@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -3443,7 +3444,7 @@ Piece Name: {gunTarget.name}";
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
 
                 if (GetGunInput(true))
                 {
@@ -3473,7 +3474,7 @@ Piece Name: {gunTarget.name}";
             foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
                 if (PlayerIsLocal(TargetRig)) continue;
-                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
                 
                 if (Time.time > barrelAllDelay)
                     throwableProjectileTimeout = 0f;
@@ -3504,7 +3505,7 @@ Piece Name: {gunTarget.name}";
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
 
                 if (GetGunInput(true))
                 {
@@ -3533,7 +3534,60 @@ Piece Name: {gunTarget.name}";
             foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
                 if (PlayerIsLocal(TargetRig)) continue;
-                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
+            }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
+        }
+
+        public static void BarrelKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - lockTarget.headMesh.transform.position;
+                    SendBarrelProjectile(lockTarget.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BarrelKickAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsLocal(TargetRig)) continue;
+
+                Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - TargetRig.headMesh.transform.position;
+                SendBarrelProjectile(TargetRig.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+
                 if (Time.time > barrelAllDelay)
                     throwableProjectileTimeout = 0f;
             }
