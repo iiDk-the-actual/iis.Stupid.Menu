@@ -1,5 +1,5 @@
-# Security Policy
-Find a vulnerable exploit with the menu? Please contact me in the following ways:
+# 🛡️ Security Policy
+Find a vulnerable exploit with the menu? Please get in touch with me in the following ways:
 - Private GitHub security forms: https://github.com/iiDk-the-actual/iis.Stupid.Menu/security/advisories/new
 - Email: `admin@goldentrophy.software`
 
