@@ -599,14 +599,14 @@ namespace iiMenu.Mods
                         new ButtonInfo {
                             buttonText = "Vibrate Player",
                             overlapText = $"Vibrate {targetName}",
-                            method =() => Overpowered.SetPlayerStatus(1, player),
+                            method =() => Overpowered.BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }),
                             disableMethod =() => Movement.EnableRig(),
                             toolTip = $"Vibrates {targetName}'s controllers."
                         },
                         new ButtonInfo {
                             buttonText = "Slow Player",
                             overlapText = $"Slow {targetName}",
-                            method =() => Overpowered.SetPlayerStatus(0, player),
+                            method =() => Overpowered.BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } } ),
                             disableMethod =() => Movement.EnableRig(),
                             toolTip = $"Gives {targetName} tag freeze."
                         }
