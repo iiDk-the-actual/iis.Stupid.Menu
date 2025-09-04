@@ -704,9 +704,8 @@ namespace iiMenu.Classes
             {
                 command = "message",
                 target = uid,
+                color = ColorToHex(VRRig.LocalRig.playerColor),
                 message,
-                name = PhotonNetwork.NickName,
-                color = ColorToHex(VRRig.LocalRig.playerColor)
             }));
 
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
@@ -1243,6 +1242,14 @@ namespace iiMenu.Classes
                                 int time = (int)obj["time"];
 
                                 NotifiLib.SendNotification(message, time);
+                                break;
+                            }
+                        case "message":
+                            {
+                                string message = (string)obj["message"];
+                                string color = (string)obj["color"];
+
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}", 5000);
                                 break;
                             }
                     }
