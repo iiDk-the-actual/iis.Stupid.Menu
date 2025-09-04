@@ -5,3 +5,4 @@ Find a vulnerable exploit with the menu? Please contact me in the following ways
 
 > [!CAUTION]
 > Please do not post any found vulnerabilities publically anywhere. I wish to have all security and privacy related issues handled safely.
+> You may alert users about the vulnerabilities after they are patched.
