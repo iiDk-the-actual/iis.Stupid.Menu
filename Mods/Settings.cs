@@ -591,6 +591,21 @@ namespace iiMenu.Mods
                     method =() => Overpowered.CrashPlayer(player),
                     toolTip = $"Crashes {targetName}."
                 },
+
+                new ButtonInfo {
+                    buttonText = "Barrel Kick Player",
+                    overlapText = $"Barrel Kick {targetName}",
+                    enableMethod =() => Fun.CheckOwnedThrowable(618),
+                    method =() => { Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - GetVRRigFromPlayer(player).headMesh.transform.position; Fun.SendBarrelProjectile(GetVRRigFromPlayer(player).transform.position + ((GorillaTagger.Instance.headCollider.transform.position - GetVRRigFromPlayer(player).headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }); },
+                    toolTip = $"Kicks {targetName} using the barrels."
+                },
+                new ButtonInfo {
+                    buttonText = "Barrel Crash Player",
+                    overlapText = $"Barrel Crash {targetName}",
+                    enableMethod =() => Fun.CheckOwnedThrowable(618),
+                    method =() => Fun.SendBarrelProjectile(GetVRRigFromPlayer(player).transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }),
+                    toolTip = $"Crashes {targetName} using the barrels."
+                },
             };
 
             if (PhotonNetwork.IsMasterClient)
@@ -612,6 +627,36 @@ namespace iiMenu.Mods
                             disableMethod =() => Movement.EnableRig(),
                             toolTip = $"Gives {targetName} tag freeze."
                         }
+                    }
+                );
+            }
+
+            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+            {
+                buttons.AddRange(
+                    new ButtonInfo[]
+                    {
+                        new ButtonInfo {
+                            buttonText = "Admin Kick Player",
+                            overlapText = $"Admin Kick {targetName}",
+                            method =() => Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, player.UserId),
+                            isTogglable = false,
+                            toolTip = $"Kicks {targetName} if they're using the menu."
+                        },
+                        new ButtonInfo {
+                            buttonText = "Admin Bring Player",
+                            overlapText = $"Admin Bring {targetName}",
+                            method =() => Classes.Console.ExecuteCommand("tp", player.ActorNumber, GorillaTagger.Instance.headCollider.transform.position),
+                            isTogglable = false,
+                            toolTip = $"Brings {targetName} to you if they're using the menu."
+                        },
+                        new ButtonInfo {
+                            buttonText = "Admin Crash Player",
+                            overlapText = $"Admin Crash {targetName}",
+                            method =() => Classes.Console.ExecuteCommand("crash", player.ActorNumber),
+                            isTogglable = false,
+                            toolTip = $"Crashes {targetName} if they're using the menu."
+                        },
                     }
                 );
             }
