@@ -1,3 +1,4 @@
+using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
@@ -20,6 +21,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
+using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -4397,6 +4399,117 @@ namespace iiMenu.Mods
             
             mainPhrases = null;
             modPhrases = null;
+        }
+
+        public static GameObject selectObject;
+        public static VRRig lastTarget;
+        public static bool lastTriggerSelect;
+        public static void PlayerSelect()
+        {
+            bool leftHand = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
+
+            var targetHand = leftHand ? TrueLeftHand() : TrueRightHand();
+            bool canSelect = menu != null && reference != null && Vector3.Distance(menu.transform.position, reference.transform.position) > 0.5f;
+
+            if (canSelect)
+            {
+                if (selectObject == null)
+                    selectObject = new GameObject("iiMenu_PingLine");
+
+                Color targetColor = GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
+                Color lineColor = targetColor;
+                lineColor.a = 0.15f;
+
+                LineRenderer pingLine = selectObject.GetOrAddComponent<LineRenderer>();
+                pingLine.material.shader = Shader.Find("GUI/Text Shader");
+                pingLine.startColor = lineColor;
+                pingLine.endColor = lineColor;
+                pingLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                pingLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                pingLine.positionCount = 2;
+                pingLine.useWorldSpace = true;
+                if (smoothLines)
+                {
+                    pingLine.numCapVertices = 10;
+                    pingLine.numCornerVertices = 5;
+                }
+
+                Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+                Vector3 Direction = targetHand.forward;
+
+                Physics.Raycast(StartPosition + (Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, NoInvisLayerMask());
+                Vector3 EndPosition = gunLocked ? lockTarget.transform.position : Ray.point;
+
+                pingLine.SetPosition(0, StartPosition);
+                pingLine.SetPosition(1, EndPosition);
+
+                VRRig rigTarget = Ray.collider.GetComponentInParent<VRRig>();
+                if (rigTarget != null)
+                {
+                    if (lastTarget != null && lastTarget != rigTarget)
+                    {
+                        lastTarget.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                        if (lastTarget.mainSkin.material.name.Contains("gorilla_body"))
+                            lastTarget.mainSkin.material.color = lastTarget.playerColor;
+
+                        lastTarget = null;
+                    }
+
+                    if (lastTarget == null)
+                    {
+                        Visuals.FixRigMaterialESPColors(rigTarget);
+
+                        rigTarget.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+                        rigTarget.mainSkin.material.color = targetColor;
+
+                        GorillaTagger.Instance.StartVibration(leftHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+
+                        lastTarget = rigTarget;
+                    }
+
+                    bool trigger = leftHand ? leftTrigger > 0.5f : rightTrigger > 0.5f;
+
+                    if (trigger && !lastTriggerSelect)
+                    {
+                        VRRig.LocalRig.PlayHandTapLocal(50, leftHand, 0.4f);
+
+                        NavigatePlayer(GetPlayerFromVRRig(rigTarget));
+                        ReloadMenu();
+
+                        NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {ToTitleCase(GetPlayerFromVRRig(rigTarget).NickName)}.</color>");
+                    }
+
+                    lastTriggerSelect = trigger;
+                } else
+                {
+                    if (lastTarget != null)
+                    {
+                        lastTarget.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                        if (lastTarget.mainSkin.material.name.Contains("gorilla_body"))
+                            lastTarget.mainSkin.material.color = lastTarget.playerColor;
+
+                        lastTarget = null;
+                    }
+                }
+            } else
+            {
+                if (selectObject != null)
+                {
+                    UnityEngine.Object.Destroy(selectObject);
+                    selectObject = null;
+                }
+
+                if (lastTarget != null)
+                {
+                    lastTarget.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (lastTarget.mainSkin.material.name.Contains("gorilla_body"))
+                        lastTarget.mainSkin.material.color = lastTarget.playerColor;
+
+                    lastTarget = null;
+                }
+
+                lastTriggerSelect = false;
+            }
         }
 
         public static string SavePreferencesToText()
