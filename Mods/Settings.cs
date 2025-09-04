@@ -4507,7 +4507,7 @@ namespace iiMenu.Mods
                         rigTarget.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         rigTarget.mainSkin.material.color = targetColor;
 
-                        GorillaTagger.Instance.StartVibration(leftHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                        GorillaTagger.Instance.StartVibration(leftHand, GorillaTagger.Instance.tagHapticStrength / 2f, 0.05f);
 
                         lastTarget = rigTarget;
                     }
@@ -4517,6 +4517,7 @@ namespace iiMenu.Mods
                     if (trigger && !lastTriggerSelect)
                     {
                         VRRig.LocalRig.PlayHandTapLocal(50, leftHand, 0.4f);
+                        GorillaTagger.Instance.StartVibration(leftHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 
                         NavigatePlayer(GetPlayerFromVRRig(rigTarget));
                         ReloadMenu();
