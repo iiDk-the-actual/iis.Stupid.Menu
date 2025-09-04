@@ -1638,6 +1638,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method =() => Experimental.AdminKickAll(), isTogglable = false, toolTip = "Kicks everyone using the menu."},
+                
+                new ButtonInfo { buttonText = "Admin Crash Gun", method =() => Experimental.AdminCrashGun(), toolTip = "Crashes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Crash All", method =() => Experimental.AdminCrashAll(), toolTip = "Crashes everyone using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
 
@@ -1645,7 +1648,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Unfreeze Gun", method =() => Experimental.AdminFreezeGun(false), toolTip = "Unfreezes whoever your hand desires if they're using the menu."},
                 
                 new ButtonInfo { buttonText = "Admin Mute Gun", method =() => Experimental.AdminEnableGun(true, "Mute Microphone"), toolTip = "Mutes whoever your hand desires if they're using the menu."},
-                new ButtonInfo { buttonText = "Admin Unmute Gun", method =() => Experimental.AdminEnableGun(false, "Mute Microphone"), toolTip = "Unmutes whoever your hand desires if they're using the menu"},
+                new ButtonInfo { buttonText = "Admin Unmute Gun", method =() => Experimental.AdminEnableGun(false, "Mute Microphone"), toolTip = "Unmutes whoever your hand desires if they're using the menu."},
+
+                new ButtonInfo { buttonText = "Admin Board Mute Gun", method =() => Experimental.AdminBMuteGun(true), toolTip = "Mutes whoever your hand desires for everyone using the menu."},
+                new ButtonInfo { buttonText = "Admin Board Unmute Gun", method =() => Experimental.AdminBMuteGun(false), toolTip = "Unmutes whoever your hand desires for everyone using the menu."},
+
+                new ButtonInfo { buttonText = "Admin Board Mute All", method =() => Experimental.AdminBMuteAll(true), isTogglable = false, toolTip = "Mutes everyone for players using the menu."},
+                new ButtonInfo { buttonText = "Admin Board Unmute All", method =() => Experimental.AdminBMuteAll(false), isTogglable = false, toolTip = "Unmutes everyone for players using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Disable Menu Gun", method =() => Experimental.AdminLockdownGun(true), toolTip = "Disables the menu of whoever your hand desires if they're using one."},
                 new ButtonInfo { buttonText = "Admin Enable Menu Gun", method =() => Experimental.AdminLockdownGun(false), toolTip = "Enables the menu of whoever your hand desires if they're using one."},
@@ -1689,6 +1698,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Bring Hand All", method =() => Experimental.BringHandAllUsing(), toolTip = "Brings everyone using the menu to your hand."},
                 new ButtonInfo { buttonText = "Admin Bring Head All", method =() => Experimental.BringHeadAllUsing(), toolTip = "Brings everyone using the menu to your head."},
                 new ButtonInfo { buttonText = "Admin Orbit All", method =() => Experimental.OrbitAllUsing(), toolTip = "Makes everyone using the menu orbit you."},
+
+                new ButtonInfo { buttonText = "Admin Lag Gun", method =() => Experimental.AdminLagGun(), toolTip = "Lags whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Lag All", method =() => Experimental.AdminLagAll(), toolTip = "Lags everyone using the menu."},
+                new ButtonInfo { buttonText = "Admin Lag Spike Gun", method =() => Experimental.AdminLagSpikeGun(), toolTip = "Lag spikes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Lag Spike All", method =() => Experimental.AdminLagSpikeAll(), isTogglable = false, toolTip = "Lag spikes everyone using the menu."},
+
+                new ButtonInfo { buttonText = "Admin Vibrate Gun", method =() => Experimental.AdminVibrateGun(), toolTip = "Vibrate whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Vibrate All", method =() => Experimental.AdminVibrateAll(), isTogglable = false, toolTip = "Vibrates everyone using the menu."},
+
+                new ButtonInfo { buttonText = "Admin Block Gun", method =() => Experimental.AdminBlockGun(), isTogglable = false, toolTip = "Disables whoever your hand desires from joining servers for 5 minutes if they're using the menu."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
             },
