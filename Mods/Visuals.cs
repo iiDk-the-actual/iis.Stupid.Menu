@@ -1531,7 +1531,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
+                if (vrrig.mainSkin.material.name.Contains("gorilla_body") && vrrig.mainSkin.material.shader == Shader.Find("GUI/Text Shader"))
                     vrrig.mainSkin.material.color = vrrig.playerColor;
             }
         }
