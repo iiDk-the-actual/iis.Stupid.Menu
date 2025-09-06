@@ -98,11 +98,11 @@ namespace iiMenu.Mods
                 if (deadPosition == Vector3.zero)
                 {
                     deadPosition = GorillaTagger.Instance.rigidbody.transform.position;
-                    lvel = GorillaTagger.Instance.rigidbody.velocity;
+                    lvel = GorillaTagger.Instance.rigidbody.linearVelocity;
                 }
                 VRRig.LocalRig.enabled = false;
                 GorillaTagger.Instance.rigidbody.transform.position = deadPosition;
-                GorillaTagger.Instance.rigidbody.velocity = lvel;
+                GorillaTagger.Instance.rigidbody.linearVelocity = lvel;
             }
             else
             {

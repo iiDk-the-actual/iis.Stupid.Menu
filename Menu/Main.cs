@@ -17,13 +17,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net; 
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Technie.PhysicsCreator.Rigid;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -2552,7 +2551,7 @@ namespace iiMenu.Menu
 
                     Rigidbody comp = particle.AddComponent(typeof(Rigidbody)) as Rigidbody;
                     comp.position = menuBackground.transform.position;
-                    comp.velocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(3f, 5f), UnityEngine.Random.Range(-3f, 3f));
+                    comp.linearVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(3f, 5f), UnityEngine.Random.Range(-3f, 3f));
                     comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f));
                 }
             }
@@ -2795,19 +2794,19 @@ namespace iiMenu.Menu
 
                         if (rightHand || (bothHands && openedwithright))
                         {
-                            comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.linearVelocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                             comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                         }
                         else
                         {
-                            comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.linearVelocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                             comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                         }
 
                         if (annoyingMode)
                         {
-                            comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                            comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                            comp.linearVelocity = RandomVector3(33f);
+                            comp.angularVelocity = RandomVector3(33f);
                         }
                     }
                     catch { }
@@ -4194,7 +4193,7 @@ namespace iiMenu.Menu
             }
 
             if (!typePool.ContainsKey(type))
-                typePool.Add(type, FindObjectsOfType<T>(true));
+                typePool.Add(type, FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None));
 
             return (T[])typePool[type];
         }
@@ -6349,8 +6348,8 @@ jgs \_   _/ |Oo\
         public static string ForestLeaderboardID = "UnityTempFile";
 
         public static int StumpLeaderboardIndex = 5;
-        public static int ForestLeaderboardIndex = 13;
-
+        public static int ForestLeaderboardIndex = 9;
+        
         public static Material[] ogScreenMats = new Material[] { };
 
         public static bool translate;

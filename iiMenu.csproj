@@ -91,14 +91,8 @@
     <Reference Include="BepInEx.Preloader">
       <HintPath>$(ProjectDir)References\core\BepInEx.Preloader.dll</HintPath>
     </Reference>
-    <Reference Include="Cinemachine">
-      <HintPath>$(ProjectDir)References\Managed\Cinemachine.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Wit.Dictation">
-      <HintPath>$(ProjectDir)References\Managed\Facebook.Wit.Dictation.dll</HintPath>
-    </Reference>
-    <Reference Include="FbxBuildTestAssets">
-      <HintPath>$(ProjectDir)References\Managed\FbxBuildTestAssets.dll</HintPath>
+    <Reference Include="Unity.Cinemachine">
+      <HintPath>$(ProjectDir)References\Managed\Unity.Cinemachine.dll</HintPath>
     </Reference>
     <Reference Include="Fusion.Common">
       <HintPath>$(ProjectDir)References\Managed\Fusion.Common.dll</HintPath>
@@ -142,44 +136,8 @@
     <Reference Include="MeshBakerCore">
       <HintPath>$(ProjectDir)References\Managed\MeshBakerCore.dll</HintPath>
     </Reference>
-    <Reference Include="Meta.Voice.Hub.Runtime">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Hub.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.BuiltInTimer">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.BuiltInTimer.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.Chess">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.Chess.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.Dictation">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.Dictation.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.LightTraits">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.LightTraits.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.LiveUnderstanding">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.LiveUnderstanding.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.Shapes">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.Shapes.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.ShapesConduit">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.ShapesConduit.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Voice.Samples.TTSVoices">
-      <HintPath>$(ProjectDir)References\Managed\Meta.Voice.Samples.TTSVoices.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.VoiceSDK.Mic.Common">
-      <HintPath>$(ProjectDir)References\Managed\Meta.VoiceSDK.Mic.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.VoiceSDK.Mic.Other">
-      <HintPath>$(ProjectDir)References\Managed\Meta.VoiceSDK.Mic.Other.dll</HintPath>
-    </Reference>
     <Reference Include="Meta.WitAi">
       <HintPath>$(ProjectDir)References\Managed\Meta.WitAi.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.WitAi.Conduit">
-      <HintPath>$(ProjectDir)References\Managed\Meta.WitAi.Conduit.dll</HintPath>
     </Reference>
     <Reference Include="Meta.WitAi.Lib">
       <HintPath>$(ProjectDir)References\Managed\Meta.WitAi.Lib.dll</HintPath>
@@ -232,9 +190,6 @@
     <Reference Include="Nobi.UiRoundedCorners">
       <HintPath>$(ProjectDir)References\Managed\Nobi.UiRoundedCorners.dll</HintPath>
     </Reference>
-    <Reference Include="Oculus.AudioManager">
-      <HintPath>$(ProjectDir)References\Managed\Oculus.AudioManager.dll</HintPath>
-    </Reference>
     <Reference Include="Oculus.Interaction">
       <HintPath>$(ProjectDir)References\Managed\Oculus.Interaction.dll</HintPath>
     </Reference>
@@ -244,14 +199,8 @@
     <Reference Include="Oculus.Interaction.OVR.Samples">
       <HintPath>$(ProjectDir)References\Managed\Oculus.Interaction.OVR.Samples.dll</HintPath>
     </Reference>
-    <Reference Include="Oculus.LipSync">
-      <HintPath>$(ProjectDir)References\Managed\Oculus.LipSync.dll</HintPath>
-    </Reference>
     <Reference Include="Oculus.Platform">
       <HintPath>$(ProjectDir)References\Managed\Oculus.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="Oculus.Spatializer">
-      <HintPath>$(ProjectDir)References\Managed\Oculus.Spatializer.dll</HintPath>
     </Reference>
     <Reference Include="Oculus.VR">
       <HintPath>$(ProjectDir)References\Managed\Oculus.VR.dll</HintPath>
@@ -403,9 +352,6 @@
     <Reference Include="Unity.XR.Management">
       <HintPath>$(ProjectDir)References\Managed\Unity.XR.Management.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.XR.Oculus">
-      <HintPath>$(ProjectDir)References\Managed\Unity.XR.Oculus.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.XR.OpenVR">
       <HintPath>$(ProjectDir)References\Managed\Unity.XR.OpenVR.dll</HintPath>
     </Reference>
@@ -501,9 +447,6 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(ProjectDir)References\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ProfilerModule">
-      <HintPath>$(ProjectDir)References\Managed\UnityEngine.ProfilerModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PropertiesModule">
       <HintPath>$(ProjectDir)References\Managed\UnityEngine.PropertiesModule.dll</HintPath>

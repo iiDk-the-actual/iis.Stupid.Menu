@@ -414,8 +414,8 @@ namespace iiMenu.Mods
             (
                 "Velocity",
                 false,
-                string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.velocity.magnitude),
-                GorillaTagger.Instance.rigidbody.velocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white
+                string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.linearVelocity.magnitude),
+                GorillaTagger.Instance.rigidbody.linearVelocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white
             );
         }
 
@@ -1547,8 +1547,7 @@ namespace iiMenu.Mods
                         .GetComponentsInChildren<Transform>(true)
                         .Where(t => t.name.StartsWith("UnityTempFile"))
                         .GroupBy(t => t.name)
-                        .OrderByDescending(g => g.Count())
-                        .FirstOrDefault();
+                        .FirstOrDefault(g => g.Count() == 3);
 
                     _leavesName = matchingObjects?.Key ?? "UnityTempFile";
                 }

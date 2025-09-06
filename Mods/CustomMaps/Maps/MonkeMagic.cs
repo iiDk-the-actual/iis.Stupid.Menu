@@ -3,7 +3,6 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 

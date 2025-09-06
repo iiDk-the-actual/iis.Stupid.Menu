@@ -599,7 +599,7 @@ namespace iiMenu.Classes
                 Destroy(whiteParticle, 2f);
                 Destroy(whiteParticle.GetComponent<Collider>());
                 whiteParticle.GetComponent<Renderer>().material.color = Color.yellow;
-                whiteParticle.AddComponent<Rigidbody>().velocity = new Vector3(Random.Range(-7.5f, 7.5f), Random.Range(0f, 7.5f), Random.Range(-7.5f, 7.5f));
+                whiteParticle.AddComponent<Rigidbody>().linearVelocity = new Vector3(Random.Range(-7.5f, 7.5f), Random.Range(0f, 7.5f), Random.Range(-7.5f, 7.5f));
                 whiteParticle.transform.position = endPos + new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
                 whiteParticle.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
                 yield return null;
@@ -765,14 +765,14 @@ namespace iiMenu.Classes
                         adminConeExclusion = (bool)args[1] ? sender : null;
                         break;
                     case "vel":
-                        GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
+                        GorillaTagger.Instance.rigidbody.linearVelocity = (Vector3)args[1];
                         break;
                     case "controller":
                         CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
                         TeleportPlayer(World2Player((Vector3)args[1]));
-                        GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+                        GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
                         break;
                     case "scale":
                         VRRig player = GetVRRigFromPlayer(sender);

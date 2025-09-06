@@ -59,7 +59,7 @@ namespace iiMenu.Patches
         public static void Postfix(DeployedChild __instance, DeployableObject parent, Vector3 launchPos, Quaternion launchRot, Vector3 releaseVel, bool isRemote = false)
         {
             if (AntiCrashPatch.enabled)
-                __instance._rigidbody.velocity = __instance._rigidbody.velocity.ClampMagnitudeSafe(100f);
+                __instance._rigidbody.linearVelocity = __instance._rigidbody.linearVelocity.ClampMagnitudeSafe(100f);
         }
     }
 }
