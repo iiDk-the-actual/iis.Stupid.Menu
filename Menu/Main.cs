@@ -1075,6 +1075,11 @@ namespace iiMenu.Menu
                         Vector2 js = leftJoystick;
                         if (Time.time > joystickDelay)
                         {
+                            int lastPage = pageSize;
+
+                            if (joystickMenuSearching)
+                                lastPage++;
+
                             if (js.x > 0.5f)
                             {
                                 if (dynamicSounds)
@@ -1597,6 +1602,16 @@ namespace iiMenu.Menu
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[(isSearching ^ !swapButtonColors) ? 0 : 1];
+
+            if (joystickMenuSearching && joystickButtonSelected == pageSize)
+            {
+                joystickSelectedButton = "Search";
+
+                ExtGradient gradient = colorChanger.colors.Clone();
+                gradient.SetColor(0, Color.red);
+
+                colorChanger.colors = gradient;
+            }
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -6065,6 +6080,7 @@ jgs \_   _/ |Oo\
         public static bool serversidedButtonSounds;
 
         public static bool joystickMenu;
+        public static bool joystickMenuSearching;
         public static bool physicalMenu;
         public static Vector3 physicalOpenPosition = Vector3.zero;
         public static Quaternion physicalOpenRotation = Quaternion.identity;

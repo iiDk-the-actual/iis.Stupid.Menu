@@ -203,6 +203,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Legacy Ghostview", enableMethod =() => legacyGhostview = true, disableMethod =() => legacyGhostview = false, toolTip = "Reverts the transparent rig to the two balls when you're in ghost."},
 
                 new ButtonInfo { buttonText = "No Global Search", enableMethod =() => nonGlobalSearch = true, disableMethod =() => nonGlobalSearch = false, toolTip = "Makes the search button only search for mods in the current subcategory, unless on the main page."},
+                new ButtonInfo { buttonText = "Joystick Menu Search", enableMethod =() => joystickMenuSearching = true, disableMethod =() => joystickMenuSearching = false, toolTip = "Allows you to move your selected item down to the search button with joystick menu."},
 
                 new ButtonInfo { buttonText = "Menu Presets", method =() => currentCategoryName = "Menu Presets", isTogglable = false, toolTip = "Opens the page of presets."},
                 new ButtonInfo { buttonText = "Backup Preferences", enableMethod =() => BackupPreferences = true, disableMethod =() => BackupPreferences = false, toolTip = "Automatically saves a copy of your preferences every minute."},
