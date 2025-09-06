@@ -28,7 +28,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -2637,7 +2636,7 @@ Piece Name: {gunTarget.name}";
                         if (GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
-                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                             collider.material.dynamicFriction = 0f;
                         }
                     }
@@ -2646,7 +2645,7 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                     Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                    rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                    rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                     rigidbody.angularVelocity = RandomVector3(100f);
 
                     rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -2679,7 +2678,7 @@ Piece Name: {gunTarget.name}";
                     if (GetIndex("Bouncy Bug").enabled)
                     {
                         collider.material.bounciness = 1f;
-                        collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                        collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                         collider.material.dynamicFriction = 0f;
                     }
                 }
@@ -2688,7 +2687,7 @@ Piece Name: {gunTarget.name}";
                 cameraSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                 Rigidbody rigidbody = cameraSpamObject.AddComponent<Rigidbody>();
-                rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                 rigidbody.angularVelocity = RandomVector3(100f);
 
                 rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -2758,7 +2757,7 @@ Piece Name: {gunTarget.name}";
                                 if (GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
-                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                                     collider.material.dynamicFriction = 0f;
                                 }
                             }
@@ -2767,7 +2766,7 @@ Piece Name: {gunTarget.name}";
                             bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                             Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
                             rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -2792,7 +2791,7 @@ Piece Name: {gunTarget.name}";
                                 if (GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
-                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                                     collider.material.dynamicFriction = 0f;
                                 }
                             }
@@ -2801,7 +2800,7 @@ Piece Name: {gunTarget.name}";
                             bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                             Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
                             rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -2830,7 +2829,7 @@ Piece Name: {gunTarget.name}";
                                 if (GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
-                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                                     collider.material.dynamicFriction = 0f;
                                 }
                             }
@@ -2839,7 +2838,7 @@ Piece Name: {gunTarget.name}";
                             cameraSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                             Rigidbody rigidbody = cameraSpamObject.AddComponent<Rigidbody>();
-                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
                             rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -3122,7 +3121,7 @@ Piece Name: {gunTarget.name}";
                         if (GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
-                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                             collider.material.dynamicFriction = 0f;
                         }
                     }
@@ -3131,7 +3130,7 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.rotation = bug.transform.rotation;
 
                     Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                    rigidbody.velocity = tracker.GetAverageVelocity(true, 0);
+                    rigidbody.linearVelocity = tracker.GetAverageVelocity(true, 0);
                     rigidbody.angularVelocity = bug.velocityEstimator.angularVelocity;
 
                     rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -3202,7 +3201,7 @@ Piece Name: {gunTarget.name}";
                         if (GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
-                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
                             collider.material.dynamicFriction = 0f;
                         }
                     }
@@ -3211,7 +3210,7 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.rotation = camera.transform.rotation;
 
                     Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                    rigidbody.velocity = tracker.GetAverageVelocity(true, 0);
+                    rigidbody.linearVelocity = tracker.GetAverageVelocity(true, 0);
                     rigidbody.angularVelocity = estimator.angularVelocity;
 
                     rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
@@ -4667,7 +4666,7 @@ Piece Name: {gunTarget.name}";
             GameObject bugObject = GetBugObject(objectName).gameObject;
 
             TeleportPlayer(bugObject.transform.position);
-            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+            GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
         }
 
         private static bool lastWasNull;

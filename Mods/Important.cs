@@ -1,4 +1,3 @@
-using Cinemachine;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
@@ -12,6 +11,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -232,12 +232,14 @@ namespace iiMenu.Mods
 
         private static bool wasenabled = true;
 
+        [System.Obsolete]
         public static void EnableFPC()
         {
             if (TPC != null)
                 wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
         }
 
+        [System.Obsolete]
         public static void MoveFPC()
         {
             if (TPC != null)
@@ -249,6 +251,7 @@ namespace iiMenu.Mods
             }
         }
 
+        [System.Obsolete]
         public static void DisableFPC()
         {
             if (TPC != null)

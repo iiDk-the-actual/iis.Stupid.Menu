@@ -17,11 +17,9 @@ using System.Net;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -4240,7 +4238,7 @@ namespace iiMenu.Mods
                     closePosition = GorillaTagger.Instance.rigidbody.transform.position;
                 else
                     GorillaTagger.Instance.rigidbody.transform.position = closePosition;
-                GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, 0f, 0f);
+                GorillaTagger.Instance.rigidbody.linearVelocity = new Vector3(0f, 0f, 0f);
             } else
                 closePosition = Vector3.zero;
         }

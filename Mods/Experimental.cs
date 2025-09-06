@@ -11,10 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace iiMenu.Mods
 {

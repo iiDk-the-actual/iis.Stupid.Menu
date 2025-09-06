@@ -12,7 +12,7 @@ namespace iiMenu.Classes
 
         public void Update()
         {
-            if (rigidbody.velocity.magnitude < 0.01f)
+            if (rigidbody.linearVelocity.magnitude < 0.01f)
                 Destroy(gameObject);
         }
 
