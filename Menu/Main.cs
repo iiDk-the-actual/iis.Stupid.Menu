@@ -1104,7 +1104,7 @@ namespace iiMenu.Menu
 
                                 joystickButtonSelected--;
                                 if (joystickButtonSelected < 0)
-                                    joystickButtonSelected = pageSize - 1;
+                                    joystickButtonSelected = lastPage - 1;
 
                                 ReloadMenu();
                                 joystickDelay = Time.time + 0.2f;
@@ -1115,7 +1115,7 @@ namespace iiMenu.Menu
                                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "down.wav"), buttonClickVolume / 10f);
 
                                 joystickButtonSelected++;
-                                joystickButtonSelected %= pageSize;
+                                joystickButtonSelected %= lastPage;
 
                                 ReloadMenu();
                                 joystickDelay = Time.time + 0.2f;
