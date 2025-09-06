@@ -1141,9 +1141,8 @@ namespace iiMenu.Classes
 
             using HttpClient client = new HttpClient();
             byte[] downloadedData = await client.GetByteArrayAsync(URL);
-            await File.WriteAllBytesAsync(fileName, downloadedData);
 
-            AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync(fileName);
+            AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromMemoryAsync(downloadedData);
             while (!bundleCreateRequest.isDone)
                 await Task.Yield();
 
