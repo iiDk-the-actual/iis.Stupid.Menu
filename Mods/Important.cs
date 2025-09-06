@@ -230,16 +230,15 @@ namespace iiMenu.Mods
             Application.Quit();
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         private static bool wasenabled = true;
 
-        [System.Obsolete]
         public static void EnableFPC()
         {
             if (TPC != null)
                 wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
         }
 
-        [System.Obsolete]
         public static void MoveFPC()
         {
             if (TPC != null)
@@ -251,7 +250,6 @@ namespace iiMenu.Mods
             }
         }
 
-        [System.Obsolete]
         public static void DisableFPC()
         {
             if (TPC != null)
@@ -260,6 +258,7 @@ namespace iiMenu.Mods
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         public static void ForceEnableHands()
         {
