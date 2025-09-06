@@ -653,9 +653,9 @@ namespace iiMenu.Menu
                 }
 
                 if (automenuuser)
-                {
                     NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
-                }
+                else
+                    NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
 
                 // Bad apple theme
                 if (themeType == 63)
@@ -4999,9 +4999,7 @@ namespace iiMenu.Menu
                 NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
 
             if (automenuuser)
-            {
                 Toggle("Get Menu Users");
-            }
 
             RPCProtection();
         }
