@@ -1640,6 +1640,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Admin Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
+                new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => automenuuser = true, disableMethod = () => automenuuser = false, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},

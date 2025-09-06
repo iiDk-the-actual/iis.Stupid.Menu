@@ -652,6 +652,11 @@ namespace iiMenu.Menu
                     catch { }
                 }
 
+                if (automenuuser)
+                {
+                    NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
+                }
+
                 // Bad apple theme
                 if (themeType == 63)
                 {
@@ -4993,6 +4998,11 @@ namespace iiMenu.Menu
             if (!disableRoomNotifications)
                 NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
 
+            if (automenuuser)
+            {
+                Toggle("Get Menu Users");
+            }
+
             RPCProtection();
         }
 
@@ -6266,6 +6276,7 @@ jgs \_   _/ |Oo\
         private static float fpsAverageNumber;
         public static bool fpsCountTimed;
         public static bool fpsCountAverage;
+        public static bool automenuuser;
         public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
         public static Text keyboardInputObject;
