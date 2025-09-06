@@ -651,10 +651,12 @@ namespace iiMenu.Menu
                     }
                     catch { }
                 }
+                bool doneautomenu = false;
 
                 if (automenuuser)
+                    if (!doneautomenu)
                     NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
-                else
+                else if (doneautomenu && !automenuuser)
                     NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
 
                 // Bad apple theme
