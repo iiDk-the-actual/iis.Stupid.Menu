@@ -4518,13 +4518,13 @@ namespace iiMenu.Menu
                 visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Destroy(visualizeGO.GetComponent<Collider>());
 
-                visualizeGO.transform.position = position;
-                visualizeGO.transform.localScale = new Vector3(range, range, range);
-
                 auraPool.Add(key, visualizeGO);
             }
 
             visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = new Vector3(range, range, range);
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
@@ -4544,14 +4544,14 @@ namespace iiMenu.Menu
                 visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 Destroy(visualizeGO.GetComponent<Collider>());
 
-                visualizeGO.transform.position = position;
-                visualizeGO.transform.localScale = scale;
-                visualizeGO.transform.rotation = rotation;
-
                 cubePool.Add(key, visualizeGO);
             }
 
             visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = scale;
+            visualizeGO.transform.rotation = rotation;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
