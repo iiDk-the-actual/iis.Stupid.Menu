@@ -1500,6 +1500,8 @@ namespace iiMenu.Menu
 
                     if (joystickMenu && buttonIndex == joystickButtonSelected)
                     {
+                        joystickSelectedButton = method.buttonText;
+
                         ExtGradient gradient = colorChanger.colors.Clone();
                         gradient.SetColor(0, Color.red);
 
