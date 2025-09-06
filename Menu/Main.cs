@@ -889,7 +889,7 @@ namespace iiMenu.Menu
 
                         GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                         GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
-                        GhostRig.transform.Find("RigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
                         GhostRig.GetComponent<OwnershipGaurd>().enabled = false; 
                             
                         Visuals.FixRigMaterialESPColors(GhostRig);
@@ -4825,8 +4825,8 @@ namespace iiMenu.Menu
                             if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
                             {
                                 string handPath = (bool)args[1]
-                                 ? "RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
-                                 : "RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+                                 ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                 : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
 
                                 Vector3 position = target.gameObject.transform.Find(handPath).position;
 
