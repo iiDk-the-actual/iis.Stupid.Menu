@@ -2194,7 +2194,7 @@ namespace iiMenu.Menu
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(title);
+                OutlineCanvasObject(title, true);
 
             Text buildLabel = new GameObject
             {
