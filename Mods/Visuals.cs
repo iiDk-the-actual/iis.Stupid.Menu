@@ -66,8 +66,8 @@ namespace iiMenu.Mods
 
         public static void WatchOn()
         {
-            GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
             UnityEngine.Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
             regwatchobject.SetActive(true);
 
