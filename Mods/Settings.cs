@@ -4452,7 +4452,7 @@ namespace iiMenu.Mods
             bool leftHand = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
 
             var targetHand = leftHand ? TrueLeftHand() : TrueRightHand();
-            bool canSelect = menu != null && reference != null && Vector3.Distance(menu.transform.position, reference.transform.position) > 0.5f;
+            bool canSelect = NetworkSystem.Instance.InRoom && menu != null && reference != null && Vector3.Distance(menu.transform.position, reference.transform.position) > 0.5f;
 
             if (canSelect)
             {
