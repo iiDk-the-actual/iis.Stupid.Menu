@@ -860,7 +860,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.QuestNoises(), toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method =() => Fun.MaxQuestScore(), toolTip = "Gives you the maximum quest score in the game (99999)."},
                 new ButtonInfo { buttonText = "Custom Quest Score", method =() => Fun.CustomQuestScore(), toolTip = "Gives you a custom quest score. You can change this in the settings."},
-                
+
                 new ButtonInfo { buttonText = "Matchmaking Tier Spoof", method =() => Safety.SpoofRank(true, Safety.targetRank), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
                 new ButtonInfo { buttonText = "Matchmaking Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
 
@@ -1175,7 +1175,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cosmetic Spoof", enableMethod =() => Fun.TryOnAnywhere(), disableMethod =() => Fun.TryOffAnywhere(), toolTip = "Lets you try on cosmetics from anywhere. Enable this mod after wearing the cosmetics." },
                 new ButtonInfo { buttonText = "Cosmetic Browser", method =() => Fun.CosmeticBrowser(), isTogglable = false, toolTip = "Browse through every cosmetic that you can try on and add it to your cart." },
                 new ButtonInfo { buttonText = "Auto Spoof Cosmetics", enableMethod =() => Fun.AutoLoadCosmetics(), disableMethod =() => Fun.NoAutoLoadCosmetics(), toolTip = "Automatically spoofs your cosmetics, making you appear with anything you're able to try-on." },
-                
+
                 new ButtonInfo { buttonText = "Auto Purchase Cosmetics", overlapText = "Auto Purchase Free Cosmetics", method =() => Fun.AutoPurchaseCosmetics(), toolTip = "Automatically purchases any free cosmetics." },
                 new ButtonInfo { buttonText = "Auto Purchase Current Cosmetics", method =() => Fun.AutoPurchasePaidCosmetics(), toolTip = "Automatically purchases all cosmetics on your outfit until you own everything. This does use shiny rocks." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
@@ -1641,11 +1641,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Admin Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
+                new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method =() => Experimental.AdminKickAll(), isTogglable = false, toolTip = "Kicks everyone using the menu."},
-                
+
                 new ButtonInfo { buttonText = "Admin Crash Gun", method =() => Experimental.AdminCrashGun(), toolTip = "Crashes whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Crash All", method =() => Experimental.AdminCrashAll(), toolTip = "Crashes everyone using the menu."},
 
@@ -1653,7 +1654,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Freeze Gun", method =() => Experimental.AdminFreezeGun(true), toolTip = "Freezes whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Unfreeze Gun", method =() => Experimental.AdminFreezeGun(false), toolTip = "Unfreezes whoever your hand desires if they're using the menu."},
-                
+
                 new ButtonInfo { buttonText = "Admin Mute Gun", method =() => Experimental.AdminEnableGun(true, "Mute Microphone"), toolTip = "Mutes whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Unmute Gun", method =() => Experimental.AdminEnableGun(false, "Mute Microphone"), toolTip = "Unmutes whoever your hand desires if they're using the menu."},
 
@@ -1753,7 +1754,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Custom Map ID", method =() => Experimental.CopyCustomMapID(), isTogglable = false, toolTip = "Copies the map ID of the current custom map being played."},
 
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
-                
+
                 new ButtonInfo { buttonText = "Replay Tutorial", method =() => Settings.ShowTutorial(), isTogglable = false, toolTip = "Replays the tutorial video."},
                 new ButtonInfo { buttonText = "Disorganize Menu", method =() => Settings.DisorganizeMenu(), isTogglable = false, toolTip = "Disorganizes the entire menu. This cannot be undone."},
             },
@@ -1840,7 +1841,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bouncy Bug", toolTip = "Makes the bug bounce off of surfaces if using the bug colliders setting on the Bug Spam mod."},
 
                 new ButtonInfo { buttonText = "Change Custom Quest Score", overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeCustomQuestScore(true), enableMethod =() => Fun.ChangeCustomQuestScore(true), disableMethod =() => Fun.ChangeCustomQuestScore(false), incremental = true, isTogglable = false, toolTip = "Changes the value of the \"Custom Quest Score\" mod." },
-                
+
                 new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Matchmaking Tier <color=grey>[</color><color=green>High</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the matchmaking spoof mod."},
                 new ButtonInfo { buttonText = "Change ELO Value", overlapText = "Change ELO Value <color=grey>[</color><color=green>4000</color><color=grey>]</color>", method =() => Safety.ChangeELOValue(), enableMethod =() => Safety.ChangeELOValue(), disableMethod =() => Safety.ChangeELOValue(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted ELO for the badge spoof mod."},
                 new ButtonInfo { buttonText = "Change Badge Tier", overlapText = "Change Badge Tier <color=grey>[</color><color=green>Banana</color><color=grey>]</color>", method =() => Safety.ChangeBadgeTier(), enableMethod =() => Safety.ChangeBadgeTier(), disableMethod =() => Safety.ChangeBadgeTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the badge spoof mod."},
@@ -1865,7 +1866,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "iiDk", method =() => Process.Start("https://github.com/iiDk-the-actual"), isTogglable = false, toolTip = "iiDk is the main developer of ii's <b>Stupid</b> Menu, and has been working on it since 2023. He is also the owner of ii's Stupid Mods."},
                 new ButtonInfo { buttonText = "Twigcore", method =() => Process.Start("https://github.com/Twigcore"), isTogglable = false, toolTip = "Twigcore is one of the main developers of Console, the admin system in the menu. He helps create assets, moderate users, and give me ideas."},
                 new ButtonInfo { buttonText = "Kingofnetflix", method =() => Process.Start("https://github.com/kingofnetflix"), isTogglable = false, toolTip = "Kingofnetflix is an ex-developer of ii's <b>Stupid</b> Menu. Creating mods since 2022, he's been very impactful towards this menu."},
-                
+
                 new ButtonInfo { buttonText = "Joseph", method =() => Process.Start("https://github.com/josephabyt"), isTogglable = false, toolTip = "Joseph is a contributor of ii's <b>Stupid</b> Menu. He is the creator of many mods, like the debug screen, extenders, disable menu title, steam refund timer, and many more."},
                 new ButtonInfo { buttonText = "Tagdoesnothing", method =() => Process.Start("https://github.com/JuanLeoson"), isTogglable = false, toolTip = "Tag is a contributor of ii's <b>Stupid</b> Menu. She fixes small bugs and helps bug test the menu."},
                 new ButtonInfo { buttonText = "DrPerky", method =() => Process.Start("https://github.com/DrPerkyLegit"), isTogglable = false, toolTip = "DrPerky is a contributor of ii's <b>Stupid</b> Menu. He helped me rewrite all of the visual mods."},
@@ -1877,7 +1878,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Graze", method =() => Process.Start("https://github.com/The-Graze"), isTogglable = false, toolTip = "Graze gave me permission to use their color detection system."},
                 new ButtonInfo { buttonText = "Zvbex", method =() => Process.Start("https://guns.lol/zvbexisking"), isTogglable = false, toolTip = "Zvbex gave me permission to use their initial platform detection system."},
                 new ButtonInfo { buttonText = "Shiny", method =() => Process.Start("https://github.com/Shiny003"), isTogglable = false, toolTip = "Shiny gave me permission to use their PlayFab display name spoof patch."},
-                
+
                 new ButtonInfo { buttonText = "Will", method =() => Process.Start("https://github.com/64will64"), isTogglable = false, toolTip = "Will gave me the idea to make body rotation mods."},
                 new ButtonInfo { buttonText = "KyleTheScientist", method =() => Process.Start("https://github.com/KyleTheScientist"), isTogglable = false, toolTip = "KyleTheScientist gave me the idea to add \"Bark Fly\" to the menu."},
                 new ButtonInfo { buttonText = "Gorilla Dev", method =() => Process.Start("https://github.com/GorillerDev"), isTogglable = false, toolTip = "Gorilla Dev gave me the idea to add \"Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>\" to the menu."},
