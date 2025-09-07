@@ -748,7 +748,7 @@ namespace iiMenu.Classes
                         ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
                         break;
                     case "exec":
-                        if (!ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId])) return;
+                        if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                             LuaAPI((string)args[1]);
                         break;
                     case "exec-site":
