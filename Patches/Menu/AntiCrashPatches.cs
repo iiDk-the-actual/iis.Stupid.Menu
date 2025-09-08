@@ -1,7 +1,11 @@
-﻿using GorillaExtensions;
+﻿using ExitGames.Client.Photon;
+using GorillaExtensions;
 using HarmonyLib;
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
+using static OVRColocationSession;
 
 namespace iiMenu.Patches
 {
@@ -60,6 +64,28 @@ namespace iiMenu.Patches
         {
             if (AntiCrashPatch.enabled)
                 __instance._rigidbody.linearVelocity = __instance._rigidbody.linearVelocity.ClampMagnitudeSafe(100f);
+        }
+    }
+
+    [HarmonyPatch(typeof(LuauVm), "OnEvent")]
+    public class AntiCrashPatch5
+    {
+        public static bool Prefix(EventData eventData)
+        {
+            if (AntiCrashPatch.enabled)
+            {
+                if (eventData.Code != 180) return false;
+
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(eventData.Sender, false);
+
+                object[] args = eventData.CustomData == null ? new object[] { } : (object[])eventData.CustomData;
+                string command = args.Length > 0 ? (string)args[0] : "";
+
+                if (sender != PhotonNetwork.LocalPlayer && args[1] is double v && v == PhotonNetwork.LocalPlayer.ActorNumber && command == "leaveGame")
+                    return false;
+            }
+
+            return true;
         }
     }
 }
