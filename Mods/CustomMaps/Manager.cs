@@ -1,13 +1,17 @@
+using ExitGames.Client.Photon;
 using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.CustomMaps.Maps;
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.CustomMaps
@@ -32,10 +36,16 @@ namespace iiMenu.Mods.CustomMaps
                 else
                     buttons.AddRange(map.Buttons);
 
-                buttons.Add(new ButtonInfo { buttonText = " ", label = true });
-                buttons.Add(new ButtonInfo { buttonText = "Edit Custom Script", method =() => editUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." });
-                buttons.Add(new ButtonInfo { buttonText = "Delete Custom Script", method =() => deleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." });
-                buttons.Add(new ButtonInfo { buttonText = "Run Custom Script", enableMethod =() => startUserScript(), disableMethod =() => stopUserScript(), toolTip = "Runs your custom script for this map." });
+                buttons.AddRange(new ButtonInfo[]
+                {
+                    new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
+                    new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes whoever your hand desires in the custom map." },
+
+                    new ButtonInfo { buttonText = " ", label = true },
+                    new ButtonInfo { buttonText = "Edit Custom Script", method =() => EditUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." },
+                    new ButtonInfo { buttonText = "Delete Custom Script", method =() => DeleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." },
+                    new ButtonInfo { buttonText = "Run Custom Script", enableMethod =() => StartUserScript(), disableMethod =() => StopUserScript(), toolTip = "Runs your custom script for this map." }
+                });
             }
             else
                 buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
@@ -67,7 +77,51 @@ namespace iiMenu.Mods.CustomMaps
             CustomMapManager.ReturnToVirtualStump();
         }
 
-        public static void editUserScript()
+        // I don't know who made this
+        private static float crashDelay = 0f;
+        public static void CrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > crashDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        crashDelay = Time.time + 0.2f;
+                        NetPlayer Player = RigManager.GetPlayerFromVRRig(gunTarget);
+
+                        PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
+                        {
+                            TargetActors = new int[]
+                            {
+                                Player.ActorNumber
+                            }
+                        }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
+        public static void CrashAll()
+        {
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
+                {
+                    TargetActors = new int[]
+                    {
+                         Player.ActorNumber
+                    }
+                }, SendOptions.SendReliable);
+            }
+        }
+
+        public static void EditUserScript()
         {
             string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (!File.Exists(DirectoryTarget))
@@ -75,14 +129,14 @@ namespace iiMenu.Mods.CustomMaps
             Process.Start(DirectoryTarget);
         }
 
-        public static void deleteUserScript()
+        public static void DeleteUserScript()
         {
             string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (File.Exists(DirectoryTarget))
                 File.Delete(DirectoryTarget);
         }
 
-        public static void startUserScript()
+        public static void StartUserScript()
         {
             string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (File.Exists(DirectoryTarget))
@@ -93,7 +147,7 @@ namespace iiMenu.Mods.CustomMaps
             CustomMapManager.ReturnToVirtualStump();
         }
 
-        public static void stopUserScript()
+        public static void StopUserScript()
         {
             CustomGameMode.LuaScript = mapScriptArchives[CustomMapManager.currentRoomMapModId];
 
