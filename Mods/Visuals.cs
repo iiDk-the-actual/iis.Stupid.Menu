@@ -3592,6 +3592,27 @@ namespace iiMenu.Mods
             RightSphere = null;
         }
 
+        public static void AutomaticESP(Action infection, Action hunt, Action other)
+        {
+            switch (GorillaGameManager.instance.GameType())
+            {
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
+                    infection.Invoke();
+                    break;
+                case GameModeType.HuntDown:
+                    hunt.Invoke();
+                    break;
+                default:
+                    other.Invoke();
+                    break;
+            }
+        }
+
         // Tracers
         public static void CasualTracers()
         {
