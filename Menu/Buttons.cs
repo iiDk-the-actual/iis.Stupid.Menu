@@ -1715,7 +1715,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Vibrate Gun", method =() => Experimental.AdminVibrateGun(), toolTip = "Vibrate whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Vibrate All", method =() => Experimental.AdminVibrateAll(), isTogglable = false, toolTip = "Vibrates everyone using the menu."},
 
-                new ButtonInfo { buttonText = "Admin Block Gun", method =() => Experimental.AdminBlockGun(), isTogglable = false, toolTip = "Disables whoever your hand desires from joining servers for 5 minutes if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Block Gun", method =() => Experimental.AdminBlockGun(), toolTip = "Disables whoever your hand desires from joining servers for 5 minutes if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Announce Block Gun", method =() => Experimental.AdminABlockGun(false), toolTip = "Block gun, but it sends a notification to everyone using the menu that the target was blocked."},
+                new ButtonInfo { buttonText = "Silent Announce Block Gun", method =() => Experimental.AdminABlockGun(true), toolTip = "Block gun, but it sends a notification to everyone using the menu that the target was blocked. Hides your name."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
             },
