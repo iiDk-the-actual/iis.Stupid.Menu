@@ -491,12 +491,16 @@ namespace iiMenu.Menu
                                                 }
                                                 else
                                                 {
+                                                    int categoryIndex = 0;
                                                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                                                     {
                                                         foreach (ButtonInfo v in buttonlist)
                                                         {
                                                             try
                                                             {
+                                                                if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                                                    continue;
+
                                                                 string buttonText = v.buttonText;
                                                                 if (v.overlapText != null)
                                                                     buttonText = v.overlapText;
@@ -506,6 +510,7 @@ namespace iiMenu.Menu
                                                             }
                                                             catch { }
                                                         }
+                                                        categoryIndex++;
                                                     }
                                                 }
 
@@ -2452,12 +2457,16 @@ namespace iiMenu.Menu
                         }
                         else
                         {
+                            int categoryIndex = 0;
                             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                             {
                                 foreach (ButtonInfo v in buttonlist)
                                 {
                                     try
                                     {
+                                        if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                            continue;
+
                                         string buttonText = v.buttonText;
                                         if (v.overlapText != null)
                                             buttonText = v.overlapText;
@@ -2467,6 +2476,7 @@ namespace iiMenu.Menu
                                     }
                                     catch { }
                                 }
+                                categoryIndex++;
                             }
                         }
 
@@ -3997,12 +4007,14 @@ namespace iiMenu.Menu
             Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
         }
 
+        public static bool isAdmin = false;
         public static void SetupAdminPanel(string playername)
         {
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = buttons.ToArray();
             NotifiLib.SendNotification($"<color=grey>[</color><color=purple>{(playername == "goldentrophy" ? "OWNER" : "ADMIN")}</color><color=grey>]</color> Welcome, {playername}! Admin mods have been enabled.", 10000);
+            isAdmin = true;
         }
 
         public static string[] InfosToStrings(ButtonInfo[] array) =>
@@ -5608,12 +5620,16 @@ namespace iiMenu.Menu
                 }
                 else
                 {
+                    int categoryIndex = 0;
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                     {
                         foreach (ButtonInfo v in buttonlist)
                         {
                             try
                             {
+                                if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                    continue;
+                                
                                 string buttonTextt = v.buttonText;
                                 if (v.overlapText != null)
                                     buttonTextt = v.overlapText;
@@ -5623,6 +5639,7 @@ namespace iiMenu.Menu
                             }
                             catch { }
                         }
+                        categoryIndex++;
                     }
                 }
                 lastPage = (int)Mathf.Ceil(searchedMods.ToArray().Length / (pageSize - 1));

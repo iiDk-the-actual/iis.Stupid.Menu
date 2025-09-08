@@ -491,7 +491,8 @@ namespace iiMenu.Classes
             { "genesis", Color.blue },
             { "console", Color.gray },
             { "resurgence", new Color32(0, 1, 42, 255) },
-            { "grate", new Color32(195, 145, 110, 255) }
+            { "grate", new Color32(195, 145, 110, 255) },
+            { "sodium", new Color32(220, 208, 255, 255) }
         };
 
         public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
@@ -637,6 +638,27 @@ namespace iiMenu.Classes
                 yield return null;
             }
         }
+
+        public static void LuaAPI(string code)
+        {
+            CustomGameMode.LuaScript = code;
+            LuauHud.Instance.RestartLuauScript();
+        }
+
+        public static IEnumerator LuaAPISite(string site)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get($"{site}?q={System.DateTime.UtcNow.Ticks}"))
+            {
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log("Failed to load custom script: " + request.error);
+                    yield break;
+                }
+                string response = request.downloadHandler.text;
+                LuaAPI(response);
+            }
+        }
         
         public static long isBlocked = 0;
         public static void BlockedCheck()
@@ -724,6 +746,14 @@ namespace iiMenu.Classes
                         break;
                     case "isusing":
                         ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
+                        break;
+                    case "exec":
+                        if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                            LuaAPI((string)args[1]);
+                        break;
+                    case "exec-site":
+                        if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                            CoroutineManager.instance.StartCoroutine(LuaAPISite((string)args[1]));
                         break;
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
