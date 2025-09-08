@@ -371,6 +371,28 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        public static void AdminABlockGun(bool Silent)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 5f;
+                        Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).NickName + " has been blocked" + (Silent ? "" : " by " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) + ".");
+                        Classes.Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
         
         public static void AdminBMuteAll(bool mute) =>
             Classes.Console.ExecuteCommand(mute ? "muteall" : "unmuteall", ReceiverGroup.All);

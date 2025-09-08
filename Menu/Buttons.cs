@@ -732,38 +732,47 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
                 new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
                 new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
+                new ButtonInfo { buttonText = "Automatic Tracers", method =() => Visuals.AutomaticESP(Visuals.InfectionTracers, Visuals.HuntTracers, Visuals.CasualTracers), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Hunt Box ESP", method =() => Visuals.HuntBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like hunt tracers color wise, but with boxes."},
+                new ButtonInfo { buttonText = "Automatic Box ESP", method =() => Visuals.AutomaticESP(Visuals.InfectionBoxESP, Visuals.HuntBoxESP, Visuals.CasualBoxESP), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like tracers color wise, but with boxes. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Hollow Box ESP", method =() => Visuals.CasualHollowBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like casual box ESP, except the box is hollow."},
                 new ButtonInfo { buttonText = "Infection Hollow Box ESP", method =() => Visuals.HollowInfectionBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like infection box ESP, except the box is hollow."},
                 new ButtonInfo { buttonText = "Hunt Hollow Box ESP", method =() => Visuals.HollowHuntBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like hunt box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Automatic Hollow Box ESP", method =() => Visuals.AutomaticESP(Visuals.HollowInfectionBoxESP, Visuals.HollowHuntBoxESP, Visuals.CasualHollowBoxESP), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like box ESP, except the box is hollow. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Breadcrumbs", method =() => Visuals.CasualBreadcrumbs(), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like casual tracers color wise, but with breadcrumbs."},
                 new ButtonInfo { buttonText = "Infection Breadcrumbs", method =() => Visuals.InfectionBreadcrumbs(), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like infection tracers color wise, but with breadcrumbs."},
                 new ButtonInfo { buttonText = "Hunt Breadcrumbs", method =() => Visuals.HuntBreadcrumbs(), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like hunt tracers color wise, but with breadcrumbs."},
+                new ButtonInfo { buttonText = "Automatic Breadcrumbs", method =() => Visuals.AutomaticESP(Visuals.InfectionBreadcrumbs, Visuals.HuntBreadcrumbs, Visuals.CasualBreadcrumbs), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like tracers color wise, but with breadcrumbs. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Bone ESP", method =() => Visuals.CasualBoneESP(), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like casual tracers color wise, but with bones."},
                 new ButtonInfo { buttonText = "Infection Bone ESP", method =() => Visuals.InfectionBoneESP(), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like infection tracers color wise, but with bones."},
                 new ButtonInfo { buttonText = "Hunt Bone ESP", method =() => Visuals.HuntBoneESP(), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like hunt tracers color wise, but with bones."},
+                new ButtonInfo { buttonText = "Automatic Bone ESP", method =() => Visuals.AutomaticESP(Visuals.InfectionBoneESP, Visuals.HuntBoneESP, Visuals.CasualBoneESP), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like tracers color wise, but with bones. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Wireframe ESP", method =() => Visuals.CasualWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like casual tracers color wise, but with wireframes."},
                 new ButtonInfo { buttonText = "Infection Wireframe ESP", method =() => Visuals.InfectionWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like infection tracers color wise, but with wireframes."},
                 new ButtonInfo { buttonText = "Hunt Wireframe ESP", method =() => Visuals.HuntWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like hunt tracers color wise, but with wireframes."},
+                new ButtonInfo { buttonText = "Automatic Wireframe ESP", method =() => Visuals.AutomaticESP(Visuals.InfectionWireframeESP, Visuals.HuntWireframeESP, Visuals.CasualWireframeESP), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like tracers color wise, but with wireframes. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Chams", method =() => Visuals.CasualChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like casual tracers color wise, but lets you see their fur through walls."},
                 new ButtonInfo { buttonText = "Infection Chams", method =() => Visuals.InfectionChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like infection tracers color wise, but lets you see their fur through walls."},
                 new ButtonInfo { buttonText = "Hunt Chams", method =() => Visuals.HuntChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like hunt tracers color wise, but lets you see their fur through walls."},
+                new ButtonInfo { buttonText = "Automatic Chams", method =() => Visuals.AutomaticESP(Visuals.InfectionChams, Visuals.HuntChams, Visuals.CasualChams), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like tracers color wise, but lets you see their fur through walls. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Beacons", method =() => Visuals.CasualBeacons(), disableMethod =() => Visuals.isLineRenderQueued = true, toolTip = "Acts like casual tracers color wise, but it's just a giant line."},
                 new ButtonInfo { buttonText = "Infection Beacons", method =() => Visuals.InfectionBeacons(), disableMethod =() => Visuals.isLineRenderQueued = true, toolTip = "Acts like infection tracers color wise, but it's just a giant line."},
                 new ButtonInfo { buttonText = "Hunt Beacons", method =() => Visuals.HuntBeacons(), disableMethod =() => Visuals.isLineRenderQueued = true, toolTip = "Acts like hunt tracers color wise, but it's just a giant line."},
+                new ButtonInfo { buttonText = "Automatic Beacons", method =() => Visuals.AutomaticESP(Visuals.InfectionBeacons, Visuals.HuntBeacons, Visuals.CasualBeacons), disableMethod =() => Visuals.isLineRenderQueued = true, toolTip = "Acts like tracers color wise, but it's just a giant line. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Casual Distance ESP", method =() => Visuals.CasualDistanceESP(), disableMethod =() => Visuals.isNameTagQueued = true, toolTip = "Shows your distance from players."},
                 new ButtonInfo { buttonText = "Infection Distance ESP", method =() => Visuals.InfectionDistanceESP(), disableMethod =() => Visuals.isNameTagQueued = true, toolTip = "Acts like infection tracers color wise, but with text."},
                 new ButtonInfo { buttonText = "Hunt Distance ESP", method =() => Visuals.HuntDistanceESP(), disableMethod =() => Visuals.isNameTagQueued = true, toolTip = "Acts like infection tracers color wise, but with text."},
+                new ButtonInfo { buttonText = "Automatic Distance ESP", method =() => Visuals.AutomaticESP(Visuals.InfectionDistanceESP, Visuals.HuntDistanceESP, Visuals.CasualDistanceESP), disableMethod =() => Visuals.isNameTagQueued = true, toolTip = "Acts like tracers color wise, but with text. Shows targets for the current gamemode."},
 
                 new ButtonInfo { buttonText = "Show Pointers", method =() => Visuals.ShowButtonColliders(), disableMethod =() => Visuals.HideButtonColliders(), toolTip = "Shows dots near your hands, such as when you open the menu."},
 
@@ -1715,7 +1724,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Vibrate Gun", method =() => Experimental.AdminVibrateGun(), toolTip = "Vibrate whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Vibrate All", method =() => Experimental.AdminVibrateAll(), isTogglable = false, toolTip = "Vibrates everyone using the menu."},
 
-                new ButtonInfo { buttonText = "Admin Block Gun", method =() => Experimental.AdminBlockGun(), isTogglable = false, toolTip = "Disables whoever your hand desires from joining servers for 5 minutes if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Block Gun", method =() => Experimental.AdminBlockGun(), toolTip = "Disables whoever your hand desires from joining servers for 5 minutes if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Announce Block Gun", method =() => Experimental.AdminABlockGun(false), toolTip = "Block gun, but it sends a notification to everyone using the menu that the target was blocked."},
+                new ButtonInfo { buttonText = "Silent Announce Block Gun", method =() => Experimental.AdminABlockGun(true), toolTip = "Block gun, but it sends a notification to everyone using the menu that the target was blocked. Hides your name."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
             },
