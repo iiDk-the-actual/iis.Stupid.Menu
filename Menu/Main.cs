@@ -576,7 +576,7 @@ namespace iiMenu.Menu
 
                 if (fpsCount != null)
                 {
-                    string textToSet = $"FPS: {lastDeltaTime}";
+                    string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
                     if (hidetitle && !noPageNumber) textToSet += "      ";
                     if (disableFpsCounter) textToSet = "";
                     if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
@@ -2268,7 +2268,7 @@ namespace iiMenu.Menu
             }.AddComponent<Text>();
             fps.font = activeFont;
 
-            string textToSet = $"FPS: {lastDeltaTime}";
+            string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
             if (hidetitle && !noPageNumber) textToSet += "      ";
             if (disableFpsCounter) textToSet = "";
             if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
@@ -6301,6 +6301,7 @@ jgs \_   _/ |Oo\
         private static float fpsAverageNumber;
         public static bool fpsCountTimed;
         public static bool fpsCountAverage;
+        public static bool ftCount;
         public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
         public static Text keyboardInputObject;
