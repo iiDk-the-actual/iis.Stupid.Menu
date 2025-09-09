@@ -3,7 +3,9 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using UnityEngine;
 using static iiMenu.Classes.RigManager;
+using static iiMenu.Menu.Main;
 using static iiMenu.Mods.CustomMaps.Manager;
 
 namespace iiMenu.Mods.CustomMaps.Maps
@@ -21,6 +23,8 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Instant Kill", enableMethod =() => InstantKill(), disableMethod =() => DisableInstantKill(), toolTip = "Makes your gun instant kill players."},
             new ButtonInfo { buttonText = "Infinite Points", enableMethod =() => InfinitePoints(), disableMethod =() => DisableInfinitePoints(), toolTip = "Gives you an infinite amount of points."},
             new ButtonInfo { buttonText = "Infinite Ammo", enableMethod =() => InfiniteAmmo(), disableMethod =() => DisableInfiniteAmmo(), toolTip = "Gives you an infinite amount of ammo."},
+            new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
+            new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes whoever your hand desires in the custom map." },
         };
 
         public static void KillAll() =>
@@ -102,5 +106,63 @@ namespace iiMenu.Mods.CustomMaps.Maps
 
         public static void DisableRapidFire() =>
             RevertCustomScript(2041);
+
+        // I don't know who made this
+        private static float crashDelay = 0f;
+        public static void CrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    NetPlayer Player = RigManager.GetPlayerFromVRRig(lockTarget);
+
+                    PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
+                    {
+                        TargetActors = new int[]
+                        {
+                            Player.ActorNumber
+                        }
+                    }, SendOptions.SendReliable);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if (Time.time > crashDelay)
+            {
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
+                    {
+                        TargetActors = new int[]
+                        {
+                         Player.ActorNumber
+                        }
+                    }, SendOptions.SendReliable);
+                }
+                crashDelay = Time.time + 0.1f;
+            }
+        }
     }
 }
