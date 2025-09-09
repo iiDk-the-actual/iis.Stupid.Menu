@@ -198,6 +198,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Slow FPS Counter", enableMethod =() => fpsCountTimed = true, disableMethod =() => fpsCountTimed = false, toolTip = "Updates the FPS Counter less, making it easier to read."},
                 new ButtonInfo { buttonText = "Average FPS Counter", enableMethod =() => fpsCountAverage = true, disableMethod =() => fpsCountAverage = false, toolTip = "Smooths out the FPS Counter, making it easier to read."},
+                new ButtonInfo { buttonText = "Frametime Counter", enableMethod =() => ftCount = true, disableMethod =() => ftCount = false, toolTip = "Replace the FPS Counter to show frametime in ms instead."},
 
                 new ButtonInfo { buttonText = "Disable Ghostview", enableMethod =() => disableGhostview = true, disableMethod =() => disableGhostview = false, toolTip = "Disables the transparent rig when you're in ghost."},
                 new ButtonInfo { buttonText = "Legacy Ghostview", enableMethod =() => legacyGhostview = true, disableMethod =() => legacyGhostview = false, toolTip = "Reverts the transparent rig to the two balls when you're in ghost."},
