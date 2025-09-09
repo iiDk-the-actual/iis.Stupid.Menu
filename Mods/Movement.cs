@@ -1466,93 +1466,94 @@ namespace iiMenu.Mods
         }
 
         private static int rememberPageNumber;
+        public static readonly string[][] mapData = new string[][]
+        {
+            new string[] // Forest
+            {
+                "Forest",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/TreeRoomSpawnForestZone",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit"
+            },
+            new string[] // City
+            {
+                "City",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCity",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front"
+            },
+            new string[] // Canyons
+            {
+                "Canyons",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestCanyonTransition",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon"
+            },
+            new string[] // Clouds
+            {
+                "Clouds",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToSkyJungle",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds From Computer"
+            },
+            new string[] // Caves
+            {
+                "Caves",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCave",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave"
+            },
+            new string[] // Beach
+            {
+                "Beach",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BeachToForest",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach for Computer"
+            },
+            new string[] // Mountains
+            {
+                "Mountains",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToMountain",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain"
+            },
+            new string[] // Basement
+            {
+                "Basement",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToBasement",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer"
+            },
+            new string[] // Metropolis
+            {
+                "Metropolis",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MetropolisOnly",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Metropolis from Computer"
+            },
+            new string[] // Arcade
+            {
+                "Arcade",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
+            },
+            new string[] // Rotating
+            {
+                "Rotating",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToRotating",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Rotating Map"
+            },
+            new string[] // Bayou
+            {
+                "Bayou",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BayouOnly",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2"
+            },
+            new string[] // Virtual Stump
+            {
+                "Virtual Stump",
+                "VSTUMP",
+                "VSTUMP"
+            },
+        };
+
         public static void EnterTeleportToMap() // Credits to Malachi for the positions
         {
             rememberPageNumber = pageNumber;
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToMap(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
-            string[][] mapData = new string[][]
-            {
-                new string[] // Forest
-                {
-                    "Forest",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/TreeRoomSpawnForestZone",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit"
-                },
-                new string[] // City
-                {
-                    "City",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCity",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front"
-                },
-                new string[] // Canyons
-                {
-                    "Canyons",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestCanyonTransition",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon"
-                },
-                new string[] // Clouds
-                {
-                    "Clouds",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToSkyJungle",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds From Computer"
-                },
-                new string[] // Caves
-                {
-                    "Caves",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCave",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave"
-                },
-                new string[] // Beach
-                {
-                    "Beach",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BeachToForest",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach for Computer"
-                },
-                new string[] // Mountains
-                {
-                    "Mountains",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToMountain",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain"
-                },
-                new string[] // Basement
-                {
-                    "Basement",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToBasement",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer"
-                },
-                new string[] // Metropolis
-                {
-                    "Metropolis",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MetropolisOnly",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Metropolis from Computer"
-                },
-                new string[] // Arcade
-                {
-                    "Arcade",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
-                },
-                new string[] // Rotating
-                {
-                    "Rotating",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToRotating",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Rotating Map"
-                },
-                new string[] // Bayou
-                {
-                    "Bayou",
-                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BayouOnly",
-                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2"
-                },
-                new string[] // Virtual Stump
-                {
-                    "Virtual Stump",
-                    "VSTUMP",
-                    "VSTUMP"
-                },
-            };
 
             foreach (string[] Data in mapData)
                 tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count.ToString(), overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });

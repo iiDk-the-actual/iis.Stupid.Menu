@@ -366,21 +366,22 @@ namespace iiMenu.Mods
             GUIUtility.systemCopyBuffer = text;
         }
 
-        public static GameObject theboxlol = null;
+        public static GameObject physicalQuitBox;
         public static void PhysicalQuitbox()
         {
-            GameObject thequitbox = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
-            theboxlol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            theboxlol.transform.position = thequitbox.transform.position;
-            theboxlol.transform.rotation = thequitbox.transform.rotation;
-            theboxlol.transform.localScale = thequitbox.transform.localScale;
-            theboxlol.GetComponent<Renderer>().material = OrangeUI;
-            GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
+            GameObject quitBox = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
+            physicalQuitBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            physicalQuitBox.transform.position = quitBox.transform.position;
+            physicalQuitBox.transform.rotation = quitBox.transform.rotation;
+            physicalQuitBox.transform.localScale = quitBox.transform.localScale;
+            physicalQuitBox.GetComponent<Renderer>().material = OrangeUI;
+
+            quitBox.SetActive(false);
         }
 
-        public static void NotPhysicalQuitbox()
+        public static void DisablePhysicalQuitbox()
         {
-            Object.Destroy(theboxlol);
+            Object.Destroy(physicalQuitBox);
             GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 
