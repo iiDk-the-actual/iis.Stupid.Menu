@@ -1,5 +1,4 @@
-﻿using GorillaTagScripts;
-using HarmonyLib;
+﻿using HarmonyLib;
 using iiMenu.Mods;
 
 namespace iiMenu.Patches
