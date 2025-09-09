@@ -732,10 +732,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 
-                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
-                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
+                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
+                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
                 new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
                 new ButtonInfo { buttonText = "Automatic Tracers", method =() => Visuals.AutomaticESP(Visuals.InfectionTracers, Visuals.HuntTracers, Visuals.CasualTracers), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows targets for the current gamemode."},
+                new ButtonInfo { buttonText = "Nearest Tracer", method =() => Visuals.NearestTracer(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows the nearest player."},
 
                 new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
