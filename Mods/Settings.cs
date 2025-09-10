@@ -3968,6 +3968,16 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float fontTime = 0f;
+        public static void ChangeFontRapid()
+        {
+            if (Time.time > fontTime)
+            {
+                ChangeFontType();
+                fontTime = Time.time + 0.4f;
+            }
+        }
+
         public static void ChangeFontStyleType(bool positive = true)
         {
             if (positive)
