@@ -1204,6 +1204,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Narrate ID Self", method =() => Fun.NarrateSelfID(), isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
                 new ButtonInfo { buttonText = "Narrate ID Gun", method =() => Fun.NarrateIDGun(), toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate ID All", method =() => Fun.NarrateIDAll(), isTogglable = false, toolTip = "Gets the player IDs of everyone and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Fun.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Fun.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
