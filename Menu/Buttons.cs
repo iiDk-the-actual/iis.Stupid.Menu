@@ -690,6 +690,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Room Information Overlay", method =() => { if (PhotonNetwork.InRoom) { NotifiLib.information["Room Code"] = PhotonNetwork.CurrentRoom.Name; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); } else { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); } }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
                 new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotifiLib.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotifiLib.information.Remove("Ping"); NotifiLib.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
                 new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotifiLib.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotifiLib.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
+                new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotifiLib.information["Velocity"] = string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.linearVelocity.magnitude), disableMethod =() => NotifiLib.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
+                new ButtonInfo { buttonText = "Nearby Overlay", method =() => Visuals.NearbyTaggerOverlay(), disableMethod =() => NotifiLib.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod =() => Visuals.WatchOn(), method =() => Visuals.WatchStep(), disableMethod =() => Visuals.WatchOff(), toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
 
@@ -1204,6 +1206,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Narrate ID Self", method =() => Fun.NarrateSelfID(), isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
                 new ButtonInfo { buttonText = "Narrate ID Gun", method =() => Fun.NarrateIDGun(), toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate ID All", method =() => Fun.NarrateIDAll(), isTogglable = false, toolTip = "Gets the player IDs of everyone and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Fun.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Fun.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
@@ -1319,6 +1322,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.SetCurrencyAll(int.MaxValue), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
+
+                new ButtonInfo { buttonText = "Add Currency Self", method =() => Fun.AddCurrencySelf(100), isTogglable = false, toolTip = "Gives you 100 more currency in the horror map."},
+                new ButtonInfo { buttonText = "Add Currency Gun", method =() => Fun.AddCurrencyGun(100), toolTip = "Gives whoever your hand desires 100 more currency in the horror map."},
+                new ButtonInfo { buttonText = "Add Currency All", method =() => Fun.AddCurrencyAll(100), isTogglable = false, toolTip = "Gives everyone in the room 100 more currency in the horror map."},
 
                 new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.SetCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
                 new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.SetCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
