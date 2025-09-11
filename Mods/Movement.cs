@@ -104,18 +104,13 @@ namespace iiMenu.Mods
             GameObject platform = GameObject.CreatePrimitive(GetPlatformPrimitiveType());
             platform.transform.localScale = GetPlatformScale();
 
+            Renderer platformRenderer = platform.GetComponent<Renderer>();
+
             switch (platformMode)
             {
                 case 1:
                 case 6:
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 2:
-                    float h = (Time.frameCount / 180f) % 1f;
-                    platform.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
-                    break;
-                case 3:
-                    platform.GetComponent<Renderer>().material.color = RandomColor();
+                    platformRenderer.enabled = false;
                     break;
                 case 4:
                     UpdateClipColliders(false);
@@ -123,20 +118,27 @@ namespace iiMenu.Mods
                 case 5:
                     platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
                     if (glass == null)
-                        glass = new Material(Shader.Find("GUI/Text Shader")) { color = new Color32(145, 187, 255, 100) };
-                    
-                    platform.GetComponent<Renderer>().material = glass;
+                        glass = new Material(Shader.Find("GUI/Text Shader"));
+
+                    platformRenderer.material = glass;
                     break;
             }
 
             if (!GetIndex("Non-Sticky Platforms").enabled)
                 FixStickyColliders(platform);
 
-            ColorChanger colorChanger = platform.AddComponent<ColorChanger>();
-            colorChanger.colors = backgroundColor;
+            if (platformRenderer.enabled && platform)
+            {
+                ColorChanger colorChanger = platform.AddComponent<ColorChanger>();
+                colorChanger.colors = backgroundColor;
 
-            colorChanger.colors.rainbow |= platformMode == 2;
-            colorChanger.colors.epileptic |= platformMode == 3;
+                if (platformMode == 2 || platformMode == 3)
+                {
+                    colorChanger.colors = colorChanger.colors.Clone();
+                    colorChanger.colors.rainbow |= platformMode == 2;
+                    colorChanger.colors.epileptic |= platformMode == 3;
+                }
+            }
 
             if (GetIndex("Platform Outlines").enabled)
             {
@@ -169,8 +171,8 @@ namespace iiMenu.Mods
         public static int longarmCycle = 2;
         public static float armlength = 1.25f;
 
-        public static GameObject leftplat = null;
-        public static GameObject rightplat = null;
+        public static GameObject leftplat;
+        public static GameObject rightplat;
         public static void Platforms(bool? left = null, bool? right = null)
         {
             if (platformMode == 6)
