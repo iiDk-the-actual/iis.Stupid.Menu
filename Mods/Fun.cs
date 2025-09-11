@@ -1311,6 +1311,45 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AddCurrencySelf(int currency = 0)
+        {
+            if (!NetworkSystem.Instance.IsMasterClient) { return; }
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency += currency;
+        }
+
+        public static void AddCurrencyGun(int currency = 0)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency += currency;
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+        }
+
+        public static void AddCurrencyAll(int currency = 0)
+        {
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            foreach (Player target in PhotonNetwork.PlayerList)
+            {
+                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                plr.currency += currency;
+            }
+        }
+
         public static void RemoveCurrencySelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { return; }
@@ -5924,6 +5963,17 @@ Piece Name: {gunTarget.name}";
                     }
                 }
             }
+        }
+        
+        public static void NarrateIDAll()
+        {
+            string ids = "";
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                    ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(vrrig).UserId) + ". ";
+            }
+            CoroutineManager.RunCoroutine(SpeakText(ids));
         }
 
         public static void NarrateSelfID() =>
