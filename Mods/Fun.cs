@@ -1038,7 +1038,18 @@ namespace iiMenu.Mods
                 RPCProtection();
         }
 
-        public static void BraceletSpam() => GetBracelet(Time.frameCount % 2 == 0);
+        private static bool previousBraceletSpamState;
+        private static float braceletSpamDelay;
+        public static void BraceletSpam()
+        {
+            if (Time.time > braceletSpamDelay)
+            {
+                GetBracelet(Time.frameCount % 2 == 0);
+                braceletSpamDelay = Time.time + 0.1f;
+
+                previousBraceletSpamState = !previousBraceletSpamState;
+            }
+        }
 
         public static void RemoveBracelet()
         {
