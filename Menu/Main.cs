@@ -4097,7 +4097,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = scaleWithPlayer && XRSettings.isDeviceActive ? new Vector3(0.1f, 0.3f, 0.3825f) * menuScale * GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = scaleWithPlayer && XRSettings.isDeviceActive ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
