@@ -15,6 +15,8 @@ namespace iiMenu.Classes
     {
         #region Configuration
         public static bool ServerDataEnabled = true;
+        public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
+
         public static string ServerEndpoint = "https://iidk.online";
         public static string ServerDataEndpoint = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt";
 
@@ -237,6 +239,9 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator TelementryRequest(string directory, string identity, string region, string userid, bool isPrivate, int playerCount, string gameMode)
         {
+            if (DisableTelemetry)
+                yield break;
+
             UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telemetry", "POST");
 
             string json = JsonConvert.SerializeObject(new
@@ -282,6 +287,9 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
         {
+            if (DisableTelemetry)
+                yield break;
+
             DataSyncDelay = Time.time + 3f;
             yield return new WaitForSeconds(3f);
 
@@ -316,6 +324,9 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator ReportFailureMessage(string error)
         {
+            if (DisableTelemetry)
+                yield break;
+
             List<string> enabledMods = new List<string>();
 
             int categoryIndex = 0;
