@@ -3652,6 +3652,53 @@ namespace iiMenu.Mods
                 line.SetPosition(1, playerRig.transform.position);
             }
         }
+        
+        public static void NearestTracer()
+        {
+            if (DoPerformanceCheck())
+                return;
+
+            if (GorillaGameManager.instance == null)
+                return;
+
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+
+            Color menuColor = backgroundColor.GetCurrentColor();
+
+            float distance = float.MaxValue;
+            VRRig playerRig = VRRig.LocalRig;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (distance > Vector3.Distance(rig.transform.position, VRRig.LocalRig.transform.position) && !rig.isLocal)
+                {
+                    distance = Vector3.Distance(rig.transform.position, VRRig.LocalRig.transform.position);
+                    playerRig = rig;
+                }
+            }
+
+            if (!playerRig.isLocal)
+            {
+                Color lineColor = playerRig.playerColor;
+
+                LineRenderer line = GetLineRender(hiddenOnCamera);
+
+                if (followMenuTheme)
+                    lineColor = menuColor;
+
+                if (transparentTheme)
+                    lineColor.a = 0.5f;
+
+                line.startColor = lineColor;
+                line.endColor = lineColor;
+                line.startWidth = lineWidth;
+                line.endWidth = lineWidth;
+                line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                line.SetPosition(1, playerRig.transform.position);
+            }
+        }
 
         public static void InfectionTracers()
         {
