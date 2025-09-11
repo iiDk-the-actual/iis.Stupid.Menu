@@ -5964,6 +5964,17 @@ Piece Name: {gunTarget.name}";
                 }
             }
         }
+        
+        public static void NarrateIDAll()
+        {
+            string ids = "";
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                    ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(vrrig).UserId) + ". ";
+            }
+            CoroutineManager.RunCoroutine(SpeakText(ids));
+        }
 
         public static void NarrateSelfID() =>
             CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId)));
