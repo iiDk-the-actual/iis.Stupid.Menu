@@ -457,6 +457,26 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void NearbyTaggerOverlay()
+        {
+            if (DoPerformanceCheck())
+                return;
+            float closest = float.MaxValue;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsTagged(vrrig) != PlayerIsTagged(VRRig.LocalRig))
+                {
+                    float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
+                    if (dist < closest)
+                        closest = dist;
+                }
+            }
+            if (closest != float.MaxValue)
+                Notifications.NotifiLib.information["Nearby"] = string.Format("{0:F1}m", closest);
+            else
+                Notifications.NotifiLib.information.Remove("Nearby");
+        }
+
         public static void NearbyTaggerLabel()
         {
             if (DoPerformanceCheck())
