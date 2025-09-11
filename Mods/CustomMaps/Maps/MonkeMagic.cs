@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
@@ -24,9 +24,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Spawn Lucy Self", isTogglable = false, method =() => SpawnLucySelf(), toolTip = "Spawns lucy on yourself."},
             new ButtonInfo { buttonText = "Spawn Lucy Gun", method =() => SpawnLucyGun(), toolTip = "Spawns lucy on whoever your hand desires."},
             new ButtonInfo { buttonText = "Spawn Lucy All", isTogglable = false, method =() => SpawnLucyAll(), toolTip = "Spawns lucy on everyone in the room."},
-
-            new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
-            new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes whoever your hand desires in the custom map." },
         };
 
         private static float lightningDelay;
@@ -157,64 +154,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
                 PhotonNetwork.RaiseEvent(180, new object[] { "SummonLucy", (double)player.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        }
-
-        // I don't know who made this
-        private static float crashDelay = 0f;
-        public static void CrashGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(lockTarget);
-
-                    PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
-                    {
-                        TargetActors = new int[]
-                        {
-                            Player.ActorNumber
-                        }
-                    }, SendOptions.SendReliable);
-                }
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void CrashAll()
-        {
-            if (Time.time > crashDelay)
-            {
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-                {
-                    PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)Player.ActorNumber, false, (double)Player.ActorNumber }, new RaiseEventOptions()
-                    {
-                        TargetActors = new int[]
-                        {
-                         Player.ActorNumber
-                        }
-                    }, SendOptions.SendReliable);
-                }
-                crashDelay = Time.time + 0.1f;
-            }
         }
     }
 }

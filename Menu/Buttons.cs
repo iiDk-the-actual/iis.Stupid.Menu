@@ -129,6 +129,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Page Type", method =() => Settings.ChangePageType(), enableMethod =() => Settings.ChangePageType(), disableMethod =() => Settings.ChangePageType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of page buttons."},
                 new ButtonInfo { buttonText = "Change Arrow Type", method =() => Settings.ChangeArrowType(), enableMethod =() => Settings.ChangeArrowType(), disableMethod =() => Settings.ChangeArrowType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of arrows on the page buttons."},
                 new ButtonInfo { buttonText = "Change Font Type", method =() => Settings.ChangeFontType(), enableMethod =() => Settings.ChangeFontType(), disableMethod =() => Settings.ChangeFontType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of font."},
+                new ButtonInfo { buttonText = "Rapid Font Changer", method =() => Settings.ChangeFontRapid(), toolTip = "Changes the type of font every menu refresh."},
                 new ButtonInfo { buttonText = "Change Font Style Type", method =() => Settings.ChangeFontStyleType(), enableMethod =() => Settings.ChangeFontStyleType(), disableMethod =() => Settings.ChangeFontStyleType(false), incremental = true, isTogglable = false, toolTip = "Changes the style of the font."},
                 new ButtonInfo { buttonText = "Change Input Text Color", overlapText = "Change Input Text Color <color=grey>[</color><color=green>Green</color><color=grey>]</color>", method =() => Settings.ChangeInputTextColor(), enableMethod =() => Settings.ChangeInputTextColor(), disableMethod =() => Settings.ChangeInputTextColor(false), incremental = true, isTogglable = false, toolTip = "Changes the color of the input indicator next to the buttons."},
                 new ButtonInfo { buttonText = "Change PC Menu Background", method =() => Settings.ChangePCUI(), enableMethod =() => Settings.ChangePCUI(), disableMethod =() => Settings.ChangePCUI(false), incremental = true, isTogglable = false, toolTip = "Changes the background of the PC ui."},
@@ -198,6 +199,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Slow FPS Counter", enableMethod =() => fpsCountTimed = true, disableMethod =() => fpsCountTimed = false, toolTip = "Updates the FPS Counter less, making it easier to read."},
                 new ButtonInfo { buttonText = "Average FPS Counter", enableMethod =() => fpsCountAverage = true, disableMethod =() => fpsCountAverage = false, toolTip = "Smooths out the FPS Counter, making it easier to read."},
+                new ButtonInfo { buttonText = "Frametime Counter", enableMethod =() => ftCount = true, disableMethod =() => ftCount = false, toolTip = "Replace the FPS Counter to show frametime in ms instead."},
 
                 new ButtonInfo { buttonText = "Disable Ghostview", enableMethod =() => disableGhostview = true, disableMethod =() => disableGhostview = false, toolTip = "Disables the transparent rig when you're in ghost."},
                 new ButtonInfo { buttonText = "Legacy Ghostview", enableMethod =() => legacyGhostview = true, disableMethod =() => legacyGhostview = false, toolTip = "Reverts the transparent rig to the two balls when you're in ghost."},
@@ -730,10 +732,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 
-                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
-                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
+                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
+                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
                 new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
                 new ButtonInfo { buttonText = "Automatic Tracers", method =() => Visuals.AutomaticESP(Visuals.InfectionTracers, Visuals.HuntTracers, Visuals.CasualTracers), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows targets for the current gamemode."},
+                new ButtonInfo { buttonText = "Nearest Tracer", method =() => Visuals.NearestTracer(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows the nearest player."},
 
                 new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
