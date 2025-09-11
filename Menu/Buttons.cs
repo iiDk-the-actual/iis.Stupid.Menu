@@ -1397,7 +1397,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rock Gun", method =() => Overpowered.RockGun(), toolTip = "Sets whoever your hand desires to rock."},
                 new ButtonInfo { buttonText = "Rock All", method =() => Overpowered.RockAll(), toolTip = "Sets everyone in the room to rock."},
 
-                new ButtonInfo { buttonText = "Tag Lag", enableMethod =() => Advantages.SetTagCooldown(float.MaxValue), disableMethod =() => Advantages.SetTagCooldown(5f), toolTip = "Forces tag lag in the lobby, letting no one get tagged."},
+                new ButtonInfo { buttonText = "Give Tag Lag Gun", method =() => Advantages.TagLagGun(), toolTip = "Forces tag lag on whoever your hand desires, making them untaggable."},
+                new ButtonInfo { buttonText = "Tag Lag Gun", method =() => Advantages.TagLagGun(), toolTip = "Forces tag lag on whoever your hand desires, letting them not be able to tag anyone."},
+                new ButtonInfo { buttonText = "Tag Lag", overlapText = "Tag Lag All", enableMethod =() => Advantages.SetTagCooldown(float.MaxValue), disableMethod =() => Advantages.SetTagCooldown(5f), toolTip = "Forces tag lag in the everyone in the room, letting no one get tagged."},
 
                 new ButtonInfo { buttonText = "Bonk Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BetaSoundSpam(4), toolTip = "Plays the bonk sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Count Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BetaSoundSpam(1), toolTip = "Plays the count sound when holding <color=green>grip</color>." },
