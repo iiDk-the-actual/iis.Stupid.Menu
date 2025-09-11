@@ -1320,6 +1320,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.SetCurrencyAll(int.MaxValue), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
 
+                new ButtonInfo { buttonText = "Add Currency Self", method =() => Fun.AddCurrencySelf(100), isTogglable = false, toolTip = "Gives you 100 more currency in the horror map."},
+                new ButtonInfo { buttonText = "Add Currency Gun", method =() => Fun.AddCurrencyGun(100), toolTip = "Gives whoever your hand desires 100 more currency in the horror map."},
+                new ButtonInfo { buttonText = "Add Currency All", method =() => Fun.AddCurrencyAll(100), isTogglable = false, toolTip = "Gives everyone in the room 100 more currency in the horror map."},
+
                 new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.SetCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
                 new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.SetCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
                 new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.SetCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the horror map from everyone in the room."},
