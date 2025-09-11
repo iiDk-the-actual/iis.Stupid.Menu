@@ -86,10 +86,21 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (PlayerIsTagged(VRRig.LocalRig))
-                    UntagSelf();
-            } else
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    if (!Patches.ReportTagPatch.invinciblePlayers.Contains(NetworkSystem.Instance.LocalPlayer))
+                        Patches.ReportTagPatch.invinciblePlayers.Add(NetworkSystem.Instance.LocalPlayer);
+                } else
+                {
+                    if (PlayerIsTagged(VRRig.LocalRig))
+                        UntagSelf();
+                }
+            }
+            else
+            {
                 NoTagOnJoin();
+                Patches.ReportTagPatch.invinciblePlayers.Clear();
+            }
         }
 
         public static void UntagAll()
@@ -181,6 +192,83 @@ namespace iiMenu.Mods
                         else
                             RemoveInfected(v);
                     }
+                }
+            }
+        }
+
+        public static void TagLagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            if (lockTarget != null)
+                                Patches.ReportTagPatch.blacklistedPlayers.Remove(RigManager.GetPlayerFromVRRig(lockTarget));
+
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+
+                            Patches.ReportTagPatch.blacklistedPlayers.Add(RigManager.GetPlayerFromVRRig(gunTarget));
+
+                        } else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    Patches.ReportTagPatch.blacklistedPlayers.Remove(RigManager.GetPlayerFromVRRig(lockTarget));
+                }
+            }
+        }
+
+        public static void GiveTagLagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            if (lockTarget != null)
+                                Patches.ReportTagPatch.invinciblePlayers.Remove(RigManager.GetPlayerFromVRRig(lockTarget));
+
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+
+                            Patches.ReportTagPatch.invinciblePlayers.Add(RigManager.GetPlayerFromVRRig(gunTarget));
+
+                        }
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    Patches.ReportTagPatch.invinciblePlayers.Remove(RigManager.GetPlayerFromVRRig(lockTarget));
                 }
             }
         }
@@ -766,6 +854,9 @@ namespace iiMenu.Mods
 
         public static void TagOnJoin()
         {
+            if (Patches.ReportTagPatch.invinciblePlayers.Contains(NetworkSystem.Instance.LocalPlayer))
+                Patches.ReportTagPatch.invinciblePlayers.Remove(NetworkSystem.Instance.LocalPlayer);
+
             PlayerPrefs.SetString("tutorial", "done");
             PlayerPrefs.SetString("didTutorial", "done");
             Hashtable h = new Hashtable
