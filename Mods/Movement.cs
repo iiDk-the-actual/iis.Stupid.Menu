@@ -1395,7 +1395,9 @@ namespace iiMenu.Mods
                 walkNormal = ray.normal;
             }
 
-            if (walkPos != Vector3.zero && rightGrab)
+            bool wallWalkKey = GetIndex("Left Wall Walk").enabled ? leftGrab : rightGrab;
+
+            if (walkPos != Vector3.zero && wallWalkKey)
             {
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
                 ZeroGravity();
