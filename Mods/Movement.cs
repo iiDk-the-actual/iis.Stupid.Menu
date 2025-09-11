@@ -1364,6 +1364,28 @@ namespace iiMenu.Mods
         private static Vector3 walkPos;
         private static Vector3 walkNormal;
 
+        public static int wallWalkStrengthIndex = 2;
+        private static float wallWalkStrength;
+
+        public static void ChangeWallWalkStrength(bool positive = true)
+        {
+            float[] strengthAmounts = new float[] { 2f, 5f, 9.81f, 15f, 50f };
+            string[] strengthNames = new string[] { "Very Weak", "Weak", "Normal", "Strong", "Very Strong" };
+
+            if (positive)
+                wallWalkStrengthIndex++;
+            else
+                wallWalkStrengthIndex--;
+
+            wallWalkStrengthIndex %= strengthAmounts.Length;
+            if (wallWalkStrengthIndex < 0)
+                wallWalkStrengthIndex = strengthAmounts.Length - 1;
+
+            wallWalkStrength = strengthAmounts[wallWalkStrengthIndex];
+
+            GetIndex("Change Wall Walk Strength").overlapText = "Change Wall Walk Strength <color=grey>[</color><color=green>" + strengthNames[wallWalkStrengthIndex] + "</color><color=grey>]</color>";
+        }
+
         public static void WallWalk()
         {
             if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
@@ -1376,38 +1398,6 @@ namespace iiMenu.Mods
             if (walkPos != Vector3.zero && rightGrab)
             {
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
-                ZeroGravity();
-            }
-        }
-
-        public static void WeakWallWalk()
-        {
-            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
-            {
-                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
-                walkPos = ray.point;
-                walkNormal = ray.normal;
-            }
-
-            if (walkPos != Vector3.zero && rightGrab)
-            {
-                GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -5f, ForceMode.Acceleration);
-                ZeroGravity();
-            }
-        }
-
-        public static void StrongWallWalk()
-        {
-            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
-            {
-                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
-                walkPos = ray.point;
-                walkNormal = ray.normal;
-            }
-
-            if (walkPos != Vector3.zero && rightGrab)
-            {
-                GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -50f, ForceMode.Acceleration);
                 ZeroGravity();
             }
         }

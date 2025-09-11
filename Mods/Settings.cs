@@ -4650,7 +4650,8 @@ namespace iiMenu.Mods
                 menuButtonIndex.ToString(),
                 Safety.targetElo.ToString(),
                 Safety.targetBadge.ToString(),
-                Movement.playspaceAbuseIndex.ToString()
+                Movement.playspaceAbuseIndex.ToString(),
+                Movement.wallWalkStrengthIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -4870,6 +4871,9 @@ namespace iiMenu.Mods
 
                 Movement.playspaceAbuseIndex = int.Parse(data[54]) - 1;
                 Movement.ChangePlayspaceAbuseSpeed();
+
+                Movement.wallWalkStrengthIndex = int.Parse(data[55]) - 1;
+                Movement.ChangeWallWalkStrength();
             }
             catch { LogManager.Log("Save file out of date"); }
 
