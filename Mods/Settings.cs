@@ -876,6 +876,7 @@ namespace iiMenu.Mods
             GetIndex("Change Menu Button").overlapText = "Change Menu Button <color=grey>[</color><color=green>" + buttonNames[menuButtonIndex] + "</color><color=grey>]</color>";
         }
 
+        // I know there's better ways to do this. Trust me.
         public static void ChangeMenuTheme(bool increment = true)
         {
             if (increment) 
@@ -883,7 +884,7 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 64;
+            int themeCount = 65;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -2946,6 +2947,50 @@ namespace iiMenu.Mods
                         new ExtGradient // Title
                         {
                             colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    break;
+                case 65: // Old ShibaGT RGB
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = new GradientColorKey[]
+                        {
+                            new GradientColorKey(Color.red, 0f),
+                            new GradientColorKey(Color.green, 0.333f),
+                            new GradientColorKey(Color.blue, 0.666f),
+                            new GradientColorKey(Color.red, 1f),
+                        }
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = new GradientColorKey[]
+                            {
+                                new GradientColorKey(Color.red, 0f),
+                                new GradientColorKey(Color.green, 0.333f),
+                                new GradientColorKey(Color.blue, 0.666f),
+                                new GradientColorKey(Color.red, 1f),
+                            }
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
                         },
                         new ExtGradient // Button Released
                         {
