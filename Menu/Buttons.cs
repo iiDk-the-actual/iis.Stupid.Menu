@@ -368,8 +368,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method =() => Important.DisablePitchScaling(), disableMethod =() => Important.EnablePitchScaling(), toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},
 
-                new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 60 frames per second."},
-                new ButtonInfo { buttonText = "72 FPS", method =() => Important.CapFPS(72), toolTip = "Caps your FPS at 60 frames per second."},
+                new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
+                new ButtonInfo { buttonText = "72 FPS", method =() => Important.CapFPS(72), toolTip = "Caps your FPS at 72 frames per second."},
                 new ButtonInfo { buttonText = "60 FPS", method =() => Important.CapFPS(60), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "45 FPS", method =() => Important.CapFPS(45), toolTip = "Caps your FPS at 45 frames per second."},
                 new ButtonInfo { buttonText = "30 FPS", method =() => Important.CapFPS(30), toolTip = "Caps your FPS at 30 frames per second."},
