@@ -4480,5 +4480,25 @@ namespace iiMenu.Mods
             if (destroy || isLineRenderQueued)
                 linePool.Clear();
         }
+        
+        public static void ConsoleBeacon(string id, string version)
+        {
+            NetPlayer sender = GetPlayerFromID(id);
+            VRRig vrrig = GetVRRigFromPlayer(sender);
+
+            Color userColor = Color.red;
+
+            Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + version + ".", 3000);
+            VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
+            VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+            GameObject line = new GameObject("Line");
+            LineRenderer liner = line.AddComponent<LineRenderer>();
+            liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+
+            liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+            liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+            liner.material.shader = Shader.Find("GUI/Text Shader");
+            Menu.Main.Destroy(line, 3f);
+        }
     }
 }
