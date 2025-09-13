@@ -5147,7 +5147,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
             {
                 GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                if (v.name.Contains(StumpLeaderboardID))
+                if (v.name.Contains("UnityTempFile"))
                 {
                     boardIndex++;
                     if (boardIndex == StumpLeaderboardIndex)
@@ -5159,7 +5159,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains(ForestLeaderboardID))
+                if (v.name.Contains("UnityTempFile"))
                 {
                     boardIndex++;
                     if (boardIndex == ForestLeaderboardIndex)
