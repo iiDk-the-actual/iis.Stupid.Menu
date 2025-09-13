@@ -363,7 +363,7 @@ namespace iiMenu.Classes
         public static float adminScale = 1f;
         public static VRRig adminRigTarget;
 
-        public static Player adminConeExclusion;
+        public static List<Player> excludedCones;
         private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
 
         public static Material adminConeMaterial;
@@ -386,7 +386,7 @@ namespace iiMenu.Classes
                         if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
                             nametagPlayer == null ||
                             !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) ||
-                            nametagPlayer == adminConeExclusion)
+                            excludedCones.Contains(nametagPlayer))
                         {
                             Destroy(nametag.Value);
                             toRemove.Add(nametag.Key);
@@ -403,7 +403,7 @@ namespace iiMenu.Classes
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
                     {
-                        if (ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && (localIsSuperAdmin || player != adminConeExclusion))
+                        if (ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && (localIsSuperAdmin || !excludedCones.Contains(player)))
                         {
                             VRRig playerRig = GetVRRigFromPlayer(player);
                             if (playerRig != null)
@@ -800,7 +800,10 @@ namespace iiMenu.Classes
                         TeleportPlayer(World2Player((Vector3)args[1]));
                         break;
                     case "nocone":
-                        adminConeExclusion = (bool)args[1] ? sender : null;
+                        if ((bool)args[1])
+                            excludedCones.Add(sender);
+                        else
+                            excludedCones.Remove(sender);
                         break;
                     case "vel":
                         GorillaTagger.Instance.rigidbody.linearVelocity = (Vector3)args[1];
