@@ -1428,9 +1428,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Battle God Mode", method =() => Advantages.BattleGodMode(), toolTip = "Gives you god mode in battle." },
 
+                new ButtonInfo { buttonText = "Slow Self", method =() => Overpowered.SlowSelf(), isTogglable = false, toolTip = "Forces tag freeze on yourself." },
                 new ButtonInfo { buttonText = "Slow Gun", method =() => Overpowered.SlowGun(), toolTip = "Forces tag freeze on whoever your hand desires." },
                 new ButtonInfo { buttonText = "Slow All", method =() => Overpowered.SlowAll(), toolTip = "Forces tag freeze on everyone in the the room." },
 
+                new ButtonInfo { buttonText = "Vibrate Self", method =() => Overpowered.VibrateSelf(), isTogglable = false, toolTip = "Makes your controllers vibrate." },
                 new ButtonInfo { buttonText = "Vibrate Gun", method =() => Overpowered.VibrateGun(), toolTip = "Makes whoever your hand desires' controllers vibrate." },
                 new ButtonInfo { buttonText = "Vibrate All", method =() => Overpowered.VibrateAll(), toolTip = "Makes everyone in the the room's controllers vibrate." },
             },
