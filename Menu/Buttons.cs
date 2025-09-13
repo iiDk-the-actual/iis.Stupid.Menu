@@ -411,6 +411,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
 
                 new ButtonInfo { buttonText = "Bypass Automod", method =() => Safety.BypassAutomod(), toolTip = "Attempts to bypass automod muting yourself and others."},
+                new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => Patches.PropertiesPatch.enabled = true, method =() => Safety.BypassModCheckers(), disableMethod =() => Patches.PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have ever mod possible."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method =() => Safety.AntiReportDisconnect(), toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method =() => Safety.AntiReportReconnect(), toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
@@ -849,6 +850,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Trigger Anti Report Gun", method =() => Fun.TriggerAntiReportGun(), toolTip = "Triggers whoever your hand desires' anti report if enabled."},
                 new ButtonInfo { buttonText = "Trigger Anti Report All", method =() => Fun.TriggerAntiReportAll(), toolTip = "Triggers everyone in the room's anti report if enabled."},
+
+                new ButtonInfo { buttonText = "Break Mod Checkers", method =() => Fun.BreakModCheckers(), disableMethod =() => Safety.BypassModCheckers(), toolTip = "Tells players using mod checkers that you have ever mod possible."},
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 

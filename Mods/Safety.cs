@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
@@ -7,6 +8,7 @@ using Photon.Realtime;
 using Photon.Voice.Unity;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -470,6 +472,17 @@ namespace iiMenu.Mods
             lastVol = volume;
         }
 
+        public static void BypassModCheckers()
+        {
+            if (PhotonNetwork.LocalPlayer.CustomProperties.Any(prop => prop.Key.ToString() != "didTutorial"))
+            {
+                Hashtable customProperties = new Hashtable();
+                if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("didTutorial"))
+                    customProperties["didTutorial"] = PhotonNetwork.LocalPlayer.CustomProperties["didTutorial"];
+
+                PhotonNetwork.LocalPlayer.CustomProperties = customProperties;
+            }
+        }
 
         public static void ChangeIdentity()
         {
