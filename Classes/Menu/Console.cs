@@ -697,7 +697,7 @@ namespace iiMenu.Classes
 
         private static void HandleConsoleEvent(Player sender, object[] args, string command)
         {
-            if (ServerData.Administrators.ContainsValue(sender.UserId))
+            if (ServerData.Administrators.ContainsKey(sender.UserId))
             {
                 NetPlayer Target = null;
 
