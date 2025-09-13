@@ -34,11 +34,6 @@ namespace iiMenu.Mods.CustomMaps
 
                 buttons.AddRange(new ButtonInfo[]
                 {
-                    new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), toolTip = "Crashes whoever your hand desires in the custom map." },
-                    new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
-                    new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => AntiReportCrash(), toolTip = "Crashes everyone who tries to report you." },
-                    new ButtonInfo { buttonText = "Crash On Touch", method =() => CrashOnTouch(), toolTip = "Crashes whoever you touch in the custom map." },
-
                     new ButtonInfo { buttonText = " ", label = true },
                     new ButtonInfo { buttonText = "Edit Custom Script", method =() => EditUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." },
                     new ButtonInfo { buttonText = "Delete Custom Script", method =() => DeleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." },
@@ -145,90 +140,6 @@ namespace iiMenu.Mods.CustomMaps
             }
 
             return instance;
-        }
-
-        // I don't know who made this
-        public static float crashDelay = 0f;
-        public static void CrashPlayer(int ActorNumber)
-        {
-            Photon.Pun.PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new Photon.Realtime.RaiseEventOptions()
-            {
-                TargetActors = new int[]
-                {
-                    ActorNumber
-                }
-            }, ExitGames.Client.Photon.SendOptions.SendReliable);
-            RPCProtection();
-        }
-        public static void CrashGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                UnityEngine.RaycastHit Ray = GunData.Ray;
-                UnityEngine.GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null && UnityEngine.Time.time > crashDelay)
-                {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(lockTarget);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.2f;
-                }
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-        public static void CrashOnTouch()
-        {
-            if (UnityEngine.Time.time < crashDelay)
-                return;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.isLocal && (UnityEngine.Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || UnityEngine.Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
-                {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(rig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.2f;
-                }
-            }
-        }
-        public static void CrashAll()
-        {
-            if (UnityEngine.Time.time > crashDelay)
-            {
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-                {
-                    CrashPlayer(Player.ActorNumber);
-                }
-                crashDelay = UnityEngine.Time.time + 0.1f;
-            }
-        }
-        public static void AntiReportCrash()
-        {
-            Safety.AntiReport((vrrig, position) =>
-            {
-
-                if (UnityEngine.Time.time > crashDelay)
-                {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(vrrig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.5f;
-                    Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + RigManager.GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
-                }
-            });
         }
     }
 }

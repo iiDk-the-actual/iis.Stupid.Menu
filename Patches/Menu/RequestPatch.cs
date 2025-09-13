@@ -13,7 +13,7 @@ namespace iiMenu.Patches
     public class RequestPatch
     {
         public static bool enabled;
-        public static Coroutine currentCoroutine = null;
+        public static Coroutine currentCoroutine;
 
         public static bool Prefix(VRRig __instance, PhotonMessageInfoWrapped info)
         {
