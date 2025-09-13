@@ -916,6 +916,15 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BreakModCheckers()
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
+            foreach (string mod in Visuals.modDictionary.Keys)
+                props[mod] = true;
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+
         public static void MuteDJSets()
         {
             foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
