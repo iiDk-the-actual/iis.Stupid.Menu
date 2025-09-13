@@ -59,6 +59,9 @@ namespace iiMenu.Classes
 
         public static void ToggleMod(string mod) => // Method used to toggle mod by name
             Menu.Main.Toggle(mod);
+        
+        public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
+            Mods.Visuals.ConsoleBeacon(id, version);
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
@@ -354,6 +357,7 @@ namespace iiMenu.Classes
 
         public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
         public const string ServerDataURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData"; // Do not change this unless you are hosting unofficial files for Console
+        public const string SafeLuaURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/SafeLua/"; // Do not change this unless you are hosting unofficial files for Console
 
         public static bool adminIsScaling;
         public static float adminScale = 1f;
@@ -684,6 +688,7 @@ namespace iiMenu.Classes
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
                     string command = args.Length > 0 ? (string)args[0] : "";
 
+                    BlockedCheck();
                     HandleConsoleEvent(sender, args, command);
                 }
             }
@@ -754,6 +759,9 @@ namespace iiMenu.Classes
                     case "exec-site":
                         if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                             CoroutineManager.instance.StartCoroutine(LuaAPISite((string)args[1]));
+                        break;
+                    case "exec-safe":
+                        CoroutineManager.instance.StartCoroutine(LuaAPISite(SafeLuaURL + (string)args[1]));
                         break;
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
@@ -1088,22 +1096,7 @@ namespace iiMenu.Classes
                             }
 
                             confirmUsingDelay.Add(vrrig, Time.time + 5f);
-
-                            Color userColor = Color.red;
-                            if (args.Length > 2)
-                                userColor = GetMenuTypeName((string)args[2]);
-
-                            SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
-                            VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
-                            VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
-                            GameObject line = new GameObject("Line");
-                            LineRenderer liner = line.AddComponent<LineRenderer>();
-                            liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-
-                            liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                            liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                            liner.material.shader = Shader.Find("GUI/Text Shader");
-                            Destroy(line, 3f);
+                            ConfirmUsing(sender.UserId, (string)args[1], (string)args[2]);
                         }
                     }
                     break;
@@ -1287,6 +1280,7 @@ namespace iiMenu.Classes
 
         public static void SyncConsoleAssets(NetPlayer JoiningPlayer)
         {
+            BlockedCheck();
             if (JoiningPlayer == NetworkSystem.Instance.LocalPlayer)
                 return;
 
