@@ -185,7 +185,7 @@ namespace iiMenu.Classes
                     SuperAdministrators.Add(superAdmin.ToString());
 
                 // Give admin panel if on list
-                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsValue(PhotonNetwork.LocalPlayer.UserId))
                 {
                     GivenAdminMods = true;
                     SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
