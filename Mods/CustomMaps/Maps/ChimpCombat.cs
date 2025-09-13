@@ -25,8 +25,11 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Infinite Ammo", enableMethod =() => InfiniteAmmo(), disableMethod =() => DisableInfiniteAmmo(), toolTip = "Gives you an infinite amount of ammo."},
         };
 
-        public static void KillAll() =>
+        public static void KillAll()
+        {
             PhotonNetwork.RaiseEvent(180, new object[] { "HitPlayer", (double)GetRandomPlayer(false).ActorNumber, (double)99999, (double)GetRandomPlayer(false).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            RPCProtection();
+        }
 
         public static void GodMode()
         {

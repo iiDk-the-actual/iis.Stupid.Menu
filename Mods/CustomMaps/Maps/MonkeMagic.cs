@@ -31,8 +31,9 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time > lightningDelay)
             {
-                lightningDelay = Time.time + 0.1f;
+                lightningDelay = Time.time + 0.2f;
                 PhotonNetwork.RaiseEvent(180, new object[] { "SummonThunder", (double)PhotonNetwork.LocalPlayer.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                RPCProtection();
             }
         }
 
@@ -48,6 +49,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                 {
                     lightningDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(180, new object[] { "SummonThunder", (double)GetPlayerFromVRRig(lockTarget).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    RPCProtection();
                 }
 
                 if (GetGunInput(true))
@@ -73,6 +75,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 lightningDelay = Time.time + 0.1f;
                 PhotonNetwork.RaiseEvent(180, new object[] { "SummonThunder", (double)GetRandomPlayer(false).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                RPCProtection();
             }
         }
 
@@ -83,6 +86,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 materialDelay = Time.time + 0.1f;
                 PhotonNetwork.RaiseEvent(180, new object[] { "ChangingMaterial", (double)PhotonNetwork.LocalPlayer.ActorNumber, (double)UnityEngine.Random.Range(0, VRRig.LocalRig.materialsToChangeTo.Length) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                RPCProtection();
             }
         }
 
@@ -98,6 +102,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                 {
                     materialDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(180, new object[] { "ChangingMaterial", (double)PhotonNetwork.LocalPlayer.ActorNumber, (double)UnityEngine.Random.Range(0, VRRig.LocalRig.materialsToChangeTo.Length) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    RPCProtection();
                 }
 
                 if (GetGunInput(true))
@@ -121,14 +126,18 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time > materialDelay)
             {
-                materialDelay = Time.time + 0.1f;
+                materialDelay = Time.time + 0.2f;
                 PhotonNetwork.RaiseEvent(180, new object[] { "ChangingMaterial", (double)GetPlayerFromVRRig(lockTarget).ActorNumber, (double)UnityEngine.Random.Range(0, VRRig.LocalRig.materialsToChangeTo.Length) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                RPCProtection();
             }
         }
 
         private static float lucyDelay;
-        public static void SpawnLucySelf() =>
+        public static void SpawnLucySelf()
+        {
             PhotonNetwork.RaiseEvent(180, new object[] { "SummonLucy", (double)PhotonNetwork.LocalPlayer.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            RPCProtection();
+        }
 
         public static void SpawnLucyGun()
         {
@@ -145,6 +154,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                     {
                         lucyDelay = Time.time + 0.2f;
                         PhotonNetwork.RaiseEvent(180, new object[] { "SummonLucy", (double)GetPlayerFromVRRig(lockTarget).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                        RPCProtection();
                     }
                 }
             }
@@ -153,7 +163,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
         public static void SpawnLucyAll()
         {
             foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+            {
                 PhotonNetwork.RaiseEvent(180, new object[] { "SummonLucy", (double)player.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                RPCProtection();
+            }
         }
     }
 }

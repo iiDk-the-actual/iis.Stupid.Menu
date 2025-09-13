@@ -158,6 +158,7 @@ namespace iiMenu.Mods.CustomMaps
                     ActorNumber
                 }
             }, ExitGames.Client.Photon.SendOptions.SendReliable);
+            RPCProtection();
         }
         public static void CrashGun()
         {
@@ -171,7 +172,7 @@ namespace iiMenu.Mods.CustomMaps
                 {
                     NetPlayer Player = RigManager.GetPlayerFromVRRig(lockTarget);
                     CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.1f;
+                    crashDelay = UnityEngine.Time.time + 0.2f;
                 }
 
                 if (GetGunInput(true))
@@ -219,7 +220,7 @@ namespace iiMenu.Mods.CustomMaps
         {
             Safety.AntiReport((vrrig, position) =>
             {
-                
+
                 if (UnityEngine.Time.time > crashDelay)
                 {
                     NetPlayer Player = RigManager.GetPlayerFromVRRig(vrrig);
