@@ -1,4 +1,4 @@
-﻿using GorillaNetworking;
+using GorillaNetworking;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -175,7 +175,7 @@ namespace iiMenu.Classes
                 {
                     string name = admin["name"].ToString();
                     string userId = admin["user-id"].ToString();
-                    Administrators[name] = userId;
+                    Administrators[userId] = name;
                 }
 
                 SuperAdministrators.Clear();
@@ -185,7 +185,7 @@ namespace iiMenu.Classes
                     SuperAdministrators.Add(superAdmin.ToString());
 
                 // Give admin panel if on list
-                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsValue(PhotonNetwork.LocalPlayer.UserId))
+                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                 {
                     GivenAdminMods = true;
                     SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
