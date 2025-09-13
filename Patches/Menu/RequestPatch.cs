@@ -5,7 +5,10 @@ using iiMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections;
+using System.Linq;
+using Unity.Collections;
 using UnityEngine;
+using Valve.Newtonsoft.Json.Linq;
 
 namespace iiMenu.Patches
 {
@@ -13,22 +16,43 @@ namespace iiMenu.Patches
     public class RequestPatch
     {
         public static bool enabled;
+        public static bool bypassCosmeticCheck;
         public static Coroutine currentCoroutine;
 
         public static bool Prefix(VRRig __instance, PhotonMessageInfoWrapped info)
         {
-            if (__instance.isLocal)
+            if (__instance.netView.IsMine && __instance.isLocal)
             {
-                if (enabled)
+                if (CosmeticsController.hasInstance)
                 {
-                    if (CosmeticsController.hasInstance)
+                    if (CosmeticsController.instance.isHidingCosmeticsFromRemotePlayers)
                     {
-                        if (CosmeticsController.instance.isHidingCosmeticsFromRemotePlayers)
-                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_HideAllCosmetics", info.Sender, Array.Empty<object>());
-                        else
-                            currentCoroutine ??= CoroutineManager.RunCoroutine(LoadCosmetics());
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_HideAllCosmetics", info.Sender, Array.Empty<object>());
+                        return false;
                     }
-                    return false;
+
+                    if (enabled)
+                    {
+                        currentCoroutine ??= CoroutineManager.RunCoroutine(LoadCosmetics());
+                        return false;
+                    }
+
+                    if (bypassCosmeticCheck)
+                    {
+                        CosmeticsController.CosmeticSet items = new CosmeticsController.CosmeticSet
+                        (
+                            CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Select(
+                                cosmetic => Menu.Main.CosmeticsOwned.Contains(cosmetic)
+                                    ? cosmetic
+                                    : "null"
+                                )
+                            .ToArray(),
+                            CosmeticsController.instance
+                        );
+
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", NetworkSystem.Instance.GetPlayer(info.senderID), new object[] { items.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray() });
+                        return false;
+                    }
                 }
             }
             return true;
