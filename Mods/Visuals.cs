@@ -1207,6 +1207,7 @@ namespace iiMenu.Mods
             { "CustomMaterial", "Custom Cosmetics" },
             { "I like cheese", "Rec Room Rig" },
             { "silliness", "Silliness" },
+            { "EmoteWheel", "Fortnite Emote Wheel" }
         };
 
         private static readonly Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
