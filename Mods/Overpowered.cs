@@ -829,6 +829,32 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ForceGrab()
+        {
+            VRRig.LocalRig.enabled = true;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig.leftMiddle.calcT > 0.8f || rig.rightMiddle.calcT > 0.8f)
+                {
+                    bool isLeftHand = rig.leftMiddle.calcT > 0.8f;
+                    Transform targetHand = isLeftHand ? rig.leftHandTransform : rig.rightHandTransform;
+
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = targetHand.position - (Vector3.up * 0.8f);
+                    VRRig.LocalRig.transform.rotation = Quaternion.identity;
+
+                    (isLeftHand ? VRRig.LocalRig.rightHand : VRRig.LocalRig.leftHand).rigTarget.transform.position = targetHand.transform.position;
+                    (isLeftHand ? VRRig.LocalRig.leftHand : VRRig.LocalRig.rightHand).rigTarget.transform.position = VRRig.LocalRig.transform.position;
+
+                    VRMapMiddle targetFinger = isLeftHand ? rig.rightMiddle : rig.leftMiddle;
+                    targetFinger.calcT = 1f;
+                    targetFinger.LerpFinger(1f, false);
+
+                    break;
+                }
+            }
+        }
+
         public static void TowardsPositionOnGrab(Vector3 position)
         {
             VRRig.LocalRig.enabled = true;
