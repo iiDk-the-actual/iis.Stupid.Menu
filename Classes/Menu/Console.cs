@@ -357,7 +357,7 @@ namespace iiMenu.Classes
 
         public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
         public const string ServerDataURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData"; // Do not change this unless you are hosting unofficial files for Console
-        public const string SafeLuaURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/SafeLua/"; // Do not change this unless you are hosting unofficial files for Console
+        public const string SafeLuaURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/SafeLua"; // Do not change this unless you are hosting unofficial files for Console
 
         public static bool adminIsScaling;
         public static float adminScale = 1f;
@@ -761,7 +761,7 @@ namespace iiMenu.Classes
                             CoroutineManager.instance.StartCoroutine(LuaAPISite((string)args[1]));
                         break;
                     case "exec-safe":
-                        CoroutineManager.instance.StartCoroutine(LuaAPISite(SafeLuaURL + (string)args[1]));
+                        CoroutineManager.instance.StartCoroutine(LuaAPISite($"{SafeLuaURL}/{(string)args[1]}"));
                         break;
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
