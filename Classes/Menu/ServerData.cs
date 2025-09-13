@@ -8,17 +8,18 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 
 namespace iiMenu.Classes
 {
     public class ServerData : MonoBehaviour
     {
         #region Configuration
-        public static bool ServerDataEnabled = true;
+        public static bool ServerDataEnabled = true; // Disables Console, telemetry, and admin panel
         public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
 
         public static string ServerEndpoint = "https://iidk.online";
-        public static string ServerDataEndpoint = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt";
+        public static string ServerDataEndpoint = "https://iidk.online/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
             Menu.Main.SetupAdminPanel(playername);
@@ -54,7 +55,7 @@ namespace iiMenu.Classes
 
         public void Update()
         {
-            if (DataLoadTime > 0 && Time.time > DataLoadTime && GorillaComputer.instance.isConnectedToMaster)
+            if (DataLoadTime > 0f && Time.time > DataLoadTime && GorillaComputer.instance.isConnectedToMaster)
             {
                 DataLoadTime = Time.time + 5f;
 
@@ -120,7 +121,7 @@ namespace iiMenu.Classes
         public static List<string> SuperAdministrators = new List<string>();
         public static System.Collections.IEnumerator LoadServerData()
         {
-            using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataEndpoint}?q={DateTime.UtcNow.Ticks}"))
+            using (UnityWebRequest request = UnityWebRequest.Get(ServerDataEndpoint))
             {
                 yield return request.SendWebRequest();
 
@@ -130,14 +131,16 @@ namespace iiMenu.Classes
                     yield break;
                 }
 
-                string response = request.downloadHandler.text;
+                string json = request.downloadHandler.text;
                 DataLoadTime = -1f;
 
-                string[] ResponseData = response.Split("\n");
+                JObject data = JObject.Parse(json);
 
-                Menu.Main.serverLink = ResponseData[3];
+                Menu.Main.serverLink = (string)data["discord-invite"];
+                Menu.Main.motdTemplate = (string)data["motd"];
 
                 // Version Check
+                string version = (string)data["menu-version"];
                 if (!VersionWarning)
                 {
                     VersionWarning = true;
@@ -147,38 +150,39 @@ namespace iiMenu.Classes
                         VersionWarning = true;
                         Console.Log("User is on beta build");
                         Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Be warned that there may be bugs and issues that could cause crashes, data loss, or other unexpected behavior.", 10000);
-                    } else if (ResponseData[0] != PluginInfo.Version)
+                    }
+                    else if (version != PluginInfo.Version)
                     {
                         VersionWarning = true;
                         Console.Log("Version is outdated");
                         JoinDiscordServer();
-                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + version + ".", 10000);
                     }
                 }
 
                 // Lockdown check
-                if (ResponseData[0] == "lockdown")
+                if (version == "lockdown")
                 {
-                    Console.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + ResponseData[2], 10000);
+                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {Menu.Main.motdTemplate}", 10000);
                     Console.DisableMenu = true;
                 }
 
                 // Admin dictionary
                 Administrators.Clear();
-                string[] AdminList = ResponseData[1].Split(",");
-                foreach (string AdminAccount in AdminList)
+
+                JArray admins = (JArray)data["admins"];
+                foreach (var admin in admins)
                 {
-                    string[] AdminData = AdminAccount.Split(";");
-                    Administrators.Add(AdminData[0], AdminData[1]);
+                    string name = admin["name"].ToString();
+                    string userId = admin["user-id"].ToString();
+                    Administrators[name] = userId;
                 }
 
                 SuperAdministrators.Clear();
-                string[] SuperAdminList = ResponseData[6].Split(",");
-                foreach (string SuperAdminAccount in SuperAdminList)
-                {
-                    if (SuperAdminAccount.Length > 0)
-                        SuperAdministrators.Add(SuperAdminAccount);
-                }
+
+                JArray superAdmins = (JArray)data["super-admins"];
+                foreach (var superAdmin in superAdmins)
+                    SuperAdministrators.Add(superAdmin.ToString());
 
                 // Give admin panel if on list
                 if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
@@ -187,30 +191,14 @@ namespace iiMenu.Classes
                     SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
                 }
 
-                // Static variables
-                string[] Data2 = ResponseData[4].Split(";;");
-
-                Menu.Main.motdTemplate = ResponseData[2];
-
-                Menu.Main.StumpLeaderboardID = Data2[0];
-                Menu.Main.ForestLeaderboardID = Data2[1];
-
-                Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
-                Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
-
                 // Detected mod labels
-                string[] DetectedMods = null;
-
-                if (ResponseData[5].Contains(";;"))
-                    DetectedMods = ResponseData[5].Split(";;");
-                else
-                    DetectedMods = new string[] { ResponseData[5] };
-
-                foreach (string DetectedMod in DetectedMods)
+                JArray detectedMods = (JArray)data["detected-mods"];
+                foreach (var detectedMod in detectedMods)
                 {
-                    if (!DetectedModsLabelled.Contains(DetectedMod))
+                    string detectedModName = detectedMod.ToString();
+                    if (!DetectedModsLabelled.Contains(detectedModName))
                     {
-                        ButtonInfo Button = Menu.Main.GetIndex(DetectedMod);
+                        ButtonInfo Button = Menu.Main.GetIndex(detectedModName);
                         if (Button != null)
                         {
                             string overlapText = Button.overlapText ?? Button.buttonText;
@@ -220,18 +208,19 @@ namespace iiMenu.Classes
                             Button.enabled = false;
 
                             Button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
+                            Button.enableMethod = Button.method;
+                            Button.disableMethod = Button.method;
                         }
-                        DetectedModsLabelled.Add(DetectedMod);
+                        DetectedModsLabelled.Add(detectedModName);
                     }
                 }
 
-                string[] AnnoyingPeople = new string[] { };
-                if (ResponseData[7].Contains(";"))
-                    AnnoyingPeople = ResponseData[7].Split(";");
-                else
-                    AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
+                List<string> muteIds = new List<string>();
+                JArray muteIdData = (JArray)data["blacklisted-ids"];
+                foreach (var targetMutedData in muteIdData)
+                    muteIds.Add(targetMutedData.ToString());
 
-                Menu.Main.muteIDs = AnnoyingPeople.ToList();
+                Menu.Main.muteIDs = muteIds;
             }
 
             yield return null;
