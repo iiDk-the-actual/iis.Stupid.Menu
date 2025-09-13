@@ -37,6 +37,7 @@ namespace iiMenu.Mods.CustomMaps
                     new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), toolTip = "Crashes whoever your hand desires in the custom map." },
                     new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
                     new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => AntiReportCrash(), toolTip = "Crashes everyone who tries to report you." },
+                    new ButtonInfo { buttonText = "Crash On Touch", method =() => CrashOnTouch(), toolTip = "Crashes whoever you touch in the custom map." },
 
                     new ButtonInfo { buttonText = " ", label = true },
                     new ButtonInfo { buttonText = "Edit Custom Script", method =() => EditUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." },
@@ -187,6 +188,20 @@ namespace iiMenu.Mods.CustomMaps
             {
                 if (gunLocked)
                     gunLocked = false;
+            }
+        }
+        public static void CrashOnTouch()
+        {
+            if (UnityEngine.Time.time < crashDelay)
+                return;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.isLocal && (UnityEngine.Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || UnityEngine.Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
+                {
+                    NetPlayer Player = RigManager.GetPlayerFromVRRig(rig);
+                    CrashPlayer(Player.ActorNumber);
+                    crashDelay = UnityEngine.Time.time + 0.2f;
+                }
             }
         }
         public static void CrashAll()
