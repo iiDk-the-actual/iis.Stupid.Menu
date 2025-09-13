@@ -219,17 +219,17 @@ namespace iiMenu.Menu
                         CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
                         CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
 
-                        bool found = false;
-                        int indexOfThatThing = 0;
+                        bool foundStumpBoard = false;
+                        int stumpBoardIndex = 0;
                         for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                         {
                             GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                            if (v.name.Contains(StumpLeaderboardID))
+                            if (v.name.Contains("UnityTempFile"))
                             {
-                                indexOfThatThing++;
-                                if (indexOfThatThing == StumpLeaderboardIndex)
+                                stumpBoardIndex++;
+                                if (stumpBoardIndex == StumpLeaderboardIndex)
                                 {
-                                    found = true;
+                                    foundStumpBoard = true;
                                     if (StumpMat == null)
                                         StumpMat = v.GetComponent<Renderer>().material;
 
@@ -239,17 +239,17 @@ namespace iiMenu.Menu
                             }
                         }
 
-                        bool found2 = false;
-                        indexOfThatThing = 0;
+                        bool foundForestBoard = false;
+                        int forestBoardIndex = 0;
                         for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                         {
                             GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                            if (v.name.Contains(ForestLeaderboardID))
+                            if (v.name.Contains("UnityTempFile"))
                             {
-                                indexOfThatThing++;
-                                if (indexOfThatThing == ForestLeaderboardIndex)
+                                forestBoardIndex++;
+                                if (forestBoardIndex == ForestLeaderboardIndex)
                                 {
-                                    found2 = true;
+                                    foundForestBoard = true;
                                     if (ForestMat == null)
                                         ForestMat = v.GetComponent<Renderer>().material;
 
@@ -258,12 +258,9 @@ namespace iiMenu.Menu
                                 }
                             }
                         }
-                        if (found && found2)
-                        {
-                            GameObject vr = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
-                            if (vr != null)
-                                vr.GetComponent<Renderer>().material = OrangeUI;
 
+                        if (foundStumpBoard && foundForestBoard)
+                        {
                             foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
                             {
                                 try
@@ -1067,9 +1064,6 @@ namespace iiMenu.Menu
 
                         if (!previousButton && !nextButton)
                             pageButtonChangeDelay = -1f;
-
-                        lastPrevious = previousButton;
-                        lastNext = nextButton;
                     }
                 }
 
@@ -2370,16 +2364,6 @@ namespace iiMenu.Menu
 
                 ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
                 colorChanger.colors = buttonColors[0];
-
-                if (joystickMenu && joystickButtonSelected == 0)
-                {
-                    joystickSelectedButton = "SearchBar";
-
-                    ExtGradient gradient = colorChanger.colors.Clone();
-                    gradient.SetColor(0, Color.red);
-
-                    colorChanger.colors = gradient;
-                }
 
                 if (shouldRound)
                     RoundObj(searchBoxObject);
@@ -6380,9 +6364,6 @@ jgs \_   _/ |Oo\
         public static List<TextMeshPro> udTMP = new List<TextMeshPro>();
         public static GameObject computerMonitor;
 
-        public static string StumpLeaderboardID = "UnityTempFile";
-        public static string ForestLeaderboardID = "UnityTempFile";
-
         public static int StumpLeaderboardIndex = 5;
         public static int ForestLeaderboardIndex = 9;
         
@@ -6513,9 +6494,6 @@ jgs \_   _/ |Oo\
         public static bool lastHitLP;
         public static bool lastHitRP;
         public static bool lastHitRS;
-
-        public static bool lastPrevious;
-        public static bool lastNext;
 
         public static bool headspazType;
 
