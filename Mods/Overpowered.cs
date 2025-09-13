@@ -2878,6 +2878,13 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SlowSelf()
+        {
+            NetPlayer player = PhotonNetwork.LocalPlayer;
+            BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
+            RPCProtection();
+        }
+
         public static void SlowGun()
         {
             if (GetGunInput(false))
@@ -2908,6 +2915,14 @@ namespace iiMenu.Mods
                 RPCProtection();
                 kgDebounce = Time.time + 1f;
             }
+        }
+
+        public static void VibrateSelf()
+        {
+            
+            NetPlayer owner = PhotonNetwork.LocalPlayer;
+            BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
+            RPCProtection();
         }
 
         public static void VibrateGun()
