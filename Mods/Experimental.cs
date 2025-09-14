@@ -1003,8 +1003,17 @@ namespace iiMenu.Mods
             PromptText("What room would you like the users to join?", () => Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
 
         public static string targetNotification;
-        public static void GetTargetNotification() =>
-            PromptText("What notification would you like to send?", () => targetNotification = keyboardInput, null, "Done", "Cancel");
+        public static void GetTargetNotification()
+        {
+            PromptText("What notification would you like to send?", () =>
+            {
+                targetNotification = keyboardInput;
+                GetIndex("NotifLabel").overlapText = "Notif: " + keyboardInput;
+            }, null, "Done", "Cancel");
+        }
+
+        public static void NotifySelf() =>
+            Classes.Console.ExecuteCommand("notify", PhotonNetwork.LocalPlayer.ActorNumber, targetNotification);
 
         public static void NotifyGun()
         {
@@ -1027,7 +1036,7 @@ namespace iiMenu.Mods
         }
 
         public static void NotifyAll() =>
-            PromptText("What notification would you like to send?", () => Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput), null, "Done", "Cancel");
+            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, targetNotification);
 
         public static void GetMenuUsers()
         {
