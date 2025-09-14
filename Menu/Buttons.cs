@@ -1230,6 +1230,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Fun.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Grab Player Info", method =() => Fun.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
+
+                new ButtonInfo { buttonText = "Disable Critters Dome", enableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(false), disableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(true), toolTip = "Disables the critters dome." },
             },
 
             new ButtonInfo[] { // Spam Mods [13]
@@ -1683,6 +1685,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
+                new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "CONSOLE USER LIST"; }, method =() => Experimental.ConsoleOnConduct(), toolTip = "Shows menu users on the code of conduct."},
                 new ButtonInfo { buttonText = "Menu User Tracers", enableMethod =() => Experimental.EnableAdminMenuUserTracers(), method =() => Experimental.MenuUserTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows menu users."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
