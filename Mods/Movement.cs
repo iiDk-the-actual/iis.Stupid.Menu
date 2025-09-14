@@ -1367,6 +1367,9 @@ namespace iiMenu.Mods
         public static int wallWalkStrengthIndex = 2;
         private static float wallWalkStrength;
 
+        public static bool leftWallWalk;
+        public static bool bothWallWalk;
+
         public static void ChangeWallWalkStrength(bool positive = true)
         {
             float[] strengthAmounts = new float[] { 2f, 5f, 9.81f, 15f, 50f };
@@ -1395,7 +1398,9 @@ namespace iiMenu.Mods
                 walkNormal = ray.normal;
             }
 
-            bool wallWalkKey = GetIndex("Left Wall Walk").enabled ? leftGrab : rightGrab;
+            bool wallWalkKey = 
+                bothWallWalk ? leftGrab || rightGrab :
+                leftWallWalk ? leftGrab : rightGrab;
 
             if (walkPos != Vector3.zero && wallWalkKey)
             {
@@ -1410,7 +1415,7 @@ namespace iiMenu.Mods
             float range = 0.2f;
             float power = -2f;
 
-            if (leftGrab)
+            if (leftGrab && (leftWallWalk || bothHands))
             {
                 RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
@@ -1418,7 +1423,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
             }
 
-            if (rightGrab)
+            if (rightGrab && (!leftWallWalk || bothHands))
             {
                 RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
