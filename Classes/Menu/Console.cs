@@ -3,6 +3,7 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -217,6 +218,21 @@ namespace iiMenu.Classes
 
             audios[url] = audio;
             onComplete?.Invoke(audio);
+        }
+
+        public static IEnumerator PlaySoundMicrophone(AudioClip sound)
+        {
+            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
+            GorillaTagger.Instance.myRecorder.AudioClip = sound;
+            GorillaTagger.Instance.myRecorder.RestartRecording(true);
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+
+            yield return new WaitForSeconds(sound.length + 0.4f);
+
+            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
+            GorillaTagger.Instance.myRecorder.AudioClip = null;
+            GorillaTagger.Instance.myRecorder.RestartRecording(true);
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
         }
 
         public static IEnumerator DownloadAdminTextures()
@@ -925,6 +941,11 @@ namespace iiMenu.Classes
                             VRRig.LocalRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
                         }
 
+                        break;
+
+                    case "sb":
+                        CoroutineManager.instance.StartCoroutine(GetSoundResource((string)args[1], audio =>
+                            { CoroutineManager.instance.StartCoroutine(PlaySoundMicrophone(audio)); }));
                         break;
 
                     case "time":
