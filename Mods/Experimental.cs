@@ -1,4 +1,5 @@
 using ExitGames.Client.Photon;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
@@ -880,11 +881,19 @@ namespace iiMenu.Mods
         public static void AdminIndicatorBack() =>
             Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, false);
 
-        public static void EnableAdminMenuUserTags() =>
-            PhotonNetwork.NetworkingClient.EventReceived += AdminUserTagSys;
+        public static void EnableAdminMenuUserTags()
+        {
+            if (!userTagHooked)
+            {
+                userTagHooked = true;
+                PhotonNetwork.NetworkingClient.EventReceived += AdminUserTagSys;
+            }
+        }
 
-        private static bool lastInRoom = false;
+        private static bool lastInRoom;
         private static int lastPlayerCount = -1;
+
+        public static bool userTagHooked;
         public static void AdminUserTagSys(EventData data)
         {
             try
@@ -973,6 +982,118 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(nametag.Value);
 
             nametags.Clear();
+        }
+
+        public static bool tracerTagHooked;
+        public static void EnableAdminMenuUserTracers()
+        {
+            if (!tracerTagHooked)
+            {
+                tracerTagHooked = true;
+                PhotonNetwork.NetworkingClient.EventReceived += AdminTracerSys;
+            }
+        }
+
+        private static Dictionary<VRRig, string> menuUsers = new Dictionary<VRRig, string>();
+        public static void AdminTracerSys(EventData data)
+        {
+            try
+            {
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                if (data.Code == Classes.Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
+                {
+                    object[] args = (object[])data.CustomData;
+                    string command = (string)args[0];
+                    switch (command)
+                    {
+                        case "confirmusing":
+                            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            {
+                                VRRig vrrig = GetVRRigFromPlayer(sender);
+                                if (!nametags.ContainsKey(vrrig))
+                                {
+                                    GameObject go = new GameObject("iiMenu_Nametag");
+                                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                                    textMesh.fontSize = 48;
+                                    textMesh.characterSize = 0.1f;
+                                    textMesh.anchor = TextAnchor.MiddleCenter;
+                                    textMesh.alignment = TextAlignment.Center;
+
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+
+                                    textMesh.color = userColor;
+                                    textMesh.text = ToTitleCase((string)args[2]);
+
+                                    nametags.Add(vrrig, go);
+                                }
+                                else
+                                {
+                                    TextMesh textMesh = nametags[vrrig].GetComponent<TextMesh>();
+
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+
+                                    textMesh.color = userColor;
+                                    textMesh.text = ToTitleCase((string)args[2]);
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void MenuUserTracers()
+        {
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+
+            lastInRoom = PhotonNetwork.InRoom;
+            lastPlayerCount = PhotonNetwork.PlayerList.Length;
+            if (!PhotonNetwork.InRoom)
+                lastPlayerCount = -1;
+
+            if (Visuals.DoPerformanceCheck())
+                return;
+
+            if (GorillaGameManager.instance == null)
+                return;
+
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+
+            Color menuColor = backgroundColor.GetCurrentColor();
+
+            foreach (KeyValuePair<VRRig, string> userData in menuUsers)
+            {
+                VRRig playerRig = userData.Key;
+                if (playerRig.isLocal)
+                    continue;
+
+                Color lineColor = Classes.Console.GetMenuTypeName(userData.Value);
+
+                LineRenderer line = Visuals.GetLineRender(hiddenOnCamera);
+
+                if (followMenuTheme)
+                    lineColor = menuColor;
+
+                if (transparentTheme)
+                    lineColor.a = 0.5f;
+
+                line.startColor = lineColor;
+                line.endColor = lineColor;
+                line.startWidth = lineWidth;
+                line.endWidth = lineWidth;
+                line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                line.SetPosition(1, playerRig.transform.position);
+            }
         }
 
         public static string targetRoom;
