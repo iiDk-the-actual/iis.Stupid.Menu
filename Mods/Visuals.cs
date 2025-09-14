@@ -952,6 +952,61 @@ namespace iiMenu.Mods
             FPSnametags.Clear();
         }
 
+        private static readonly Dictionary<VRRig, GameObject> platformTags = new Dictionary<VRRig, GameObject>();
+        public static void PlatformTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    platformTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!platformTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_PlatformTag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            platformTags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = platformTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = $"{(IsPlayerSteam(vrrig) ? "Steam" : "Quest")}";
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisablePlatformTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            platformTags.Clear();
+        }
+
         private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();
         public static void CreationDateTags()
         {
