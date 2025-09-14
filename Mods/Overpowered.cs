@@ -1118,17 +1118,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ActiveNetworkHandlerRPC(string rpc, Player target, object[] args)
-        {
-            GameMode.activeNetworkHandler.netView.GetView.RPC(rpc, target, args);
-            RPCProtection();
-        }
-        public static void ActiveNetworkHandlerRPC(string rpc, RpcTarget target, object[] args)
-        {
-            GameMode.activeNetworkHandler.netView.GetView.RPC(rpc, target, args);
-            RPCProtection();
-        }
-
         public static void BetaSetVelocityPlayer(NetPlayer victim, Vector3 velocity)
         {
             if (velocity.sqrMagnitude > 20f)
@@ -2600,7 +2589,7 @@ namespace iiMenu.Mods
                     GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
-                        ActiveNetworkHandlerRPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.rightHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.rightHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
                         RPCProtection();
                         flip = !flip;
                     }
@@ -2617,7 +2606,7 @@ namespace iiMenu.Mods
                     GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
-                        ActiveNetworkHandlerRPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.leftHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.leftHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
                         RPCProtection();
                         flip = !flip;
                     }
@@ -2644,7 +2633,7 @@ namespace iiMenu.Mods
                     {
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            ActiveNetworkHandlerRPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { NewPointer.transform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                            GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { NewPointer.transform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
                             RPCProtection();
                             flip = !flip;
                         }
