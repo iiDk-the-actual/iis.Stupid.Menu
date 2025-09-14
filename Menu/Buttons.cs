@@ -938,6 +938,10 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Paintbrawl Aimbot", method =() => Patches.GetLaunchPatch.enabled = true, disableMethod =() => Patches.GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
 
+                new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), toolTip = "Kills yourself in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Kill All", method =() => Advantages.PaintbrawlKillAll(), toolTip = "Kills everyone in the room in paintbrawl." },
+
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Spaz Snowballs <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpazSnowballs(), toolTip = "Randomizes the size of the snowballs. Credits to test for the idea."},
 
@@ -1425,23 +1429,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BetaSoundSpam(0), toolTip = "Plays the tag sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Round End Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BetaSoundSpam(2), toolTip = "Plays the round end sound when holding <color=green>grip</color>." },
 
-                new ButtonInfo { buttonText = "Paintbrawl Start Game", method =() => Advantages.PaintbrawlStartGame(), isTogglable = false, toolTip = "Starts a game of battle." },
-                new ButtonInfo { buttonText = "Paintbrawl End Game", method =() => Advantages.PaintbrawlEndGame(), isTogglable = false, toolTip = "Ends the current game of battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Restart Game", method =() => Advantages.PaintbrawlRestartGame(), isTogglable = false, toolTip = "Restarts the current game of battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Restart Spam", method =() => Advantages.PaintbrawlRestartGame(), toolTip = "Spam starts and ends games of battle." },
+                new ButtonInfo { buttonText = "Paintbrawl Start Game", method =() => Advantages.PaintbrawlStartGame(), isTogglable = false, toolTip = "Starts a game of paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl End Game", method =() => Advantages.PaintbrawlEndGame(), isTogglable = false, toolTip = "Ends the current game of paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Restart Game", method =() => Advantages.PaintbrawlRestartGame(), isTogglable = false, toolTip = "Restarts the current game of paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Restart Spam", method =() => Advantages.PaintbrawlRestartGame(), toolTip = "Spam starts and ends games of paintbrawl." },
 
-                new ButtonInfo { buttonText = "Paintbrawl Balloon Spam Self", method =() => Advantages.PaintbrawlBalloonSpamSelf(), toolTip = "Spam pops and unpops your balloons in battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Balloon Spam All", method =() => Advantages.PaintbrawlBalloonSpam(), toolTip = "Spam pops and unpops everyone's balloons in battle." },
+                new ButtonInfo { buttonText = "Paintbrawl Balloon Spam Self", method =() => Advantages.PaintbrawlBalloonSpamSelf(), toolTip = "Spam pops and unpops your balloons in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Balloon Spam All", method =() => Advantages.PaintbrawlBalloonSpam(), toolTip = "Spam pops and unpops everyone's balloons in paintbrawl." },
 
-                new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), isTogglable = false, toolTip = "Kills yourself in battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Kill All", method =() => Advantages.PaintbrawlKillAll(), isTogglable = false, toolTip = "Kills everyone in the room in battle." },
+                new ButtonInfo { buttonText = "Paintbrawl Revive Gun", method =() => Advantages.PaintbrawlReviveGun(), toolTip = "Revives whoever your hand desires in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Revive Self", method =() => Advantages.PaintbrawlReviveSelf(), isTogglable = false, toolTip = "Revives yourself in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Revive All", method =() => Advantages.PaintbrawlReviveAll(), isTogglable = false, toolTip = "Revives everyone in paintbrawl." },
 
-                new ButtonInfo { buttonText = "Paintbrawl Revive Gun", method =() => Advantages.PaintbrawlReviveGun(), toolTip = "Revives whoever your hand desires in battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Revive Self", method =() => Advantages.PaintbrawlReviveSelf(), isTogglable = false, toolTip = "Revives yourself in battle." },
-                new ButtonInfo { buttonText = "Paintbrawl Revive All", method =() => Advantages.PaintbrawlReviveAll(), isTogglable = false, toolTip = "Revives everyone in battle." },
-
-                new ButtonInfo { buttonText = "Paintbrawl God Mode", method =() => Advantages.PaintbrawlGodMode(), toolTip = "Gives you god mode in battle." },
+                new ButtonInfo { buttonText = "Paintbrawl God Mode", method =() => Advantages.PaintbrawlGodMode(), toolTip = "Gives you god mode in paintbrawl." },
 
                 new ButtonInfo { buttonText = "Slow Self", method =() => Overpowered.SlowSelf(), isTogglable = false, toolTip = "Forces tag freeze on yourself." },
                 new ButtonInfo { buttonText = "Slow Gun", method =() => Overpowered.SlowGun(), toolTip = "Forces tag freeze on whoever your hand desires." },
@@ -2119,7 +2119,7 @@ new ButtonInfo { buttonText = "Auto Set Master", overlapText = "Auto Set Master 
 new ButtonInfo { buttonText = "Infection Gamemode", method =() => Overpowered.InfectionGamemode(), isTogglable = false, toolTip = "Sets the gamemode to infection."},
 new ButtonInfo { buttonText = "Casual Gamemode", method =() => Overpowered.CasualGamemode(), isTogglable = false, toolTip = "Sets the gamemode to casual."},
 new ButtonInfo { buttonText = "Hunt Gamemode", method =() => Overpowered.HuntGamemode(), isTogglable = false, toolTip = "Sets the gamemode to hunt."},
-new ButtonInfo { buttonText = "Paintbrawl Gamemode", method =() => Overpowered.PaintbrawlGamemode(), isTogglable = false, toolTip = "Sets the gamemode to battle."},
+new ButtonInfo { buttonText = "Paintbrawl Gamemode", method =() => Overpowered.PaintbrawlGamemode(), isTogglable = false, toolTip = "Sets the gamemode to paintbrawl."},
 
 new ButtonInfo { buttonText = "Break Network Triggers", method =() => Overpowered.SSDisableNetworkTriggers(), isTogglable = false, toolTip = "Disables network triggers for everyone."},
 new ButtonInfo { buttonText = "Trap Stump", method =() => Overpowered.TrapStump(), isTogglable = false, toolTip = "Anyone who enters the stump will be kicked."},
