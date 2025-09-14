@@ -715,9 +715,6 @@ namespace iiMenu.Mods
 
                 Vector3 targetPosition = Ray.point == Vector3.zero ? raycastPosition : Ray.point;
 
-                VisualizeAura(raycastPosition, 1f, Color.red);
-                VisualizeAura(targetPosition, 1f, Color.green);
-
                 TeleportPlayer(targetPosition + Vector3.up * 0.2f);
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
             }
