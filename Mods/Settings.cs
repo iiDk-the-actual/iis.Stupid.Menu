@@ -691,7 +691,7 @@ namespace iiMenu.Mods
                     },
                     new ButtonInfo {
                         buttonText = "Player FPS",
-                        overlapText = $"FPS: {playerRig.fps}F",
+                        overlapText = $"FPS: {playerRig.fps}",
                         label = true
                     }
                 }
