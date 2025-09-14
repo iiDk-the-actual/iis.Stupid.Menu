@@ -701,6 +701,24 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.rigidbody.linearVelocity = new Vector3(targetVelocity.x, GorillaTagger.Instance.rigidbody.linearVelocity.y, targetVelocity.z);
         }
 
+        public static void HardDrive()
+        {
+            Vector2 joy = leftJoystick;
+
+            if (Mathf.Abs(joy.x) > 0.05f || Mathf.Abs(joy.y) > 0.05f)
+            {
+                Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * joy.y + GorillaTagger.Instance.bodyCollider.transform.right * joy.x;// + new Vector3(0f, -1f, 0f);
+
+                Vector3 raycastPosition = GorillaTagger.Instance.bodyCollider.transform.position + (Vector3.up * 5f) + (addition * Time.deltaTime * flySpeed);
+                Physics.Raycast(raycastPosition, Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
+
+                Vector3 targetPosition = Ray.point == Vector3.zero ? raycastPosition : Ray.point;
+
+                GTPlayer.Instance.transform.position = targetPosition;
+                GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
+            }
+        }
+
         private static bool lastaomfg = false;
         public static void Dash()
         {
