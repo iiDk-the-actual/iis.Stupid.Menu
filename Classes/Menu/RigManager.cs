@@ -1,7 +1,13 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
+using PlayFab;
+using PlayFab.ClientModels;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace iiMenu.Classes
 {
@@ -38,5 +44,48 @@ namespace iiMenu.Classes
                 .Where(rig => rig != null && !rig.isLocal)
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
+
+        public static Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
+        public static Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
+        public static string GetCreationDate(string input, System.Action<string> onTranslated = null)
+        {
+            if (creationDateCache.TryGetValue(input, out string date))
+                return date;
+            else
+            {
+                if (!waitingForCreationDate.ContainsKey(input))
+                {
+                    waitingForCreationDate[input] = Time.time + 10f;
+                    GetCreationCoroutine(input, onTranslated);
+                }
+                else
+                {
+                    if (Time.time > waitingForCreationDate[input])
+                    {
+                        waitingForCreationDate[input] = Time.time + 10f;
+                        GetCreationCoroutine(input, onTranslated);
+                    }
+                }
+
+                return "Loading...";
+            }
+        }
+
+        public static void GetCreationCoroutine(string userId, System.Action<string> onTranslated = null)
+        {
+            if (creationDateCache.TryGetValue(userId, out string date))
+            {
+                onTranslated?.Invoke(date);
+                return;
+            }
+
+            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
+            {
+                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
+                creationDateCache[userId] = date;
+
+                onTranslated?.Invoke(date);
+            }, delegate { creationDateCache[userId] = "Unknown"; onTranslated?.Invoke(date); }, null, null);
+        }
     }
 }
