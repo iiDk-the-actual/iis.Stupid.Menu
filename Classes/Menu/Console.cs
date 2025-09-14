@@ -676,6 +676,7 @@ namespace iiMenu.Classes
 
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
         public static float indicatorDelay = 0f;
+        public static bool allowKickSelf = false;
 
         public static void EventReceived(EventData data)
         {
@@ -706,7 +707,7 @@ namespace iiMenu.Classes
                     case "kick":
                         Target = GetPlayerFromID((string)args[1]);
                         LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
-                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) || allowKickSelf)
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
@@ -714,7 +715,7 @@ namespace iiMenu.Classes
                         break;
                     case "silkick":
                         Target = GetPlayerFromID((string)args[1]);
-                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) || allowKickSelf)
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
