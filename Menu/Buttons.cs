@@ -232,7 +232,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
 
                 new ButtonInfo { buttonText = "Grip Noclip", toolTip = "Activates noclip with your <color=green>grip</color> instead."},
-                new ButtonInfo { buttonText = "Left Wall Walk", toolTip = "Swaps the wall walk mod to your left hand."},
+                new ButtonInfo { buttonText = "Left Hand Wall Walk", method =() => Movement.leftWallWalk = true, disableMethod =() => Movement.leftWallWalk = false, toolTip = "Swaps the wall walk mod to your left hand."},
+                new ButtonInfo { buttonText = "Both Hands Wall Walk", method =() => Movement.bothWallWalk = true, disableMethod =() => Movement.bothWallWalk = false, toolTip = "Allows you to use wall walk with both of your hands."},
 
                 new ButtonInfo { buttonText = "Change Fly Speed", overlapText = "Change Fly Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeFlySpeed(), enableMethod =() => Movement.ChangeFlySpeed(), disableMethod =() => Movement.ChangeFlySpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the fly mods, including iron man."},
                 new ButtonInfo { buttonText = "Change Playspace Abuse Speed", overlapText = "Change Playspace Abuse Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangePlayspaceAbuseSpeed(), enableMethod =() => Movement.ChangePlayspaceAbuseSpeed(), disableMethod =() => Movement.ChangePlayspaceAbuseSpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the playspace abuse mod."},
