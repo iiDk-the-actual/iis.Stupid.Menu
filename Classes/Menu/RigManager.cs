@@ -79,7 +79,7 @@ namespace iiMenu.Classes
                 return;
             }
 
-            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
+            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = userId }, delegate (GetAccountInfoResult result) // Who designed this
             {
                 string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
                 creationDateCache[userId] = date;
