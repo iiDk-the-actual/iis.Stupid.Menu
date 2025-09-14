@@ -3553,7 +3553,7 @@ namespace iiMenu.Mods
         }
 
         // Thanks DrPerky for rewriting visual mods <@427495360517111809>
-        private static bool DoPerformanceCheck()
+        public static bool DoPerformanceCheck()
         {
             if (PerformanceVisuals)
             {
@@ -4418,7 +4418,7 @@ namespace iiMenu.Mods
 
         public static bool isLineRenderQueued = false;
 
-        private static LineRenderer GetLineRender(bool hideOnCamera)
+        public static LineRenderer GetLineRender(bool hideOnCamera)
         {
             if (lineRenderHolder == null)
                 lineRenderHolder = new GameObject("LineRender_Holder");
