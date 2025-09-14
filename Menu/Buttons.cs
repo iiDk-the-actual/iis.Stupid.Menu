@@ -1756,6 +1756,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Silent Announce Block Gun", method =() => Experimental.AdminABlockGun(true), toolTip = "Block gun, but it sends a notification to everyone using the menu that the target was blocked. Hides your name."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
+                new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Classes.Console.allowKickSelf = true, disableMethod =() => Classes.Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},
             },
 
             new ButtonInfo[] { // Enabled Mods [24]
