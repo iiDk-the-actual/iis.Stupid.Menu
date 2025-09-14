@@ -889,7 +889,7 @@ namespace iiMenu.Mods
             };
         }
 
-        public static void BattleStartGame()
+        public static void PaintbrawlStartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -900,7 +900,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleEndGame()
+        public static void PaintbrawlEndGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -911,7 +911,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleRestartGame()
+        public static void PaintbrawlRestartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -923,7 +923,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleBalloonSpamSelf()
+        public static void PaintbrawlBalloonSpamSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -934,7 +934,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleBalloonSpam()
+        public static void PaintbrawlBalloonSpam()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -946,7 +946,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleKillGun()
+        public static void PaintbrawlKillGun()
         {
             if (GetGunInput(false))
             {
@@ -972,7 +972,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleKillSelf()
+        public static void PaintbrawlKillSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -983,7 +983,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleKillAll()
+        public static void PaintbrawlKillAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -995,7 +995,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleReviveGun()
+        public static void PaintbrawlReviveGun()
         {
             if (GetGunInput(false))
             {
@@ -1021,7 +1021,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleReviveSelf()
+        public static void PaintbrawlReviveSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -1032,7 +1032,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleReviveAll()
+        public static void PaintbrawlReviveAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -1044,7 +1044,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BattleGodMode()
+        public static void PaintbrawlGodMode()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
