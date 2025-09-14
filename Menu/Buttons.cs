@@ -1723,8 +1723,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Fear Gun", method =() => Experimental.AdminFearGun(), toolTip = "Sends a person into pure fear and scarefulness."},
                 new ButtonInfo { buttonText = "Admin Object Gun", method =() => Experimental.AdminObjectGun(), toolTip = "Spawns an object wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Random Object Gun", method =() => Experimental.AdminRandomObjectGun(), toolTip = "Spawns a random object wherever your hand desires."},
-                new ButtonInfo { buttonText = "Admin Notify Gun", enableMethod =() => Experimental.GetTargetNotification(), method =() => Experimental.NotifyGun(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
+                
+                new ButtonInfo { buttonText = "NotifLabel", overlapText = "No Notification Set", label = true},
+                new ButtonInfo { buttonText = "Set Notification", isTogglable = false, method =() => Experimental.GetTargetNotification(), toolTip = "Changes the notification text. The notification text is based off of what you type into the search bar."},
+                new ButtonInfo { buttonText = "Admin Notify Self", isTogglable = false, method =() => Experimental.NotifySelf(), toolTip = "Sends a notification to yourself. The notification text is based off of what you type into the search bar."},
+                new ButtonInfo { buttonText = "Admin Notify Gun", method =() => Experimental.NotifyGun(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
                 new ButtonInfo { buttonText = "Admin Notify All", isTogglable = false, method =() => Experimental.NotifyAll(), toolTip = "Sends a notification to everyone using the menu. The notification text is based off of what you type into the search bar."},
+                
                 new ButtonInfo { buttonText = "Admin Join Gun", enableMethod =() => Experimental.GetTargetNotification(), method =() => Experimental.JoinGun(), toolTip = "Brings whoever your hand desires to a room. The room is based off of what you type into the search bar."},
                 new ButtonInfo { buttonText = "Admin Join All", isTogglable = false, method =() => Experimental.JoinAll(), toolTip = "Brings everyone using the menu to a room. The room is based off of what you type into the search bar."},
                 new ButtonInfo { buttonText = "Admin Network Scale", method =() => Experimental.AdminNetworkScale(), disableMethod =() => Experimental.UnAdminNetworkScale(), toolTip = "Networks your scale to others with the menu."},
