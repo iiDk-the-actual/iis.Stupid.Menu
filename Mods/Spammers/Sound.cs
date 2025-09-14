@@ -237,7 +237,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (Time.time > soundDebounce)
                 {
-                    object[] soundSendData = new object[2] { id, volume };
+                    object[] soundSendData = new object[3] { id, volume, false };
                     object[] sendEventData = new object[3] { PhotonNetwork.ServerTimestamp, (byte)3, soundSendData };
 
                     try
