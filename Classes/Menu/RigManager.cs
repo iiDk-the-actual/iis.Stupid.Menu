@@ -85,7 +85,7 @@ namespace iiMenu.Classes
                 creationDateCache[userId] = date;
 
                 onTranslated?.Invoke(date);
-            }, delegate { creationDateCache[userId] = "Unknown"; onTranslated?.Invoke(date); }, null, null);
+            }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke(date); }, null, null);
         }
     }
 }
