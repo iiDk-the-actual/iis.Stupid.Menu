@@ -491,6 +491,8 @@ namespace iiMenu.Mods
             currentCategoryName = "Temporary Category";
             string targetName = ToTitleCase(player.NickName);
 
+            VRRig playerRig = GetVRRigFromPlayer(player) ?? null;
+
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Exit PlayerInspect",
@@ -510,7 +512,7 @@ namespace iiMenu.Mods
                 new ButtonInfo {
                     buttonText = "Give Player Guns",
                     overlapText = $"Give {targetName} Guns",
-                    method =() => giveGunTarget = GetVRRigFromPlayer(player),
+                    method =() => giveGunTarget = playerRig,
                     disableMethod =() => giveGunTarget = null,
                     toolTip = $"Gives {targetName} every gun on the menu."
                 },
@@ -594,14 +596,14 @@ namespace iiMenu.Mods
                     buttonText = "Barrel Kick Player",
                     overlapText = $"Barrel Kick {targetName}",
                     enableMethod =() => Fun.CheckOwnedThrowable(618),
-                    method =() => { Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - GetVRRigFromPlayer(player).headMesh.transform.position; Fun.SendBarrelProjectile(GetVRRigFromPlayer(player).transform.position + ((GorillaTagger.Instance.headCollider.transform.position - GetVRRigFromPlayer(player).headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }); },
+                    method =() => { Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - playerRig.headMesh.transform.position; Fun.SendBarrelProjectile(playerRig.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - playerRig.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }); },
                     toolTip = $"Kicks {targetName} using the barrels."
                 },
                 new ButtonInfo {
                     buttonText = "Barrel Crash Player",
                     overlapText = $"Barrel Crash {targetName}",
                     enableMethod =() => Fun.CheckOwnedThrowable(618),
-                    method =() => Fun.SendBarrelProjectile(GetVRRigFromPlayer(player).transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }),
+                    method =() => Fun.SendBarrelProjectile(playerRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }),
                     toolTip = $"Crashes {targetName} using the barrels."
                 },
             };
@@ -659,13 +661,7 @@ namespace iiMenu.Mods
                 );
             }
 
-            Color playerColor = Color.white;
-            try
-            {
-                playerColor = GetVRRigFromPlayer(player).playerColor;
-            }
-            catch { }
-
+            Color playerColor = playerRig?.playerColor ?? Color.black;
             buttons.AddRange(
                 new ButtonInfo[]
                 {
@@ -686,6 +682,16 @@ namespace iiMenu.Mods
                     new ButtonInfo {
                         buttonText = "Player User ID",
                         overlapText = $"User ID: {player.UserId}",
+                        label = true
+                    },
+                    new ButtonInfo {
+                        buttonText = "Player Creation Date",
+                        overlapText = $"Creation Date: {GetCreationDate(player.UserId, (creationDate) => { GetIndex("Player Creation Date").overlapText = $"Creation Date: {creationDate}"; ReloadMenu(); })}",
+                        label = true
+                    },
+                    new ButtonInfo {
+                        buttonText = "Player FPS",
+                        overlapText = $"FPS: {playerRig.fps}FPS",
                         label = true
                     }
                 }
