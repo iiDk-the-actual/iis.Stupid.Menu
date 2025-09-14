@@ -4333,6 +4333,13 @@ namespace iiMenu.Menu
                     else
                         infected.AddRange(ghostManager.currentInfected);
                     break;
+                case GorillaGameModes.GameModeType.Paintbrawl:
+                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+
+                    foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value > 0).Select(element => element.Value).ToArray())
+                        infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
+                    
+                    break;
             }
 
             return infected;
@@ -4360,6 +4367,11 @@ namespace iiMenu.Menu
                     else if (!ghostManager.currentInfected.Contains(plr))
                         ghostManager.AddInfectedPlayer(plr);
                     break;
+                case GorillaGameModes.GameModeType.Paintbrawl:
+                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                    paintbrawlManager.playerLives[plr.ActorNumber] = 0;
+
+                    break;
             }
         }
 
@@ -4385,6 +4397,11 @@ namespace iiMenu.Menu
                     else if (!ghostManager.isCurrentlyTag && ghostManager.currentInfected.Contains(plr))
                         ghostManager.currentInfected.Remove(plr);
                     break;
+                case GorillaGameModes.GameModeType.Paintbrawl:
+                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                    paintbrawlManager.playerLives[plr.ActorNumber] = 3;
+
+                    break;
             }
         }
 
@@ -4404,6 +4421,11 @@ namespace iiMenu.Menu
                 case GorillaGameModes.GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     ghostManager.ChangeCurrentIt(plr);
+
+                    break;
+                case GorillaGameModes.GameModeType.Paintbrawl:
+                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                    paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
                     break;
             }
@@ -4427,6 +4449,11 @@ namespace iiMenu.Menu
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     if (ghostManager.currentIt == plr)
                         ghostManager.ChangeCurrentIt(null);
+
+                    break;
+                case GorillaGameModes.GameModeType.Paintbrawl:
+                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                    paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
                     break;
             }
