@@ -6000,6 +6000,13 @@ Piece Name: {gunTarget.name}";
             CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId)));
 
         private static float cgdgd = 0f;
+        public static void CopyCreationDateSelf()
+        {
+            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, (date) => CopyCreationDate(date));
+            if (date != "Loading...")
+                CopyCreationDate(date);
+        }
+
         public static void CopyCreationDateGun()
         {
             if (GetGunInput(false))
@@ -6014,25 +6021,26 @@ Piece Name: {gunTarget.name}";
                     if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
-                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
-                        {
-                            string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
-                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
-                            GUIUtility.systemCopyBuffer = date;
-                        }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
+
+                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, (date) => CopyCreationDate(date));
+                        if (date != "Loading...")
+                            CopyCreationDate(date);
                     }
                 }
             }
         }
 
-        public static void CopyCreationDateSelf()
+        public static void CopyCreationDate(string date)
         {
-            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
-            {
-                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
-                GUIUtility.systemCopyBuffer = date;
-            }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
+            GUIUtility.systemCopyBuffer = date;
+        }
+
+        public static void NarrateCreationDateSelf()
+        {
+            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, (date) => CoroutineManager.RunCoroutine(SpeakText(date)));
+            if (date != "Loading...")
+                CoroutineManager.RunCoroutine(SpeakText(date));
         }
 
         public static void NarrateCreationDateGun()
@@ -6049,23 +6057,13 @@ Piece Name: {gunTarget.name}";
                     if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
-                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
-                        {
-                            string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy at h mm");
+
+                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, (date) => CoroutineManager.RunCoroutine(SpeakText(date)));
+                        if (date != "Loading...")
                             CoroutineManager.RunCoroutine(SpeakText(date));
-                        }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
                     }
                 }
             }
-        }
-
-        public static void NarrateCreationDateSelf()
-        {
-            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
-            {
-                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy at h mm");
-                CoroutineManager.RunCoroutine(SpeakText(date));
-            }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
         }
 
         public static void GrabPlayerInfo()
