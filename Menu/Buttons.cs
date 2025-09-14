@@ -1228,6 +1228,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Fun.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Grab Player Info", method =() => Fun.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
+
+                new ButtonInfo { buttonText = "Disable Critters Dome", enableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(false), disableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(true), toolTip = "Disables the critters dome." },
             },
 
             new ButtonInfo[] { // Spam Mods [13]
