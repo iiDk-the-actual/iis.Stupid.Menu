@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Windows 11 24H2]
+ - OS [e.g. Windows 11 24H2]
  - Menu Version [e.g. 6.1.0]
  - CPU [e.g. Intel Core i9]
  - GPU [e.g. NVIDIA GTX 1660 Ti]
