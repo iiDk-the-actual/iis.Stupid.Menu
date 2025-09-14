@@ -363,7 +363,7 @@ namespace iiMenu.Classes
         public static float adminScale = 1f;
         public static VRRig adminRigTarget;
 
-        public static List<Player> excludedCones;
+        public static List<Player> excludedCones = new List<Player>();
         private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
 
         public static Material adminConeMaterial;
