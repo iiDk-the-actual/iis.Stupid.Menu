@@ -936,6 +936,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 10f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
                 new ButtonInfo { buttonText = "Slow Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
+                new ButtonInfo { buttonText = "Paintbrawl Aimbot", method =() => Patches.GetLaunchPatch.enabled = true, disableMethod =() => Patches.GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
+
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Spaz Snowballs <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpazSnowballs(), toolTip = "Randomizes the size of the snowballs. Credits to test for the idea."},
 
