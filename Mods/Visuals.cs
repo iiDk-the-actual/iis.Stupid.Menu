@@ -952,6 +952,61 @@ namespace iiMenu.Mods
             FPSnametags.Clear();
         }
 
+        private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();
+        public static void CreationDateTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in creationDateTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    creationDateTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!creationDateTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_CreationTag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            creationDateTags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = creationDateTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId);
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableCreationDateTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in creationDateTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            creationDateTags.Clear();
+        }
+
         private static readonly Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject>();
         public static void PingTags()
         {
