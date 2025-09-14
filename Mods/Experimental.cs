@@ -906,7 +906,7 @@ namespace iiMenu.Mods
                     switch (command)
                     {
                         case "confirmusing":
-                            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            if (GetIndex("Menu User Name Tags").enabled && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 VRRig vrrig = GetVRRigFromPlayer(sender);
                                 if (!nametags.ContainsKey(vrrig))
@@ -938,6 +938,11 @@ namespace iiMenu.Mods
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
                                 }
+                            }
+                            if (GetIndex("Conduct Menu Users").enabled)
+                            {
+                                if (!onConduct.ContainsKey(sender.UserId))
+                                    onConduct.Add(sender.UserId, sender.NickName + " - " + ToTitleCase((string)args[2]));
                             }
                             break;
                     }
@@ -1094,6 +1099,23 @@ namespace iiMenu.Mods
                 line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 line.SetPosition(1, playerRig.transform.position);
             }
+        }
+
+        public static Dictionary<string, string> onConduct = new Dictionary<string, string>();
+        public static void ConsoleOnConduct()
+        {
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount) && !GetIndex("Menu User Name Tags").enabled)
+                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+
+            string conductText = "";
+            foreach (KeyValuePair<string, string> item in onConduct)
+            {
+                if (GetPlayerFromID(item.Key) == null)
+                    onConduct.Remove(item.Key);
+                else
+                    conductText += item.Value + "\\n";
+            }
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = conductText;
         }
 
         public static string targetRoom;
