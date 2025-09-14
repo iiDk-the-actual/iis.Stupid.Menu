@@ -670,7 +670,7 @@ namespace iiMenu.Classes
             if (isBlocked > System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond && PhotonNetwork.InRoom)
             {
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond)).ToString() + "s.");
+                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond)).ToString() + "s.", 10000);
             }
         }
 
