@@ -693,8 +693,8 @@ namespace iiMenu.Mods
             Vector2 joy = leftJoystick;
             lerpygerpy = Vector2.Lerp(lerpygerpy, joy, 0.05f);
 
-            Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;// + new Vector3(0f, -1f, 0f);
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
             Vector3 targetVelocity = (addition * driveSpeed);
 
             if (Ray.distance < 0.2f && (Mathf.Abs(lerpygerpy.x) > 0.05f || Mathf.Abs(lerpygerpy.y) > 0.05f))
@@ -703,18 +703,22 @@ namespace iiMenu.Mods
 
         public static void HardDrive()
         {
-            Vector2 joy = leftJoystick;
-
-            if (Mathf.Abs(joy.x) > 0.05f || Mathf.Abs(joy.y) > 0.05f)
+            if (Mathf.Abs(leftJoystick.x) > 0.05f || Mathf.Abs(leftJoystick.y) > 0.05f)
             {
-                Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * joy.y + GorillaTagger.Instance.bodyCollider.transform.right * joy.x;// + new Vector3(0f, -1f, 0f);
+                Vector3 direction = (GorillaTagger.Instance.bodyCollider.transform.forward * leftJoystick.y)
+                                  + (GorillaTagger.Instance.bodyCollider.transform.right * leftJoystick.x);
 
-                Vector3 raycastPosition = GorillaTagger.Instance.bodyCollider.transform.position + (Vector3.up * 5f) + (addition * Time.deltaTime * flySpeed);
-                Physics.Raycast(raycastPosition, Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
+                Vector3 raycastPosition = GorillaTagger.Instance.bodyCollider.transform.position
+                    + (Vector3.up * 5f)
+                    + (direction * Time.deltaTime * driveSpeed);
+                Physics.Raycast(raycastPosition, Vector3.down, out var Ray, 5f, GTPlayer.Instance.locomotionEnabledLayers);
 
                 Vector3 targetPosition = Ray.point == Vector3.zero ? raycastPosition : Ray.point;
 
-                GTPlayer.Instance.transform.position = targetPosition;
+                VisualizeAura(raycastPosition, 1f, Color.red);
+                VisualizeAura(targetPosition, 1f, Color.green);
+
+                TeleportPlayer(targetPosition + Vector3.up * 0.2f);
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
             }
         }
@@ -1637,7 +1641,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && !previousTeleportTrigger)
                 {
                     closePosition = Vector3.zero;
-                    TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 1f, 0f));
+                    TeleportPlayer(NewPointer.transform.position + Vector3.up);
                     GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
                 }
 
