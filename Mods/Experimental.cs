@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -195,6 +196,68 @@ namespace iiMenu.Mods
             string id = CustomMapManager.currentRoomMapModId.id.ToString();
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
             GUIUtility.systemCopyBuffer = id;
+        }
+        
+        public static int restartIndex = 0;
+        public static float restartDelay = 0f;
+        public static Vector3 restartPosition;
+        public static string restartRoom;
+        public static void SafeRestartGame()
+        {
+            switch (restartIndex)
+            {
+                case 0:
+                    string readPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    if (File.Exists(readPath))
+                    {
+                        string data = File.ReadAllText(readPath);
+                        restartRoom = data.Split(";")[0];
+                        List<string> positionData = data.Split(";")[1].Split(",").ToList();
+                        restartPosition = new Vector3(float.Parse(positionData[0]), float.Parse(positionData[1]), float.Parse(positionData[2]));
+                        restartIndex = 3;
+                    }
+                    else
+                    {
+                        if (PhotonNetwork.InRoom)
+                            restartRoom = PhotonNetwork.CurrentRoom.Name;
+                        else
+                            restartRoom = "";
+                        restartPosition = GTPlayer.Instance.transform.position;
+                        restartIndex = 1;
+                    }
+                    restartDelay = Time.time + 6f;
+                    break;
+                case 1:
+                    string writePath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    Settings.SavePreferences();
+                    File.WriteAllText(writePath, restartRoom + $";{restartPosition.x},{restartPosition.y},{restartPosition.z}");
+                    restartIndex = 2;
+                    break;
+                case 2:
+                    string existsPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    if (File.Exists(existsPath) && Time.time > restartDelay)
+                    {
+                        Important.RestartGame();
+                        restartIndex = 4;
+                    }
+                    break;
+                case 3:
+                    if (!PhotonNetwork.InRoom && restartRoom != "")
+                    {
+                        if (Important.queueCoroutine == null && Time.time > restartDelay)
+                            Important.QueueRoom(restartRoom);
+                    }
+                    else
+                    {
+                        TeleportPlayer(restartPosition);
+                        File.Delete(System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
+                        restartIndex = 4;
+                        GetIndex("Safe Restart Game").enabled = false;
+                        Settings.SavePreferences();
+                    }
+                    break;
+            }
         }
 
         private static float adminEventDelay;
