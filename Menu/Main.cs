@@ -1353,67 +1353,63 @@ namespace iiMenu.Menu
                 }
 
                 // Menu
-                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                foreach (ButtonInfo button in Buttons.buttons
+                    .SelectMany(list => list)
+                    .Where(button => button.enabled))
                 {
-                    foreach (ButtonInfo v in buttonlist)
+                    try
                     {
-                        try
+                        bool _leftPrimary = leftPrimary;
+                        bool _leftSecondary = leftSecondary;
+                        bool _rightPrimary = rightPrimary;
+                        bool _rightSecondary = rightSecondary;
+                        bool _leftGrab = leftGrab;
+                        bool _rightGrab = rightGrab;
+                        float _leftTrigger = leftTrigger;
+                        float _rightTrigger = rightTrigger;
+                        bool _leftJoystickClick = leftJoystickClick;
+                        bool _rightJoystickClick = rightJoystickClick;
+
+                        if (OverwriteKeybinds && button.customBind != null)
                         {
-                            if (v.enabled)
+                            leftPrimary = true;
+                            leftSecondary = true;
+                            rightPrimary = true;
+                            rightSecondary = true;
+                            leftGrab = true;
+                            rightGrab = true;
+                            leftTrigger = 1f;
+                            rightTrigger = 1f;
+                            leftJoystickClick = true;
+                            rightJoystickClick = true;
+                        }
+
+                        if (button.method != null)
+                        {
+                            try
                             {
-                                bool _leftPrimary = leftPrimary;
-                                bool _leftSecondary = leftSecondary;
-                                bool _rightPrimary = rightPrimary;
-                                bool _rightSecondary = rightSecondary;
-                                bool _leftGrab = leftGrab;
-                                bool _rightGrab = rightGrab;
-                                float _leftTrigger = leftTrigger;
-                                float _rightTrigger = rightTrigger;
-                                bool _leftJoystickClick = leftJoystickClick;
-                                bool _rightJoystickClick = rightJoystickClick;
-
-                                if (OverwriteKeybinds && v.customBind != null)
-                                {
-                                    leftPrimary = true;
-                                    leftSecondary = true;
-                                    rightPrimary = true;
-                                    rightSecondary = true;
-                                    leftGrab = true;
-                                    rightGrab = true;
-                                    leftTrigger = 1f;
-                                    rightTrigger = 1f;
-                                    leftJoystickClick = true;
-                                    rightJoystickClick = true;
-                                }
-
-                                if (v.method != null)
-                                {
-                                    try
-                                    {
-                                        v.method.Invoke();
-                                    }
-                                    catch (Exception exc)
-                                    {
-                                        LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", v.buttonText, exc.StackTrace, exc.Message));
-                                    }
-                                }
-
-                                if (OverwriteKeybinds && v.customBind != null)
-                                {
-                                    leftPrimary = _leftPrimary;
-                                    leftSecondary = _leftSecondary;
-                                    rightPrimary = _rightPrimary;
-                                    rightSecondary = _rightSecondary;
-                                    leftGrab = _leftGrab;
-                                    rightGrab = _rightGrab;
-                                    leftTrigger = _leftTrigger;
-                                    rightTrigger = _rightTrigger;
-                                    leftJoystickClick = _leftJoystickClick;
-                                    rightJoystickClick = _rightJoystickClick;
-                                }
+                                button.method.Invoke();
                             }
-                        } catch { }
-                    }
+                            catch (Exception exc)
+                            {
+                                LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", button.buttonText, exc.StackTrace, exc.Message));
+                            }
+                        }
+
+                        if (OverwriteKeybinds && button.customBind != null)
+                        {
+                            leftPrimary = _leftPrimary;
+                            leftSecondary = _leftSecondary;
+                            rightPrimary = _rightPrimary;
+                            rightSecondary = _rightSecondary;
+                            leftGrab = _leftGrab;
+                            rightGrab = _rightGrab;
+                            leftTrigger = _leftTrigger;
+                            rightTrigger = _rightTrigger;
+                            leftJoystickClick = _leftJoystickClick;
+                            rightJoystickClick = _rightJoystickClick;
+                        }
+                    } catch { }
                 }
                 #endregion
             }
@@ -4336,7 +4332,7 @@ namespace iiMenu.Menu
                 case GorillaGameModes.GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
 
-                    foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value > 0).Select(element => element.Value).ToArray())
+                    foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value > 0).Select(element => element.Key).ToArray())
                         infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
                     
                     break;
