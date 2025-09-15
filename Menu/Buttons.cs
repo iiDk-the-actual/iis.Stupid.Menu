@@ -936,7 +936,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 10f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
                 new ButtonInfo { buttonText = "Slow Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
-                new ButtonInfo { buttonText = "Paintbrawl Aimbot", method =() => Patches.GetLaunchPatch.enabled = true, disableMethod =() => Patches.GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
+                new ButtonInfo { buttonText = "Paintbrawl Aimbot", enableMethod =() => Patches.GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => Patches.GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
+                new ButtonInfo { buttonText = "Slingshot Helper", method =() => Fun.SlingshotHelper(), toolTip = "Helps you grab the small paintball on your slingshot."},
 
                 new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), toolTip = "Kills yourself in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in paintbrawl." },
