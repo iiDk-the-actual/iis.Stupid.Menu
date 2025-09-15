@@ -4335,6 +4335,9 @@ namespace iiMenu.Menu
                     foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value <= 0).Select(element => element.Key).ToArray())
                         infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
                     
+                    if (!infected.Contains(NetworkSystem.Instance.LocalPlayer))
+                        infected.Add(NetworkSystem.Instance.LocalPlayer);
+
                     break;
             }
 
