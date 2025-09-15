@@ -599,21 +599,6 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void Aimbot()
-        {
-            if (rightPrimary)
-            {
-                foreach (SlingshotProjectile projectile in GetAllType<SlingshotProjectile>())
-                {
-                    if (projectile.projectileOwner == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        projectile.gameObject.transform.position = GetRandomVRRig(false).headConstraint.transform.position;
-                        RPCProtection();
-                    }
-                }
-            }
-        }
-
         public static void ImpactSpam()
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > projDebounce)
