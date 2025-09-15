@@ -116,13 +116,13 @@ namespace iiMenu.Mods.CustomMaps.Maps
         public static float crashDelay = 0f;
         public static void CrashPlayer(int ActorNumber)
         {
-            Photon.Pun.PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new Photon.Realtime.RaiseEventOptions()
+            PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new RaiseEventOptions()
             {
                 TargetActors = new int[]
                 {
                     ActorNumber
                 }
-            }, ExitGames.Client.Photon.SendOptions.SendReliable);
+            }, SendOptions.SendReliable);
             RPCProtection();
         }
         public static void CrashGun()
@@ -130,14 +130,14 @@ namespace iiMenu.Mods.CustomMaps.Maps
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                UnityEngine.RaycastHit Ray = GunData.Ray;
-                UnityEngine.GameObject NewPointer = GunData.NewPointer;
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
-                if (gunLocked && lockTarget != null && UnityEngine.Time.time > crashDelay)
+                if (gunLocked && lockTarget != null && Time.time > crashDelay)
                 {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(lockTarget);
+                    NetPlayer Player = GetPlayerFromVRRig(lockTarget);
                     CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.2f;
+                    crashDelay = Time.time + 0.2f;
                 }
 
                 if (GetGunInput(true))
@@ -158,27 +158,27 @@ namespace iiMenu.Mods.CustomMaps.Maps
         }
         public static void CrashOnTouch()
         {
-            if (UnityEngine.Time.time < crashDelay)
+            if (Time.time < crashDelay)
                 return;
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!rig.isLocal && (UnityEngine.Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || UnityEngine.Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
+                if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
                 {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(rig);
+                    NetPlayer Player = GetPlayerFromVRRig(rig);
                     CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.2f;
+                    crashDelay = Time.time + 0.2f;
                 }
             }
         }
         public static void CrashAll()
         {
-            if (UnityEngine.Time.time > crashDelay)
+            if (Time.time > crashDelay)
             {
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     CrashPlayer(Player.ActorNumber);
                 }
-                crashDelay = UnityEngine.Time.time + 0.1f;
+                crashDelay = Time.time + 0.1f;
             }
         }
         public static void AntiReportCrash()
@@ -186,12 +186,12 @@ namespace iiMenu.Mods.CustomMaps.Maps
             Safety.AntiReport((vrrig, position) =>
             {
 
-                if (UnityEngine.Time.time > crashDelay)
+                if (Time.time > crashDelay)
                 {
-                    NetPlayer Player = RigManager.GetPlayerFromVRRig(vrrig);
+                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
                     CrashPlayer(Player.ActorNumber);
-                    crashDelay = UnityEngine.Time.time + 0.5f;
-                    Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + RigManager.GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
+                    crashDelay = Time.time + 0.5f;
+                    Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
                 }
             });
         }

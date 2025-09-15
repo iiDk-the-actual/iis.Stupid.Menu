@@ -1,5 +1,4 @@
 ﻿using ExitGames.Client.Photon;
-using GorillaLocomotion;
 using HarmonyLib;
 using Photon.Realtime;
 using System.Linq;

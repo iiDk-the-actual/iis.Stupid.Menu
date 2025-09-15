@@ -6,9 +6,7 @@ using Photon.Pun;
 using System;
 using System.Collections;
 using System.Linq;
-using Unity.Collections;
 using UnityEngine;
-using Valve.Newtonsoft.Json.Linq;
 
 namespace iiMenu.Patches
 {
