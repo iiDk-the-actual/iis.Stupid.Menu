@@ -11,6 +11,7 @@ namespace iiMenu.Patches
     public class GetLaunchPatch
     {
         public static bool enabled;
+        public static bool angryBirds;
 
         public static void Postfix(Slingshot __instance, ref Vector3 __result)
         {
@@ -37,6 +38,9 @@ namespace iiMenu.Patches
 
                 __result = CalcMinSpeed(__instance.center.transform.position, targetRig);
             }
+
+            if (angryBirds)
+                GorillaTagger.Instance.rigidbody.linearVelocity = __result;
         }
 
         // ChatGPT used for math.. because I'm only 14 and haven't learned this yet and am not taking a class for a Gorilla Tag mod
