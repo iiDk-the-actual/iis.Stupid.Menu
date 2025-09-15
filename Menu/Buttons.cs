@@ -1940,7 +1940,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] // Custom Maps [39]
             {
                 new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods."},
-                new ButtonInfo { buttonText = "You have not loaded a map.", label = true}
+                new ButtonInfo { buttonText = "You have not loaded a map.", label = true }
             }
         };
 
