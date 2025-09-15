@@ -4334,7 +4334,7 @@ namespace iiMenu.Menu
 
                     foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value <= 0).Select(element => element.Key).ToArray())
                         infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
-                    
+
                     if (!infected.Contains(NetworkSystem.Instance.LocalPlayer))
                         infected.Add(NetworkSystem.Instance.LocalPlayer);
 
@@ -4548,6 +4548,9 @@ namespace iiMenu.Menu
             visualizeGO.transform.position = position;
             visualizeGO.transform.localScale = new Vector3(range, range, range);
 
+            if (GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
             Color clr = color;
@@ -4574,6 +4577,9 @@ namespace iiMenu.Menu
             visualizeGO.transform.position = position;
             visualizeGO.transform.localScale = scale;
             visualizeGO.transform.rotation = rotation;
+
+            if (GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
