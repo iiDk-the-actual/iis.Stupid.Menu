@@ -36,13 +36,16 @@ using Valve.VR;
 using static iiMenu.Classes.RigManager;
 
 /*
-ii's Stupid Menu, written by @goldentrophy
-Any comments are dev comments I wrote
-Most comments are used to find certain parts of code faster with Ctrl + F
-Feel free to read them if you want
-
-ii's Stupid Menu falls under the GPL-3.0 license
-https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ * ii's Stupid Menu, written by @goldentrophy
+ * Any comments are developer comments I wrote
+ * Most comments are used to find certain parts of code faster with Ctrl + F
+ * Feel free to read them if you want
+ *  
+ * ii's Stupid Menu falls under the GPL-3.0 license
+ * https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ *
+ * If you want to support my, check out my Patreon: https://patreon.com/iiDk
+ * Any support is appreciated, and it helps me make more free content for you all
 */
 
 namespace iiMenu.Menu
@@ -1355,7 +1358,7 @@ namespace iiMenu.Menu
                 // Menu
                 foreach (ButtonInfo button in Buttons.buttons
                     .SelectMany(list => list)
-                    .Where(button => button.enabled))
+                    .Where(button => button.enabled && button.method != null))
                 {
                     try
                     {
@@ -1384,16 +1387,13 @@ namespace iiMenu.Menu
                             rightJoystickClick = true;
                         }
 
-                        if (button.method != null)
+                        try
                         {
-                            try
-                            {
-                                button.method.Invoke();
-                            }
-                            catch (Exception exc)
-                            {
-                                LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", button.buttonText, exc.StackTrace, exc.Message));
-                            }
+                            button.method.Invoke();
+                        }
+                        catch (Exception exc)
+                        {
+                            LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", button.buttonText, exc.StackTrace, exc.Message));
                         }
 
                         if (OverwriteKeybinds && button.customBind != null)
@@ -2689,7 +2689,7 @@ namespace iiMenu.Menu
                     }
 
                     menu.transform.parent = TPC.transform;
-                    menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f) + (TPC.transform.up * 0f);
+                    menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f);
                     menu.transform.rotation = TPC.transform.rotation * Quaternion.Euler(-90f, 90f, 0f);
 
                     if (reference != null)
