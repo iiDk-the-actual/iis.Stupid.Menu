@@ -1792,6 +1792,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Experimental Mods [27]
                 new ButtonInfo { buttonText = "Exit Experimental Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
+                new ButtonInfo { buttonText = "Safe Restart Game", enableMethod =() => { Experimental.restartDelay = Time.time; Experimental.restartIndex = 0; }, method =() => Experimental.SafeRestartGame(), toolTip = "Restarts Gorilla Tag, saving room and position data."},
+
                 new ButtonInfo { buttonText = "Overlap RPCs", enableMethod =() => NoOverlapRPCs = false, disableMethod =() => NoOverlapRPCs = true, toolTip = "Disables the check that only allows you to flush once a frame."},
 
                 new ButtonInfo { buttonText = "Fix Broken Buttons", method =() => Experimental.FixDuplicateButtons(), isTogglable = false, toolTip = "Fixes any duplicate or broken buttons."},
