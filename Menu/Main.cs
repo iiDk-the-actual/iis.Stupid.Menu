@@ -6036,7 +6036,8 @@ jgs \_   _/ |Oo\
         public static bool hidetitle;
         public static bool disorganized;
         public static bool flipMenu;
-        public static bool shinymenu;
+        public static bool shinyMenu;
+        public static bool transparentMenu;
         public static bool crystallizemenu;
         public static bool zeroGravityMenu;
         public static bool dropOnRemove = true;
