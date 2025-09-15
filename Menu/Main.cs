@@ -4332,7 +4332,7 @@ namespace iiMenu.Menu
                 case GorillaGameModes.GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
 
-                    foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value > 0).Select(element => element.Key).ToArray())
+                    foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value <= 0).Select(element => element.Key).ToArray())
                         infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
                     
                     break;

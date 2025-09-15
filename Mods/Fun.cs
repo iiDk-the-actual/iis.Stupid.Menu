@@ -30,6 +30,7 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Oculus.Interaction.Context;
 
 namespace iiMenu.Mods
 {
@@ -2534,6 +2535,64 @@ Piece Name: {gunTarget.name}";
             {
                 glider.pullUpLiftBonus = 0.1f;
                 glider.dragVsSpeedDragFactor = 0.2f;
+            }
+        }
+
+        private static Slingshot CurrentSlingshot()
+        {
+            if (EquipmentInteractor.instance.leftHandHeldEquipment != null)
+            {
+                EquipmentInteractor.instance.leftHandHeldEquipment.gameObject.TryGetComponent(out Slingshot slingshot);
+                return slingshot;
+            }
+
+            if (EquipmentInteractor.instance.rightHandHeldEquipment != null)
+            {
+                EquipmentInteractor.instance.rightHandHeldEquipment.gameObject.TryGetComponent(out Slingshot slingshot);
+                return slingshot;
+            }
+            return null;
+        }
+
+        public static void DebugSlingshotAimbot()
+        {
+            if (CurrentSlingshot() == null)
+                return;
+
+            List<NetPlayer> infected = InfectedList();
+            List<VRRig> rigs = GorillaParent.instance.vrrigs
+                .Where(rig => !rig.isLocal)
+                .Where(rig => !infected.Contains(GetPlayerFromVRRig(rig)))
+                .ToList();
+
+            Transform head = GorillaTagger.Instance.headCollider.transform;
+            VRRig targetRig = rigs
+                .Where(rig => rig != null)
+                .Select(rig => new {
+                    Rig = rig,
+                    ToRig = (rig.transform.position - head.position).normalized,
+                    Distance = Vector3.Distance(head.position, rig.transform.position)
+                })
+                .OrderBy(x => Vector3.Angle(head.forward, x.ToRig)) // only angle matters
+                .ThenBy(x => x.Distance) // tiebreaker if multiple at same angle
+                .Select(x => x.Rig)
+                .FirstOrDefault();
+
+            VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
+        }
+
+        public static void SlingshotHelper()
+        {
+            Slingshot slingshot = CurrentSlingshot();
+            if (slingshot == null)
+                return;
+
+            if (slingshot.ForLeftHandSlingshot() ? rightGrab : leftGrab)
+            {
+                if (slingshot.ForLeftHandSlingshot())
+                    slingshot.itemState = TransferrableObject.ItemStates.State2;
+                else
+                    slingshot.itemState = TransferrableObject.ItemStates.State3;
             }
         }
 
