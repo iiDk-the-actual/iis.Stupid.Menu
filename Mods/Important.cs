@@ -1,4 +1,4 @@
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
@@ -8,6 +8,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -226,7 +227,39 @@ namespace iiMenu.Mods
 
         public static void RestartGame()
         {
-            Process.Start("steam://rungameid/1533390");
+            string restartScript = @"@echo off
+title ii's Stupid Menu
+color 0E
+
+cls
+echo.
+echo      ••╹   ┏┓     • ┓  ┳┳┓      
+echo      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
+echo      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+echo                 ┛               
+echo.
+
+echo Your game is restarting, please wait...
+echo.
+
+:WAIT_LOOP
+tasklist /FI ""IMAGENAME eq Gorilla Tag.exe"" | find /I ""Gorilla Tag.exe"" >nul
+if %ERRORLEVEL%==0 (
+    timeout /t 1 >nul
+    goto WAIT_LOOP
+)
+
+start steam://run/1533390
+exit";
+
+            string fileName = $"{PluginInfo.BaseDirectory}/RestartScript.bat";
+
+            File.WriteAllText(fileName, restartScript);
+
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
+            filePath = filePath.Split("BepInEx\\")[0] + fileName;
+
+            Process.Start(filePath);
             Application.Quit();
         }
 
