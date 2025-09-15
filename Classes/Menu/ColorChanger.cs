@@ -40,7 +40,7 @@ namespace iiMenu.Classes
                     targetRenderer.material.color = colors.GetColor(0);
                 else
                 {
-                    if (targetRenderer.material.shader.name != "Universal Render Pipeline/Unlit")
+                    if (targetRenderer.material.shader.name != "Universal Render Pipeline/Unlit" && targetRenderer.material.mainTexture != null)
                     {
                         targetRenderer.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                         {
@@ -48,6 +48,13 @@ namespace iiMenu.Classes
                         };
                     }
                 }
+            }
+
+            if (Main.transparentMenu)
+            {
+                Color color = targetRenderer.material.color;
+                color.a = 0.5f;
+                targetRenderer.material.color = color;
             }
         }
 
