@@ -88,7 +88,7 @@ namespace iiMenu.Mods
         {
             string text = "Handtap Sound Data\n(from GorillaLocomotion.GTPlayer.Instance.materialData)";
             int i = 0;
-            foreach (GorillaLocomotion.GTPlayer.MaterialData oneshot in GorillaLocomotion.GTPlayer.Instance.materialData)
+            foreach (GTPlayer.MaterialData oneshot in GTPlayer.Instance.materialData)
             {
                 try
                 {
@@ -703,7 +703,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
@@ -758,7 +758,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)

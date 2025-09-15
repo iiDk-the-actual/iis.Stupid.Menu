@@ -30,7 +30,6 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Oculus.Interaction.Context;
 
 namespace iiMenu.Mods
 {
@@ -3511,7 +3510,7 @@ Piece Name: {gunTarget.name}";
         {
             if (GetGunInput(false))
             {
-                var GunData = RenderGun(GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 

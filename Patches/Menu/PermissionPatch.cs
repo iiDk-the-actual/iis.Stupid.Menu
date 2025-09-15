@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Photon.Pun;
 
 namespace iiMenu.Patches
 {

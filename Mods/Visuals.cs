@@ -4610,7 +4610,7 @@ namespace iiMenu.Mods
             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
             liner.material.shader = Shader.Find("GUI/Text Shader");
-            Menu.Main.Destroy(line, 3f);
+            UnityEngine.Object.Destroy(line, 3f);
         }
     }
 }
