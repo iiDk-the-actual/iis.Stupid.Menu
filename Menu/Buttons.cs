@@ -1669,6 +1669,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Visual Settings [22]
                 new ButtonInfo { buttonText = "Exit Visual Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
+                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II STUPID MENU", method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NoRichtextTags(NotifiLib.NotifiText.text), toolTip = "Shows notifications on the code of conduct instead."},
+
                 new ButtonInfo { buttonText = "Change Performance Visuals Step", overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>0.2</color><color=grey>]</color>", method =() => Visuals.ChangePerformanceModeVisualStep(), enableMethod =() => Visuals.ChangePerformanceModeVisualStep(), disableMethod =() => Visuals.ChangePerformanceModeVisualStep(false), incremental = true, isTogglable = false, toolTip = "Changes the time between rendering visual mods."},
                 new ButtonInfo { buttonText = "Performance Visuals", enableMethod =() => Visuals.PerformanceVisuals = true, disableMethod =() => Visuals.PerformanceVisuals = false, toolTip = "Makes visual mods render less often, to increase performange and decrease memory usage."},
                 new ButtonInfo { buttonText = "Short Breadcrumbs", toolTip = "Shortens the length of the breadcrumbs."},
