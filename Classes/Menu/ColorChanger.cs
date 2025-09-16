@@ -27,7 +27,7 @@ namespace iiMenu.Classes
 
         public void Update()
         {
-            targetRenderer.enabled = !colors.transparent;
+            targetRenderer.enabled = overrideTransparency ?? !colors.transparent;
 
             if (colors.transparent)
                 return;
@@ -60,5 +60,6 @@ namespace iiMenu.Classes
 
         public Renderer targetRenderer;
         public ExtGradient colors;
+        public bool? overrideTransparency;
     }
 }

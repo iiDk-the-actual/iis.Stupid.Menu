@@ -3347,10 +3347,7 @@ namespace iiMenu.Menu
 
             ColorChanger colorChanger = ToRoundRenderer.GetComponent<ColorChanger>();
             if (colorChanger)
-            {
-                colorChanger.colors = colorChanger.colors.Clone();
-                colorChanger.colors.transparent = true;
-            }
+                colorChanger.overrideTransparency = false;
         }
 
         public static bool IsPrompting;
