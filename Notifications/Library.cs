@@ -33,6 +33,7 @@ namespace iiMenu.Notifications
         public static Text StatsText;
 
         private bool HasInit;
+        public static bool noRichText;
 
         public static int NotifiCounter = 0;
 
@@ -295,13 +296,16 @@ namespace iiMenu.Notifications
 
                     CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
 
+                    if (noRichText)
+                        NotifiText.text = NoRichtextTags(NotifiText.text);
+
                     if (lowercaseMode)
                         NotifiText.text = NotifiText.text.ToLower();
 
                     if (uppercaseMode)
                         NotifiText.text = NotifiText.text.ToUpper();
 
-                    NotifiText.supportRichText = true;
+                    NotifiText.supportRichText = !noRichText;
 
                     if (narrateNotifications)
                     {
