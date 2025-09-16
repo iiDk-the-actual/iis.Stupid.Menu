@@ -3344,6 +3344,13 @@ namespace iiMenu.Menu
             }
 
             ToRoundRenderer.enabled = false;
+
+            ColorChanger colorChanger = ToRoundRenderer.GetComponent<ColorChanger>();
+            if (colorChanger)
+            {
+                colorChanger.colors = colorChanger.colors.Clone();
+                colorChanger.colors.transparent = true;
+            }
         }
 
         public static bool IsPrompting;
