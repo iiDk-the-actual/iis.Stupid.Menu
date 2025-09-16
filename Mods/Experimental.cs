@@ -1202,6 +1202,27 @@ namespace iiMenu.Mods
             GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = conductText;
         }
 
+        private static float thingdeb = 0f;
+        public static void AdminPunchMod()
+        {
+            if (Time.time > thingdeb)
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    bool leftHand = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f;
+                    bool rightHand = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f;
+
+                    if (!rig.isLocal && (leftHand || rightHand))
+                    {
+                        Vector3 vel = rightHand ? GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(rig).ActorNumber, vel);
+                        thingdeb = Time.time + 0.1f;
+                    }
+                }
+            }
+        }
+
         public static string targetRoom;
         public static void GetTargetRoom() =>
             PromptText("What room would you like the users to join?", () => targetRoom = keyboardInput, null, "Done", "Cancel");
