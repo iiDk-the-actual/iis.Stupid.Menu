@@ -924,8 +924,14 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float paintbrawlSpamDelay;
         public static void PaintbrawlBalloonSpamSelf()
         {
+            if (Time.time < paintbrawlSpamDelay)
+                return;
+
+            paintbrawlSpamDelay = Time.time + 0.1f;
+
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
@@ -935,8 +941,61 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void PaintbrawlBalloonSpamGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!NetworkSystem.Instance.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        if (Time.time > paintbrawlSpamDelay)
+                        {
+                            paintbrawlSpamDelay = Time.time + 0.1f;
+
+                            if (!NetworkSystem.Instance.IsMasterClient)
+                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            else
+                            {
+                                GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                                brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = Random.Range(0, 4);
+                            }
+                        }
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static void PaintbrawlBalloonSpam()
         {
+            if (Time.time < paintbrawlSpamDelay)
+                return;
+
+            paintbrawlSpamDelay = Time.time + 0.1f;
+
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
