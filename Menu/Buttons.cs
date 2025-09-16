@@ -170,6 +170,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
 
+                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II STUPID MENU", method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NoRichtextTags(NotifiLib.NotifiText.text), toolTip = "Shows notifications on the code of conduct instead."},
+                new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotifiLib.noRichText = true, disableMethod =() => NotifiLib.noRichText = false, toolTip = "Removes rich text from notifications."},
+
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
                 new ButtonInfo { buttonText = "Disable Master Client Notifications", enableMethod =() => disableMasterClientNotifications = true, disableMethod =() => disableMasterClientNotifications = false, toolTip = "Disables all notifications regarding master client."},
                 new ButtonInfo { buttonText = "Disable Room Notifications", enableMethod =() => disableRoomNotifications = true, disableMethod =() => disableRoomNotifications = false, toolTip = "Disables all notifications regarding the room."},
@@ -1668,8 +1671,6 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Visual Settings [22]
                 new ButtonInfo { buttonText = "Exit Visual Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
-
-                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II STUPID MENU", method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NoRichtextTags(NotifiLib.NotifiText.text), toolTip = "Shows notifications on the code of conduct instead."},
 
                 new ButtonInfo { buttonText = "Change Performance Visuals Step", overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>0.2</color><color=grey>]</color>", method =() => Visuals.ChangePerformanceModeVisualStep(), enableMethod =() => Visuals.ChangePerformanceModeVisualStep(), disableMethod =() => Visuals.ChangePerformanceModeVisualStep(false), incremental = true, isTogglable = false, toolTip = "Changes the time between rendering visual mods."},
                 new ButtonInfo { buttonText = "Performance Visuals", enableMethod =() => Visuals.PerformanceVisuals = true, disableMethod =() => Visuals.PerformanceVisuals = false, toolTip = "Makes visual mods render less often, to increase performange and decrease memory usage."},
