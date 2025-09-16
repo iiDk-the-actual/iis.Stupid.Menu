@@ -4111,7 +4111,7 @@ namespace iiMenu.Menu
             float elapsedTime = 0f;
             while (elapsedTime < 0.1f)
             {
-                int from = (buttonIndex < 0 && swapButtonColors) ? 1 : 0;
+                int from = (buttonIndex < 0 && swapButtonColors) ? 0 : 1;
                 int to = 1 - from;
 
                 render.material.color = Color.Lerp(
