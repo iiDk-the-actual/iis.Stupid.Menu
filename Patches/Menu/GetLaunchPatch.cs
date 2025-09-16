@@ -51,6 +51,7 @@ namespace iiMenu.Patches
         {
             Vector3 targetPos = targetRig.headMesh.transform.position;
             Vector3 targetVel = targetRig.LatestVelocity();
+            targetVel.y /= 3f;
 
             Vector3 displacement = targetPos - origin;
             Vector3 displacementXZ = new Vector3(displacement.x, 0, displacement.z);
