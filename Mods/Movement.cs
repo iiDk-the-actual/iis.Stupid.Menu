@@ -1352,8 +1352,8 @@ namespace iiMenu.Mods
         public static void LowGravity() =>
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * (Time.unscaledDeltaTime * (6.66f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
 
-        public static void ZeroGravity() => 
-            GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * (Time.unscaledDeltaTime * (9.81f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
+        public static void ZeroGravity() =>
+            GTPlayer.Instance.GetComponent<Rigidbody>().AddForce(-Physics.gravity, ForceMode.Acceleration);
 
         public static void HighGravity() =>
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.down * (Time.unscaledDeltaTime * (7.77f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
