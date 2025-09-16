@@ -460,6 +460,27 @@ namespace iiMenu.Mods
         
         public static void AdminBMuteAll(bool mute) =>
             Classes.Console.ExecuteCommand(mute ? "muteall" : "unmuteall", ReceiverGroup.All);
+        
+        public static void AdminButtonPressGun(string key)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.8f;
+                        Classes.Console.ExecuteCommand("controller", GetPlayerFromVRRig(gunTarget).ActorNumber, key, 1f, 1f);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
 
         public static void FlipMenuGun()
         {
