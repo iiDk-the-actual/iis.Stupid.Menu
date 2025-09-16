@@ -36,6 +36,9 @@ namespace iiMenu.Patches
                     .Select(x => x.Rig)
                     .FirstOrDefault();
 
+                if (targetRig == null)
+                    return;
+
                 __result = CalcMinSpeed(__instance.center.transform.position, targetRig);
             }
 
