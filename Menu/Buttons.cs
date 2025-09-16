@@ -1436,10 +1436,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Paintbrawl Restart Spam", method =() => Advantages.PaintbrawlRestartGame(), toolTip = "Spam starts and ends games of paintbrawl." },
 
                 new ButtonInfo { buttonText = "Paintbrawl Balloon Spam Self", method =() => Advantages.PaintbrawlBalloonSpamSelf(), toolTip = "Spam pops and unpops your balloons in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Balloon Spam Gun", method =() => Advantages.PaintbrawlBalloonSpamGun(), toolTip = "Spam pops and unpops whoever your hand desires' balloons in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Balloon Spam All", method =() => Advantages.PaintbrawlBalloonSpam(), toolTip = "Spam pops and unpops everyone's balloons in paintbrawl." },
 
-                new ButtonInfo { buttonText = "Paintbrawl Revive Gun", method =() => Advantages.PaintbrawlReviveGun(), toolTip = "Revives whoever your hand desires in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Revive Self", method =() => Advantages.PaintbrawlReviveSelf(), isTogglable = false, toolTip = "Revives yourself in paintbrawl." },
+                new ButtonInfo { buttonText = "Paintbrawl Revive Gun", method =() => Advantages.PaintbrawlReviveGun(), toolTip = "Revives whoever your hand desires in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Revive All", method =() => Advantages.PaintbrawlReviveAll(), isTogglable = false, toolTip = "Revives everyone in paintbrawl." },
 
                 new ButtonInfo { buttonText = "Paintbrawl God Mode", method =() => Advantages.PaintbrawlGodMode(), toolTip = "Gives you god mode in paintbrawl." },
