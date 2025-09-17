@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -696,42 +697,7 @@ namespace iiMenu.Mods
                 Vector3 position = rig.syncPos;
                 Vector3 velocity = rig.LatestVelocity();
 
-                if (velocity.magnitude < 0.5f)
-                {
-                    Line.enabled = false;
-                    continue;
-                }
-
-                Line.enabled = true;
-
-                int stepCount = Mathf.Min(25, Mathf.CeilToInt(5f / 0.1f));
-                Vector3[] points = new Vector3[stepCount];
-
-                int i;
-                for (i = 0; i < stepCount; i++)
-                {
-                    points[i] = position;
-
-                    Vector3 nextVelocity = velocity + Physics.gravity * 0.1f;
-                    Vector3 nextPosition = position + velocity * 0.1f;
-
-                    if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, GTPlayer.Instance.locomotionEnabledLayers))
-                    {
-                        points[i] = hit.point;
-                        i++;
-                        break;
-                    }
-
-                    position = nextPosition;
-                    velocity = nextVelocity;
-                }
-
-                Vector3[] finalPoints = new Vector3[i];
-                for (int j = 0; j < i; j++)
-                    finalPoints[j] = points[j];
-
-                Line.positionCount = finalPoints.Length;
-                Line.SetPositions(finalPoints);
+                DrawTrajectory(position, velocity, Line);
             }
         }
 
@@ -741,6 +707,202 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(pred.Value.gameObject);
 
             predictions.Clear();
+        }
+
+        // This doesn't work.
+        // TODO: Fix the other players' slingshot trajectory prediction.
+
+        public static readonly Dictionary<SlingshotProjectile, LineRenderer> trajectoryPool = new Dictionary<SlingshotProjectile, LineRenderer>();
+        public static LineRenderer localTrajectoryLine;
+
+        public static void PaintbrawlTrajectories()
+        {
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+
+            List<SlingshotProjectile> toRemoveTrajectories = new List<SlingshotProjectile>();
+            foreach (KeyValuePair<SlingshotProjectile, LineRenderer> key in trajectoryPool)
+            {
+                if (!key.Value.gameObject.activeSelf)
+                {
+                    toRemoveTrajectories.Add(key.Key);
+                    UnityEngine.Object.Destroy(key.Value.gameObject);
+                }
+                else
+                    key.Value.gameObject.SetActive(false);
+            }
+
+            foreach (SlingshotProjectile item in toRemoveTrajectories)
+                trajectoryPool.Remove(item);
+
+            foreach (LoopingArray<ProjectileTracker.ProjectileInfo> projectileArray in ProjectileTracker.m_playerProjectiles.Values)
+            {
+                if (projectileArray == null || projectileArray.Length <= 0) continue;
+                for (int index = 0; index < projectileArray.Length; index++)
+                {
+                    SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
+                    if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
+
+                    VisualizeAura(projectileInstance.transform.position, 0.5f, Color.red);
+
+                    if (!trajectoryPool.TryGetValue(projectileInstance, out LineRenderer Line))
+                    {
+                        GameObject LineObject = new GameObject("LineObject");
+                        Line = LineObject.AddComponent<LineRenderer>();
+                        if (smoothLines)
+                        {
+                            Line.numCapVertices = 10;
+                            Line.numCornerVertices = 5;
+                        }
+                        Line.material.shader = Shader.Find("GUI/Text Shader");
+                        Line.startWidth = 0.025f;
+                        Line.endWidth = 0.025f;
+                        Line.positionCount = 25;
+                        Line.useWorldSpace = true;
+                        trajectoryPool.Add(projectileInstance, Line);
+                    }
+
+                    Line.gameObject.SetActive(true);
+
+                    if (hoc)
+                        Line.gameObject.layer = 19;
+
+                    Color color = projectileInstance.teamColor;
+
+                    if (fmt)
+                        color = backgroundColor.GetCurrentColor();
+                    if (tt)
+                        color = new Color(color.r, color.g, color.b, 0.5f);
+
+                    float width = thinTracers ? 0.0075f : 0.025f;
+                    Line.startWidth = width;
+                    Line.endWidth = width;
+
+                    Line.startColor = color;
+                    Line.endColor = color;
+
+                    Vector3 position = projectileInstance.transform.position;
+                    Vector3 velocity = projectileInstance.projectileRigidbody.linearVelocity;
+
+                    float scale = projectileInstance.transform.lossyScale.x;
+                    Vector3 gravity = Physics.gravity * projectileInstance.gravityMultiplier * ((scale < 1f) ? scale : 1f);
+
+                    DrawTrajectory(position, velocity, Line, NoInvisLayerMask(), gravity);
+                }
+            }
+
+            if (localTrajectoryLine != null)
+            {
+                if (!localTrajectoryLine.gameObject.activeSelf)
+                {
+                    localTrajectoryLine = null;
+                    UnityEngine.Object.Destroy(localTrajectoryLine.gameObject);
+                }
+                else
+                    localTrajectoryLine.gameObject.SetActive(false);
+            }
+
+            Slingshot localSlingshot = Fun.CurrentSlingshot();
+            if (localSlingshot == null || !localSlingshot.InDrawingState())
+                return;
+
+            if (localTrajectoryLine == null)
+            {
+                GameObject LineObject = new GameObject("LineObject");
+                localTrajectoryLine = LineObject.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    localTrajectoryLine.numCapVertices = 10;
+                    localTrajectoryLine.numCornerVertices = 5;
+                }
+                localTrajectoryLine.material.shader = Shader.Find("GUI/Text Shader");
+                localTrajectoryLine.startWidth = 0.025f;
+                localTrajectoryLine.endWidth = 0.025f;
+                localTrajectoryLine.positionCount = 25;
+                localTrajectoryLine.useWorldSpace = true;
+            }
+
+            localTrajectoryLine.gameObject.SetActive(true);
+
+            if (hoc)
+                localTrajectoryLine.gameObject.layer = 19;
+
+            Color localColor = GetPlayerColor(VRRig.LocalRig);
+
+            if (fmt)
+                localColor = backgroundColor.GetCurrentColor();
+            if (tt)
+                localColor = new Color(localColor.r, localColor.g, localColor.b, 0.5f);
+
+            float localWidth = thinTracers ? 0.0075f : 0.025f;
+            localTrajectoryLine.startWidth = localWidth;
+            localTrajectoryLine.endWidth = localWidth;
+
+            localTrajectoryLine.startColor = localColor;
+            localTrajectoryLine.endColor = localColor;
+
+            Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * (EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x));
+            Vector3 localVelocity = localSlingshot.GetLaunchVelocity();
+
+            float localScale = localSlingshot.dummyProjectile.transform.lossyScale.x;
+            Vector3 localGravity = Physics.gravity * localSlingshot.dummyProjectile.GetComponent<SlingshotProjectile>().gravityMultiplier * ((localScale < 1f) ? localScale : 1f);
+
+            DrawTrajectory(localPosition, localVelocity, localTrajectoryLine, NoInvisLayerMask(), localGravity);
+        }
+
+        public static void DisablePaintbrawlTrajectories()
+        {
+            foreach (KeyValuePair<SlingshotProjectile, LineRenderer> pred in trajectoryPool)
+                UnityEngine.Object.Destroy(pred.Value.gameObject);
+
+            trajectoryPool.Clear();
+
+            if (localTrajectoryLine != null)
+            {
+                UnityEngine.Object.Destroy(localTrajectoryLine.gameObject);
+                localTrajectoryLine = null;
+            }
+        }
+
+        public static void DrawTrajectory(Vector3 position, Vector3 velocity, LineRenderer lineRenderer, int? overrideLayerMask = null, Vector3? overrideGravity = null)
+        {
+            if (velocity.magnitude < 0.5f)
+            {
+                lineRenderer.enabled = false;
+                return;
+            }
+
+            lineRenderer.enabled = true;
+
+            int stepCount = 25;
+            Vector3[] points = new Vector3[stepCount];
+
+            int i;
+            for (i = 0; i < stepCount; i++)
+            {
+                points[i] = position;
+
+                Vector3 nextVelocity = velocity + (overrideGravity ?? Physics.gravity) * 0.1f;
+                Vector3 nextPosition = position + velocity * 0.1f;
+
+                if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, overrideLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers))
+                {
+                    points[i] = hit.point;
+                    i++;
+                    break;
+                }
+
+                position = nextPosition;
+                velocity = nextVelocity;
+            }
+
+            Vector3[] finalPoints = new Vector3[i];
+            Array.Copy(points, finalPoints, i);
+
+            lineRenderer.positionCount = finalPoints.Length;
+            lineRenderer.SetPositions(finalPoints);
         }
 
         public static void VisualizeNetworkTriggers()
