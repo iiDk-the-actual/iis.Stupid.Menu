@@ -878,41 +878,34 @@ namespace iiMenu.Mods
 
         public static void TriggerAntiReportAll()
         {
-            if (rightTrigger > 0.5f)
+            VRRig.LocalRig.enabled = false;
+
+            try
             {
-                VRRig.LocalRig.enabled = false;
-
-                try
+                Player triggerAntiReportTarget = GetRandomPlayer(false);
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    Player triggerAntiReportTarget = GetRandomPlayer(false);
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    if (NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
                     {
-                        if (NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
+                        Transform report = line.reportButton.gameObject.transform;
 
-                            VRRig.LocalRig.transform.position = report.transform.position;
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
-                        }
+                        VRRig.LocalRig.transform.position = report.transform.position;
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
                     }
                 }
-                catch { }
-
-                if (Time.time > pressButtonDelay)
-                {
-                    pressButtonDelay = Time.time + 0.1f;
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        67,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
             }
-            else
+            catch { }
+
+            if (Time.time > pressButtonDelay)
             {
-                VRRig.LocalRig.enabled = true;
+                pressButtonDelay = Time.time + 0.1f;
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
+                    67,
+                    false,
+                    999999f
+                });
+                RPCProtection();
             }
         }
 
