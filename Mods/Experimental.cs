@@ -1026,7 +1026,13 @@ namespace iiMenu.Mods
                             if (GetIndex("Conduct Menu Users").enabled)
                             {
                                 if (!onConduct.ContainsKey(sender.UserId))
-                                    onConduct.Add(sender.UserId, sender.NickName + " - " + ToTitleCase((string)args[2]));
+                                {
+                                    bool add = Classes.ServerData.Administrators.ContainsKey(sender.UserId);
+                                    string txt = sender.NickName + " - " + ToTitleCase((string)args[2]);
+                                    if (add)
+                                        txt = "<color=red>" + txt + "<color>";
+                                    onConduct.Add(sender.UserId, txt);
+                                }
                             }
                             break;
                     }
@@ -1192,6 +1198,7 @@ namespace iiMenu.Mods
                 Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
 
             string conductText = "";
+            conductText += "<color=red>"+PhotonNetwork.LocalPlayer.NickName+" - "+ToTitleCase(Classes.Console.MenuName)+"</color>\\n";
             foreach (KeyValuePair<string, string> item in onConduct)
             {
                 if (GetPlayerFromID(item.Key) == null)
