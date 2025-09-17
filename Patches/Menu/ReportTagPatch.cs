@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaTagManager), "ReportTag")]
     public class ReportTagPatch

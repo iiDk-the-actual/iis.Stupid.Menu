@@ -4,9 +4,9 @@ using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
 using GorillaTagScripts;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using iiMenu.Notifications;
-using iiMenu.Patches;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods

@@ -1,8 +1,9 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaComputer), "GeneralFailureMessage")]
     public class FailurePatch

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 // There is literally no reason I should have to rewrite Photon
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(NetworkSystemPUN), "MakeOrFindRoom")]
     public class RoomPatch

@@ -2,9 +2,11 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts.ModIO;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Notifications;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -13,8 +15,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Console = iiMenu.Classes.Menu.Console;
 
 namespace iiMenu.Mods
 {
@@ -69,9 +72,9 @@ namespace iiMenu.Mods
 
         public static void OnlySerializeNecessary()
         {
-            if (Patches.SerializePatch.OverrideSerialization == null)
+            if (SerializePatch.OverrideSerialization == null)
             {
-                Patches.SerializePatch.OverrideSerialization = () =>
+                SerializePatch.OverrideSerialization = () =>
                 {
                     if (PhotonNetwork.InRoom)
                     {
@@ -275,14 +278,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                        Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                     }
                 }
             }
         }
 
         public static void AdminKickAll() =>
-            Classes.Console.ExecuteCommand("kickall", ReceiverGroup.All);
+            Console.ExecuteCommand("kickall", ReceiverGroup.All);
         
         public static void AdminCrashGun()
         {
@@ -298,14 +301,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("crash", GetPlayerFromVRRig(gunTarget).ActorNumber);
+                        Console.ExecuteCommand("crash", GetPlayerFromVRRig(gunTarget).ActorNumber);
                     }
                 }
             }
         }
         
         public static void AdminCrashAll() =>
-            Classes.Console.ExecuteCommand("crash", ReceiverGroup.Others);
+            Console.ExecuteCommand("crash", ReceiverGroup.Others);
         
         public static void AdminLagSpikeGun()
         {
@@ -321,7 +324,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.5f;
-                        Classes.Console.ExecuteCommand("sleep", GetPlayerFromVRRig(gunTarget).ActorNumber, 1000);
+                        Console.ExecuteCommand("sleep", GetPlayerFromVRRig(gunTarget).ActorNumber, 1000);
                     }
                 }
             }
@@ -340,7 +343,7 @@ namespace iiMenu.Mods
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("sleep", GetPlayerFromVRRig(lockTarget).ActorNumber, 50);
+                        Console.ExecuteCommand("sleep", GetPlayerFromVRRig(lockTarget).ActorNumber, 50);
                         RPCProtection();
                     }
                 }
@@ -361,14 +364,14 @@ namespace iiMenu.Mods
         }
 
         public static void AdminLagSpikeAll() =>
-            Classes.Console.ExecuteCommand("sleep", ReceiverGroup.Others, 1000);
+            Console.ExecuteCommand("sleep", ReceiverGroup.Others, 1000);
 
         public static void AdminLagAll()
         {
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                Classes.Console.ExecuteCommand("sleep", ReceiverGroup.Others, 50);
+                Console.ExecuteCommand("sleep", ReceiverGroup.Others, 50);
                 RPCProtection();
             }
         }
@@ -388,7 +391,7 @@ namespace iiMenu.Mods
                         if (lockTarget.rightThumb.calcT > 0.5f)
                         {
                             adminEventDelay = Time.time + 0.1f;
-                            Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.headMesh.transform.forward * Movement._flySpeed);
+                            Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.headMesh.transform.forward * Movement._flySpeed);
                             RPCProtection();
                         }
                     }
@@ -423,14 +426,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.2f;
-                        Classes.Console.ExecuteCommand("vibrate", GetPlayerFromVRRig(gunTarget).ActorNumber, 3, 1f);
+                        Console.ExecuteCommand("vibrate", GetPlayerFromVRRig(gunTarget).ActorNumber, 3, 1f);
                     }
                 }
             }
         }
         
         public static void AdminVibrateAll() =>
-            Classes.Console.ExecuteCommand("vibrate", ReceiverGroup.Others, 3, 1f);
+            Console.ExecuteCommand("vibrate", ReceiverGroup.Others, 3, 1f);
         
         public static void AdminBMuteGun(bool mute)
         {
@@ -446,7 +449,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.5f;
-                        Classes.Console.ExecuteCommand(mute ? "mute" : "unmute", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                        Console.ExecuteCommand(mute ? "mute" : "unmute", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                     }
                 }
             }
@@ -466,7 +469,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 5f;
-                        Classes.Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
+                        Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
                     }
                 }
             }
@@ -486,8 +489,8 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 5f;
-                        Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).NickName + " has been blocked" + (Silent ? "" : " by " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) + ".");
-                        Classes.Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
+                        Console.ExecuteCommand("notify", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).NickName + " has been blocked" + (Silent ? "" : " by " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) + ".");
+                        Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
                         RPCProtection();
                     }
                 }
@@ -495,7 +498,7 @@ namespace iiMenu.Mods
         }
         
         public static void AdminBMuteAll(bool mute) =>
-            Classes.Console.ExecuteCommand(mute ? "muteall" : "unmuteall", ReceiverGroup.All);
+            Console.ExecuteCommand(mute ? "muteall" : "unmuteall", ReceiverGroup.All);
         
         public static void AdminButtonPressGun(string key)
         {
@@ -511,7 +514,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.8f;
-                        Classes.Console.ExecuteCommand("controller", GetPlayerFromVRRig(gunTarget).ActorNumber, key, 1f, 1f);
+                        Console.ExecuteCommand("controller", GetPlayerFromVRRig(gunTarget).ActorNumber, key, 1f, 1f);
                         RPCProtection();
                     }
                 }
@@ -532,7 +535,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Right Hand");
+                        Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Right Hand");
                     }
                 }
             }
@@ -552,7 +555,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, mod, enable);
+                        Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, mod, enable);
                     }
                 }
             }
@@ -561,11 +564,11 @@ namespace iiMenu.Mods
         private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
         private static System.Collections.IEnumerator FreezeCoroutine(VRRig rig)
         {
-            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(rig).ActorNumber, "Zero Gravity", true);
+            Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(rig).ActorNumber, "Zero Gravity", true);
             Vector3 pos = rig.transform.position;
             while (GorillaParent.instance.vrrigs.Contains(rig))
             {
-                Classes.Console.ExecuteCommand("tp", GetPlayerFromVRRig(rig).ActorNumber, pos);
+                Console.ExecuteCommand("tp", GetPlayerFromVRRig(rig).ActorNumber, pos);
                 yield return new WaitForSeconds(0.1f);
             }
         }
@@ -589,7 +592,7 @@ namespace iiMenu.Mods
                         if (!freeze && freezePool.ContainsKey(gunTarget))
                         {
                             CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
-                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Zero Gravity", false);
+                            Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Zero Gravity", false);
                             freezePool.Remove(gunTarget);
                         }
                     }
@@ -608,7 +611,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("tp", ReceiverGroup.Others, NewPointer.transform.position);
+                    Console.ExecuteCommand("tp", ReceiverGroup.Others, NewPointer.transform.position);
                 }
             }
         }
@@ -627,7 +630,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(gunTarget).ActorNumber, new Vector3(0f, 50f, 0f));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(gunTarget).ActorNumber, new Vector3(0f, 50f, 0f));
                     }
                 }
             }
@@ -647,7 +650,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
+                        Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
                     }
                 }
             }
@@ -660,21 +663,21 @@ namespace iiMenu.Mods
             {
                 if (!fullActorNumbers.Contains(actorNumber))
                 {
-                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
-                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Load Preferences");
+                    Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
+                    Console.ExecuteCommand("forceenable", actorNumber, "Load Preferences");
                 }
             } else
             {
                 if (fullActorNumbers.Contains(actorNumber))
                 {
-                    Classes.Console.ExecuteCommand("toggle", actorNumber, "Save Preferences");
-                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
-                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Panic", true);
-                    Classes.Console.ExecuteCommand("togglemenu", actorNumber, enable);
+                    Console.ExecuteCommand("toggle", actorNumber, "Save Preferences");
+                    Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
+                    Console.ExecuteCommand("forceenable", actorNumber, "Panic", true);
+                    Console.ExecuteCommand("togglemenu", actorNumber, enable);
                 }
             }
 
-            Classes.Console.ExecuteCommand("togglemenu", actorNumber, enable);
+            Console.ExecuteCommand("togglemenu", actorNumber, enable);
         }
 
         public static void AdminFullLockdownGun(bool enable)
@@ -702,7 +705,7 @@ namespace iiMenu.Mods
         public static void AdminLockdownAll(bool enable)
         {
             if (PhotonNetwork.InRoom && (!lastInRoom2 || PhotonNetwork.PlayerList.Length != lastPlayerCount2))
-                Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
+                Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
 
             lastInRoom2 = PhotonNetwork.InRoom;
             lastPlayerCount2 = PhotonNetwork.PlayerList.Length;
@@ -751,7 +754,7 @@ namespace iiMenu.Mods
                     if (Time.time > stdell)
                     {
                         stdell = Time.time + 0.05f;
-                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
+                        Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
                     }
                 }
             }
@@ -760,7 +763,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
@@ -805,7 +808,7 @@ namespace iiMenu.Mods
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.05f;
-                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
+                        Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
                     }
                 }
             }
@@ -815,7 +818,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
@@ -843,7 +846,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position);
+                    Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -859,7 +862,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), RandomVector3(360f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
+                    Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), RandomVector3(360f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
                 }
             }
         }
@@ -871,7 +874,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > scalenetdel && (lastnetscale != VRRig.LocalRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
             {
-                Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, VRRig.LocalRig.scaleFactor);
+                Console.ExecuteCommand("scale", ReceiverGroup.All, VRRig.LocalRig.scaleFactor);
                 scalenetdel = Time.time + 0.05f;
                 lastnetscale = VRRig.LocalRig.scaleFactor;
                 lastplayercount = PhotonNetwork.PlayerList.Length;
@@ -879,7 +882,7 @@ namespace iiMenu.Mods
         }
 
         public static void UnAdminNetworkScale() =>
-            Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, 1f);
+            Console.ExecuteCommand("scale", ReceiverGroup.All, 1f);
 
         public static void LightningGun()
         {
@@ -892,7 +895,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, NewPointer.transform.position);
+                    Console.ExecuteCommand("strike", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -902,7 +905,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)));
+                Console.ExecuteCommand("strike", ReceiverGroup.All, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)));
             }
         }
 
@@ -916,9 +919,9 @@ namespace iiMenu.Mods
                 if (gunTarget && !PlayerIsLocal(gunTarget))
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                    Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                 } else
-                    Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, Ray.point);
+                    Console.ExecuteCommand("strike", ReceiverGroup.All, Ray.point);
             }
         }
 
@@ -947,14 +950,14 @@ namespace iiMenu.Mods
                         whereOriginalPlayerPos = gunTarget.transform.position;
 
                         int actorNumber = GetPlayerFromVRRig(gunTarget).ActorNumber;
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f));
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f));
                         
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f));
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f));
                         
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
-                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
+                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
 
                         GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(platform, 60f);
@@ -974,15 +977,15 @@ namespace iiMenu.Mods
                     gunLocked = false;
 
                     TeleportPlayer(originalMePosition);
-                    Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(lockTarget).ActorNumber, whereOriginalPlayerPos);
-                    Classes.Console.ExecuteCommand("unmuteall", GetPlayerFromVRRig(lockTarget).ActorNumber);
+                    Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(lockTarget).ActorNumber, whereOriginalPlayerPos);
+                    Console.ExecuteCommand("unmuteall", GetPlayerFromVRRig(lockTarget).ActorNumber);
                 }
             }
         }
 
         public static void EnableNoAdminIndicator()
         {
-            Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
+            Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
             lastplayercount = -1;
         }
 
@@ -993,13 +996,13 @@ namespace iiMenu.Mods
             
             if (PhotonNetwork.PlayerList.Length != lastplayercount && PhotonNetwork.InRoom)
             {
-                Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
+                Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
                 lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
 
         public static void AdminIndicatorBack() =>
-            Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, false);
+            Console.ExecuteCommand("nocone", ReceiverGroup.All, false);
 
         public static void EnableAdminMenuUserTags()
         {
@@ -1019,7 +1022,7 @@ namespace iiMenu.Mods
             try
             {
                 Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
-                if (data.Code == Classes.Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
+                if (data.Code == Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
                     string command = (string)args[0];
@@ -1041,7 +1044,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+                                        userColor = Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -1053,7 +1056,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+                                        userColor = Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -1063,7 +1066,7 @@ namespace iiMenu.Mods
                             {
                                 if (!onConduct.ContainsKey(sender.UserId))
                                 {
-                                    bool add = Classes.ServerData.Administrators.ContainsKey(sender.UserId);
+                                    bool add = ServerData.Administrators.ContainsKey(sender.UserId);
                                     string txt = sender.NickName + " - " + ToTitleCase((string)args[2]);
                                     if (add)
                                         txt = "<color=red>" + txt + "<color>";
@@ -1081,7 +1084,7 @@ namespace iiMenu.Mods
         public static void AdminMenuUserTags()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
-                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+                Console.ExecuteCommand("isusing", ReceiverGroup.All);
             
             lastInRoom = PhotonNetwork.InRoom;
             lastPlayerCount = PhotonNetwork.PlayerList.Length;
@@ -1131,7 +1134,7 @@ namespace iiMenu.Mods
             try
             {
                 Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
-                if (data.Code == Classes.Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
+                if (data.Code == Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
                     string command = (string)args[0];
@@ -1153,7 +1156,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+                                        userColor = Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -1166,7 +1169,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
+                                        userColor = Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -1182,7 +1185,7 @@ namespace iiMenu.Mods
         public static void MenuUserTracers()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
-                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+                Console.ExecuteCommand("isusing", ReceiverGroup.All);
 
             lastInRoom = PhotonNetwork.InRoom;
             lastPlayerCount = PhotonNetwork.PlayerList.Length;
@@ -1208,7 +1211,7 @@ namespace iiMenu.Mods
                 if (playerRig.isLocal)
                     continue;
 
-                Color lineColor = Classes.Console.GetMenuTypeName(userData.Value);
+                Color lineColor = Console.GetMenuTypeName(userData.Value);
 
                 LineRenderer line = Visuals.GetLineRender(hiddenOnCamera);
 
@@ -1231,10 +1234,10 @@ namespace iiMenu.Mods
         public static void ConsoleOnConduct()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount) && !GetIndex("Menu User Name Tags").enabled)
-                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+                Console.ExecuteCommand("isusing", ReceiverGroup.All);
 
             string conductText = "";
-            conductText += "<color=red>"+PhotonNetwork.LocalPlayer.NickName+" - "+ToTitleCase(Classes.Console.MenuName)+"</color>\\n";
+            conductText += "<color=red>"+PhotonNetwork.LocalPlayer.NickName+" - "+ToTitleCase(Console.MenuName)+"</color>\\n";
             foreach (KeyValuePair<string, string> item in onConduct)
             {
                 if (GetPlayerFromID(item.Key) == null)
@@ -1259,7 +1262,7 @@ namespace iiMenu.Mods
                     {
                         Vector3 vel = rightHand ? GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
 
-                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(rig).ActorNumber, vel);
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(rig).ActorNumber, vel);
                         thingdeb = Time.time + 0.1f;
                     }
                 }
@@ -1284,14 +1287,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, targetRoom.ToUpper());
+                        Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, targetRoom.ToUpper());
                     }
                 }
             }
         }
 
         public static void JoinAll() =>
-            PromptText("What room would you like the users to join?", () => Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
+            PromptText("What room would you like the users to join?", () => Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
 
         public static string targetNotification;
         public static void GetTargetNotification()
@@ -1304,7 +1307,7 @@ namespace iiMenu.Mods
         }
 
         public static void NotifySelf() =>
-            Classes.Console.ExecuteCommand("notify", PhotonNetwork.LocalPlayer.ActorNumber, targetNotification);
+            Console.ExecuteCommand("notify", PhotonNetwork.LocalPlayer.ActorNumber, targetNotification);
 
         public static void NotifyGun()
         {
@@ -1320,19 +1323,19 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, targetNotification);
+                        Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, targetNotification);
                     }
                 }
             }
         }
 
         public static void NotifyAll() =>
-            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, targetNotification);
+            Console.ExecuteCommand("notify", ReceiverGroup.All, targetNotification);
 
         public static void GetMenuUsers()
         {
-            Classes.Console.indicatorDelay = Time.time + 2f;
-            Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+            Console.indicatorDelay = Time.time + 2f;
+            Console.ExecuteCommand("isusing", ReceiverGroup.All);
         }
 
         private static bool lastLasering = false;
@@ -1347,17 +1350,17 @@ namespace iiMenu.Mods
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                        Classes.Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                        Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                 } catch { }
                 if (Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("laser", ReceiverGroup.All, true, rightPrimary);
+                    Console.ExecuteCommand("laser", ReceiverGroup.All, true, rightPrimary);
                 }
             }
             bool isLasering = leftPrimary || rightPrimary;
             if (lastLasering && !isLasering)
-                Classes.Console.ExecuteCommand("laser", ReceiverGroup.All, false, false);
+                Console.ExecuteCommand("laser", ReceiverGroup.All, false, false);
             
             lastLasering = isLasering;
         }
@@ -1370,7 +1373,7 @@ namespace iiMenu.Mods
                 beamDelay = Time.time + 0.05f;
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
-                Classes.Console.ExecuteCommand("lr", ReceiverGroup.All, color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f);
+                Console.ExecuteCommand("lr", ReceiverGroup.All, color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f);
             }
         }
 
@@ -1388,7 +1391,7 @@ namespace iiMenu.Mods
                 beamDelay = Time.time + 0.5f;
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
-                Classes.Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
+                Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
             }
         }
 
@@ -1397,7 +1400,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("vel", ReceiverGroup.Others, new Vector3(0f, 10f, 0f));
+                Console.ExecuteCommand("vel", ReceiverGroup.Others, new Vector3(0f, 10f, 0f));
             }
         }
 
@@ -1415,7 +1418,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(gunTarget).ActorNumber, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
+                        Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(gunTarget).ActorNumber, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
                     }
                 }
             }
@@ -1426,7 +1429,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
+                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
             }
         }
 
@@ -1435,7 +1438,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, TrueRightHand().position + TrueRightHand().forward);
+                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, TrueRightHand().position + TrueRightHand().forward);
             }
         }
 
@@ -1444,7 +1447,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward);
+                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward);
             }
         }
 
@@ -1453,12 +1456,12 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f)));
+                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f)));
             }
         }
 
         public static void ConfirmNotifyAllUsing() =>
-            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
+            Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
 
         public static int[] oldCosmetics;
         public static int[] oldTryOn;
@@ -1475,7 +1478,7 @@ namespace iiMenu.Mods
 
                     if (!string.IsNullOrEmpty(concat))
                     {
-                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, concat);
+                        Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, concat);
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
                     }
                 }
@@ -1490,7 +1493,7 @@ namespace iiMenu.Mods
 
             if (!string.IsNullOrEmpty(concat))
             {
-                Classes.Console.ExecuteCommand("cosmetic", new int[] { player.ActorNumber }, concat);
+                Console.ExecuteCommand("cosmetic", new int[] { player.ActorNumber }, concat);
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
             }
         }

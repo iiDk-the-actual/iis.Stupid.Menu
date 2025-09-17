@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaGameModes.GameMode), "ReportTag")]
     public class TagPatch
@@ -35,27 +35,27 @@ namespace iiMenu.Patches
                     switch (tagCount)
                     {
                         case 1:
-                            if (Menu.Main.InfectedList().Count <= 1)
-                                Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/firstblood.wav", "firstblood.wav"), Menu.Main.buttonClickVolume / 10f);
+                            if (iiMenu.Menu.Main.InfectedList().Count <= 1)
+                                iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/firstblood.wav", "firstblood.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             
                             break;
                         case 2:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/doublekill.wav", "doublekill.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/doublekill.wav", "doublekill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                         case 3:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/triplekill.wav", "triplekill.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/triplekill.wav", "triplekill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                         case 4:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/killingspree.wav", "killingspree.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/killingspree.wav", "killingspree.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                         case 5:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/wickedsick.wav", "wickedsick.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/wickedsick.wav", "wickedsick.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                         case 6:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/monsterkill.wav", "monsterkill.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/monsterkill.wav", "monsterkill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                         case 7:
-                            Menu.Main.Play2DAudio(Menu.Main.LoadSoundFromURL($"{killsounds}/rampage.wav", "rampage.wav"), Menu.Main.buttonClickVolume / 10f);
+                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/rampage.wav", "rampage.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
                             break;
                     }
                 }

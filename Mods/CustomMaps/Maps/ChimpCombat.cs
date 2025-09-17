@@ -1,10 +1,10 @@
 using ExitGames.Client.Photon;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.CustomMaps.Manager;
 

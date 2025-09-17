@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using iiMenu.Mods;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GrowingSnowballThrowable), "OnEnable")]
     public class EnablePatch

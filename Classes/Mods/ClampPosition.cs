@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Mods
 {
     public class ClampPosition : MonoBehaviour
     {

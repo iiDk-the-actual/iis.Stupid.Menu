@@ -3,7 +3,9 @@ using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Classes.Mods;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -11,8 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -356,7 +357,7 @@ namespace iiMenu.Mods
 
         public static void DisableGamesenseRing()
         {
-            Patches.HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
+            HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
 
             foreach (object[] handTapData in handTaps)
             {

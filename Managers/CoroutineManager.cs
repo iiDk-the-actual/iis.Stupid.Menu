@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace iiMenu.Managers
 {
     public class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
     {

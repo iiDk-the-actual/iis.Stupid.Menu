@@ -1,7 +1,7 @@
 using GorillaTagScripts.ModIO;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods.CustomMaps.Maps;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

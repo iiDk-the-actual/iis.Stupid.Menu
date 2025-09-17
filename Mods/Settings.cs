@@ -1,7 +1,8 @@
 using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaNetworking;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
@@ -20,8 +21,9 @@ using UnityEngine.InputSystem;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Console = iiMenu.Classes.Menu.Console;
 
 namespace iiMenu.Mods
 {
@@ -639,21 +641,21 @@ namespace iiMenu.Mods
                         new ButtonInfo {
                             buttonText = "Admin Kick Player",
                             overlapText = $"Admin Kick {targetName}",
-                            method =() => Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, player.UserId),
+                            method =() => Console.ExecuteCommand("kick", ReceiverGroup.All, player.UserId),
                             isTogglable = false,
                             toolTip = $"Kicks {targetName} if they're using the menu."
                         },
                         new ButtonInfo {
                             buttonText = "Admin Bring Player",
                             overlapText = $"Admin Bring {targetName}",
-                            method =() => Classes.Console.ExecuteCommand("tp", player.ActorNumber, GorillaTagger.Instance.headCollider.transform.position),
+                            method =() => Console.ExecuteCommand("tp", player.ActorNumber, GorillaTagger.Instance.headCollider.transform.position),
                             isTogglable = false,
                             toolTip = $"Brings {targetName} to you if they're using the menu."
                         },
                         new ButtonInfo {
                             buttonText = "Admin Crash Player",
                             overlapText = $"Admin Crash {targetName}",
-                            method =() => Classes.Console.ExecuteCommand("crash", player.ActorNumber),
+                            method =() => Console.ExecuteCommand("crash", player.ActorNumber),
                             isTogglable = false,
                             toolTip = $"Crashes {targetName} if they're using the menu."
                         },

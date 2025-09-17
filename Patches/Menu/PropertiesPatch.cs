@@ -3,7 +3,7 @@ using HarmonyLib;
 using Photon.Realtime;
 using System.Linq;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     // Gizmo I didn't steal this idea from you
     [HarmonyPatch(typeof(Player), "SetCustomProperties")]

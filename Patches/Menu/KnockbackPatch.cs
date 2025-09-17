@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "ApplyKnockback")]
     public class KnockbackPatch

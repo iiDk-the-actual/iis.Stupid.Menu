@@ -1,5 +1,5 @@
 using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using System;
 using System.Linq;
 using System.Reflection;

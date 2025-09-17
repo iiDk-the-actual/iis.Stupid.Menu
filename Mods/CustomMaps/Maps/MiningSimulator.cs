@@ -1,4 +1,4 @@
-﻿using iiMenu.Classes;
+﻿using iiMenu.Classes.Menu;
 using System.Collections.Generic;
 using static iiMenu.Mods.CustomMaps.Manager;
 

@@ -1,6 +1,7 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
+using iiMenu.Managers;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -17,7 +18,7 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.Video;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class Console : MonoBehaviour
     {
@@ -31,9 +32,9 @@ namespace iiMenu.Classes
 
         public static bool DisableMenu // Variable used to disable menu from opening
         {
-            get => Menu.Main.Lockdown;
+            get => iiMenu.Menu.Main.Lockdown;
             set =>
-                Menu.Main.Lockdown = value;
+                iiMenu.Menu.Main.Lockdown = value;
         }
 
         public static void SendNotification(string text, int sendTime = 1000) => // Method used to spawn notifications
@@ -42,13 +43,13 @@ namespace iiMenu.Classes
         public static void TeleportPlayer(Vector3 position) // Only modify this if you need any special logic
         {
             GTPlayer.Instance.TeleportTo(position, GTPlayer.Instance.transform.rotation);
-            Mods.Movement.lastPosition = position;
-            Menu.Main.closePosition = position;
+            iiMenu.Mods.Movement.lastPosition = position;
+            iiMenu.Menu.Main.closePosition = position;
         }
 
         public static void EnableMod(string mod, bool enable) // Method used to enable mods
         {
-            ButtonInfo Button = Menu.Main.GetIndex(mod);
+            ButtonInfo Button = iiMenu.Menu.Main.GetIndex(mod);
             if (!Button.isTogglable)
                 Button.method.Invoke();
             else
@@ -59,10 +60,10 @@ namespace iiMenu.Classes
         }
 
         public static void ToggleMod(string mod) => // Method used to toggle mod by name
-            Menu.Main.Toggle(mod);
+            iiMenu.Menu.Main.Toggle(mod);
         
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
-            Mods.Visuals.ConsoleBeacon(id, version);
+            iiMenu.Mods.Visuals.ConsoleBeacon(id, version);
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);

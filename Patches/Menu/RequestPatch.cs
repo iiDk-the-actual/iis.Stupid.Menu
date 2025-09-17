@@ -1,6 +1,6 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using iiMenu.Mods;
 using Photon.Pun;
 using System;
@@ -8,7 +8,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
     public class RequestPatch
@@ -40,7 +40,7 @@ namespace iiMenu.Patches
                         CosmeticsController.CosmeticSet items = new CosmeticsController.CosmeticSet
                         (
                             CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Select(
-                                cosmetic => Menu.Main.CosmeticsOwned.Contains(cosmetic)
+                                cosmetic => iiMenu.Menu.Main.CosmeticsOwned.Contains(cosmetic)
                                     ? cosmetic
                                     : "null"
                                 )
@@ -61,7 +61,7 @@ namespace iiMenu.Patches
         {
             if (PhotonNetwork.InRoom)
             {
-                Vector3 target = Menu.Main.TryOnRoom.transform.position;
+                Vector3 target = iiMenu.Menu.Main.TryOnRoom.transform.position;
 
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = target;
@@ -69,7 +69,7 @@ namespace iiMenu.Patches
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
 
-                while (Vector3.Distance(Menu.Main.ServerPos, target) > 0.2f)
+                while (Vector3.Distance(iiMenu.Menu.Main.ServerPos, target) > 0.2f)
                     yield return null;
                 
                 yield return new WaitForSeconds(0.1f);

@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "IsPositionInRange")]
     public class DistancePatch
@@ -12,7 +12,7 @@ namespace iiMenu.Patches
         public static void Postfix(VRRig __instance, ref bool __result, Vector3 position, float range)
         {
             NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
-            if ((enabled && __instance.isLocal) || (player != null && Menu.Main.ShouldBypassChecks(player)))
+            if ((enabled && __instance.isLocal) || (player != null && iiMenu.Menu.Main.ShouldBypassChecks(player)))
                 __result = true;
         }
     }

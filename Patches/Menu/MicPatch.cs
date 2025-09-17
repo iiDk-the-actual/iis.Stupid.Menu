@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaSpeakerLoudness), "UpdateLoudness")]
     public class MicPatch

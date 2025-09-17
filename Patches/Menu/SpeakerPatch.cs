@@ -3,7 +3,7 @@ using iiMenu.Mods;
 using Photon.Voice;
 using Photon.Voice.Unity;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(Speaker), "OnAudioFrame")]
     public class SpeakerPatch

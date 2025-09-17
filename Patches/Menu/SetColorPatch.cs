@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "InitializeNoobMaterial")]
     public class InitializeNoobMaterial
@@ -9,7 +9,7 @@ namespace iiMenu.Patches
         public static bool Prefix(VRRig __instance, float red, float green, float blue, PhotonMessageInfoWrapped info)
         {
             NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
-            if (player != null && Menu.Main.ShouldBypassChecks(player))
+            if (player != null && iiMenu.Menu.Main.ShouldBypassChecks(player))
             {
                 if (info.senderID == NetworkSystem.Instance.GetOwningPlayerID(__instance.rigSerializer.gameObject))
                     __instance.InitializeNoobMaterialLocal(red, green, blue);

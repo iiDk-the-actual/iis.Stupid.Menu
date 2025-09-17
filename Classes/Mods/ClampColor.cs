@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using iiMenu.Classes.Menu;
+using UnityEngine;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Mods
 {
     public class ClampColor : MonoBehaviour
     {

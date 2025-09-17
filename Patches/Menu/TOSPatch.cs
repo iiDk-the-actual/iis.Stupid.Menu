@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using System.Threading.Tasks;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(LegalAgreements), "Update")]
     public class TOSPatch

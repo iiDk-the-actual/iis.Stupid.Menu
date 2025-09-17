@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(NetworkSystemPUN), "InternalDisconnect")]
     public class SinglePlayerPatch

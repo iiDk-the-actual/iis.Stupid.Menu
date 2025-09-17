@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "SerializeReadShared")]
     public class PlayerSerializePatch

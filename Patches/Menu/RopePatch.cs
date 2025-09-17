@@ -3,7 +3,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaRopeSwing), "AttachLocalPlayer")]
     public class RopePatch

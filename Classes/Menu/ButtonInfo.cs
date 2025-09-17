@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class ButtonInfo
     {

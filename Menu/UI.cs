@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using GorillaNetworking;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Mods;
 using Photon.Pun;
 using System;
