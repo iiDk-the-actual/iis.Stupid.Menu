@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "PackCompetitiveData")]
     public class FPSPatch

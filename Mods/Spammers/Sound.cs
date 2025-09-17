@@ -1,5 +1,5 @@
 ﻿using ExitGames.Client.Photon;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;

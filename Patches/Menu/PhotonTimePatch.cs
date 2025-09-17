@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(PhotonNetwork), "get_ServerTimestamp")]
     public class PhotonTimePatch

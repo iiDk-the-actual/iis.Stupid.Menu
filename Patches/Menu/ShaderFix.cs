@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GameObject), "CreatePrimitive")]
     public class ShaderFix

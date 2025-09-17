@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using Photon.Pun;
 using System;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(PhotonNetwork), "RunViewUpdate")]
     public class SerializePatch

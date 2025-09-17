@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class ExtGradient
     {

@@ -1,7 +1,7 @@
 ﻿using GorillaLocomotion;
 using HarmonyLib;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GTPlayer), "GetSlidePercentage")]
     public class SlidePatch

@@ -2,7 +2,7 @@ using GorillaLocomotion;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Mods
 {
     public class CustomParticle : MonoBehaviour
 	{

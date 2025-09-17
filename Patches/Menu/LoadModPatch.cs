@@ -2,7 +2,7 @@
 using HarmonyLib;
 using ModIO;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(CustomMapManager), "LoadMod")]
     public class LoadModPatch

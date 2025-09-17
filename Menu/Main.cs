@@ -5,11 +5,14 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Classes.Mods;
+using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -33,7 +36,9 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.VR;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
+using Button = iiMenu.Classes.Menu.Button;
+using Console = iiMenu.Classes.Menu.Console;
 
 /*
  * ii's Stupid Menu, written by @goldentrophy
@@ -1459,7 +1464,7 @@ namespace iiMenu.Menu
                         buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
                 }
 
-                Classes.Button Button = buttonObject.AddComponent<Classes.Button>();
+                Button Button = buttonObject.AddComponent<Button>();
                 Button.relatedText = method.buttonText;
 
                 if (incrementalButtons)
@@ -1592,7 +1597,7 @@ namespace iiMenu.Menu
             else
                 buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
 
-            buttonObject.AddComponent<Classes.Button>().relatedText = "Search";
+            buttonObject.AddComponent<Button>().relatedText = "Search";
 
             if (shouldOutline)
                 OutlineObj(buttonObject, isSearching ^ !swapButtonColors);
@@ -1663,7 +1668,7 @@ namespace iiMenu.Menu
             else
                 buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Classes.Button>().relatedText = "Info Screen";
+            buttonObject.AddComponent<Button>().relatedText = "Info Screen";
 
             if (shouldOutline)
                 OutlineObj(buttonObject, infoScreenEnabled ^ swapButtonColors);
@@ -1722,7 +1727,7 @@ namespace iiMenu.Menu
             else
                 buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Classes.Button>().relatedText = "Donate Button";
+            buttonObject.AddComponent<Button>().relatedText = "Donate Button";
 
             if (shouldOutline)
                 OutlineObj(buttonObject, !swapButtonColors);
@@ -1787,7 +1792,7 @@ namespace iiMenu.Menu
             if (offcenteredPosition)
                 buttonObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
 
-            buttonObject.AddComponent<Classes.Button>().relatedText = "Global Return";
+            buttonObject.AddComponent<Button>().relatedText = "Global Return";
 
             if (shouldOutline)
                 OutlineObj(buttonObject, !swapButtonColors);
@@ -1857,7 +1862,7 @@ namespace iiMenu.Menu
                 else
                     buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
 
-                Classes.Button Button = buttonObject.AddComponent<Classes.Button>();
+                Button Button = buttonObject.AddComponent<Button>();
                 Button.relatedText = method.buttonText;
                 Button.incremental = true;
                 Button.positive = increment;
@@ -2700,7 +2705,7 @@ namespace iiMenu.Menu
                             bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f, NoInvisLayerMask());
                             if (worked)
                             {
-                                Classes.Button collide = hit.transform.gameObject.GetComponent<Classes.Button>();
+                                Button collide = hit.transform.gameObject.GetComponent<Button>();
                                 if (collide != null)
                                 {
                                     collide.OnTriggerEnter(buttonCollider);
@@ -2968,7 +2973,7 @@ namespace iiMenu.Menu
                 button.transform.localScale = new Vector3(0.09f, DeclineText == null ? 0.9f : 0.4375f, 0.08f);
                 button.transform.localPosition = new Vector3(0.56f, DeclineText == null ? 0f : 0.2375f, -0.43f);
 
-                button.AddComponent<Classes.Button>().relatedText = "Accept Prompt";
+                button.AddComponent<Button>().relatedText = "Accept Prompt";
 
                 if (lastClickedName != "Accept Prompt")
                 {
@@ -3044,7 +3049,7 @@ namespace iiMenu.Menu
                 button.transform.localScale = new Vector3(0.09f, 0.4375f, 0.08f);
                 button.transform.localPosition = new Vector3(0.56f, -0.2375f, -0.43f);
 
-                button.AddComponent<Classes.Button>().relatedText = "Decline Prompt";
+                button.AddComponent<Button>().relatedText = "Decline Prompt";
 
                 if (lastClickedName != "Decline Prompt")
                 {
@@ -3138,7 +3143,7 @@ namespace iiMenu.Menu
             button.transform.localScale = scale;
             button.transform.localPosition = position;
 
-            button.AddComponent<Classes.Button>().relatedText = buttonName;
+            button.AddComponent<Button>().relatedText = buttonName;
 
             if (lastClickedName != buttonName)
             {
@@ -5809,7 +5814,7 @@ namespace iiMenu.Menu
                                 {
                                     if (fromMenu && !ignoreForce && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && rightJoystickClick && PhotonNetwork.InRoom)
                                     {
-                                        Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
+                                        Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                     }
@@ -5888,7 +5893,7 @@ namespace iiMenu.Menu
             if (ConsoleObject == null)
             {
                 ConsoleObject = new GameObject(ConsoleGUID);
-                ConsoleObject.AddComponent<Classes.Console>();
+                ConsoleObject.AddComponent<Console>();
             } else
             {
                 if (ConsoleObject.GetComponents<Component>()
@@ -5900,11 +5905,11 @@ namespace iiMenu.Menu
                     .Select(f => f.GetValue(null))
                     .FirstOrDefault() is string consoleVersion)
                 {
-                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(Classes.Console.ConsoleVersion))
+                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(Console.ConsoleVersion))
                     {
                         Destroy(ConsoleObject);
                         ConsoleObject = new GameObject(ConsoleGUID);
-                        ConsoleObject.AddComponent<Classes.Console>();
+                        ConsoleObject.AddComponent<Console>();
                     }
                 }
             }
@@ -5950,8 +5955,8 @@ namespace iiMenu.Menu
             NetworkSystem.Instance.OnPlayerJoined -= OnPlayerJoin;
             NetworkSystem.Instance.OnPlayerLeft -= OnPlayerLeave;
 
-            if (Classes.Console.instance != null)
-                Destroy(Classes.Console.instance.gameObject);
+            if (Console.instance != null)
+                Destroy(Console.instance.gameObject);
 
             if (NotifiLib.instance != null)
             {

@@ -1,7 +1,7 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(PhotonNetworkController), "AttemptToJoinRankedPublicRoom")]
     public class RankedPatch

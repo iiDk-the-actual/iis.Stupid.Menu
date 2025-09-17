@@ -1,16 +1,19 @@
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using System;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using Console = iiMenu.Classes.Menu.Console;
 
 namespace iiMenu.Menu
 {
@@ -310,13 +313,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Join Random", method =() => Important.JoinRandom(), isTogglable = false, toolTip = "Joins a random public room." },
 
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
-                new ButtonInfo { buttonText = "Create Duplicate", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = true; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
+                new ButtonInfo { buttonText = "Create Duplicate", method =() => { RoomPatch.enabled = true; RoomPatch.duplicate = true; }, disableMethod =() =>  RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
 
-                new ButtonInfo { buttonText = "Fast Disconnect", method =() => Patches.SinglePlayerPatch.enabled = true, disableMethod =() =>  Patches.SinglePlayerPatch.enabled = false, toolTip = "Uses the fastest method of disconnecting possible."},
-                new ButtonInfo { buttonText = "Fast Join Rooms", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = false; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Uses the fastest method of joining rooms possible when trying to join a room."},
+                new ButtonInfo { buttonText = "Fast Disconnect", method =() => SinglePlayerPatch.enabled = true, disableMethod =() =>  SinglePlayerPatch.enabled = false, toolTip = "Uses the fastest method of disconnecting possible."},
+                new ButtonInfo { buttonText = "Fast Join Rooms", method =() => { RoomPatch.enabled = true; RoomPatch.duplicate = false; }, disableMethod =() =>  RoomPatch.enabled = false, toolTip = "Uses the fastest method of joining rooms possible when trying to join a room."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 
-                new ButtonInfo { buttonText = "Bypass Join Room Type", method =() => Patches.JoinedRoomPatch.enabled = true, disableMethod =() => Patches.JoinedRoomPatch.enabled = false, toolTip = "Bypasses the immediate disconnection when trying to join a room that is in another map."},
+                new ButtonInfo { buttonText = "Bypass Join Room Type", method =() => JoinedRoomPatch.enabled = true, disableMethod =() => JoinedRoomPatch.enabled = false, toolTip = "Bypasses the immediate disconnection when trying to join a room that is in another map."},
 
                 new ButtonInfo { buttonText = "Auto Join Room \"RUN\"", method =() => Important.QueueRoom("RUN"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"RUN\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"DAISY\"", method =() => Important.QueueRoom("DAISY"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY\" every couple of seconds until connected." },
@@ -349,14 +352,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Gorilla Tag", method =() => Application.Quit(), isTogglable = false, toolTip = "Closes Gorilla Tag."},
                 new ButtonInfo { buttonText = "Restart Gorilla Tag", method =() => Important.RestartGame(), isTogglable = false, toolTip = "Restarts Gorilla Tag."},
 
-                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => Patches.HandTapPatch.enabled = true, disableMethod =() => Patches.HandTapPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
+                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => HandTapPatch.enabled = true, disableMethod =() => HandTapPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
                 new ButtonInfo { buttonText = "First Person Camera", enableMethod =() => Important.EnableFPC(), method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
                 new ButtonInfo { buttonText = "Force Enable Hands", method =() => Important.ForceEnableHands(), toolTip = "Prevents your hands from disconnecting."},
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Important.OculusReportMenu(), toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
-                new ButtonInfo { buttonText = "Accept TOS", method =() => Important.AcceptTOS(), disableMethod =() => Patches.TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
-                new ButtonInfo { buttonText = "Bypass K-ID Restrictions", method =() => Patches.PermissionPatch.enabled = true, disableMethod =() => Patches.PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by K-ID for underage users."},
+                new ButtonInfo { buttonText = "Accept TOS", method =() => Important.AcceptTOS(), disableMethod =() => TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
+                new ButtonInfo { buttonText = "Bypass K-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by K-ID for underage users."},
                 new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.RunCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method =() => Important.CopyPlayerPosition(), isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
@@ -364,11 +367,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications", method =() => NotifiLib.ClearAllNotifications(), isTogglable = false, toolTip = "Clears your notifications. Good for when they get stuck."},
 
                 new ButtonInfo { buttonText = "Anti AFK", enableMethod =() => PhotonNetworkController.Instance.disableAFKKick = true, disableMethod =() => PhotonNetworkController.Instance.disableAFKKick = false, toolTip = "Doesn't let you get kicked for being AFK."},
-                new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => Patches.NetworkTriggerPatch.enabled = true, disableMethod =() => Patches.NetworkTriggerPatch.enabled = false, toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
+                new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => NetworkTriggerPatch.enabled = true, disableMethod =() => NetworkTriggerPatch.enabled = false, toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
                 new ButtonInfo { buttonText = "Disable Map Triggers", enableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(false), disableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(true), toolTip = "Disables the map triggers, so you can change maps without loading them."},
-                new ButtonInfo { buttonText = "Disable Quit Box", enableMethod =() => Patches.QuitBoxPatch.enabled = false, disableMethod =() => Patches.QuitBoxPatch.enabled = true, toolTip = "Disables the box under the map that closes your game."},
+                new ButtonInfo { buttonText = "Disable Quit Box", enableMethod =() => QuitBoxPatch.enabled = false, disableMethod =() => QuitBoxPatch.enabled = true, toolTip = "Disables the box under the map that closes your game."},
                 new ButtonInfo { buttonText = "Physical Quit Box", enableMethod =() => Important.PhysicalQuitbox(), disableMethod =() => Important.DisablePhysicalQuitbox(), toolTip = "Makes the quitbox physical, letting you see and walk on it."},
-                new ButtonInfo { buttonText = "Stump Quit Box", enableMethod =() => Patches.QuitBoxPatch.teleportToStump = true, disableMethod =() => Patches.QuitBoxPatch.teleportToStump = false, toolTip = "Disables the box under the map that closes your game."},
+                new ButtonInfo { buttonText = "Stump Quit Box", enableMethod =() => QuitBoxPatch.teleportToStump = true, disableMethod =() => QuitBoxPatch.teleportToStump = false, toolTip = "Disables the box under the map that closes your game."},
 
                 new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotifiLib.information["REFUND"] = "Refund soon"; } else { NotifiLib.information.Remove("REFUND"); } }, enableMethod =() => Important.CheckNewAcc(), disableMethod =() => NotifiLib.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
 
@@ -389,7 +392,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Tag Lag Detector", method =() => Important.TagLagDetector(), toolTip = "Detects when the master client is not currently allowing tag requests."},
 
-                new ButtonInfo { buttonText = "Anti Stump Kick", enableMethod =() => Patches.GroupPatch.enabled = true, disableMethod =() => Patches.GroupPatch.enabled = false, toolTip = "Stops people from group kicking you."},
+                new ButtonInfo { buttonText = "Anti Stump Kick", enableMethod =() => GroupPatch.enabled = true, disableMethod =() => GroupPatch.enabled = false, toolTip = "Stops people from group kicking you."},
 
                 new ButtonInfo { buttonText = "Connect to US", method =() => PhotonNetwork.ConnectToRegion("us"), isTogglable = false, toolTip = "Connects you to the United States servers."},
                 new ButtonInfo { buttonText = "Connect to US West", method =() => PhotonNetwork.ConnectToRegion("usw"), isTogglable = false, toolTip = "Connects you to the western United States servers."},
@@ -406,20 +409,20 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fake Report Menu <color=grey>[</color><color=green>Y</color><color=grey>]</color>", method =() => Safety.FakeReportMenu(), toolTip = "Imitates opening the report menu when holding <color=green>Y</color>."},
                 new ButtonInfo { buttonText = "Fake Broken Controller <color=grey>[</color><color=green>X</color><color=grey>]</color>", enableMethod =() => GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = false, method =() => Safety.FakeBrokenController(), disableMethod =() => GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = true, toolTip = "Makes you look like your left controller is broken, hold <color=green>X</color> to move your right hand with your left hand."},
                 new ButtonInfo { buttonText = "Fake Power Off <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Safety.FakePowerOff(), toolTip = "Imitates turning off your headset when holding down your <color=green>joystick</color>."},
-                new ButtonInfo { buttonText = "Fake Valve Tracking <color=grey>[</color><color=green>J</color><color=grey>]</color>", enableMethod =() => Patches.TorsoPatch.VRRigLateUpdate += Safety.FakeValveTracking, disableMethod =() => Patches.TorsoPatch.VRRigLateUpdate -= Safety.FakeValveTracking, toolTip = "Imitates what happens when your headset disconnects on a Valve Index when holding your <color=green>right joystick</color>."},
+                new ButtonInfo { buttonText = "Fake Valve Tracking <color=grey>[</color><color=green>J</color><color=grey>]</color>", enableMethod =() => TorsoPatch.VRRigLateUpdate += Safety.FakeValveTracking, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Safety.FakeValveTracking, toolTip = "Imitates what happens when your headset disconnects on a Valve Index when holding your <color=green>right joystick</color>."},
 
                 new ButtonInfo { buttonText = "Disable Gamemode Buttons", enableMethod =() => Safety.SetGamemodeButtonActive(false), disableMethod =() => Safety.SetGamemodeButtonActive(), toolTip = "Disables the gamemode buttons."},
                 new ButtonInfo { buttonText = "Support Page Spoof", method =() => Safety.SpoofSupportPage(), toolTip = "Makes the support page appear as if you are on Oculus."},
 
                 new ButtonInfo { buttonText = "Flush RPCs", method =() => RPCProtection(), isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
-                new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => Patches.AntiCrashPatch.enabled = true, disableMethod =() => Patches.AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
+                new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => AntiCrashPatch.enabled = true, disableMethod =() => AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
                 new ButtonInfo { buttonText = "Anti Kick", enableMethod =() => onlySerializeNecessary = true, method =() => Experimental.OnlySerializeNecessary(), disableMethod =() => onlySerializeNecessary = false, toolTip = "Only networks the necessities to prevent getting kicked."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
 
                 new ButtonInfo { buttonText = "Bypass Automod", method =() => Safety.BypassAutomod(), toolTip = "Attempts to bypass automod muting yourself and others."},
-                new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => Patches.PropertiesPatch.enabled = true, method =() => Safety.BypassModCheckers(), disableMethod =() => Patches.PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have ever mod possible."},
-                new ButtonInfo { buttonText = "Bypass Cosmetic Check", method =() => Patches.RequestPatch.bypassCosmeticCheck = true, disableMethod =() => Patches.RequestPatch.bypassCosmeticCheck = false, toolTip = "Turns off the networking for any cosmetic mods, stopping people from seeing if you're using one."},
+                new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatch.enabled = true, method =() => Safety.BypassModCheckers(), disableMethod =() => PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have ever mod possible."},
+                new ButtonInfo { buttonText = "Bypass Cosmetic Check", method =() => RequestPatch.bypassCosmeticCheck = true, disableMethod =() => RequestPatch.bypassCosmeticCheck = false, toolTip = "Turns off the networking for any cosmetic mods, stopping people from seeing if you're using one."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method =() => Safety.AntiReportDisconnect(), toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method =() => Safety.AntiReportReconnect(), toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
@@ -440,7 +443,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeIdentityRegularOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a regular player would have."},
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Child</color><color=grey>]</color>", method =() => Safety.ChangeIdentityMinigamesOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a kid would have."},
 
-                new ButtonInfo { buttonText = "FPS Spoof", method =() => Safety.FPSSpoof(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
+                new ButtonInfo { buttonText = "FPS Spoof", method =() => Safety.FPSSpoof(), disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
                 new ButtonInfo { buttonText = "Name Spoof", method =() => Safety.NameSpoof(), toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", method =() => Safety.ColorSpoof(), toolTip = "Makes your color appear different to every player."},
 
@@ -528,8 +531,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method =() => Movement.AlwaysMaxVelocity(), toolTip = "Always makes you go as fast as the velocity limit."},
 
-                new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => Patches.SlidePatch.everythingSlippery = true, disableMethod =() => Patches.SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
-                new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => Patches.SlidePatch.everythingGrippy = true, disableMethod =() => Patches.SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
+                new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
+                new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
                 new ButtonInfo { buttonText = "Sticky Hands", method =() => Movement.StickyHands(), disableMethod =() => Movement.DisableStickyHands(), toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method =() => Movement.ClimbyHands(), disableMethod =() => Movement.DisableClimbyHands(), toolTip = "Lets you climb everything like a rope."},
                 new ButtonInfo { buttonText = "Disable Hands", method =() => Movement.SetHandEnabled(false), disableMethod =() => Movement.SetHandEnabled(true), toolTip = "Disables your hand colliders."},
@@ -561,7 +564,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Water", enableMethod =() => Movement.DisableWater(), disableMethod =() => Movement.FixWater(), toolTip = "Disables the water in the beach map." },
                 new ButtonInfo { buttonText = "Air Swim", method =() => Movement.AirSwim(), disableMethod =() => Movement.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.SetSwimSpeed(10f), disableMethod =() => Movement.SetSwimSpeed(), toolTip = "Lets you swim faster in water." },
-                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { Patches.ForcePatch.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); }, disableMethod =() => { Patches.ForcePatch.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
+                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { ForcePatch.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); }, disableMethod =() => { ForcePatch.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.Ghost(), disableMethod =() => Movement.EnableRig(), toolTip = "Keeps your rig still when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method =() => Movement.Invisible(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you go invisible when holding <color=green>B</color>."},
@@ -610,36 +613,36 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Ghost Animations", method =() => Movement.GhostAnimations(), disableMethod =() => Movement.DisableGhostAnimations(), toolTip = "Makes you look like a ghost, making your movement snappy and slow."},
                 new ButtonInfo { buttonText = "Minecraft Animations", method =() => Movement.MinecraftAnimations(), disableMethod =() => Movement.EnableRig(), toolTip = "Puts your hands down, and makes you walk when holding <color=green>A</color>. You can also point with <color=green>B</color>."},
 
-                new ButtonInfo { buttonText = "Stare at Nearby", overlapText = "Stare At Player Nearby", enableMethod =() => Patches.TorsoPatch.VRRigLateUpdate += Movement.StareAtNearby, disableMethod =() => Patches.TorsoPatch.VRRigLateUpdate -= Movement.StareAtNearby, toolTip = "Makes you stare at the nearest player."},
-                new ButtonInfo { buttonText = "Stare at Player Gun", method =() => Movement.StareAtGun(), disableMethod =() => Patches.TorsoPatch.VRRigLateUpdate -= Movement.StareAtTarget, toolTip = "Makes you stare at whoever your hand desires."},
-                new ButtonInfo { buttonText = "Stare at All Players", enableMethod =() => Movement.StareAtAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Makes you stare at everyone in the room."},
+                new ButtonInfo { buttonText = "Stare at Nearby", overlapText = "Stare At Player Nearby", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.StareAtNearby, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtNearby, toolTip = "Makes you stare at the nearest player."},
+                new ButtonInfo { buttonText = "Stare at Player Gun", method =() => Movement.StareAtGun(), disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtTarget, toolTip = "Makes you stare at whoever your hand desires."},
+                new ButtonInfo { buttonText = "Stare at All Players", enableMethod =() => Movement.StareAtAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you stare at everyone in the room."},
                 new ButtonInfo { buttonText = "Floating Rig", enableMethod =() => Movement.EnableFloatingRig(), method =() => Movement.FloatingRig(), disableMethod =() => Movement.DisableFloatingRig(), toolTip = "Makes your rig float."},
 
                 new ButtonInfo { buttonText = "Bees", method =() => Movement.Bees(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes your rig teleport to random players, imitating the bees ghost."},
 
                 new ButtonInfo { buttonText = "Piggyback Gun", method =() => Movement.PiggybackGun(), toolTip = "Teleports you on top of whoever your hand desires repeatedly."},
-                new ButtonInfo { buttonText = "Piggyback All", enableMethod =() => Movement.PiggybackAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Makes you appear on top of everyone in the room"},
+                new ButtonInfo { buttonText = "Piggyback All", enableMethod =() => Movement.PiggybackAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you appear on top of everyone in the room"},
 
                 new ButtonInfo { buttonText = "Copy Movement Gun", method =() => Movement.CopyMovementGun(), toolTip = "Makes your rig copy the movement of whoever your hand desires."},
-                new ButtonInfo { buttonText = "Copy Movement All", enableMethod =() => Movement.CopyMovementAll(), disableMethod =() => { Patches.SerializePatch.OverrideSerialization = null; Movement.followPositions.Clear(); }, toolTip = "Makes your rig copy the movement of every player in the room."},
+                new ButtonInfo { buttonText = "Copy Movement All", enableMethod =() => Movement.CopyMovementAll(), disableMethod =() => { SerializePatch.OverrideSerialization = null; Movement.followPositions.Clear(); }, toolTip = "Makes your rig copy the movement of every player in the room."},
 
                 new ButtonInfo { buttonText = "Follow Player Gun", method =() => Movement.FollowPlayerGun(), toolTip = "Flies your rig towards whoever your hand desires."},
-                new ButtonInfo { buttonText = "Follow All Players", enableMethod =() => Movement.FollowAllPlayers(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Flies your rig towards everyone in the room."},
+                new ButtonInfo { buttonText = "Follow All Players", enableMethod =() => Movement.FollowAllPlayers(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flies your rig towards everyone in the room."},
 
                 new ButtonInfo { buttonText = "Orbit Player Gun", method =() => Movement.OrbitPlayerGun(), toolTip = "Orbits your rig around whoever your hand desires."},
-                new ButtonInfo { buttonText = "Orbit All Players", enableMethod =() => Movement.OrbitAllPlayers(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Orbits your rig around everyone in the room."},
+                new ButtonInfo { buttonText = "Orbit All Players", enableMethod =() => Movement.OrbitAllPlayers(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Orbits your rig around everyone in the room."},
 
                 new ButtonInfo { buttonText = "Jumpscare Gun", method =() => Movement.JumpscareGun(), toolTip = "Makes you jumpscare whoever your hand desires."},
-                new ButtonInfo { buttonText = "Jumpscare All", enableMethod =() => Movement.JumpscareAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Makes you jumpscare everyone in the room."},
+                new ButtonInfo { buttonText = "Jumpscare All", enableMethod =() => Movement.JumpscareAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you jumpscare everyone in the room."},
 
                 new ButtonInfo { buttonText = "Annoy Player Gun", method =() => Movement.AnnoyPlayerGun(), toolTip = "Spazzes your body around whoever your hand desires, with sounds."},
-                new ButtonInfo { buttonText = "Annoy All Players", enableMethod =() => Movement.AnnoyAllPlayers(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Spazzes your body around everyone in the room, with sounds."},
+                new ButtonInfo { buttonText = "Annoy All Players", enableMethod =() => Movement.AnnoyAllPlayers(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Spazzes your body around everyone in the room, with sounds."},
 
                 new ButtonInfo { buttonText = "Intercourse Gun", method =() => Movement.IntercourseGun(), toolTip = "Makes you thrust whoever your hand desires, with sounds."},
-                new ButtonInfo { buttonText = "Intercourse All", enableMethod =() => Movement.IntercourseAll(), method =() => Movement.IntercourseNoises(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, with sounds."},
+                new ButtonInfo { buttonText = "Intercourse All", enableMethod =() => Movement.IntercourseAll(), method =() => Movement.IntercourseNoises(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, with sounds."},
 
                 new ButtonInfo { buttonText = "Head Gun", method =() => Movement.HeadGun(), toolTip = "Makes you thrust whoever your hand desires, but lower, with sounds."},
-                new ButtonInfo { buttonText = "Head All", enableMethod =() => Movement.HeadAll(), method =() => Movement.IntercourseNoises(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, but lower, with sounds."}
+                new ButtonInfo { buttonText = "Head All", enableMethod =() => Movement.HeadAll(), method =() => Movement.IntercourseNoises(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, but lower, with sounds."}
             },
 
             new ButtonInfo[] { // Advantage Mods [10]
@@ -667,7 +670,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Untag Self", method =() => Advantages.UntagSelf(), isTogglable = false, toolTip = "Removes you from the list of tagged players."},
 
                 new ButtonInfo { buttonText = "Anti Tag", method =() => Advantages.AntiTag(), disableMethod =() => Advantages.TagOnJoin(), toolTip = "Removes you from the list of tagged players when tagged."},
-                new ButtonInfo { buttonText = "Report Anti Tag", enableMethod =() => Advantages.ReportAntiTag(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Prevents you from getting tagged, and whoever tries to tag you will just get reported."},
+                new ButtonInfo { buttonText = "Report Anti Tag", enableMethod =() => Advantages.ReportAntiTag(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Prevents you from getting tagged, and whoever tries to tag you will just get reported."},
 
                 new ButtonInfo { buttonText = "No Tag Limit", method =() => GorillaTagger.Instance.maxTagDistance = float.MaxValue, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Removes the distance check when tagging players."}
             },
@@ -692,7 +695,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), disableMethod =() => Visuals.DisableDrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
 
-                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Shows the direction of where people walk around you." },
+                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Shows the direction of where people walk around you." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
@@ -737,7 +740,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fix Rig Colors", method =() => Visuals.FixRigColors(), toolTip = "Fixes a Steam bug where other players' color would be wrong between servers."},
                 new ButtonInfo { buttonText = "Disable Rig Lerping", overlapText = "Disable Rig Smoothing", method =() => Visuals.NoSmoothRigs(), disableMethod =() => Visuals.ReSmoothRigs(), toolTip = "Disable the smoothing on the other player's rigs."},
-                new ButtonInfo { buttonText = "Better Rig Lerping", overlapText = "Better Rig Smoothing", enableMethod =() => Patches.PlayerSerializePatch.OnPlayerSerialize += Visuals.BetterRigLerping, disableMethod =() => Patches.PlayerSerializePatch.OnPlayerSerialize -= Visuals.BetterRigLerping, toolTip = "Estimates the inbetween positions using a real velocity emulator on the other player's rigs."},
+                new ButtonInfo { buttonText = "Better Rig Lerping", overlapText = "Better Rig Smoothing", enableMethod =() => PlayerSerializePatch.OnPlayerSerialize += Visuals.BetterRigLerping, disableMethod =() => PlayerSerializePatch.OnPlayerSerialize -= Visuals.BetterRigLerping, toolTip = "Estimates the inbetween positions using a real velocity emulator on the other player's rigs."},
                 new ButtonInfo { buttonText = "Remove Leaves", enableMethod =() => Visuals.EnableRemoveLeaves(), disableMethod =() => Visuals.DisableRemoveLeaves(), toolTip = "Removes leaves on trees, good for branching."},
                 new ButtonInfo { buttonText = "Streamer Remove Leaves", enableMethod =() => Visuals.EnableStreamerRemoveLeaves(), disableMethod =() => Visuals.DisableStreamerRemoveLeaves(), toolTip = "Removes leaves on trees in VR, but not on the camera. Good for streaming."},
                 new ButtonInfo { buttonText = "Remove Cosmetics", enableMethod =() => Visuals.DisableCosmetics(), disableMethod =() => Visuals.EnableCosmetics(), toolTip = "Locally toggles off your cosmetics, so you can wear sight-blocking cosmetics such as the eyepatch."},
@@ -836,7 +839,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Water Splash Gun", method =() => Fun.WaterSplashGun(), toolTip = "Splashes water wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Confuse Player Gun", method =() => Movement.ConfusePlayerGun(), toolTip = "Makes whoever your hand desires look like they're going crazy by splashing water on their screen."},
-                new ButtonInfo { buttonText = "Confuse All Players", enableMethod =() => Movement.ConfuseAllPlayers(), method =() => Movement.ConfuseAllPlayersSplash(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Splashes water on everyone's screens, making them look like they're going crazy."},
+                new ButtonInfo { buttonText = "Confuse All Players", enableMethod =() => Movement.ConfuseAllPlayers(), method =() => Movement.ConfuseAllPlayersSplash(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Splashes water on everyone's screens, making them look like they're going crazy."},
 
                 new ButtonInfo { buttonText = "Schizophrenic Gun", method =() => Movement.SchizophrenicGun(), toolTip = "Makes you not appear for whoever your hand desires."},
                 new ButtonInfo { buttonText = "Reverse Schizophrenic Gun", method =() => Movement.ReverseSchizoGun(), toolTip = "Makes you only appear for whoever your hand desires."},
@@ -848,7 +851,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Keyboard Tracker", method =() => Fun.KeyboardTracker(), disableMethod =() => Fun.keyboardTrackerEnabled = false, toolTip = "Tracks everyone's keyboard inputs in the lobby."},
 
-                new ButtonInfo { buttonText = "Tag Sounds", enableMethod =() => Fun.PreloadTagSounds(), method =() => Patches.TagPatch.enabled = true, disableMethod =() => Patches.TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
+                new ButtonInfo { buttonText = "Tag Sounds", enableMethod =() => Fun.PreloadTagSounds(), method =() => TagPatch.enabled = true, disableMethod =() => TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
 
                 new ButtonInfo { buttonText = "Free Camera <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Fun.Freecam(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Exit your own body and fly around to your free will."},
                 new ButtonInfo { buttonText = "Third Person Camera", method =() => Fun.ThirdPersonCamera(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Moves your camera to behind your head."},
@@ -899,7 +902,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Matchmaking Tier Spoof", method =() => Safety.SpoofRank(true, Safety.targetRank), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
                 new ButtonInfo { buttonText = "Matchmaking Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
 
-                new ButtonInfo { buttonText = "Badge Tier Spoof", method =() => Safety.SpoofBadge(), disableMethod =() => Patches.SetRankedPatch.enabled = false, toolTip = "Spoofs your competitive badge, showing that you have a higher rank than you really do."},
+                new ButtonInfo { buttonText = "Badge Tier Spoof", method =() => Safety.SpoofBadge(), disableMethod =() => SetRankedPatch.enabled = false, toolTip = "Spoofs your competitive badge, showing that you have a higher rank than you really do."},
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method =() => Fun.ArcadeTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method =() => Fun.StumpTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
@@ -913,16 +916,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Basement Door Spam", method =() => Fun.BasementDoorSpam(), toolTip = "Repeatedly opens and closes the basement door."},
                 new ButtonInfo { buttonText = "Elevator Door Spam", method =() => Fun.ElevatorDoorSpam(), toolTip = "Repeatedly opens and closes the elevator door."},
 
-                new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
+                new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 
                 new ButtonInfo { buttonText = "Get Builder Watch", method =() => Fun.GiveBuilderWatch(), isTogglable = false, toolTip = "Gives you the builder watch without needing to be in attic."},
                 new ButtonInfo { buttonText = "Remove Builder Watch", method =() => Fun.RemoveBuilderWatch(), isTogglable = false, toolTip = "Disables the builder watch."},
 
                 new ButtonInfo { buttonText = "Grab ID Card <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabIDCard(), toolTip = "Puts the ID card in your hand." },
-                new ButtonInfo { buttonText = "Entity Reach", method =() => Patches.EntityGrabPatch.enabled = true, disableMethod =() => Patches.EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
+                new ButtonInfo { buttonText = "Entity Reach", method =() => EntityGrabPatch.enabled = true, disableMethod =() => EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
 
                 new ButtonInfo { buttonText = "Infinite Prop Distance", method =() => Fun.SetPropDistanceLimit(float.MaxValue), disableMethod =() => Fun.SetPropDistanceLimit(0.35f), toolTip = "Removes the distance limit of props in the prop hunt map." },
-                new ButtonInfo { buttonText = "Prop Noclip", method =() => Patches.PropPatch.enabled = true, disableMethod =() => Patches.PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop hunt map." },
+                new ButtonInfo { buttonText = "Prop Noclip", method =() => PropPatch.enabled = true, disableMethod =() => PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop hunt map." },
 
                 new ButtonInfo { buttonText = "Spaz Tool Stations", method =() => Fun.SpazToolStations(), toolTip = "Spazzes out the tool purchase stations in the horror map." },
                 new ButtonInfo { buttonText = "Purchase All Tool Stations", method =() => Fun.PurchaseAllToolStations(), toolTip = "Makes every tool purchase station force purchase in the horror map." },
@@ -933,36 +936,36 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Glider Blind Gun", method =() => Overpowered.GliderBlindGun(), toolTip = "Moves all of the gliders to whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Glider Blind All", method =() => Overpowered.GliderBlindAll(), toolTip = "Moves all of the gliders to everyone's faces." },
 
-                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Patches.RopePatch.enabled = true, disableMethod =() => Patches.RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
+                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => RopePatch.enabled = true, disableMethod =() => RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
 
-                new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Patches.GliderPatch.enabled = true, disableMethod =() => Patches.GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
+                new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => GliderPatch.enabled = true, disableMethod =() => GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
-                new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
-                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Patches.KnockbackPatch.enabled = true, disableMethod =() => Patches.KnockbackPatch.enabled = false, toolTip = "Prevents players from knocking you back with snowballs."},
+                new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => GrabPatch.enabled = true, disableMethod =() => GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
+                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => KnockbackPatch.enabled = true, disableMethod =() => KnockbackPatch.enabled = false, toolTip = "Prevents players from knocking you back with snowballs."},
 
-                new ButtonInfo { buttonText = "Fast Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 10f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
-                new ButtonInfo { buttonText = "Slow Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
+                new ButtonInfo { buttonText = "Fast Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 10f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
+                new ButtonInfo { buttonText = "Slow Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
-                new ButtonInfo { buttonText = "Angry Birds", enableMethod =() => Patches.GetLaunchPatch.angryBirds = true, disableMethod =() => Patches.GetLaunchPatch.angryBirds = false, toolTip = "Flings you in whatever direction your slingshot's projectiles are heading."},
-                new ButtonInfo { buttonText = "Paintbrawl Aimbot", enableMethod =() => Patches.GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => Patches.GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
+                new ButtonInfo { buttonText = "Angry Birds", enableMethod =() => GetLaunchPatch.angryBirds = true, disableMethod =() => GetLaunchPatch.angryBirds = false, toolTip = "Flings you in whatever direction your slingshot's projectiles are heading."},
+                new ButtonInfo { buttonText = "Paintbrawl Aimbot", enableMethod =() => GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
                 new ButtonInfo { buttonText = "Slingshot Helper", method =() => Fun.SlingshotHelper(), toolTip = "Helps you grab the small paintball on your slingshot."},
 
                 new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), toolTip = "Kills yourself in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill All", method =() => Advantages.PaintbrawlKillAll(), toolTip = "Kills everyone in the room in paintbrawl." },
 
-                new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
+                new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => EnablePatch.enabled = true, disableMethod =() => EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Spaz Snowballs <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpazSnowballs(), toolTip = "Randomizes the size of the snowballs. Credits to test for the idea."},
 
-                new ButtonInfo { buttonText = "Multiply Snowballs", method =() => Patches.ThrowPatch.enabled = true, disableMethod =() => Patches.ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
+                new ButtonInfo { buttonText = "Multiply Snowballs", method =() => ThrowPatch.enabled = true, disableMethod =() => ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
 
                 new ButtonInfo { buttonText = "Fast Snowballs", overlapText = "Fast Projectiles", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", overlapText = "Slow Projectiles", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really slow when thrown."},
 
-                new ButtonInfo { buttonText = "Rainbow Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
-                new ButtonInfo { buttonText = "Flash Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
-                new ButtonInfo { buttonText = "Strobe Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = RandomColor(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
-                new ButtonInfo { buttonText = "Custom Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = new Color(Projectiles.red / 10f, Projectiles.green / 10f, Projectiles.blue / 10f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be whatever your custom projectile color is set to in the projectile settings."},
+                new ButtonInfo { buttonText = "Rainbow Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Flash Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Strobe Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = RandomColor(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Custom Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = new Color(Projectiles.red / 10f, Projectiles.green / 10f, Projectiles.blue / 10f), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be whatever your custom projectile color is set to in the projectile settings."},
 
                 new ButtonInfo { buttonText = "Snowball Buttocks", method =() => Fun.SnowballButtocks(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake buttocks using the snowballs." },
                 new ButtonInfo { buttonText = "Snowball Breasts", method =() => Fun.SnowballBreasts(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake breasts using the snowballs." },
@@ -977,34 +980,34 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},
 
                 new ButtonInfo { buttonText = "Black Screen Gun", method =() => Fun.HoverboardScreenGun(Color.black), toolTip = "Uses the hoverboards to blind whoever your hand desires."},
-                new ButtonInfo { buttonText = "Black Screen All", method =() => Fun.HoverboardScreenAll(Color.black), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+                new ButtonInfo { buttonText = "Black Screen All", method =() => Fun.HoverboardScreenAll(Color.black), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
 
                 new ButtonInfo { buttonText = "White Screen Gun", method =() => Fun.HoverboardScreenGun(Color.white), toolTip = "Uses the hoverboards to make whoever your hand desires' screen white."},
-                new ButtonInfo { buttonText = "White Screen All", method =() => Fun.HoverboardScreenAll(Color.white), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to flash the screen of everyone in the room."},
+                new ButtonInfo { buttonText = "White Screen All", method =() => Fun.HoverboardScreenAll(Color.white), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to flash the screen of everyone in the room."},
 
                 new ButtonInfo { buttonText = "Flash Screen Gun", method =() => Fun.HoverboardScreenGun(Time.time % 0.2f > 0.1f ? Color.white : Color.black), toolTip = "Uses the hoverboards to flash the screen of whoever your hand desires."},
-                new ButtonInfo { buttonText = "Flash Screen All", method =() => Fun.HoverboardScreenAll(Time.time % 0.2f > 0.1f ? Color.white : Color.black), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+                new ButtonInfo { buttonText = "Flash Screen All", method =() => Fun.HoverboardScreenAll(Time.time % 0.2f > 0.1f ? Color.white : Color.black), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
 
                 new ButtonInfo { buttonText = "Strobe Screen Gun", method =() => Fun.HoverboardScreenGun(RandomColor()), toolTip = "Uses the hoverboards to flash the screen of whoever your hand desires."},
-                new ButtonInfo { buttonText = "Strobe Screen All", method =() => Fun.HoverboardScreenAll(RandomColor()), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+                new ButtonInfo { buttonText = "Strobe Screen All", method =() => Fun.HoverboardScreenAll(RandomColor()), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
 
                 new ButtonInfo { buttonText = "Rainbow Screen Gun", method =() => Fun.HoverboardScreenGun(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), toolTip = "Uses the hoverboards to make the screen of whoever your hand desires rainbow."},
-                new ButtonInfo { buttonText = "Rainbow Screen All", method =() => Fun.HoverboardScreenAll(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to make the screen of everyone in the room rainbow."},
+                new ButtonInfo { buttonText = "Rainbow Screen All", method =() => Fun.HoverboardScreenAll(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to make the screen of everyone in the room rainbow."},
 
                 new ButtonInfo { buttonText = "Hoverboard Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.HoverboardSpam(), toolTip = "Spams hoverboards from your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Spawn Hoverboard", method =() => Fun.SpawnHoverboard(), isTogglable = false, toolTip = "Spawns a hoverboard at your player position."},
 
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
-                new ButtonInfo { buttonText = "Override Hand Link", method =() => Patches.GroundedPatch.enabled = true, disableMethod =() => Patches.GroundedPatch.enabled = false, toolTip = "Prioritizes you when you or others grab onto you."},
+                new ButtonInfo { buttonText = "Override Hand Link", method =() => GroundedPatch.enabled = true, disableMethod =() => GroundedPatch.enabled = false, toolTip = "Prioritizes you when you or others grab onto you."},
                 new ButtonInfo { buttonText = "Disable Hand Link", method =() => { VRRig.LocalRig.leftHandLink.BreakLink(); VRRig.LocalRig.rightHandLink.BreakLink(); }, toolTip = "Disables you from grabbing onto other players and them from grabbing onto you."},
-                new ButtonInfo { buttonText = "Anti Hand Link", method =() => Patches.HandLinkPatch.enabled = true, disableMethod =() => Patches.HandLinkPatch.enabled = false, toolTip = "Disables you from moving when grabbing onto other players."},
+                new ButtonInfo { buttonText = "Anti Hand Link", method =() => HandLinkPatch.enabled = true, disableMethod =() => HandLinkPatch.enabled = false, toolTip = "Disables you from moving when grabbing onto other players."},
 
-                new ButtonInfo { buttonText = "Fast Throw Players", method =() => Patches.ReleasePatch.enabled = true, disableMethod =() => Patches.ReleasePatch.enabled = false, toolTip = "Makes players go really fast when you throw them."},
+                new ButtonInfo { buttonText = "Fast Throw Players", method =() => ReleasePatch.enabled = true, disableMethod =() => ReleasePatch.enabled = false, toolTip = "Makes players go really fast when you throw them."},
 
                 new ButtonInfo { buttonText = "Noclip Building", method =() => Fun.NoclipBuilding(), disableMethod =() => Fun.DisableNoclipBuilding(), toolTip = "Disables the colliders of every block in the block map."},
-                new ButtonInfo { buttonText = "Overlap Building", enableMethod =() => Patches.OverlapPatch.enabled = true, disableMethod =() => Patches.OverlapPatch.enabled = false, toolTip = "Lets you place pieces inside of each other in the attic."},
-                new ButtonInfo { buttonText = "Small Building", enableMethod =() => Patches.BuildPatch.enabled = true, disableMethod =() => Patches.BuildPatch.enabled = false, toolTip = "Lets you build in the block map while small."},
+                new ButtonInfo { buttonText = "Overlap Building", enableMethod =() => OverlapPatch.enabled = true, disableMethod =() => OverlapPatch.enabled = false, toolTip = "Lets you place pieces inside of each other in the attic."},
+                new ButtonInfo { buttonText = "Small Building", enableMethod =() => BuildPatch.enabled = true, disableMethod =() => BuildPatch.enabled = false, toolTip = "Lets you build in the block map while small."},
                 new ButtonInfo { buttonText = "Multi Grab", method =() => Fun.MultiGrab(), toolTip = "Lets you grab multiple objects."},
 
                 new ButtonInfo { buttonText = "Block Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},
@@ -1090,9 +1093,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Respawn Firefly", enableMethod =() => Fun.SetRespawnDistance("Firefly"), disableMethod =() => Fun.SetRespawnDistance("Firefly", 50f), toolTip = "Doesn't respawn the firefly if it goes too far outside the bounds of forest."},
                 new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable"), disableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable", 50f), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
 
-                new ButtonInfo { buttonText = "Permanent Bug", method =() => Fun.PermanentOwnership("Floating Bug Holdable"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bug."},
-                new ButtonInfo { buttonText = "Permanent Firefly", method =() => Fun.PermanentOwnership("Firefly"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the firefly."},
-                new ButtonInfo { buttonText = "Permanent Bat", method =() => Fun.PermanentOwnership("Cave Bat Holdable"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bat."},
+                new ButtonInfo { buttonText = "Permanent Bug", method =() => Fun.PermanentOwnership("Floating Bug Holdable"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bug."},
+                new ButtonInfo { buttonText = "Permanent Firefly", method =() => Fun.PermanentOwnership("Firefly"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the firefly."},
+                new ButtonInfo { buttonText = "Permanent Bat", method =() => Fun.PermanentOwnership("Cave Bat Holdable"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bat."},
 
                 new ButtonInfo { buttonText = "Bug Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.BugSpam(), disableMethod =() => Fun.DisableBugSpam(), toolTip = "Shoots the bug and firefly out of your hand repeatedly." },
                 new ButtonInfo { buttonText = "Camera Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.CameraSpam(), disableMethod =() => Fun.DisableCameraSpam(), toolTip = "Shoots the camera out of your hand repeatedly." },
@@ -1102,7 +1105,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bug Phallus Gun", method =() => Fun.BugPhallusGun(), toolTip = "Gives whoever your hand desires a phallus in the form of the bugs." },
 
                 new ButtonInfo { buttonText = "Bug Vibrate Gun", method =() => Fun.BugVibrateGun(), toolTip = "Vibrates the controllers of whoever your hand desires using the bugs." },
-                new ButtonInfo { buttonText = "Bug Vibrate All", enableMethod =() => Fun.EnableBugVibrateAll(), method =() => Fun.BugVibrateAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Vibrates the controllers of everyone in the room using the bugs." },
+                new ButtonInfo { buttonText = "Bug Vibrate All", enableMethod =() => Fun.EnableBugVibrateAll(), method =() => Fun.BugVibrateAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Vibrates the controllers of everyone in the room using the bugs." },
 
                 new ButtonInfo { buttonText = "Holster Bug", method =() => Fun.HolsterObject("Floating Bug Holdable", TransferrableObject.PositionState.OnLeftArm), toolTip = "Holsters the bug on your left arm." },
                 new ButtonInfo { buttonText = "Holster Firefly", method =() => Fun.HolsterObject("Firefly", TransferrableObject.PositionState.OnRightArm), toolTip = "Holsters the firefly on your right arm." },
@@ -1279,7 +1282,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Custom Sound ID", method =() => Sound.IncreaseSoundID(), enableMethod =() => Sound.IncreaseSoundID(), disableMethod =() => Sound.DecreaseSoundID(), incremental = true, isTogglable = false, toolTip = "Changes the Sound ID of the Custom Sound Spam." },
                 new ButtonInfo { buttonText = "Custom Sound Spam", overlapText = "Custom Sound Spam <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Sound.CustomSoundSpam(), toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
 
-                new ButtonInfo { buttonText = "Override Tap Sound", method =() => { Patches.EffectDataPatch.enabled = true; Patches.EffectDataPatch.material = soundId; }, disableMethod =() => {  Patches.EffectDataPatch.enabled = false;  Patches.EffectDataPatch.material = -1; }, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Override Tap Sound", method =() => { EffectDataPatch.enabled = true; EffectDataPatch.material = soundId; }, disableMethod =() => {  EffectDataPatch.enabled = false;  EffectDataPatch.material = -1; }, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
             },
 
             new ButtonInfo[] { // Projectile Spam Mods [15]
@@ -1303,10 +1306,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spit Gun", method =() => Projectiles.SpitGun(), toolTip = "Makes whoever your hand desires spit." },
 
                 new ButtonInfo { buttonText = "Projectile Blind Gun", method =() => Projectiles.ProjectileBlindGun(), toolTip = "Blinds whoever your hand desires using the egg projectiles."},
-                new ButtonInfo { buttonText = "Projectile Blind All", enableMethod =() => Projectiles.ProjectileBlindAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Blinds everybody in the room using the egg projectiles."},
+                new ButtonInfo { buttonText = "Projectile Blind All", enableMethod =() => Projectiles.ProjectileBlindAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Blinds everybody in the room using the egg projectiles."},
 
                 new ButtonInfo { buttonText = "Projectile Lag Gun", method =() => Projectiles.ProjectileLagGun(), toolTip = "Lags whoever your hand desires using the firework projectiles."},
-                new ButtonInfo { buttonText = "Projectile Lag All", enableMethod =() => Projectiles.ProjectileLagAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Lags everybody in the room using the firework projectiles."}
+                new ButtonInfo { buttonText = "Projectile Lag All", enableMethod =() => Projectiles.ProjectileLagAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Lags everybody in the room using the firework projectiles."}
             },
 
             new ButtonInfo[] { // Master Mods [16]
@@ -1510,8 +1513,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method =() => Overpowered.GuardianCrashGun(), toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianCrashAll(), toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Overpowered.DelayBanGun(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
-                new ButtonInfo { buttonText = "Delay Ban All", enableMethod =() => Overpowered.DelayBanAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
+                new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Overpowered.DelayBanGun(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
+                new ButtonInfo { buttonText = "Delay Ban All", enableMethod =() => Overpowered.DelayBanAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
                 new ButtonInfo { buttonText = "Force Grab", method =() => Overpowered.ForceGrab(), toolTip = "Attempts to grab the hand of anyone who presses their grips." },
                 new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
@@ -1560,15 +1563,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
 
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Barrel Punch Mod", method =() => Fun.BarrelPunchMod(), toolTip = "Flings people when you punch them."},
 
                 new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashGun(), toolTip = "Crashes whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsGun(), toolTip = "Flings whoever your hand desires using the barrels towards you."},
-                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
@@ -1594,7 +1597,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "City Kick All", method =() => Fun.CityKickAll(), toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
 
                 new ButtonInfo { buttonText = "Barrel Kick Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelKickGun(), toolTip = "Kicks whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Kick All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelKickAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Kick All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelKickAll(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Elevator Kick Gun", method =() => Fun.ElevatorKickGun(), toolTip = "Kicks whoever your hand desires if they are in the elevator."},
                 new ButtonInfo { buttonText = "Elevator Kick All", method =() => Fun.ElevatorKickAll(), isTogglable = false, toolTip = "Kicks everyone in the elevator."},
@@ -1783,7 +1786,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
-                new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Classes.Console.allowKickSelf = true, disableMethod =() => Classes.Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},
+                new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Console.allowKickSelf = true, disableMethod =() => Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},
             },
 
             new ButtonInfo[] { // Enabled Mods [24]

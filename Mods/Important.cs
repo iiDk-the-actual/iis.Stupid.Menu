@@ -1,8 +1,8 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
+using iiMenu.Managers;
 using iiMenu.Notifications;
-using iiMenu.Patches;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;

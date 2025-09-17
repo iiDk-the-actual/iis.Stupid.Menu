@@ -8,11 +8,13 @@ using GorillaTag;
 using GorillaTag.Cosmetics;
 using GorillaTag.Rendering;
 using GorillaTagScripts;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Classes.Mods;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
-using iiMenu.Patches;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -28,7 +30,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods

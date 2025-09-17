@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GrowingSnowballThrowable), "SnowballThrowEventReceiver")]
     public class LimitPatch
@@ -9,7 +9,7 @@ namespace iiMenu.Patches
         public static bool Prefix(GrowingSnowballThrowable __instance, int sender, int receiver, object[] args, PhotonMessageInfoWrapped info)
         {
             NetPlayer player = info.Sender;
-            if (player != null && Menu.Main.ShouldBypassChecks(player))
+            if (player != null && iiMenu.Menu.Main.ShouldBypassChecks(player))
             {
                 object obj = args[0];
                 if (obj is Vector3)

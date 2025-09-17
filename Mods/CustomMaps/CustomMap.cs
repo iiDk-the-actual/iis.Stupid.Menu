@@ -1,6 +1,6 @@
-﻿using iiMenu.Classes;
+﻿using iiMenu.Classes.Menu;
 
-namespace iiMenu.Mods.CustomMaps.Maps
+namespace iiMenu.Mods.CustomMaps
 {
     public abstract class CustomMap
     {

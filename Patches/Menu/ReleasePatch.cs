@@ -2,7 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(HandLink), "OnRelease")]
     public class ReleasePatch

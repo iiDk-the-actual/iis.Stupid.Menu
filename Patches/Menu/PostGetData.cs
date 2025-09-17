@@ -3,7 +3,7 @@ using GorillaNetworking.Store;
 using HarmonyLib;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(BundleManager), "CheckIfBundlesOwned")]
     public class PostGetData

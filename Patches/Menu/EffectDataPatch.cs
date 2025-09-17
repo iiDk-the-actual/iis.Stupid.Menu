@@ -4,7 +4,7 @@ using iiMenu.Menu;
 using Photon.Pun;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "SetHandEffectData")]
     public class EffectDataPatch

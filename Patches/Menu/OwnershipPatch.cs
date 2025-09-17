@@ -2,7 +2,7 @@
 using Photon.Pun;
 using System.Collections.Generic;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
     public class OwnershipPatch

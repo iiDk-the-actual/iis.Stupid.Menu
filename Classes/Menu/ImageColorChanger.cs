@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class ImageColorChanger : MonoBehaviour
     {

@@ -1,8 +1,10 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
-using iiMenu.Classes;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Notifications;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -10,7 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -609,8 +611,8 @@ namespace iiMenu.Mods
         public static int fpsSpoofValue = 90;
         public static void FPSSpoof()
         {
-            Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = Random.Range(fpsSpoofValue - 10, fpsSpoofValue + 10);
+            FPSPatch.enabled = true;
+            FPSPatch.spoofFPSValue = Random.Range(fpsSpoofValue - 10, fpsSpoofValue + 10);
         }
 
         public static void ChangeFPSSpoofValue(bool positive = true)
@@ -710,21 +712,21 @@ namespace iiMenu.Mods
 
         public static void SpoofRank(bool enabled, string tier = null)
         {
-            Patches.RankedPatch.enabled = enabled;
-            Patches.RankedPatch.targetTier = tier;
+            RankedPatch.enabled = enabled;
+            RankedPatch.targetTier = tier;
         }
 
         public static void SpoofPlatform(bool enabled, string target = null)
         {
-            Patches.RankedPatch.enabled = enabled;
-            Patches.RankedPatch.targetPlatform = target;
+            RankedPatch.enabled = enabled;
+            RankedPatch.targetPlatform = target;
         }
 
         public static int targetElo = 4000;
         public static int targetBadge = 7;
         public static void SpoofBadge()
         {
-            Patches.SetRankedPatch.enabled = true;
+            SetRankedPatch.enabled = true;
             if (VRRig.LocalRig.currentRankedELO != targetElo || VRRig.LocalRig.currentRankedSubTierQuest != targetBadge || VRRig.LocalRig.currentRankedSubTierPC != targetBadge)
                 VRRig.LocalRig.SetRankedInfo(targetElo, targetBadge, targetBadge);
         }

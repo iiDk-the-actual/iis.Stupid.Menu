@@ -1,4 +1,5 @@
 using GorillaNetworking;
+using iiMenu.Managers;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -9,7 +10,7 @@ using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class ServerData : MonoBehaviour
     {
@@ -21,10 +22,10 @@ namespace iiMenu.Classes
         public static string ServerDataEndpoint = "https://iidk.online/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
-            Menu.Main.SetupAdminPanel(playername);
+            iiMenu.Menu.Main.SetupAdminPanel(playername);
 
         public static void JoinDiscordServer() => // Method used to join the Discord server
-            Mods.Important.JoinDiscord();
+            iiMenu.Mods.Important.JoinDiscord();
 
         #endregion
 
@@ -144,8 +145,8 @@ namespace iiMenu.Classes
 
                 JObject data = JObject.Parse(json);
 
-                Menu.Main.serverLink = (string)data["discord-invite"];
-                Menu.Main.motdTemplate = (string)data["motd"];
+                iiMenu.Menu.Main.serverLink = (string)data["discord-invite"];
+                iiMenu.Menu.Main.motdTemplate = (string)data["motd"];
 
                 // Version Check
                 string version = (string)data["menu-version"];
@@ -169,7 +170,7 @@ namespace iiMenu.Classes
                 // Lockdown check
                 if (version == "lockdown")
                 {
-                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {Menu.Main.motdTemplate}", 10000);
+                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {iiMenu.Menu.Main.motdTemplate}", 10000);
                     Console.DisableMenu = true;
                 }
 
@@ -204,7 +205,7 @@ namespace iiMenu.Classes
                     string detectedModName = detectedMod.ToString();
                     if (!DetectedModsLabelled.Contains(detectedModName))
                     {
-                        ButtonInfo Button = Menu.Main.GetIndex(detectedModName);
+                        ButtonInfo Button = iiMenu.Menu.Main.GetIndex(detectedModName);
                         if (Button != null)
                         {
                             string overlapText = Button.overlapText ?? Button.buttonText;
@@ -226,7 +227,7 @@ namespace iiMenu.Classes
                 foreach (var targetMutedData in muteIdData)
                     muteIds.Add(targetMutedData.ToString());
 
-                Menu.Main.muteIDs = muteIds;
+                iiMenu.Menu.Main.muteIDs = muteIds;
             }
 
             yield return null;
@@ -325,12 +326,12 @@ namespace iiMenu.Classes
             List<string> enabledMods = new List<string>();
 
             int categoryIndex = 0;
-            foreach (ButtonInfo[] category in Menu.Buttons.buttons)
+            foreach (ButtonInfo[] category in iiMenu.Menu.Buttons.buttons)
             {
                 foreach (ButtonInfo button in category)
                 {
-                    if (button.enabled && !Menu.Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(Menu.Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
+                    if (button.enabled && !iiMenu.Menu.Buttons.categoryNames[categoryIndex].Contains("Settings"))
+                        enabledMods.Add(NoASCIIStringCheck(iiMenu.Menu.Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
                 }
 
                 categoryIndex++;

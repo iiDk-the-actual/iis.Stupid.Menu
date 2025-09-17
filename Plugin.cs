@@ -1,11 +1,14 @@
 using BepInEx;
 using BepInEx.Logging;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches;
-using System;
+using iiMenu.Patches.Menu;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Console = System.Console;
 
 namespace iiMenu
 {
@@ -23,7 +26,7 @@ namespace iiMenu
             Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
             instance = this;
 
-            Classes.LogManager.Log($@"
+            LogManager.Log($@"
 
      ••╹   ┏┓     • ┓  ┳┳┓      
      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
@@ -61,7 +64,7 @@ namespace iiMenu
             }
 
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_DisableTelemetry.txt"))
-                Classes.ServerData.DisableTelemetry = true;
+                ServerData.DisableTelemetry = true;
             
             GorillaTagger.OnPlayerSpawned(LoadMenu);
         }
@@ -73,7 +76,7 @@ namespace iiMenu
             GameObject Loader = new GameObject("iiMenu_Loader");
             Loader.AddComponent<UI>();
             Loader.AddComponent<Notifications.NotifiLib>();
-            Loader.AddComponent<Classes.CoroutineManager>();
+            Loader.AddComponent<CoroutineManager>();
 
             DontDestroyOnLoad(Loader);
         }

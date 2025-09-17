@@ -2,6 +2,7 @@
 using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaNetworking;
+using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using iiMenu.Notifications;
@@ -19,10 +20,10 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
-using static iiMenu.Classes.RigManager;
+using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Classes
+namespace iiMenu.Managers
 {
     public class FriendManager : MonoBehaviour
     {

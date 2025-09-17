@@ -1,4 +1,4 @@
-﻿namespace iiMenu.Classes
+﻿namespace iiMenu.Managers
 {
     public class LogManager
     {

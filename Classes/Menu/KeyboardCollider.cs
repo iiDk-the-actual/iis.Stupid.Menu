@@ -1,7 +1,7 @@
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Classes
+namespace iiMenu.Classes.Menu
 {
     public class KeyboardKey : MonoBehaviour
 	{

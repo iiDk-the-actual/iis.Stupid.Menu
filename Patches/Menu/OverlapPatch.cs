@@ -1,7 +1,7 @@
 ﻿using GorillaTagScripts;
 using HarmonyLib;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(BuilderAttachGridPlane), "IsConnected")]
     public class OverlapPatch

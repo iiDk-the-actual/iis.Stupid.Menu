@@ -2,7 +2,7 @@
 using iiMenu.Mods;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(VRRig), "LateUpdate")]
     public class TorsoPatch
