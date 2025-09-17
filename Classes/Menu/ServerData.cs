@@ -116,6 +116,15 @@ namespace iiMenu.Classes
             return input;
         }
 
+        public static int VersionToNumber(string version)
+        {
+            string[] parts = version.Split('.');
+            if (parts.Length != 3)
+                return -1; // Version must be in 'major.minor.patch' format
+
+            return int.Parse(parts[0]) * 100 + int.Parse(parts[1]) * 10 + int.Parse(parts[2]);
+        }
+
         public static Dictionary<string, string> Administrators = new Dictionary<string, string>();
         public static List<string> SuperAdministrators = new List<string>();
         public static System.Collections.IEnumerator LoadServerData()
