@@ -2530,7 +2530,7 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        private static Slingshot CurrentSlingshot()
+        public static Slingshot CurrentSlingshot()
         {
             if (EquipmentInteractor.instance.leftHandHeldEquipment != null)
             {
@@ -2569,6 +2569,9 @@ Piece Name: {gunTarget.name}";
                 .ThenBy(x => x.Distance) // tiebreaker if multiple at same angle
                 .Select(x => x.Rig)
                 .FirstOrDefault();
+
+            if (targetRig == null)
+                return;
 
             VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
         }
