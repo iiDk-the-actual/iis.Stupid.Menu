@@ -19,6 +19,41 @@ namespace iiMenu.Mods
 {
     public class Visuals
     {
+        public static void ConductDebug()
+        {
+            string text = "";
+            text += "<color=blue><b>ii's Stupid Menu </b></color>" + PluginInfo.Version + "\\n \\n";
+            
+            string red = "<color=red>" + MathF.Floor(PlayerPrefs.GetFloat("redValue") * 255f).ToString() + "</color>";
+            string green = ", <color=green>" + MathF.Floor(PlayerPrefs.GetFloat("greenValue") * 255f).ToString() + "</color>";
+            string blue = ", <color=blue>" + MathF.Floor(PlayerPrefs.GetFloat("blueValue") * 255f).ToString() + "</color>";
+            string redS = "<color=red>" + MathF.Round(PlayerPrefs.GetFloat("redValue") * 9f).ToString() + "</color>";
+            string greenS = ", <color=green>" + MathF.Round(PlayerPrefs.GetFloat("greenValue") * 9f).ToString() + "</color>";
+            string blueS = ", <color=blue>" + MathF.Round(PlayerPrefs.GetFloat("blueValue") * 9f).ToString() + "</color>";
+            text += "<color=green>Color</color><color=grey>:</color> " + red + green + blue + " <color=grey>[</color>"+ redS + greenS + blueS +"<color=grey>]</color>\\n";
+
+            string master = PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient ? "<color=grey> [</color><color=red>Master</color><color=grey>]</color>" : "";
+            text += "<color=green>Name</color><color=grey>:</color> " + PhotonNetwork.LocalPlayer.NickName + master + "\\n";
+
+            text += "<color=green>ID</color><color=grey>:</color> " + (Settings.hideId ? "Hidden" : PhotonNetwork.LocalPlayer.UserId) + "\\n";
+            text += "<color=green>Clip</color><color=grey>:</color> " + (GUIUtility.systemCopyBuffer.Length > 35 ? GUIUtility.systemCopyBuffer[..35] : GUIUtility.systemCopyBuffer) + "\\n";
+            text += lastDeltaTime.ToString() + " <color=green>FPS</color> <color=grey>|</color> " + PhotonNetwork.GetPing().ToString() + " <color=green>Ping</color>\\n";
+
+            string room = PhotonNetwork.InRoom ? (NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public") : "Not in room";
+            text += "<color=green>" + NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper() + "</color> " + PhotonNetwork.PlayerList.Length.ToString() + " <color=green>Players</color> <color=grey>|</color> " + room + "\\n \\n";
+
+            string admin = "";
+            if (Time.time > 5f)
+            {
+                if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                    admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) ? "Super " : "") + "Admin</color>";
+            }
+            text += "<color=green>Theme</color> " + themeType + admin + "\n";
+            text += "<color=green>Preferences Directory</color><color=grey>:</color> " + System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}";
+
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = text;
+        }
+
         public static void WeatherChange(bool rain)
         {
             for (int i = 0; i < BetterDayNightManager.instance.weatherCycle.Length; i++)

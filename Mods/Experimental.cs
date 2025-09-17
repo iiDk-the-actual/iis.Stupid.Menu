@@ -373,6 +373,42 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AdminGiveFlyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > adminEventDelay)
+                    {
+                        if (lockTarget.rightThumb.calcT > 0.5f)
+                        {
+                            adminEventDelay = Time.time + 0.1f;
+                            Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.headMesh.transform.forward * Movement._flySpeed);
+                            RPCProtection();
+                        }
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                gunLocked = false;
+            }
+        }
+
         public static void AdminVibrateGun()
         {
             if (GetGunInput(false))
@@ -1026,7 +1062,13 @@ namespace iiMenu.Mods
                             if (GetIndex("Conduct Menu Users").enabled)
                             {
                                 if (!onConduct.ContainsKey(sender.UserId))
-                                    onConduct.Add(sender.UserId, sender.NickName + " - " + ToTitleCase((string)args[2]));
+                                {
+                                    bool add = Classes.ServerData.Administrators.ContainsKey(sender.UserId);
+                                    string txt = sender.NickName + " - " + ToTitleCase((string)args[2]);
+                                    if (add)
+                                        txt = "<color=red>" + txt + "<color>";
+                                    onConduct.Add(sender.UserId, txt);
+                                }
                             }
                             break;
                     }
@@ -1192,6 +1234,7 @@ namespace iiMenu.Mods
                 Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
 
             string conductText = "";
+            conductText += "<color=red>"+PhotonNetwork.LocalPlayer.NickName+" - "+ToTitleCase(Classes.Console.MenuName)+"</color>\\n";
             foreach (KeyValuePair<string, string> item in onConduct)
             {
                 if (GetPlayerFromID(item.Key) == null)
