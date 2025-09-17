@@ -421,7 +421,7 @@ namespace iiMenu.Classes
                                 Nametag.transform.LookAt(Camera.main.transform.position);
                                 Nametag.transform.Rotate(0f, 180f, 0f);
 
-                                ghostRigDelay[SenderRig] = Time.time + 0.1f;
+                                ghostRigDelay[SenderRig] = Time.time + 0.09f;
 
                                 break;
                             }
