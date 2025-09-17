@@ -192,6 +192,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => disableBoardTextColor = true, disableMethod =() => disableBoardTextColor = false, toolTip = "Disables the text colors on the boards to make them match their original theme."},
 
                 new ButtonInfo { buttonText = "Info Hide ID", enableMethod =() => Settings.hideId = true, disableMethod =() => Settings.hideId = false, toolTip = "Hides your ID in the information page."},
+                new ButtonInfo { buttonText = "Conduct Info", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "DEBUG INFO"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method =() => Visuals.ConductDebug(), toolTip = "Shows debug information on the code of conduct."},
 
                 new ButtonInfo { buttonText = "Hide Text on Camera", enableMethod =() => hideTextOnCamera = true, disableMethod =() => hideTextOnCamera = false, overlapText = "Streamer Mode Menu Text", toolTip = "Makes the menu's text only render on VR."},
                 new ButtonInfo { buttonText = "Hide Pointer", enableMethod =() => hidePointer = true, disableMethod =() => hidePointer = false, toolTip = "Hides the pointer above your hand."},
@@ -1692,7 +1693,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
-                new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "CONSOLE USER LIST"; }, method =() => Experimental.ConsoleOnConduct(), toolTip = "Shows menu users on the code of conduct."},
+                new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "CONSOLE USER LIST"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method =() => Experimental.ConsoleOnConduct(), toolTip = "Shows menu users on the code of conduct."},
                 new ButtonInfo { buttonText = "Menu User Tracers", enableMethod =() => Experimental.EnableAdminMenuUserTracers(), method =() => Experimental.MenuUserTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows menu users."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
@@ -1779,6 +1780,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Toggle Invis Gun", method =() => Experimental.AdminButtonPressGun("rSecondary"), toolTip = "Force a player to toggle invisibility mod."},
                 
                 new ButtonInfo { buttonText = "Admin Punch Mod", method =() => Experimental.AdminPunchMod(), toolTip = "Flings people when you punch them if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
                 new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Classes.Console.allowKickSelf = true, disableMethod =() => Classes.Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},
