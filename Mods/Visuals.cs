@@ -711,6 +711,7 @@ namespace iiMenu.Mods
 
         // This doesn't work.
         // TODO: Fix the other players' slingshot trajectory prediction.
+        // TODO: Fix gravity of slingshot prediction
 
         public static readonly Dictionary<SlingshotProjectile, LineRenderer> trajectoryPool = new Dictionary<SlingshotProjectile, LineRenderer>();
         public static LineRenderer localTrajectoryLine;
