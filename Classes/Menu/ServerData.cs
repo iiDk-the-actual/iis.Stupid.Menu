@@ -155,13 +155,11 @@ namespace iiMenu.Classes
 
                     if (PluginInfo.BetaBuild)
                     {
-                        VersionWarning = true;
                         Console.Log("User is on beta build");
                         Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Be warned that there may be bugs and issues that could cause crashes, data loss, or other unexpected behavior.", 10000);
                     }
-                    else if (version != PluginInfo.Version)
+                    else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
                     {
-                        VersionWarning = true;
                         Console.Log("Version is outdated");
                         JoinDiscordServer();
                         Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + version + ".", 10000);
