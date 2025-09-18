@@ -1073,6 +1073,8 @@ namespace iiMenu.Mods
                                     onConduct.Add(sender.UserId, txt);
                                 }
                             }
+                            if (GetIndex("Admin Find User").enabled)
+                                isUserFound = true;
                             break;
                     }
                 }
@@ -1246,6 +1248,33 @@ namespace iiMenu.Mods
                     conductText += item.Value + "\\n";
             }
             GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = conductText;
+        }
+
+        public static float FindUserTime;
+        public static bool isUserFound;
+        public static void AdminFindUser()
+        {
+            if (Time.time < FindUserTime)
+                return;
+
+            if (!PhotonNetwork.InRoom)
+            {
+                Important.JoinRandom();
+                isUserFound = false;
+                FindUserTime = Time.time + 7f;
+            }
+            else
+            {
+                if (isUserFound)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Found menu user!");
+                    GetIndex("Admin Find User").enabled = false;
+                    return;
+                }
+                NotifiLib.SendNotification("Nobody found, searching for players.");
+                NetworkSystem.Instance.ReturnToSinglePlayer();
+                FindUserTime = Time.time + 2f;
+            }
         }
 
         private static float thingdeb = 0f;
