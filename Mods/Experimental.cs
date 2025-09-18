@@ -411,6 +411,42 @@ namespace iiMenu.Mods
                 gunLocked = false;
             }
         }
+        
+        public static void AdminGiveTriggerFlyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > adminEventDelay)
+                    {
+                        if (lockTarget.rightIndex.calcT > 0.5f)
+                        {
+                            adminEventDelay = Time.time + 0.1f;
+                            Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.headMesh.transform.forward * Movement._flySpeed);
+                            RPCProtection();
+                        }
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                gunLocked = false;
+            }
+        }
 
         public static void AdminVibrateGun()
         {
