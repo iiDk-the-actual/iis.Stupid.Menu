@@ -1786,6 +1786,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Punch Mod", method =() => Experimental.AdminPunchMod(), toolTip = "Flings people when you punch them if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
 
+                new ButtonInfo { buttonText = "Admin Find User", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); Experimental.FindUserTime = Time.time; }, method =() => Experimental.AdminFindUser(), toolTip = "Joins publics until a menu user is found."},
+
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
                 new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Console.allowKickSelf = true, disableMethod =() => Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},
             },
