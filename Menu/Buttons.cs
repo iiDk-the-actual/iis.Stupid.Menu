@@ -173,7 +173,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
 
-                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II STUPID MENU", method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NoRichtextTags(NotifiLib.NotifiText.text), toolTip = "Shows notifications on the code of conduct instead."},
+                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NotifiLib.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
                 new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotifiLib.noRichText = true, disableMethod =() => NotifiLib.noRichText = false, toolTip = "Removes rich text from notifications."},
 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
@@ -729,6 +729,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Tags", method =() => Visuals.NameTags(), disableMethod =() => Visuals.DisableNameTags(), toolTip = "Gives players name tags above their heads that show their nickname."},
                 new ButtonInfo { buttonText = "Velocity Name Tags", method =() => Visuals.VelocityTags(), disableMethod =() => Visuals.DisableVelocityTags(), toolTip = "Gives players name tags above their heads that show their velocity."},
                 new ButtonInfo { buttonText = "FPS Name Tags", method =() => Visuals.FPSTags(), disableMethod =() => Visuals.DisableFPSTags(), toolTip = "Gives players name tags above their heads that show their FPS."},
+                new ButtonInfo { buttonText = "ID Name Tags", method =() => Visuals.IDTags(), disableMethod =() => Visuals.DisableIDTags(), toolTip = "Gives players name tags above their heads that show their ID."},
                 new ButtonInfo { buttonText = "Platform Name Tags", method =() => Visuals.PlatformTags(), disableMethod =() => Visuals.DisablePlatformTags(), toolTip = "Gives players name tags above their heads that show what platform they're playing on."},
                 new ButtonInfo { buttonText = "Creation Date Name Tags", method =() => Visuals.CreationDateTags(), disableMethod =() => Visuals.DisableCreationDateTags(), toolTip = "Gives players name tags above their heads that show their creation date."},
                 new ButtonInfo { buttonText = "Ping Name Tags", method =() => Visuals.PingTags(), disableMethod =() => Visuals.DisablePingTags(), toolTip = "Gives players name tags above their heads that show their ping."},
@@ -1784,6 +1785,8 @@ namespace iiMenu.Menu
                 
                 new ButtonInfo { buttonText = "Admin Punch Mod", method =() => Experimental.AdminPunchMod(), toolTip = "Flings people when you punch them if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
+
+                new ButtonInfo { buttonText = "Admin Find User", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); Experimental.FindUserTime = Time.time; }, method =() => Experimental.AdminFindUser(), toolTip = "Joins publics until a menu user is found."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
                 new ButtonInfo { buttonText = "Allow Kick Self", enableMethod =() => Console.allowKickSelf = true, disableMethod =() => Console.allowKickSelf = false, toolTip = "Lets other admins kick you."},

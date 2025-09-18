@@ -1150,6 +1150,61 @@ namespace iiMenu.Mods
 
             FPSnametags.Clear();
         }
+        
+        private static readonly Dictionary<VRRig, GameObject> IDnametags = new Dictionary<VRRig, GameObject>();
+        public static void IDTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in IDnametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    IDnametags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!IDnametags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_IDtag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            IDnametags.Add(vrrig, go);
+                        }
+                        
+
+                        GameObject nameTag = IDnametags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).UserId;
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                } catch { }
+            }
+        }
+
+        public static void DisableIDTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in IDnametags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            IDnametags.Clear();
+        }
 
         private static readonly Dictionary<VRRig, GameObject> platformTags = new Dictionary<VRRig, GameObject>();
         public static void PlatformTags()
