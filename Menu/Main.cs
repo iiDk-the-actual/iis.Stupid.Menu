@@ -2149,6 +2149,7 @@ namespace iiMenu.Menu
                     "WM TROLLING MENU",
                     "ShibaGT Dark",
                     "ShibaGT-X v5.5",
+                    "ii stupid",
                     "bvunt menu",
                     "GorillaTaggingKid Menu",
                     "fart",
