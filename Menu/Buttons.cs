@@ -1694,6 +1694,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Admin Mods (admins only) [23]
                 new ButtonInfo { buttonText = "Exit Admin Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
+                new ButtonInfo { buttonText = "Mod Givers", method =() => currentCategoryName = "Mod Givers", isTogglable = false, toolTip = "Opens the mod givers page."},
+
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
@@ -1782,10 +1784,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Open Menu Gun", method =() => Experimental.AdminButtonPressGun("lSecondary"), toolTip = "Force a player to open their menu."},
                 new ButtonInfo { buttonText = "Admin Toggle Invis Gun", method =() => Experimental.AdminButtonPressGun("rSecondary"), toolTip = "Force a player to toggle invisibility mod."},
-                
-                new ButtonInfo { buttonText = "Admin Punch Mod", method =() => Experimental.AdminPunchMod(), toolTip = "Flings people when you punch them if they're using the menu."},
-                new ButtonInfo { buttonText = "Admin Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
 
+                new ButtonInfo { buttonText = "Admin Punch Mod", method =() => Experimental.AdminPunchMod(), toolTip = "Flings people when you punch them if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Find User", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); Experimental.FindUserTime = Time.time; }, method =() => Experimental.AdminFindUser(), toolTip = "Joins publics until a menu user is found."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
@@ -1965,6 +1965,13 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods."},
                 new ButtonInfo { buttonText = "You have not loaded a map.", label = true }
+            },
+            
+            new ButtonInfo[] // Admin Mod Givers [40]
+            {
+                new ButtonInfo { buttonText = "Exit Admin Mod Givers", method =() => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Returns you back to the fun mods."},
+                new ButtonInfo { buttonText = "Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
+                new ButtonInfo { buttonText = "Give Trigger Fly Gun", method =() => Experimental.AdminGiveTriggerFlyGun(), toolTip = "Gives whoever you want fly when they hold their trigger down if they're using console."},
             }
         };
 
@@ -2009,7 +2016,8 @@ namespace iiMenu.Menu
             "Fun Settings",
             "Players",
             "Credits",
-            "Custom Maps"
+            "Custom Maps",
+            "Mod Givers"
         };
     }
 }
@@ -2104,7 +2112,6 @@ new ButtonInfo { buttonText = "Firecracker Crash All <color=grey>[</color><color
 
 new ButtonInfo { buttonText = "Firecracker Instant Crash Gun", method =() => Overpowered.FirecrackerInstantCrashGun(), toolTip = "Crashes whoever your hand desires with the firecrackers."},
 new ButtonInfo { buttonText = "Firecracker Instant Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FirecrackerInstantCrashAll(), toolTip = "Crashes everybody in the room when holding <color=green>trigger</color> with the firecrackers."},
-
 new ButtonInfo { buttonText = "Repair Kick", method =() => Overpowered.RepairKick(), isTogglable = false, toolTip = "Swaps the target used for kicking, to hopefully repair any kick mods."},
 new ButtonInfo { buttonText = "Auto Repair Kick", method =() => Overpowered.AutoRepairKick(), toolTip = "Automatically swaps the target used for kicking, to hopefully repair any kick mods without needing to manually press that button."},
 
