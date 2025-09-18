@@ -1069,7 +1069,7 @@ namespace iiMenu.Mods
                                     bool add = ServerData.Administrators.ContainsKey(sender.UserId);
                                     string txt = sender.NickName + " - " + ToTitleCase((string)args[2]);
                                     if (add)
-                                        txt = "<color=red>" + txt + "<color>";
+                                        txt = "<color=red>" + txt + "</color>";
                                     onConduct.Add(sender.UserId, txt);
                                 }
                             }
