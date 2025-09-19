@@ -4966,6 +4966,7 @@ namespace iiMenu.Mods
 
             try
             {
+                quickActions.Clear();
                 foreach (string quickAction in textData[7].Split(";;"))
                 {
                     ButtonInfo button = GetIndex(quickAction);
