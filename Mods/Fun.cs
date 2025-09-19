@@ -70,6 +70,7 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
         }
 
+        private static float headSpinSpeed = 10f;
         public static void SpinHead(string axis)
         {
             if (VRRig.LocalRig.enabled)
@@ -77,20 +78,35 @@ namespace iiMenu.Mods
                 switch (axis.ToLower())
                 {
                     case "x":
-                        VRRig.LocalRig.head.trackingRotationOffset.x += 10f;
+                        VRRig.LocalRig.head.trackingRotationOffset.x += headSpinSpeed;
                         break;
                     case "y":
-                        VRRig.LocalRig.head.trackingRotationOffset.y += 10f;
+                        VRRig.LocalRig.head.trackingRotationOffset.y += headSpinSpeed;
                         break;
                     case "z":
-                        VRRig.LocalRig.head.trackingRotationOffset.z += 10f;
+                        VRRig.LocalRig.head.trackingRotationOffset.z += headSpinSpeed;
                         break;
                     default:
                         return;
                 }
             }
             else
-                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
+            {
+                switch (axis.ToLower())
+                {
+                    case "x":
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(headSpinSpeed, 0f, 0f));
+                        break;
+                    case "y":
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, headSpinSpeed, 0f));
+                        break;
+                    case "z":
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 0f, headSpinSpeed));
+                        break;
+                    default:
+                        return;
+                }
+            }
         }
 
         public static void SpazHead(string axis)
