@@ -60,102 +60,11 @@ namespace iiMenu.Mods
                 }
             };
 
-            Task<(string region, int count)> regionTask = RoomPatch.GetLargestRegion(roomName);
-            yield return new WaitUntil(() => regionTask.IsCompleted);
-
-            if (regionTask.Exception != null)
-            {
-                LogManager.LogError("Could not retrieve region");
-                instance.netState = NetSystemState.Idle;
-
-                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
-                yield break;
-            }
-
-            var (region, count) = regionTask.Result;
-            LogManager.Log($"Room {roomName} Region: {region} Count: {count}");
-
-            if (count <= 0)
-            {
-                LogManager.Log("Room is empty");
-
-                Task joinTask = RoomPatch.ForceJoinDuplicate(instance, roomName, opts);
-                yield return new WaitUntil(() => joinTask.IsCompleted);
-
-                if (joinTask.Exception != null)
-                {
-                    LogManager.LogError("Could not create room");
-                    instance.netState = NetSystemState.Idle;
-                } else
-                    yield break;
-            }
-
-            if (count < maxPlayers)
-            {
-                LogManager.Log("Room is not full");
-
-                Task joinTask = instance.TryJoinRoomInRegion(roomName, opts, System.Array.IndexOf(NetworkSystem.Instance.regionNames, region));
-                yield return new WaitUntil(() => joinTask.IsCompleted);
-
-                if (joinTask.Exception != null)
-                {
-                    LogManager.LogError("Could not join room");
-                    instance.netState = NetSystemState.Idle;
-                } else
-                    yield break;
-            }
-
-            LogManager.Log("Room is full");
-            int errorCount = 0;
             while (!instance.InRoom)
             {
-                int currentPlayerCount = -1;
-                PlayFabClientAPI.GetSharedGroupData(new PlayFab.ClientModels.GetSharedGroupDataRequest
-                {
-                    SharedGroupId = roomName + region.ToUpper()
-                }, delegate (GetSharedGroupDataResult result)
-                {
-                    currentPlayerCount = result.Data.Count;
-                    LogManager.Log($"{currentPlayerCount} players in room {roomName} {region}");
-                }, null, null, null);
-
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
                 yield return new WaitForSeconds(reconnectDelay);
-
-                if (currentPlayerCount < 0)
-                {
-                    errorCount++;
-                    LogManager.LogError($"Could not get player count ({errorCount}/5)");
-
-                    if (errorCount >= 5)
-                    {
-                        LogManager.LogError("Rate limited");
-                        errorCount = 0;
-
-                        yield return new WaitForSeconds(10f);
-                    }
-                }
-                else
-                {
-                    if (currentPlayerCount < maxPlayers)
-                    {
-                        Task joinTask = instance.TryJoinRoomInRegion(roomName, opts, System.Array.IndexOf(instance.regionNames, region));
-                        yield return new WaitUntil(() => joinTask.IsCompleted);
-
-                        if (joinTask.Exception != null)
-                        {
-                            LogManager.LogError("Could not join room");
-                            instance.netState = NetSystemState.Idle;
-
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
-                        }
-
-                        yield return new WaitForSeconds(reconnectDelay);
-                    }
-                }
             }
-
-            if (instance.InRoom)
-                instance.netState = NetSystemState.InGame;
         }
 
         public static void QueueRoom(string roomName)
