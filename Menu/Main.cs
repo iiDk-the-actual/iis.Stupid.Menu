@@ -5591,8 +5591,21 @@ namespace iiMenu.Menu
             ReloadMenu();
         }
 
-        public static int NoInvisLayerMask() =>
-            ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
+        private static int? noInvisLayerMask;
+        public static int NoInvisLayerMask()
+        {
+            if (noInvisLayerMask == null)
+                noInvisLayerMask = ~(
+                    1 << LayerMask.NameToLayer("TransparentFX") |
+                    1 << LayerMask.NameToLayer("Ignore Raycast") |
+                    1 << LayerMask.NameToLayer("Zone") |
+                    1 << LayerMask.NameToLayer("Gorilla Trigger") |
+                    1 << LayerMask.NameToLayer("Gorilla Boundary") |
+                    1 << LayerMask.NameToLayer("GorillaCosmetics") |
+                    1 << LayerMask.NameToLayer("GorillaParticle"));
+
+            return noInvisLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers;
+        }
 
         public static void Toggle(string buttonText, bool fromMenu = false, bool ignoreForce = false)
         {
@@ -6323,14 +6336,6 @@ jgs \_   _/ |Oo\
         };
 
         public static List<string> quickActions = new List<string>();
-
-        public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
-        public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
-        public static int Zone = LayerMask.NameToLayer("Zone");
-        public static int GorillaTrigger = LayerMask.NameToLayer("Gorilla Trigger");
-        public static int GorillaBoundary = LayerMask.NameToLayer("Gorilla Boundary");
-        public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
-        public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
 
         public static Camera TPC;
         public static GameObject menu;
