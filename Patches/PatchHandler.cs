@@ -18,7 +18,7 @@ namespace iiMenu.Patches
                 instance ??= new Harmony(PluginInfo.GUID);
 
                 foreach (var type in Assembly.GetExecutingAssembly().GetTypes()
-                    .Where(t => t.IsClass && t.GetCustomAttribute<HarmonyPatch>() != null))
+                    .Where(t => t != null && t.IsClass && t.GetCustomAttribute<HarmonyPatch>() != null))
                 {
                     try
                     {

@@ -1,4 +1,4 @@
-using GorillaTagScripts.ModIO;
+using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -20,7 +20,7 @@ namespace iiMenu.Mods.CustomMaps
             int category = GetCategory("Custom Maps");
             List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
 
-            if (overwriteId != -1 && CustomMapLoader.IsModLoaded())
+            if (overwriteId != -1 && CustomMapLoader.IsMapLoaded())
             {
                 long mapID = overwriteId ?? CustomMapLoader.LoadedMapModId;
                 if (!mapScriptArchives.ContainsKey(mapID))

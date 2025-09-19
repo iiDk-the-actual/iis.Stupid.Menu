@@ -1,7 +1,7 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
-using GorillaTagScripts.ModIO;
+using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -196,7 +196,7 @@ namespace iiMenu.Mods
 
         public static void CopyCustomMapID()
         {
-            string id = CustomMapManager.currentRoomMapModId.id.ToString();
+            string id = CustomMapManager.currentRoomMapModId._id.ToString();
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
             GUIUtility.systemCopyBuffer = id;
         }
