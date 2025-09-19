@@ -93,7 +93,7 @@ namespace iiMenu.Managers
 
             foreach (KeyValuePair<VRRig, float> ghostRig in ghostRigDelay)
             {
-                if (!GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > (ghostRig.Value + 0.05))
+                if (!GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > (ghostRig.Value + 0.05f))
                 {
                     toRemoveGhosts.Add(ghostRig.Key);
 
@@ -422,7 +422,7 @@ namespace iiMenu.Managers
                                 Nametag.transform.LookAt(Camera.main.transform.position);
                                 Nametag.transform.Rotate(0f, 180f, 0f);
 
-                                ghostRigDelay[SenderRig] = Time.time + 0.1f;
+                                ghostRigDelay[SenderRig] = Time.time + 0.09f;
 
                                 break;
                             }
