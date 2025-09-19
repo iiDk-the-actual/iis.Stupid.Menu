@@ -91,6 +91,18 @@
     <Reference Include="BepInEx.Preloader">
       <HintPath>$(ProjectDir)References\core\BepInEx.Preloader.dll</HintPath>
     </Reference>
+    <Reference Include="Modio">
+      <HintPath>$(ProjectDir)References\Managed\Modio.dll</HintPath>
+    </Reference>
+    <Reference Include="Modio.Unity">
+      <HintPath>$(ProjectDir)References\Managed\Modio.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Modio.Unity.Examples">
+      <HintPath>$(ProjectDir)References\Managed\Modio.Unity.Examples.dll</HintPath>
+    </Reference>
+    <Reference Include="Modio.Unity.UI">
+      <HintPath>$(ProjectDir)References\Managed\Modio.Unity.UI.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Cinemachine">
       <HintPath>$(ProjectDir)References\Managed\Unity.Cinemachine.dll</HintPath>
     </Reference>
@@ -180,12 +192,6 @@
     </Reference>
     <Reference Include="NavMeshComponents">
       <HintPath>$(ProjectDir)References\Managed\NavMeshComponents.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json.UnityConverters">
-      <HintPath>$(ProjectDir)References\Managed\Newtonsoft.Json.UnityConverters.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json.UnityConverters.Addressables">
-      <HintPath>$(ProjectDir)References\Managed\Newtonsoft.Json.UnityConverters.Addressables.dll</HintPath>
     </Reference>
     <Reference Include="Nobi.UiRoundedCorners">
       <HintPath>$(ProjectDir)References\Managed\Nobi.UiRoundedCorners.dll</HintPath>
