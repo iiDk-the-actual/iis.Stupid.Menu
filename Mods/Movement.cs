@@ -60,7 +60,8 @@ namespace iiMenu.Mods
                 "Legacy",
                 "Small",
                 "Long",
-                "1x1"
+                "1x1",
+                "Massive"
             };
 
             if (positive)
@@ -96,7 +97,8 @@ namespace iiMenu.Mods
                 new Vector3(0.025f, 0.3f, 0.4f),
                 new Vector3(0.025f, 0.15f, 0.2f),
                 new Vector3(0.025f, 0.3f, 0.8f),
-                new Vector3(0.1f, 0.1f, 0.1f)
+                new Vector3(0.1f, 0.1f, 0.1f),
+                new Vector3(0.025f, 1f, 1f)
             }[platformShape] * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
         }
 
