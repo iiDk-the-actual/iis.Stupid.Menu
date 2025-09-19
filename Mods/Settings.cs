@@ -4704,7 +4704,8 @@ namespace iiMenu.Mods
                 Safety.targetElo.ToString(),
                 Safety.targetBadge.ToString(),
                 Movement.playspaceAbuseIndex.ToString(),
-                Movement.wallWalkStrengthIndex.ToString()
+                Movement.wallWalkStrengthIndex.ToString(),
+                Fun.headSpinIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -4927,6 +4928,9 @@ namespace iiMenu.Mods
 
                 Movement.wallWalkStrengthIndex = int.Parse(data[55]) - 1;
                 Movement.ChangeWallWalkStrength();
+
+                Fun.headSpinIndex = int.Parse(data[56]) - 1;
+                Fun.ChangeHeadSpinSpeed();
             }
             catch { LogManager.Log("Save file out of date"); }
 

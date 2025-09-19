@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -68,6 +69,26 @@ namespace iiMenu.Mods
             } 
             else
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
+        }
+
+        public static int headSpinIndex;
+        public static void ChangeHeadSpinSpeed(bool positive = true)
+        {
+            float[] speedAmounts = new float[] { 2f, 7.5f, 8f, 9f, 200f };
+            string[] speedNames = new string[] { "Very Slow", "Slow", "Normal", "Fast", "Very Fast" };
+
+            if (positive)
+                headSpinIndex++;
+            else
+                headSpinIndex--;
+
+            headSpinIndex %= speedAmounts.Length;
+            if (headSpinIndex < 0)
+                headSpinIndex = speedAmounts.Length - 1;
+
+            headSpinSpeed = speedAmounts[headSpinIndex];
+
+            GetIndex("Change Head Spin Speed").overlapText = "Change Head Spin Speed <color=grey>[</color><color=green>" + speedNames[headSpinIndex] + "</color><color=grey>]</color>";
         }
 
         private static float headSpinSpeed = 10f;
