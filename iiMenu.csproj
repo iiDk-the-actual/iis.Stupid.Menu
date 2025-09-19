@@ -160,12 +160,6 @@
     <Reference Include="Meta.XR.BuildingBlocks">
       <HintPath>$(ProjectDir)References\Managed\Meta.XR.BuildingBlocks.dll</HintPath>
     </Reference>
-    <Reference Include="modio.UI">
-      <HintPath>$(ProjectDir)References\Managed\modio.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="modio.UnityPlugin">
-      <HintPath>$(ProjectDir)References\Managed\modio.UnityPlugin.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>$(ProjectDir)References\core\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -192,9 +186,6 @@
     </Reference>
     <Reference Include="NavMeshComponents">
       <HintPath>$(ProjectDir)References\Managed\NavMeshComponents.dll</HintPath>
-    </Reference>
-    <Reference Include="Nobi.UiRoundedCorners">
-      <HintPath>$(ProjectDir)References\Managed\Nobi.UiRoundedCorners.dll</HintPath>
     </Reference>
     <Reference Include="Oculus.Interaction">
       <HintPath>$(ProjectDir)References\Managed\Oculus.Interaction.dll</HintPath>
