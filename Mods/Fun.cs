@@ -2553,6 +2553,9 @@ Piece Name: {gunTarget.name}";
             if (CurrentSlingshot() == null)
                 return;
 
+            if (CurrentSlingshot().InLeftHand() ? leftTrigger > 0.5f : rightTrigger > 0.5f)
+                return;
+
             List<NetPlayer> infected = InfectedList();
             List<VRRig> rigs = GorillaParent.instance.vrrigs
                 .Where(rig => !rig.isLocal)
