@@ -1,6 +1,6 @@
 ﻿using GorillaTagScripts.VirtualStumpCustomMaps;
 using HarmonyLib;
-using ModIO;
+using Modio.Mods;
 
 namespace iiMenu.Patches.Menu
 {
@@ -8,7 +8,7 @@ namespace iiMenu.Patches.Menu
     public class LoadModPatch
     {
         public static void Prefix(ModId modId) =>
-            Mods.CustomMaps.Manager.UpdateCustomMapsTab(modId.id);
+            Mods.CustomMaps.Manager.UpdateCustomMapsTab(modId);
     }
 
     [HarmonyPatch(typeof(CustomMapManager), "UnloadMap")]
