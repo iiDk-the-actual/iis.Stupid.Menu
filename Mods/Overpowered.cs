@@ -834,7 +834,7 @@ namespace iiMenu.Mods
             VRRig.LocalRig.enabled = true;
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.leftMiddle.calcT > 0.8f || rig.rightMiddle.calcT > 0.8f)
+                if ((rig.leftMiddle.calcT > 0.8f && rig.leftHandLink.grabbedPlayer == null) || (rig.rightMiddle.calcT > 0.8f && rig.rightHandLink.grabbedPlayer == null))
                 {
                     bool isLeftHand = rig.leftMiddle.calcT > 0.8f;
                     Transform targetHand = isLeftHand ? rig.leftHandTransform : rig.rightHandTransform;
