@@ -733,6 +733,9 @@ namespace iiMenu.Mods
                 Vector3 position = rig.syncPos;
                 Vector3 velocity = rig.LatestVelocity();
 
+                if (velocity.magnitude < 0.5f)
+                    continue;
+
                 DrawTrajectory(position, velocity, Line);
             }
         }
@@ -774,15 +777,13 @@ namespace iiMenu.Mods
             foreach (SlingshotProjectile item in toRemoveTrajectories)
                 trajectoryPool.Remove(item);
 
-            foreach (LoopingArray<ProjectileTracker.ProjectileInfo> projectileArray in ProjectileTracker.m_playerProjectiles.Values)
+            void LoopProjectileArray(LoopingArray<ProjectileTracker.ProjectileInfo> projectileArray)
             {
-                if (projectileArray == null || projectileArray.Length <= 0) continue;
+                if (projectileArray == null || projectileArray.Length <= 0) return;
                 for (int index = 0; index < projectileArray.Length; index++)
                 {
                     SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
                     if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
-
-                    VisualizeAura(projectileInstance.transform.position, 0.5f, Color.red);
 
                     if (!trajectoryPool.TryGetValue(projectileInstance, out LineRenderer Line))
                     {
@@ -823,12 +824,16 @@ namespace iiMenu.Mods
                     Vector3 position = projectileInstance.transform.position;
                     Vector3 velocity = projectileInstance.projectileRigidbody.linearVelocity;
 
-                    float scale = projectileInstance.transform.lossyScale.x;
-                    Vector3 gravity = Physics.gravity * projectileInstance.gravityMultiplier * ((scale < 1f) ? scale : 1f);
+                    Vector3 gravity = Physics.gravity + (projectileInstance.forceComponent?.force ?? Vector3.zero);
 
                     DrawTrajectory(position, velocity, Line, NoInvisLayerMask(), gravity);
                 }
             }
+
+            foreach (LoopingArray<ProjectileTracker.ProjectileInfo> projectileArray in ProjectileTracker.m_playerProjectiles.Values)
+                LoopProjectileArray(projectileArray);
+
+            LoopProjectileArray(ProjectileTracker.m_localProjectiles);
 
             if (localTrajectoryLine != null)
             {
@@ -883,10 +888,7 @@ namespace iiMenu.Mods
             Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * (EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x));
             Vector3 localVelocity = localSlingshot.GetLaunchVelocity();
 
-            float localScale = localSlingshot.dummyProjectile.transform.lossyScale.x;
-            Vector3 localGravity = Physics.gravity * localSlingshot.dummyProjectile.GetComponent<SlingshotProjectile>().gravityMultiplier * ((localScale < 1f) ? localScale : 1f);
-
-            DrawTrajectory(localPosition, localVelocity, localTrajectoryLine, NoInvisLayerMask(), localGravity);
+            DrawTrajectory(localPosition, localVelocity, localTrajectoryLine, NoInvisLayerMask(), Vector3.down * 10.79f);
         }
 
         public static void DisablePaintbrawlTrajectories()
@@ -905,17 +907,12 @@ namespace iiMenu.Mods
 
         public static void DrawTrajectory(Vector3 position, Vector3 velocity, LineRenderer lineRenderer, int? overrideLayerMask = null, Vector3? overrideGravity = null)
         {
-            if (velocity.magnitude < 0.5f)
-            {
-                lineRenderer.enabled = false;
-                return;
-            }
-
             lineRenderer.enabled = true;
 
             int stepCount = 25;
             Vector3[] points = new Vector3[stepCount];
 
+            VRRig hitPlayer = null;
             int i;
             for (i = 0; i < stepCount; i++)
             {
@@ -924,16 +921,34 @@ namespace iiMenu.Mods
                 Vector3 nextVelocity = velocity + (overrideGravity ?? Physics.gravity) * 0.1f;
                 Vector3 nextPosition = position + velocity * 0.1f;
 
-                if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, overrideLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers))
+                if (i >= 1 && Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, overrideLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers))
                 {
                     points[i] = hit.point;
                     i++;
+
+                    VRRig raycastTarget = hit.collider.GetComponentInParent<VRRig>();
+                    if (raycastTarget)
+                        hitPlayer = raycastTarget;
+                    
                     break;
                 }
 
                 position = nextPosition;
                 velocity = nextVelocity;
             }
+
+            Color lineColor = lineRenderer.startColor;
+
+            if (hitPlayer != null)
+            {
+                if (PlayerIsLocal(hitPlayer))
+                    lineColor = Color.red;
+                else
+                    lineColor = Color.green;
+            }
+
+            lineRenderer.startColor = lineColor;
+            lineRenderer.endColor = lineColor;
 
             Vector3[] finalPoints = new Vector3[i];
             Array.Copy(points, finalPoints, i);
