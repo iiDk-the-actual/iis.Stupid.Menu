@@ -17,6 +17,9 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled)
             {
+                if (__instance.InLeftHand() ? leftTrigger > 0.5f : rightTrigger > 0.5f)
+                    return;
+
                 List<NetPlayer> infected = InfectedList();
                 List<VRRig> rigs = GorillaParent.instance.vrrigs
                     .Where(rig => !rig.isLocal)
