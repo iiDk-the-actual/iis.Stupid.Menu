@@ -65,6 +65,9 @@ namespace iiMenu.Managers
         public static bool InviteNotifications = true;
         public static bool PreferenceSharing = true;
 
+        public static bool SoundEffects = true;
+        public static bool Messaging = true;
+
         public static bool PhysicalPlatforms;
 
         public void Update()
@@ -639,7 +642,12 @@ namespace iiMenu.Managers
         public static void DenyFriendRequest(string uid)
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000),
+                () => {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
+
+                    if (SoundEffects)
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/doorclose.mp3", "doorclose.mp3"), buttonClickVolume / 10f);
+                },
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
         }
@@ -702,6 +710,9 @@ namespace iiMenu.Managers
                 color = ColorToHex(VRRig.LocalRig.playerColor),
                 message,
             }));
+
+            if (SoundEffects)
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/send.mp3", "send.mp3"), buttonClickVolume / 10f);
 
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
         }
@@ -784,10 +795,20 @@ namespace iiMenu.Managers
             FriendData.Friend[] organizedFriends = onlineFriends.Concat(offlineFriends).ToArray();
 
             if (onlineFriends.Length > previousOnlineCount && onlineFriends.Length > 0)
+            {
+                if (SoundEffects)
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/online.mp3", "online.mp3"), buttonClickVolume / 10f);
+
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
+            }
 
             if (instance.Friends.incoming.Values.Count > previousIncomingCount && instance.Friends.incoming.Values.Count > 0)
+            {
+                if (SoundEffects)
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/dooropen.mp3", "dooropen.mp3"), buttonClickVolume / 10f);
+
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend request{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")}.", 5000);
+            }
 
             previousOnlineCount = onlineFriends.Length;
             previousIncomingCount = instance.Friends.incoming.Values.Count;
@@ -1241,6 +1262,12 @@ namespace iiMenu.Managers
                             }
                         case "message":
                             {
+                                if (!Messaging)
+                                    break;
+
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/receive.mp3", "receive.mp3"), buttonClickVolume / 10f);
+
                                 string message = (string)obj["message"];
                                 string color = (string)obj["color"];
 
