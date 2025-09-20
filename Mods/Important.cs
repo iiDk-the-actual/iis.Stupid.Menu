@@ -4,8 +4,6 @@ using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
-using PlayFab;
-using PlayFab.ClientModels;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;

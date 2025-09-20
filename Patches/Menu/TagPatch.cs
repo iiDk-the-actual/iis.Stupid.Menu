@@ -31,7 +31,7 @@ namespace iiMenu.Patches.Menu
                     tagCount = Math.Min(tagCount + 1, 7);
                     tagDelay = Time.time + 10f;
 
-                    string killsounds = "https://github.com/iiDk-the-actual/ModInfo/raw/main/killsounds";
+                    string killsounds = PluginInfo.ResourceURL;
                     switch (tagCount)
                     {
                         case 1:

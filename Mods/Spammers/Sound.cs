@@ -94,7 +94,7 @@ namespace iiMenu.Mods.Spammers
         {
             currentCategoryName = "Sound Library";
 
-            string library = GetHttp("https://github.com/iiDk-the-actual/ModInfo/raw/main/SoundLibrary.txt");
+            string library = GetHttp($"{PluginInfo.ResourceURL}/SoundLibrary.txt");
             string[] audios = AlphabetizeNoSkip(library.Split("\n"));
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Sound Library", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." } };
             int index = 0;
