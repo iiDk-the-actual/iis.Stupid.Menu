@@ -281,10 +281,10 @@ namespace iiMenu.Mods
                         tapMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                         if (tapTxt == null)
-                            tapTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/footstep.png", "footstep.png");
+                            tapTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/footstep.png", "footstep.png");
 
                         if (warningTxt == null)
-                            warningTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/warning.png", "warning.png");
+                            warningTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/warning.png", "warning.png");
 
                         tapMat.SetFloat("_Surface", 1);
                         tapMat.SetFloat("_Blend", 0);
@@ -2157,7 +2157,7 @@ namespace iiMenu.Mods
 
                     if (!cosmeticTextures.TryGetValue(currentCosmetic, out Texture2D texture))
                     {
-                        texture = LoadTextureFromURL($"https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/{currentCosmetic}.png", $"{currentCosmetic}.png");
+                        texture = LoadTextureFromURL($"{PluginInfo.ResourceURL}/{currentCosmetic}.png", $"{currentCosmetic}.png");
                         cosmeticTextures.Add(currentCosmetic, texture);
                     }
 
@@ -2236,10 +2236,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
@@ -2281,10 +2281,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);

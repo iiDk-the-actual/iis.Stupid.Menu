@@ -30,7 +30,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -655,7 +654,7 @@ namespace iiMenu.Mods
             };
 
             foreach (string sound in sounds)
-                LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/killsounds/{sound}.wav", $"{sound}.wav");
+                LoadSoundFromURL($"{PluginInfo.ResourceURL}/killsounds/{sound}.wav", $"{sound}.wav");
         }
 
         private static GameObject FreeCamObject;
@@ -4360,7 +4359,7 @@ Piece Name: {gunTarget.name}";
             isFiring = true;
 
             if (!File.Exists($"{PluginInfo.BaseDirectory}/shotgun.wav"))
-                LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
+                LoadSoundFromURL($"{PluginInfo.ResourceURL}/shotgun.wav", "shotgun.wav");
 
             Sound.PlayAudio("shotgun.wav");
 

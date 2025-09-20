@@ -1873,7 +1873,7 @@ namespace iiMenu.Mods
                         };
                         if (pearltxt == null)
                         {
-                            pearltxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/pearl.png", "pearl.png");
+                            pearltxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/pearl.png", "pearl.png");
                             pearltxt.filterMode = FilterMode.Point;
                             pearltxt.wrapMode = TextureWrapMode.Clamp;
                         }

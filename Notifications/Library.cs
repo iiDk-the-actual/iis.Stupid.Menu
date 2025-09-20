@@ -325,7 +325,7 @@ namespace iiMenu.Notifications
         }
 
         public static void PlayNotificationSound() =>
-            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav", Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
+            Play2DAudio(LoadSoundFromURL(PluginInfo.ResourceURL + "/" + Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav", Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
 
         public static void ClearAllNotifications() =>
             NotifiText.text = "";
