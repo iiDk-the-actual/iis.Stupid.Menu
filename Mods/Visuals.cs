@@ -401,16 +401,23 @@ namespace iiMenu.Mods
         public static Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>>();
         public static float GetLabelDistance(bool leftHand)
         {
-            if (labelDistances[leftHand][0] == Time.frameCount)
+            if (!labelDistances.TryGetValue(leftHand, out List<int> frames))
             {
-                labelDistances[leftHand].Add(Time.frameCount);
-                return 0.1f + (labelDistances[leftHand].Count * 0.1f);
+                frames = new List<int> { Time.frameCount };
+                labelDistances[leftHand] = frames;
+                return 0.2f;
+            }
+
+            if (frames[0] == Time.frameCount)
+            {
+                frames.Add(Time.frameCount);
+                return 0.1f + (Time.frameCount * 0.1f);
             }
             else
             {
-                labelDistances[leftHand].Clear();
-                labelDistances[leftHand].Add(Time.frameCount);
-                return 0.1f + (labelDistances[leftHand].Count * 0.1f);
+                frames.Clear();
+                frames.Add(Time.frameCount);
+                return 0.1f + (frames.Count * 0.1f);
             }
         }
 
