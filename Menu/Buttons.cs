@@ -1893,12 +1893,12 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Friend Settings [35]
                 new ButtonInfo { buttonText = "Exit Friend Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
-
+                
                 new ButtonInfo { buttonText = "Disable Rig Networking", enableMethod =() => FriendManager.RigNetworking = false, disableMethod =() => FriendManager.RigNetworking = true, toolTip = "Disables the networking between friends when your rig is disabled."},
                 new ButtonInfo { buttonText = "Disable Platform Networking", enableMethod =() => FriendManager.PlatformNetworking = false, disableMethod =() => FriendManager.PlatformNetworking = true, toolTip = "Disables the platform networking between friends."},
                 new ButtonInfo { buttonText = "Disable Pinging", enableMethod =() => FriendManager.Pinging = false, disableMethod =() => FriendManager.Pinging = true, toolTip = "Disables the pinging feature between friends."},
                 new ButtonInfo { buttonText = "Disable Messaging", enableMethod =() => FriendManager.Messaging = false, disableMethod =() => FriendManager.Messaging = true, toolTip = "Disables the message feature between friends."},
-                new ButtonInfo { buttonText = "Disable Friend Sounds", enableMethod =() => FriendManager.SoundEffects = false, disableMethod =() => FriendManager.SoundEffects = true, toolTip = "Disables the message feature between friends."},
+                new ButtonInfo { buttonText = "Disable Friend Sounds", enableMethod =() => FriendManager.SoundEffects = false, disableMethod =() => FriendManager.SoundEffects = true, toolTip = "Disables the sound effects in the friend system."},
                 new ButtonInfo { buttonText = "Friend Sided Projectiles", enableMethod =() => Projectiles.friendSided = true, disableMethod =() => Projectiles.friendSided = false, toolTip = "Makes projectiles only appear between friends."},
 
                 new ButtonInfo { buttonText = "Disable Invite Notifications", enableMethod =() => FriendManager.InviteNotifications = false, disableMethod =() => FriendManager.InviteNotifications = true, toolTip = "Disables the prompt and notification when getting an invite from a friend."},
