@@ -1056,7 +1056,7 @@ namespace iiMenu.Menu
                     if (pageButtonType == 3 || pageButtonType == 4)
                     {
                         bool previousButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
-                        bool nextButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
+                        bool nextButton = pageButtonType == 3 ? rightGrab : rightTrigger > 0.5f;
 
                         if (Time.time > pageButtonChangeDelay)
                         {
