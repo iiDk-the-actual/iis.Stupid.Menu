@@ -520,7 +520,12 @@ namespace iiMenu.Menu
                                                 }
 
                                                 ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                                Toggle(buttons[0].buttonText);
+                                                ButtonInfo button = buttons[0];
+
+                                                if (button.incremental)
+                                                    ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
+                                                else
+                                                    Toggle(buttons[0].buttonText, true);
                                             } else if (IsText)
                                                 Toggle("Accept Prompt");
 
@@ -4087,7 +4092,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = scaleWithPlayer && XRSettings.isDeviceActive ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
