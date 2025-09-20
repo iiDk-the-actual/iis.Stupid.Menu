@@ -3868,8 +3868,8 @@ namespace iiMenu.Mods
                 buttonColors[1].GetColor(0),
                 buttonColors[1].GetColor(1),
                 textColors[0].GetColor(0),
-                textColors[1].GetColor(1),
-                textColors[2].GetColor(2)
+                textColors[1].GetColor(0),
+                textColors[2].GetColor(0)
             };
 
             string output = "";

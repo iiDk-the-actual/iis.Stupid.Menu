@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
 
@@ -183,6 +184,9 @@ exit";
         {
             if (TPC != null)
             {
+                if (menu != null && !XRSettings.isDeviceActive)
+                    return;
+
                 TPC.fieldOfView = 90f;
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = false;
                 TPC.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
