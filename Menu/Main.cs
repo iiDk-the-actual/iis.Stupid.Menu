@@ -503,7 +503,7 @@ namespace iiMenu.Menu
                                                         {
                                                             try
                                                             {
-                                                                if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                                                if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
                                                                     continue;
 
                                                                 string buttonText = v.buttonText;
@@ -2455,7 +2455,7 @@ namespace iiMenu.Menu
                                 {
                                     try
                                     {
-                                        if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                        if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
                                             continue;
 
                                         string buttonText = v.buttonText;
@@ -5671,7 +5671,7 @@ namespace iiMenu.Menu
                         {
                             try
                             {
-                                if (Buttons.categoryNames[categoryIndex].Contains("Admin") && !isAdmin)
+                                if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
                                     continue;
                                 
                                 string buttonTextt = v.buttonText;
