@@ -15,6 +15,7 @@ using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
+using Oculus.Interaction.Samples;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -2671,9 +2672,20 @@ Piece Name: {gunTarget.name}";
             paintbrawlTriggerLine.enabled = false;
 
             if (paintbrawlTriggerLine.startColor == Color.green && Time.time > triggerBotDelay)
-            {
                 triggerBotDelay = Time.time + 0.2f;
-                localSlingshot.OnRelease(null, localSlingshot.drawingHand);
+
+            if (Time.time < triggerBotDelay)
+            {
+                if (localSlingshot.ForLeftHandSlingshot())
+                {
+                    ControllerInputPoller.instance.rightControllerGripFloat = 0f;
+                    ControllerInputPoller.instance.rightGrab = false;
+                }
+                else
+                {
+                    ControllerInputPoller.instance.leftControllerGripFloat = 0f;
+                    ControllerInputPoller.instance.leftGrab = false;
+                }
             }
         }
 
