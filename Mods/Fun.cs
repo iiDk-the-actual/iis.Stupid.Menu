@@ -2632,6 +2632,51 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static LineRenderer paintbrawlTriggerLine;
+        public static float triggerBotDelay;
+        public static void SlingshotTriggerBot()
+        {
+            if (paintbrawlTriggerLine != null)
+            {
+                if (!paintbrawlTriggerLine.gameObject.activeSelf)
+                {
+                    paintbrawlTriggerLine = null;
+                    UnityEngine.Object.Destroy(paintbrawlTriggerLine.gameObject);
+                }
+                else
+                    paintbrawlTriggerLine.gameObject.SetActive(false);
+            }
+
+            Slingshot localSlingshot = Fun.CurrentSlingshot();
+            if (localSlingshot == null || !localSlingshot.InDrawingState())
+                return;
+
+            if (paintbrawlTriggerLine == null)
+            {
+                GameObject LineObject = new GameObject("LineObject");
+                paintbrawlTriggerLine = LineObject.AddComponent<LineRenderer>();
+                paintbrawlTriggerLine.positionCount = 25;
+            }
+
+            paintbrawlTriggerLine.gameObject.SetActive(true);
+
+            paintbrawlTriggerLine.startColor = Color.black;
+            paintbrawlTriggerLine.endColor = Color.black;
+
+            Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * (EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x));
+            Vector3 localVelocity = localSlingshot.GetLaunchVelocity();
+
+            Visuals.DrawTrajectory(localPosition, localVelocity, paintbrawlTriggerLine, NoInvisLayerMask(), Vector3.down * 10.79f);
+
+            paintbrawlTriggerLine.enabled = false;
+
+            if (paintbrawlTriggerLine.startColor == Color.green && Time.time > triggerBotDelay)
+            {
+                triggerBotDelay = Time.time + 0.2f;
+                localSlingshot.OnRelease(null, localSlingshot.drawingHand);
+            }
+        }
+
         public static Coroutine bugCoroutine;
         public static IEnumerator ReturnRig()
         {

@@ -948,6 +948,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Angry Birds", enableMethod =() => GetLaunchPatch.angryBirds = true, disableMethod =() => GetLaunchPatch.angryBirds = false, toolTip = "Flings you in whatever direction your slingshot's projectiles are heading."},
                 new ButtonInfo { buttonText = "Paintbrawl Aimbot", enableMethod =() => GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
                 new ButtonInfo { buttonText = "Slingshot Helper", method =() => Fun.SlingshotHelper(), toolTip = "Helps you grab the small paintball on your slingshot."},
+                new ButtonInfo { buttonText = "Slingshot Trigger Bot", method =() => Fun.SlingshotTriggerBot(), toolTip = "Releases the small paintball on your slingshot when hovering over another player."},
 
                 new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), toolTip = "Kills yourself in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in paintbrawl." },
