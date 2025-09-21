@@ -646,7 +646,7 @@ namespace iiMenu.Managers
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
 
                     if (SoundEffects)
-                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/doorclose.mp3", "doorclose.mp3"), buttonClickVolume / 10f);
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/doorslam.mp3", "doorslam.mp3"), buttonClickVolume / 10f);
                 },
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
