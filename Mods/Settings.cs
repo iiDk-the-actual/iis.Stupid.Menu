@@ -477,7 +477,7 @@ namespace iiMenu.Mods
                     buttons.Add(new ButtonInfo
                     {
                         buttonText = $"PlayerButton{i}",
-                        overlapText = $"<color={playerColor}>" + ToTitleCase(player.NickName) + "</color>",
+                        overlapText = $"<color={playerColor}>" + player.NickName + "</color>",
                         method =() => NavigatePlayer(player),
                         isTogglable = false,
                         toolTip = $"See information on the player {player.NickName}."
@@ -491,7 +491,7 @@ namespace iiMenu.Mods
         public static void NavigatePlayer(NetPlayer player)
         {
             currentCategoryName = "Temporary Category";
-            string targetName = ToTitleCase(player.NickName);
+            string targetName = player.NickName;
 
             VRRig playerRig = GetVRRigFromPlayer(player) ?? null;
 
@@ -4583,7 +4583,7 @@ namespace iiMenu.Mods
                         NavigatePlayer(GetPlayerFromVRRig(rigTarget));
                         ReloadMenu();
 
-                        NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {ToTitleCase(GetPlayerFromVRRig(rigTarget).NickName)}.</color>");
+                        NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {GetPlayerFromVRRig(rigTarget).NickName}.</color>");
                     }
 
                     lastTriggerSelect = trigger;
