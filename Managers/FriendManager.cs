@@ -10,6 +10,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -717,6 +718,23 @@ namespace iiMenu.Managers
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
         }
 
+        public static void UpdateFriendMessage(string friendTarget, string message)
+        {
+            string messageDataPath = $"{PluginInfo.BaseDirectory}/Friends/Messages/{friendTarget}.json";
+            if (!File.Exists(messageDataPath))
+                File.WriteAllText(messageDataPath, @"{""messages"":[]}");
+            else
+            {
+                JObject json = JObject.Parse(File.ReadAllText(messageDataPath));
+                List<string> messages = json["messages"]?.ToObject<List<string>>() ?? new List<string>();
+
+                messages.Add(message);
+
+                json["messages"] = JArray.FromObject(messages);
+                File.WriteAllText(messageDataPath, json.ToString());
+            }
+        }
+
         public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
         {
             UnityWebRequest request = new UnityWebRequest($"https://iidk.online/{action}", "POST");
@@ -1022,11 +1040,11 @@ namespace iiMenu.Managers
                     },
                     new ButtonInfo
                     {
-                        buttonText = $"SendMessage{friendTarget}",
-                        overlapText = "Send Message",
-                        method = () => PromptText("What would you like to send?", () => SendFriendMessage(friendTarget, keyboardInput), null, "Done", "Cancel"),
+                        buttonText = $"MessageLogs{friendTarget}",
+                        overlapText = "Message",
+                        method = () => ShowChatMessages(friendTarget),
                         isTogglable = false,
-                        toolTip = $"Sends a message to {friend.currentName}."
+                        toolTip = $"Opens the chat menu for {friend.currentName}."
                     },
                 });
             }
@@ -1093,6 +1111,61 @@ namespace iiMenu.Managers
             };
 
             Buttons.buttons[29] = buttons.ToArray();
+        }
+
+        public static void ShowChatMessages(string friendTarget)
+        {
+            currentCategoryName = "Chat Messages";
+            FriendData.Friend friend = instance.Friends.friends[friendTarget];
+
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
+                new ButtonInfo {
+                    buttonText = "Return to Friend Page",
+                    method =() => InspectFriend(friendTarget),
+                    isTogglable = false,
+                    toolTip = "Returns you back to the page of your friend."
+                }
+            };
+
+            List<string> messages = new List<string>();
+            int messageCount = pageSize - 2;
+
+            string messageDataPath = $"{PluginInfo.BaseDirectory}/Friends/Messages/{friendTarget}.json";
+            if (!File.Exists(messageDataPath))
+                File.WriteAllText(messageDataPath, @"{""messages"":[]}");
+            else
+            {
+                JObject json = JObject.Parse(File.ReadAllText(messageDataPath));
+                messages = json["messages"]?.ToObject<List<string>>() ?? new List<string>();
+
+                if (messages.Count > messageCount)
+                    messages = messages.Skip(messages.Count - messageCount).ToList();
+            }
+
+            while (messages.Count < messageCount)
+                messages.Insert(0, "");
+
+            for (int i = 0; i < messages.Count; i++)
+            {
+                string message = messages[i];
+                buttons.Add(new ButtonInfo
+                {
+                    buttonText = $"FriendMessage{i}",
+                    overlapText = message,
+                    label = true
+                });
+            }
+
+            buttons.Add(new ButtonInfo
+            {
+                buttonText = $"Message{friendTarget}",
+                overlapText = "Message",
+                method = () => PromptText("What would you like to send?", () => { SendFriendMessage(friendTarget, keyboardInput); UpdateFriendMessage(friendTarget, $"        <color=grey>[</color><color=#{ColorToHex(VRRig.LocalRig.playerColor)}>{PhotonNetwork.NickName.ToUpper()}</color><color=grey>]</color> {keyboardInput}"); ShowChatMessages(friendTarget); ReloadMenu(); }, null, "Done", "Cancel"),
+                isTogglable = false,
+                toolTip = $"Sends a message to {friend.currentName}."
+            });
+
+            Buttons.buttons[41] = buttons.ToArray();
         }
 
         public class FriendWebSocket : MonoBehaviour
@@ -1272,6 +1345,14 @@ namespace iiMenu.Managers
                                 string color = (string)obj["color"];
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}", 5000);
+                                UpdateFriendMessage(from, $"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}        ");
+
+                                if (currentCategoryIndex == 41)
+                                {
+                                    ShowChatMessages(from);
+                                    ReloadMenu();
+                                }
+
                                 break;
                             }
                     }
