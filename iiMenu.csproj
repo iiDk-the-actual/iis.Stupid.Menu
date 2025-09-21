@@ -583,8 +583,4 @@
       <HintPath>$(ProjectDir)References\Managed\ZString.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="GPL\" />
-  </ItemGroup>
 </Project>
