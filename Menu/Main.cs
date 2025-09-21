@@ -568,10 +568,6 @@ namespace iiMenu.Menu
 
                     lastPressedKeys = keysPressed;
                 }
-                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.5f && !disableShift)
-                    shift = true;
-                else
-                    shift = false;
                 #endregion
 
                 #region Get Camera
@@ -5615,7 +5611,7 @@ namespace iiMenu.Menu
                         keyboardInput = keyboardInput[..^1];
                 }
                 else
-                    keyboardInput += shift ? key.ToUpper() : key.ToLower();
+                    keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToUpper() : key.ToLower();
             }
             VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
@@ -6580,7 +6576,7 @@ jgs \_   _/ |Oo\
 
         public static bool AntiOculusReport;
 
-        public static bool shift; //keyboard shift key
+        public static bool shift;
         public static bool disableShift;
 
         public static bool lastHit;
