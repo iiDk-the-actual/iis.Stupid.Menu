@@ -887,10 +887,10 @@ namespace iiMenu.Managers
                     if (!IsPlayerFriend(Player))
                         buttons.Add(new ButtonInfo
                         {
-                            buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{Player.NickName}</color>",
+                            buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{ToTitleCase(Player.NickName)}</color>",
                             method = () => SendFriendRequest(Player.UserId),
                             isTogglable = false,
-                            toolTip = $"Sends a friend request to {Player.NickName}."
+                            toolTip = $"Sends a friend request to {ToTitleCase(Player.NickName)}."
                         });
                 }
             }
