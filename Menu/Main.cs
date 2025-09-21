@@ -568,23 +568,28 @@ namespace iiMenu.Menu
 
                     lastPressedKeys = keysPressed;
                 }
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.5f && !disableShift)
+                    shift = true;
+                else
+                    shift = false;
                 #endregion
 
                 #region Get Camera
                 try
-                {
-                    if (TPC == null)
                     {
-                        try
+                        if (TPC == null)
                         {
-                            TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
-                        }
-                        catch
-                        {
-                            TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
+                            try
+                            {
+                                TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                            }
+                            catch
+                            {
+                                TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
+                            }
                         }
                     }
-                } catch { }
+                    catch { }
                 #endregion
 
                 #region Menu Animations
@@ -5610,7 +5615,7 @@ namespace iiMenu.Menu
                         keyboardInput = keyboardInput[..^1];
                 }
                 else
-                    keyboardInput += key.ToLower();
+                    keyboardInput += shift ? key.ToUpper() : key.ToLower();
             }
             VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
@@ -6574,6 +6579,9 @@ jgs \_   _/ |Oo\
         public static bool strobeColor;
 
         public static bool AntiOculusReport;
+
+        public static bool shift; //keyboard shift key
+        public static bool disableShift;
 
         public static bool lastHit;
         public static bool lastHit2;
