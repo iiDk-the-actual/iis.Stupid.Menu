@@ -1976,7 +1976,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
                 new ButtonInfo { buttonText = "Give Trigger Fly Gun", method =() => Experimental.AdminGiveTriggerFlyGun(), toolTip = "Gives whoever you want fly when they hold their trigger down if they're using console."},
                 new ButtonInfo { buttonText = "Give Speed Boost Gun", method =() => Experimental.AdminGiveSpeedGun(), toolTip = "Gives whoever you want speed boost if they're using console."},
-            }
+            },
+
+            new ButtonInfo[] // Chat Messages [41]
+            {
+            },
         };
 
         public static string[] categoryNames = new string[]
@@ -2021,7 +2025,8 @@ namespace iiMenu.Menu
             "Players",
             "Credits",
             "Custom Maps",
-            "Mod Givers"
+            "Mod Givers",
+            "Chat Messages"
         };
     }
 }
