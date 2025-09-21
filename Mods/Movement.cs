@@ -3369,7 +3369,7 @@ namespace iiMenu.Mods
 
             Rigidbody rb = GorillaTagger.Instance.rigidbody;
 
-            Vector3 displacement = rb.linearVelocity * Time.fixedDeltaTime * extraFactor;
+            Vector3 displacement = (rb.linearVelocity + Physics.gravity) * Time.fixedDeltaTime * extraFactor;
             rb.MovePosition(rb.position + displacement);
         }
 
