@@ -294,10 +294,24 @@ namespace iiMenu.Notifications
                     if (inputTextColor != "green")
                         NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
 
+                    NotificationText = NotificationText.TrimEnd('\n', '\r');
+
                     if (PreviousNotifi == NotificationText && stackNotifications)
                     {
                         NotifiCounter++;
-                        NotifiText.text = $"{NotificationText} {(NotifiCounter >= 1 ? $"<color=grey>(x{NotifiCounter + 1})</color>" : "")}";
+
+                        string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (lines.Length > 0)
+                        {
+                            string lastLine = lines[lines.Length - 1];
+                            int counterIndex = lastLine.IndexOf(" <color=grey>(x");
+                            if (counterIndex > 0)
+                                lastLine = lastLine.Substring(0, counterIndex);
+
+                            lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
+                            NotifiText.text = string.Join(Environment.NewLine, lines);
+                        }
 
                         if (clearCoroutines.Count > 0)
                             CancelClear(clearCoroutines[0]);
@@ -307,14 +321,13 @@ namespace iiMenu.Notifications
                         NotifiCounter = 0;
                         PreviousNotifi = NotificationText;
 
-                        if (!NotificationText.Contains(Environment.NewLine))
-                            NotificationText += Environment.NewLine;
-
-                        if (!string.IsNullOrEmpty(NotifiText.text) &&
-                            !NotifiText.text.EndsWith(Environment.NewLine))
-                            NotifiText.text += Environment.NewLine;
-
-                        NotifiText.text += NotificationText;
+                        if (!string.IsNullOrEmpty(NotifiText.text))
+                        {
+                            string currentText = NotifiText.text.TrimEnd('\n', '\r');
+                            NotifiText.text = currentText + Environment.NewLine + NotificationText;
+                        }
+                        else
+                            NotifiText.text = NotificationText;
                     }
 
                     CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
@@ -354,13 +367,25 @@ namespace iiMenu.Notifications
 
         public static void ClearPastNotifications(int amount)
         {
-            string text = "";
-            foreach (string text2 in Enumerable.Skip(NotifiText.text.Split(Environment.NewLine.ToCharArray()), amount))
+            if (string.IsNullOrEmpty(NotifiText.text))
+                return;
+
+            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (amount >= lines.Length)
             {
-                if (text2 != "")
-                    text = text + text2 + "\n";
+                NotifiText.text = "";
+                return;
             }
-            NotifiText.text = text;
+
+            List<string> remainingLines = new List<string>();
+            for (int i = amount; i < lines.Length; i++)
+            {
+                remainingLines.Add(lines[i]);
+            }
+
+            NotifiText.text = string.Join(Environment.NewLine, remainingLines);
+            NotifiText.text = NotifiText.text.TrimEnd('\n', '\r');
         }
 
         private static IEnumerator TrackCoroutine(IEnumerator routine)
