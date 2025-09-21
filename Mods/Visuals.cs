@@ -26,6 +26,7 @@ using GorillaNetworking;
 using GorillaTag.Rendering;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
+using iiMenu.Extensions;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using System;
@@ -869,7 +870,7 @@ namespace iiMenu.Mods
                     localTrajectoryLine.gameObject.SetActive(false);
             }
 
-            Slingshot localSlingshot = Fun.CurrentSlingshot();
+            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot();
             if (localSlingshot == null || !localSlingshot.InDrawingState())
                 return;
 
@@ -908,7 +909,7 @@ namespace iiMenu.Mods
             localTrajectoryLine.startColor = localColor;
             localTrajectoryLine.endColor = localColor;
 
-            Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * (EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x));
+            Vector3 localPosition = localSlingshot.GetTrueLaunchPosition();
             Vector3 localVelocity = localSlingshot.GetLaunchVelocity();
 
             DrawTrajectory(localPosition, localVelocity, localTrajectoryLine, NoInvisLayerMask(), Vector3.down * 10.79f);
