@@ -3348,10 +3348,8 @@ namespace iiMenu.Mods
 
             Rigidbody rb = GorillaTagger.Instance.rigidbody;
 
-            float dt = Time.fixedDeltaTime * extraFactor;
-
-            Vector3 displacement = rb.linearVelocity * dt;
-            rb.position += displacement;
+            Vector3 displacement = rb.linearVelocity * Time.fixedDeltaTime * extraFactor;
+            rb.MovePosition(rb.position + displacement);
         }
 
         public static void FlickJump()
