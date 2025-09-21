@@ -31,6 +31,7 @@ using GorillaTag.Rendering;
 using GorillaTagScripts;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -2589,28 +2590,12 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        public static Slingshot CurrentSlingshot()
-        {
-            if (EquipmentInteractor.instance.leftHandHeldEquipment != null)
-            {
-                EquipmentInteractor.instance.leftHandHeldEquipment.gameObject.TryGetComponent(out Slingshot slingshot);
-                return slingshot;
-            }
-
-            if (EquipmentInteractor.instance.rightHandHeldEquipment != null)
-            {
-                EquipmentInteractor.instance.rightHandHeldEquipment.gameObject.TryGetComponent(out Slingshot slingshot);
-                return slingshot;
-            }
-            return null;
-        }
-
         public static void DebugSlingshotAimbot()
         {
-            if (CurrentSlingshot() == null)
+            if (VRRig.LocalRig.GetSlingshot() == null)
                 return;
 
-            if (CurrentSlingshot().InLeftHand() ? leftTrigger > 0.5f : rightTrigger > 0.5f)
+            if (VRRig.LocalRig.GetSlingshot().InLeftHand() ? leftTrigger > 0.5f : rightTrigger > 0.5f)
                 return;
 
             List<NetPlayer> infected = InfectedList();
@@ -2640,7 +2625,7 @@ Piece Name: {gunTarget.name}";
 
         public static void SlingshotHelper()
         {
-            Slingshot slingshot = CurrentSlingshot();
+            Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
             if (slingshot == null)
                 return;
 
@@ -2668,7 +2653,7 @@ Piece Name: {gunTarget.name}";
                     paintbrawlTriggerLine.gameObject.SetActive(false);
             }
 
-            Slingshot localSlingshot = Fun.CurrentSlingshot();
+            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot();
             if (localSlingshot == null || !localSlingshot.InDrawingState())
                 return;
 
