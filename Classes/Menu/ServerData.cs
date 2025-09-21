@@ -41,7 +41,7 @@ namespace iiMenu.Classes.Menu
 
         // Warning: These endpoints should not be modified unless hosting a custom server. Use with caution.
         public static string ServerEndpoint = "https://iidk.online";
-        public static string ServerDataEndpoint = "https://iidk.online/serverdata";
+        public static string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
             iiMenu.Menu.Main.SetupAdminPanel(playername);
