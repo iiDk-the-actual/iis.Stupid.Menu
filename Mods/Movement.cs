@@ -3335,10 +3335,10 @@ namespace iiMenu.Mods
         {
             float[] timerPowers = new float[]
             {
-                0.75f,
+                0.5f,
                 1.25f,
-                1.5f,
-                2f
+                2f,
+                5f
             };
             string[] timerNames = new string[]
             {
