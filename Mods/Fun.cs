@@ -2671,7 +2671,7 @@ Piece Name: {gunTarget.name}";
             paintbrawlTriggerLine.enabled = false;
 
             if (paintbrawlTriggerLine.startColor == Color.green && Time.time > triggerBotDelay)
-                triggerBotDelay = Time.time + 0.2f;
+                triggerBotDelay = Time.time + 0.5f;
 
             if (Time.time < triggerBotDelay)
             {
