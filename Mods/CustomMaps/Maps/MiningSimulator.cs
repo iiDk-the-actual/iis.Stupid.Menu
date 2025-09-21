@@ -1,3 +1,12 @@
+/*
+ * ii's Stupid Menu  Mods/CustomMaps/Maps/MiningSimulator.cs
+ * Copyright (C) 2025  Goldentrophy Software
+ * https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ * 
+ * Licensed under the GPL-3.0 license
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ */
+
 ﻿using iiMenu.Classes.Menu;
 using System.Collections.Generic;
 using static iiMenu.Mods.CustomMaps.Manager;

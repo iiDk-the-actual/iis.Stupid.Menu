@@ -1,3 +1,12 @@
+/*
+ * ii's Stupid Menu  Mods/CustomMaps/Maps/MonkeMagic.cs
+ * Copyright (C) 2025  Goldentrophy Software
+ * https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ * 
+ * Licensed under the GPL-3.0 license
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ */
+
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
 using Photon.Pun;
