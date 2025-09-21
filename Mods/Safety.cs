@@ -476,14 +476,24 @@ namespace iiMenu.Mods
 
         public static void BypassModCheckers()
         {
-            if (PhotonNetwork.LocalPlayer.CustomProperties.Any(prop => prop.Key.ToString() != "didTutorial"))
-            {
-                Hashtable customProperties = new Hashtable();
-                if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("didTutorial"))
-                    customProperties["didTutorial"] = PhotonNetwork.LocalPlayer.CustomProperties["didTutorial"];
+            var player = PhotonNetwork.LocalPlayer;
+            if (player == null) return;
 
-                PhotonNetwork.LocalPlayer.CustomProperties = customProperties;
+            if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+
+            Hashtable toRemove = new Hashtable();
+
+            foreach (var keyObj in player.CustomProperties.Keys.Cast<object>().ToList())
+            {
+                string key = keyObj?.ToString();
+                if (key == null) continue;
+
+                if (!key.Equals("didTutorial"))
+                    toRemove[key] = null;
             }
+
+            if (toRemove.Count > 0)
+                player.SetCustomProperties(toRemove);
         }
 
         public static void ChangeIdentity()
