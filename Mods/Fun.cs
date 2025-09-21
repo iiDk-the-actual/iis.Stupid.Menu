@@ -15,7 +15,6 @@ using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
-using Oculus.Interaction.Samples;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;

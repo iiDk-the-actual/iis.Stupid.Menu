@@ -15,7 +15,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
-using static Unity.Burst.Intrinsics.X86;
 
 namespace iiMenu.Mods
 {
