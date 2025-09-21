@@ -284,13 +284,14 @@ namespace iiMenu.Notifications
                     else
                     {
                         NotifiCounter = 0;
-
                         PreviousNotifi = NotificationText;
+
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
 
-                        if (NotifiCounter > 0)
-                            NotificationText += Environment.NewLine;
+                        if (!string.IsNullOrEmpty(NotifiText.text) &&
+                            !NotifiText.text.EndsWith(Environment.NewLine))
+                            NotifiText.text += Environment.NewLine;
 
                         NotifiText.text += NotificationText;
                     }
