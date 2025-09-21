@@ -46,7 +46,9 @@ namespace iiMenu
                 "/Backups",
                 "/TTS",
                 "/PlayerInfo",
-                "/CustomScripts"
+                "/CustomScripts",
+                "/Friends",
+                "/Friends/Messages"
             };
 
             foreach (string DirectoryString in ExistingDirectories)
