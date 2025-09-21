@@ -3357,7 +3357,7 @@ namespace iiMenu.Mods
             if (timerPowerIndex < 0)
                 timerPowerIndex = timerPowers.Length - 1;
 
-            timerPower = timerPowers[predInt];
+            timerPower = timerPowers[timerPowerIndex];
             GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + timerNames[timerPowerIndex] + "</color><color=grey>]</color>";
         }
 
