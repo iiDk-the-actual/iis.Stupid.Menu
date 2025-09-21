@@ -442,6 +442,7 @@ namespace iiMenu.Mods
             textMesh.characterSize = 0.1f;
             textMesh.anchor = TextAnchor.MiddleCenter;
             textMesh.alignment = TextAlignment.Center;
+
             textMesh.text = text;
 
             go.transform.position = (leftHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform).position + Vector3.up * (GetLabelDistance(leftHand) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
@@ -490,9 +491,7 @@ namespace iiMenu.Mods
                     (
                         "Time",
                         false,
-                        !playerIsTagged ?
-                        FormatUnix(Mathf.FloorToInt(Time.time - startTime)) :
-                        FormatUnix(Mathf.FloorToInt(endTime)),
+                        FormatUnix(Mathf.FloorToInt(playerIsTagged ? endTime : (Time.time - startTime))),
                         playerIsTagged ? Color.green : Color.white
                     );
                 }
@@ -531,16 +530,18 @@ namespace iiMenu.Mods
                 float closest = float.MaxValue;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (!vrrig.isLocal && PlayerIsTagged(vrrig))
+                    if (PlayerIsTagged(vrrig) != PlayerIsTagged(VRRig.LocalRig))
                     {
                         float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                         if (dist < closest)
                             closest = dist;
                     }
                 }
+
                 if (closest != float.MaxValue)
                 {
                     Color colorn = Color.green;
+
                     if (closest < 30f)
                         colorn = Color.yellow;
                     
@@ -550,13 +551,7 @@ namespace iiMenu.Mods
                     if (closest < 10f)
                         colorn = Color.red;
 
-                    GetLabel
-                    (
-                        "NearbyTagger",
-                        false,
-                        string.Format("{0:F1}m", closest),
-                        colorn
-                    );
+                    GetLabel("NearbyTagger", true, $"{closest.ToString("F1")}m", colorn);
                 }
             }
         }
@@ -576,7 +571,7 @@ namespace iiMenu.Mods
                     GetLabel
                     (
                         "LastLabel",
-                        false,
+                        true,
                         left.ToString() + " left",
                         left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white
                     );
