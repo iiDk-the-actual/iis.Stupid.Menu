@@ -866,7 +866,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Report All", method =() => Fun.ReportAll(), isTogglable = false, toolTip = "Reports everyone in the room for cheating."},
 
                 new ButtonInfo { buttonText = "Trigger Anti Report Gun", method =() => Fun.TriggerAntiReportGun(), toolTip = "Triggers whoever your hand desires' anti report if enabled."},
-                new ButtonInfo { buttonText = "Trigger Anti Report All", method =() => Fun.TriggerAntiReportAll(), toolTip = "Triggers everyone in the room's anti report if enabled."},
+                new ButtonInfo { buttonText = "Trigger Anti Report All", method =() => Fun.TriggerAntiReportAll(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Triggers everyone in the room's anti report if enabled."},
 
                 new ButtonInfo { buttonText = "Break Mod Checkers", method =() => Fun.BreakModCheckers(), disableMethod =() => Safety.BypassModCheckers(), toolTip = "Tells players using mod checkers that you have ever mod possible."},
 
