@@ -56,9 +56,11 @@ namespace iiMenu
     ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
     
-    This program comes with ABSOLUTELY NO WARRANTY; for details see `https://github.com/iiDk-the-actual/iis.Stupid.Menu/GPL/WARRANTY.md`
-    This is free software, and you are welcome to redistribute it
-    under certain conditions; see `https://github.com/iiDk-the-actual/iis.Stupid.Menu/GPL/REDISTRIBUTION.md` for details.
+    This program comes with ABSOLUTELY NO WARRANTY;
+    for details see `https://github.com/iiDk-the-actual/iis.Stupid.Menu/GPL/WARRANTY.md`
+    
+    This is free software, and you are welcome to redistribute it under certain conditions;
+    see `https://github.com/iiDk-the-actual/iis.Stupid.Menu/GPL/REDISTRIBUTION.md` for details.
 ");
 
             FirstLaunch = !Directory.Exists(PluginInfo.BaseDirectory);
