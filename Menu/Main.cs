@@ -28,6 +28,7 @@ using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
@@ -451,10 +452,22 @@ namespace iiMenu.Menu
                 if (inTextInput)
                 {
                     List<KeyCode> keysPressed = new List<KeyCode>();
-                    foreach (KeyCode keyCode in allowedKeys)
+                    foreach (KeyCode keyCode in detectedKeyCodes)
                     {
                         if (UnityInput.Current.GetKey(keyCode))
                         {
+                            if (keyPressedTimes.TryGetValue(keyCode, out (float, float) delay))
+                            {
+                                float newDelay = Mathf.Max(delay.Item2 * 0.75f, 0.05f);
+
+                                if (Time.time > delay.Item1)
+                                    keyPressedTimes[keyCode] = (Time.time + newDelay, newDelay);
+                                else
+                                    continue;
+                            }
+                            else
+                                keyPressedTimes[keyCode] = (Time.time + 0.5f, 0.5f);
+
                             keysPressed.Add(keyCode);
 
                             if (!lastPressedKeys.Contains(keyCode))
@@ -477,13 +490,11 @@ namespace iiMenu.Menu
                                                 keyboardInput = string.Join(" ", keyboardInput.Split(' ').SkipLast(1));
                                             break;
                                     }
-                                } else
+                                }
+                                else
                                 {
                                     switch (keyCode)
                                     {
-                                        case KeyCode.Space:
-                                            keyboardInput += " ";
-                                            break;
                                         case KeyCode.Backspace:
                                             if (keyboardInput.Length > 0)
                                                 keyboardInput = keyboardInput[..^1];
@@ -547,14 +558,15 @@ namespace iiMenu.Menu
                                                     ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
                                                 else
                                                     Toggle(buttons[0].buttonText, true);
-                                            } else if (IsText)
+                                            }
+                                            else if (IsText)
                                                 Toggle("Accept Prompt");
 
                                             break;
                                         default:
-                                            keyboardInput += 
-                                                UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? 
-                                                keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
+                                            keyboardInput +=
+                                                UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
+                                                keyCode.ToString().Capitalize() : keyCode.Key().ToLower();
                                             break;
                                     }
                                 }
@@ -564,6 +576,8 @@ namespace iiMenu.Menu
                                 ReloadMenu();
                             }
                         }
+                        else if (keyPressedTimes.ContainsKey(keyCode))
+                            keyPressedTimes.Remove(keyCode);
                     }
 
                     lastPressedKeys = keysPressed;
@@ -6279,7 +6293,6 @@ jgs \_   _/ |Oo\
         public static bool isKeyboardPc;
         public static bool inTextInput;
         public static string keyboardInput = "";
-        public static float lastBackspaceTime;
 
         public static int fullModAmount = -1;
         public static int amountPartying;
@@ -6322,13 +6335,24 @@ jgs \_   _/ |Oo\
         public static bool rightJoystickClick;
 
         public static List<KeyCode> lastPressedKeys = new List<KeyCode>();
-        public static KeyCode[] allowedKeys = {
+        public static readonly Dictionary<KeyCode, (float, float)> keyPressedTimes = new Dictionary<KeyCode, (float, float)>();
+        public static readonly KeyCode[] detectedKeyCodes = {
             KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E,
             KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.I, KeyCode.J,
             KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O,
             KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
             KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y,
-            KeyCode.Z, KeyCode.Space, KeyCode.Backspace,KeyCode.Return, KeyCode.Escape // it doesn't fit :(
+            KeyCode.Z,
+
+            KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3,
+            KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7,
+            KeyCode.Alpha8, KeyCode.Alpha9, 
+            
+            KeyCode.Comma, KeyCode.Period, KeyCode.Slash, KeyCode.Backslash,
+            KeyCode.Minus, KeyCode.Equals,KeyCode.Semicolon, KeyCode.Quote,
+            KeyCode.LeftBracket, KeyCode.RightBracket,
+            
+            KeyCode.Space, KeyCode.Backspace, KeyCode.Return, KeyCode.Escape 
         };
 
         public static bool ToggleBindings = true;
