@@ -1738,6 +1738,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Crash Gun", method =() => Experimental.AdminCrashGun(), toolTip = "Crashes whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Crash All", method =() => Experimental.AdminCrashAll(), toolTip = "Crashes everyone using the menu."},
 
+                new ButtonInfo { buttonText = "Admin Break Game Gun", method =() => Experimental.AdminCrashBypassGun(), toolTip = "Crashes menu users who attempt to bypass crashers, also breaks the game."},
+
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Freeze Gun", method =() => Experimental.AdminFreezeGun(true), toolTip = "Freezes whoever your hand desires if they're using the menu."},
