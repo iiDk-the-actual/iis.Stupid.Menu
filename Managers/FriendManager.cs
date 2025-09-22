@@ -150,7 +150,7 @@ namespace iiMenu.Managers
                             if (starMaterial == null)
                             {
                                 if (starTexture == null)
-                                    starTexture = LoadTextureFromResource("iiMenu.Resources.star.png");
+                                    starTexture = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.star.png");
 
                                 starMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                                 {
@@ -668,7 +668,7 @@ namespace iiMenu.Managers
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
 
                     if (SoundEffects)
-                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/doorslam.mp3", "doorslam.mp3"), buttonClickVolume / 10f);
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Friends/doorslam.mp3", "doorslam.mp3"), buttonClickVolume / 10f);
                 },
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
@@ -734,7 +734,7 @@ namespace iiMenu.Managers
             }));
 
             if (SoundEffects)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/send.mp3", "send.mp3"), buttonClickVolume / 10f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Friends/send.mp3", "send.mp3"), buttonClickVolume / 10f);
 
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
         }
@@ -836,7 +836,7 @@ namespace iiMenu.Managers
             if (onlineFriends.Length > previousOnlineCount && onlineFriends.Length > 0)
             {
                 if (SoundEffects)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/online.mp3", "online.mp3"), buttonClickVolume / 10f);
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Friends/online.mp3", "online.mp3"), buttonClickVolume / 10f);
 
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
             }
@@ -844,7 +844,7 @@ namespace iiMenu.Managers
             if (instance.Friends.incoming.Values.Count > previousIncomingCount && instance.Friends.incoming.Values.Count > 0)
             {
                 if (SoundEffects)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/dooropen.mp3", "dooropen.mp3"), buttonClickVolume / 10f);
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Friends/dooropen.mp3", "dooropen.mp3"), buttonClickVolume / 10f);
 
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend request{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")}.", 5000);
             }
@@ -1360,7 +1360,7 @@ namespace iiMenu.Managers
                                     break;
 
                                 if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/receive.mp3", "receive.mp3"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Friends/receive.mp3", "receive.mp3"), buttonClickVolume / 10f);
 
                                 string message = (string)obj["message"];
                                 string color = (string)obj["color"];
