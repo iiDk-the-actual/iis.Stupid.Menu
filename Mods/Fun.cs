@@ -2175,6 +2175,24 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void ProjectileRange()
+        {
+            LoopingArray<ProjectileTracker.ProjectileInfo> projectileArray = ProjectileTracker.m_localProjectiles;
+            if (projectileArray == null || projectileArray.Length <= 0) return;
+            for (int index = 0; index < projectileArray.Length; index++)
+            {
+                SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
+                if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
+
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (rig.IsLocal()) continue;
+                    if (rig.Distance(projectileInstance.transform.position) < 0.5f)
+                        projectileInstance.transform.position = rig.headMesh.transform.position;
+                }
+            }
+        }
+
         public static Color projHookColor = Color.white;
         public static void HookProjectileColors()
         {
