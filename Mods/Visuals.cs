@@ -472,6 +472,27 @@ namespace iiMenu.Mods
             go.transform.Rotate(0f, 180f, 0f);
         }
 
+
+        public static string OverallPlayTime;
+        private static float playtime;
+        public static void UpdatePlayTime()
+        {
+            iiMenu.Managers.CoroutineManager.instance.StartCoroutine(UpdatePlaytime());
+        }
+        private static IEnumerator UpdatePlaytime() 
+        {
+            yield return new WaitForSeconds(0.1f);
+            playtime += Time.deltaTime;
+            int h = (int)playtime / 3600;
+            int m = (int)playtime % 3600 / 60;
+            int s = (int)playtime % 60;
+
+            OverallPlayTime = "";
+            if (h > 0) OverallPlayTime += h.ToString("00") + ":";
+            if (m > 0 || h > 0) OverallPlayTime += m.ToString("00") + ":";
+            OverallPlayTime += s.ToString("00");
+        }
+
         public static void VelocityLabel()
         {
             if (DoPerformanceCheck())
