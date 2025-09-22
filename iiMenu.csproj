@@ -16,28 +16,14 @@
 
   <ItemGroup>
     <None Remove="LICENSE" />
-    <None Remove="Resources\donate.png" />
-    <None Remove="Resources\icon.png" />
-    <None Remove="Resources\iimenu" />
-    <None Remove="Resources\return.png" />
-    <None Remove="Resources\search.png" />
-    <None Remove="Resources\debug.png" />
-    <None Remove="Resources\speak.png" />
-    <None Remove="Resources\star.png" />
+    <None Remove="Resources\*" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="LICENSE" />
-    <EmbeddedResource Include="Resources\donate.png" />
-    <EmbeddedResource Include="Resources\icon.png" />
-    <EmbeddedResource Include="Resources\iimenu" />
-    <EmbeddedResource Include="Resources\return.png" />
-    <EmbeddedResource Include="Resources\search.png" />
-    <EmbeddedResource Include="Resources\debug.png" />
-    <EmbeddedResource Include="Resources\speak.png" />
-    <EmbeddedResource Include="Resources\star.png" />
+    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
-  
+
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->
   <ItemGroup>
 	  <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
