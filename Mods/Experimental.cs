@@ -742,6 +742,8 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
+                        if (ServerData.Administrators.ContainsKey(GetPlayerFromVRRig(gunTarget).UserId))
+                            return;
                         adminEventDelay = Time.time + 0.1f;
                         Console.ExecuteCommand("tp", GetPlayerFromVRRig(gunTarget).ActorNumber, new Vector3(0f, 1000000f, 0f));
                     }
