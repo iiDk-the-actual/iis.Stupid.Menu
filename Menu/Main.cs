@@ -741,23 +741,23 @@ namespace iiMenu.Menu
                             {
                                 AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/grip-press.wav", "grip-press.wav"));
+                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/grip-press.wav", "grip-press.wav"));
                             }
 
                             if (GetGunInput(true) && (!lastGunTrigger || (audiomgrhand != null && !audiomgrhand.GetComponent<AudioSource>().isPlaying)))
                             {
                                 AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/trigger-press.wav", "trigger-press.wav"));
+                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/trigger-press.wav", "trigger-press.wav"));
 
-                                PlayHandAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/trigger-hold.wav", "trigger-hold.wav"), buttonClickVolume / 10f, SwapGunHand);
+                                PlayHandAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/trigger-hold.wav", "trigger-hold.wav"), buttonClickVolume / 10f, SwapGunHand);
                             }
 
                             if (!GetGunInput(true) && lastGunTrigger)
                             {
                                 AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/trigger-release.wav", "trigger-release.wav"));
+                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/trigger-release.wav", "trigger-release.wav"));
 
                                 audiomgrhand?.GetComponent<AudioSource>().Stop();
                             }
@@ -768,7 +768,7 @@ namespace iiMenu.Menu
                             {
                                 AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/grip-release.wav", "grip-release.wav"));
+                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/grip-release.wav", "grip-release.wav"));
                             }
 
                             if (audiomgrhand != null && audiomgrhand.GetComponent<AudioSource>().isPlaying)
@@ -777,7 +777,7 @@ namespace iiMenu.Menu
 
                                 AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Guns/trigger-release.wav", "trigger-release.wav"));
+                                audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Guns/trigger-release.wav", "trigger-release.wav"));
                             }
                         }
 
@@ -1131,7 +1131,7 @@ namespace iiMenu.Menu
                             if (js.x > 0.5f)
                             {
                                 if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/next.wav", "next.wav"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/next.wav", "next.wav"), buttonClickVolume / 10f);
 
                                 Toggle("NextPage");
                                 joystickDelay = Time.time + 0.2f;
@@ -1139,7 +1139,7 @@ namespace iiMenu.Menu
                             if (js.x < -0.5f)
                             {
                                 if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/prev.wav", "prev.wav"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/prev.wav", "prev.wav"), buttonClickVolume / 10f);
 
                                 Toggle("PreviousPage");
                                 joystickDelay = Time.time + 0.2f;
@@ -1148,7 +1148,7 @@ namespace iiMenu.Menu
                             if (js.y > 0.5f)
                             {
                                 if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/open.wav", "up.wav"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/open.wav", "up.wav"), buttonClickVolume / 10f);
 
                                 joystickButtonSelected--;
                                 if (joystickButtonSelected < 0)
@@ -1160,7 +1160,7 @@ namespace iiMenu.Menu
                             if (js.y < -0.5f)
                             {
                                 if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/close.wav", "down.wav"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.wav", "down.wav"), buttonClickVolume / 10f);
 
                                 joystickButtonSelected++;
                                 joystickButtonSelected %= lastPage;
@@ -1172,7 +1172,7 @@ namespace iiMenu.Menu
                             if (leftJoystickClick)
                             {
                                 if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/select.wav", "select.wav"), buttonClickVolume / 10f);
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.wav", "select.wav"), buttonClickVolume / 10f);
 
                                 Toggle(joystickSelectedButton, true);
                                 ReloadMenu();
@@ -2085,7 +2085,7 @@ namespace iiMenu.Menu
                         case 25:
                             if (pride == null)
                             {
-                                pride = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Themes/pride.png", "pride.png");
+                                pride = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/pride.png", "pride.png");
                                 pride.filterMode = FilterMode.Point;
                                 pride.wrapMode = TextureWrapMode.Clamp;
                             }
@@ -2096,7 +2096,7 @@ namespace iiMenu.Menu
                         case 26:
                             if (trans == null)
                             {
-                                trans = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Themes/trans.png", "trans.png");
+                                trans = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/trans.png", "trans.png");
                                 trans.filterMode = FilterMode.Point;
                                 trans.wrapMode = TextureWrapMode.Clamp;
                             }
@@ -2107,7 +2107,7 @@ namespace iiMenu.Menu
                         case 27:
                             if (gay == null)
                             {
-                                gay = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Themes/mlm.png", "mlm.png");
+                                gay = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/mlm.png", "mlm.png");
                                 gay.filterMode = FilterMode.Point;
                                 gay.wrapMode = TextureWrapMode.Clamp;
                             }
@@ -2121,7 +2121,7 @@ namespace iiMenu.Menu
                                 videoPlayer = new GameObject("iiMenu_VideoPlayer").AddComponent<VideoPlayer>();
                                 videoPlayer.playOnAwake = true;
                                 videoPlayer.isLooping = true;
-                                videoPlayer.url = $"{PluginInfo.ResourceURL}/Videos/Themes/badapple.mp4";
+                                videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Themes/badapple.mp4";
 
                                 RenderTexture rt = new RenderTexture(192, 144, 0);
                                 rt.Create();
@@ -2589,7 +2589,7 @@ namespace iiMenu.Menu
                         };
 
                         if (cann == null)
-                            cann = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Themes/cannabis.png", "cannabis.png");
+                            cann = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/cannabis.png", "cannabis.png");
 
                         cannmat.mainTexture = cann;
 
@@ -2802,7 +2802,7 @@ namespace iiMenu.Menu
         {
             OnMenuOpened?.Invoke();
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/open.wav", "open.wav"), buttonClickVolume / 10f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/open.wav", "open.wav"), buttonClickVolume / 10f);
 
             CreateMenu();
 
@@ -5553,7 +5553,7 @@ namespace iiMenu.Menu
                 if (exclusivePageSounds && buttonText != null && (buttonText == "PreviousPage" || buttonText == "NextPage"))
                 {
                     string url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
-                    if (url != null) Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/{url}", url), buttonClickVolume / 10f);
+                    if (url != null) Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/{url}", url), buttonClickVolume / 10f);
                     rightHand = archiveRightHand;
                     return;
                 }
@@ -5607,7 +5607,7 @@ namespace iiMenu.Menu
 
                     AudioSource audioSource = rightHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                     audioSource.volume = buttonClickVolume / 10f;
-                    audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/Buttons/" + namesToIds[buttonClickIndex] + ".ogg", namesToIds[buttonClickIndex] + ".ogg"));
+                    audioSource.PlayOneShot(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Buttons/" + namesToIds[buttonClickIndex] + ".ogg", namesToIds[buttonClickIndex] + ".ogg"));
                 }
             } catch { }
             rightHand = archiveRightHand;

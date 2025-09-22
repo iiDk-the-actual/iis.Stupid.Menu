@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ii's Stupid Menu  Mods/Spammers/Sound.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -115,7 +115,7 @@ namespace iiMenu.Mods.Spammers
         {
             currentCategoryName = "Sound Library";
 
-            string library = GetHttp($"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/SoundLibrary.txt");
+            string library = GetHttp($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Soundboard/SoundLibrary.txt");
             string[] audios = AlphabetizeNoSkip(library.Split("\n"));
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Sound Library", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." } };
             int index = 0;
@@ -125,7 +125,7 @@ namespace iiMenu.Mods.Spammers
                 {
                     index++;
                     string[] Data = audio.Split(";");
-                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardDownload" + index.ToString(), overlapText = Data[0], method = () => DownloadSound(Data[0], $"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/Sounds/{Data[1]}"), isTogglable = false, toolTip = "Downloads " + Data[0] + " to your sound library." });
+                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardDownload" + index.ToString(), overlapText = Data[0], method = () => DownloadSound(Data[0], $"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Soundboard/Sounds/{Data[1]}"), isTogglable = false, toolTip = "Downloads " + Data[0] + " to your sound library." });
                 }
             }
             Buttons.buttons[26] = soundbuttons.ToArray();

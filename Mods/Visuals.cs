@@ -303,10 +303,10 @@ namespace iiMenu.Mods
                         tapMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                         if (tapTxt == null)
-                            tapTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/footstep.png", "footstep.png");
+                            tapTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/footstep.png", "footstep.png");
 
                         if (warningTxt == null)
-                            warningTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/warning.png", "warning.png");
+                            warningTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/warning.png", "warning.png");
 
                         tapMat.SetFloat("_Surface", 1);
                         tapMat.SetFloat("_Blend", 0);
@@ -2255,7 +2255,7 @@ namespace iiMenu.Mods
 
                     if (!cosmeticTextures.TryGetValue(currentCosmetic, out Texture2D texture))
                     {
-                        texture = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/{currentCosmetic}.png", $"{currentCosmetic}.png");
+                        texture = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/{currentCosmetic}.png", $"{currentCosmetic}.png");
                         cosmeticTextures.Add(currentCosmetic, texture);
                     }
 
@@ -2334,10 +2334,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
@@ -2379,10 +2379,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);

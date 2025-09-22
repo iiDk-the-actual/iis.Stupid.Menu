@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ii's Stupid Menu  Patches/Menu/TagPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -52,7 +52,7 @@ namespace iiMenu.Patches.Menu
                     tagCount = Math.Min(tagCount + 1, 7);
                     tagDelay = Time.time + 10f;
 
-                    string killsounds = $"{PluginInfo.ResourceURL}/Audio/Mods/Fun/TagSounds";
+                    string killsounds = $"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/TagSounds";
                     switch (tagCount)
                     {
                         case 1:
