@@ -473,24 +473,19 @@ namespace iiMenu.Mods
         }
 
 
-        public static string OverallPlayTime;
+        public static string OverallPlaytime;
         private static float playtime;
-        public static void UpdatePlayTime()
+        public static void UpdatePlaytime()
         {
-            iiMenu.Managers.CoroutineManager.instance.StartCoroutine(UpdatePlaytime());
+            iiMenu.Managers.CoroutineManager.instance.StartCoroutine(Updateplaytime());
         }
-        private static IEnumerator UpdatePlaytime() 
+        private static IEnumerator Updateplaytime() 
         {
-            yield return new WaitForSeconds(0.1f);
             playtime += Time.deltaTime;
-            int h = (int)playtime / 3600;
-            int m = (int)playtime % 3600 / 60;
-            int s = (int)playtime % 60;
 
-            OverallPlayTime = "";
-            if (h > 0) OverallPlayTime += h.ToString("00") + ":";
-            if (m > 0 || h > 0) OverallPlayTime += m.ToString("00") + ":";
-            OverallPlayTime += s.ToString("00");
+            TimeSpan time = TimeSpan.FromSeconds(playtime);
+            OverallPlaytime = string.Format("{0:D2}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+            yield return new WaitForSeconds(0.1f);
         }
 
         public static void VelocityLabel()
