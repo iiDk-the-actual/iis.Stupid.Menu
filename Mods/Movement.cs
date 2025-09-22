@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ii's Stupid Menu  Mods/Movement.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -1894,7 +1894,7 @@ namespace iiMenu.Mods
                         };
                         if (pearltxt == null)
                         {
-                            pearltxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Movement/pearl.png", "pearl.png");
+                            pearltxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Movement/pearl.png", "pearl.png");
                             pearltxt.filterMode = FilterMode.Point;
                             pearltxt.wrapMode = TextureWrapMode.Clamp;
                         }

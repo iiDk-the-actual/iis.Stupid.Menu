@@ -189,7 +189,7 @@ namespace iiMenu.Mods
             TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
 
             VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            videoPlayer.url = $"{PluginInfo.ResourceURL}/Videos/Tutorial/tutorial-q{(XRSettings.isDeviceActive && ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
+            videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Tutorial/tutorial-q{(XRSettings.isDeviceActive && ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
             videoPlayer.isLooping = true;
 
             videoPlayer.AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Pause;
@@ -412,7 +412,7 @@ namespace iiMenu.Mods
         {
             currentCategoryName = "Sound Library";
 
-            string library = GetHttp($"{PluginInfo.ResourceURL}/Plugins/PluginLibrary.txt");
+            string library = GetHttp($"{PluginInfo.ServerResourcePath}/Plugins/PluginLibrary.txt");
             string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
 
             List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
@@ -4434,7 +4434,7 @@ namespace iiMenu.Mods
             modPhrases.Start();
 
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/select.wav", "select.wav"), buttonClickVolume / 10f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.wav", "select.wav"), buttonClickVolume / 10f);
             
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
         }
@@ -4489,14 +4489,14 @@ namespace iiMenu.Mods
                 ButtonInfo mod = GetIndex(modTarget);
                 NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + ">VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
                 
                 Toggle(modTarget, true, true);
             } else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+args.text+").", 3000);
                 if (dynamicSounds)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/close.wav", "close.wav"), buttonClickVolume / 10f);
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.wav", "close.wav"), buttonClickVolume / 10f);
             }
         }
 
@@ -4517,7 +4517,7 @@ namespace iiMenu.Mods
             
             NotifiLib.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ResourceURL}/Audio/Menu/close.wav", "close.wav"), buttonClickVolume / 10f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.wav", "close.wav"), buttonClickVolume / 10f);
         }
 
         public static void VoiceRecognitionOff()
