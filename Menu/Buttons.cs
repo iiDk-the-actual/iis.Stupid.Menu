@@ -499,7 +499,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grappling Hooks", method =() => Movement.GrapplingHooks(), disableMethod =() => Movement.DisableSpiderMan(), toolTip = "Gives you grappling hooks, use your <color=green>grips</color> to shoot them."},
                 
                 new ButtonInfo { buttonText = "Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.Drive(), toolTip = "Lets you drive around in your invisible car. Use the <color=green>joystick</color> to move."},
-                new ButtonInfo { buttonText = "Hard Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.HardDrive(), toolTip = "Similar to drive, but locks you to the ground."},
+                new ButtonInfo { buttonText = "Hard Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", overlapText = "Sticky Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.HardDrive(), toolTip = "Similar to drive, but locks you to the ground."},
 
                 new ButtonInfo { buttonText = "Noclip <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Movement.Noclip(), toolTip = "Makes you go through objects when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Up And Down", method =() => Movement.UpAndDown(), toolTip = "Makes you go up when holding your <color=green>trigger</color>, and down when holding your <color=green>grip</color>."},
