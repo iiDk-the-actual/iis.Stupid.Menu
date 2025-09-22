@@ -125,7 +125,7 @@ namespace iiMenu.Mods.Spammers
                 {
                     index++;
                     string[] Data = audio.Split(";");
-                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardDownload" + index.ToString(), overlapText = Data[0], method = () => DownloadSound(Data[0], Data[1]), isTogglable = false, toolTip = "Downloads " + Data[0] + " to your sound library." });
+                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardDownload" + index.ToString(), overlapText = Data[0], method = () => DownloadSound(Data[0], $"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/Sounds/{Data[1]}"), isTogglable = false, toolTip = "Downloads " + Data[0] + " to your sound library." });
                 }
             }
             Buttons.buttons[26] = soundbuttons.ToArray();
@@ -139,7 +139,7 @@ namespace iiMenu.Mods.Spammers
             if (name.Contains(":"))
                 return;
 
-            string filename = $"Sounds{Subdirectory}/{name}.{GetFileExtension($"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/Sounds/{url}")}";
+            string filename = $"Sounds{Subdirectory}/{name}.{GetFileExtension(url)}";
             if (File.Exists($"{PluginInfo.BaseDirectory}/{filename}"))
                 File.Delete($"{PluginInfo.BaseDirectory}/{filename}");
             
