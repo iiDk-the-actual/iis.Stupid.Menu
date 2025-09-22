@@ -208,6 +208,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Search Button", enableMethod =() => disableSearchButton = true, disableMethod =() => disableSearchButton = false, toolTip = "Disables the search button at the bottom of the menu."},
                 new ButtonInfo { buttonText = "Disable Return Button", enableMethod =() => disableReturnButton = true, disableMethod =() => disableReturnButton = false, toolTip = "Disables the return button at the bottom of the menu."},
                 new ButtonInfo { buttonText = "Disable Shift Button", enableMethod =() => disableShift = true, disableMethod =() => disableShift = false, toolTip = "Disables the ability to type capital letters when holding left trigger."},
+                new ButtonInfo { buttonText = "Invert Shift Button", enableMethod =() => invertShift = true, disableMethod =() => invertShift = false, toolTip = "Inverts the ability to type capital letters when holding left trigger to be lowercase instead."},
                 new ButtonInfo { buttonText = "Info Button", enableMethod =() => enableDebugButton = true, disableMethod =() => enableDebugButton = false, toolTip = "Shows an information button at the bottom of the menu."},
                 new ButtonInfo { buttonText = "Disable Page Buttons", enableMethod =() => Settings.DisablePageButtons(), disableMethod =() => disablePageButtons = false, toolTip = "Disables the page buttons. Recommended with Joystick Menu."},
                 new ButtonInfo { buttonText = "Disable Page Number", enableMethod =() => noPageNumber = true, disableMethod =() => noPageNumber = false, toolTip = "Disables the current page number in the title text."},
@@ -552,6 +553,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Dynamic Speed Boost", method =() => Movement.DynamicSpeedBoost(), toolTip = "Dynamically changes your speed to whatever you set it to when tagged players get closer to you."},
                 new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method =() => Movement.AlwaysMaxVelocity(), toolTip = "Always makes you go as fast as the velocity limit."},
+
+                new ButtonInfo { buttonText = "Funny Movement", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method =() => Movement.FunMove(), toolTip = "Ruins your movement."},
+                new ButtonInfo { buttonText = "Velocity Multiplier", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method =() => Movement.VelocityMultiplier(), toolTip = "Multiplies your velocity frequently."},
 
                 new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
                 new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
@@ -1733,6 +1737,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Crash Gun", method =() => Experimental.AdminCrashGun(), toolTip = "Crashes whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Crash All", method =() => Experimental.AdminCrashAll(), toolTip = "Crashes everyone using the menu."},
+
+                new ButtonInfo { buttonText = "Admin Break Game Gun", method =() => Experimental.AdminCrashBypassGun(), toolTip = "Crashes menu users who attempt to bypass crashers, also breaks the game."},
 
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
 
