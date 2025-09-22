@@ -740,7 +740,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fake Unban Self", method =() => Visuals.FakeUnbanSelf(), isTogglable = false, toolTip = "Makes it appear as if you're not banned." },
 
                 new ButtonInfo { buttonText = "Jump Predictions", overlapText = "Jump Trajectories", method =() => Visuals.JumpPredictions(), disableMethod =() => Visuals.DisableJumpPredictions(), toolTip = "Shows a visualizer of where the other players will jump."},
-                new ButtonInfo { buttonText = "Paintbrawl Trajectories", method =() => Visuals.PaintbrawlTrajectories(), disableMethod =() => Visuals.DisablePaintbrawlTrajectories(), toolTip = "Shows a visualizer of where all slingshot projectiles and your slingshot will hit."},
+                new ButtonInfo { buttonText = "Paintbrawl Trajectories", overlapText = "Projectile Trajectories", method =() => Visuals.PaintbrawlTrajectories(), disableMethod =() => Visuals.DisablePaintbrawlTrajectories(), toolTip = "Shows a visualizer of where all projectiles and your slingshot will hit."},
 
                 new ButtonInfo { buttonText = "Audio Visualizer", enableMethod =() => Visuals.CreateAudioVisualizer(), method =() => Visuals.AudioVisualizer(), disableMethod =() => Visuals.DestroyAudioVisualizer(), toolTip = "Shows a visualizer of your microphone loudness below your player."},
                 new ButtonInfo { buttonText = "Show Server Position", method =() => Visuals.ShowServerPosition(), disableMethod =() => Visuals.DisableShowServerPosition(), toolTip = "Shows your current syncronized position on the server."},
@@ -970,10 +970,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slow Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
                 new ButtonInfo { buttonText = "Angry Birds", enableMethod =() => GetLaunchPatch.angryBirds = true, disableMethod =() => GetLaunchPatch.angryBirds = false, toolTip = "Flings you in whatever direction your slingshot's projectiles are heading."},
-                new ButtonInfo { buttonText = "Paintbrawl Aimbot", enableMethod =() => GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
+                new ButtonInfo { buttonText = "Paintbrawl Aimbot", overlapText = "Slingshot Aimbot", enableMethod =() => GetLaunchPatch.enabled = true, method =() => Fun.DebugSlingshotAimbot(), disableMethod =() => GetLaunchPatch.enabled = false, toolTip = "Redirects your slingshot to the closest nearby players."},
                 new ButtonInfo { buttonText = "Slingshot Helper", method =() => Fun.SlingshotHelper(), toolTip = "Helps you grab the small paintball on your slingshot."},
                 new ButtonInfo { buttonText = "Slingshot Trigger Bot", method =() => Fun.SlingshotTriggerBot(), toolTip = "Releases the small paintball on your slingshot when hovering over another player."},
-
+                
                 new ButtonInfo { buttonText = "Paintbrawl Kill Self", method =() => Advantages.PaintbrawlKillSelf(), toolTip = "Kills yourself in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill Gun", method =() => Advantages.PaintbrawlKillGun(), toolTip = "Kills whoever your hand desires in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Kill All", method =() => Advantages.PaintbrawlKillAll(), toolTip = "Kills everyone in the room in paintbrawl." },
@@ -985,6 +985,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fast Snowballs", overlapText = "Fast Projectiles", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", overlapText = "Slow Projectiles", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really slow when thrown."},
+
+                new ButtonInfo { buttonText = "Projectile Range", method =() => Fun.ProjectileRange(), toolTip = "Increases the hitbox scale of your projectiles."},
 
                 new ButtonInfo { buttonText = "Rainbow Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
                 new ButtonInfo { buttonText = "Flash Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
