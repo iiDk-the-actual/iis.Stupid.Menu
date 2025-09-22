@@ -5625,7 +5625,12 @@ namespace iiMenu.Menu
                         keyboardInput = keyboardInput[..^1];
                 }
                 else
-                    keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToUpper() : key.ToLower();
+                {
+                    if (invertShift)
+                        keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToLower() : key.ToUpper();
+                    else
+                        keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToUpper() : key.ToLower();
+                }
             }
             VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
@@ -6602,6 +6607,7 @@ jgs \_   _/ |Oo\
 
         public static bool shift;
         public static bool disableShift;
+        public static bool invertShift;
 
         public static bool lastHit;
         public static bool lastHit2;

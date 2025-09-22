@@ -61,7 +61,7 @@ Feel like something is missing? Read the [Contributing](https://github.com/iiDk-
 > Menu sends requests to [https://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for telemetry and administrative purposes. Menu connects to [wss://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for friend system and administrative purposes.<br>
 > Donate, search, star, speak symbols by [Icons8](https://icons8.com).
 
-> ii's Stupid Menu  README.md
+> ii's Stupid Menu  README.md<br>
 > A mod menu for Gorilla Tag with over 1000+ mods
 >
 > Copyright (C) 2025  Goldentrophy Software
