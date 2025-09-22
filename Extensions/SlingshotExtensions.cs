@@ -19,9 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using GorillaLocomotion;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 namespace iiMenu.Extensions
 {
