@@ -472,6 +472,22 @@ namespace iiMenu.Mods
             go.transform.Rotate(0f, 180f, 0f);
         }
 
+
+        public static string OverallPlaytime;
+        private static float playtime;
+        public static void UpdatePlaytime()
+        {
+            iiMenu.Managers.CoroutineManager.instance.StartCoroutine(Updateplaytime());
+        }
+        private static IEnumerator Updateplaytime() 
+        {
+            playtime += Time.deltaTime;
+
+            TimeSpan time = TimeSpan.FromSeconds(playtime);
+            OverallPlaytime = string.Format("{0:D2}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+            yield return new WaitForSeconds(0.1f);
+        }
+
         public static void VelocityLabel()
         {
             if (DoPerformanceCheck())
