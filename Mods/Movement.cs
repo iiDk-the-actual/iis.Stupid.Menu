@@ -1975,6 +1975,27 @@ namespace iiMenu.Mods
             GTPlayer.Instance.jumpMultiplier = jmpt;
         }
 
+        public static float funMoveDelay;
+        public static Vector3 funLastVel;
+        public static void FunMove()
+        {
+            if (Time.time > funMoveDelay)
+            {
+                funMoveDelay = Time.time + 0.2f;
+                GorillaTagger.Instance.rigidbody.linearVelocity = (GorillaTagger.Instance.rigidbody.transform.position - funLastVel) * 6f;
+                funLastVel = GorillaTagger.Instance.rigidbody.transform.position;
+            }
+        }
+        public static void VelocityMultiplier()
+        {
+            if (Time.time > funMoveDelay)
+            {
+                funMoveDelay = Time.time + 0.05f;
+                GorillaTagger.Instance.rigidbody.linearVelocity = (GorillaTagger.Instance.rigidbody.transform.position - funLastVel) * 5.17f;
+                funLastVel = GorillaTagger.Instance.rigidbody.transform.position;
+            }
+        } 
+
         public static void DynamicSpeedBoost()
         {
             bool isTagged = PlayerIsTagged(VRRig.LocalRig);
