@@ -715,7 +715,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
                 new ButtonInfo { buttonText = "Disable Fog", method =() => Visuals.DisableFog(), disableMethod =() => Visuals.ResetFog(), toolTip = "Disables the fog."},
-                new ButtonInfo { buttonText = "Enable Fog", method =() => Visuals.EnableFog(), disableMethod =() => Visuals.ResetFog(), toolTip = "Disables the fog."},
+                new ButtonInfo { buttonText = "Enable Fog", method =() => Visuals.EnableFog(), disableMethod =() => Visuals.ResetFog(), toolTip = "Enables the fog."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
@@ -2005,7 +2005,7 @@ namespace iiMenu.Menu
             
             new ButtonInfo[] // Admin Mod Givers [40]
             {
-                new ButtonInfo { buttonText = "Exit Admin Mod Givers", method =() => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Returns you back to the fun mods."},
+                new ButtonInfo { buttonText = "Exit Admin Mod Givers", method =() => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Returns you back to the Admin mods."},
                 new ButtonInfo { buttonText = "Give Fly Gun", method =() => Experimental.AdminGiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down if they're using console."},
                 new ButtonInfo { buttonText = "Give Trigger Fly Gun", method =() => Experimental.AdminGiveTriggerFlyGun(), toolTip = "Gives whoever you want fly when they hold their trigger down if they're using console."},
                 new ButtonInfo { buttonText = "Give Speed Boost Gun", method =() => Experimental.AdminGiveSpeedGun(), toolTip = "Gives whoever you want speed boost if they're using console."},
