@@ -28,8 +28,8 @@ namespace iiMenu.Extensions
         public static float Distance(this VRRig rig) =>
             rig.Distance(GorillaTagger.Instance.bodyCollider.transform.position);
 
-        public static VRRig GetClosestVRRig(this VRRig rig) =>
-            GorillaParent.instance.vrrigs.Where(targetRig => targetRig != null && !targetRig.isLocal)
+        public static VRRig GetClosest(this VRRig rig) =>
+            GorillaParent.instance.vrrigs.Where(targetRig => targetRig != null && targetRig != rig)
                                          .OrderBy(targetRig => rig.Distance(targetRig))
                                          .FirstOrDefault();
 

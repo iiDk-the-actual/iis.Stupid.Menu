@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Extensions;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
@@ -58,10 +59,7 @@ namespace iiMenu.Managers
             GetNetworkViewFromVRRig(p).GetView;
 
         public static VRRig GetClosestVRRig() =>
-            GorillaParent.instance.vrrigs
-                .Where(rig => rig != null && !rig.isLocal)
-                .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
-                .FirstOrDefault();
+            VRRig.LocalRig.GetClosest();
 
         public static Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
         public static Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
