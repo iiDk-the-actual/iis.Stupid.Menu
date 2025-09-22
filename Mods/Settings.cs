@@ -705,7 +705,9 @@ namespace iiMenu.Mods
                     new ButtonInfo {
                         buttonText = "Player User ID",
                         overlapText = $"User ID: {player.UserId}",
-                        label = true
+                        method =() => { NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully copied {player.UserId} to the clipboard!", 5000); GUIUtility.systemCopyBuffer = player.UserId; },
+                        isTogglable = false,
+                        toolTip = $"Copies {player.UserId} to your clipboard."
                     },
                     new ButtonInfo {
                         buttonText = "Player Creation Date",

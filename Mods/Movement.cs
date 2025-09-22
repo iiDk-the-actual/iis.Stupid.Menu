@@ -735,7 +735,7 @@ namespace iiMenu.Mods
                 Vector3 raycastPosition = GorillaTagger.Instance.bodyCollider.transform.position
                     + (Vector3.up * 5f)
                     + (direction * Time.deltaTime * driveSpeed);
-                Physics.Raycast(raycastPosition, Vector3.down, out var Ray, 16f, GTPlayer.Instance.locomotionEnabledLayers);
+                Physics.Raycast(raycastPosition, Vector3.down, out var Ray, 50f, GTPlayer.Instance.locomotionEnabledLayers);
 
                 Vector3 targetPosition = Ray.point == Vector3.zero ? raycastPosition : Ray.point;
 
