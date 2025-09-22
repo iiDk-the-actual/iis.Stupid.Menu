@@ -553,6 +553,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method =() => Movement.AlwaysMaxVelocity(), toolTip = "Always makes you go as fast as the velocity limit."},
 
+                new ButtonInfo { buttonText = "Funny Movement", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method =() => Movement.FunMove(), toolTip = "Ruins your movement."},
+                new ButtonInfo { buttonText = "Velocity Multiplier", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method =() => Movement.VelocityMultiplier(), toolTip = "Multiplies your velocity frequently."},
+
                 new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
                 new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
                 new ButtonInfo { buttonText = "Sticky Hands", method =() => Movement.StickyHands(), disableMethod =() => Movement.DisableStickyHands(), toolTip = "Makes your hands really sticky."},
