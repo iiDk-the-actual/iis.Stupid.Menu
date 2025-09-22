@@ -729,6 +729,26 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AdminCrashBypassGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        Console.ExecuteCommand("tp", GetPlayerFromVRRig(gunTarget).ActorNumber, new Vector3(0f, 1000000f, 0f));
+                    }
+                }
+            }
+        }
+
         public static void AdminLockdownGun(bool enable)
         {
             if (GetGunInput(false))
