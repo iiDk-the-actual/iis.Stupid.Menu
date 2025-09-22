@@ -16,12 +16,12 @@
 
   <ItemGroup>
     <None Remove="LICENSE" />
-    <None Remove="Resources\*" />
+    <None Remove="Resources\Client\*" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="LICENSE" />
-    <EmbeddedResource Include="Resources\*" />
+    <EmbeddedResource Include="Resources\Client\*" />
   </ItemGroup>
 
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->

@@ -1894,7 +1894,7 @@ namespace iiMenu.Mods
                         };
                         if (pearltxt == null)
                         {
-                            pearltxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/pearl.png", "pearl.png");
+                            pearltxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Movement/pearl.png", "pearl.png");
                             pearltxt.filterMode = FilterMode.Point;
                             pearltxt.wrapMode = TextureWrapMode.Clamp;
                         }

@@ -115,7 +115,7 @@ namespace iiMenu.Mods.Spammers
         {
             currentCategoryName = "Sound Library";
 
-            string library = GetHttp($"{PluginInfo.ResourceURL}/SoundLibrary.txt");
+            string library = GetHttp($"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/SoundLibrary.txt");
             string[] audios = AlphabetizeNoSkip(library.Split("\n"));
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Sound Library", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." } };
             int index = 0;
@@ -139,7 +139,7 @@ namespace iiMenu.Mods.Spammers
             if (name.Contains(":"))
                 return;
 
-            string filename = $"Sounds{Subdirectory}/{name}.{GetFileExtension(url)}";
+            string filename = $"Sounds{Subdirectory}/{name}.{GetFileExtension($"{PluginInfo.ResourceURL}/Audio/Mods/Fun/Soundboard/Sounds/{url}")}";
             if (File.Exists($"{PluginInfo.BaseDirectory}/{filename}"))
                 File.Delete($"{PluginInfo.BaseDirectory}/{filename}");
             

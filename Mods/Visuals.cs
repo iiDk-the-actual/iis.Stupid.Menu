@@ -303,10 +303,10 @@ namespace iiMenu.Mods
                         tapMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                         if (tapTxt == null)
-                            tapTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/footstep.png", "footstep.png");
+                            tapTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/footstep.png", "footstep.png");
 
                         if (warningTxt == null)
-                            warningTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/warning.png", "warning.png");
+                            warningTxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/warning.png", "warning.png");
 
                         tapMat.SetFloat("_Surface", 1);
                         tapMat.SetFloat("_Blend", 0);
@@ -2239,7 +2239,7 @@ namespace iiMenu.Mods
 
                     if (!cosmeticTextures.TryGetValue(currentCosmetic, out Texture2D texture))
                     {
-                        texture = LoadTextureFromURL($"{PluginInfo.ResourceURL}/{currentCosmetic}.png", $"{currentCosmetic}.png");
+                        texture = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/{currentCosmetic}.png", $"{currentCosmetic}.png");
                         cosmeticTextures.Add(currentCosmetic, texture);
                     }
 
@@ -2318,10 +2318,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
@@ -2363,10 +2363,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/oculus.png", "oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ResourceURL}/Images/Mods/Visuals/steam.png", "steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
@@ -2423,7 +2423,7 @@ namespace iiMenu.Mods
                                 voiceMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                                 if (voicetxt == null)
-                                    voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                                    voicetxt = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.speak.png");
                                 
                                 voiceMat.mainTexture = voicetxt;
 
@@ -2486,7 +2486,7 @@ namespace iiMenu.Mods
                                 voiceEspMat = new Material(Shader.Find("GUI/Text Shader"));
 
                             if (voicetxt == null)
-                                voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                                voicetxt = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.speak.png");
 
                             voiceEspMat.mainTexture = voicetxt;
 

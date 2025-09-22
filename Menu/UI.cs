@@ -105,7 +105,7 @@ namespace iiMenu.Menu
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
                 
                 if (icon == null)
-                    icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                    icon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png");
 
                 try
                 {
