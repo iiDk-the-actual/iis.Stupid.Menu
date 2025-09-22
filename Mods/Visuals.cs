@@ -880,6 +880,64 @@ namespace iiMenu.Mods
 
             LoopProjectileArray(ProjectileTracker.m_localProjectiles);
 
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig.IsLocal()) continue;
+
+                Slingshot playerSlingshot = rig.GetSlingshot();
+                if (playerSlingshot != null)
+                {
+                    if (playerSlingshot.InDrawingState() && playerSlingshot.dummyProjectile != null)
+                    {
+                        SlingshotProjectile projectileInstance = playerSlingshot.dummyProjectile.GetComponent<SlingshotProjectile>();
+                        if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
+
+                        if (!trajectoryPool.TryGetValue(projectileInstance, out LineRenderer Line))
+                        {
+                            GameObject LineObject = new GameObject("LineObject");
+                            Line = LineObject.AddComponent<LineRenderer>();
+                            if (smoothLines)
+                            {
+                                Line.numCapVertices = 10;
+                                Line.numCornerVertices = 5;
+                            }
+                            Line.material.shader = Shader.Find("GUI/Text Shader");
+                            Line.startWidth = 0.025f;
+                            Line.endWidth = 0.025f;
+                            Line.positionCount = 25;
+                            Line.useWorldSpace = true;
+                            trajectoryPool.Add(projectileInstance, Line);
+                        }
+
+                        Line.gameObject.SetActive(true);
+
+                        if (hoc)
+                            Line.gameObject.layer = 19;
+
+                        Color color = rig.GetColor();
+
+                        if (fmt)
+                            color = backgroundColor.GetCurrentColor();
+                        if (tt)
+                            color = new Color(color.r, color.g, color.b, 0.5f);
+
+                        float width = thinTracers ? 0.0075f : 0.025f;
+                        Line.startWidth = width;
+                        Line.endWidth = width;
+
+                        Line.startColor = color;
+                        Line.endColor = color;
+
+                        Vector3 position = playerSlingshot.GetTrueLaunchPosition();
+                        Vector3 velocity = playerSlingshot.GetNetworkedLaunchVelocity();
+
+                        Vector3 gravity = Physics.gravity + (projectileInstance.forceComponent?.force ?? Vector3.zero);
+
+                        DrawTrajectory(position, velocity, Line, NoInvisLayerMask(), gravity);
+                    }
+                }
+            }
+
             if (localTrajectoryLine != null)
             {
                 if (!localTrajectoryLine.gameObject.activeSelf)
@@ -986,7 +1044,7 @@ namespace iiMenu.Mods
 
             if (hitPlayer != null)
             {
-                if (PlayerIsLocal(hitPlayer))
+                if (hitPlayer.IsLocal())
                     lineColor = Color.red;
                 else
                     lineColor = Color.green;
