@@ -4972,84 +4972,92 @@ namespace iiMenu.Menu
 
         public static void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (disableBoardColor)
-                return;
+            if (disableBoardColor) return;
 
-            Vector3 rotation = Vector3.zero;
-            Vector3 scale = Vector3.zero;
-            string gameObject = "";
-            Vector3 position;
-            switch (scene.name)
-            {
-                case "Canyon2":
-                    gameObject = "Canyon/CanyonScoreboardAnchor/GorillaScoreBoard";
-                    position = new Vector3(-24.5019f, -28.7746f, 0.1f);
-                    rotation = new Vector3(270f, 0f, 0f);
-                    scale = new Vector3(21.5946f, 1f, 22.1782f);
-                    break;
-                case "Skyjungle":
-                    gameObject = "skyjungle/UI/Scoreboard/GorillaScoreBoard";
-                    position = new Vector3(-21.2764f, -32.1928f, 0f);
-                    rotation = new Vector3(270.2987f, 0.2f, 359.9f);
-                    scale = new Vector3(21.6f, 0.1f, 20.4909f);
-                    break;
-                case "Mountain":
-                    gameObject = "Mountain/MountainScoreboardAnchor/GorillaScoreBoard";
-                    position = Vector3.zero;
-                    rotation = Vector3.zero;
-                    scale = Vector3.one;
-                    break;
-                case "Metropolis":
-                    gameObject = "MetroMain/ComputerArea/Scoreboard/GorillaScoreBoard";
-                    position = new Vector3(-25.1f, -31f, 0.1502f);
-                    rotation = new Vector3(270.1958f, 0.2086f, 0f);
-                    scale = new Vector3(21f, 102.9727f, 21.4f);
-                    break;
-                case "Bayou":
-                    gameObject = "BayouMain/ComputerArea/GorillaScoreBoardPhysical";
-                    position = new Vector3(-28.3419f, -26.851f, 0.3f);
-                    rotation = new Vector3(270f, 0f, 0f);
-                    scale = new Vector3(21.3636f, 38f, 21f);
-                    break;
-                case "Beach":
-                    gameObject = "BeachScoreboardAnchor/GorillaScoreBoard";
-                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
-                    rotation = new Vector3(270.056f, 0f, 0f);
-                    scale = new Vector3(21.2f, 2f, 21.6f);
-                    break;
-                case "Cave":
-                    gameObject = "Cave_Main_Prefab/CrystalCaveScoreboardAnchor/GorillaScoreBoard";
-                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
-                    rotation = new Vector3(270.056f, 0f, 0f);
-                    scale = new Vector3(21.2f, 2f, 21.6f);
-                    break;
-                case "Rotating":
-                    gameObject = "RotatingPermanentEntrance/UI (1)/RotatingScoreboard/RotatingScoreboardAnchor/GorillaScoreBoard";
-                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
-                    rotation = new Vector3(270.056f, 0f, 0f);
-                    scale = new Vector3(21.2f, 2f, 21.6f);
-                    break;
-                case "MonkeBlocks":
-                    gameObject = "Environment Objects/MonkeBlocksRoomPersistent/AtticScoreBoard/AtticScoreboardAnchor/GorillaScoreBoard";
-                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
-                    rotation = new Vector3(270.1856f, 0.1f, 0f);
-                    scale = new Vector3(21.6f, 1.2f, 20.8f);
-                    break;
-                case "Basement":
-                    gameObject = "Basement/BasementScoreboardAnchor/GorillaScoreBoard/";
-                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
-                    rotation = new Vector3(270.1856f, 0.1f, 0f);
-                    scale = new Vector3(21.6f, 1.2f, 20.8f);
-                    break;
-                default:
-                    return;
-            }
+            if (!BoardInformations.TryGetValue(scene.name, out var config)) return;
 
-            if (gameObject.IsNullOrEmpty())
-                return;
-
-            CreateObjectBoard(scene.name, gameObject, position, rotation, scale);
+            CreateObjectBoard(scene.name, config.GameObjectPath, config.Position, config.Rotation, config.Scale);
         }
+
+        private readonly struct BoardInformation
+        {
+            public readonly string GameObjectPath;
+            public readonly Vector3 Position;
+            public readonly Vector3 Rotation;
+            public readonly Vector3 Scale;
+
+            public BoardInformation(string path, Vector3 pos, Vector3 rot, Vector3 scale)
+            {
+                GameObjectPath = path;
+                Position = pos;
+                Rotation = rot;
+                Scale = scale;
+            }
+        }
+
+        private static readonly Dictionary<string, BoardInformation> BoardInformations = new Dictionary<string, BoardInformation>
+        {
+            ["Canyon2"] = new BoardInformation(
+                "Canyon/CanyonScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-24.5019f, -28.7746f, 0.1f),
+                new Vector3(270f, 0f, 0f),
+                new Vector3(21.5946f, 1f, 22.1782f)
+            ),
+            ["Skyjungle"] = new BoardInformation(
+                "skyjungle/UI/Scoreboard/GorillaScoreBoard",
+                new Vector3(-21.2764f, -32.1928f, 0f),
+                new Vector3(270.2987f, 0.2f, 359.9f),
+                new Vector3(21.6f, 0.1f, 20.4909f)
+            ),
+            ["Mountain"] = new BoardInformation(
+                "Mountain/MountainScoreboardAnchor/GorillaScoreBoard",
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.one
+            ),
+            ["Metropolis"] = new BoardInformation(
+                "MetroMain/ComputerArea/Scoreboard/GorillaScoreBoard",
+                new Vector3(-25.1f, -31f, 0.1502f),
+                new Vector3(270.1958f, 0.2086f, 0f),
+                new Vector3(21f, 102.9727f, 21.4f)
+            ),
+            ["Bayou"] = new BoardInformation(
+                "BayouMain/ComputerArea/GorillaScoreBoardPhysical",
+                new Vector3(-28.3419f, -26.851f, 0.3f),
+                new Vector3(270f, 0f, 0f),
+                new Vector3(21.3636f, 38f, 21f)
+            ),
+            ["Beach"] = new BoardInformation(
+                "BeachScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -33.7126f, 0.1f),
+                new Vector3(270.056f, 0f, 0f),
+                new Vector3(21.2f, 2f, 21.6f)
+            ),
+            ["Cave"] = new BoardInformation(
+                "Cave_Main_Prefab/CrystalCaveScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -33.7126f, 0.1f),
+                new Vector3(270.056f, 0f, 0f),
+                new Vector3(21.2f, 2f, 21.6f)
+            ),
+            ["Rotating"] = new BoardInformation(
+                "RotatingPermanentEntrance/UI (1)/RotatingScoreboard/RotatingScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -33.7126f, 0.1f),
+                new Vector3(270.056f, 0f, 0f),
+                new Vector3(21.2f, 2f, 21.6f)
+            ),
+            ["MonkeBlocks"] = new BoardInformation(
+                "Environment Objects/MonkeBlocksRoomPersistent/AtticScoreBoard/AtticScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -24.5091f, 0.57f),
+                new Vector3(270.1856f, 0.1f, 0f),
+                new Vector3(21.6f, 1.2f, 20.8f)
+            ),
+            ["Basement"] = new BoardInformation(
+                "Basement/BasementScoreboardAnchor/GorillaScoreBoard/",
+                new Vector3(-22.1964f, -24.5091f, 0.57f),
+                new Vector3(270.1856f, 0.1f, 0f),
+                new Vector3(21.6f, 1.2f, 20.8f)
+            )
+        };
 
         public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
         {
@@ -5140,7 +5148,7 @@ namespace iiMenu.Menu
             ServerSyncRightHandPos = VRRig.LocalRig?.rightHand?.rigTarget?.transform?.position ?? ServerSyncRightHandPos;
         }
 
-        public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
+        public static readonly Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
         public static void OnPlayerSerialize(VRRig rig) =>
             playerPing[rig] = (int)Math.Abs((rig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
 
