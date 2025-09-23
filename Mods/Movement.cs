@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ii's Stupid Menu  Mods/Movement.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -2479,6 +2479,36 @@ namespace iiMenu.Mods
             }
             else
                 VRRig.LocalRig.enabled = true;
+        }
+
+        public static Vector3 stillBeybladeStartPos = Vector3.zero;
+        public static void StillBeyblade()
+        {
+            if (rightPrimary)
+            {
+                if (stillBeybladeStartPos == Vector3.zero)
+                    stillBeybladeStartPos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                
+                VRRig.LocalRig.enabled = false;
+
+                VRRig.LocalRig.transform.position = stillBeybladeStartPos;
+                VRRig.LocalRig.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * -1f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * 1f;
+
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+
+                FixRigHandRotation();
+            }
+            else
+            {
+                stillBeybladeStartPos = Vector3.zero;
+                VRRig.LocalRig.enabled = true;
+            }
         }
 
         public static void Fan()
