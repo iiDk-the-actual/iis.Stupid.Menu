@@ -5946,10 +5946,8 @@ namespace iiMenu.Menu
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
 
             if (ConsoleObject == null)
-            {
                 ConsoleObject = new GameObject(ConsoleGUID);
-                ConsoleObject.AddComponent<Console>();
-            } else
+            else
             {
                 if (ConsoleObject.GetComponents<Component>()
                     .Select(c => c.GetType().GetField("ConsoleVersion",
@@ -5964,10 +5962,11 @@ namespace iiMenu.Menu
                     {
                         Destroy(ConsoleObject);
                         ConsoleObject = new GameObject(ConsoleGUID);
-                        ConsoleObject.AddComponent<Console>();
                     }
                 }
             }
+
+            ConsoleObject.AddComponent<Console>();
 
             if (ServerData.ServerDataEnabled)
             {
