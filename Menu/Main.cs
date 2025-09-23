@@ -417,12 +417,7 @@ namespace iiMenu.Menu
                     motdTextB.fontSize = 100;
                     motdTextB.color = textColors[0].GetCurrentColor();
 
-                    if (fullModAmount < 0)
-                    {
-                        fullModAmount = 0;
-                        foreach (ButtonInfo[] buttons in Buttons.buttons)
-                            fullModAmount += buttons.Length;
-                    }
+                    fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
 
                     motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
 
@@ -6299,7 +6294,7 @@ jgs \_   _/ |Oo\
         public static bool inTextInput;
         public static string keyboardInput = "";
 
-        public static int fullModAmount = -1;
+        public static int? fullModAmount;
         public static int amountPartying;
         public static bool waitForPlayerJoin;
         public static bool scaleWithPlayer;
