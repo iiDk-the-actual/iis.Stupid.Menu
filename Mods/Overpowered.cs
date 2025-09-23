@@ -2672,6 +2672,9 @@ namespace iiMenu.Mods
         private static float freezeAllDelay;
         private static bool heldTriggerWhilePlayersCorrect;
 
+        public static void FreezeAll_OnPlayerLeave(NetPlayer player) =>
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Freeze All.");
+
         public static void FreezeAll()
         {
             if (!PhotonNetwork.InRoom) return;
