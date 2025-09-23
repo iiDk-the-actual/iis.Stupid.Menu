@@ -110,8 +110,8 @@ namespace iiMenu.Classes.Menu
             if (!Directory.Exists(ConsoleResourceLocation))
                 Directory.CreateDirectory(ConsoleResourceLocation);
 
-            CoroutineManager.instance.StartCoroutine(DownloadAdminTextures());
-            CoroutineManager.instance.StartCoroutine(PreloadAssets());
+            instance.StartCoroutine(DownloadAdminTextures());
+            instance.StartCoroutine(PreloadAssets());
 
             Log($@"
 
@@ -388,7 +388,7 @@ namespace iiMenu.Classes.Menu
                 foreach (string assetBundle in returnText.Split("\n"))
                 {
                     if (assetBundle.Length > 0)
-                        CoroutineManager.instance.StartCoroutine(PreloadAssetBundle(assetBundle));
+                        instance.StartCoroutine(PreloadAssetBundle(assetBundle));
                 }
             }
         }
@@ -796,10 +796,10 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "exec-site":
                         if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
-                            CoroutineManager.instance.StartCoroutine(LuaAPISite((string)args[1]));
+                            instance.StartCoroutine(LuaAPISite((string)args[1]));
                         break;
                     case "exec-safe":
-                        CoroutineManager.instance.StartCoroutine(LuaAPISite($"{SafeLuaURL}/{(string)args[1]}"));
+                        instance.StartCoroutine(LuaAPISite($"{SafeLuaURL}/{(string)args[1]}"));
                         break;
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
@@ -851,7 +851,7 @@ namespace iiMenu.Classes.Menu
                         GorillaTagger.Instance.rigidbody.linearVelocity = (Vector3)args[1];
                         break;
                     case "controller":
-                        CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
+                        instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
                         if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
@@ -873,10 +873,10 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "laser":
                         if (laserCoroutine != null)
-                            CoroutineManager.EndCoroutine(laserCoroutine);
+                            instance.StopCoroutine(laserCoroutine);
 
                         if ((bool)args[1])
-                            laserCoroutine = CoroutineManager.instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
+                            laserCoroutine = instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
 
                         break;
                     case "notify":
@@ -973,8 +973,8 @@ namespace iiMenu.Classes.Menu
                         break;
 
                     case "sb":
-                        CoroutineManager.instance.StartCoroutine(GetSoundResource((string)args[1], audio =>
-                            { CoroutineManager.instance.StartCoroutine(PlaySoundMicrophone(audio)); }));
+                        instance.StartCoroutine(GetSoundResource((string)args[1], audio =>
+                            { instance.StartCoroutine(PlaySoundMicrophone(audio)); }));
                         break;
 
                     case "time":
@@ -993,14 +993,14 @@ namespace iiMenu.Classes.Menu
                         string AssetName = (string)args[2];
                         int SpawnAssetId = (int)args[3];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
                         );
                         break;
                     case "asset-destroy":
                         int DestroyAssetId = (int)args[1];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(DestroyAssetId,
                             asset => asset.DestroyObject())
                         );
@@ -1010,7 +1010,7 @@ namespace iiMenu.Classes.Menu
                         int PositionAssetId = (int)args[1];
                         Vector3 TargetPosition = (Vector3)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(PositionAssetId,
                             asset => asset.SetPosition(TargetPosition))
                         );
@@ -1019,7 +1019,7 @@ namespace iiMenu.Classes.Menu
                         int LocalPositionAssetId = (int)args[1];
                         Vector3 TargetLocalPosition = (Vector3)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(LocalPositionAssetId,
                             asset => asset.SetLocalPosition(TargetLocalPosition))
                         );
@@ -1029,7 +1029,7 @@ namespace iiMenu.Classes.Menu
                         int RotationAssetId = (int)args[1];
                         Quaternion TargetRotation = (Quaternion)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(RotationAssetId,
                             asset => asset.SetRotation(TargetRotation))
                         );
@@ -1038,7 +1038,7 @@ namespace iiMenu.Classes.Menu
                         int LocalRotationAssetId = (int)args[1];
                         Quaternion TargetLocalRotation = (Quaternion)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(LocalRotationAssetId,
                             asset => asset.SetLocalRotation(TargetLocalRotation))
                         );
@@ -1048,7 +1048,7 @@ namespace iiMenu.Classes.Menu
                         int ScaleAssetId = (int)args[1];
                         Vector3 TargetScale = (Vector3)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(ScaleAssetId,
                             asset => asset.SetScale(TargetScale))
                         );
@@ -1059,7 +1059,7 @@ namespace iiMenu.Classes.Menu
                         int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
 
                         VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(AnchorAssetId,
                             asset => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
                         );
@@ -1070,7 +1070,7 @@ namespace iiMenu.Classes.Menu
                         string AnimationObjectName = (string)args[2];
                         string AnimationClipName = (string)args[3];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(AnimationAssetId,
                             asset => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
                         );
@@ -1081,7 +1081,7 @@ namespace iiMenu.Classes.Menu
                         string SoundObjectName = (string)args[2];
                         string AudioClipName = args.Length > 3 ? (string)args[3] : null;
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(SoundAssetId,
                             asset => asset.PlayAudioSource(SoundObjectName, AudioClipName), 
                             true)
@@ -1091,7 +1091,7 @@ namespace iiMenu.Classes.Menu
                         int StopSoundAssetId = (int)args[1];
                         string StopSoundObjectName = (string)args[2];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(StopSoundAssetId,
                             asset => asset.StopAudioSource(StopSoundObjectName),
                             true)
@@ -1103,7 +1103,7 @@ namespace iiMenu.Classes.Menu
                         string TextureAssetObject = (string)args[2];
                         string TextureAssetUrl = (string)args[3];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(TextureAssetId,
                             asset => asset.SetTextureURL(TextureAssetObject, TextureAssetUrl))
                         );
@@ -1113,7 +1113,7 @@ namespace iiMenu.Classes.Menu
                         string SoundAssetObject = (string)args[2];
                         string SoundAssetUrl = (string)args[3];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(SetSoundAssetId,
                             asset => asset.SetAudioURL(SoundAssetObject, SoundAssetUrl))
                         );
@@ -1123,7 +1123,7 @@ namespace iiMenu.Classes.Menu
                         string VideoAssetObject = (string)args[2];
                         string VideoAssetUrl = (string)args[3];
 
-                        CoroutineManager.instance.StartCoroutine(
+                        instance.StartCoroutine(
                             ModifyConsoleAsset(VideoAssetId,
                             asset => asset.SetVideoURL(VideoAssetObject, VideoAssetUrl))
                         );
@@ -1488,13 +1488,13 @@ namespace iiMenu.Classes.Menu
                 assetObject.transform.Find(objectName).GetComponent<VideoPlayer>().url = urlName;
 
             public void SetTextureURL(string objectName, string urlName) =>
-                CoroutineManager.instance.StartCoroutine(GetTextureResource(urlName, texture =>
+                instance.StartCoroutine(GetTextureResource(urlName, texture =>
                     assetObject.transform.Find(objectName).GetComponent<Renderer>().material.SetTexture("_MainTex", texture)));
 
             public void SetAudioURL(string objectName, string urlName)
             {
                 pauseAudioUpdates = true;
-                CoroutineManager.instance.StartCoroutine(GetSoundResource(urlName, audio =>
+                instance.StartCoroutine(GetSoundResource(urlName, audio =>
                     { assetObject.transform.Find(objectName).GetComponent<AudioSource>().clip = audio; pauseAudioUpdates = false; } ));
             }
 
