@@ -97,7 +97,7 @@ namespace iiMenu.Managers
             if (Time.time > UpdateTime)
             {
                 UpdateTime = Time.time + 30f;
-                CoroutineManager.RunCoroutine(UpdateFriendsList());
+                instance.StartCoroutine(UpdateFriendsList());
             }
 
             List<VRRig> toRemoveRigs = new List<VRRig>();
@@ -479,7 +479,7 @@ namespace iiMenu.Managers
                                 lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
 
                                 PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, 99999f, PingPosition);
-                                CoroutineManager.instance.StartCoroutine(FadePing(line));
+                                instance.StartCoroutine(FadePing(line));
 
                                 pingDelay[SenderRig] = Time.time + 0.1f;
 
@@ -639,7 +639,7 @@ namespace iiMenu.Managers
 
         public static void SendFriendRequest(string uid)
         {
-            CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
+            instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
             ));
@@ -647,7 +647,7 @@ namespace iiMenu.Managers
 
         public static void AcceptFriendRequest(string uid)
         {
-            CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
+            instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully accepted friend request.", 5000),
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
             ));
@@ -655,7 +655,7 @@ namespace iiMenu.Managers
 
         public static void RemoveFriend(string uid)
         {
-            CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
+            instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed friend from friends list.", 5000),
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
             ));
@@ -663,7 +663,7 @@ namespace iiMenu.Managers
 
         public static void DenyFriendRequest(string uid)
         {
-            CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
+            instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
 
@@ -676,7 +676,7 @@ namespace iiMenu.Managers
 
         public static void CancelFriendRequest(string uid)
         {
-            CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
+            instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Cancelled friend request.", 5000),
                 error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
             ));

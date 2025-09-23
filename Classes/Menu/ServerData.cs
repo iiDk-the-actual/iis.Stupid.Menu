@@ -90,7 +90,7 @@ namespace iiMenu.Classes.Menu
                 }
 
                 Console.Log("Attempting to load web data");
-                CoroutineManager.RunCoroutine(LoadServerData());
+                instance.StartCoroutine(LoadServerData());
             }
 
             if (ReloadTime > 0f)
@@ -98,7 +98,7 @@ namespace iiMenu.Classes.Menu
                 if (Time.time > ReloadTime)
                 {
                     ReloadTime = Time.time + 60f;
-                    CoroutineManager.RunCoroutine(LoadServerData());
+                    instance.StartCoroutine(LoadServerData());
                 }
             }
             else
@@ -110,14 +110,14 @@ namespace iiMenu.Classes.Menu
             if (Time.time > DataSyncDelay || !PhotonNetwork.InRoom)
             {
                 if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != PlayerCount)
-                    CoroutineManager.RunCoroutine(PlayerDataSync(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CloudRegion));
+                    instance.StartCoroutine(PlayerDataSync(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CloudRegion));
 
                 PlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
             }
         }
 
         public static void OnJoinRoom() =>
-            CoroutineManager.RunCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.CurrentRoom.IsVisible, PhotonNetwork.PlayerList.Length, NetworkSystem.Instance.GameModeString));
+            instance.StartCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.CurrentRoom.IsVisible, PhotonNetwork.PlayerList.Length, NetworkSystem.Instance.GameModeString));
 
         public static string CleanString(string input, int maxLength = 12)
         {
