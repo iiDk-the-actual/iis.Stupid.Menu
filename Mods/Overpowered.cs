@@ -2668,21 +2668,35 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool previousMuteValue;
+        private static bool freezeAllValue;
         private static float freezeAllDelay;
+        private static bool heldTriggerWhilePlayersCorrect;
+
         public static void FreezeAll()
         {
+            if (!PhotonNetwork.InRoom) return;
+
             if (rightTrigger > 0.5f)
             {
-                if (Time.time > freezeAllDelay)
+                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
                 {
-                    previousMuteValue = !previousMuteValue;
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                        GorillaPlayerScoreboardLine.MutePlayer(line.linePlayer.UserId, line.linePlayer.NickName, previousMuteValue ? 1 : 0);
+                    heldTriggerWhilePlayersCorrect = true;
 
-                    freezeAllDelay = Time.time + 0.1f;
+                    if (Time.time > freezeAllDelay)
+                    {
+                        freezeAllValue = !freezeAllValue;
+
+                        for (int i = 0; i < 10; i++)
+                            NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
+
+                        freezeAllDelay = Time.time + 0.1f;
+                    }
                 }
+                else
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
             }
+            else
+                heldTriggerWhilePlayersCorrect = false;
         }
 
         private static float lagDebounce;
