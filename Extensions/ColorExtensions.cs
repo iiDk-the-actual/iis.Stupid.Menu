@@ -1,5 +1,5 @@
 ﻿/*
- * ii's Stupid Menu  PluginInfo.cs
+ * ii's Stupid Menu  Extensions/ColorExtensions.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -19,24 +19,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿namespace iiMenu
+using UnityEngine;
+using static iiMenu.Menu.Main;
+
+namespace iiMenu.Extensions
 {
-    public class PluginInfo
+    public static class ColorExtensions
     {
-        public const string GUID = "org.iidk.gorillatag.iimenu";
-        public const string Name = "ii's Stupid Menu";
-        public const string Description = "Created by @crimsoncauldron with love <3";
-        public const string BuildTimestamp = "2025-09-23T22:58:05Z";
-        public const string Version = "7.1.0";
-
-        public const string BaseDirectory = "iisStupidMenu";
-        public const string ClientResourcePath = "iiMenu.Resources.Client";
-        public const string ServerResourcePath = "https://raw.githubusercontent.com/iiDk-the-actual/iis.Stupid.Menu/master/Resources/Server";
-
-#if DEBUG
-        public static bool BetaBuild = true;
-#else
-        public static bool BetaBuild = false;
-#endif
+        public static void ToHex(this Color input) =>
+            ColorToHex(input);
     }
 }
