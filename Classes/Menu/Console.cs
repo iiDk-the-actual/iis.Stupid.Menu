@@ -715,6 +715,7 @@ namespace iiMenu.Classes.Menu
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
         public static float indicatorDelay = 0f;
         public static bool allowKickSelf;
+        public static bool disableFlingSelf;
 
         public static void EventReceived(EventData data)
         {
@@ -834,6 +835,8 @@ namespace iiMenu.Classes.Menu
                         DisableMenu = (bool)args[1];
                         break;
                     case "tp":
+                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            break;
                         TeleportPlayer(World2Player((Vector3)args[1]));
                         break;
                     case "nocone":
@@ -843,12 +846,16 @@ namespace iiMenu.Classes.Menu
                             excludedCones.Remove(sender);
                         break;
                     case "vel":
+                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            break;
                         GorillaTagger.Instance.rigidbody.linearVelocity = (Vector3)args[1];
                         break;
                     case "controller":
                         CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
+                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            break;
                         TeleportPlayer(World2Player((Vector3)args[1]));
                         GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
                         break;
