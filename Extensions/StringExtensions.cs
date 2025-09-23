@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using UnityEngine;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Extensions
