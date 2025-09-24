@@ -2691,7 +2691,7 @@ namespace iiMenu.Mods
                     {
                         freezeAllValue = !freezeAllValue;
 
-                        for (int i = 0; i < 10; i++)
+                        for (int i = 0; i < 45; i++)
                             NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
 
                         freezeAllDelay = Time.time + 0.1f;
@@ -2759,7 +2759,7 @@ namespace iiMenu.Mods
                     {
                         freezeAllValue = !freezeAllValue;
 
-                        for (int i = 0; i < 33; i++)
+                        for (int i = 0; i < 45; i++)
                             NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
 
                         freezeAllDelay = Time.time + 0.1f;
