@@ -2702,6 +2702,8 @@ namespace iiMenu.Mods
                 heldTriggerWhilePlayersCorrect = false;
         }
 
+        public static float zaWarudoNotificationDelay;
+
         public static Coroutine ZaWarudo_StartCoroutineVariable;
         public static Coroutine ZaWarudo_EndCoroutineVariable;
 
@@ -2750,31 +2752,90 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    if (heldTriggerWhilePlayersCorrect)
+                    if (Time.time > zaWarudoNotificationDelay)
                     {
-                        if (ZaWarudo_EndCoroutineVariable != null)
-                        {
-                            CoroutineManager.instance.StopCoroutine(ZaWarudo_EndCoroutineVariable);
-                            ZaWarudo_EndCoroutineVariable = null;
-                        }
-
-                        //ZaWarudo_EndCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StopCoroutine());
-
+                        zaWarudoNotificationDelay = Time.time + 0.1f;
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
                     }
-
-                    heldTriggerWhilePlayersCorrect = false;
                 }
             }
             else
+            {
+                if (heldTriggerWhilePlayersCorrect)
+                {
+                    if (ZaWarudo_StartCoroutineVariable != null)
+                    {
+                        CoroutineManager.instance.StopCoroutine(ZaWarudo_StartCoroutineVariable);
+                        ZaWarudo_StartCoroutineVariable = null;
+                    }
+
+                    if (ZaWarudo_EndCoroutineVariable != null)
+                    {
+                        CoroutineManager.instance.StopCoroutine(ZaWarudo_EndCoroutineVariable);
+                        ZaWarudo_EndCoroutineVariable = null;
+                    }
+
+                    ZaWarudo_EndCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StopCoroutine());
+                }
+
                 heldTriggerWhilePlayersCorrect = false;
+            }
         }
 
         public static IEnumerator ZaWarudo_StartCoroutine()
         {
-            Play2DAudio(ZaWarudo_Start, 0.5f);
+            Spammers.Sound.PlayAudio(ZaWarudo_Start);
             yield return new WaitForSeconds(2.4f);
-            LogManager.Log("Done");
+
+            float endWhiteFadeTime = Time.time;
+            Vector3 originPoint = GorillaTagger.Instance.bodyCollider.transform.position;
+
+            while (Time.time < endWhiteFadeTime + 0.2f)
+            {
+                float t = (Time.time - endWhiteFadeTime) / 0.2f;
+                Fun.HueShift(Color.Lerp(Color.clear, Color.white, t));
+
+                TeleportPlayer(originPoint + RandomVector3(t * 0.2f));
+
+                yield return null;
+            }
+
+            float purpleFadeTime = Time.time;
+
+            while (Time.time < purpleFadeTime + 2f)
+            {
+                float t = (Time.time - purpleFadeTime) / 2f;
+                Fun.HueShift(Color.Lerp(Color.white, new Color32(120, 47, 196, 100), t));
+
+                TeleportPlayer(originPoint + RandomVector3((1 - t) * 0.2f));
+
+                yield return null;
+            }
+
+            TeleportPlayer(originPoint);
+
+            Fun.HueShift(new Color32(120, 47, 196, 100));
+
+            yield break;
+        }
+
+        public static IEnumerator ZaWarudo_StopCoroutine()
+        {
+            Spammers.Sound.PlayAudio(ZaWarudo_Stop);
+            yield return new WaitForSeconds(0.5f);
+
+            float purpleFadeTime = Time.time;
+
+            while (Time.time < purpleFadeTime + 1f)
+            {
+                float t = Time.time - purpleFadeTime;
+                Fun.HueShift(Color.Lerp(new Color32(120, 47, 196, 100), new Color32(120, 47, 196, 0), t));
+
+                yield return null;
+            }
+
+            Fun.HueShift(Color.clear);
+            yield break;
         }
 
         private static float lagDebounce;

@@ -370,7 +370,7 @@ namespace iiMenu.Notifications
             if (string.IsNullOrEmpty(NotifiText.text))
                 return;
 
-            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); 
 
             if (amount >= lines.Length)
             {

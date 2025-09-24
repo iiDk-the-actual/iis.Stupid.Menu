@@ -303,10 +303,10 @@ namespace iiMenu.Mods
                         tapMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                         if (tapTxt == null)
-                            tapTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/footstep.png", "footstep.png");
+                            tapTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/footstep.png", "Images/Mods/Visuals/footstep.png");
 
                         if (warningTxt == null)
-                            warningTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/warning.png", "warning.png");
+                            warningTxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/warning.png", "Images/Mods/Visuals/warning.png");
 
                         tapMat.SetFloat("_Surface", 1);
                         tapMat.SetFloat("_Blend", 0);
@@ -2334,10 +2334,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
@@ -2379,10 +2379,10 @@ namespace iiMenu.Mods
                     }
 
                     if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "oculus.png");
+                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
 
                     if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "steam.png");
+                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
 
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
