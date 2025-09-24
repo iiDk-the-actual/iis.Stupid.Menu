@@ -360,7 +360,7 @@ namespace iiMenu.Notifications
         }
 
         public static void PlayNotificationSound() =>
-            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.wav", $"{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.wav"), buttonClickVolume / 10f);
+            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg", $"Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg"), buttonClickVolume / 10f);
 
         public static void ClearAllNotifications() =>
             NotifiText.text = "";
