@@ -2047,9 +2047,17 @@ namespace iiMenu.Mods
                     {
                         if (!crashedNameTags.ContainsKey(vrrig))
                         {
-                            bool crashed = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                            double crashPower = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+                            bool crashed = crashPower > 500;
+
                             if (crashed)
                             {
+                                Color crashedColor = Color.yellow;
+                                if (crashPower > 2500)
+                                    crashedColor = Color.red;
+                                else if (crashPower > 1500)
+                                    crashedColor = new Color32(255, 128, 0, 255);
+
                                 GameObject go = new GameObject("iiMenu_Crashedtag");
                                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                                 TextMesh textMesh = go.AddComponent<TextMesh>();
@@ -2057,8 +2065,8 @@ namespace iiMenu.Mods
                                 textMesh.characterSize = 0.1f;
                                 textMesh.anchor = TextAnchor.MiddleCenter;
                                 textMesh.alignment = TextAlignment.Center;
-                                textMesh.color = Color.red;
-                                textMesh.text = "Crashed";
+                                textMesh.color = crashedColor;
+                                textMesh.text = "Lagging";
 
                                 crashedNameTags.Add(vrrig, go);
                             }
@@ -2066,6 +2074,15 @@ namespace iiMenu.Mods
 
                         if (crashedNameTags.TryGetValue(vrrig, out GameObject nameTag))
                         {
+                            double crashPower = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+
+                            Color crashedColor = Color.yellow;
+                            if (crashPower > 2500)
+                                crashedColor = Color.red;
+                            else if (crashPower > 1500)
+                                crashedColor = new Color32(255, 128, 0, 255);
+
+                            nameTag.GetComponent<TextMesh>().color = crashedColor;
                             nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
