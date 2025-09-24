@@ -2668,8 +2668,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool freezeAllValue;
         private static float freezeAllDelay;
+        private static float freezeAllNotificationDelay;
         private static bool heldTriggerWhilePlayersCorrect;
 
         public static void FreezeAll_OnPlayerLeave(NetPlayer player) =>
@@ -2689,16 +2689,30 @@ namespace iiMenu.Mods
 
                     if (Time.time > freezeAllDelay)
                     {
-                        freezeAllValue = !freezeAllValue;
+                        for (int i = 0; i < 11; i++)
+                        {
+                            WebFlags flags = new WebFlags(1);
+                            NetEventOptions options = new NetEventOptions
+                            {
+                                Flags = flags,
+                                TargetActors = new int[] { -1 }
+                            };
+                            byte code = 51;
+                            NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
+                        }
 
-                        for (int i = 0; i < 45; i++)
-                            NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
-
+                        RPCProtection();
                         freezeAllDelay = Time.time + 0.1f;
                     }
                 }
                 else
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
+                {
+                    if (Time.time > freezeAllNotificationDelay)
+                    {
+                        freezeAllNotificationDelay = Time.time + 0.1f;
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
+                    }
+                }
             }
             else
             {
@@ -2757,19 +2771,27 @@ namespace iiMenu.Mods
 
                     if (Time.time > freezeAllDelay)
                     {
-                        freezeAllValue = !freezeAllValue;
+                        for (int i = 0; i < 11; i++)
+                        {
+                            WebFlags flags = new WebFlags(1);
+                            NetEventOptions options = new NetEventOptions
+                            {
+                                Flags = flags,
+                                TargetActors = new int[] { -1 }
+                            };
+                            byte code = 51;
+                            NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: true);
+                        }
 
-                        for (int i = 0; i < 45; i++)
-                            NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
-
+                        RPCProtection();
                         freezeAllDelay = Time.time + 0.1f;
                     }
                 }
                 else
                 {
-                    if (Time.time > zaWarudoNotificationDelay)
+                    if (Time.time > freezeAllNotificationDelay)
                     {
-                        zaWarudoNotificationDelay = Time.time + 0.1f;
+                        freezeAllNotificationDelay = Time.time + 0.1f;
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
                     }
                 }
