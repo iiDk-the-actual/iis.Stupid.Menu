@@ -21,6 +21,7 @@
 
 ﻿using GorillaNetworking;
 using HarmonyLib;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
@@ -33,6 +34,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -439,28 +441,14 @@ exit";
             }
         }
 
-
-        public static Quaternion lastHeadQuat = Quaternion.identity;
-        public static Quaternion lastLHQuat = Quaternion.identity;
-        public static Quaternion lastRHQuat = Quaternion.identity;
-
-        public static bool lastTagLag = false;
-        public static int tagLagFrames = 0;
-
+        private static bool lastTagLag;
         public static void TagLagDetector()
         {
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
-                if (Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).head.syncRotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation, lastLHQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHand.syncRotation, lastRHQuat) <= 0.01f)
-                    tagLagFrames++;
-                else
-                    tagLagFrames = 0;
+                VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
+                bool thereIsTagLag = System.Math.Abs((masterRig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
 
-                lastLHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation;
-                lastRHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation;
-                lastHeadQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).head.syncRotation;
-
-                bool thereIsTagLag = tagLagFrames > 255;
                 if (thereIsTagLag && !lastTagLag)
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
                 if (!thereIsTagLag && lastTagLag)
