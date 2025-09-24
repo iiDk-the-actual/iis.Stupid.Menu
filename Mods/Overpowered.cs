@@ -2683,6 +2683,8 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
                 {
+                    SerializePatch.OverrideSerialization = () => false;
+
                     heldTriggerWhilePlayersCorrect = true;
 
                     if (Time.time > freezeAllDelay)
@@ -2699,7 +2701,10 @@ namespace iiMenu.Mods
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
             }
             else
+            {
+                SerializePatch.OverrideSerialization = null;
                 heldTriggerWhilePlayersCorrect = false;
+            }
         }
 
         public static float zaWarudoNotificationDelay;
@@ -2729,22 +2734,32 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
                 {
-                    heldTriggerWhilePlayersCorrect = true;
+                    SerializePatch.OverrideSerialization = () => false;
 
-                    if (ZaWarudo_StartCoroutineVariable == null)
-                        ZaWarudo_StartCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StartCoroutine());
-
-                    if (ZaWarudo_EndCoroutineVariable != null)
+                    if (!heldTriggerWhilePlayersCorrect)
                     {
-                        CoroutineManager.instance.StopCoroutine(ZaWarudo_StartCoroutineVariable);
-                        ZaWarudo_EndCoroutineVariable = null;
+                        if (ZaWarudo_StartCoroutineVariable != null)
+                        {
+                            CoroutineManager.instance.StopCoroutine(ZaWarudo_StartCoroutineVariable);
+                            ZaWarudo_StartCoroutineVariable = null;
+                        }
+
+                        if (ZaWarudo_EndCoroutineVariable != null)
+                        {
+                            CoroutineManager.instance.StopCoroutine(ZaWarudo_StartCoroutineVariable);
+                            ZaWarudo_EndCoroutineVariable = null;
+                        }
+
+                        ZaWarudo_StartCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StartCoroutine());
                     }
+
+                    heldTriggerWhilePlayersCorrect = true;
 
                     if (Time.time > freezeAllDelay)
                     {
                         freezeAllValue = !freezeAllValue;
 
-                        for (int i = 0; i < 10; i++)
+                        for (int i = 0; i < 33; i++)
                             NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
 
                         freezeAllDelay = Time.time + 0.1f;
@@ -2777,6 +2792,8 @@ namespace iiMenu.Mods
 
                     ZaWarudo_EndCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StopCoroutine());
                 }
+
+                SerializePatch.OverrideSerialization = null;
 
                 heldTriggerWhilePlayersCorrect = false;
             }
@@ -2816,6 +2833,7 @@ namespace iiMenu.Mods
 
             Fun.HueShift(new Color32(120, 47, 196, 100));
 
+            ZaWarudo_StartCoroutineVariable = null;
             yield break;
         }
 
@@ -2835,6 +2853,8 @@ namespace iiMenu.Mods
             }
 
             Fun.HueShift(Color.clear);
+
+            ZaWarudo_EndCoroutineVariable = null;
             yield break;
         }
 
