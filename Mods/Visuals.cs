@@ -1983,7 +1983,7 @@ namespace iiMenu.Mods
                                 textMesh.characterSize = 0.1f;
                                 textMesh.anchor = TextAnchor.MiddleCenter;
                                 textMesh.alignment = TextAlignment.Center;
-                                textMesh.GetComponent<TextMesh>().text = name;
+                                textMesh.text = name;
 
                                 verifiedNameTags.Add(vrrig, go);
                             } else if (ServerData.Administrators.TryGetValue(userId, out string adminName))
@@ -1995,7 +1995,7 @@ namespace iiMenu.Mods
                                 textMesh.characterSize = 0.1f;
                                 textMesh.anchor = TextAnchor.MiddleCenter;
                                 textMesh.alignment = TextAlignment.Center;
-                                textMesh.GetComponent<TextMesh>().text = adminName;
+                                textMesh.text = adminName;
 
                                 verifiedNameTags.Add(vrrig, go);
                             }
@@ -2019,6 +2019,68 @@ namespace iiMenu.Mods
         }
 
         public static void DisableVerifiedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            modNameTags.Clear();
+        }
+
+        private static readonly Dictionary<VRRig, GameObject> crashedNameTags = new Dictionary<VRRig, GameObject>();
+        public static void CrashedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTags)
+            {
+                bool crashed = Math.Abs((nametag.Key.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || !crashed)
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    crashedNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!crashedNameTags.ContainsKey(vrrig))
+                        {
+                            bool crashed = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                            if (crashed)
+                            {
+                                GameObject go = new GameObject("iiMenu_Crashedtag");
+                                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMesh textMesh = go.AddComponent<TextMesh>();
+                                textMesh.fontSize = 48;
+                                textMesh.characterSize = 0.1f;
+                                textMesh.anchor = TextAnchor.MiddleCenter;
+                                textMesh.alignment = TextAlignment.Center;
+                                textMesh.color = Color.red;
+                                textMesh.text = "Crashed";
+
+                                crashedNameTags.Add(vrrig, go);
+                            }
+                        }
+
+                        if (crashedNameTags.TryGetValue(vrrig, out GameObject nameTag))
+                        {
+                            nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                            nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                            nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                            nameTag.transform.LookAt(Camera.main.transform.position);
+                            nameTag.transform.Rotate(0f, 180f, 0f);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableCrashedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
                 UnityEngine.Object.Destroy(nametag.Value);
