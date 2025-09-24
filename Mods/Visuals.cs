@@ -2031,11 +2031,19 @@ namespace iiMenu.Mods
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTags)
             {
-                bool crashed = Math.Abs((nametag.Key.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
-                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || !crashed)
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
                     UnityEngine.Object.Destroy(nametag.Value);
                     crashedNameTags.Remove(nametag.Key);
+                }
+                else
+                {
+                    bool crashed = Math.Abs((nametag.Key.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                    if (!crashed)
+                    {
+                        UnityEngine.Object.Destroy(nametag.Value);
+                        crashedNameTags.Remove(nametag.Key);
+                    }
                 }
             }
 
@@ -2053,7 +2061,9 @@ namespace iiMenu.Mods
                             if (crashed)
                             {
                                 Color crashedColor = Color.yellow;
-                                if (crashPower > 2500)
+                                if (crashPower > 5000)
+                                    crashedColor = Color.black;
+                                else if(crashPower > 2500)
                                     crashedColor = Color.red;
                                 else if (crashPower > 1500)
                                     crashedColor = new Color32(255, 128, 0, 255);
