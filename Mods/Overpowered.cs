@@ -2702,6 +2702,81 @@ namespace iiMenu.Mods
                 heldTriggerWhilePlayersCorrect = false;
         }
 
+        public static Coroutine ZaWarudo_StartCoroutineVariable;
+        public static Coroutine ZaWarudo_EndCoroutineVariable;
+
+        public static AudioClip ZaWarudo_Start;
+        public static AudioClip ZaWarudo_Stop;
+
+        public static void ZaWarudo_enableMethod()
+        {
+            NetworkSystem.Instance.OnPlayerLeft += ZaWarudo_OnPlayerLeave;
+
+            ZaWarudo_Start = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Timestop/start.ogg", "Audio/Mods/Fun/Timestop/start.ogg");
+            ZaWarudo_Stop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Timestop/end.ogg", "Audio/Mods/Fun/Timestop/end.ogg");
+        }
+
+        public static void ZaWarudo_OnPlayerLeave(NetPlayer player) =>
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Za Warudo.");
+
+        public static void ZaWarudo()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            if (rightTrigger > 0.5f)
+            {
+                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
+                {
+                    heldTriggerWhilePlayersCorrect = true;
+
+                    if (ZaWarudo_StartCoroutineVariable == null)
+                        ZaWarudo_StartCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StartCoroutine());
+
+                    if (ZaWarudo_EndCoroutineVariable != null)
+                    {
+                        CoroutineManager.instance.StopCoroutine(ZaWarudo_StartCoroutineVariable);
+                        ZaWarudo_EndCoroutineVariable = null;
+                    }
+
+                    if (Time.time > freezeAllDelay)
+                    {
+                        freezeAllValue = !freezeAllValue;
+
+                        for (int i = 0; i < 10; i++)
+                            NetworkSystemRaiseEvent.RaiseEvent(51, new object[] { serverLink });
+
+                        freezeAllDelay = Time.time + 0.1f;
+                    }
+                }
+                else
+                {
+                    if (heldTriggerWhilePlayersCorrect)
+                    {
+                        if (ZaWarudo_EndCoroutineVariable != null)
+                        {
+                            CoroutineManager.instance.StopCoroutine(ZaWarudo_EndCoroutineVariable);
+                            ZaWarudo_EndCoroutineVariable = null;
+                        }
+
+                        //ZaWarudo_EndCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StopCoroutine());
+
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
+                    }
+
+                    heldTriggerWhilePlayersCorrect = false;
+                }
+            }
+            else
+                heldTriggerWhilePlayersCorrect = false;
+        }
+
+        public static IEnumerator ZaWarudo_StartCoroutine()
+        {
+            Play2DAudio(ZaWarudo_Start, 0.5f);
+            yield return new WaitForSeconds(2.4f);
+            LogManager.Log("Done");
+        }
+
         private static float lagDebounce;
         public static void LagTarget(object general)
         {

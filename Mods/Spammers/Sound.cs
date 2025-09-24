@@ -155,20 +155,25 @@ namespace iiMenu.Mods.Spammers
 
         public static bool AudioIsPlaying = false;
         public static float RecoverTime = -1f;
+        public static void PlayAudio(AudioClip sound)
+        {
+            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
+            GorillaTagger.Instance.myRecorder.AudioClip = sound;
+            GorillaTagger.Instance.myRecorder.RestartRecording(true);
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+            if (!LoopAudio)
+            {
+                AudioIsPlaying = true;
+                RecoverTime = Time.time + sound.length + 0.4f;
+            }
+        }
+
         public static void PlayAudio(string file)
         {
             if (PhotonNetwork.InRoom)
             {
                 AudioClip sound = LoadSoundFromFile(file);
-                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-                GorillaTagger.Instance.myRecorder.AudioClip = sound;
-                GorillaTagger.Instance.myRecorder.RestartRecording(true);
-                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
-                if (!LoopAudio)
-                {
-                    AudioIsPlaying = true;
-                    RecoverTime = Time.time + sound.length + 0.4f;
-                }
+                PlayAudio(sound);
             }
         }
 

@@ -676,7 +676,7 @@ namespace iiMenu.Mods
             };
 
             foreach (string sound in sounds)
-                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/TagSounds/{sound}.wav", $"{sound}.wav");
+                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/TagSounds/{sound}.ogg", $"Audio/Mods/Fun/TagSounds/{sound}.ogg");
         }
 
         private static GameObject FreeCamObject;
@@ -4439,7 +4439,7 @@ Piece Name: {gunTarget.name}";
             isFiring = true;
 
             if (!File.Exists($"{PluginInfo.BaseDirectory}/shotgun.wav"))
-                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/shotgun.wav", "shotgun.wav");
+                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/shotgun.ogg", "Audio/Mods/Fun/shotgun.ogg");
 
             Sound.PlayAudio("shotgun.wav");
 
