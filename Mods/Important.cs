@@ -225,6 +225,9 @@ exit";
 
         public static void ForceEnableHands()
         {
+            if (!XRSettings.isDeviceActive)
+                return;
+
             ConnectedControllerHandler.Instance.leftControllerValid = true;
             ConnectedControllerHandler.Instance.rightControllerValid = true;
 
