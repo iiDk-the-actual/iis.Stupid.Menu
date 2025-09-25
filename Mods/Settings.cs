@@ -640,14 +640,14 @@ namespace iiMenu.Mods
                             buttonText = "Vibrate Player",
                             overlapText = $"Vibrate {targetName}",
                             method =() => Overpowered.BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }),
-                            disableMethod =() => Movement.EnableRig(),
+                            disableMethod = Movement.EnableRig,
                             toolTip = $"Vibrates {targetName}'s controllers."
                         },
                         new ButtonInfo {
                             buttonText = "Slow Player",
                             overlapText = $"Slow {targetName}",
                             method =() => Overpowered.BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } } ),
-                            disableMethod =() => Movement.EnableRig(),
+                            disableMethod = Movement.EnableRig,
                             toolTip = $"Gives {targetName} tag freeze."
                         }
                     }
@@ -685,42 +685,56 @@ namespace iiMenu.Mods
             }
 
             Color playerColor = playerRig?.playerColor ?? Color.black;
-            buttons.AddRange(
-                new ButtonInfo[]
-                {
-                    new ButtonInfo {
-                        buttonText = "Player Name",
-                        overlapText = $"Name: {player.NickName}",
-                        method =() => ChangeName(player.NickName),
-                        isTogglable = false,
-                        toolTip = $"Sets your name to \"{player.NickName}\"."
-                    },
-                    new ButtonInfo {
-                        buttonText = "Player Color",
-                        overlapText = $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g * 255)}</color> <color=blue>{Math.Round(playerColor.b * 255)}</color>",
-                        method =() => ChangeColor(playerColor),
-                        isTogglable = false,
-                        toolTip = $"Sets your color to the same as {targetName}."
-                    },
-                    new ButtonInfo {
-                        buttonText = "Player User ID",
-                        overlapText = $"User ID: {player.UserId}",
-                        method =() => { NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully copied {player.UserId} to the clipboard!", 5000); GUIUtility.systemCopyBuffer = player.UserId; },
-                        isTogglable = false,
-                        toolTip = $"Copies {player.UserId} to your clipboard."
-                    },
-                    new ButtonInfo {
-                        buttonText = "Player Creation Date",
-                        overlapText = $"Creation Date: {GetCreationDate(player.UserId, (creationDate) => { GetIndex("Player Creation Date").overlapText = $"Creation Date: {creationDate}"; ReloadMenu(); })}",
-                        label = true
-                    },
-                    new ButtonInfo {
-                        buttonText = "Player FPS",
-                        overlapText = $"FPS: {playerRig.fps}",
-                        label = true
+            if (playerRig)
+                buttons.AddRange(
+                    new ButtonInfo[]
+                    {
+                        new ButtonInfo
+                        {
+                            buttonText = "Player Name",
+                            overlapText = $"Name: {player.NickName}",
+                            method = () => ChangeName(player.NickName),
+                            isTogglable = false,
+                            toolTip = $"Sets your name to \"{player.NickName}\"."
+                        },
+                        new ButtonInfo
+                        {
+                            buttonText = "Player Color",
+                            overlapText =
+                                $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g * 255)}</color> <color=blue>{Math.Round(playerColor.b * 255)}</color>",
+                            method = () => ChangeColor(playerColor),
+                            isTogglable = false,
+                            toolTip = $"Sets your color to the same as {targetName}."
+                        },
+                        new ButtonInfo
+                        {
+                            buttonText = "Player User ID",
+                            overlapText = $"User ID: {player.UserId}",
+                            method = () =>
+                            {
+                                NotifiLib.SendNotification(
+                                    $"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully copied {player.UserId} to the clipboard!",
+                                    5000);
+                                GUIUtility.systemCopyBuffer = player.UserId;
+                            },
+                            isTogglable = false,
+                            toolTip = $"Copies {player.UserId} to your clipboard."
+                        },
+                        new ButtonInfo
+                        {
+                            buttonText = "Player Creation Date",
+                            overlapText =
+                                $"Creation Date: {GetCreationDate(player.UserId, (creationDate) => { GetIndex("Player Creation Date").overlapText = $"Creation Date: {creationDate}"; ReloadMenu(); })}",
+                            label = true
+                        },
+                        new ButtonInfo
+                        {
+                            buttonText = "Player FPS",
+                            overlapText = $"FPS: {playerRig.fps}",
+                            label = true
+                        }
                     }
-                }
-            );
+                );
 
             Buttons.buttons[29] = buttons.ToArray();
         }
@@ -734,12 +748,11 @@ namespace iiMenu.Mods
                 Toggle("Watch Menu");
                 NotifiLib.ClearAllNotifications();
             }
-            if (GetIndex("Info Watch").enabled)
-            {
-                Toggle("Info Watch");
-                Toggle("Info Watch");
-                NotifiLib.ClearAllNotifications();
-            }
+
+            if (!GetIndex("Info Watch").enabled) return;
+            Toggle("Info Watch");
+            Toggle("Info Watch");
+            NotifiLib.ClearAllNotifications();
         }
 
         public static void LeftHand()
@@ -751,29 +764,28 @@ namespace iiMenu.Mods
                 Toggle("Watch Menu");
                 NotifiLib.ClearAllNotifications();
             }
-            if (GetIndex("Info Watch").enabled)
-            {
-                Toggle("Info Watch");
-                Toggle("Info Watch");
-                NotifiLib.ClearAllNotifications();
-            }
+
+            if (!GetIndex("Info Watch").enabled) return;
+            Toggle("Info Watch");
+            Toggle("Info Watch");
+            NotifiLib.ClearAllNotifications();
         }
 
         public static void ClearAllKeybinds()
         {
-            foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
+            foreach (KeyValuePair<string, List<string>> bind in ModBindings)
             {
-                foreach (string modName in Bind.Value)
+                foreach (string modName in bind.Value)
                     GetIndex(modName).customBind = null;
 
-                Bind.Value.Clear();
+                bind.Value.Clear();
             }
         }
 
-        public static void StartBind(string Bind)
+        public static void StartBind(string bind)
         {
             IsBinding = true;
-            BindInput = Bind;
+            BindInput = bind;
         }
 
         public static void JoystickMenuOff()
@@ -836,7 +848,7 @@ namespace iiMenu.Mods
         public static int langInd = 0;
         public static void ChangeMenuLanguage(bool positive = true)
         {
-            string[] langnames = new string[]
+            string[] languageNames = new string[]
             {
                 "English",
                 "Español",
@@ -869,25 +881,21 @@ namespace iiMenu.Mods
             else
                 langInd--;
 
-            langInd %= langnames.Length;
+            langInd %= languageNames.Length;
             if (langInd < 0)
-                langInd = langnames.Length - 1;
+                langInd = languageNames.Length - 1;
 
             translateCache.Clear();
             language = codenames[langInd];
 
-            GetIndex("Change Menu Language").overlapText = "Change Menu Language <color=grey>[</color><color=green>" + langnames[langInd] + "</color><color=grey>]</color>";
+            GetIndex("Change Menu Language").overlapText = "Change Menu Language <color=grey>[</color><color=green>" + languageNames[langInd] + "</color><color=grey>]</color>";
 
-            if (langInd == 0)
-                translate = false;
-            else
-                translate = true;
+            translate = langInd != 0;
         }
 
         public static void ChangeMenuButton(bool positive = true)
         {
-            string[] buttonNames = new string[]
-            {
+            string[] buttonNames = {
                 "Primary",
                 "Secondary",
                 "Grip",
@@ -915,7 +923,7 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 65;
+            const int themeCount = 65;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -3944,10 +3952,7 @@ namespace iiMenu.Mods
             if (pageButtonType < 1)
                 pageButtonType = 6;
 
-            if (pageButtonType == 1)
-                buttonOffset = 2;
-            else
-                buttonOffset = 0;
+            buttonOffset = pageButtonType == 1 ? 2 : 0;
         }
 
         public static void ChangePageSize(bool positive = true)

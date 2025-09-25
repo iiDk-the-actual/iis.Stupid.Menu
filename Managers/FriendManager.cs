@@ -852,10 +852,7 @@ namespace iiMenu.Managers
             previousOnlineCount = onlineFriends.Length;
             previousIncomingCount = instance.Friends.incoming.Values.Count;
 
-            if (onlineFriends.Length > 0)
-                GetIndex("Friends").overlapText = $"Friends <color=grey>[</color><color=green>{onlineFriends.Length} Online</color><color=grey>]</color>";
-            else
-                GetIndex("Friends").overlapText = null;
+            GetIndex("Friends").overlapText = onlineFriends.Length > 0 ? $"Friends <color=grey>[</color><color=green>{onlineFriends.Length} Online</color><color=grey>]</color>" : null;
 
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {

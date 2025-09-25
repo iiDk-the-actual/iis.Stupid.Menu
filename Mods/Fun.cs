@@ -2646,12 +2646,7 @@ Piece Name: {gunTarget.name}";
                 return;
 
             if (slingshot.ForLeftHandSlingshot() ? rightGrab : leftGrab)
-            {
-                if (slingshot.ForLeftHandSlingshot())
-                    slingshot.itemState = TransferrableObject.ItemStates.State2;
-                else
-                    slingshot.itemState = TransferrableObject.ItemStates.State3;
-            }
+                slingshot.itemState = slingshot.ForLeftHandSlingshot() ? TransferrableObject.ItemStates.State2 : TransferrableObject.ItemStates.State3;
         }
 
         public static LineRenderer paintbrawlTriggerLine;
@@ -2675,8 +2670,8 @@ Piece Name: {gunTarget.name}";
 
             if (paintbrawlTriggerLine == null)
             {
-                GameObject LineObject = new GameObject("LineObject");
-                paintbrawlTriggerLine = LineObject.AddComponent<LineRenderer>();
+                GameObject lineObject = new GameObject("LineObject");
+                paintbrawlTriggerLine = lineObject.AddComponent<LineRenderer>();
                 paintbrawlTriggerLine.positionCount = 25;
             }
 
@@ -2710,12 +2705,12 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        public static Coroutine bugCoroutine;
+        public static Coroutine BugCoroutine;
         public static IEnumerator ReturnRig()
         {
             yield return new WaitForSeconds(0.2f);
             VRRig.LocalRig.enabled = true;
-            bugCoroutine = null;
+            BugCoroutine = null;
         }
 
         public static ThrowableBug _firefly;
@@ -2734,10 +2729,7 @@ Piece Name: {gunTarget.name}";
         public static ThrowableBug GetBugObject(string name)
         {
             GameObject bugObject = null;
-            if (name == "Firefly")
-                bugObject = Firefly.gameObject;
-            else
-                bugObject = GetObject(name);
+            bugObject = name == "Firefly" ? Firefly.gameObject : GetObject(name);
             if (bugObject == null)
                 return null;
 
@@ -2775,10 +2767,10 @@ Piece Name: {gunTarget.name}";
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = bugObject.transform.position;
 
-                    if (bugCoroutine != null)
-                        CoroutineManager.instance.StopCoroutine(bugCoroutine);
+                    if (BugCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(BugCoroutine);
 
-                    bugCoroutine = CoroutineManager.instance.StartCoroutine(ReturnRig());
+                    BugCoroutine = CoroutineManager.instance.StartCoroutine(ReturnRig());
                 }
 
                 if (Vector3.SqrMagnitude(bugObject.transform.position - ServerPos) > 15f)
@@ -2820,9 +2812,9 @@ Piece Name: {gunTarget.name}";
             }
             else
             {
-                if (bugCoroutine != null)
+                if (BugCoroutine != null)
                 {
-                    CoroutineManager.instance.StopCoroutine(bugCoroutine);
+                    CoroutineManager.instance.StopCoroutine(BugCoroutine);
                     VRRig.LocalRig.enabled = true;
                 }
 
