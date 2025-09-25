@@ -2223,7 +2223,7 @@ namespace iiMenu.Mods
             leaves.Clear();
         }
 
-        public static List<GameObject> cosmetics = new List<GameObject>();
+        public static readonly List<GameObject> cosmetics = new List<GameObject>();
         public static void DisableCosmetics()
         {
             try
@@ -2246,6 +2246,31 @@ namespace iiMenu.Mods
                 c.SetActive(true);
             
             cosmetics.Clear();
+        }
+
+        public static readonly List<Renderer> disabledRenderers = new List<Renderer>();
+        public static void Xray()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (disabledRenderers.Count <= 0)
+                {
+                    foreach (Renderer renderer in GetAllType<Renderer>().Where(rend => rend != null && rend.gameObject != null && rend.enabled && rend.gameObject.activeSelf))
+                    {
+                        renderer.enabled = false;
+                        disabledRenderers.Add(renderer);
+                    }
+                }
+            } else
+            {
+                if (disabledRenderers.Count > 0)
+                {
+                    foreach (Renderer renderer in disabledRenderers.Where(rend => rend != null && rend.gameObject != null))
+                        renderer.enabled = true;
+
+                    disabledRenderers.Clear();
+                }
+            }
         }
 
         public static void NoSmoothRigs()
