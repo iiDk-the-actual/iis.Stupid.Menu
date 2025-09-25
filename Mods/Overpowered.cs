@@ -2769,6 +2769,8 @@ namespace iiMenu.Mods
 
                     heldTriggerWhilePlayersCorrect = true;
 
+                    Movement.LowGravity();
+
                     if (Time.time > freezeAllDelay)
                     {
                         for (int i = 0; i < 11; i++)
