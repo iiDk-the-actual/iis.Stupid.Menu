@@ -915,7 +915,7 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 65;
+            int themeCount = 71;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -3033,6 +3033,71 @@ namespace iiMenu.Mods
                         }
                     };
                     break;
+                    if (themeType == 66) // Xbox 360 Glow
+    {
+        bgColorA = new Color32(16, 124, 16, 255);
+        bgColorB = new Color32(0, 64, 0, 255);
+        buttonDefaultA = new Color32(0, 200, 0, 255);
+        buttonDefaultB = new Color32(0, 200, 0, 255);
+        buttonClickedA = new Color32(144, 238, 144, 255);
+        buttonClickedB = new Color32(144, 238, 144, 255);
+        textColor = Color.white;
+    }
+
+    if (themeType == 67) // Among Us Drip
+    {
+        bgColorA = new Color32(255, 0, 0, 255);
+        bgColorB = new Color32(50, 0, 0, 255);
+        buttonDefaultA = new Color32(0, 0, 0, 255);
+        buttonDefaultB = new Color32(0, 0, 0, 255);
+        buttonClickedA = new Color32(255, 255, 255, 255);
+        buttonClickedB = new Color32(255, 255, 255, 255);
+        textColor = new Color32(200, 200, 200, 255);
+    }
+
+    if (themeType == 68) // Dorito Dust
+    {
+        bgColorA = new Color32(255, 140, 0, 255);
+        bgColorB = new Color32(139, 69, 19, 255);
+        buttonDefaultA = new Color32(255, 69, 0, 255);
+        buttonDefaultB = new Color32(255, 69, 0, 255);
+        buttonClickedA = new Color32(255, 215, 0, 255);
+        buttonClickedB = new Color32(255, 215, 0, 255);
+        textColor = Color.black;
+    }
+
+    if (themeType == 69) // Windows XP
+    {
+        bgColorA = new Color32(0, 120, 215, 255);
+        bgColorB = new Color32(0, 70, 140, 255);
+        buttonDefaultA = new Color32(0, 180, 0, 255);
+        buttonDefaultB = new Color32(0, 180, 0, 255);
+        buttonClickedA = new Color32(255, 255, 0, 255);
+        buttonClickedB = new Color32(255, 255, 0, 255);
+        textColor = Color.white;
+    }
+
+    if (themeType == 70) // Shrek Swamp
+    {
+        bgColorA = new Color32(34, 139, 34, 255);
+        bgColorB = new Color32(85, 107, 47, 255);
+        buttonDefaultA = new Color32(107, 142, 35, 255);
+        buttonDefaultB = new Color32(107, 142, 35, 255);
+        buttonClickedA = new Color32(154, 205, 50, 255);
+        buttonClickedB = new Color32(154, 205, 50, 255);
+        textColor = new Color32(255, 255, 153, 255);
+    }
+
+    if (themeType == 71) // Obamium
+    {
+        bgColorA = new Color32(0, 51, 102, 255);
+        bgColorB = new Color32(255, 0, 0, 255);
+        buttonDefaultA = new Color32(255, 255, 255, 255);
+        buttonDefaultB = new Color32(255, 255, 255, 255);
+        buttonClickedA = new Color32(0, 0, 0, 255);
+        buttonClickedB = new Color32(0, 0, 0, 255);
+        textColor = Color.white;
+    }
             }
         }
 
