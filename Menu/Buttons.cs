@@ -376,8 +376,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Important Mods [7]
                 new ButtonInfo { buttonText = "Exit Important Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Exit Gorilla Tag", method =() => Application.Quit(), isTogglable = false, toolTip = "Closes Gorilla Tag."},
-                new ButtonInfo { buttonText = "Restart Gorilla Tag", method =() => Important.RestartGame(), isTogglable = false, toolTip = "Restarts Gorilla Tag."},
+                new ButtonInfo { buttonText = "Exit Gorilla Tag", method = () => Prompt("Are you sure you want to exit Gorilla Tag?", () => Application.Quit(), null, "Yes", "No"), isTogglable = false, toolTip = "Closes Gorilla Tag." },
+                new ButtonInfo { buttonText = "Restart Gorilla Tag", method = () => Prompt("Are you sure you want to restart Gorilla Tag?", () => Important.RestartGame(), null, "Yes", "No"), isTogglable = false, toolTip = "Restarts Gorilla Tag." },
 
                 new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => HandTapPatch.enabled = true, disableMethod =() => HandTapPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
                 new ButtonInfo { buttonText = "First Person Camera", enableMethod =() => Important.EnableFPC(), method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
