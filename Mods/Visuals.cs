@@ -357,8 +357,7 @@ namespace iiMenu.Mods
                 gameObject.transform.position = finalPos;
 
                 gameObject.transform.rotation = Quaternion.LookRotation(finalPos - Camera.main.transform.position, -Camera.main.transform.up);
-                Vector3 forwardFlat = Camera.main.transform.forward;
-                forwardFlat.y = 0;
+                Vector3 forwardFlat = Camera.main.transform.forward.X_Z();
 
                 float t = Mathf.Lerp(1f, 0f, Time.time - timestamp);
 

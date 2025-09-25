@@ -695,10 +695,8 @@ namespace iiMenu.Mods
 
             Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
 
-            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward;
-            playerForward.y = 0;
-            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
-            playerRight.y = 0;
+            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward.X_Z();
+            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right.X_Z();
 
             Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
             velocity *= Movement.flySpeed;
