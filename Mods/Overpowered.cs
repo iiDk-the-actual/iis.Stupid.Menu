@@ -2733,8 +2733,8 @@ namespace iiMenu.Mods
         {
             NetworkSystem.Instance.OnPlayerLeft += ZaWarudo_OnPlayerLeave;
 
-            ZaWarudo_Start = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Timestop/start.ogg", "Audio/Mods/Fun/Timestop/start.ogg");
-            ZaWarudo_Stop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Timestop/end.ogg", "Audio/Mods/Fun/Timestop/end.ogg");
+            ZaWarudo_Start = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Timestop/start.ogg", "Audio/Mods/Overpowered/Timestop/start.ogg");
+            ZaWarudo_Stop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Timestop/end.ogg", "Audio/Mods/Overpowered/Timestop/end.ogg");
         }
 
         public static void ZaWarudo_OnPlayerLeave(NetPlayer player) =>
