@@ -89,10 +89,12 @@ namespace iiMenu
                 "/Audio/Menu/Notifications",
 
                 "/Audio/Mods/Fun",
-                "/Audio/Mods/Fun/Timestop",
                 "/Audio/Mods/Fun/TagSounds",
                 "/Audio/Mods/Fun/Soundboard",
                 "/Audio/Mods/Fun/Soundboard/Sounds",
+
+                "/Audio/Mods/Overpowered",
+                "/Audio/Mods/Overpowered/Timestop",
 
                 "/Images",
                 "/Images/Mods",
