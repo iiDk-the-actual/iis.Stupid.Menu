@@ -35,7 +35,7 @@ namespace iiMenu.Extensions
         public static string Key(this KeyCode key)
         {
             if (key >= KeyCode.A && key <= KeyCode.Z)
-                return key.ToString(); // Returns "A", "B", etc.
+                return key.ToString();
 
             if (key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9)
                 return ((char)('0' + (key - KeyCode.Alpha0))).ToString();
@@ -64,5 +64,11 @@ namespace iiMenu.Extensions
                 default: return ""; // Unknown key
             }
         }
+
+        public static void Play(this AudioClip clip, float volume = 1f) =>
+            Play2DAudio(clip, volume);
+
+        public static void PlayAt(this AudioClip clip, Vector3 position, float volume = 1f) =>
+            PlayPositionAudio(clip, position, volume);
     }
 }
