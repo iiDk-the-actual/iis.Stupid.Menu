@@ -65,49 +65,39 @@ namespace iiMenu
 
             FirstLaunch = !Directory.Exists(PluginInfo.BaseDirectory);
 
-            string[] ExistingDirectories = new string[]
-            {
-                "",
-                "/Sounds",
-                "/Plugins",
-                "/Backups",
-                "/TTS",
-                "/PlayerInfo",
-                "/CustomScripts",
-                "/Friends",
-                "/Friends/Messages",
+           string[] ExistingDirectories =
+{
+    "/PlayerInfo",
+    "/CustomScripts",
 
-                // So far, this is the only solution I have to making files go to their proper directories on download.
-                // If anyone can fix this and make it dynamically make directories, please PR.
-                "/Audio",
-                "/Audio/Friends",
-                "/Audio/Guns",
-                "/Audio/Menu",
-                "/Audio/Mods",
+    "/Friends",
+    "/Friends/Messages",
 
-                "/Audio/Menu/Buttons",
-                "/Audio/Menu/Notifications",
+    "/Audio",
+    "/Audio/Friends",
+    "/Audio/Guns",
+    "/Audio/Menu",
+    "/Audio/Menu/Buttons",
+    "/Audio/Menu/Notifications",
+    "/Audio/Mods",
+    "/Audio/Mods/Fun",
+    "/Audio/Mods/Fun/Timestop",
+    "/Audio/Mods/Fun/TagSounds",
+    "/Audio/Mods/Fun/Soundboard",
+    "/Audio/Mods/Fun/Soundboard/Sounds",
 
-                "/Audio/Mods/Fun",
-                "/Audio/Mods/Fun/Timestop",
-                "/Audio/Mods/Fun/TagSounds",
-                "/Audio/Mods/Fun/Soundboard",
-                "/Audio/Mods/Fun/Soundboard/Sounds",
+    "/Images",
+    "/Images/Mods",
+    "/Images/Mods/Movement",
+    "/Images/Mods/Visuals",
+    "/Images/Themes"
+};
 
-                "/Images",
-                "/Images/Mods",
-                "/Images/Themes",
+foreach (var dir in ExistingDirectories)
+{
+    Directory.CreateDirectory(dir);
+}
 
-                "/Images/Mods/Movement",
-                "/Images/Mods/Visuals"
-            };
-
-            foreach (string DirectoryString in ExistingDirectories)
-            {
-                string DirectoryTarget = $"{PluginInfo.BaseDirectory}{DirectoryString}";
-                if (!Directory.Exists(DirectoryTarget))
-                    Directory.CreateDirectory(DirectoryTarget);
-            }
 
             // Ugily hard-coded but works so well
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
