@@ -45,10 +45,9 @@ namespace iiMenu.Mods
     {
         public static void MasterCheck()
         {
-            if (NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>");
-            else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            NotifiLib.SendNotification(NetworkSystem.Instance.IsMasterClient
+                ? "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>"
+                : "<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
         }
 
         public static void SetGuardianTarget(NetPlayer target)

@@ -119,11 +119,11 @@ namespace iiMenu.Menu
 
                 if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
                 {
-                    Vector2 Direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
+                    Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
                     if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
-                        rightJoystick = Direction;
+                        rightJoystick = direction;
                     else
-                        leftJoystick = Direction;
+                        leftJoystick = direction;
                 }
 
                 if (UnityInput.Current.GetKey(KeyCode.Return))
@@ -224,12 +224,14 @@ namespace iiMenu.Menu
                     buttonCondition = isKeyboardCondition;
 
                 isMenuButtonHeld = buttonCondition;
-                if (buttonCondition && menu == null)
-                    OpenMenu();
-                else
+                switch (buttonCondition)
                 {
-                    if (!buttonCondition && menu != null)
+                    case true when menu == null:
+                        OpenMenu();
+                        break;
+                    case false when menu != null:
                         CloseMenu();
+                        break;
                 }
 
                 if (buttonCondition && menu != null)
@@ -254,19 +256,15 @@ namespace iiMenu.Menu
                         for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                         {
                             GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                            if (v.name.Contains("UnityTempFile"))
-                            {
-                                stumpBoardIndex++;
-                                if (stumpBoardIndex == StumpLeaderboardIndex)
-                                {
-                                    foundStumpBoard = true;
-                                    if (StumpMat == null)
-                                        StumpMat = v.GetComponent<Renderer>().material;
+                            if (!v.name.Contains("UnityTempFile")) continue;
+                            stumpBoardIndex++;
+                            if (stumpBoardIndex != StumpLeaderboardIndex) continue;
+                            foundStumpBoard = true;
+                            if (StumpMat == null)
+                                StumpMat = v.GetComponent<Renderer>().material;
 
-                                    v.GetComponent<Renderer>().material = OrangeUI;
-                                    break;
-                                }
-                            }
+                            v.GetComponent<Renderer>().material = OrangeUI;
+                            break;
                         }
 
                         bool foundForestBoard = false;
@@ -274,19 +272,15 @@ namespace iiMenu.Menu
                         for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                         {
                             GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                            if (v.name.Contains("UnityTempFile"))
-                            {
-                                forestBoardIndex++;
-                                if (forestBoardIndex == ForestLeaderboardIndex)
-                                {
-                                    foundForestBoard = true;
-                                    if (ForestMat == null)
-                                        ForestMat = v.GetComponent<Renderer>().material;
+                            if (!v.name.Contains("UnityTempFile")) continue;
+                            forestBoardIndex++;
+                            if (forestBoardIndex != ForestLeaderboardIndex) continue;
+                            foundForestBoard = true;
+                            if (ForestMat == null)
+                                ForestMat = v.GetComponent<Renderer>().material;
 
-                                    v.GetComponent<Renderer>().material = OrangeUI;
-                                    break;
-                                }
-                            }
+                            v.GetComponent<Renderer>().material = OrangeUI;
+                            break;
                         }
 
                         if (foundStumpBoard && foundForestBoard)
@@ -339,12 +333,11 @@ namespace iiMenu.Menu
                             for (int i = 0; i < forestTransform.transform.childCount; i++)
                             {
                                 GameObject v = forestTransform.GetChild(i).gameObject;
-                                if ((v.name.Contains("Board Text") || v.name.Contains("Scoreboard_OfflineText")) && v.activeSelf)
-                                {
-                                    TextMeshPro text = v.GetComponent<TextMeshPro>();
-                                    if (!udTMP.Contains(text))
-                                        udTMP.Add(text);
-                                }
+                                if ((!v.name.Contains("Board Text") && !v.name.Contains("Scoreboard_OfflineText")) ||
+                                    !v.activeSelf) continue;
+                                TextMeshPro text = v.GetComponent<TextMeshPro>();
+                                if (!udTMP.Contains(text))
+                                    udTMP.Add(text);
                             }
 
                             hasFoundAllBoards = true;
@@ -377,28 +370,28 @@ namespace iiMenu.Menu
                         motdObject.SetActive(false);
                     }
 
-                    TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
-                    if (!udTMP.Contains(motdTC))
-                        udTMP.Add(motdTC);
+                    TextMeshPro motdTc = motd.GetComponent<TextMeshPro>();
+                    if (!udTMP.Contains(motdTc))
+                        udTMP.Add(motdTc);
 
-                    motdTC.richText = true;
-                    motdTC.fontSize = 70;
-                    motdTC.text = "Thanks for using ii's Stupid Menu!";
+                    motdTc.richText = true;
+                    motdTc.fontSize = 70;
+                    motdTc.text = "Thanks for using ii's Stupid Menu!";
 
                     if (doCustomName)
-                        motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
+                        motdTc.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
 
                     if (translate)
-                        motdTC.text = TranslateText(motdTC.text);
+                        motdTc.text = TranslateText(motdTc.text);
 
                     if (lowercaseMode)
-                        motdTC.text = motdTC.text.ToLower();
+                        motdTc.text = motdTc.text.ToLower();
 
                     if (uppercaseMode)
-                        motdTC.text = motdTC.text.ToUpper();
+                        motdTc.text = motdTc.text.ToUpper();
 
-                    motdTC.color = textColors[0].GetCurrentColor();
-                    motdTC.overflowMode = TextOverflowModes.Overflow;
+                    motdTc.color = textColors[0].GetCurrentColor();
+                    motdTc.overflowMode = TextOverflowModes.Overflow;
 
                     if (motdText == null)
                     {
@@ -465,52 +458,70 @@ namespace iiMenu.Menu
 
                             keysPressed.Add(keyCode);
 
-                            if (!lastPressedKeys.Contains(keyCode))
+                            if (lastPressedKeys.Contains(keyCode)) continue;
+                            if (UnityInput.Current.GetKey(KeyCode.LeftControl))
                             {
-                                if (UnityInput.Current.GetKey(KeyCode.LeftControl))
+                                switch (keyCode)
                                 {
-                                    switch (keyCode)
-                                    {
-                                        case KeyCode.A:
-                                            keyboardInput = "";
-                                            break;
-                                        case KeyCode.C:
-                                            GUIUtility.systemCopyBuffer = keyboardInput;
-                                            break;
-                                        case KeyCode.V:
-                                            keyboardInput = GUIUtility.systemCopyBuffer;
-                                            break;
-                                        case KeyCode.Backspace:
-                                            if (keyboardInput.Length > 0)
-                                                keyboardInput = string.Join(" ", keyboardInput.Split(' ').SkipLast(1));
-                                            break;
-                                    }
+                                    case KeyCode.A:
+                                        keyboardInput = "";
+                                        break;
+                                    case KeyCode.C:
+                                        GUIUtility.systemCopyBuffer = keyboardInput;
+                                        break;
+                                    case KeyCode.V:
+                                        keyboardInput = GUIUtility.systemCopyBuffer;
+                                        break;
+                                    case KeyCode.Backspace:
+                                        if (keyboardInput.Length > 0)
+                                            keyboardInput = string.Join(" ", keyboardInput.Split(' ').SkipLast(1));
+                                        break;
                                 }
-                                else
+                            }
+                            else
+                            {
+                                switch (keyCode)
                                 {
-                                    switch (keyCode)
-                                    {
-                                        case KeyCode.Backspace:
-                                            if (keyboardInput.Length > 0)
-                                                keyboardInput = keyboardInput[..^1];
-                                            break;
-                                        case KeyCode.Escape:
-                                            if (isSearching)
-                                                Toggle("Search");
-                                            else
-                                                Toggle("Decline Prompt");
+                                    case KeyCode.Backspace:
+                                        if (keyboardInput.Length > 0)
+                                            keyboardInput = keyboardInput[..^1];
+                                        break;
+                                    case KeyCode.Escape:
+                                        Toggle(isSearching ? "Search" : "Decline Prompt");
 
-                                            break;
-                                        case KeyCode.Return:
-                                            if (isSearching)
+                                        break;
+                                    case KeyCode.Return:
+                                        if (isSearching)
+                                        {
+                                            List<ButtonInfo> searchedMods = new List<ButtonInfo>();
+                                            if (nonGlobalSearch && currentCategoryName != "Main")
                                             {
-                                                List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                                                if (nonGlobalSearch && currentCategoryName != "Main")
+                                                foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                                                 {
-                                                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                                    try
+                                                    {
+                                                        string buttonText = v.buttonText;
+                                                        if (v.overlapText != null)
+                                                            buttonText = v.overlapText;
+
+                                                        if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                            searchedMods.Add(v);
+                                                    }
+                                                    catch { }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                int categoryIndex = 0;
+                                                foreach (ButtonInfo[] buttonInfos in Buttons.buttons)
+                                                {
+                                                    foreach (ButtonInfo v in buttonInfos)
                                                     {
                                                         try
                                                         {
+                                                            if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
+                                                                continue;
+
                                                             string buttonText = v.buttonText;
                                                             if (v.overlapText != null)
                                                                 buttonText = v.overlapText;
@@ -520,58 +531,35 @@ namespace iiMenu.Menu
                                                         }
                                                         catch { }
                                                     }
+                                                    categoryIndex++;
                                                 }
-                                                else
-                                                {
-                                                    int categoryIndex = 0;
-                                                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                                                    {
-                                                        foreach (ButtonInfo v in buttonlist)
-                                                        {
-                                                            try
-                                                            {
-                                                                if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
-                                                                    continue;
-
-                                                                string buttonText = v.buttonText;
-                                                                if (v.overlapText != null)
-                                                                    buttonText = v.overlapText;
-
-                                                                if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                                                    searchedMods.Add(v);
-                                                            }
-                                                            catch { }
-                                                        }
-                                                        categoryIndex++;
-                                                    }
-                                                }
-
-                                                ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                                ButtonInfo button = buttons[0];
-
-                                                if (button.incremental)
-                                                    ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
-                                                else
-                                                    Toggle(buttons[0].buttonText, true);
                                             }
-                                            else if (IsText)
-                                                Toggle("Accept Prompt");
 
-                                            break;
-                                        default:
-                                            keyboardInput +=
-                                                UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
+                                            ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                            ButtonInfo button = buttons[0];
+
+                                            if (button.incremental)
+                                                ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
+                                            else
+                                                Toggle(buttons[0].buttonText, true);
+                                        }
+                                        else if (IsText)
+                                            Toggle("Accept Prompt");
+
+                                        break;
+                                    default:
+                                        keyboardInput +=
+                                            UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
                                                 keyCode.ToString().Capitalize() : keyCode.Key().ToLower();
-                                            break;
-                                    }
+                                        break;
                                 }
-
-                                VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
-                                pageNumber = 0;
-                                ReloadMenu();
                             }
+
+                            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                            pageNumber = 0;
+                            ReloadMenu();
                         }
-                        else if (keyPressedTimes.ContainsKey(keyCode))
+                        else
                             keyPressedTimes.Remove(keyCode);
                     }
 
@@ -634,10 +622,7 @@ namespace iiMenu.Menu
                 {
                     string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
                     int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
-                    if (length > 0)
-                        title.text = targetString[..length];
-                    else
-                        title.text = "";
+                    title.text = length > 0 ? targetString[..length] : "";
                 }
 
                 if (gradientTitle && title != null)
@@ -1025,49 +1010,36 @@ namespace iiMenu.Menu
                     {
                         foreach (string id in muteIDs)
                         {
-                            if (!mutedIDs.Contains(id))
+                            if (mutedIDs.Contains(id)) continue;
+                            string randomName = "gorilla";
+                            for (var i = 0; i < 4; i++)
+                                randomName += UnityEngine.Random.Range(0, 9).ToString();
+
+                            object[] content = new object[] {
+                                id,
+                                true,
+                                randomName,
+                                NetworkSystem.Instance.LocalPlayer.NickName,
+                                true,
+                                NetworkSystem.Instance.RoomStringStripped()
+                            };
+
+                            PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
                             {
-                                string randomName = "gorilla";
-                                for (var i = 0; i < 4; i++)
-                                    randomName += UnityEngine.Random.Range(0, 9).ToString();
+                                TargetActors = new int[] { -1 },
+                                Receivers = ReceiverGroup.All,
+                                Flags = new WebFlags(1)
+                            }, SendOptions.SendReliable);
 
-                                object[] content = new object[] {
-                                    id,
-                                    true,
-                                    randomName,
-                                    NetworkSystem.Instance.LocalPlayer.NickName,
-                                    true,
-                                    NetworkSystem.Instance.RoomStringStripped()
-                                };
-
-                                PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
-                                {
-                                    TargetActors = new int[] { -1 },
-                                    Receivers = ReceiverGroup.All,
-                                    Flags = new WebFlags(1)
-                                }, SendOptions.SendReliable);
-
-                                mutedIDs.Add(id);
-                            }
+                            mutedIDs.Add(id);
                         }
                     }
                 }
                 catch { }
 
-                if (ServerPos == Vector3.zero)
-                    ServerPos = ServerSyncPos;
-                else
-                    ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
-
-                if (ServerLeftHandPos == Vector3.zero)
-                    ServerLeftHandPos = ServerSyncLeftHandPos;
-                else
-                    ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
-
-                if (ServerRightHandPos == Vector3.zero)
-                    ServerRightHandPos = ServerSyncRightHandPos;
-                else
-                    ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
+                ServerPos = ServerPos == Vector3.zero ? ServerSyncPos : Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+                ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
+                ServerRightHandPos = ServerRightHandPos == Vector3.zero ? ServerSyncRightHandPos : Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
                 #endregion
 
                 shouldBePC = UnityInput.Current.GetKey(KeyCode.E) 
@@ -1475,10 +1447,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.parent = menu.transform;
                 buttonObject.transform.rotation = Quaternion.identity;
 
-                if (thinMenu)
-                    buttonObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
-                else
-                    buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
+                buttonObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, buttonDistance * 0.8f) : new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
 
                 if (longmenu && buttonIndex >= pageSize)
                 {
@@ -1494,10 +1463,7 @@ namespace iiMenu.Menu
                     // 0.08 x Y = 0.102
 
                     buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-                    if (thinMenu)
-                        buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
-                    else
-                        buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
+                    buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.399f, 0.28f - offset) : new Vector3(0.56f, 0.599f, 0.28f - offset);
                 }
 
                 Button Button = buttonObject.AddComponent<Button>();
@@ -1628,10 +1594,7 @@ namespace iiMenu.Menu
             // Fat menu theorem
             // To get the fat position of a button:
             // original x * (0.7 / 0.45) or 1.555555556
-            if (thinMenu)
-                buttonObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
-            else
-                buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
+            buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, -0.450f, -0.58f) : new Vector3(0.56f, -0.7f, -0.58f);
 
             buttonObject.AddComponent<Button>().relatedText = "Search";
 
@@ -1675,10 +1638,7 @@ namespace iiMenu.Menu
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
-            if (thinMenu)
-                imageTransform.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
-            else
-                imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
+            imageTransform.localPosition = thinMenu ? new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f) : new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
@@ -1699,10 +1659,7 @@ namespace iiMenu.Menu
             buttonObject.transform.rotation = Quaternion.identity;
 
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-            if (thinMenu)
-                buttonObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
-            else
-                buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+            buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
 
             buttonObject.AddComponent<Button>().relatedText = "Info Screen";
 
@@ -1736,10 +1693,7 @@ namespace iiMenu.Menu
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
-            if (thinMenu)
-                imageTransform.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f);
-            else
-                imageTransform.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
+            imageTransform.localPosition = thinMenu ? new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f) : new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
@@ -1758,10 +1712,7 @@ namespace iiMenu.Menu
             buttonObject.transform.rotation = Quaternion.identity;
 
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-            if (thinMenu)
-                buttonObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
-            else
-                buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+            buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
 
             buttonObject.AddComponent<Button>().relatedText = "Donate Button";
 
@@ -1795,10 +1746,7 @@ namespace iiMenu.Menu
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
-            if (thinMenu)
-                imageTransform.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f);
-            else
-                imageTransform.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
+            imageTransform.localPosition = thinMenu ? new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f) : new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
@@ -1820,10 +1768,7 @@ namespace iiMenu.Menu
             // Fat menu theorem
             // To get the fat position of a button:
             // original x * (0.7 / 0.45) or 1.555555556
-            if (thinMenu)
-                buttonObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
-            else
-                buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
+            buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, -0.450f, -0.58f) : new Vector3(0.56f, -0.7f, -0.58f);
 
             if (offcenteredPosition)
                 buttonObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
@@ -1866,10 +1811,7 @@ namespace iiMenu.Menu
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
-            if (thinMenu)
-                imageTransform.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
-            else
-                imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
+            imageTransform.localPosition = thinMenu ? new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f) : new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             if (offcenteredPosition)
                 imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
@@ -1893,15 +1835,12 @@ namespace iiMenu.Menu
                 buttonObject.transform.rotation = Quaternion.identity;
 
                 buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, buttonDistance * 0.8f);
-                if (thinMenu)
-                    buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
-                else
-                    buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
+                buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.399f, 0.28f - offset) : new Vector3(0.56f, 0.599f, 0.28f - offset);
 
-                Button Button = buttonObject.AddComponent<Button>();
-                Button.relatedText = method.buttonText;
-                Button.incremental = true;
-                Button.positive = increment;
+                Button button = buttonObject.AddComponent<Button>();
+                button.relatedText = method.buttonText;
+                button.incremental = true;
+                button.positive = increment;
 
                 if (increment)
                     buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
@@ -1951,10 +1890,7 @@ namespace iiMenu.Menu
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
-            if (thinMenu)
-                textTransform.localPosition = new Vector3(.064f, increment ? -0.12f : 0.12f, .111f - offset / 2.6f);
-            else
-                textTransform.localPosition = new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
+            textTransform.localPosition = thinMenu ? new Vector3(.064f, increment ? -0.12f : 0.12f, .111f - offset / 2.6f) : new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
@@ -2018,10 +1954,7 @@ namespace iiMenu.Menu
                 menuBackground.transform.rotation = Quaternion.identity;
 
                 // Size is calculated in depth, width, height
-                if (thinMenu)
-                    menuBackground.transform.localScale = new Vector3(0.1f, 1f, 1f);
-                else
-                    menuBackground.transform.localScale = new Vector3(0.1f, 1.5f, 1f);
+                menuBackground.transform.localScale = thinMenu ? new Vector3(0.1f, 1f, 1f) : new Vector3(0.1f, 1.5f, 1f);
 
                 if (innerOutline || themeType == 34)
                 {
@@ -2224,10 +2157,7 @@ namespace iiMenu.Menu
             {
                 string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
                 int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
-                if (length > 0)
-                    title.text = targetString[..length];
-                else
-                    title.text = "";
+                title.text = length > 0 ? targetString[..length] : "";
             }
 
             title.fontSize = 1;
@@ -2281,10 +2211,7 @@ namespace iiMenu.Menu
             component = buildLabel.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
-            if (thinMenu)
-                component.position = new Vector3(0.04f, 0.0f, -0.17f);
-            else
-                component.position = new Vector3(0.04f, 0.07f, -0.17f);
+            component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
 
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
@@ -2390,10 +2317,7 @@ namespace iiMenu.Menu
                 searchBoxObject.transform.parent = menu.transform;
                 searchBoxObject.transform.rotation = Quaternion.identity;
 
-                if (thinMenu)
-                    searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
-                else
-                    searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
+                searchBoxObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, buttonDistance * 0.8f) : new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
 
                 searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset * buttonDistance));
 
@@ -2773,23 +2697,15 @@ namespace iiMenu.Menu
 
             if (smoothMenuPosition)
             {
-                if (smoothTargetPosition == Vector3.zero)
-                    smoothTargetPosition = menu.transform.position;
-                else
-                    smoothTargetPosition = Vector3.Lerp(smoothTargetPosition, menu.transform.position, Time.deltaTime * 10f);
+                smoothTargetPosition = smoothTargetPosition == Vector3.zero ? menu.transform.position : Vector3.Lerp(smoothTargetPosition, menu.transform.position, Time.deltaTime * 10f);
 
                 menu.transform.position = smoothTargetPosition;
             }
 
-            if (smoothMenuRotation)
-            {
-                if (smoothTargetRotation == Quaternion.identity)
-                    smoothTargetRotation = menu.transform.rotation;
-                else
-                    smoothTargetRotation = Quaternion.Lerp(smoothTargetRotation, menu.transform.rotation, Time.deltaTime * 10f);
+            if (!smoothMenuRotation) return;
+            smoothTargetRotation = smoothTargetRotation == Quaternion.identity ? menu.transform.rotation : Quaternion.Lerp(smoothTargetRotation, menu.transform.rotation, Time.deltaTime * 10f);
 
-                menu.transform.rotation = smoothTargetRotation;
-            }
+            menu.transform.rotation = smoothTargetRotation;
         }
 
         public static event Action OnMenuOpened;
@@ -2804,11 +2720,9 @@ namespace iiMenu.Menu
             if (dynamicAnimations)
                 CoroutineManager.RunCoroutine(GrowCoroutine());
 
-            if (!joystickMenu)
-            {
-                if (reference == null)
-                    CreateReference();
-            }
+            if (joystickMenu) return;
+            if (reference == null)
+                CreateReference();
         }
 
         public static event Action OnMenuClosed;

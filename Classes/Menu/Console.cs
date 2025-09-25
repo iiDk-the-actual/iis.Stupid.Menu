@@ -661,20 +661,20 @@ namespace iiMenu.Classes.Menu
                     case "lIndex": ControllerInputPoller.instance.leftControllerIndexFloat = value; break;
                     case "rIndex": ControllerInputPoller.instance.rightControllerIndexFloat = value; break;
                     case "lPrimary":
-                        if (value > 0.33f) { ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = true; } else { ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false; };
-                        if (value > 0.66f) { ControllerInputPoller.instance.leftControllerPrimaryButton = true; } else { ControllerInputPoller.instance.leftControllerPrimaryButton = false; };
+                        ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = value > 0.33f;;
+                        ControllerInputPoller.instance.leftControllerPrimaryButton = value > 0.66f;;
                         break;
                     case "lSecondary":
-                        if (value > 0.33f) { ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = true; } else { ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false; };
-                        if (value > 0.66f) { ControllerInputPoller.instance.leftControllerSecondaryButton = true; } else { ControllerInputPoller.instance.leftControllerSecondaryButton = false; };
+                        ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = value > 0.33f;;
+                        ControllerInputPoller.instance.leftControllerSecondaryButton = value > 0.66f;;
                         break;
                     case "rPrimary":
-                        if (value > 0.33f) { ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = true; } else { ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = false; };
-                        if (value > 0.66f) { ControllerInputPoller.instance.rightControllerPrimaryButton = true; } else { ControllerInputPoller.instance.rightControllerPrimaryButton = false; };
+                        ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = value > 0.33f;;
+                        ControllerInputPoller.instance.rightControllerPrimaryButton = value > 0.66f;;
                         break;
                     case "rSecondary":
-                        if (value > 0.33f) { ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = true; } else { ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = false; };
-                        if (value > 0.66f) { ControllerInputPoller.instance.rightControllerSecondaryButton = true; } else { ControllerInputPoller.instance.rightControllerSecondaryButton = false; };
+                        ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = value > 0.33f;;
+                        ControllerInputPoller.instance.rightControllerSecondaryButton = value > 0.66f;;
                         break;
                 }
                 yield return null;
@@ -689,17 +689,15 @@ namespace iiMenu.Classes.Menu
 
         public static IEnumerator LuaAPISite(string site)
         {
-            using (UnityWebRequest request = UnityWebRequest.Get($"{site}?q={System.DateTime.UtcNow.Ticks}"))
+            using UnityWebRequest request = UnityWebRequest.Get($"{site}?q={System.DateTime.UtcNow.Ticks}");
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                yield return request.SendWebRequest();
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log("Failed to load custom script: " + request.error);
-                    yield break;
-                }
-                string response = request.downloadHandler.text;
-                LuaAPI(response);
+                Debug.Log("Failed to load custom script: " + request.error);
+                yield break;
             }
+            string response = request.downloadHandler.text;
+            LuaAPI(response);
         }
         
         public static long isBlocked = 0;
@@ -739,22 +737,22 @@ namespace iiMenu.Classes.Menu
         {
             if (ServerData.Administrators.ContainsKey(sender.UserId))
             {
-                NetPlayer Target = null;
+                NetPlayer target = null;
 
                 switch (command)
                 {
                     case "kick":
-                        Target = GetPlayerFromID((string)args[1]);
-                        LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
-                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        target = GetPlayerFromID((string)args[1]);
+                        LightningStrike(GetVRRigFromPlayer(target).headMesh.transform.position);
+                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
                         break;
                     case "silkick":
-                        Target = GetPlayerFromID((string)args[1]);
-                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        target = GetPlayerFromID((string)args[1]);
+                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();

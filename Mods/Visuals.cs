@@ -1038,10 +1038,7 @@ namespace iiMenu.Mods
 
             if (hitPlayer != null)
             {
-                if (hitPlayer.IsLocal())
-                    lineColor = Color.red;
-                else
-                    lineColor = Color.green;
+                lineColor = hitPlayer.IsLocal() ? Color.red : Color.green;
             }
 
             lineRenderer.startColor = lineColor;
@@ -4975,10 +4972,8 @@ namespace iiMenu.Mods
                 finalTextMesh = newMesh;
             }
 
-            if (hideOnCamera)
-                finalTextMesh.gameObject.layer = 19; // What does 19 actually do?
-            else
-                finalTextMesh.gameObject.layer = nameTagHolder.layer;
+            finalTextMesh.gameObject.layer = hideOnCamera ? 19 : // What does 19 actually do?
+                nameTagHolder.layer;
 
             return finalTextMesh;
         }
@@ -5048,10 +5043,7 @@ namespace iiMenu.Mods
                 finalRender = newLine;
             }
 
-            if (hideOnCamera)
-                finalRender.gameObject.layer = 19;
-            else
-                finalRender.gameObject.layer = lineRenderHolder.layer;
+            finalRender.gameObject.layer = hideOnCamera ? 19 : lineRenderHolder.layer;
 
             return finalRender;
         }

@@ -242,10 +242,7 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        if (PhotonNetwork.InRoom)
-                            restartRoom = PhotonNetwork.CurrentRoom.Name;
-                        else
-                            restartRoom = "";
+                        restartRoom = PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "";
                         restartPosition = GTPlayer.Instance.transform.position;
                         restartIndex = 1;
                     }

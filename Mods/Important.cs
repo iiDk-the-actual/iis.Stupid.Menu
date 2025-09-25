@@ -109,10 +109,7 @@ namespace iiMenu.Mods
             if (queueCoroutine != null)
                 CoroutineManager.instance.StopCoroutine(queueCoroutine);
 
-            if (NetworkSystem.Instance.InRoom)
-                NetworkSystem.Instance.netState = NetSystemState.InGame;
-            else
-                NetworkSystem.Instance.netState = NetSystemState.Idle;
+            NetworkSystem.Instance.netState = NetworkSystem.Instance.InRoom ? NetSystemState.InGame : NetSystemState.Idle;
 
             partyLastCode = null;
             phaseTwo = false;
