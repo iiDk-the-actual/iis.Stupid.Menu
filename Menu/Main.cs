@@ -133,6 +133,17 @@ namespace iiMenu.Menu
                     else
                         leftJoystickClick = true;
                 }
+
+                shouldBePC = UnityInput.Current.GetKey(KeyCode.E)
+                            || UnityInput.Current.GetKey(KeyCode.R)
+                            || UnityInput.Current.GetKey(KeyCode.F)
+                            || UnityInput.Current.GetKey(KeyCode.G)
+                            || UnityInput.Current.GetKey(KeyCode.LeftBracket)
+                            || UnityInput.Current.GetKey(KeyCode.RightBracket)
+                            || UnityInput.Current.GetKey(KeyCode.Minus)
+                            || UnityInput.Current.GetKey(KeyCode.Equals)
+                            || Mouse.current.leftButton.isPressed
+                            || Mouse.current.rightButton.isPressed;
             }
             catch { }
             #endregion
@@ -1041,17 +1052,6 @@ namespace iiMenu.Menu
                 ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
                 ServerRightHandPos = ServerRightHandPos == Vector3.zero ? ServerSyncRightHandPos : Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
                 #endregion
-
-                shouldBePC = UnityInput.Current.GetKey(KeyCode.E) 
-                            || UnityInput.Current.GetKey(KeyCode.R)
-                            || UnityInput.Current.GetKey(KeyCode.F)
-                            || UnityInput.Current.GetKey(KeyCode.G)
-                            || UnityInput.Current.GetKey(KeyCode.LeftBracket)
-                            || UnityInput.Current.GetKey(KeyCode.RightBracket)
-                            || UnityInput.Current.GetKey(KeyCode.Minus)
-                            || UnityInput.Current.GetKey(KeyCode.Equals)
-                            || Mouse.current.leftButton.isPressed
-                            || Mouse.current.rightButton.isPressed;
 
                 #region Menu Navigation Features
                 if (menu != null)
@@ -5557,15 +5557,14 @@ namespace iiMenu.Menu
         private static int? noInvisLayerMask;
         public static int NoInvisLayerMask()
         {
-            if (noInvisLayerMask == null)
-                noInvisLayerMask = ~(
-                    1 << LayerMask.NameToLayer("TransparentFX") |
-                    1 << LayerMask.NameToLayer("Ignore Raycast") |
-                    1 << LayerMask.NameToLayer("Zone") |
-                    1 << LayerMask.NameToLayer("Gorilla Trigger") |
-                    1 << LayerMask.NameToLayer("Gorilla Boundary") |
-                    1 << LayerMask.NameToLayer("GorillaCosmetics") |
-                    1 << LayerMask.NameToLayer("GorillaParticle"));
+            noInvisLayerMask ??= ~(
+                1 << LayerMask.NameToLayer("TransparentFX") |
+                1 << LayerMask.NameToLayer("Ignore Raycast") | 
+                1 << LayerMask.NameToLayer("Zone") |
+                1 << LayerMask.NameToLayer("Gorilla Trigger") |
+                1 << LayerMask.NameToLayer("Gorilla Boundary") |
+                1 << LayerMask.NameToLayer("GorillaCosmetics") |
+                1 << LayerMask.NameToLayer("GorillaParticle"));
 
             return noInvisLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers;
         }
