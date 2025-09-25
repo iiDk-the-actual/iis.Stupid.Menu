@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion;
@@ -533,10 +533,8 @@ namespace iiMenu.Mods
         {
             Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
 
-            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward;
-            playerForward.y = 0;
-            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
-            playerRight.y = 0;
+            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward.X_Z();
+            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right.X_Z();
 
             ZeroGravity();
 
@@ -3437,10 +3435,8 @@ namespace iiMenu.Mods
             if (rightPrimary)
             {
                 if (longJumpPower == Vector3.zero)
-                {
-                    longJumpPower = GorillaTagger.Instance.rigidbody.linearVelocity * playspaceAbusePower;
-                    longJumpPower.y = 0f;
-                }
+                    longJumpPower = (GorillaTagger.Instance.rigidbody.linearVelocity * playspaceAbusePower).X_Z();
+                
                 GTPlayer.Instance.transform.position += longJumpPower;
             }
             else
