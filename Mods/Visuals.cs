@@ -2194,7 +2194,7 @@ namespace iiMenu.Mods
                     GameObject v = Forest.transform.GetChild(i).gameObject;
                     if (v.name.Contains(leavesName))
                     {
-                        v.layer = 16;
+                        v.layer = 25; 
                         leaves.Add(v);
                     }
                 }
@@ -2208,7 +2208,7 @@ namespace iiMenu.Mods
                     GameObject v = RankedForest.transform.GetChild(i).gameObject;
                     if (v.name.Contains(leavesName))
                     {
-                        v.layer = 16;
+                        v.layer = 25;
                         leaves.Add(v);
                     }
                 }
