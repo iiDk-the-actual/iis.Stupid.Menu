@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/PlacePatch.cs
+ * ii's Stupid Menu  Patches/Menu/PurchasePatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,9 +20,7 @@
  */
 
 using GorillaNetworking;
-using GorillaTagScripts;
 using HarmonyLib;
-using PlayFab.ClientModels;
 
 namespace iiMenu.Patches.Menu
 {
