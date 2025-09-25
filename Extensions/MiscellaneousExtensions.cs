@@ -1,5 +1,5 @@
 ﻿/*
- * ii's Stupid Menu  Extensions/KeyCodeExtensions.cs
+ * ii's Stupid Menu  Extensions/MiscellaneousExtensions.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,11 +20,18 @@
  */
 
 using UnityEngine;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Extensions
 {
-    public static class KeyCodeExtensions
+    public static class MiscellaneousExtensions
     {
+        public static float GetDelay(this CallLimiter self) =>
+            GetCallLimiterDelay(self);
+
+        public static void ToHex(this Color input) =>
+            ColorToHex(input);
+
         public static string Key(this KeyCode key)
         {
             if (key >= KeyCode.A && key <= KeyCode.Z)

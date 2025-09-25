@@ -4636,7 +4636,7 @@ namespace iiMenu.Menu
         }
 
         public static GameObject audiomgr;
-        public static void Play2DAudio(AudioClip sound, float volume)
+        public static void Play2DAudio(AudioClip sound, float volume = 1f)
         {
             if (audiomgr == null)
             {
@@ -4649,7 +4649,7 @@ namespace iiMenu.Menu
             ausrc.PlayOneShot(sound);
         }
 
-        public static void PlayPositionAudio(AudioClip sound, float volume, Vector3 position, float spatialBlend = 1f)
+        public static void PlayPositionAudio(AudioClip sound, Vector3 position, float volume = 1f, float spatialBlend = 1f)
         {
             GameObject audiomgr = new GameObject("AudioMgr");
             audiomgr.transform.position = position;

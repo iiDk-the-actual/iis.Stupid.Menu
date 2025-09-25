@@ -478,7 +478,7 @@ namespace iiMenu.Managers
                                 lineRenderer.SetPosition(1, PingPosition + (Vector3.up * 99999f));
                                 lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
 
-                                PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, 99999f, PingPosition);
+                                PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, PingPosition);
                                 instance.StartCoroutine(FadePing(line));
 
                                 pingDelay[SenderRig] = Time.time + 0.1f;
