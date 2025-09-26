@@ -182,7 +182,7 @@ namespace iiMenu.Classes.Menu
             onComplete?.Invoke(texture);
         }
 
-        private static Dictionary<string, AudioClip> audios = new Dictionary<string, AudioClip>();
+        private static readonly Dictionary<string, AudioClip> audios = new Dictionary<string, AudioClip>();
         public static IEnumerator GetSoundResource(string url, System.Action<AudioClip> onComplete = null)
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
