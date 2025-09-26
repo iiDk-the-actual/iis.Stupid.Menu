@@ -3427,11 +3427,16 @@ namespace iiMenu.Menu
 
         public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
         {
-            if (!File.Exists($"{PluginInfo.BaseDirectory}/{fileName}"))
+            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
+            string directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            if (!File.Exists(filePath))
             {
                 LogManager.Log("Downloading " + fileName);
-                WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, $"{PluginInfo.BaseDirectory}/{fileName}");
+                using WebClient stream = new WebClient();
+                stream.DownloadFile(resourcePath, filePath);
             }
 
             return LoadSoundFromFile(fileName);
@@ -3456,16 +3461,21 @@ namespace iiMenu.Menu
 
         public static Texture2D LoadTextureFromURL(string resourcePath, string fileName)
         {
+            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
+            string directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             Texture2D texture = new Texture2D(2, 2);
 
-            if (!File.Exists($"{PluginInfo.BaseDirectory}/" + fileName))
+            if (!File.Exists(filePath))
             {
                 LogManager.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, $"{PluginInfo.BaseDirectory}/" + fileName);
+                stream.DownloadFile(resourcePath, filePath);
             }
 
-            byte[] bytes = File.ReadAllBytes($"{PluginInfo.BaseDirectory}/" + fileName);
+            byte[] bytes = File.ReadAllBytes(filePath);
             texture.LoadImage(bytes);
 
             return texture;
