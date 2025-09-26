@@ -20,6 +20,7 @@
  */
 
 using UnityEngine;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Extensions
 {
@@ -30,5 +31,8 @@ namespace iiMenu.Extensions
 
         public static long Pack(this Vector3 vec) =>
             BitPackUtils.PackWorldPosForNetwork(vec);
+
+        public static Vector3 Random(this Vector3 vec, float power = 1) =>
+            RandomVector3(power);
     }
 }
