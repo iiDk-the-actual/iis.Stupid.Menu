@@ -21,22 +21,35 @@
 
 using ExitGames.Client.Photon;
 using iiMenu.Managers;
+using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 
 namespace iiMenu.Extensions
 {
     public static class PlayerExtensions
     {
+        #region NetPlayer
         public static Player GetPlayer(this NetPlayer self) =>
             RigManager.NetPlayerToPlayer(self);
 
         public static VRRig VRRig(this NetPlayer self) =>
             RigManager.GetVRRigFromPlayer(self);
 
+        public static bool InRoom(this NetPlayer self) =>
+            NetworkSystem.Instance.AllNetPlayers.Contains(self);
+
         public static Hashtable GetCustomProperties(this NetPlayer self) =>
             self.GetPlayer().CustomProperties;
+        #endregion
 
+        #region Player
         public static VRRig VRRig(this Player self) =>
             RigManager.GetVRRigFromPlayer(self);
+
+        public static bool InRoom(this Player self) =>
+            PhotonNetwork.PlayerList.Contains(self);
+
+        #endregion
     }
 }
