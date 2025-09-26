@@ -76,32 +76,6 @@ namespace iiMenu
                 "/CustomScripts",
                 "/Friends",
                 "/Friends/Messages",
-
-                // So far, this is the only solution I have to making files go to their proper directories on download.
-                // If anyone can fix this and make it dynamically make directories, please PR.
-                "/Audio",
-                "/Audio/Friends",
-                "/Audio/Guns",
-                "/Audio/Menu",
-                "/Audio/Mods",
-
-                "/Audio/Menu/Buttons",
-                "/Audio/Menu/Notifications",
-
-                "/Audio/Mods/Fun",
-                "/Audio/Mods/Fun/TagSounds",
-                "/Audio/Mods/Fun/Soundboard",
-                "/Audio/Mods/Fun/Soundboard/Sounds",
-
-                "/Audio/Mods/Overpowered",
-                "/Audio/Mods/Overpowered/Timestop",
-
-                "/Images",
-                "/Images/Mods",
-                "/Images/Themes",
-
-                "/Images/Mods/Movement",
-                "/Images/Mods/Visuals"
             };
 
             foreach (string DirectoryString in ExistingDirectories)
