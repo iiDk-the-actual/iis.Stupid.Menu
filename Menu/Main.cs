@@ -2731,6 +2731,9 @@ namespace iiMenu.Menu
             OnMenuClosed?.Invoke();
             GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
 
+            if (dynamicSounds)
+                Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+
             try
             {
                 if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
