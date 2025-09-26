@@ -20,7 +20,6 @@
  */
 
 using ExitGames.Client.Photon;
-using Fusion;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Managers;
@@ -29,7 +28,6 @@ using Photon.Realtime;
 using Photon.Voice.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
