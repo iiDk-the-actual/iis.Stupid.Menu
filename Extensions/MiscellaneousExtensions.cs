@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -29,8 +30,14 @@ namespace iiMenu.Extensions
         public static float GetDelay(this CallLimiter self) =>
             GetCallLimiterDelay(self);
 
-        public static void ToHex(this Color input) =>
+        public static string ToHex(this Color input) =>
             ColorToHex(input);
+
+        public static string ToRichRGBString(this Color input, int roundAmount = 255) =>
+            $"<color=red>{Math.Round(input.r * roundAmount)}</color> <color=green>{Math.Round(input.g * roundAmount)}</color> <color=blue>{Math.Round(input.b * roundAmount)}</color>";
+
+        public static string ToRGBString(this Color input, int roundAmount = 255) =>
+            $"{Math.Round(input.r * roundAmount)} {Math.Round(input.g * roundAmount)} {Math.Round(input.b * roundAmount)}";
 
         public static string Key(this KeyCode key)
         {
