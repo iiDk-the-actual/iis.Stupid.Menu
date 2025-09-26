@@ -31,7 +31,7 @@ namespace iiMenu.Extensions
         public static void ISO8601(this string input) =>
             ISO8601(input);
 
-        public static void Random(this string input, int length) =>
-            input = GenerateRandomString(length);
+        public static string Random(this string input, int length) =>
+            GenerateRandomString(length);
     }
 }
