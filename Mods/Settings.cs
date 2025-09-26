@@ -23,6 +23,7 @@ using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -701,7 +702,7 @@ namespace iiMenu.Mods
                         {
                             buttonText = "Player Color",
                             overlapText =
-                                $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g * 255)}</color> <color=blue>{Math.Round(playerColor.b * 255)}</color>",
+                                $"Player Color: {playerColor.ToRichRGBString()}",
                             method = () => ChangeColor(playerColor),
                             isTogglable = false,
                             toolTip = $"Sets your color to the same as {targetName}."
