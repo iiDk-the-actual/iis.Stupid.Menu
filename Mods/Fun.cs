@@ -2639,6 +2639,18 @@ Piece Name: {gunTarget.name}";
             VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
         }
 
+        private static bool lastDrawing;
+        public static void AngryBirdsSounds()
+        {
+            if (!dynamicSounds) return;
+            Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
+
+            if (slingshot.InDrawingState() && !lastDrawing)
+                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/AngryBirds/drawing.ogg", "Audio/Mods/Fun/AngryBirds/drawing.ogg").Play(buttonClickVolume / 10f);
+
+            lastDrawing = slingshot.InDrawingState();
+        }
+
         public static void SlingshotHelper()
         {
             Slingshot slingshot = VRRig.LocalRig.GetSlingshot();

@@ -20,6 +20,7 @@
  */
 
 ﻿using HarmonyLib;
+using iiMenu.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -67,7 +68,12 @@ namespace iiMenu.Patches.Menu
             }
 
             if (angryBirds)
+            {
                 GorillaTagger.Instance.rigidbody.linearVelocity = __result;
+
+                if (dynamicSounds)
+                    LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/AngryBirds/launch.ogg", "Audio/Mods/Fun/AngryBirds/launch.ogg").Play(buttonClickVolume / 10f);
+            }
         }
 
         // ChatGPT used for math.. because I'm only 14 and haven't learned this yet and am not taking a class for a Gorilla Tag mod
