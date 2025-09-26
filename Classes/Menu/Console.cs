@@ -20,6 +20,7 @@
  */
 
 using ExitGames.Client.Photon;
+using Fusion;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Managers;
@@ -28,6 +29,7 @@ using Photon.Realtime;
 using Photon.Voice.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -101,6 +103,7 @@ namespace iiMenu.Classes.Menu
 
             NetworkSystem.Instance.OnReturnedToSinglePlayer += ClearConsoleAssets;
             NetworkSystem.Instance.OnPlayerJoined += SyncConsoleAssets;
+            NetworkSystem.Instance.OnPlayerLeft += SyncConsoleUsers;
 
             string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"Console.txt";
             if (File.Exists(blockDir))
@@ -402,7 +405,7 @@ namespace iiMenu.Classes.Menu
         public static VRRig adminRigTarget;
 
         public static List<Player> excludedCones = new List<Player>();
-        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
+        public static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
 
         public static Material adminConeMaterial;
         public static Texture2D adminConeTexture;
@@ -710,7 +713,8 @@ namespace iiMenu.Classes.Menu
             }
         }
 
-        private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
+        private static readonly Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
+        private static readonly Dictionary<Player, (string, string)> userDictionary = new Dictionary<Player, (string, string)>(); 
         public static float indicatorDelay = 0f;
         public static bool allowKickSelf;
         public static bool disableFlingSelf;
@@ -1146,6 +1150,7 @@ namespace iiMenu.Classes.Menu
                             }
 
                             confirmUsingDelay.Add(vrrig, Time.time + 5f);
+                            userDictionary[vrrig.OwningNetPlayer.GetPlayerRef()] = ((string)args[1], (string)args[2]);
                             ConfirmUsing(sender.UserId, (string)args[1], (string)args[2]);
                         }
                     }
@@ -1317,6 +1322,7 @@ namespace iiMenu.Classes.Menu
                 asset.DestroyObject();
 
             consoleAssets.Clear();
+            userDictionary.Clear();
         }
 
         public static void SanitizeConsoleAssets()
@@ -1366,6 +1372,12 @@ namespace iiMenu.Classes.Menu
                     PhotonNetwork.SendAllOutgoingCommands();
                 }
             }
+        }
+        
+        public static void SyncConsoleUsers(NetPlayer player)
+        {
+            Player playerRef = player.GetPlayerRef(); 
+            userDictionary.Remove(playerRef);
         }
 
         public static int GetFreeAssetID()
