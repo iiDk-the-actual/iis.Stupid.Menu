@@ -2542,11 +2542,11 @@ namespace iiMenu.Mods
 
         public static void ZaWarudo()
         {
-            if (!PhotonNetwork.InRoom && !GetIndex("No Freeze Za Warudo").enabled) return;
+            if (!PhotonNetwork.InRoom) return;
 
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers)
             {
-                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Warudo").enabled)
+                if (heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Warudo").enabled)
                 {
                     SerializePatch.OverrideSerialization = () => false;
 
