@@ -2548,7 +2548,8 @@ namespace iiMenu.Mods
             {
                 if (heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Warudo").enabled)
                 {
-                    SerializePatch.OverrideSerialization = () => false;
+                    if (!GetIndex("No Freeze Za Warudo").enabled)
+                        SerializePatch.OverrideSerialization = () => false;
 
                     if (!heldTriggerWhilePlayersCorrect)
                     {
