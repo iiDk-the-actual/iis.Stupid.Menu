@@ -2282,41 +2282,73 @@ namespace iiMenu.Mods
         public static void NoSmoothRigs()
         {
             foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
-                {
-                    vrrig.lerpValueBody = 2f;
-                    vrrig.lerpValueFingers = 1f;
-                }
+            {
+                vrrig.lerpValueBody = 2f;
+                vrrig.lerpValueFingers = 1f;
             }
         }
 
         public static void ReSmoothRigs()
         {
             foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
-                {
-                    vrrig.lerpValueBody = VRRig.LocalRig.lerpValueBody;
-                    vrrig.lerpValueFingers = VRRig.LocalRig.lerpValueFingers;
-                }
+            {
+                vrrig.lerpValueBody = VRRig.LocalRig.lerpValueBody;
+                vrrig.lerpValueFingers = VRRig.LocalRig.lerpValueFingers;
             }
         }
 
+        public static readonly Dictionary<VRRig, Coroutine> rigLerpCoroutines = new Dictionary<VRRig, Coroutine>();
+        public static IEnumerator LerpRig(VRRig rig)
+        {
+            Quaternion headStartRot = rig.head.rigTarget.localRotation;
+
+            Vector3 syncStartPos = rig.transform.position;
+            Quaternion syncStartRot = rig.transform.rotation;
+
+            Vector3 leftHandStartPos = rig.leftHand.rigTarget.localPosition;
+            Quaternion leftHandStartRot = rig.leftHand.rigTarget.localRotation;
+
+            Vector3 rightHandStartPos = rig.rightHand.rigTarget.localPosition;
+            Quaternion rightHandStartRot = rig.rightHand.rigTarget.localRotation;
+
+            float startTime = Time.time;
+            while (Time.time < startTime + 0.1f)
+            {
+                float t = (Time.time - startTime) / 0.1f;
+
+                rig.head.rigTarget.localRotation = Quaternion.Lerp(headStartRot, rig.head.syncRotation, t);
+
+                rig.transform.position = Vector3.Lerp(syncStartPos, rig.syncPos, t);
+                rig.transform.rotation = Quaternion.Lerp(syncStartRot, rig.syncRotation, t);
+
+                rig.leftHand.rigTarget.localPosition = Vector3.Lerp(leftHandStartPos, rig.leftHand.syncPos, t);
+                rig.leftHand.rigTarget.localRotation = Quaternion.Lerp(leftHandStartRot, rig.leftHand.syncRotation, t);
+
+                rig.rightHand.rigTarget.localPosition = Vector3.Lerp(rightHandStartPos, rig.rightHand.syncPos, t);
+                rig.rightHand.rigTarget.localRotation = Quaternion.Lerp(rightHandStartRot, rig.rightHand.syncRotation, t);
+
+                yield return null;
+            }
+
+            rigLerpCoroutines.Remove(rig);
+        }
+        
         public static void BetterRigLerping(VRRig rig)
         {
-            rig.LocalTrajectoryOverrideBlend = 1f;
-            rig.LocalTrajectoryOverridePosition = rig.syncPos;
-            rig.LocalTrajectoryOverrideVelocity = rig.LatestVelocity();
+            if (rigLerpCoroutines.TryGetValue(rig, out Coroutine coroutine))
+                CoroutineManager.instance.StopCoroutine(coroutine);
+
+            rigLerpCoroutines[rig] = CoroutineManager.instance.StartCoroutine(LerpRig(rig));
         }
 
         private static readonly Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject>();
         private static readonly Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D>();
         public static void CosmeticESP()
         {
-            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
+            foreach (var nametag in cosmeticIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
-                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
-                {
-                    Object.Destroy(nametag.Value);
-                    cosmeticIndicators.Remove(nametag.Key);
-                }
+                Object.Destroy(nametag.Value);
+                cosmeticIndicators.Remove(nametag.Key);
             }
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
