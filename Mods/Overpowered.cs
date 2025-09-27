@@ -2732,7 +2732,7 @@ namespace iiMenu.Mods
 
             if (rightTrigger > 0.5f)
             {
-                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
+                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Worudo").enabled)
                 {
                     SerializePatch.OverrideSerialization = () => false;
 
@@ -2757,7 +2757,7 @@ namespace iiMenu.Mods
 
                     Movement.LowGravity();
 
-                    if (Time.time > freezeAllDelay)
+                    if (Time.time > freezeAllDelay && !GetIndex("No Freeze Za Worudo").enabled)
                     {
                         for (int i = 0; i < 11; i++)
                         {
