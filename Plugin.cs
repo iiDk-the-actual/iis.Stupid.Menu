@@ -109,6 +109,9 @@ namespace iiMenu
             Loader.AddComponent<CoroutineManager>();
 
             DontDestroyOnLoad(Loader);
+
+            // Initialize ModdedLobbyManager with the loader GameObject
+            ModdedLobbyManager.Initialize(Loader);
         }
 
         // For SharpMonoInjector usage

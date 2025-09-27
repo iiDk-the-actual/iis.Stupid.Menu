@@ -137,7 +137,8 @@ namespace iiMenu.Mods
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
                     { "platform", PhotonNetworkController.Instance.platformTag },
-                    { "queueName", GorillaComputer.instance.currentQueue }
+                    { "queueName", GorillaComputer.instance.currentQueue },
+                    { "MODDED", "TRUE" }  // Mark the room as modded
                 }
             };
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);

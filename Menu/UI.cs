@@ -96,12 +96,25 @@ namespace iiMenu.Menu
                 GUI.backgroundColor = guiColor;
 
                 string roomText = translate ? TranslateText("Not connected to room") : "Not connected to room";
+                string lobbyStatus = "";
                 try
                 {
                     if (PhotonNetwork.InRoom)
+                    {
                         roomText = (translate ? TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
+
+                        // Show modded lobby status
+                        if (ModdedLobbyManager.IsInModdedLobby())
+                        {
+                            lobbyStatus = " <color=green>[MODDED - Menu Active]</color>";
+                        }
+                        else
+                        {
+                            lobbyStatus = " <color=red>[PUBLIC - Menu Disabled]</color>";
+                        }
+                    }
                 } catch { }
-                GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
+                GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText + lobbyStatus);
                 
                 if (icon == null)
                     icon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png");

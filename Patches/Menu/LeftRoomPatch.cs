@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/JoinedRoomPatch.cs
+ * ii's Stupid Menu  Patches/Menu/LeftRoomPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -19,27 +19,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using GorillaNetworking;
+using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Managers;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PhotonNetworkController), "OnJoinedRoom")]
-    public class JoinedRoomPatch
+    [HarmonyPatch(typeof(PhotonNetworkController), "OnLeftRoom")]
+    public class LeftRoomPatch
     {
-        public static bool enabled;
-
-        private static void Prefix()
-        {
-            if (enabled)
-                PhotonNetworkController.Instance.currentJoinType = JoinType.FollowingParty;
-        }
-
         private static void Postfix()
         {
-            // Check if the joined room is modded and update menu state accordingly
-            ModdedLobbyManager.OnJoinedRoom();
+            // Disable menu when leaving a room
+            ModdedLobbyManager.OnLeftRoom();
         }
     }
 }
