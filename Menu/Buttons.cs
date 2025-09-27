@@ -1568,7 +1568,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => NetworkSystem.Instance.OnPlayerLeft += Overpowered.FreezeAll_OnPlayerLeave, method = Overpowered.FreezeAll, disableMethod =() => NetworkSystem.Instance.OnPlayerLeft -= Overpowered.FreezeAll_OnPlayerLeave, toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
                 new ButtonInfo { buttonText = "Za Warudo <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod = Overpowered.ZaWarudo_enableMethod, method = Overpowered.ZaWarudo, disableMethod =() => NetworkSystem.Instance.OnPlayerLeft -= Overpowered.ZaWarudo_OnPlayerLeave, toolTip = "Freeze all, but with special effects." },
-                new ButtonInfo { buttonText = "No Freeze Za Worudo" },
 
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method = Overpowered.SnowballAirstrikeGun, toolTip = "Spawns a snowball airstrike wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Gun", method = Overpowered.SnowballGun, toolTip = "Spawns a snowball wherever your hand desires."},
