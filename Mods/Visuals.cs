@@ -2249,7 +2249,7 @@ namespace iiMenu.Mods
             {
                 if (disabledRenderers.Count <= 0)
                 {
-                    foreach (Renderer renderer in GetAllType<Renderer>().Where(rend => rend != null && rend.gameObject != null && rend.enabled && rend.gameObject.activeSelf))
+                    foreach (Renderer renderer in GetAllType<Renderer>().Where(rend => rend != null && rend.gameObject != null && !(rend is SkinnedMeshRenderer) && rend.enabled && rend.gameObject.activeSelf))
                     {
                         renderer.enabled = false;
                         disabledRenderers.Add(renderer);
