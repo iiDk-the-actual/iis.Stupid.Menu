@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
 using iiMenu.Notifications;
@@ -35,22 +36,22 @@ namespace iiMenu.Mods.CustomMaps.Maps
         public override long MapID => 5107228;
         public override ButtonInfo[] Buttons => new[]
         {
-            new ButtonInfo { buttonText = "Lightning Strike Self", method =() => LightningStrikeSelf(), toolTip = "Strikes yourself with lightning."},
-            new ButtonInfo { buttonText = "Lightning Strike Gun", method =() => LightningStrikeGun(), toolTip = "Strikes whoever your hand desires with lightning."},
-            new ButtonInfo { buttonText = "Lightning Strike All", method =() => LightningStrikeAll(), toolTip = "Strikes everyone in the room with lightning."},
+            new ButtonInfo { buttonText = "Lightning Strike Self", method = LightningStrikeSelf, toolTip = "Strikes yourself with lightning."},
+            new ButtonInfo { buttonText = "Lightning Strike Gun", method = LightningStrikeGun, toolTip = "Strikes whoever your hand desires with lightning."},
+            new ButtonInfo { buttonText = "Lightning Strike All", method = LightningStrikeAll, toolTip = "Strikes everyone in the room with lightning."},
 
-            new ButtonInfo { buttonText = "Change Material Self", method =() => ChangeMaterialSelf(), toolTip = "Changes your material."},
-            new ButtonInfo { buttonText = "Change Material Gun", method =() => ChangeMaterialGun(), toolTip = "Changes the material of whoever your hand desires."},
-            new ButtonInfo { buttonText = "Change Material All", method =() => ChangeMaterialAll(), toolTip = "Changes the material of everyone in the room."},
+            new ButtonInfo { buttonText = "Change Material Self", method = ChangeMaterialSelf, toolTip = "Changes your material."},
+            new ButtonInfo { buttonText = "Change Material Gun", method = ChangeMaterialGun, toolTip = "Changes the material of whoever your hand desires."},
+            new ButtonInfo { buttonText = "Change Material All", method = ChangeMaterialAll, toolTip = "Changes the material of everyone in the room."},
 
-            new ButtonInfo { buttonText = "Spawn Lucy Self", isTogglable = false, method =() => SpawnLucySelf(), toolTip = "Spawns lucy on yourself."},
-            new ButtonInfo { buttonText = "Spawn Lucy Gun", method =() => SpawnLucyGun(), toolTip = "Spawns lucy on whoever your hand desires."},
-            new ButtonInfo { buttonText = "Spawn Lucy All", isTogglable = false, method =() => SpawnLucyAll(), toolTip = "Spawns lucy on everyone in the room."},
+            new ButtonInfo { buttonText = "Spawn Lucy Self", isTogglable = false, method = SpawnLucySelf, toolTip = "Spawns lucy on yourself."},
+            new ButtonInfo { buttonText = "Spawn Lucy Gun", method = SpawnLucyGun, toolTip = "Spawns lucy on whoever your hand desires."},
+            new ButtonInfo { buttonText = "Spawn Lucy All", isTogglable = false, method = SpawnLucyAll, toolTip = "Spawns lucy on everyone in the room."},
 
-            new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), toolTip = "Crashes whoever your hand desires in the custom map." },
-            new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
-            new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => AntiReportCrash(), toolTip = "Crashes everyone who tries to report you." },
-            new ButtonInfo { buttonText = "Crash On Touch", method =() => CrashOnTouch(), toolTip = "Crashes whoever you touch in the custom map." }
+            new ButtonInfo { buttonText = "Crash Gun", method = CrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
+            new ButtonInfo { buttonText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
+            new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
+            new ButtonInfo { buttonText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
         };
 
         private static float lightningDelay;
@@ -70,7 +71,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null && Time.time > lightningDelay)
                 {
@@ -123,7 +123,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null && Time.time > materialDelay)
                 {
@@ -172,7 +171,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -215,7 +213,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null && Time.time > crashDelay)
                 {
@@ -244,14 +241,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time < crashDelay)
                 return;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            foreach (var Player in from rig in GorillaParent.instance.vrrigs where !rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f) select GetPlayerFromVRRig(rig))
             {
-                if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
-                {
-                    NetPlayer Player = GetPlayerFromVRRig(rig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = Time.time + 0.2f;
-                }
+                CrashPlayer(Player.ActorNumber);
+                crashDelay = Time.time + 0.2f;
             }
         }
         public static void CrashAll()

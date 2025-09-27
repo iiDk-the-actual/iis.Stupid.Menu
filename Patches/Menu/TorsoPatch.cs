@@ -44,7 +44,7 @@ namespace iiMenu.Patches.Menu
                     switch (mode)
                     {
                         case 0:
-                            rotation = Quaternion.Euler(0f, (Time.time * 90f) % 360, 0f);
+                            rotation = Quaternion.Euler(0f, Time.time * 90f % 360, 0f);
                             break;
                         case 1:
                             rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);

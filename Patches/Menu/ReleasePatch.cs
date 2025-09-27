@@ -38,16 +38,16 @@ namespace iiMenu.Patches.Menu
                 {
                     bool grounded = false;
 
-                    HandLink handLink = ((releasingHand == EquipmentInteractor.instance.leftHand) ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink);
+                    HandLink handLink = releasingHand == EquipmentInteractor.instance.leftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
                    
                     HandLinkAuthorityStatus selfHandLinkAuthority = GTPlayer.Instance.GetSelfHandLinkAuthority();
-                    HandLinkAuthorityStatus selfChainAuthority = handLink.GetChainAuthority(out int selfAuthority);
+                    HandLinkAuthorityStatus selfChainAuthority = handLink.GetChainAuthority(out _);
 
                     if (selfHandLinkAuthority.type >= HandLinkAuthorityType.ButtGrounded && selfChainAuthority.type < selfHandLinkAuthority.type)
                         grounded = true;
                     else if (handLink.myOtherHandLink.grabbedLink != null)
                     {
-                        HandLinkAuthorityStatus otherChainAuthority = handLink.myOtherHandLink.GetChainAuthority(out int otherAuthority);
+                        HandLinkAuthorityStatus otherChainAuthority = handLink.myOtherHandLink.GetChainAuthority(out _);
                         if (otherChainAuthority.type >= HandLinkAuthorityType.ButtGrounded && selfChainAuthority.type < otherChainAuthority.type)
                             grounded = true;
                     }

@@ -46,13 +46,13 @@ namespace iiMenu.Patches.Menu
     [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
     public class AntiCrashPatch2
     {
-        private static List<float> callTimestamps = new List<float>();
+        private static readonly List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
             if (AntiCrashPatch.enabled && __instance.isLocal)
             {
                 callTimestamps.Add(Time.time);
-                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
+                callTimestamps.RemoveAll(t => Time.time - t > 1);
 
                 return callTimestamps.Count < 15;
             }
@@ -63,13 +63,13 @@ namespace iiMenu.Patches.Menu
     [HarmonyPatch(typeof(VRRig), "RequestMaterialColor")]
     public class AntiCrashPatch3
     {
-        private static List<float> callTimestamps = new List<float>();
+        private static readonly List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
             if (AntiCrashPatch.enabled && __instance.isLocal)
             {
                 callTimestamps.Add(Time.time);
-                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
+                callTimestamps.RemoveAll(t => Time.time - t > 1);
 
                 return callTimestamps.Count < 15;
             }

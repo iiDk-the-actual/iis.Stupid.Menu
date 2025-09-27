@@ -23,6 +23,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,19 +71,6 @@ namespace iiMenu.Mods
             instance.netState = NetSystemState.Connecting;
 
             byte maxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
-            RoomConfig opts = new RoomConfig
-            {
-                createIfMissing = true,
-                isJoinable = true,
-                isPublic = false,
-                MaxPlayers = maxPlayers,
-                CustomProps = new Hashtable
-                {
-                    { "gameMode", (PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest")).GetFullDesiredGameModeString() },
-                    { "platform", PhotonNetworkController.Instance.platformTag },
-                    { "queueName", GorillaComputer.instance.currentQueue }
-                }
-            };
 
             while (!instance.InRoom)
             {
@@ -356,23 +344,19 @@ exit";
 
         public static void DisablePitchScaling()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
             {
-                if (!vrrig.isLocal)
-                    vrrig.voicePitchForRelativeScale = new AnimationCurve(
-                        new Keyframe(0f, 1f, 0f, 0f),
-                        new Keyframe(1f, 1f, 0f, 0f)
-                    );
+                vrrig.voicePitchForRelativeScale = new AnimationCurve(
+                    new Keyframe(0f, 1f, 0f, 0f),
+                    new Keyframe(1f, 1f, 0f, 0f)
+                );
             }
         }
 
         public static void EnablePitchScaling()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (!vrrig.isLocal)
-                    vrrig.voicePitchForRelativeScale = VRRig.LocalRig.voicePitchForRelativeScale;
-            }
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
+                vrrig.voicePitchForRelativeScale = VRRig.LocalRig.voicePitchForRelativeScale;
         }
 
         public static void DisableMouthMovement()
@@ -424,19 +408,19 @@ exit";
                         Type compType = component.GetType();
                         string compName = compType.Name;
 
-                        if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton"))
-                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                        if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPlayerLineButton")
+                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
 
-                        if (compName == "CustomKeyboardKey")
+                        switch (compName)
                         {
-                            keyboardDelay = Time.time + 0.1f;
-                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                        }
-
-                        if (compName == "GorillaKeyboardButton")
-                        {
-                            keyboardDelay = Time.time + 0.1f;
-                            GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                            case "CustomKeyboardKey":
+                                keyboardDelay = Time.time + 0.1f;
+                                compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                                break;
+                            case "GorillaKeyboardButton":
+                                keyboardDelay = Time.time + 0.1f;
+                                GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                                break;
                         }
                     }
                 }
@@ -449,12 +433,18 @@ exit";
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
-                bool thereIsTagLag = Math.Abs((masterRig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                bool thereIsTagLag = Math.Abs(masterRig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp) > 500;
 
-                if (thereIsTagLag && !lastTagLag)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
-                if (!thereIsTagLag && lastTagLag)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                switch (thereIsTagLag)
+                {
+                    case true when !lastTagLag:
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
+                        break;
+                    case false when lastTagLag:
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                        break;
+                }
+
                 lastTagLag = thereIsTagLag;
             } else
             {
@@ -466,12 +456,11 @@ exit";
 
         public static string RandomRoomName()
         {
-            string text = GenerateRandomString();
-
-            if (GorillaComputer.instance.CheckAutoBanListForName(text))
-                return text;
-            
-            return RandomRoomName();
+            while (true)
+            {
+                string text = GenerateRandomString();
+                if (GorillaComputer.instance.CheckAutoBanListForName(text)) return text;
+            }
         }
     }
 }

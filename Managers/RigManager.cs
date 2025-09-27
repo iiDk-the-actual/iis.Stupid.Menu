@@ -63,8 +63,8 @@ namespace iiMenu.Managers
         public static VRRig GetClosestVRRig() =>
             VRRig.LocalRig.GetClosest();
 
-        public static Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
-        public static Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
+        public static readonly Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
+        public static readonly Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
         public static string GetCreationDate(string input, Action<string> onTranslated = null)
         {
             if (creationDateCache.TryGetValue(input, out string date))

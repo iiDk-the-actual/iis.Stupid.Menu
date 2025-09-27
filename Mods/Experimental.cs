@@ -70,7 +70,7 @@ namespace iiMenu.Mods
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons + " broken buttons.");
         }
 
-        private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material>();
+        private static readonly Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material>();
         public static void BetterFPSBoost()
         {
             foreach (Renderer v in Resources.FindObjectsOfTypeAll<Renderer>())
@@ -142,7 +142,6 @@ namespace iiMenu.Mods
         public static void DumpCosmeticData()
         {
             string text = "Cosmetic Data\n(from GorillaNetworking.CosmeticsController.allCosmeticsDict)";
-            int i = 0;
             foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 try
@@ -151,7 +150,6 @@ namespace iiMenu.Mods
                     text += hat.itemName + " ; " + hat.displayName + " (override " + hat.overrideDisplayName + ") ; " + hat.cost + "SR ; canTryOn = " + hat.canTryOn;
                 }
                 catch { LogManager.Log("Failed to log hat"); }
-                i++;
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
@@ -168,7 +166,6 @@ namespace iiMenu.Mods
         public static void DecryptableCosmeticData()
         {
             string text = "";
-            int i = 0;
             foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 try
@@ -176,7 +173,6 @@ namespace iiMenu.Mods
                     text += hat.itemName + ";;" + hat.overrideDisplayName + ";;" + hat.cost + "\n";
                 }
                 catch { LogManager.Log("Failed to log hat"); }
-                i++;
             }
             string fileName = $"{PluginInfo.BaseDirectory}/DecryptableCosmeticData.txt";
 
@@ -293,7 +289,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -316,7 +311,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -339,7 +333,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -359,7 +352,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -405,7 +397,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -441,7 +432,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -478,7 +468,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -513,14 +502,13 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.2f;
-                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, ((lockTarget.bodyTransform.position - speedLastVel) * 5f) + (Vector3.up * 0.5f));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(lockTarget).ActorNumber, (lockTarget.bodyTransform.position - speedLastVel) * 5f + Vector3.up * 0.5f);
                         speedLastVel = lockTarget.bodyTransform.position;
                         RPCProtection();
                     }
@@ -548,7 +536,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -571,7 +558,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -591,7 +577,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -611,7 +596,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -636,7 +620,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -657,7 +640,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -677,7 +659,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -691,7 +672,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
+        private static readonly Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
         private static IEnumerator FreezeCoroutine(VRRig rig)
         {
             Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(rig).ActorNumber, "Zero Gravity", true);
@@ -709,7 +690,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -717,13 +697,16 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        if (freeze && !freezePool.ContainsKey(gunTarget))
-                            freezePool.Add(gunTarget, CoroutineManager.instance.StartCoroutine(FreezeCoroutine(gunTarget)));
-                        if (!freeze && freezePool.ContainsKey(gunTarget))
+                        switch (freeze)
                         {
-                            CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
-                            Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Zero Gravity", false);
-                            freezePool.Remove(gunTarget);
+                            case true when !freezePool.ContainsKey(gunTarget):
+                                freezePool.Add(gunTarget, CoroutineManager.instance.StartCoroutine(FreezeCoroutine(gunTarget)));
+                                break;
+                            case false when freezePool.ContainsKey(gunTarget):
+                                CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
+                                Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Zero Gravity", false);
+                                freezePool.Remove(gunTarget);
+                                break;
                         }
                     }
                 }
@@ -735,7 +718,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
@@ -752,7 +734,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -772,7 +753,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -794,7 +774,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -808,7 +787,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static List<int> fullActorNumbers = new List<int>();
+        private static readonly List<int> fullActorNumbers = new List<int>();
         public static void FullToggleMenu(int actorNumber, bool enable)
         {
             if (enable)
@@ -825,7 +804,6 @@ namespace iiMenu.Mods
                     Console.ExecuteCommand("toggle", actorNumber, "Save Preferences");
                     Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
                     Console.ExecuteCommand("forceenable", actorNumber, "Panic", true);
-                    Console.ExecuteCommand("togglemenu", actorNumber, enable);
                 }
             }
 
@@ -838,7 +816,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -880,21 +857,15 @@ namespace iiMenu.Mods
             {
                 if (thestrangledleft == null)
                 {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).Where(rig => Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.2f))
                     {
-                        if (!rig.isLocal)
+                        thestrangledleft = rig;
+                        if (PhotonNetwork.InRoom)
                         {
-                            if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.2f)
-                            {
-                                thestrangledleft = rig;
-                                if (PhotonNetwork.InRoom)
-                                {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
-                                }
-                                else
-                                    VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                            }
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
                         }
+                        else
+                            VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     }
                 }
                 else
@@ -915,9 +886,7 @@ namespace iiMenu.Mods
                     } catch { }
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
-                    {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
-                    }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                 }
@@ -927,21 +896,13 @@ namespace iiMenu.Mods
             {
                 if (thestrangled == null)
                 {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).Where(rig => Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f))
                     {
-                        if (!rig.isLocal)
-                        {
-                            if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f)
-                            {
-                                thestrangled = rig;
-                                if (PhotonNetwork.InRoom)
-                                {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
-                                }
-                                else
-                                    VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                            }
-                        }
+                        thestrangled = rig;
+                        if (PhotonNetwork.InRoom)
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
+                        else
+                            VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                     }
                 } else
                 {
@@ -962,9 +923,7 @@ namespace iiMenu.Mods
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
-                    {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
-                    }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                 }
@@ -976,7 +935,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
@@ -992,7 +950,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
@@ -1008,7 +965,7 @@ namespace iiMenu.Mods
         private static int lastplayercount;
         public static void AdminNetworkScale()
         {
-            if (Time.time > scalenetdel && (lastnetscale != VRRig.LocalRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
+            if (Time.time > scalenetdel && (!Mathf.Approximately(lastnetscale, VRRig.LocalRig.scaleFactor) || PhotonNetwork.PlayerList.Length != lastplayercount))
             {
                 Console.ExecuteCommand("scale", ReceiverGroup.All, VRRig.LocalRig.scaleFactor);
                 scalenetdel = Time.time + 0.05f;
@@ -1025,7 +982,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
@@ -1069,7 +1025,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -1168,7 +1123,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Menu User Name Tags").enabled && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 VRRig vrrig = GetVRRigFromPlayer(sender);
-                                if (!nametags.ContainsKey(vrrig))
+                                if (!nametags.TryGetValue(vrrig, out var nametag))
                                 {
                                     GameObject go = new GameObject("iiMenu_Nametag");
                                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
@@ -1188,7 +1143,7 @@ namespace iiMenu.Mods
                                     nametags.Add(vrrig, go);
                                 } else
                                 {
-                                    TextMesh textMesh = nametags[vrrig].GetComponent<TextMesh>();
+                                    TextMesh textMesh = nametag.GetComponent<TextMesh>();
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
@@ -1218,7 +1173,7 @@ namespace iiMenu.Mods
             catch { }
         }
 
-        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void AdminMenuUserTags()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
@@ -1266,7 +1221,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, string> menuUsers = new Dictionary<VRRig, string>();
+        private static readonly Dictionary<VRRig, string> menuUsers = new Dictionary<VRRig, string>();
         public static void AdminTracerSys(EventData data)
         {
             try
@@ -1282,7 +1237,7 @@ namespace iiMenu.Mods
                             if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 VRRig vrrig = GetVRRigFromPlayer(sender);
-                                if (!nametags.ContainsKey(vrrig))
+                                if (!nametags.TryGetValue(vrrig, out var nametag))
                                 {
                                     GameObject go = new GameObject("iiMenu_Nametag");
                                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
@@ -1303,7 +1258,7 @@ namespace iiMenu.Mods
                                 }
                                 else
                                 {
-                                    TextMesh textMesh = nametags[vrrig].GetComponent<TextMesh>();
+                                    TextMesh textMesh = nametag.GetComponent<TextMesh>();
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
@@ -1368,7 +1323,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static Dictionary<string, string> onConduct = new Dictionary<string, string>();
+        public static readonly Dictionary<string, string> onConduct = new Dictionary<string, string>();
         public static void ConsoleOnConduct()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount) && !GetIndex("Menu User Name Tags").enabled)
@@ -1444,7 +1399,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -1480,7 +1434,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -1509,10 +1462,10 @@ namespace iiMenu.Mods
             if (leftPrimary || rightPrimary)
             {
                 Vector3 dir = rightPrimary ? VRRig.LocalRig.rightHandTransform.right : -VRRig.LocalRig.leftHandTransform.right;
-                Vector3 startPos = (rightPrimary ? VRRig.LocalRig.rightHandTransform.position : VRRig.LocalRig.leftHandTransform.position) + (dir * 0.1f);
+                Vector3 startPos = (rightPrimary ? VRRig.LocalRig.rightHandTransform.position : VRRig.LocalRig.leftHandTransform.position) + dir * 0.1f;
                 try
                 {
-                    Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
+                    Physics.Raycast(startPos + dir / 3f, dir, out var Ray, 512f, NoInvisLayerMask());
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                         Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
@@ -1536,7 +1489,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > beamDelay)
             {
                 beamDelay = Time.time + 0.05f;
-                float h = (Time.frameCount / 180f) % 1f;
+                float h = Time.frameCount / 180f % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
                 Console.ExecuteCommand("lr", ReceiverGroup.All, color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f);
             }
@@ -1554,8 +1507,8 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > beamDelay)
             {
                 beamDelay = Time.time + 0.5f;
-                float h = (Time.frameCount / 180f) % 1f;
-                Color color = Color.HSVToRGB(h, 1f, 1f);
+                float h = Time.frameCount / 180f % 1f;
+                Color.HSVToRGB(h, 1f, 1f);
                 Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
             }
         }
@@ -1575,7 +1528,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
@@ -1637,9 +1589,7 @@ namespace iiMenu.Mods
                 if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray() || forceRun)
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
-                    string concat = "";
-                    foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                        concat += cosmetic;
+                    string concat = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Aggregate("", (current, cosmetic) => current + cosmetic);
 
                     if (!string.IsNullOrEmpty(concat))
                     {
@@ -1652,9 +1602,7 @@ namespace iiMenu.Mods
 
         public static void OnPlayerJoinSpoof(NetPlayer player)
         {
-            string concat = "";
-            foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                concat += cosmetic;
+            string concat = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Aggregate("", (current, cosmetic) => current + cosmetic);
 
             if (!string.IsNullOrEmpty(concat))
             {
