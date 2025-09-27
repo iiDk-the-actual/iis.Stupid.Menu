@@ -45,7 +45,7 @@ using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
 {
-    public class Important
+    public static class Important
     {
         public static string oldId = "";
 

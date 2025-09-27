@@ -539,7 +539,7 @@ namespace iiMenu.Mods
 
         public static void PingOverlay()
         {
-            VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
+            VRRig masterRig = PhotonNetwork.MasterClient?.VRRig() ?? null;
             if (!PhotonNetwork.InRoom || PhotonNetwork.IsMasterClient || masterRig == null || !playerPing.ContainsKey(masterRig))
             {
                 NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString() + "ms";

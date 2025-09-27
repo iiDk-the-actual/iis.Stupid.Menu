@@ -38,7 +38,7 @@ namespace iiMenu.Notifications
 
     public class NotifiLib : MonoBehaviour
     {
-        public static NotifiLib instance;
+        public static NotifiLib instance { get; private set; }
         public GameObject HUDObj;
         public GameObject HUDObj2;
 

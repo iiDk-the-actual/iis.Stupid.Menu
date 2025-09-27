@@ -26,7 +26,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    public class Presets
+    public static class Presets
     {
         public static void LegitimatePreset()
         {

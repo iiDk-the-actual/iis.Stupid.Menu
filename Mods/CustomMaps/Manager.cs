@@ -33,7 +33,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.CustomMaps
 {
-    public class Manager
+    public static class Manager
     {
         private static readonly Dictionary<long, string> mapScriptArchives = new Dictionary<long, string>();
         public static void UpdateCustomMapsTab(long? overwriteId = null)

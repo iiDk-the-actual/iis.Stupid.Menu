@@ -36,7 +36,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.Spammers
 {
-    public class Sound
+    public static class Sound
     {
         public static bool LoopAudio = false;
         public static int BindMode;

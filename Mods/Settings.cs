@@ -50,7 +50,7 @@ using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
 {
-    public class Settings
+    public static class Settings
     {
         public static void Search() // This took me like 4 hours
         {
