@@ -39,7 +39,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods.Spammers
 {
-    public class Projectiles
+    public static class Projectiles
     {
         // This file needs to be rewritten
         public static readonly string[] ProjectileObjectNames = {

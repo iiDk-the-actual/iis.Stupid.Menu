@@ -34,7 +34,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    public class Advantages
+    public static class Advantages
     {
         public static void TagSelf()
         {

@@ -41,7 +41,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
-    public class Safety
+    public static class Safety
     {
         public static void GeneralSafety()
         {

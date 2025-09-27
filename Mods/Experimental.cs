@@ -47,7 +47,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
-    public class Experimental
+    public static class Experimental
     {
         public static void FixDuplicateButtons()
         {

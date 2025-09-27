@@ -62,7 +62,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
-    public class Fun
+    public static class Fun
     {
         public static void FixHead()
         {
