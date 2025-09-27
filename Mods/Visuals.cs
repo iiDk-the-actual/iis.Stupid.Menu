@@ -69,14 +69,14 @@ namespace iiMenu.Mods
             text += "<color=green>Clip</color><color=grey>:</color> " + (GUIUtility.systemCopyBuffer.Length > 35 ? GUIUtility.systemCopyBuffer[..35] : GUIUtility.systemCopyBuffer) + "\\n";
             text += lastDeltaTime + " <color=green>FPS</color> <color=grey>|</color> " + PhotonNetwork.GetPing() + " <color=green>Ping</color>\\n";
 
-            string room = PhotonNetwork.InRoom ? (NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public") : "Not in room";
+            string room = PhotonNetwork.InRoom ? NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public" : "Not in room";
             text += "<color=green>" + NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper() + "</color> " + PhotonNetwork.PlayerList.Length + " <color=green>Players</color> <color=grey>|</color> " + room + "\\n \\n";
 
             string admin = "";
             if (Time.time > 5f)
             {
-                if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                    admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) ? "Super " : "") + "Admin</color>";
+                if (ServerData.Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var administrator))
+                    admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(administrator) ? "Super " : "") + "Admin</color>";
             }
             text += "<color=green>Theme</color> " + themeType + admin + "\n";
             text += "<color=green>Preferences Directory</color><color=grey>:</color> " + Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}";
@@ -217,7 +217,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
                 
                 if (trailRenderer == null)
@@ -336,7 +335,7 @@ namespace iiMenu.Mods
 
 
                     gameObject.GetComponent<Renderer>().material = tapMat;
-                    gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? (PlayerIsTagged(rig) ? tapTxt : warningTxt) : (PlayerIsTagged(rig) ? warningTxt : tapTxt);
+                    gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? PlayerIsTagged(rig) ? tapTxt : warningTxt : PlayerIsTagged(rig) ? warningTxt : tapTxt;
                     gameObject.GetComponent<Renderer>().material.color = targetColor;
 
                     handTaps[i][3] = gameObject;
@@ -364,7 +363,7 @@ namespace iiMenu.Mods
                 gameObject.transform.position = finalPos;
 
                 gameObject.transform.rotation = Quaternion.LookRotation(finalPos - Camera.main.transform.position, -Camera.main.transform.up);
-                Vector3 forwardFlat = Camera.main.transform.forward.X_Z();
+                Camera.main.transform.forward.X_Z();
 
                 float t = Mathf.Lerp(1f, 0f, Time.time - timestamp);
 
@@ -389,10 +388,6 @@ namespace iiMenu.Mods
 
             foreach (object[] handTapData in handTaps)
             {
-                VRRig rig = (VRRig)handTapData[0];
-                Vector3 position = (Vector3)handTapData[1];
-
-                float timestamp = (float)handTapData[2];
                 GameObject gameObject = (GameObject)handTapData[3] ?? null;
 
                 if (gameObject != null)
@@ -424,8 +419,8 @@ namespace iiMenu.Mods
         public static float PerformanceVisualDelay;
         public static int DelayChangeStep;
 
-        public static Dictionary<string, GameObject> labelDictionary = new Dictionary<string, GameObject>();
-        public static Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>>();
+        public static readonly Dictionary<string, GameObject> labelDictionary = new Dictionary<string, GameObject>();
+        public static readonly Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>>();
         public static float GetLabelDistance(bool leftHand)
         {
             if (!labelDistances.TryGetValue(leftHand, out List<int> frames))
@@ -438,12 +433,12 @@ namespace iiMenu.Mods
             if (frames[0] == Time.frameCount)
             {
                 frames.Add(Time.frameCount);
-                return 0.1f + (Time.frameCount * 0.1f);
+                return 0.1f + Time.frameCount * 0.1f;
             }
 
             frames.Clear();
             frames.Add(Time.frameCount);
-            return 0.1f + (frames.Count * 0.1f);
+            return 0.1f + frames.Count * 0.1f;
         }
 
         public static void GetLabel(string codeName, bool leftHand, string text, Color color)
@@ -533,7 +528,7 @@ namespace iiMenu.Mods
                     (
                         "Time",
                         false,
-                        FormatUnix(Mathf.FloorToInt(playerIsTagged ? endTime : (Time.time - startTime))),
+                        FormatUnix(Mathf.FloorToInt(playerIsTagged ? endTime : Time.time - startTime)),
                         playerIsTagged ? Color.green : Color.white
                     );
                 }
@@ -1092,12 +1087,12 @@ namespace iiMenu.Mods
                 if (ntDistanceList[rig][0] == Time.frameCount)
                 {
                     ntDistanceList[rig].Add(Time.frameCount);
-                    return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
+                    return (0.25f + ntDistanceList[rig].Count * 0.15f) * rig.scaleFactor;
                 }
 
                 ntDistanceList[rig].Clear();
                 ntDistanceList[rig].Add(Time.frameCount);
-                return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
+                return (0.25f + ntDistanceList[rig].Count * 0.15f) * rig.scaleFactor;
             }
 
             ntDistanceList.Add(rig, new List<int> { Time.frameCount });
@@ -1604,7 +1599,7 @@ namespace iiMenu.Mods
             taggedNameTags.Clear();
         }
 
-        public static Dictionary<string, string> modDictionary = new Dictionary<string, string> {
+        public static readonly Dictionary<string, string> modDictionary = new Dictionary<string, string> {
             { "genesis", "Genesis" },
             { "HP_Left", "Holdable Pad" },
             { "GrateVersion", "Grate" },
@@ -1782,7 +1777,7 @@ namespace iiMenu.Mods
             modNameTags.Clear();
         }
 
-        public static Dictionary<string, string> specialCosmetics = new Dictionary<string, string>
+        public static readonly Dictionary<string, string> specialCosmetics = new Dictionary<string, string>
         {
             { "LBAAD.", "Administrator" },
             { "LBAAK.", "Forest Guide" },
@@ -1865,7 +1860,7 @@ namespace iiMenu.Mods
             cosmeticNameTags.Clear();
         }
 
-        public static Dictionary<string, string> verifiedDictionary = new Dictionary<string, string>
+        public static readonly Dictionary<string, string> verifiedDictionary = new Dictionary<string, string>
         {
             { "9DBC90CF7449EF64", "StyledSnail" },
             { "33FFCE29A8DB5BB", "Jmancurly?" },
@@ -2037,7 +2032,7 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    bool crashed = Math.Abs((nametag.Key.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                    bool crashed = Math.Abs(nametag.Key.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp) > 500;
                     if (!crashed)
                     {
                         Object.Destroy(nametag.Value);
@@ -2054,7 +2049,7 @@ namespace iiMenu.Mods
                     {
                         if (!crashedNameTags.ContainsKey(vrrig))
                         {
-                            double crashPower = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+                            double crashPower = Math.Abs(vrrig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp);
                             bool crashed = crashPower > 500;
 
                             if (crashed)
@@ -2083,7 +2078,7 @@ namespace iiMenu.Mods
 
                         if (crashedNameTags.TryGetValue(vrrig, out GameObject nameTag))
                         {
-                            double crashPower = Math.Abs((vrrig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+                            double crashPower = Math.Abs(vrrig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp);
 
                             Color crashedColor = Color.yellow;
                             if (crashPower > 2500)
@@ -2143,7 +2138,7 @@ namespace iiMenu.Mods
             } 
         }
 
-        public static List<GameObject> leaves = new List<GameObject>();
+        public static readonly List<GameObject> leaves = new List<GameObject>();
         public static void EnableRemoveLeaves()
         {
             GameObject Forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
@@ -2783,7 +2778,7 @@ namespace iiMenu.Mods
                         liner.material.shader = Shader.Find("GUI/Text Shader");
 
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i * 2 + 1]].position);
                     }
                 }
             }
@@ -2886,7 +2881,7 @@ namespace iiMenu.Mods
                         liner.enabled = (selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0;
 
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i * 2 + 1]].position);
                     }
                 }
             }
@@ -2956,7 +2951,7 @@ namespace iiMenu.Mods
 
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
@@ -2994,7 +2989,7 @@ namespace iiMenu.Mods
                         liner.enabled = owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer;
 
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i * 2 + 1]].position);
                     }
                 }
             }
@@ -3191,7 +3186,7 @@ namespace iiMenu.Mods
                 NetPlayer owner = GetPlayerFromVRRig(rig);
                 NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                Color thecolor = owner == target ? GetPlayerColor(rig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();
@@ -3626,7 +3621,7 @@ namespace iiMenu.Mods
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -3907,7 +3902,7 @@ namespace iiMenu.Mods
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -4119,7 +4114,7 @@ namespace iiMenu.Mods
                 NetPlayer owner = GetPlayerFromVRRig(rig);
                 NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                Color thecolor = owner == target ? GetPlayerColor(rig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();

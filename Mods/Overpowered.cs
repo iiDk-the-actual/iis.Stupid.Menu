@@ -45,15 +45,8 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
-    public class Overpowered
+    public static class Overpowered
     {
-        public static void MasterCheck()
-        {
-            NotifiLib.SendNotification(NetworkSystem.Instance.IsMasterClient
-                ? "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>"
-                : "<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-        }
-
         public static void SetGuardianTarget(NetPlayer target)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
@@ -84,7 +77,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -103,13 +95,10 @@ namespace iiMenu.Mods
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 int i = 0;
-                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
+                foreach (var gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers.Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid()))
                 {
-                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
-                    {
-                        gorillaGuardianZoneManager.SetGuardian(PhotonNetwork.PlayerList[i]);
-                        i++;
-                    }
+                    gorillaGuardianZoneManager.SetGuardian(PhotonNetwork.PlayerList[i]);
+                    i++;
                 }
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
@@ -119,14 +108,8 @@ namespace iiMenu.Mods
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                {
-                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
-                    {
-                        if (gorillaGuardianZoneManager.CurrentGuardian == NetworkSystem.Instance.LocalPlayer)
-                            gorillaGuardianZoneManager.SetGuardian(null);
-                    }
-                }
+                foreach (var gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers.Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid()).Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.CurrentGuardian == NetworkSystem.Instance.LocalPlayer))
+                    gorillaGuardianZoneManager.SetGuardian(null);
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
@@ -137,7 +120,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -146,14 +128,8 @@ namespace iiMenu.Mods
                     {
                         if (NetworkSystem.Instance.IsMasterClient)
                         {
-                            foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                            {
-                                if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
-                                {
-                                    if (gorillaGuardianZoneManager.CurrentGuardian == GetPlayerFromVRRig(gunTarget))
-                                        gorillaGuardianZoneManager.SetGuardian(null);
-                                }
-                            }
+                            foreach (var gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers.Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid()).Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.CurrentGuardian == GetPlayerFromVRRig(gunTarget)))
+                                gorillaGuardianZoneManager.SetGuardian(null);
                         }
                         else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
                         kgDebounce = Time.time + 0.1f;
@@ -166,28 +142,31 @@ namespace iiMenu.Mods
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                {
-                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
-                        gorillaGuardianZoneManager.SetGuardian(null);
-                }
+                foreach (var gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers.Where(gorillaGuardianZoneManager => gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid()))
+                    gorillaGuardianZoneManager.SetGuardian(null);
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
         public static void SetPlayerColors(Dictionary<int, int> colors) // ActorNumber : Team // 0 = Blue, 1 = Red, -1 = None
         {
-            MonkeBallGame.Instance.photonView.RPC("RequestSetGameStateRPC", RpcTarget.All, (int)MonkeBallGame.GameState.Playing, PhotonNetwork.Time + (MonkeBallGame.Instance.gameDuration - 1f), NetworkSystem.Instance.AllNetPlayers
-                .Where(p => colors.ContainsKey(p.ActorNumber))
-                .Select(p => p.ActorNumber)
-                .ToArray(), NetworkSystem.Instance.AllNetPlayers
-                .Where(p => colors.ContainsKey(p.ActorNumber))
-                .Select(p => colors[p.ActorNumber])
-                .ToArray(), new int[MonkeBallGame.Instance.team.Count], MonkeBallGame.Instance.startingBalls.Select(ball =>
-                    BitPackUtils.PackHandPosRotForNetwork(ball.transform.position, ball.transform.rotation))
-                .ToArray(), MonkeBallGame.Instance.startingBalls.Select(ball =>
-                    BitPackUtils.PackWorldPosForNetwork(ball.gameBall.GetVelocity()))
-                .ToArray());
+            var filteredPlayers = NetworkSystem.Instance.AllNetPlayers
+                .Where(p => colors.ContainsKey(p.ActorNumber));
+            MonkeBallGame.Instance.photonView.RPC(
+                "RequestSetGameStateRPC",
+                RpcTarget.All,
+                (int)MonkeBallGame.GameState.Playing,
+                PhotonNetwork.Time + (MonkeBallGame.Instance.gameDuration - 1f),
+                filteredPlayers.Select(p => p.ActorNumber).ToArray(),
+                filteredPlayers.Select(p => colors[p.ActorNumber]).ToArray(),
+                new int[MonkeBallGame.Instance.team.Count],
+                MonkeBallGame.Instance.startingBalls
+                    .Select(ball => BitPackUtils.PackHandPosRotForNetwork(ball.transform.position, ball.transform.rotation))
+                    .ToArray(),
+                MonkeBallGame.Instance.startingBalls
+                    .Select(ball => BitPackUtils.PackWorldPosForNetwork(ball.gameBall.GetVelocity()))
+                    .ToArray()
+            );
         }
 
         private static float playerColorDelay;
@@ -200,7 +179,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > playerColorDelay)
                 {
@@ -243,7 +221,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -288,7 +265,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, int> materialState = new Dictionary<VRRig, int>();
+        private static readonly Dictionary<VRRig, int> materialState = new Dictionary<VRRig, int>();
         public static float materialDelay;
         public static void MaterialTarget(VRRig rig)
         {
@@ -299,8 +276,7 @@ namespace iiMenu.Mods
             }
                 
             NetPlayer player = GetPlayerFromVRRig(rig);
-            int state = 0;
-            materialState.TryGetValue(rig, out state);
+            materialState.TryGetValue(rig, out var state);
 
             state++;
             state %= 6;
@@ -342,7 +318,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -452,21 +427,14 @@ namespace iiMenu.Mods
             {
                 GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
 
-                if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+                if (!manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer)) return;
+                foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                 {
-                    foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
+                    if (!tgi.manager || !tgi.manager.photonView) continue;
+                    foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay))
                     {
-                        if (tgi.manager && tgi.manager.photonView)
-                        {
-                            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay)
-                                {
-                                    BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - tgi.transform.position).normalized * 50f);
-                                    guardianProtectorDelay = Time.time + 0.1f;
-                                }
-                            }
-                        }
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - tgi.transform.position).normalized * 50f);
+                        guardianProtectorDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -478,7 +446,7 @@ namespace iiMenu.Mods
             {
                 crashAllDelay = Time.time + 0.1f;
                 VRRig rig = GetVRRigFromPlayer(target);
-                BetaSetVelocityPlayer(target, rig.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - rig.transform.position).normalized * 50f : (rig.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f));
+                BetaSetVelocityPlayer(target, rig.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - rig.transform.position).normalized * 50f : rig.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f);
                 RPCProtection();
             }
         }
@@ -490,14 +458,13 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > crashAllDelay)
                     {
                         crashAllDelay = Time.time + 0.1f;
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), lockTarget.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - lockTarget.transform.position).normalized * 50f : (lockTarget.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f));
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), lockTarget.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - lockTarget.transform.position).normalized * 50f : lockTarget.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f);
                         RPCProtection();
                     }
                 }
@@ -523,13 +490,10 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > crashAllDelay)
             {
                 crashAllDelay = Time.time + 0.1f;
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal))
                 {
-                    if (!rig.isLocal)
-                    {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), rig.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - rig.transform.position).normalized * 50f : (rig.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f));
-                        RPCProtection();
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), rig.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - rig.transform.position).normalized * 50f : rig.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left * 50f);
+                    RPCProtection();
                 }
             }
         }
@@ -552,7 +516,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -585,13 +548,10 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > crashAllDelay)
             {
                 crashAllDelay = Time.time + 0.1f;
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal && rig.transform.position.x < -5))
                 {
-                    if (!rig.isLocal && rig.transform.position.x < -5)
-                    {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
-                        RPCProtection();
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                    RPCProtection();
                 }
             }
         }
@@ -603,7 +563,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -639,7 +598,7 @@ namespace iiMenu.Mods
                         
                         SerializePatch.OverrideSerialization = () =>
                         {
-                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            GetPlayerFromVRRig(lockTarget);
                             MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
@@ -685,7 +644,7 @@ namespace iiMenu.Mods
                     return true;
                 }
 
-                NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                GetPlayerFromVRRig(lockTarget);
                 MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 positionArchive = VRRig.LocalRig.transform.position;
@@ -722,90 +681,32 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void GuardianObliterateGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > crashAllDelay) /*&& lockTarget.transform.position.x < 80)*/
-                    {
-                        crashAllDelay = Time.time + 0.1f;
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void GuardianObliterateAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > crashAllDelay)
-            {
-                crashAllDelay = Time.time + 0.1f;
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                {
-                    if (!rig.isLocal)
-                    {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
-                        RPCProtection();
-                    }
-                }
-            }
-        }
-
         private static float serializeDelay;
         public static void DirectionOnGrab(Vector3 direction)
         {
             VRRig.LocalRig.enabled = true;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).Where(rig => rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer))
             {
-                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
+                VRRig.LocalRig.enabled = false;
+
+                if (Time.time > serializeDelay)
                 {
-                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
+                    serializeDelay = Time.time + 0.3f;
+
+                    for (int i = 0; i < 100; i++)
                     {
-                        VRRig.LocalRig.enabled = false;
-
-                        if (Time.time > serializeDelay)
-                        {
-                            serializeDelay = Time.time + 0.3f;
-
-                            for (int i = 0; i < 100; i++)
-                            {
-                                VRRig.LocalRig.transform.position += direction.normalized;
-                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-                            }
-
-                            RPCProtection();
-                        }
-
-                        if (rig.LatestVelocity().y > 6f)
-                        {
-                            VRRig.LocalRig.transform.position += direction.normalized * 100f;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-
-                            RPCProtection();
-                        }
+                        VRRig.LocalRig.transform.position += direction.normalized;
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
                     }
+
+                    RPCProtection();
                 }
+
+                if (!(rig.LatestVelocity().y > 6f)) continue;
+                VRRig.LocalRig.transform.position += direction.normalized * 100f;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
+
+                RPCProtection();
             }
         }
 
@@ -825,11 +726,10 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    point.transform.position = NewPointer.transform.position + (Vector3.up * 0.5f);
+                    point.transform.position = NewPointer.transform.position + Vector3.up * 0.5f;
             }
 
             TowardsPositionOnGrab(point.transform.position);
@@ -855,7 +755,7 @@ namespace iiMenu.Mods
                     Transform targetHand = isLeftHand ? rig.leftHandTransform : rig.rightHandTransform;
 
                     VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = targetHand.position - (Vector3.up * 0.8f);
+                    VRRig.LocalRig.transform.position = targetHand.position - Vector3.up * 0.8f;
                     VRRig.LocalRig.transform.rotation = Quaternion.identity;
 
                     (isLeftHand ? VRRig.LocalRig.rightHand : VRRig.LocalRig.leftHand).rigTarget.transform.position = targetHand.transform.position;
@@ -908,24 +808,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BlindOnGrab()
-        {
-            VRRig.LocalRig.enabled = true;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
-                {
-                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * Random.Range(99999f, 99f);
-                        VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                    }
-                }
-            }
-        }
-
         public static void FlingOnGrab()
         {
             VRRig.LocalRig.enabled = true;
@@ -935,7 +817,7 @@ namespace iiMenu.Mods
                 {
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        Vector3 velocity = (Vector3.up + (GorillaTagger.Instance.bodyCollider.transform.forward * 1)).normalized * 20f;
+                        Vector3 velocity = (Vector3.up + GorillaTagger.Instance.bodyCollider.transform.forward * 1).normalized * 20f;
                         GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                         rig.ApplyLocalTrajectoryOverride(velocity);
                         VRRig.LocalRig.leftHandLink.BreakLink();
@@ -1002,33 +884,40 @@ namespace iiMenu.Mods
                 sendData
             };
 
-            if (target is RpcTarget)
-                GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", (RpcTarget)target, createData);
-
-            if (target is Player)
-                GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", (Player)target, createData);
+            switch (target)
+            {
+                case RpcTarget rpcTarget:
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                    break;
+                case Player player:
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                    break;
+            }
 
             if (velocity != Vector3.zero || angVelocity != Vector3.zero)
             {
-                bool handTarget = GamePlayerLocal.instance.gamePlayer.GetGameEntityId(GamePlayer.GetHandIndex(false)) != null;
                 velocity = velocity.ClampMagnitudeSafe(1600f);
 
                 object[] grabData = {
                     netId,
-                    handTarget,
+                    true,
                     BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
                     PhotonNetwork.LocalPlayer
                 };
 
-                if (target is RpcTarget)
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", (RpcTarget)target, grabData);
+                switch (target)
+                {
+                    case RpcTarget rpcTarget:
+                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                        break;
+                    case Player player:
+                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                        break;
+                }
 
-                if (target is Player)
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", (Player)target, grabData);
-                
                 object[] dropData = {
                     netId,
-                    handTarget,
+                    true,
                     position,
                     rotation,
                     velocity,
@@ -1037,11 +926,15 @@ namespace iiMenu.Mods
                     PhotonNetwork.Time
                 };
 
-                if (target is RpcTarget)
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", (RpcTarget)target, dropData);
-
-                if (target is Player)
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", (Player)target, dropData);
+                switch (target)
+                {
+                    case RpcTarget rpcTarget:
+                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
+                        break;
+                    case Player player:
+                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
+                        break;
+                }
             }
 
             RPCProtection();
@@ -1052,25 +945,10 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                     CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, Quaternion.Euler(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f)), Vector3.zero, Vector3.zero);
-            }
-        }
-
-        private static float minigunDelay;
-        public static void SpamObjectMinigun(int objectId)
-        {
-            if (rightGrab)
-            {
-                Safety.NoFinger();
-                if (Time.time > minigunDelay)
-                {
-                    minigunDelay = Time.time + 0.02f;
-                    CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength * 5f, Vector3.zero);
-                }
             }
         }
 
@@ -1084,7 +962,7 @@ namespace iiMenu.Mods
                 -175001459
             };
 
-            SpamObjectGun(Random.Range(0, objectIds.Length - 1));
+            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length - 1)]);
         }
 
         private static float destroyDelay;
@@ -1093,7 +971,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1164,23 +1041,21 @@ namespace iiMenu.Mods
                             break;
                         }
                     case RpcTarget.Others:
+                    {
+                        foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal))
                         {
-                            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!rig.isLocal)
-                                {
-                                    GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), true, false, false);
-                                    GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
-                                }
-                            }
-                            break;
+                            GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), true, false, false);
+                            GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                         }
+
+                        break;
+                    }
                     case RpcTarget.MasterClient:
-                        {
-                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
-                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("DroppedByPlayer", RpcTarget.Others, velocity);
-                            break;
-                        }
+                    {
+                        GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
+                        GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("DroppedByPlayer", RpcTarget.Others, velocity);
+                        break;
+                    }
                 }
             }
             else
@@ -1193,7 +1068,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -1219,16 +1093,13 @@ namespace iiMenu.Mods
             if (rightGrab && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
-                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                     {
-                        if (!plr.isLocal)
-                        {
-                            GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
-                            RPCProtection();
-                        }
+                        GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
+                        RPCProtection();
                     }
                 }
                 else
@@ -1242,7 +1113,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -1269,16 +1139,13 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
-                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                     {
-                        if (!plr.isLocal)
-                        {
-                            GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new Vector3(0f, 0f, 0f));
-                            RPCProtection();
-                        }
+                        GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new Vector3(0f, 0f, 0f));
+                        RPCProtection();
                     }
                 }
                 else
@@ -1292,7 +1159,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -1324,7 +1190,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -1368,7 +1233,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -1524,14 +1388,12 @@ namespace iiMenu.Mods
         }
 
         public static bool SnowballHandIndex;
-        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
+        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customNetworkedSize = -1)
         {
             for (int i = 0; i < snowballMultiplicationFactor; i++)
             {
                 try
                 {
-                    Scale = snowballScale;
-
                     SnowballHandIndex = !SnowballHandIndex;
                     Vel = Vel.ClampMagnitudeSafe(50f);
 
@@ -1555,23 +1417,23 @@ namespace iiMenu.Mods
                     switch (Mode)
                     {
                         case 0:
-                            int increment = GetProjectileIncrement(Pos, Vel, Scale);
+                            int increment = GetProjectileIncrement(Pos, Vel, snowballScale);
 
                             GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
-                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize > 0 ? customNetworkedSize : (int)Scale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize ?? snowballScale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
 
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
                             GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
                             break;
                         case 1:
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
+                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, snowballScale));
                             break;
                         case 2:
                             PhotonNetwork.RaiseEvent(176, new object[]
                             {
-                            GrowingSnowball.changeSizeEvent._eventId,
-                            customNetworkedSize > 0 ? customNetworkedSize : (int)Scale
+                                GrowingSnowball.changeSizeEvent._eventId,
+                                customNetworkedSize ?? snowballScale,
                             }, new RaiseEventOptions
                             {
                                 TargetActors = new[] { Target.ActorNumber }
@@ -1583,10 +1445,10 @@ namespace iiMenu.Mods
 
                             PhotonNetwork.RaiseEvent(176, new object[]
                             {
-                            GrowingSnowball.snowballThrowEvent._eventId,
-                            Pos,
-                            Vel,
-                            GetProjectileIncrement(Pos, Vel, Scale)
+                                GrowingSnowball.snowballThrowEvent._eventId,
+                                Pos,
+                                Vel,
+                            GetProjectileIncrement(Pos, Vel, snowballScale)
                             }, new RaiseEventOptions
                             {
                                 TargetActors = new[] { Target.ActorNumber }
@@ -1625,12 +1487,11 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 50f, 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1642,7 +1503,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), Vector3.zero, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1654,7 +1515,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1666,7 +1527,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(Time.frameCount / 30f), 2f, MathF.Sin(Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(Time.frameCount / 30f), 2f, MathF.Sin(Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1678,7 +1539,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomVector3() * 20f, 5f, 0);
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomVector3() * 20f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1689,12 +1550,11 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 10f, 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1704,7 +1564,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength * 5f;
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
                 if (Mouse.current.leftButton.isPressed)
                 {
                     Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -1714,7 +1574,7 @@ namespace iiMenu.Mods
                     velocity *= ShootStrength * 2f;
                 }
 
-                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity, 5f, 0);
+                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity, 0);
                 snowballDelay = Time.time + snowballSpawnDelay;
             }
         }
@@ -1725,13 +1585,12 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null && Time.time > snowballDelay)
                 {
-                    Vector3 velocity = lockTarget.rightHandTransform.transform.forward * ShootStrength * 5f;
+                    Vector3 velocity = lockTarget.rightHandTransform.transform.forward * (ShootStrength * 5f);
 
-                    BetaSpawnSnowball(lockTarget.rightHandTransform.transform.position, velocity, 5f, 0);
+                    BetaSpawnSnowball(lockTarget.rightHandTransform.transform.position, velocity, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
                 if (GetGunInput(true))
@@ -1759,12 +1618,11 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 0f, 0f), 15f, 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 0f, 0f), 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1776,7 +1634,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
@@ -1799,7 +1656,7 @@ namespace iiMenu.Mods
                     if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position;
-                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -1817,7 +1674,7 @@ namespace iiMenu.Mods
                         if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3f)
                         {
                             Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position;
-                            BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+                            BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
                             snowballDelay = Time.time + snowballSpawnDelay;
                             if (PhotonNetwork.InRoom)
                             {
@@ -1835,7 +1692,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > snowballDelay)
             {
-                BetaSpawnSnowball(GetVRRigFromPlayer(player).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(player));
+                BetaSpawnSnowball(GetVRRigFromPlayer(player).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(player));
                 snowballDelay = Time.time + snowballSpawnDelay;
             }
         }
@@ -1848,7 +1705,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     FlingPlayer(lockTarget);
@@ -1882,13 +1738,12 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -1916,7 +1771,7 @@ namespace iiMenu.Mods
                 snowballDelay = Time.time + snowballSpawnDelay;
 
                 Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
-                BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, plr);
+                BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, plr);
             }
         }
 
@@ -1925,7 +1780,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
@@ -1933,7 +1787,7 @@ namespace iiMenu.Mods
                     snowballDelay = Time.time + snowballSpawnDelay;
                     Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
                     Vector3 targetDirection = (NewPointer.transform.position - GetVRRigFromPlayer(plr).headMesh.transform.position).normalized;
-                    BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z) / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
+                    BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z) / 1.7f, new Vector3(0f, -500f, 0f), 2, plr);
                 }
             }
         }
@@ -1943,12 +1797,11 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -500f, 0f), 15f, 1);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -500f, 0f), 1);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1960,14 +1813,13 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
                         Vector3 targetDirection = (lockTarget.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized;
-                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -1994,14 +1846,13 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
                         Vector3 targetDirection = (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized;
-                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -2028,14 +1879,13 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position;
-                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -2062,13 +1912,12 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + snowballSpawnDelay;
                     }
                 }
@@ -2094,7 +1943,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
                 snowballDelay = Time.time + snowballSpawnDelay;
-                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 1);
+                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 1);
             }
         }
 
@@ -2119,7 +1968,7 @@ namespace iiMenu.Mods
                 Safety.AntiReport((vrrig, position) =>
                 {
                     snowballDelay = Time.time + snowballSpawnDelay;
-                    BetaSpawnSnowball(position, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)));
+                    BetaSpawnSnowball(position, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)));
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
                 });
             }
@@ -2215,7 +2064,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -2268,7 +2116,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -2289,7 +2136,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -2322,13 +2168,10 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.2f;
-                foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                 {
-                    if (!plr.isLocal)
-                    {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 20f);
-                        RPCProtection();
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 20f);
+                    RPCProtection();
                 }
             }
         }
@@ -2339,7 +2182,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -2372,13 +2214,10 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.2f;
-                foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                 {
-                    if (!plr.isLocal)
-                    {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (plr.transform.position - GorillaTagger.Instance.bodyCollider.transform.position).normalized * 20f);
-                        RPCProtection();
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (plr.transform.position - GorillaTagger.Instance.bodyCollider.transform.position).normalized * 20f);
+                    RPCProtection();
                 }
             }
         }
@@ -2394,7 +2233,7 @@ namespace iiMenu.Mods
                 VRRig[] rigs = GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).ToArray();
                 foreach (VRRig rig in rigs)
                 {
-                    float offset = (360f / rigs.Length) * index;
+                    float offset = 360f / rigs.Length * index;
                     Vector3 targetPosition = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + Time.time) * scale, 2, MathF.Sin(offset + Time.time) * scale);
 
                     BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (targetPosition - rig.transform.position) * 1f);
@@ -2411,7 +2250,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -2447,16 +2285,10 @@ namespace iiMenu.Mods
             if (Time.time > thingdeb)
             {
                 thingdeb = Time.time + 0.1f;
-                foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal).Where(plr => plr.rightThumb.calcT > 0.5f))
                 {
-                    if (!plr.isLocal)
-                    {
-                        if (plr.rightThumb.calcT > 0.5f)
-                        {
-                            BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), plr.headMesh.transform.forward * Movement._flySpeed);
-                            RPCProtection();
-                        }
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), plr.headMesh.transform.forward * Movement._flySpeed);
+                    RPCProtection();
                 }
             }
         }
@@ -2481,19 +2313,13 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float>();
-        private static float GetBoxingDelay(VRRig rig)
-        {
-            if (boxingDelay.ContainsKey(rig))
-                return boxingDelay[rig];
-
-            return -1;
-        }
+        private static readonly Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float>();
+        private static float GetBoxingDelay(VRRig rig) =>
+            boxingDelay.GetValueOrDefault(rig, -1);
 
         private static void SetBoxingDelay(VRRig rig)
         {
-            if (boxingDelay.ContainsKey(rig))
-                boxingDelay.Remove(rig);
+            boxingDelay.Remove(rig);
 
             boxingDelay.Add(rig, Time.time + 0.5f);
         }
@@ -2505,15 +2331,10 @@ namespace iiMenu.Mods
                 if (Time.time < GetBoxingDelay(rig1))
                     continue;
 
-                foreach (VRRig rig2 in GorillaParent.instance.vrrigs)
+                foreach (var targetDirection in from rig2 in GorillaParent.instance.vrrigs where rig2 != rig1 where Vector3.Distance(rig2.leftHandTransform.position, rig1.headMesh.transform.position) < 0.25f || Vector3.Distance(rig2.rightHandTransform.position, rig1.headMesh.transform.position) < 0.25f select (rig1.headMesh.transform.position - rig2.headMesh.transform.position) * 20f)
                 {
-                    if (rig2 == rig1) continue;
-                    if (Vector3.Distance(rig2.leftHandTransform.position, rig1.headMesh.transform.position) < 0.25f || Vector3.Distance(rig2.rightHandTransform.position, rig1.headMesh.transform.position) < 0.25f)
-                    {
-                        Vector3 targetDirection = (rig1.headMesh.transform.position - rig2.headMesh.transform.position) * 20f;
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig1), targetDirection);
-                        SetBoxingDelay(rig1);
-                    }
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(rig1), targetDirection);
+                    SetBoxingDelay(rig1);
                 }
             }
         }
@@ -2523,18 +2344,15 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
                     if (Time.time > kgDebounce)
                     {
-                        foreach (VRRig plr in GorillaParent.instance.vrrigs)
-                        {
-                            if (!plr.isLocal)
-                                BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(NewPointer.transform.position - plr.transform.position) * 50f);
-                        }
+                        foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(NewPointer.transform.position - plr.transform.position) * 50f);
+                        
                         RPCProtection();
                         kgDebounce = Time.time + 0.2f;
                     }
@@ -2547,18 +2365,15 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
                     if (Time.time > kgDebounce)
                     {
-                        foreach (VRRig plr in GorillaParent.instance.vrrigs)
-                        {
-                            if (!plr.isLocal)
-                                BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(plr.transform.position - NewPointer.transform.position) * 50f);
-                        }
+                        foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(plr.transform.position - NewPointer.transform.position) * 50f);
+                        
                         RPCProtection();
                         kgDebounce = Time.time + 0.2f;
                     }
@@ -2630,7 +2445,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -2844,7 +2658,6 @@ namespace iiMenu.Mods
             Fun.HueShift(new Color32(120, 47, 196, 100));
 
             ZaWarudo_StartCoroutineVariable = null;
-            yield break;
         }
 
         public static IEnumerator ZaWarudo_StopCoroutine()
@@ -2865,7 +2678,6 @@ namespace iiMenu.Mods
             Fun.HueShift(Color.clear);
 
             ZaWarudo_EndCoroutineVariable = null;
-            yield break;
         }
 
         private static float lagDebounce;
@@ -2873,20 +2685,26 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom && Time.time > lagDebounce)
             {
-                if (general is NetPlayer player)
+                switch (general)
                 {
-                    for (int i = 0; i < lagAmount; i++)
-                       FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", NetPlayerToPlayer(player), new object[] { null });
-                }
-                else if (general is RpcTarget target)
-                {
-                    for (int i = 0; i < lagAmount; i++)
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", target, new object[] { null });
-                }
-                else if (general is int[] targets)
-                {
-                    for (int i = 0; i < lagAmount; i++)
-                        SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = targets }, new object[] { null });
+                    case NetPlayer player:
+                    {
+                        for (int i = 0; i < lagAmount; i++)
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", NetPlayerToPlayer(player), new object[] { null });
+                        break;
+                    }
+                    case RpcTarget target:
+                    {
+                        for (int i = 0; i < lagAmount; i++)
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", target, new object[] { null });
+                        break;
+                    }
+                    case int[] targets:
+                    {
+                        for (int i = 0; i < lagAmount; i++)
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = targets }, new object[] { null });
+                        break;
+                    }
                 }
 
                 RPCProtection();
@@ -2900,7 +2718,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     LagTarget(GetPlayerFromVRRig(lockTarget));
@@ -2926,11 +2743,8 @@ namespace iiMenu.Mods
 
         public static void LagAura()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
-                    LagTarget(GetPlayerFromVRRig(vrrig));
-            }
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig)))
+                LagTarget(GetPlayerFromVRRig(vrrig));
         }
 
         private static float antiReportLagDelay;
@@ -2974,7 +2788,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -3052,7 +2865,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -3100,7 +2912,7 @@ namespace iiMenu.Mods
         public static void SlowSelf()
         {
             NetPlayer player = PhotonNetwork.LocalPlayer;
-            BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
+            BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
             RPCProtection();
         }
 
@@ -3110,7 +2922,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -3118,7 +2929,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
+                        BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 1f;
                     }
@@ -3140,7 +2951,7 @@ namespace iiMenu.Mods
         {
             
             NetPlayer owner = PhotonNetwork.LocalPlayer;
-            BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
+            BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new[] { owner.ActorNumber } });
             RPCProtection();
         }
 
@@ -3150,7 +2961,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -3158,7 +2968,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
+                        BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new[] { owner.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 0.5f;
                     }
@@ -3182,7 +2992,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -3219,23 +3028,20 @@ namespace iiMenu.Mods
         {
             GliderHoldable[] those = GetAllType<GliderHoldable>();
             int index = 0;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
             {
-                if (!vrrig.isLocal)
+                try
                 {
-                    try
+                    GliderHoldable glider = those[index];
+                    if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                     {
-                        GliderHoldable glider = those[index];
-                        if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                        {
-                            glider.gameObject.transform.position = vrrig.headMesh.transform.position;
-                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
-                        }
-                        else
-                            glider.OnHover(null, null);
-                    } catch { }
-                    index++;
-                }
+                        glider.gameObject.transform.position = vrrig.headMesh.transform.position;
+                        glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
+                    }
+                    else
+                        glider.OnHover(null, null);
+                } catch { }
+                index++;
             }
         }
 
@@ -3245,7 +3051,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3355,7 +3160,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -3401,7 +3205,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -3421,7 +3224,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > RopeDelay)
@@ -3499,7 +3301,10 @@ namespace iiMenu.Mods
                         if (critter)
                             critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
                         CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                     }
                 }
@@ -3577,7 +3382,10 @@ namespace iiMenu.Mods
                             if (critter)
                                 critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            if (localGrabber != null)
+                                CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                    CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                    Quaternion.identity, Vector3.zero, false);
                             CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                         }
                     }
@@ -3628,7 +3436,10 @@ namespace iiMenu.Mods
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
                         CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero);
                     }
                 }
@@ -3681,7 +3492,10 @@ namespace iiMenu.Mods
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
                         CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero);
                     }
                 }
@@ -3695,7 +3509,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -3739,7 +3552,10 @@ namespace iiMenu.Mods
                             critter.transform.position = NewPointer.transform.position + Vector3.up;
                             critter.transform.rotation = RandomQuaternion();
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            if (localGrabber != null)
+                                CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                    CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                    Quaternion.identity, Vector3.zero, false);
                             CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero);
                         }
                     }
@@ -3806,7 +3622,10 @@ namespace iiMenu.Mods
                         if (critter)
                             critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
                         CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                     }
                 }
@@ -3879,7 +3698,10 @@ namespace iiMenu.Mods
                             if (critter)
                                 critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            if (localGrabber != null)
+                                CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                    CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                    Quaternion.identity, Vector3.zero, false);
                             CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                         }
                     }

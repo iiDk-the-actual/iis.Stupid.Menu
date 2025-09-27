@@ -32,7 +32,7 @@ namespace iiMenu.Patches.Menu
     [HarmonyPatch(typeof(GameMode), "ReportTag")]
     public class TagPatch
     {
-        public static List<NetPlayer> taggedPlayers = new List<NetPlayer>();
+        public static readonly List<NetPlayer> taggedPlayers = new List<NetPlayer>();
 
         public static bool enabled;
         public static float tagDelay;

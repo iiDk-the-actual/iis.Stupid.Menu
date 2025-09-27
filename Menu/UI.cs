@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using BepInEx;
 using GorillaNetworking;
 using iiMenu.Classes.Menu;
@@ -122,7 +121,7 @@ namespace iiMenu.Menu
                         {
                             alignment = TextAnchor.LowerRight
                         };
-                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build") : "Build")+" "+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
+                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build") : "Build")+" "+PluginInfo.Version+"\n"+serverLink.Replace("https://", ""), style);
                     }
                 }
                 catch { }
@@ -226,7 +225,6 @@ namespace iiMenu.Menu
                         categoryIndex++;
                     }
 
-                    Regex notags = new Regex("<.*?>");
                     string[] sortedButtons = alphabetized
                         .OrderByDescending(s => labelStyle.CalcSize(new GUIContent(NoRichtextTags(s))).x)
                         .ToArray();

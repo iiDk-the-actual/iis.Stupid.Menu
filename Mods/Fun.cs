@@ -85,13 +85,13 @@ namespace iiMenu.Mods
  
 
         public static float lastBangTime;
-        public static float BPM = 159f;
+        public static readonly float BPM = 159f;
         public static void HeadBang()
         {
             if (Time.time > lastBangTime)
             {
                 VRRig.LocalRig.head.trackingRotationOffset.x = 50f;
-                lastBangTime = Time.time + (60f/BPM);
+                lastBangTime = Time.time + 60f/BPM;
             } 
             else
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
@@ -256,7 +256,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > kgDebounce)
                 {
@@ -489,7 +488,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -545,7 +543,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > splashDel)
@@ -640,7 +637,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static List<object[]> keyLogs = new List<object[]>();
+        public static readonly List<object[]> keyLogs = new List<object[]>();
         public static bool keyboardTrackerEnabled;
         public static void KeyboardTracker()
         {
@@ -762,7 +759,6 @@ namespace iiMenu.Mods
                 {
                     var GunData = RenderGun();
                     RaycastHit Ray = GunData.Ray;
-                    GameObject NewPointer = GunData.NewPointer;
 
                     if (GetGunInput(true))
                     {
@@ -802,7 +798,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
@@ -846,7 +841,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
@@ -875,7 +869,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -1114,7 +1107,7 @@ namespace iiMenu.Mods
             }
             List<Color> rgbColors = new List<Color>();
             for (int i=0; i<10; i++)
-                rgbColors.Add(Color.HSVToRGB(((Time.frameCount / 180f) + (i / 10f)) % 1f, 1f, 1f));
+                rgbColors.Add(Color.HSVToRGB((Time.frameCount / 180f + i / 10f) % 1f, 1f, 1f));
             
             VRRig.LocalRig.reliableState.isBraceletLeftHanded = false;
             VRRig.LocalRig.reliableState.braceletSelfIndex = 99;
@@ -1338,7 +1331,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1377,7 +1369,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1416,7 +1407,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1523,7 +1513,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1551,7 +1540,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1605,7 +1593,7 @@ namespace iiMenu.Mods
 
             public class PitchProcessor : IProcessor<float>
             {
-                private float pitch;
+                private readonly float pitch;
 
                 public PitchProcessor(float pitchFactor) =>
                     pitch = Mathf.Clamp(pitchFactor, 0.5f, 2f);
@@ -1639,7 +1627,7 @@ namespace iiMenu.Mods
 
         public class LoopbackFactory : IAudioReader<float>
         {
-            private Queue<float> buffer = new Queue<float>();
+            private readonly Queue<float> buffer = new Queue<float>();
 
             public void Feed(float[] data)
             {
@@ -1768,7 +1756,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1832,7 +1819,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1849,7 +1835,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1871,7 +1856,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1911,7 +1895,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > hoverboardGunDelay)
@@ -1929,7 +1912,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1947,7 +1929,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1968,7 +1949,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -2396,8 +2376,8 @@ Piece Name: {gunTarget.name}";
 
             Vector3 angVel = rig.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
 
-            Vector3 HoverboardPos = rig.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + (rig.LatestVelocity() * 0.5f);
-            Quaternion HoverboardRotation = (rig.headMesh.transform.rotation * Quaternion.Euler(angVel * Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
+            Vector3 HoverboardPos = rig.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + rig.LatestVelocity() * 0.5f;
+            Quaternion HoverboardRotation = rig.headMesh.transform.rotation * Quaternion.Euler(angVel * Mathf.Rad2Deg * 0.1f) * Quaternion.Euler(0f, 90f, 270f);
 
             VRRig.LocalRig.enabled = false;
             VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
@@ -2497,18 +2477,18 @@ Piece Name: {gunTarget.name}";
                 hoverboardSpamDelay = Time.time + 0.25f;
 
                 float offset = 0f;
-                Vector3 position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                Vector3 position = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 offset = -25f;
-                Vector3 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                Vector3 position2 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
 
                 offset = 180f;
-                position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                position = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 offset = 155f;
-                position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                position2 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
             }
@@ -2527,7 +2507,7 @@ Piece Name: {gunTarget.name}";
         {
             if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
             {
-                float h = (Time.frameCount / 180f) % 1f;
+                float h = Time.frameCount / 180f % 1f;
                 Color rgbColor = Color.HSVToRGB(h, 1f, 1f);
                 VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, VRRig.LocalRig.hoverboardVisual.NominalLocalRotation, rgbColor);
             }
@@ -3065,7 +3045,7 @@ Piece Name: {gunTarget.name}";
                         Projectiles.BetaFireProjectile(projectileName, GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomColor());
                         break;
                     case 6:
-                        Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Overpowered.snowballScale, 0);
+                        Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, 0);
                         break;
                 }
             }
@@ -3119,7 +3099,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3161,7 +3140,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3295,7 +3273,7 @@ Piece Name: {gunTarget.name}";
                 bug.maxNaturalSpeed = speed;
         }
 
-        private static Dictionary<string, bool> lastInAirValues = new Dictionary<string, bool>();
+        private static readonly Dictionary<string, bool> lastInAirValues = new Dictionary<string, bool>();
         public static void PhysicalObject(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
@@ -3596,7 +3574,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -3620,9 +3597,9 @@ Piece Name: {gunTarget.name}";
                     transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
                     VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = NewPointer.transform.position - (Vector3.up * 0.5f);
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position - Vector3.up * 0.5f;
 
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + (Vector3.up * handOffset);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + Vector3.up * handOffset;
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = handRotation;
 
                     VRRig.LocalRig.rightIndex.calcT = 1f;
@@ -3642,7 +3619,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
@@ -3692,7 +3668,7 @@ Piece Name: {gunTarget.name}";
                 if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
                 {
                     Vector3 targetDirection = rig.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position;
-                    SendBarrelProjectile(rig.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+                    SendBarrelProjectile(rig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
                 }
             }
         }
@@ -3703,7 +3679,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
@@ -3750,12 +3725,11 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - lockTarget.headMesh.transform.position;
-                    SendBarrelProjectile(lockTarget.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position + (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
                 }
 
                 if (GetGunInput(true))
@@ -3787,7 +3761,7 @@ Piece Name: {gunTarget.name}";
                 if (PlayerIsLocal(TargetRig)) continue;
 
                 Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - TargetRig.headMesh.transform.position;
-                SendBarrelProjectile(TargetRig.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f), targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+                SendBarrelProjectile(TargetRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
 
                 if (Time.time > barrelAllDelay)
                     throwableProjectileTimeout = 0f;
@@ -3803,10 +3777,9 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    SendBarrelProjectile(lockTarget.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position + (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f, (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
 
                 if (GetGunInput(true))
                 {
@@ -3838,7 +3811,7 @@ Piece Name: {gunTarget.name}";
                 foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
                 {
                     if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position + ((GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f), (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
+                    SendBarrelProjectile(TargetRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
                 }
             }
         }
@@ -3849,10 +3822,9 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    SendBarrelProjectile(lockTarget.transform.position + ((new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 0.1f), (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position + (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
 
                 if (GetGunInput(true))
                 {
@@ -3877,7 +3849,7 @@ Piece Name: {gunTarget.name}";
         public static void CityKickAll()
         {
             VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position + ((new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 0.1f), (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+            SendBarrelProjectile(TargetRig.transform.position + (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
         }
 
         private static float elevatorKickDelay;
@@ -3887,7 +3859,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -3896,7 +3867,6 @@ Piece Name: {gunTarget.name}";
                     {
                         elevatorKickDelay = Time.time + 0.5f;
 
-                        GRElevator currentElevator = GRElevatorManager._instance.elevatorByLocation[GRElevatorManager._instance.currentLocation];
                         Overpowered.SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { Receivers = ReceiverGroup.Others }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
                         RPCProtection();
                     }
@@ -3950,7 +3920,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     WhiteColorTarget(lockTarget);
@@ -3984,7 +3953,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     BlackColorTarget(lockTarget);
@@ -4030,7 +3998,7 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.enabled = false;
             VRRig.LocalRig.transform.position = rig.transform.position;
 
-            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * ((Time.time * 5f % 1f) - 0.5f));
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + Vector3.up * (Time.time * 5f % 1f - 0.5f);
             VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.identity;
 
             VRRig.LocalRig.rightIndex.calcT = 1f;
@@ -4046,7 +4014,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     ChickenTarget(lockTarget);
@@ -4134,7 +4101,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -4229,7 +4195,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -4247,7 +4212,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -4281,7 +4245,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -4323,7 +4286,7 @@ Piece Name: {gunTarget.name}";
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 else
                 {
-                    VRRig rigTarget = GetVRRigFromPlayer(target);
+                    GetVRRigFromPlayer(target);
                     RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
                     RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
                     RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
@@ -4339,7 +4302,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -4376,7 +4338,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (position != Vector3.zero)
@@ -4440,7 +4401,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -4460,7 +4420,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -4592,7 +4551,7 @@ Piece Name: {gunTarget.name}";
                         return;
 
                     if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
-                        position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
+                        position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * 2.5f;
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, velocity ?? Vector3.zero, angVelocity ?? Vector3.zero);
@@ -4619,7 +4578,7 @@ Piece Name: {gunTarget.name}";
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, Networking.CreateLocalCommandId(), piece.pieceId, attachPiece != null ? attachPiece.pieceId : -1, BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ), (parentPiece != null) ? parentPiece.pieceId : -1, attachIndex, parentAttachIndex, PhotonNetwork.LocalPlayer, PhotonNetwork.ServerTimestamp);
+                Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, Networking.CreateLocalCommandId(), piece.pieceId, attachPiece != null ? attachPiece.pieceId : -1, BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ), parentPiece != null ? parentPiece.pieceId : -1, attachIndex, parentAttachIndex, PhotonNetwork.LocalPlayer, PhotonNetwork.ServerTimestamp);
             }
             else
             {
@@ -4725,7 +4684,7 @@ Piece Name: {gunTarget.name}";
         {
             ThrowableBug bug = GetBug(objectName);
             if (bug != null)
-                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 1, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30), 1, MathF.Sin(offset + (float)Time.frameCount / 30));
         }
 
         public static void OrbitCamera()
@@ -4737,7 +4696,7 @@ Piece Name: {gunTarget.name}";
             camera.CoconutCamera.SetVisualsActive(true);
             camera.CoconutCamera.SetRecordingState(true);
 
-            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(240f + ((float)Time.frameCount / 30)), 1, MathF.Sin(240f + ((float)Time.frameCount / 30)));
+            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(240f + (float)Time.frameCount / 30), 1, MathF.Sin(240f + (float)Time.frameCount / 30));
         }
 
         public static void ObjectAura(string objectName)
@@ -4811,8 +4770,8 @@ Piece Name: {gunTarget.name}";
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                 {
-                    float offset = (360f / them.Length) * index;
-                    glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                    float offset = 360f / them.Length * index;
+                    glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 5f, 2, MathF.Sin(offset + (float)Time.frameCount / 30) * 5f);
                 }
                 else
                     glider.OnHover(null, null);
@@ -5156,7 +5115,7 @@ Piece Name: {gunTarget.name}";
             if (rightGrab && !lastgripcrap)
                 CoroutineManager.RunCoroutine(CreateShotgun());
 
-            if (rightGrab && (rightTrigger > 0.5f && !lasttrigcrap))
+            if (rightGrab && rightTrigger > 0.5f && !lasttrigcrap)
                 CoroutineManager.RunCoroutine(FireShotgun());
 
             lastgripcrap = rightGrab;
@@ -5242,7 +5201,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -5272,8 +5230,8 @@ Piece Name: {gunTarget.name}";
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-                float offset = (360f / them.Length) * index;
-                monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                float offset = 360f / them.Length * index;
+                monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
                 index++;
             }
         }
@@ -5287,7 +5245,7 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece>();
+        private static readonly List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece>();
         public static void GrabAllBlocksNearby()
         {
             if (rightGrab && Time.time > blockDelay)
@@ -5412,8 +5370,8 @@ Piece Name: {gunTarget.name}";
             {
                 if (balloon.ownerRig.isLocal)
                 {
-                    float offset = (360f / them.Length) * index;
-                    balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                    float offset = 360f / them.Length * index;
+                    balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 5f, 2, MathF.Sin(offset + (float)Time.frameCount / 30) * 5f);
                 }
                 else
                     balloon.WorldShareableRequestOwnership();
@@ -5427,7 +5385,6 @@ Piece Name: {gunTarget.name}";
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -5574,7 +5531,7 @@ Piece Name: {gunTarget.name}";
             if (Time.time > colorChangerDelay)
             {
                 colorChangerDelay = Time.time + 0.05f;
-                float h = (Time.frameCount / 180f) % 1f;
+                float h = Time.frameCount / 180f % 1f;
                 ChangeColor(Color.HSVToRGB(h, 1f, 1f));
             }
         }
@@ -5630,7 +5587,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
@@ -5754,11 +5710,11 @@ Piece Name: {gunTarget.name}";
             lastHitRS = rightSecondary;
         }
 
-        private static Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]>();
+        private static readonly Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]>();
         public static int[] PackCosmetics(string[] Cosmetics)
         {
-            if (cachePacked.ContainsKey(Cosmetics))
-                return cachePacked[Cosmetics];
+            if (cachePacked.TryGetValue(Cosmetics, out var cosmetics))
+                return cosmetics;
 
             CosmeticsController.CosmeticSet Set = new CosmeticsController.CosmeticSet(Cosmetics, CosmeticsController.instance);
             int[] PackedIDs = Set.ToPackedIDArray();
@@ -6046,7 +6002,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
@@ -6075,7 +6030,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
@@ -6117,7 +6071,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -6153,7 +6106,6 @@ Piece Name: {gunTarget.name}";
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
