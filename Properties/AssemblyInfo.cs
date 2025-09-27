@@ -32,7 +32,14 @@ using iiMenu;
 
 [assembly: AssemblyFileVersion(PluginInfo.Version + ".0")]
 [assembly: AssemblyInformationalVersion(PluginInfo.Version)]
+[assembly: AssemblyVersion(PluginInfo.Version + ".0")]
+
+#if DEBUG
+[assembly: AssemblyProduct(PluginInfo.Name + " [Debug]")]
+[assembly: AssemblyTitle(PluginInfo.Name + " [Debug]")]
+#else
 [assembly: AssemblyProduct(PluginInfo.Name)]
 [assembly: AssemblyTitle(PluginInfo.Name)]
-[assembly: AssemblyVersion(PluginInfo.Version + ".0")]
-[assembly: AssemblyDescription(PluginInfo.Description)]
+#endif
+
+[assembly: AssemblyDescription(PluginInfo.Description + " [Debug]")]
