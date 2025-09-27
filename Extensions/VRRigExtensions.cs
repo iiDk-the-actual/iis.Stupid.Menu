@@ -21,6 +21,7 @@
 
 using System.Linq;
 using iiMenu.Managers;
+using Photon.Pun;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -53,6 +54,14 @@ namespace iiMenu.Extensions
             GorillaParent.instance.vrrigs.Where(targetRig => targetRig != null && targetRig != rig)
                                          .OrderBy(targetRig => rig.Distance(targetRig))
                                          .FirstOrDefault();
+
+        public static int GetPing(this VRRig rig)
+        {
+            if (playerPing.TryGetValue(rig, out int ping))
+                return ping;
+            else
+                return PhotonNetwork.GetPing();
+        }
 
         public static string GetName(this VRRig rig) =>
             RigManager.GetPlayerFromVRRig(rig)?.NickName ?? "null";
