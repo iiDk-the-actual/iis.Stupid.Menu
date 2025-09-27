@@ -26,8 +26,11 @@ namespace iiMenu.Extensions
 {
     public static class VectorExtensions
     {
-        public static void Distance(this Vector3 point, Vector3 to) =>
+        public static float Distance(this Vector3 point, Vector3 to) =>
             Vector3.Distance(point, to);
+
+        public static Vector3 Lerp(this Vector3 a, Vector3 b, float t) =>
+            Vector3.Lerp(a, b, t);
 
         public static long Pack(this Vector3 vec) =>
             BitPackUtils.PackWorldPosForNetwork(vec);
