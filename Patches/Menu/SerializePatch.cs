@@ -19,10 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System;
 using HarmonyLib;
 using iiMenu.Managers;
 using Photon.Pun;
+﻿using System;
 
 namespace iiMenu.Patches.Menu
 {

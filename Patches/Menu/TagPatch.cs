@@ -19,12 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System;
-using System.Collections.Generic;
 using GorillaGameModes;
 using HarmonyLib;
 using iiMenu.Menu;
 using Photon.Pun;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace iiMenu.Patches.Menu

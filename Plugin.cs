@@ -19,9 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using iiMenu.Classes.Menu;
@@ -30,6 +27,9 @@ using iiMenu.Menu;
 using iiMenu.Notifications;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using Console = System.Console;
 

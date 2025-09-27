@@ -19,10 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System.Linq;
 using ExitGames.Client.Photon;
 using HarmonyLib;
 using Photon.Realtime;
+﻿using System.Linq;
 
 namespace iiMenu.Patches.Menu
 {

@@ -19,16 +19,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaTagScripts.VirtualStumpCustomMaps;
+using iiMenu.Classes.Menu;
+using iiMenu.Managers;
+using iiMenu.Menu;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using GorillaTagScripts.VirtualStumpCustomMaps;
-using iiMenu.Classes.Menu;
-using iiMenu.Managers;
-using iiMenu.Menu;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.CustomMaps

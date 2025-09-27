@@ -19,15 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -38,6 +29,15 @@ using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Networking;

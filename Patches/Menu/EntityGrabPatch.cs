@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System.Collections.Generic;
 using HarmonyLib;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace iiMenu.Patches.Menu

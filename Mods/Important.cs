@@ -19,6 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaNetworking;
+using HarmonyLib;
+using iiMenu.Extensions;
+using iiMenu.Managers;
+using iiMenu.Notifications;
+using iiMenu.Patches.Menu;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -27,13 +34,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using GorillaNetworking;
-using HarmonyLib;
-using iiMenu.Extensions;
-using iiMenu.Managers;
-using iiMenu.Notifications;
-using iiMenu.Patches.Menu;
-using Photon.Pun;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
