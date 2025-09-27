@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Menu
     public class PhotonTimePatch
     {
         public static bool enabled;
-        public static readonly int distTime = 0;
+        public static int distTime = 0;
 
         public static void Postfix(ref int __result)
         {
