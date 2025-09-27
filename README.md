@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="#"><img src="https://i.imgur.com/aOzcbjM.png"></a>
-  <a href="#"><img src="https://i.imgur.com/W2ZjSPs.png"></a>
+  <a href="#"><img src="Resources/GitHub/icon.png"></a>
+  <a href="#"><img src="Resources/GitHub/title.png"></a>
 </p>
 
 ---
@@ -13,12 +13,14 @@
 
 ---
 
-# ii's Stupid Menu  
+# <img src="Resources/GitHub/cone-emoji.png" height=26px> ii's Stupid Menu  
+
 ii's Stupid Menu is a **feature-packed** mod menu for Gorilla Tag, built by me, [**iiDk**](https://github.com/iiDk-the-actual). Whether you just want mods, are a developer, or anything inbetween, this menu has you covered. Designed to be **as useful as possible**, it includes a variety of features and options that let you customize your modding experience to your heart’s content.  
 
 > Why settle for boring when you can have *stupidly* good?  
 
 ## 💡 Why open-source?  
+
 Great question. The modding community used to be about **sharing, learning, and improving** together. But nowadays, everything’s locked behind **paywalls and obfuscation**. That’s not how it should be.  
 
 By making this menu open-source, I'm giving **everyone** the opportunity to:  
@@ -30,35 +32,50 @@ By making this menu open-source, I'm giving **everyone** the opportunity to:
 Let's bring back the collaboration of modding. No paywalls, no secrets, no malware, just good mods.  
 
 ## ❓ Can I use your code?  
+
 Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html) rules apply**, which means that if you use my code:  
 - Your project **must** also be open-source.  
 - Give credit where it's due.
 - No shady stuff.
-- [Follow the license.](https://www.gnu.org/licenses/gpl-3.0.html)
+- **[Follow the license.](https://www.gnu.org/licenses/gpl-3.0.html)**
 
-> **"You wouldn’t steal a method."**  
-> [🎥 (Or would you?)](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
+> "You wouldn’t steal a method."<br>
+> [🎥 *(Or would you?)*](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
 
 ---
 
 # 📥 Installation  
-1. **Download** the latest release [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)  
-2. **Drag & Drop** `iis_Stupid_Menu.dll` into your **plugins** folder  
+
+1. **Download** the latest release **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
+2. **Drag & Drop** `iis_Stupid_Menu.dll` into your plugins folder  
 3. **Launch** Gorilla Tag and enjoy!
 
-## 🧱 From source (for developers!)
+## 🧱 From Source Code (for developers!)
 
-1. Download the source code [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
+1. Download the source code **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
 2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
-3. Build the project with `Ctrl + Shift + B`
-✅ The DLL will automatically go into your Gorilla Tag **plugins folder**<br>
+3. Build the project with `Ctrl + Shift + B`<Br>
+✅ The DLL will automatically go into your Gorilla Tag plugins folder
 
 ---
 
-## 🗣️ Contact Information
+# 🗣️ Contact Information
 
 Need help or want to collaborate? Contact me from the links on my **[website](https://iidk.dev)** or join the **[Discord server](https://discord.gg/iidk)**.  
-Feel like something is missing? Read the [Contributing](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file) tab.
+Feel like something is missing? Become a **[contributor](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file)**!
+
+# ❤️ Support
+
+If you wish to support me, here are some of the ways you can!
+
+| Platform   | Link | Address |
+|------------|------|---------|
+| Patreon    | [![Patreon](https://img.shields.io/badge/Patreon-iiDk-orange?style=for-the-badge&logo=patreon)](https://www.patreon.com/iiDk) | [iiDk](https://www.patreon.com/iiDk) |
+| Bitcoin    | [![BTC](https://img.shields.io/badge/Bitcoin-Donate-yellow?style=for-the-badge&logo=bitcoin)](bitcoin:bc1qtmrqtq4ag720tvux64ff3rjp632jy2d447p3nx) | [bc1qtmrqtq4ag720tvux64ff3rjp632jy2d447p3nx](bitcoin:bc1qtmrqtq4ag720tvux64ff3rjp632jy2d447p3nx) |
+| Ethereum   | [![ETH](https://img.shields.io/badge/Ethereum-Donate-blue?style=for-the-badge&logo=ethereum)](ethereum:0xa1A78771422F602d9Ded0E8373d5A3D77E146877) | [0xa1A78771422F602d9Ded0E8373d5A3D77E146877](ethereum:0xa1A78771422F602d9Ded0E8373d5A3D77E146877) |
+| Litecoin   | [![LTC](https://img.shields.io/badge/Litecoin-Donate-lightgrey?style=for-the-badge&logo=litecoin)](litecoin:LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5) | [LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5](litecoin:LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5) |
+| CashApp    | [![CashApp](https://img.shields.io/badge/CashApp-$iiWasHere-green?style=for-the-badge&logo=cashapp)](https://cash.app/$iiWasHere) | [$iiWasHere](https://cash.app/$iiWasHere) |
+
 
 > [!NOTE] 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
@@ -83,3 +100,7 @@ Feel like something is missing? Read the [Contributing](https://github.com/iiDk-
 > 
 > You should have received a copy of the GNU General Public License
 > along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+<p align="center">
+  <img src="Resources/GitHub/byebye.gif">
+</p>
