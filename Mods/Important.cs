@@ -4,21 +4,28 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Extensions;
@@ -26,18 +33,14 @@ using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
 {
@@ -67,13 +70,13 @@ namespace iiMenu.Mods
             instance.netState = NetSystemState.Connecting;
 
             byte maxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
-            RoomConfig opts = new RoomConfig()
+            RoomConfig opts = new RoomConfig
             {
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = false,
                 MaxPlayers = maxPlayers,
-                CustomProps = new ExitGames.Client.Photon.Hashtable()
+                CustomProps = new Hashtable
                 {
                     { "gameMode", (PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest")).GetFullDesiredGameModeString() },
                     { "platform", PhotonNetworkController.Instance.platformTag },
@@ -125,7 +128,7 @@ namespace iiMenu.Mods
             }
 
             GorillaNetworkJoinTrigger trigger = PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest");
-            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.Solo);
+            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger);
         }
 
         public static IEnumerator JoinRandomDelay()
@@ -136,13 +139,13 @@ namespace iiMenu.Mods
 
         public static void CreateRoom(string roomName, bool isPublic)
         {
-            RoomConfig roomConfig = new RoomConfig()
+            RoomConfig roomConfig = new RoomConfig
             {
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
                 MaxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
-                CustomProps = new ExitGames.Client.Photon.Hashtable()
+                CustomProps = new Hashtable
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
                     { "platform", PhotonNetworkController.Instance.platformTag },
@@ -406,7 +409,7 @@ exit";
             Application.targetFrameRate = int.MaxValue;
         }
 
-        private static float keyboardDelay = 0f;
+        private static float keyboardDelay;
         public static void PCButtonClick()
         {
             if (Mouse.current.leftButton.isPressed)
@@ -418,7 +421,7 @@ exit";
                 {
                     foreach (Component component in Ray.collider.GetComponents<Component>())
                     {
-                        System.Type compType = component.GetType();
+                        Type compType = component.GetType();
                         string compName = compType.Name;
 
                         if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton"))
@@ -446,7 +449,7 @@ exit";
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
-                bool thereIsTagLag = System.Math.Abs((masterRig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
+                bool thereIsTagLag = Math.Abs((masterRig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
 
                 if (thereIsTagLag && !lastTagLag)
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
@@ -463,7 +466,7 @@ exit";
 
         public static string RandomRoomName()
         {
-            string text = GenerateRandomString(4);
+            string text = GenerateRandomString();
 
             if (GorillaComputer.instance.CheckAutoBanListForName(text))
                 return text;

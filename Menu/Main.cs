@@ -4,24 +4,37 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
@@ -37,17 +50,6 @@ using iiMenu.Patches;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -60,20 +62,25 @@ using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Managers.RigManager;
 using Button = iiMenu.Classes.Menu.Button;
+using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using JoinType = GorillaNetworking.JoinType;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 /*
  * ii's Stupid Menu, written by @goldentrophy
  * Any comments are developer comments I wrote
  * Most comments are used to find certain parts of code faster with Ctrl + F
  * Feel free to read them if you want
- *  
+ *
  * ii's Stupid Menu falls under the GPL-3.0 license
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
  *
  * If you want to support my, check out my Patreon: https://patreon.com/iiDk
  * Any support is appreciated, and it helps me make more free content for you all
-*/
+ */
 
 namespace iiMenu.Menu
 {
@@ -110,11 +117,11 @@ namespace iiMenu.Menu
                 }
                 else
                 {
-                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out leftJoystick);
-                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out rightJoystick);
+                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out leftJoystick);
+                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out rightJoystick);
 
-                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
-                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
+                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out leftJoystickClick);
+                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
                 }
 
                 if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
@@ -320,8 +327,7 @@ namespace iiMenu.Menu
                             }
                             PhotonNetworkController.Instance.UpdateTriggerScreens();
 
-                            string[] objectsWithTMPro = new string[]
-                            {
+                            string[] objectsWithTMPro = {
                                 "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
                                 "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
                                 "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
@@ -619,7 +625,7 @@ namespace iiMenu.Menu
                     string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
                     if (hidetitle && !noPageNumber) textToSet += "      ";
                     if (disableFpsCounter) textToSet = "";
-                    if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
+                    if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
 
                     fpsCount.text = textToSet;
                     if (lowercaseMode)
@@ -638,7 +644,7 @@ namespace iiMenu.Menu
 
                 if (gradientTitle && title != null)
                     title.text = RichtextGradient(NoRichtextTags(title.text),
-                        new GradientColorKey[]
+                        new[]
                         {
                             new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
                             new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
@@ -807,12 +813,12 @@ namespace iiMenu.Menu
                 if (annoyingMode)
                 {
                     OrangeUI.color = new Color32(226, 74, 44, 255);
-                    int randy = UnityEngine.Random.Range(1, 400);
+                    int randy = Random.Range(1, 400);
                     if (randy == 21)
                     {
                         VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
                         VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0, facts.Length - 1)] + "</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
                     }
                 }
 
@@ -843,7 +849,7 @@ namespace iiMenu.Menu
                         partyLastCode = null;
                         phaseTwo = false;
                         NotifiLib.ClearAllNotifications();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying.ToString() + " party member!</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member!</color>");
                         FriendshipGroupDetection.Instance.LeaveParty();
                     }
                     else
@@ -863,7 +869,7 @@ namespace iiMenu.Menu
                         if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
                         {
                             LogManager.Log("Attempting rejoin");
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, JoinType.Solo);
                             partyTime = Time.time + Important.reconnectDelay;
                         }
                     }
@@ -1024,9 +1030,9 @@ namespace iiMenu.Menu
                             if (mutedIDs.Contains(id)) continue;
                             string randomName = "gorilla";
                             for (var i = 0; i < 4; i++)
-                                randomName += UnityEngine.Random.Range(0, 9).ToString();
+                                randomName += Random.Range(0, 9).ToString();
 
-                            object[] content = new object[] {
+                            object[] content = {
                                 id,
                                 true,
                                 randomName,
@@ -1037,7 +1043,7 @@ namespace iiMenu.Menu
 
                             PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
                             {
-                                TargetActors = new int[] { -1 },
+                                TargetActors = new[] { -1 },
                                 Receivers = ReceiverGroup.All,
                                 Flags = new WebFlags(1)
                             }, SendOptions.SendReliable);
@@ -1073,7 +1079,7 @@ namespace iiMenu.Menu
                             if (nextButton)
                             {
                                 pageButtonChangeDelay = Time.time + 0.2f;
-                                PlayButtonSound("NextPage", true, false);
+                                PlayButtonSound("NextPage", true);
                                 Toggle("NextPage");
                             }
                         }
@@ -1161,7 +1167,7 @@ namespace iiMenu.Menu
 
                         if (currentCategoryName == "Enabled Mods")
                         {
-                            List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
+                            List<ButtonInfo> enabledMods = new List<ButtonInfo>();
                             int categoryIndex = 0;
                             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                             {
@@ -1365,7 +1371,7 @@ namespace iiMenu.Menu
                         if (!Settings.disabledPlugins.Contains(Plugin.Key))
                             PluginUpdate(Plugin.Value);
                     }
-                    catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
+                    catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e); }
                 }
 
                 // Menu
@@ -1925,7 +1931,7 @@ namespace iiMenu.Menu
 
             if (annoyingMode)
             {
-                menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
+                menu.transform.localScale = new Vector3(0.1f, Random.Range(10f, 40f) / 100f, 0.3825f);
                 backgroundColor = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
 
                 buttonColors[0] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
@@ -2110,8 +2116,7 @@ namespace iiMenu.Menu
 
             if (annoyingMode)
             {
-                string[] randomMenuNames = new string[]
-                {
+                string[] randomMenuNames = {
                     "ModderX",
                     "ShibaGT Gold",
                     "Kman Menu",
@@ -2126,8 +2131,8 @@ namespace iiMenu.Menu
                     "Unttile menu"
                 };
 
-                if (UnityEngine.Random.Range(1, 5) == 2)
-                    title.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
+                if (Random.Range(1, 5) == 2)
+                    title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length - 1)] + " v" + Random.Range(8, 159);
             }
             if (translate)
                 title.text = TranslateText(title.text, output => ReloadMenu());
@@ -2146,7 +2151,7 @@ namespace iiMenu.Menu
 
             if (gradientTitle)
                 title.text = RichtextGradient(NoRichtextTags(title.text),
-                    new GradientColorKey[]
+                    new[]
                     {
                         new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
                         new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
@@ -2230,7 +2235,7 @@ namespace iiMenu.Menu
             string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
             if (hidetitle && !noPageNumber) textToSet += "      ";
             if (disableFpsCounter) textToSet = "";
-            if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
+            if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
 
             fps.text = textToSet;
             if (lowercaseMode)
@@ -2378,7 +2383,7 @@ namespace iiMenu.Menu
             {
                 // Button render code
                 int buttonIndexOffset = 0;
-                ButtonInfo[] renderButtons = new ButtonInfo[] { };
+                ButtonInfo[] renderButtons = { };
 
                 try
                 {
@@ -2429,7 +2434,7 @@ namespace iiMenu.Menu
                         buttonIndexOffset += 1;
                         renderButtons = searchedMods.ToArray();
                     }
-                    else if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
+                    else if (annoyingMode && Random.Range(1, 5) == 3)
                     {
                         ButtonInfo disconnectButton = GetIndex("Disconnect");
                         renderButtons = Enumerable.Repeat(disconnectButton, 15).ToArray();
@@ -2446,7 +2451,7 @@ namespace iiMenu.Menu
                     }
                     else if (currentCategoryName == "Enabled Mods")
                     {
-                        List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
+                        List<ButtonInfo> enabledMods = new List<ButtonInfo>();
                         int categoryIndex = 0;
                         foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                         {
@@ -2524,8 +2529,8 @@ namespace iiMenu.Menu
 
                     Rigidbody comp = particle.AddComponent(typeof(Rigidbody)) as Rigidbody;
                     comp.position = menuBackground.transform.position;
-                    comp.linearVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(3f, 5f), UnityEngine.Random.Range(-3f, 3f));
-                    comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f));
+                    comp.linearVelocity = new Vector3(Random.Range(-3f, 3f), Random.Range(3f, 5f), Random.Range(-3f, 3f));
+                    comp.angularVelocity = new Vector3(Random.Range(-3f, 3f), Random.Range(-3f, 3f), Random.Range(-3f, 3f));
                 }
             }
 
@@ -2625,8 +2630,7 @@ namespace iiMenu.Menu
                     if (physicalMenu)
                         Toggle("Physical Menu");
 
-                    Vector3[] pcpositions = new Vector3[]
-                    {
+                    Vector3[] pcpositions = {
                         new Vector3(10f, 10f, 10f),
                         new Vector3(10f, 10f, 10f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
@@ -3285,8 +3289,7 @@ namespace iiMenu.Menu
             RoundCornerD.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, -(toRound.transform.localScale.y / 2f) + (Bevel * 1.275f), -(toRound.transform.localScale.z / 2f) + Bevel);
             RoundCornerD.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
 
-            GameObject[] ToChange = new GameObject[]
-            {
+            GameObject[] ToChange = {
                 BaseA,
                 BaseB,
                 RoundCornerA,
@@ -3381,7 +3384,7 @@ namespace iiMenu.Menu
                 LogManager.LogError("Failed to load assetbundle");
         }
 
-        public static T LoadObject<T>(string assetName) where T : UnityEngine.Object
+        public static T LoadObject<T>(string assetName) where T : Object
         {
             if (assetBundle == null)
                 LoadAssetBundle();
@@ -3390,7 +3393,7 @@ namespace iiMenu.Menu
             return gameObject;
         }
 
-        public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        public static T LoadAsset<T>(string assetName) where T : Object
         {
             if (assetBundle == null)
                 LoadAssetBundle();
@@ -3683,7 +3686,7 @@ namespace iiMenu.Menu
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                                GunLine.SetPosition(i, Position + (Random.Range(0f, 1f) > 0.75f ? new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f)) : Vector3.zero));
                             }
 
                             GunLine.SetPosition(Step - 1, EndPosition);
@@ -3697,7 +3700,7 @@ namespace iiMenu.Menu
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
-                                float value = ((float)i / (float)Step) * 50f;
+                                float value = (i / (float)Step) * 50f;
 
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
                                 GunLine.SetPosition(i, Position + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
@@ -3746,7 +3749,7 @@ namespace iiMenu.Menu
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
-                                float value = ((float)i / (float)Step) * 50f;
+                                float value = (i / (float)Step) * 50f;
 
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
                                 GunLine.SetPosition(i, Position + (Right * Mathf.Cos((Time.time * -10f) + value) * 0.1f) + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
@@ -3763,7 +3766,7 @@ namespace iiMenu.Menu
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
-                                float value = ((float)i / (float)Step) * 15f;
+                                float value = (i / (float)Step) * 15f;
                                 GunLine.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.3f));
                             }
 
@@ -3844,20 +3847,18 @@ namespace iiMenu.Menu
             {
                 if (isShooting)
                     return TriggerlessGuns || (SwapGunHand ? giveGunTarget.leftIndex.calcT > 0.5f : giveGunTarget.rightIndex.calcT > 0.5f);
-                else
-                    return GriplessGuns || (SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f);
+                return GriplessGuns || (SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f);
             }
 
             if (isShooting)
                 return TriggerlessGuns || (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
-            else
-                return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || (HardGunLocks && gunLocked && !rightSecondary) || Mouse.current.rightButton.isPressed;
+            return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || (HardGunLocks && gunLocked && !rightSecondary) || Mouse.current.rightButton.isPressed;
         }
 
         public static Vector3 GetGunDirection(Transform transform) =>
             new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? TrueRightHand().forward : TrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
 
-        public static System.Collections.IEnumerator NarrateText(string text)
+        public static IEnumerator NarrateText(string text)
         {
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
@@ -3908,7 +3909,7 @@ namespace iiMenu.Menu
             Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
-        public static System.Collections.IEnumerator SpeakText(string text)
+        public static IEnumerator SpeakText(string text)
         {
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
@@ -3959,7 +3960,7 @@ namespace iiMenu.Menu
             Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
         }
 
-        public static bool isAdmin = false;
+        public static bool isAdmin;
         public static void SetupAdminPanel(string playername)
         {
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
@@ -3982,7 +3983,7 @@ namespace iiMenu.Menu
 
             string first = array[0];
             string[] others = array.Skip(1).OrderBy(s => s).ToArray();
-            return new string[] { first }.Concat(others).ToArray();
+            return new[] { first }.Concat(others).ToArray();
         }
 
         public static string[] AlphabetizeNoSkip(string[] array)
@@ -4046,7 +4047,7 @@ namespace iiMenu.Menu
             return path;
         }
 
-        public static System.Collections.IEnumerator GrowCoroutine()
+        public static IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
             Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f);
@@ -4060,7 +4061,7 @@ namespace iiMenu.Menu
             menu.transform.localScale = target;
         }
 
-        public static System.Collections.IEnumerator ShrinkCoroutine()
+        public static IEnumerator ShrinkCoroutine()
         {
             Transform menuTransform = menu.transform;
             menu = null;
@@ -4077,7 +4078,7 @@ namespace iiMenu.Menu
             Destroy(menuTransform.gameObject);
         }
 
-        public static System.Collections.IEnumerator ButtonClick(int buttonIndex, Renderer render)
+        public static IEnumerator ButtonClick(int buttonIndex, Renderer render)
         {
             lastClickedName = "";
             float elapsedTime = 0f;
@@ -4108,7 +4109,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static System.Collections.IEnumerator KeyboardClick(GameObject targetKey)
+        public static IEnumerator KeyboardClick(GameObject targetKey)
         {
             Renderer render = targetKey.GetComponent<Renderer>();
             ColorChanger colorChanger = targetKey.GetComponent<ColorChanger>();
@@ -4125,8 +4126,8 @@ namespace iiMenu.Menu
             colorChanger.enabled = true;
         }
 
-        public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
-        public static Dictionary<string, SnowballThrowable> snowballDict = null;
+        public static SnowballThrowable[] snowballs = { };
+        public static Dictionary<string, SnowballThrowable> snowballDict;
         public static SnowballThrowable GetProjectile(string projectileName)
         {
             if (snowballDict == null)
@@ -4153,14 +4154,13 @@ namespace iiMenu.Menu
 
             if (snowballDict != null && snowballDict.ContainsKey(projectileName))
                 return snowballDict[projectileName];
-            else
-                return null;
+            return null;
         }
 
         public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]>();
         private static readonly Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float>();
 
-        public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
+        public static T[] GetAllType<T>(float decayTime = 5f) where T : Object
         {
             Type type = typeof(T);
 
@@ -4181,20 +4181,20 @@ namespace iiMenu.Menu
 
         private static float randomIndex;
         private static float randomDecayTime;
-        public static T GetRandomType<T>(float decayTime = 0f) where T : UnityEngine.Object
+        public static T GetRandomType<T>(float decayTime = 0f) where T : Object
         {
             T[] allOfType = GetAllType<T>();
 
             if (Time.time > randomDecayTime)
             {
-                randomIndex = UnityEngine.Random.Range(0f, 1f);
+                randomIndex = Random.Range(0f, 1f);
                 randomDecayTime = Time.time + decayTime;
             }
 
             return allOfType[(int)(randomIndex * allOfType.Length)];
         }
 
-        public static void ClearType<T>() where T : UnityEngine.Object
+        public static void ClearType<T>() where T : Object
         {
             Type type = typeof(T);
 
@@ -4283,29 +4283,29 @@ namespace iiMenu.Menu
 
             switch (GorillaGameManager.instance.GameType())
             {
-                case GorillaGameModes.GameModeType.Infection:
-                case GorillaGameModes.GameModeType.InfectionCompetitive:
-                case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHunt:
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         infected.Add(tagManager.currentIt);
                     else
                         infected.AddRange(tagManager.currentInfected);
                     break;
-                case GorillaGameModes.GameModeType.Ghost:
-                case GorillaGameModes.GameModeType.Ambush:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     if (ghostManager.isCurrentlyTag)
                         infected.Add(ghostManager.currentIt);
                     else
                         infected.AddRange(ghostManager.currentInfected);
                     break;
-                case GorillaGameModes.GameModeType.Paintbrawl:
+                case GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
 
                     foreach (int deadPlayer in paintbrawlManager.playerLives.Where(element => element.Value <= 0).Select(element => element.Key).ToArray())
-                        infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer, false));
+                        infected.Add(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer));
 
                     if (!infected.Contains(NetworkSystem.Instance.LocalPlayer))
                         infected.Add(NetworkSystem.Instance.LocalPlayer);
@@ -4320,25 +4320,25 @@ namespace iiMenu.Menu
         {
             switch (GorillaGameManager.instance.GameType())
             {
-                case GorillaGameModes.GameModeType.Infection:
-                case GorillaGameModes.GameModeType.InfectionCompetitive:
-                case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHunt:
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         tagManager.ChangeCurrentIt(plr);
                     else if (!tagManager.currentInfected.Contains(plr))
                         tagManager.AddInfectedPlayer(plr);
                     break;
-                case GorillaGameModes.GameModeType.Ghost:
-                case GorillaGameModes.GameModeType.Ambush:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     if (ghostManager.isCurrentlyTag)
                         ghostManager.ChangeCurrentIt(plr);
                     else if (!ghostManager.currentInfected.Contains(plr))
                         ghostManager.AddInfectedPlayer(plr);
                     break;
-                case GorillaGameModes.GameModeType.Paintbrawl:
+                case GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
@@ -4350,25 +4350,25 @@ namespace iiMenu.Menu
         {
             switch (GorillaGameManager.instance.GameType())
             {
-                case GorillaGameModes.GameModeType.Infection:
-                case GorillaGameModes.GameModeType.InfectionCompetitive:
-                case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHunt:
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag && tagManager.currentIt == plr)
                         tagManager.currentIt = null;
                     else if (!tagManager.isCurrentlyTag && tagManager.currentInfected.Contains(plr))
                         tagManager.currentInfected.Remove(plr);
                     break;
-                case GorillaGameModes.GameModeType.Ghost:
-                case GorillaGameModes.GameModeType.Ambush:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     if (ghostManager.isCurrentlyTag && ghostManager.currentIt == plr)
                         ghostManager.currentIt = null;
                     else if (!ghostManager.isCurrentlyTag && ghostManager.currentInfected.Contains(plr))
                         ghostManager.currentInfected.Remove(plr);
                     break;
-                case GorillaGameModes.GameModeType.Paintbrawl:
+                case GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
@@ -4380,21 +4380,21 @@ namespace iiMenu.Menu
         {
             switch (GorillaGameManager.instance.GameType())
             {
-                case GorillaGameModes.GameModeType.Infection:
-                case GorillaGameModes.GameModeType.InfectionCompetitive:
-                case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHunt:
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     tagManager.ChangeCurrentIt(plr);
 
                     break;
-                case GorillaGameModes.GameModeType.Ghost:
-                case GorillaGameModes.GameModeType.Ambush:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     ghostManager.ChangeCurrentIt(plr);
 
                     break;
-                case GorillaGameModes.GameModeType.Paintbrawl:
+                case GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
@@ -4406,23 +4406,23 @@ namespace iiMenu.Menu
         {
             switch (GorillaGameManager.instance.GameType())
             {
-                case GorillaGameModes.GameModeType.Infection:
-                case GorillaGameModes.GameModeType.InfectionCompetitive:
-                case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHunt:
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.currentIt == plr)
                         tagManager.ChangeCurrentIt(null);
 
                     break;
-                case GorillaGameModes.GameModeType.Ghost:
-                case GorillaGameModes.GameModeType.Ambush:
+                case GameModeType.Ghost:
+                case GameModeType.Ambush:
                     GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
                     if (ghostManager.currentIt == plr)
                         ghostManager.ChangeCurrentIt(null);
 
                     break;
-                case GorillaGameModes.GameModeType.Paintbrawl:
+                case GameModeType.Paintbrawl:
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
@@ -4435,19 +4435,19 @@ namespace iiMenu.Menu
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
 
         public static Vector3 RandomVector3(float range = 1f) =>
-            new Vector3(UnityEngine.Random.Range(-range, range),
-                        UnityEngine.Random.Range(-range, range),
-                        UnityEngine.Random.Range(-range, range));
+            new Vector3(Random.Range(-range, range),
+                        Random.Range(-range, range),
+                        Random.Range(-range, range));
 
         public static Quaternion RandomQuaternion(float range = 360f) =>
-            Quaternion.Euler(UnityEngine.Random.Range(0f, range),
-                        UnityEngine.Random.Range(0f, range),
-                        UnityEngine.Random.Range(0f, range));
+            Quaternion.Euler(Random.Range(0f, range),
+                        Random.Range(0f, range),
+                        Random.Range(0f, range));
 
         public static Color RandomColor(byte range = 255, byte alpha = 255) =>
-            new Color32((byte)UnityEngine.Random.Range(0, range),
-                        (byte)UnityEngine.Random.Range(0, range),
-                        (byte)UnityEngine.Random.Range(0, range),
+            new Color32((byte)Random.Range(0, range),
+                        (byte)Random.Range(0, range),
+                        (byte)Random.Range(0, range),
                         alpha);
 
         // True left and right hand get the exact position and rotation of the middle of the hand
@@ -4471,8 +4471,7 @@ namespace iiMenu.Menu
 
         public static void FixStickyColliders(GameObject platform)
         {
-            Vector3[] localPositions = new Vector3[]
-            {
+            Vector3[] localPositions = {
                 new Vector3(0, 1f, 0),
                 new Vector3(0, -1f, 0),
                 new Vector3(1f, 0, 0),
@@ -4480,8 +4479,7 @@ namespace iiMenu.Menu
                 new Vector3(0, 0, 1f),
                 new Vector3(0, 0, -1f)
             };
-            Quaternion[] localRotations = new Quaternion[]
-            {
+            Quaternion[] localRotations = {
                 Quaternion.Euler(90, 0, 0),
                 Quaternion.Euler(-90, 0, 0),
                 Quaternion.Euler(0, -90, 0),
@@ -4621,25 +4619,22 @@ namespace iiMenu.Menu
         {
             if (translateCache.ContainsKey(input))
                 return translateCache[input];
-            else
+            if (!waitingForTranslate.ContainsKey(input))
             {
-                if (!waitingForTranslate.ContainsKey(input))
+                waitingForTranslate.Add(input, Time.time + 10f);
+                CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
+            } else
+            {
+                if (Time.time > waitingForTranslate[input])
                 {
+                    waitingForTranslate.Remove(input);
+
                     waitingForTranslate.Add(input, Time.time + 10f);
                     CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
-                } else
-                {
-                    if (Time.time > waitingForTranslate[input])
-                    {
-                        waitingForTranslate.Remove(input);
-
-                        waitingForTranslate.Add(input, Time.time + 10f);
-                        CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
-                    }
                 }
-
-                return "Loading...";
             }
+
+            return "Loading...";
         }
 
         public static string GenerateRandomString(int length = 4)
@@ -4647,7 +4642,7 @@ namespace iiMenu.Menu
             string random = "";
             for (int i = 0; i < length; i++)
             {
-                int rand = UnityEngine.Random.Range(0, 36);
+                int rand = Random.Range(0, 36);
                 char c = rand < 26
                     ? (char)('A' + rand)
                     : (char)('0' + (rand - 26));
@@ -4657,7 +4652,7 @@ namespace iiMenu.Menu
             return random;
         }
 
-        public static System.Collections.IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
+        public static IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
         {
             if (translateCache.ContainsKey(text))
             {
@@ -4800,43 +4795,43 @@ namespace iiMenu.Menu
             {
                 if (AntiOculusReport && data.Code == 200) // Credits to Gorilla Dev for the idea, fully coded by myself
                 {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
                     if (rpcName == "RPC_PlayHandTap")
                     {
-                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        object[] args = (object[])((Hashtable)data.CustomData)[4];
                         if ((int)args[0] == 67)
                         {
-                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
                             if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
-                                Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
                         }
                     }
                 }
 
                 if (Safety.smartarp && data.Code == 200)
                 {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
                     if (rpcName == "RPC_PlayHandTap")
                     {
-                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        object[] args = (object[])((Hashtable)data.CustomData)[4];
                         if ((int)args[0] == 67)
                         {
                             Safety.buttonClickTime = Time.frameCount;
-                            Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId;
+                            Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender).UserId;
                         }
                     }
                 }
 
                 if (Fun.keyboardTrackerEnabled && data.Code == 200)
                 {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
 
                     if (rpcName == "RPC_PlayHandTap")
                     {
-                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        object[] args = (object[])((Hashtable)data.CustomData)[4];
                         if ((int)args[0] == 66)
                         {
-                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
 
                             Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
                             if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
@@ -5132,7 +5127,7 @@ namespace iiMenu.Menu
             raiseEventBatch.Reliable = pv.Synchronization == ViewSynchronization.ReliableDeltaCompressed || mixedReliable;
             raiseEventBatch.Group = pv.Group;
 
-            System.Collections.IDictionary dictionary = PhotonNetwork.serializeViewBatches;
+            IDictionary dictionary = PhotonNetwork.serializeViewBatches;
 
             PhotonNetwork.SerializeViewBatch serializeViewBatch = new PhotonNetwork.SerializeViewBatch(raiseEventBatch, 2);
 
@@ -5180,7 +5175,7 @@ namespace iiMenu.Menu
             PhotonNetwork.PlayerList.Select(plr => plr.ActorNumber).ToArray();
 
         public static int[] AllActorNumbersExcept(int actorNumber) =>
-            AllActorNumbersExcept(new int[] { actorNumber });
+            AllActorNumbersExcept(new[] { actorNumber });
 
         public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
             PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
@@ -5321,10 +5316,10 @@ namespace iiMenu.Menu
                 FieldInfo Name = Type.GetField("Name", BindingFlags.Public | BindingFlags.Static);
                 FieldInfo Description = Type.GetField("Description", BindingFlags.Public | BindingFlags.Static);
                 if (Name != null && Description != null)
-                    return new string[] { (string)Name.GetValue(null), (string)Description.GetValue(null) };
+                    return new[] { (string)Name.GetValue(null), (string)Description.GetValue(null) };
             }
 
-            return new string[] { "null", "null" };
+            return new[] { "null", "null" };
         }
 
         public static void EnablePlugin(Assembly Assembly)
@@ -5436,7 +5431,7 @@ namespace iiMenu.Menu
                 {
                     if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
                         RPCProtection();
                     }
                 }
@@ -5456,13 +5451,13 @@ namespace iiMenu.Menu
             try
             {
                 if (target == null)
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, color.r, color.g, color.b);
                 else
                 {
                     if (target is NetPlayer player)
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", player, new object[] { color.r, color.g, color.b });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", player, color.r, color.g, color.b);
                     else if (target is RpcTarget targets)
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", targets, new object[] { color.r, color.g, color.b });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", targets, color.r, color.g, color.b);
                 }
 
                     RPCProtection();
@@ -5492,11 +5487,7 @@ namespace iiMenu.Menu
                     VRRig.LocalRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                     if (PhotonNetwork.InRoom && serversidedButtonSounds)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[] {
-                            buttonClickSound,
-                            rightHand,
-                            buttonClickVolume / 10f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, buttonClickSound, rightHand, buttonClickVolume / 10f);
                         RPCProtection();
                     }
                 }
@@ -5585,7 +5576,7 @@ namespace iiMenu.Menu
         {
             if (annoyingMode && fromMenu)
             {
-                if (UnityEngine.Random.Range(1, 5) == 2)
+                if (Random.Range(1, 5) == 2)
                 {
                     NotifiLib.SendNotification("<color=red>try again</color>");
                     return;
@@ -5598,7 +5589,7 @@ namespace iiMenu.Menu
             
             if (currentCategoryName == "Enabled Mods")
             {
-                List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                List<string> enabledMods = new List<string> { "Exit Enabled Mods" };
                 int categoryIndex = 0;
                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                 {
@@ -5841,7 +5832,7 @@ namespace iiMenu.Menu
             ReloadMenu();
         }
 
-        public static System.Collections.IEnumerator DelayLoadPreferences()
+        public static IEnumerator DelayLoadPreferences()
         {
             yield return new WaitForSeconds(1);
             Settings.LoadPreferences();
@@ -6388,8 +6379,8 @@ jgs \_   _/ |Oo\
         public static GameObject regwatchShell;
 
         public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
-        public static Material ForestMat = null;
-        public static Material StumpMat = null;
+        public static Material ForestMat;
+        public static Material StumpMat;
         public static GameObject motd;
         public static GameObject motdText;
         public static Material glass;
@@ -6416,7 +6407,7 @@ jgs \_   _/ |Oo\
         public static int StumpLeaderboardIndex = 5;
         public static int ForestLeaderboardIndex = 9;
         
-        public static Material[] ogScreenMats = new Material[] { };
+        public static Material[] ogScreenMats = { };
 
         public static bool translate;
         public static string language;
@@ -6426,25 +6417,24 @@ jgs \_   _/ |Oo\
 
         public static string serverLink = "https://discord.gg/iidk";
 
-        public static int[] bones = new int[] {
+        public static int[] bones = {
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
         };
 
         public static int arrowType;
-        public static string[][] arrowTypes = new string[][] // http://xahlee.info/comp/unicode_index.html
-        {
-            new string[] {"<", ">"},
-            new string[] {"←", "→"},
-            new string[] {"↞", "↠"},
-            new string[] {"◄", "►"},
-            new string[] {"〈 ", " 〉"},
-            new string[] {"‹", "›"},
-            new string[] {"«", "»"},
-            new string[] {"◀", "▶"},
-            new string[] {"-", "+"},
-            new string[] {"", ""},
-            new string[] {"v", "ʌ"},
-            new string[] { "v\nv\nv\nv\nv\nv", "ʌ\nʌ\nʌ\nʌ\nʌ\nʌ" }
+        public static string[][] arrowTypes = {
+            new[] {"<", ">"},
+            new[] {"←", "→"},
+            new[] {"↞", "↠"},
+            new[] {"◄", "►"},
+            new[] {"〈 ", " 〉"},
+            new[] {"‹", "›"},
+            new[] {"«", "»"},
+            new[] {"◀", "▶"},
+            new[] {"-", "+"},
+            new[] {"", ""},
+            new[] {"v", "ʌ"},
+            new[] { "v\nv\nv\nv\nv\nv", "ʌ\nʌ\nʌ\nʌ\nʌ\nʌ" }
         };
 
         public static int themeType = 1;
@@ -6458,8 +6448,7 @@ jgs \_   _/ |Oo\
             )
         };
 
-        public static ExtGradient[] buttonColors = new[]
-        {
+        public static ExtGradient[] buttonColors = {
             new ExtGradient // Released
             {
                 colors = ExtGradient.GetSolidGradient(new Color32(170, 85, 0, 255))
@@ -6471,8 +6460,7 @@ jgs \_   _/ |Oo\
             }
         };
 
-        public static ExtGradient[] textColors = new[]
-        {
+        public static ExtGradient[] textColors = {
             new ExtGradient // Title
             {
                 colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
@@ -6562,7 +6550,7 @@ jgs \_   _/ |Oo\
         public static string inputTextColor = "green";
         
         public static bool annoyingMode; // Build with this enabled for a surprise
-        public static string[] facts = new string[] {
+        public static string[] facts = {
             "The honeybee is the only insect that produces food eaten by humans.",
             "Bananas are berries, but strawberries aren't.",
             "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",

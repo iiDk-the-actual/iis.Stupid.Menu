@@ -4,23 +4,23 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
@@ -35,16 +35,16 @@ namespace iiMenu.Patches.Menu
             {
                 Dictionary<int, int[]> tierData = new Dictionary<int, int[]> 
                 {
-                    { 0, new int[] { 0, 0 } },
-                    { 1, new int[] { 0, 1 } },
+                    { 0, new[] { 0, 0 } },
+                    { 1, new[] { 0, 1 } },
 
-                    { 2, new int[] { 1, 0 } },
-                    { 3, new int[] { 1, 1 } },
-                    { 4, new int[] { 1, 2 } },
+                    { 2, new[] { 1, 0 } },
+                    { 3, new[] { 1, 1 } },
+                    { 4, new[] { 1, 2 } },
 
-                    { 5, new int[] { 2, 0 } },
-                    { 6, new int[] { 2, 1 } },
-                    { 7, new int[] { 2, 2 } },
+                    { 5, new[] { 2, 0 } },
+                    { 6, new[] { 2, 1 } },
+                    { 7, new[] { 2, 2 } },
                 };
 
                 foreach (GorillaTagCompetitiveServerApi.RankedModeProgressionPlatformData platformData in data.platformData)

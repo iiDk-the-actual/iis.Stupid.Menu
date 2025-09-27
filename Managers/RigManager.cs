@@ -4,29 +4,31 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using iiMenu.Extensions;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Managers
 {
@@ -63,31 +65,28 @@ namespace iiMenu.Managers
 
         public static Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
         public static Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
-        public static string GetCreationDate(string input, System.Action<string> onTranslated = null)
+        public static string GetCreationDate(string input, Action<string> onTranslated = null)
         {
             if (creationDateCache.TryGetValue(input, out string date))
                 return date;
+            if (!waitingForCreationDate.ContainsKey(input))
+            {
+                waitingForCreationDate[input] = Time.time + 10f;
+                GetCreationCoroutine(input, onTranslated);
+            }
             else
             {
-                if (!waitingForCreationDate.ContainsKey(input))
+                if (Time.time > waitingForCreationDate[input])
                 {
                     waitingForCreationDate[input] = Time.time + 10f;
                     GetCreationCoroutine(input, onTranslated);
                 }
-                else
-                {
-                    if (Time.time > waitingForCreationDate[input])
-                    {
-                        waitingForCreationDate[input] = Time.time + 10f;
-                        GetCreationCoroutine(input, onTranslated);
-                    }
-                }
-
-                return "Loading...";
             }
+
+            return "Loading...";
         }
 
-        public static void GetCreationCoroutine(string userId, System.Action<string> onTranslated = null)
+        public static void GetCreationCoroutine(string userId, Action<string> onTranslated = null)
         {
             if (creationDateCache.TryGetValue(userId, out string date))
             {
@@ -101,7 +100,7 @@ namespace iiMenu.Managers
                 creationDateCache[userId] = date;
 
                 onTranslated?.Invoke(date);
-            }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke(date); }, null, null);
+            }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke(date); });
         }
     }
 }

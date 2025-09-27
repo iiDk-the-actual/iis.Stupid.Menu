@@ -4,21 +4,25 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Diagnostics;
+using System.IO;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
@@ -28,13 +32,13 @@ using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
+using iiMenu.Patches.Safety;
 using Photon.Pun;
-using System;
-using System.Diagnostics;
-using System.IO;
+using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using Console = iiMenu.Classes.Menu.Console;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Menu
 {
@@ -194,7 +198,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
 
-                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = NotifiLib.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
+                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = NotifiLib.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
                 new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotifiLib.noRichText = true, disableMethod =() => NotifiLib.noRichText = false, toolTip = "Removes rich text from notifications."},
 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
@@ -218,7 +222,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => disableBoardTextColor = true, disableMethod =() => disableBoardTextColor = false, toolTip = "Disables the text colors on the boards to make them match their original theme."},
 
                 new ButtonInfo { buttonText = "Info Hide ID", enableMethod =() => Settings.hideId = true, disableMethod =() => Settings.hideId = false, toolTip = "Hides your ID in the information page."},
-                new ButtonInfo { buttonText = "Conduct Info", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "DEBUG INFO"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method = Visuals.ConductDebug, toolTip = "Shows debug information on the code of conduct."},
+                new ButtonInfo { buttonText = "Conduct Info", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "DEBUG INFO"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method = Visuals.ConductDebug, toolTip = "Shows debug information on the code of conduct."},
 
                 new ButtonInfo { buttonText = "Hide Text on Camera", enableMethod =() => hideTextOnCamera = true, disableMethod =() => hideTextOnCamera = false, overlapText = "Streamer Mode Menu Text", toolTip = "Makes the menu's text only render on VR."},
                 new ButtonInfo { buttonText = "Hide Pointer", enableMethod =() => hidePointer = true, disableMethod =() => hidePointer = false, toolTip = "Hides the pointer above your hand."},
@@ -456,12 +460,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Join Random</color><color=grey>]</color>", method = Safety.AntiReportJoinRandom, toolTip = "Connects you to a random the room when anyone comes near your report button."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>", enableMethod =() => AntiOculusReport = true, disableMethod =() => AntiOculusReport = false, toolTip = "Disconnects you from the room when you get reported with the Oculus report menu."},
-                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiACReport = true, disableMethod =() => Patches.Safety.AntiCheat.AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => AntiCheat.AntiACReport = true, disableMethod =() => AntiCheat.AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Notify</color><color=grey>]</color>", method = Safety.AntiReportNotify, toolTip = "Tells you when people come near your report button, but doesn't do anything."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Overlay</color><color=grey>]</color>", method = Safety.AntiReportOverlay, toolTip = "Shows you an overlay when people come near your report button, but doesn't do anythin."},
 
-                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = false, toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
-                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = false, toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => AntiCheat.AntiCheatSelf = true, disableMethod =() => AntiCheat.AntiCheatSelf = false, toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => AntiCheat.AntiCheatAll = true, disableMethod =() => AntiCheat.AntiCheatAll = false, toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
 
                 new ButtonInfo { buttonText = "Change Identity", overlapText = "Change Identity <color=grey>[</color><color=green>New</color><color=grey>]</color>", method = Safety.ChangeIdentity, isTogglable = false, toolTip = "Changes your name and color to something a new player would have."},
                 new ButtonInfo { buttonText = "Change Identity <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method = Safety.ChangeIdentityRegular, isTogglable = false, toolTip = "Changes your name and color to something a regular player would have."},
@@ -496,7 +500,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.SlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Zero Gravity Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.ZeroGravitySlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner without gravity, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Slingshot Bark Fly <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.VelocityBarkFly, toolTip = "Acts like the fly that Bark has, mixed with slingshot fly. Credits to KyleTheScientist."},
-                new ButtonInfo { buttonText = "WASD Fly", enableMethod=() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, method = Movement.WASDFly, disableMethod =() => GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
+                new ButtonInfo { buttonText = "WASD Fly", enableMethod=() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, method = Movement.WASDFly, disableMethod =() => GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
 
                 new ButtonInfo { buttonText = "Dash <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Dash, toolTip = "Flings your character forwards when pressing <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Iron Man", method = Movement.IronMan, toolTip = "Turns you into iron man, rotate your hands around to change direction."},
@@ -555,7 +559,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Speed Boost", method = Movement.SpeedBoost, toolTip = "Changes your speed to whatever you set it to."},
                 new ButtonInfo { buttonText = "Dynamic Speed Boost", method = Movement.DynamicSpeedBoost, toolTip = "Dynamically changes your speed to whatever you set it to when tagged players get closer to you."},
-                new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
+                new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method = Movement.AlwaysMaxVelocity, toolTip = "Always makes you go as fast as the velocity limit."},
 
                 new ButtonInfo { buttonText = "Funny Movement", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method = Movement.FunMove, toolTip = "Ruins your movement."},
@@ -573,7 +577,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Throw Controllers", method = Movement.ThrowControllers, toolTip = "Lets you throw your controllers with <color=green>X</color> or <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Controller Flick", enableMethod = Movement.EnableControllerFlick, method = Movement.ControllerFlick, disableMethod = Movement.DisableControllerFlick, toolTip = "Flicks your controllers in a similar way to disconnecting them with <color=green>X</color> or <color=green>A</color>."},
 
-                new ButtonInfo { buttonText = "Uncap Arm Length", method =() => GorillaLocomotion.GTPlayer.Instance.maxArmLength = float.MaxValue, disableMethod =() => GorillaLocomotion.GTPlayer.Instance.maxArmLength = 1f, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
+                new ButtonInfo { buttonText = "Uncap Arm Length", method =() => GTPlayer.Instance.maxArmLength = float.MaxValue, disableMethod =() => GTPlayer.Instance.maxArmLength = 1f, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Steam Long Arms", method = Movement.EnableSteamLongArms, disableMethod = Movement.DisableSteamLongArms, toolTip = "Gives you long arms similar to override world scale."},
                 new ButtonInfo { buttonText = "Stick Long Arms", method = Movement.StickLongArms, toolTip = "Makes you look like you're using sticks."},
                 new ButtonInfo { buttonText = "Multiplied Long Arms", method = Movement.MultipliedLongArms, toolTip = "Gives you a weird version of long arms."},
@@ -739,7 +743,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Room Information Overlay", method =() => { if (PhotonNetwork.InRoom) { NotifiLib.information["Room Code"] = PhotonNetwork.CurrentRoom.Name; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); } else { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); } }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
                 new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotifiLib.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotifiLib.information.Remove("Ping"); NotifiLib.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
                 new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotifiLib.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotifiLib.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
-                new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotifiLib.information["Velocity"] = string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.linearVelocity.magnitude), disableMethod =() => NotifiLib.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
+                new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotifiLib.information["Velocity"] = $"{GorillaTagger.Instance.rigidbody.linearVelocity.magnitude:F1}m/s", disableMethod =() => NotifiLib.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
                 new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotifiLib.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod = Visuals.WatchOn, method = Visuals.WatchStep, disableMethod = Visuals.WatchOff, toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
@@ -921,8 +925,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Activate All Doors <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.ActivateAllDoors, toolTip = "Activates all doors when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Tap All Crystals <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllClass<GorillaCaveCrystal>(), toolTip = "Taps all crystals when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Tap All Bells <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllClass<TappableBell>(), toolTip = "Taps all bells when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Tap All Crystals <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.TapAllClass<GorillaCaveCrystal>, toolTip = "Taps all crystals when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Tap All Bells <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.TapAllClass<TappableBell>, toolTip = "Taps all bells when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Get Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GetBracelet(true), toolTip = "Gives you a party bracelet without needing to be in a party."},
                 new ButtonInfo { buttonText = "Spam Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.BraceletSpam, toolTip = "Spams the party bracelet on and off."},
@@ -1089,12 +1093,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Critter Shockwave Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.StunExplosion), toolTip = "Spams the shockwave particles in your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Critter Sticky Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.StickyDeployed), toolTip = "Spams the sticky particles in your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Noise Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Particle Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle in your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Particle Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam((CrittersManager.CritterEvent)Random.Range(0, 4)), toolTip = "Spams every particle in your hand when holding <color=green>grip</color>"},
 
                 new ButtonInfo { buttonText = "Critter Shockwave Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.StunExplosion), toolTip = "Spams the shockwave particles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Sticky Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.StickyDeployed), toolTip = "Spams the sticky particles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Noise Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Fire Sound Spam <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method = Fun.FireSoundSpam, toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
 
@@ -1231,9 +1235,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
                 new ButtonInfo { buttonText = "Set Name to \"iiOnTop\"", method =() => ChangeName("iiOnTop"), isTogglable = false, toolTip = "Sets your name to \"iiOnTop\"." },
 
-                new ButtonInfo { buttonText = "PBBV Name Cycle", method =() => Fun.NameCycle(new string[] { "PPBV", "IS", "HERE" }), toolTip = "Sets your name on a loop to \"PBBV\", \"IS\", and \"HERE\"." },
-                new ButtonInfo { buttonText = "J3VU Name Cycle", method =() => Fun.NameCycle(new string[] { "J3VU", "HAS", "BECOME", "HOSTILE" }), toolTip = "Sets your name on a loop to \"J3VU\", \"HAS\", \"BECOME\", and \"HOSTILE\"" },
-                new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.NameCycle(new string[] { "RUN", "RABBIT" }), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
+                new ButtonInfo { buttonText = "PBBV Name Cycle", method =() => Fun.NameCycle(new[] { "PPBV", "IS", "HERE" }), toolTip = "Sets your name on a loop to \"PBBV\", \"IS\", and \"HERE\"." },
+                new ButtonInfo { buttonText = "J3VU Name Cycle", method =() => Fun.NameCycle(new[] { "J3VU", "HAS", "BECOME", "HOSTILE" }), toolTip = "Sets your name on a loop to \"J3VU\", \"HAS\", \"BECOME\", and \"HOSTILE\"" },
+                new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.NameCycle(new[] { "RUN", "RABBIT" }), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
                 new ButtonInfo { buttonText = "Random Name Cycle", method = Fun.RandomNameCycle, toolTip = "Sets your name on a loop to a bunch of random characters." },
                 new ButtonInfo { buttonText = "Custom Name Cycle", enableMethod = Fun.EnableCustomNameCycle, method =() => Fun.NameCycle(Fun.names), toolTip = "Sets your name on a loop to whatever's in the file." },
 
@@ -1266,7 +1270,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method = Fun.DisableCosmeticsOnTag, toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
 
                 new ButtonInfo { buttonText = "Unlock All Cosmetics", method = Fun.UnlockAllCosmetics, toolTip = "Unlocks every cosmetic in the game. This mod is client sided." },
-                new ButtonInfo { buttonText = "Unlimited Shiny Rocks", enableMethod =() => Patches.Menu.PurchasePatch.enabled = true, method =() => CosmeticsController.instance.currencyBalance = int.MaxValue, disableMethod =() => Patches.Menu.PurchasePatch.enabled = false, toolTip = "Gives you 2 billion shiny rocks. This mod is client sided." },
+                new ButtonInfo { buttonText = "Unlimited Shiny Rocks", enableMethod =() => PurchasePatch.enabled = true, method =() => CosmeticsController.instance.currencyBalance = int.MaxValue, disableMethod =() => PurchasePatch.enabled = false, toolTip = "Gives you 2 billion shiny rocks. This mod is client sided." },
 
                 new ButtonInfo { buttonText = "Sticky Holdables", method = Fun.StickyHoldables, toolTip = "Makes your holdables sticky." },
                 new ButtonInfo { buttonText = "Spaz Holdables", method = Fun.SpazHoldables, toolTip = "Spazzes out the positions of your holdables." },
@@ -1311,7 +1315,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Earrape Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(215), toolTip = "Plays a high-pitched sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Ding Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(244), toolTip = "Plays a ding sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Crystal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Sound.CrystalSoundSpam, toolTip = "Plays some crystal noises when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Piano Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(UnityEngine.Random.Range(295, 307)), toolTip = "Plays some terrible piano when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Piano Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(Random.Range(295, 307)), toolTip = "Plays some terrible piano when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Big Crystal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(213), toolTip = "Plays a long crystal sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Pan Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(248), toolTip = "Plays a pan sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "AK-47 Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(203), toolTip = "Plays a sound that sounds like an AK-47 when holding <color=green>grip</color>." },
@@ -1738,7 +1742,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Menu Users", method = Experimental.GetMenuUsers, isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod = Experimental.EnableAdminMenuUserTags, method = Experimental.AdminMenuUserTags, disableMethod = Experimental.DisableAdminMenuUserTags, toolTip = "Detects who is using the menu."},
-                new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TMPro.TextMeshPro>().text = "CONSOLE USER LIST"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().richText = true; }, method = Experimental.ConsoleOnConduct, toolTip = "Shows menu users on the code of conduct."},
+                new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "CONSOLE USER LIST"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method = Experimental.ConsoleOnConduct, toolTip = "Shows menu users on the code of conduct."},
                 new ButtonInfo { buttonText = "Menu User Tracers", enableMethod = Experimental.EnableAdminMenuUserTracers, method = Experimental.MenuUserTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows menu users."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method = Experimental.AdminKickGun, toolTip = "Kicks whoever your hand desires if they're using the menu."},
@@ -1898,10 +1902,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method = Overpowered.DisableSnowballImpactEffect, toolTip = "Disables the impact effect that people get when hit with snowballs."},
-                new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>5</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(true), enableMethod =() => Overpowered.ChangeSnowballScale(true), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
-                new ButtonInfo { buttonText = "Change Snowball Multiplication Factor", overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballMultiplicationFactor(true), enableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(true), disableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(false), incremental = true, isTogglable = false, toolTip = "Changes the multiplication factor of the snowballs." },
+                new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>5</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(), enableMethod =() => Overpowered.ChangeSnowballScale(), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
+                new ButtonInfo { buttonText = "Change Snowball Multiplication Factor", overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballMultiplicationFactor(), enableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(), disableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(false), incremental = true, isTogglable = false, toolTip = "Changes the multiplication factor of the snowballs." },
 
-                new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(true), enableMethod =() => Overpowered.ChangeLagPower(true), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
+                new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(), enableMethod =() => Overpowered.ChangeLagPower(), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
             },
 
             new[] { // Keybind Settings [32]
@@ -2023,8 +2027,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { }, // Chat Messages [41] 
         };
 
-        public static string[] categoryNames = new string[]
-        {
+        public static string[] categoryNames = {
             "Main",
             "Settings",
             "Menu Settings",

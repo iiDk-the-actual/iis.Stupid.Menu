@@ -4,29 +4,30 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using GorillaNetworking;
-using HarmonyLib;
-using iiMenu.Managers;
-using iiMenu.Mods;
-using Photon.Pun;
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
+using GorillaNetworking;
+using HarmonyLib;
+using iiMenu.Managers;
+using iiMenu.Menu;
+using iiMenu.Mods;
+using Photon.Pun;
 using UnityEngine;
 
 namespace iiMenu.Patches.Menu
@@ -46,7 +47,7 @@ namespace iiMenu.Patches.Menu
                 {
                     if (CosmeticsController.instance.isHidingCosmeticsFromRemotePlayers)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_HideAllCosmetics", info.Sender, Array.Empty<object>());
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_HideAllCosmetics", info.Sender);
                         return false;
                     }
 
@@ -61,7 +62,7 @@ namespace iiMenu.Patches.Menu
                         CosmeticsController.CosmeticSet items = new CosmeticsController.CosmeticSet
                         (
                             CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Select(
-                                cosmetic => iiMenu.Menu.Main.CosmeticsOwned.Contains(cosmetic)
+                                cosmetic => Main.CosmeticsOwned.Contains(cosmetic)
                                     ? cosmetic
                                     : "null"
                                 )
@@ -69,7 +70,7 @@ namespace iiMenu.Patches.Menu
                             CosmeticsController.instance
                         );
 
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", NetworkSystem.Instance.GetPlayer(info.senderID), new object[] { items.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray() });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", NetworkSystem.Instance.GetPlayer(info.senderID), items.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
                         return false;
                     }
                 }
@@ -77,12 +78,12 @@ namespace iiMenu.Patches.Menu
             return true;
         }
 
-        private static string[] archiveCosmetics = null;
+        private static string[] archiveCosmetics;
         public static IEnumerator LoadCosmetics()
         {
             if (PhotonNetwork.InRoom)
             {
-                Vector3 target = iiMenu.Menu.Main.TryOnRoom.transform.position;
+                Vector3 target = Main.TryOnRoom.transform.position;
 
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = target;
@@ -90,12 +91,12 @@ namespace iiMenu.Patches.Menu
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
 
-                while (Vector3.Distance(iiMenu.Menu.Main.ServerPos, target) > 0.2f)
+                while (Vector3.Distance(Main.ServerPos, target) > 0.2f)
                     yield return null;
                 
                 yield return new WaitForSeconds(0.1f);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray());
                 VRRig.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 

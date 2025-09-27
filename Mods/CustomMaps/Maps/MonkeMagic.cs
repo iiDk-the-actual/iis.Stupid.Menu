@@ -4,23 +4,24 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
+using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
     public class MonkeMagic : CustomMap
     {
         public override long MapID => 5107228;
-        public override ButtonInfo[] Buttons => new ButtonInfo[]
+        public override ButtonInfo[] Buttons => new[]
         {
             new ButtonInfo { buttonText = "Lightning Strike Self", method =() => LightningStrikeSelf(), toolTip = "Strikes yourself with lightning."},
             new ButtonInfo { buttonText = "Lightning Strike Gun", method =() => LightningStrikeGun(), toolTip = "Strikes whoever your hand desires with lightning."},
@@ -196,12 +197,12 @@ namespace iiMenu.Mods.CustomMaps.Maps
         }
 
         // I don't know who made this
-        public static float crashDelay = 0f;
+        public static float crashDelay;
         public static void CrashPlayer(int ActorNumber)
         {
-            PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new RaiseEventOptions()
+            PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new RaiseEventOptions
             {
-                TargetActors = new int[]
+                TargetActors = new[]
                 {
                     ActorNumber
                 }
@@ -274,7 +275,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                     NetPlayer Player = GetPlayerFromVRRig(vrrig);
                     CrashPlayer(Player.ActorNumber);
                     crashDelay = Time.time + 0.5f;
-                    Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
                 }
             });
         }

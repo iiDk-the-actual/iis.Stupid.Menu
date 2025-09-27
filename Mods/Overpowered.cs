@@ -4,21 +4,25 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
@@ -26,18 +30,18 @@ using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
 using GorillaTagScripts;
 using iiMenu.Managers;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
@@ -173,26 +177,17 @@ namespace iiMenu.Mods
 
         public static void SetPlayerColors(Dictionary<int, int> colors) // ActorNumber : Team // 0 = Blue, 1 = Red, -1 = None
         {
-            MonkeBallGame.Instance.photonView.RPC("RequestSetGameStateRPC", RpcTarget.All, new object[]
-            {
-                (int)MonkeBallGame.GameState.Playing,
-                PhotonNetwork.Time + (MonkeBallGame.Instance.gameDuration - 1f),
-                NetworkSystem.Instance.AllNetPlayers
-                    .Where(p => colors.ContainsKey(p.ActorNumber))
-                    .Select(p => p.ActorNumber)
-                    .ToArray(),
-                NetworkSystem.Instance.AllNetPlayers
-                    .Where(p => colors.ContainsKey(p.ActorNumber))
-                    .Select(p => colors[p.ActorNumber])
-                    .ToArray(),
-                new int[MonkeBallGame.Instance.team.Count],
-                MonkeBallGame.Instance.startingBalls.Select(ball =>
+            MonkeBallGame.Instance.photonView.RPC("RequestSetGameStateRPC", RpcTarget.All, (int)MonkeBallGame.GameState.Playing, PhotonNetwork.Time + (MonkeBallGame.Instance.gameDuration - 1f), NetworkSystem.Instance.AllNetPlayers
+                .Where(p => colors.ContainsKey(p.ActorNumber))
+                .Select(p => p.ActorNumber)
+                .ToArray(), NetworkSystem.Instance.AllNetPlayers
+                .Where(p => colors.ContainsKey(p.ActorNumber))
+                .Select(p => colors[p.ActorNumber])
+                .ToArray(), new int[MonkeBallGame.Instance.team.Count], MonkeBallGame.Instance.startingBalls.Select(ball =>
                     BitPackUtils.PackHandPosRotForNetwork(ball.transform.position, ball.transform.rotation))
-                    .ToArray(),
-                MonkeBallGame.Instance.startingBalls.Select(ball =>
+                .ToArray(), MonkeBallGame.Instance.startingBalls.Select(ball =>
                     BitPackUtils.PackWorldPosForNetwork(ball.gameBall.GetVelocity()))
-                    .ToArray()
-            });
+                .ToArray());
         }
 
         private static float playerColorDelay;
@@ -392,8 +387,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float guardianSpazDelay = 0f;
-        private static bool guardianSpazToggle = false;
+        private static float guardianSpazDelay;
+        private static bool guardianSpazToggle;
         public static void GuardianSpaz()
         {
             if (Time.time > guardianSpazDelay)
@@ -438,7 +433,7 @@ namespace iiMenu.Mods
                                 if (Time.time > alwaysGuardianDelay)
                                 {
                                     alwaysGuardianDelay = Time.time + (zoneManager._currentActivationTime >= zoneManager.requiredActivationTime - 1f ? 0f : 0.2f);
-                                    tgi.OnTap(UnityEngine.Random.Range(0f, 1f));
+                                    tgi.OnTap(Random.Range(0f, 1f));
                                     RPCProtection();
                                 }
                             }
@@ -645,16 +640,16 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () =>
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, GetPlayerFromVRRig(lockTarget).ActorNumber }) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = AllActorNumbersExcept(new[] { PhotonNetwork.MasterClient.ActorNumber, GetPlayerFromVRRig(lockTarget).ActorNumber }) });
 
                             VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
 
                             VRRig.LocalRig.transform.position = lockTarget.rightHandTransform.position;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -691,13 +686,13 @@ namespace iiMenu.Mods
                 }
 
                 NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = PhotonNetwork.PlayerList.Where(player => !player.IsMasterClient && PlayerIsTagged(GetVRRigFromPlayer(player))).Select(player => player.ActorNumber).ToArray() });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = PhotonNetwork.PlayerList.Where(player => !player.IsMasterClient && PlayerIsTagged(GetVRRigFromPlayer(player))).Select(player => player.ActorNumber).ToArray() });
 
                 VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
 
                 foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
                 {
@@ -705,7 +700,7 @@ namespace iiMenu.Mods
                     if (!player.IsMasterClient && PlayerIsTagged(rig))
                     {
                         VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { player.ActorNumber } });
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
                     }
                 }
 
@@ -796,7 +791,7 @@ namespace iiMenu.Mods
                             for (int i = 0; i < 100; i++)
                             {
                                 VRRig.LocalRig.transform.position += direction.normalized;
-                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
                             }
 
                             RPCProtection();
@@ -805,7 +800,7 @@ namespace iiMenu.Mods
                         if (rig.LatestVelocity().y > 6f)
                         {
                             VRRig.LocalRig.transform.position += direction.normalized * 100f;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
 
                             RPCProtection();
                         }
@@ -820,7 +815,7 @@ namespace iiMenu.Mods
             if (point == null)
             {
                 point = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(point.GetComponent<Collider>());
+                Object.Destroy(point.GetComponent<Collider>());
                 point.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 point.transform.localScale = Vector3.one * 0.2f;
             }
@@ -844,7 +839,7 @@ namespace iiMenu.Mods
         {
             if (point != null)
             {
-                UnityEngine.Object.Destroy(point);
+                Object.Destroy(point);
                 point = null;
             }
         }
@@ -895,7 +890,7 @@ namespace iiMenu.Mods
                             for (int i = 0; i < 100; i++)
                             {
                                 VRRig.LocalRig.transform.position += direction.normalized;
-                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
                             }
 
                             RPCProtection();
@@ -904,7 +899,7 @@ namespace iiMenu.Mods
                         if (rig.LatestVelocity().y > 6f)
                         {
                             VRRig.LocalRig.transform.position += direction.normalized * 100f;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
 
                             RPCProtection();
                         }
@@ -923,7 +918,7 @@ namespace iiMenu.Mods
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * UnityEngine.Random.Range(99999f, 99f);
+                        VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * Random.Range(99999f, 99f);
                         VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
                         VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
                     }
@@ -941,7 +936,7 @@ namespace iiMenu.Mods
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Vector3 velocity = (Vector3.up + (GorillaTagger.Instance.bodyCollider.transform.forward * 1)).normalized * 20f;
-                        GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { velocity });
+                        GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                         rig.ApplyLocalTrajectoryOverride(velocity);
                         VRRig.LocalRig.leftHandLink.BreakLink();
                         VRRig.LocalRig.rightHandLink.BreakLink();
@@ -965,7 +960,7 @@ namespace iiMenu.Mods
                 {
                     GorillaPropHuntGameManager hauntManager = (GorillaPropHuntGameManager)GorillaGameManager.instance;
                     hauntManager._ph_timeRoundStartedMillis = propHuntSpazMode ? 1 : 2;
-                    hauntManager._ph_randomSeed = UnityEngine.Random.Range(1, int.MaxValue);
+                    hauntManager._ph_randomSeed = Random.Range(1, int.MaxValue);
                 }
             }
         }
@@ -996,15 +991,14 @@ namespace iiMenu.Mods
             if (target is NetPlayer)
                 target = NetPlayerToPlayer((NetPlayer)target);
 
-            sendData ??= new long[] { 0L };
+            sendData ??= new[] { 0L };
 
-            object[] createData = new object[]
-            {
-                new int[] { netId },
-                new int[] { (int)GTZone.ghostReactor },
-                new int[] { hash },
-                new long[] { BitPackUtils.PackWorldPosForNetwork(position) },
-                new int[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
+            object[] createData = {
+                new[] { netId },
+                new[] { (int)GTZone.ghostReactor },
+                new[] { hash },
+                new[] { BitPackUtils.PackWorldPosForNetwork(position) },
+                new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
                 sendData
             };
 
@@ -1019,8 +1013,7 @@ namespace iiMenu.Mods
                 bool handTarget = GamePlayerLocal.instance.gamePlayer.GetGameEntityId(GamePlayer.GetHandIndex(false)) != null;
                 velocity = velocity.ClampMagnitudeSafe(1600f);
 
-                object[] grabData = new object[]
-                {
+                object[] grabData = {
                     netId,
                     handTarget,
                     BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
@@ -1033,8 +1026,7 @@ namespace iiMenu.Mods
                 if (target is Player)
                     GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", (Player)target, grabData);
                 
-                object[] dropData = new object[]
-                {
+                object[] dropData = {
                     netId,
                     handTarget,
                     position,
@@ -1064,7 +1056,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f)), Vector3.zero, Vector3.zero);
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, Quaternion.Euler(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f)), Vector3.zero, Vector3.zero);
             }
         }
 
@@ -1084,8 +1076,7 @@ namespace iiMenu.Mods
 
         public static void ToolSpamGun()
         {
-            int[] objectIds = new int[]
-            {
+            int[] objectIds = {
                 225241881,
                 1115277044,
                 1165678479,
@@ -1093,7 +1084,7 @@ namespace iiMenu.Mods
                 -175001459
             };
 
-            SpamObjectGun(UnityEngine.Random.Range(0, objectIds.Length - 1));
+            SpamObjectGun(Random.Range(0, objectIds.Length - 1));
         }
 
         private static float destroyDelay;
@@ -1130,7 +1121,7 @@ namespace iiMenu.Mods
 
                         if (gameEntity != null)
                         {
-                            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new object[] { new int[] { gameEntity.GetNetId() } });
+                            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
                             RPCProtection();
                         }
                     }
@@ -1146,8 +1137,8 @@ namespace iiMenu.Mods
             GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
             {
-                GetNetworkViewFromVRRig(GetVRRigFromPlayer(victim)).SendRPC("GrabbedByPlayer", victim, new object[] { true, false, false });
-                GetNetworkViewFromVRRig(GetVRRigFromPlayer(victim)).SendRPC("DroppedByPlayer", victim, new object[] { velocity });
+                GetNetworkViewFromVRRig(GetVRRigFromPlayer(victim)).SendRPC("GrabbedByPlayer", victim, true, false, false);
+                GetNetworkViewFromVRRig(GetVRRigFromPlayer(victim)).SendRPC("DroppedByPlayer", victim, velocity);
             }
             else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
@@ -1167,8 +1158,8 @@ namespace iiMenu.Mods
                         {
                             foreach (VRRig rig in GorillaParent.instance.vrrigs)
                             {
-                                GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), new object[] { true, false, false });
-                                GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { velocity });
+                                GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), true, false, false);
+                                GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                             }
                             break;
                         }
@@ -1178,16 +1169,16 @@ namespace iiMenu.Mods
                             {
                                 if (!rig.isLocal)
                                 {
-                                    GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), new object[] { true, false, false });
-                                    GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { velocity });
+                                    GetNetworkViewFromVRRig(rig).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(rig), true, false, false);
+                                    GetNetworkViewFromVRRig(rig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                                 }
                             }
                             break;
                         }
                     case RpcTarget.MasterClient:
                         {
-                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
-                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { velocity });
+                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
+                            GetNetworkViewFromVRRig(GetVRRigFromPlayer(NetworkSystem.Instance.MasterClient)).SendRPC("DroppedByPlayer", RpcTarget.Others, velocity);
                             break;
                         }
                 }
@@ -1212,7 +1203,7 @@ namespace iiMenu.Mods
                         GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                            GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
                             RPCProtection();
                         }
                         else
@@ -1235,7 +1226,7 @@ namespace iiMenu.Mods
                     {
                         if (!plr.isLocal)
                         {
-                            GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                            GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, true, false, false);
                             RPCProtection();
                         }
                     }
@@ -1261,7 +1252,7 @@ namespace iiMenu.Mods
                         GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
+                            GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", RpcTarget.Others, new Vector3(0f, 0f, 0f));
                             RPCProtection();
                         }
                         else
@@ -1285,7 +1276,7 @@ namespace iiMenu.Mods
                     {
                         if (!plr.isLocal)
                         {
-                            GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
+                            GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new Vector3(0f, 0f, 0f));
                             RPCProtection();
                         }
                     }
@@ -1436,7 +1427,7 @@ namespace iiMenu.Mods
                 int Data = ProjectileTracker.m_localProjectiles.AddAndIncrement(LocalProjectileInfo);
                 archiveIncrement = Data;
 
-                UnityEngine.Object.Destroy(SlingshotProjectileGameObject);
+                Object.Destroy(SlingshotProjectileGameObject);
                 return Data;
             } catch
             {
@@ -1485,7 +1476,7 @@ namespace iiMenu.Mods
             if (snowballScale < 1)
                 snowballScale = 5;
 
-            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + snowballScale.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + snowballScale + "</color><color=grey>]</color>";
         }
 
         public static int snowballMultiplicationFactor = 1;
@@ -1502,7 +1493,7 @@ namespace iiMenu.Mods
             if (snowballMultiplicationFactor < 1)
                 snowballMultiplicationFactor = 5;
 
-            GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor + "</color><color=grey>]</color>";
         }
 
         public static int lagIndex = 1;
@@ -1519,10 +1510,10 @@ namespace iiMenu.Mods
             if (lagIndex < 0)
                 lagIndex = 2;
 
-            lagAmount = new int[] { 40, 113, 425 } [lagIndex];
-            lagDelay = new float[] { 0.1f, 0.25f, 1f } [lagIndex];
+            lagAmount = new[] { 40, 113, 425 } [lagIndex];
+            lagDelay = new[] { 0.1f, 0.25f, 1f } [lagIndex];
 
-            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new string[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
+            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
         }
 
         public static float _snowballSpawnDelay = 0.1f;
@@ -1583,7 +1574,7 @@ namespace iiMenu.Mods
                             customNetworkedSize > 0 ? customNetworkedSize : (int)Scale
                             }, new RaiseEventOptions
                             {
-                                TargetActors = new int[] { Target.ActorNumber }
+                                TargetActors = new[] { Target.ActorNumber }
                             }, new SendOptions
                             {
                                 Reliability = false,
@@ -1598,7 +1589,7 @@ namespace iiMenu.Mods
                             GetProjectileIncrement(Pos, Vel, Scale)
                             }, new RaiseEventOptions
                             {
-                                TargetActors = new int[] { Target.ActorNumber }
+                                TargetActors = new[] { Target.ActorNumber }
                             }, new SendOptions
                             {
                                 Reliability = false,
@@ -1628,7 +1619,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        private static float snowballDelay = 0f;
+        private static float snowballDelay;
         public static void SnowballAirstrikeGun()
         {
             if (GetGunInput(false))
@@ -1651,7 +1642,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1663,7 +1654,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1675,7 +1666,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(Time.frameCount / 30f), 2f, MathF.Sin(Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1830,11 +1821,7 @@ namespace iiMenu.Mods
                             snowballDelay = Time.time + snowballSpawnDelay;
                             if (PhotonNetwork.InRoom)
                             {
-                                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                    248,
-                                    false,
-                                    999999f
-                                });
+                                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 248, false, 999999f);
                             }
                             else
                                 VRRig.LocalRig.PlayHandTapLocal(248, false, 999999f);
@@ -1848,7 +1835,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > snowballDelay)
             {
-                BetaSpawnSnowball(GetVRRigFromPlayer(player).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(player));
+                BetaSpawnSnowball(GetVRRigFromPlayer(player).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(player));
                 snowballDelay = Time.time + snowballSpawnDelay;
             }
         }
@@ -2142,7 +2129,7 @@ namespace iiMenu.Mods
         {
             if (photonView != null && parameters != null && !string.IsNullOrEmpty(method))
             {
-                ExitGames.Client.Photon.Hashtable rpcData = new ExitGames.Client.Photon.Hashtable
+                Hashtable rpcData = new Hashtable
                 {
                     { 0, photonView.ViewID },
                     { 2, PhotonNetwork.ServerTimestamp },
@@ -2184,7 +2171,7 @@ namespace iiMenu.Mods
         {
             if (photonView != null && parameters != null && !string.IsNullOrEmpty(method))
             {
-                ExitGames.Client.Photon.Hashtable rpcData = new ExitGames.Client.Photon.Hashtable
+                Hashtable rpcData = new Hashtable
                 {
                     { 0, photonView.ViewID },
                     { 2, PhotonNetwork.ServerTimestamp + timeOffset },
@@ -2417,7 +2404,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float thingdeb = 0f;
+        private static float thingdeb;
         public static void GiveFlyGun()
         {
             if (GetGunInput(false))
@@ -2598,8 +2585,8 @@ namespace iiMenu.Mods
             }
         }
         
-        private static float slamDel = 0f;
-        private static bool flip = false;
+        private static float slamDel;
+        private static bool flip;
         public static void EffectSpamHands()
         {
             if (rightGrab)
@@ -2609,7 +2596,7 @@ namespace iiMenu.Mods
                     GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
-                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.rightHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, GorillaTagger.Instance.rightHandTransform.position, new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
                         RPCProtection();
                         flip = !flip;
                     }
@@ -2626,7 +2613,7 @@ namespace iiMenu.Mods
                     GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
-                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.leftHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                        GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, GorillaTagger.Instance.leftHandTransform.position, new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
                         RPCProtection();
                         flip = !flip;
                     }
@@ -2653,7 +2640,7 @@ namespace iiMenu.Mods
                     {
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { NewPointer.transform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
+                            GameMode.ActiveNetworkHandler.NetView.GetView.RPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, NewPointer.transform.position, new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
                             RPCProtection();
                             flip = !flip;
                         }
@@ -2672,7 +2659,7 @@ namespace iiMenu.Mods
         private static bool heldTriggerWhilePlayersCorrect;
 
         public static void FreezeAll_OnPlayerLeave(NetPlayer player) =>
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Freeze All.");
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Freeze All.");
 
         public static void FreezeAll()
         {
@@ -2694,7 +2681,7 @@ namespace iiMenu.Mods
                             NetEventOptions options = new NetEventOptions
                             {
                                 Flags = flags,
-                                TargetActors = new int[] { -1 }
+                                TargetActors = new[] { -1 }
                             };
                             byte code = 51;
                             NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
@@ -2737,7 +2724,7 @@ namespace iiMenu.Mods
         }
 
         public static void ZaWarudo_OnPlayerLeave(NetPlayer player) =>
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Za Warudo.");
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Za Warudo.");
 
         public static void ZaWarudo()
         {
@@ -2778,7 +2765,7 @@ namespace iiMenu.Mods
                             NetEventOptions options = new NetEventOptions
                             {
                                 Flags = flags,
-                                TargetActors = new int[] { -1 }
+                                TargetActors = new[] { -1 }
                             };
                             byte code = 51;
                             NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: true);
@@ -2824,7 +2811,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator ZaWarudo_StartCoroutine()
         {
-            Spammers.Sound.PlayAudio(ZaWarudo_Start);
+            Sound.PlayAudio(ZaWarudo_Start);
             yield return new WaitForSeconds(2.4f);
 
             float endWhiteFadeTime = Time.time;
@@ -2862,7 +2849,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator ZaWarudo_StopCoroutine()
         {
-            Spammers.Sound.PlayAudio(ZaWarudo_Stop);
+            Sound.PlayAudio(ZaWarudo_Stop);
             yield return new WaitForSeconds(0.5f);
 
             float purpleFadeTime = Time.time;
@@ -2969,7 +2956,7 @@ namespace iiMenu.Mods
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
-                { 251, new ExitGames.Client.Photon.Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },
+                { 251, new Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },
                 { 250, false },
                 { 231, null }
             };
@@ -3214,7 +3201,7 @@ namespace iiMenu.Mods
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
                             glider.gameObject.transform.position = lockTarget.headMesh.transform.position;
-                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
                         }
                         else
                             glider.OnHover(null, null);
@@ -3242,7 +3229,7 @@ namespace iiMenu.Mods
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
                             glider.gameObject.transform.position = vrrig.headMesh.transform.position;
-                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360)));
                         }
                         else
                             glider.OnHover(null, null);
@@ -3262,11 +3249,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", GetPlayerFromVRRig(lockTarget), new object[]{
-                        111,
-                        false,
-                        999999f
-                    });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", GetPlayerFromVRRig(lockTarget), 111, false, 999999f);
                     RPCProtection();
                 }
                 if (GetGunInput(true))
@@ -3293,11 +3276,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[]{
-                    111,
-                    false,
-                    999999f
-                });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, 111, false, 999999f);
             }
         }
 
@@ -3353,12 +3332,12 @@ namespace iiMenu.Mods
             if (Time.time > randomRopeDelay)
             {
                 randomRopeDelay = Time.time + 0.5f;
-                randomRope = RopeSwingManager.instance.ropes.Values.OrderBy(_ => UnityEngine.Random.value).FirstOrDefault();
+                randomRope = RopeSwingManager.instance.ropes.Values.OrderBy(_ => Random.value).FirstOrDefault();
             }
             return randomRope;
         }
 
-        private static float RopeDelay = 0f;
+        private static float RopeDelay;
         public static void JoystickRopeControl() // Thanks to ShibaGT for the fix
         {
             if ((Mathf.Abs(rightJoystick.x) > 0.05f || Mathf.Abs(rightJoystick.y) > 0.05f) && Time.time > RopeDelay)
@@ -3408,7 +3387,7 @@ namespace iiMenu.Mods
                 RopeDelay = Time.time + 0.125f;
                 VRRig randomRig = GorillaParent.instance.vrrigs
                     .Where(rig => rig.currentRopeSwing != null)
-                    .OrderBy(_ => UnityEngine.Random.value)
+                    .OrderBy(_ => Random.value)
                     .FirstOrDefault();
 
                 if (randomRig != null)
@@ -3486,8 +3465,6 @@ namespace iiMenu.Mods
                         case CrittersManager.CritterEvent.NoiseMakerTriggered:
                             type = CrittersActor.CrittersActorType.NoiseMaker;
                             break;
-                        default:
-                            break;
                     }
 
                     CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
@@ -3499,7 +3476,7 @@ namespace iiMenu.Mods
                     if (critters.Count <= 0)
                         critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                    CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersActor critter = critters[Random.Range(0, critters.Count)];
 
                     if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
@@ -3522,8 +3499,8 @@ namespace iiMenu.Mods
                         if (critter)
                             critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                     }
                 }
             }
@@ -3566,8 +3543,6 @@ namespace iiMenu.Mods
                             case CrittersManager.CritterEvent.NoiseMakerTriggered:
                                 type = CrittersActor.CrittersActorType.NoiseMaker;
                                 break;
-                            default:
-                                break;
                         }
 
                         CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
@@ -3579,7 +3554,7 @@ namespace iiMenu.Mods
                         if (critters.Count <= 0)
                             critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                        CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                        CrittersActor critter = critters[Random.Range(0, critters.Count)];
 
                         if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                         {
@@ -3602,8 +3577,8 @@ namespace iiMenu.Mods
                             if (critter)
                                 critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                         }
                     }
                 }
@@ -3618,7 +3593,7 @@ namespace iiMenu.Mods
                 {
                     List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
 
-                    CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                     targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     targetCritter.transform.rotation = RandomQuaternion();
                 }
@@ -3633,7 +3608,7 @@ namespace iiMenu.Mods
                     if (critters.Count <= 0)
                         critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                    CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 
                     if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
@@ -3653,8 +3628,8 @@ namespace iiMenu.Mods
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero });
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero);
                     }
                 }
             }
@@ -3668,7 +3643,7 @@ namespace iiMenu.Mods
                 {
                     List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
 
-                    CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                     targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     targetCritter.transform.rotation = RandomQuaternion();
 
@@ -3686,7 +3661,7 @@ namespace iiMenu.Mods
                     if (critters.Count <= 0)
                         critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                    CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 
                     if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
@@ -3706,8 +3681,8 @@ namespace iiMenu.Mods
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero });
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero);
                     }
                 }
             }
@@ -3729,7 +3704,7 @@ namespace iiMenu.Mods
                     {
                         List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
 
-                        CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                        CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                         targetCritter.transform.position = NewPointer.transform.position;
                         targetCritter.transform.rotation = RandomQuaternion();
                     }
@@ -3744,7 +3719,7 @@ namespace iiMenu.Mods
                         if (critters.Count <= 0)
                             critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                        CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                        CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 
                         if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                         {
@@ -3764,8 +3739,8 @@ namespace iiMenu.Mods
                             critter.transform.position = NewPointer.transform.position + Vector3.up;
                             critter.transform.rotation = RandomQuaternion();
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero });
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero);
                         }
                     }
                 }
@@ -3797,8 +3772,6 @@ namespace iiMenu.Mods
                             type = CrittersActor.CrittersActorType.StickyTrap;
                             velocity = Vector3.down * 50f;
                             break;
-                        default:
-                            break;
                     }
 
                     CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
@@ -3810,7 +3783,7 @@ namespace iiMenu.Mods
                     if (critters.Count <= 0)
                         critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                    CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    CrittersActor critter = critters[Random.Range(0, critters.Count)];
 
                     if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
@@ -3833,8 +3806,8 @@ namespace iiMenu.Mods
                         if (critter)
                             critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                     }
                 }
             }
@@ -3872,8 +3845,6 @@ namespace iiMenu.Mods
                                 velocity = Ray.normal * -20f;
                                 position = NewPointer.transform.position + Ray.normal;
                                 break;
-                            default:
-                                break;
                         }
 
                         CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
@@ -3885,7 +3856,7 @@ namespace iiMenu.Mods
                         if (critters.Count <= 0)
                             critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                        CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                        CrittersActor critter = critters[Random.Range(0, critters.Count)];
 
                         if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                         {
@@ -3908,8 +3879,8 @@ namespace iiMenu.Mods
                             if (critter)
                                 critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
-                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false);
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
                         }
                     }
                 }

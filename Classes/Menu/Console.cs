@@ -4,28 +4,22 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using ExitGames.Client.Photon;
-using GorillaLocomotion;
-using GorillaNetworking;
-using iiMenu.Managers;
-using Photon.Pun;
-using Photon.Realtime;
-using Photon.Voice.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -34,10 +28,23 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using ExitGames.Client.Photon;
+using GorillaLocomotion;
+using GorillaNetworking;
+using iiMenu.Managers;
+using iiMenu.Menu;
+using iiMenu.Mods;
+using iiMenu.Notifications;
+using Photon.Pun;
+using Photon.Realtime;
+using Photon.Voice.Unity;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.Video;
+using JoinType = GorillaNetworking.JoinType;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Classes.Menu
 {
@@ -53,24 +60,24 @@ namespace iiMenu.Classes.Menu
 
         public static bool DisableMenu // Variable used to disable menu from opening
         {
-            get => iiMenu.Menu.Main.Lockdown;
+            get => Main.Lockdown;
             set =>
-                iiMenu.Menu.Main.Lockdown = value;
+                Main.Lockdown = value;
         }
 
         public static void SendNotification(string text, int sendTime = 1000) => // Method used to spawn notifications
-            Notifications.NotifiLib.SendNotification(text, sendTime);
+            NotifiLib.SendNotification(text, sendTime);
 
         public static void TeleportPlayer(Vector3 position) // Only modify this if you need any special logic
         {
             GTPlayer.Instance.TeleportTo(position, GTPlayer.Instance.transform.rotation);
-            iiMenu.Mods.Movement.lastPosition = position;
-            iiMenu.Menu.Main.closePosition = position;
+            Movement.lastPosition = position;
+            Main.closePosition = position;
         }
 
         public static void EnableMod(string mod, bool enable) // Method used to enable mods
         {
-            ButtonInfo Button = iiMenu.Menu.Main.GetIndex(mod);
+            ButtonInfo Button = Main.GetIndex(mod);
             if (!Button.isTogglable)
                 Button.method.Invoke();
             else
@@ -81,10 +88,10 @@ namespace iiMenu.Classes.Menu
         }
 
         public static void ToggleMod(string mod) => // Method used to toggle mod by name
-            iiMenu.Menu.Main.Toggle(mod);
+            Main.Toggle(mod);
         
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
-            iiMenu.Mods.Visuals.ConsoleBeacon(id, version);
+            Visuals.ConsoleBeacon(id, version);
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
@@ -103,7 +110,7 @@ namespace iiMenu.Classes.Menu
             NetworkSystem.Instance.OnPlayerJoined += SyncConsoleAssets;
             NetworkSystem.Instance.OnPlayerLeft += SyncConsoleUsers;
 
-            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"Console.txt";
+            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
             if (File.Exists(blockDir))
                 isBlocked = long.Parse(File.ReadAllText(blockDir));
             NetworkSystem.Instance.OnJoinedRoomEvent += BlockedCheck;
@@ -130,11 +137,11 @@ namespace iiMenu.Classes.Menu
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
         private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
-        public static IEnumerator GetTextureResource(string url, System.Action<Texture2D> onComplete = null)
+        public static IEnumerator GetTextureResource(string url, Action<Texture2D> onComplete = null)
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = System.Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
+                string fileName = Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -184,11 +191,11 @@ namespace iiMenu.Classes.Menu
         }
 
         private static readonly Dictionary<string, AudioClip> audios = new Dictionary<string, AudioClip>();
-        public static IEnumerator GetSoundResource(string url, System.Action<AudioClip> onComplete = null)
+        public static IEnumerator GetSoundResource(string url, Action<AudioClip> onComplete = null)
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = System.Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
+                string fileName = Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -604,7 +611,7 @@ namespace iiMenu.Classes.Menu
             Destroy(line2, 2f);
         }
 
-        public static Coroutine laserCoroutine = null;
+        public static Coroutine laserCoroutine;
         public static IEnumerator RenderLaser(bool rightHand, VRRig rigTarget)
         {
             float stoplasar = Time.time + 0.2f;
@@ -690,7 +697,7 @@ namespace iiMenu.Classes.Menu
 
         public static IEnumerator LuaAPISite(string site)
         {
-            using UnityWebRequest request = UnityWebRequest.Get($"{site}?q={System.DateTime.UtcNow.Ticks}");
+            using UnityWebRequest request = UnityWebRequest.Get($"{site}?q={DateTime.UtcNow.Ticks}");
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
@@ -701,13 +708,13 @@ namespace iiMenu.Classes.Menu
             LuaAPI(response);
         }
         
-        public static long isBlocked = 0;
+        public static long isBlocked;
         public static void BlockedCheck()
         {
-            if (isBlocked > System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond && PhotonNetwork.InRoom)
+            if (isBlocked > DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond && PhotonNetwork.InRoom)
             {
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond)).ToString() + "s.", 10000);
+                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond)) + "s.", 10000);
             }
         }
 
@@ -723,7 +730,7 @@ namespace iiMenu.Classes.Menu
             {
                 if (data.Code == ConsoleByte) // Admin mods, before you try anything yes it's player ID locked
                 {
-                    Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                    Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
 
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
                     string command = args.Length > 0 ? (string)args[0] : "";
@@ -762,7 +769,7 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "join":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], JoinType.Solo);
 
                         break;
                     case "kickall":
@@ -776,10 +783,10 @@ namespace iiMenu.Classes.Menu
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             long blockDur = (long)args[1];
-                            blockDur = Unity.Mathematics.math.clamp(blockDur, 1L, ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) ? 36000L : 1800L);
-                            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"Console.txt";
-                            File.WriteAllText(blockDir, ((System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond) + blockDur).ToString());
-                            isBlocked = (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond) + blockDur;
+                            blockDur = math.clamp(blockDur, 1L, ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) ? 36000L : 1800L);
+                            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
+                            File.WriteAllText(blockDir, ((DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) + blockDur).ToString());
+                            isBlocked = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) + blockDur;
                             NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
                         break;
@@ -1058,7 +1065,7 @@ namespace iiMenu.Classes.Menu
                         int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
                         int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
 
-                        VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
+                        VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID));
                         instance.StartCoroutine(
                             ModifyConsoleAsset(AnchorAssetId,
                             asset => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
@@ -1183,7 +1190,7 @@ namespace iiMenu.Classes.Menu
             ExecuteCommand(command, new RaiseEventOptions { TargetActors = targets }, parameters);
 
         public static void ExecuteCommand(string command, int target, params object[] parameters) =>
-            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new int[] { target } }, parameters);
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new[] { target } }, parameters);
 
         public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
             ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
@@ -1258,7 +1265,7 @@ namespace iiMenu.Classes.Menu
             consoleAssets.Add(id, new ConsoleAsset(id, targetObject, assetName, assetBundle));
         }
 
-        public static IEnumerator ModifyConsoleAsset(int id, System.Action<ConsoleAsset> action, bool isAudio = false)
+        public static IEnumerator ModifyConsoleAsset(int id, Action<ConsoleAsset> action, bool isAudio = false)
         {
             if (!PhotonNetwork.InRoom)
             {
@@ -1423,7 +1430,7 @@ namespace iiMenu.Classes.Menu
                 bindedToIndex = BindPosition;
                 bindPlayerActor = BindPlayer;
 
-                VRRig Rig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(bindPlayerActor, false));
+                VRRig Rig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(bindPlayerActor));
                 GameObject TargetAnchorObject = null;
 
                 switch (bindedToIndex)

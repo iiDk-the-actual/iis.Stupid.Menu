@@ -4,21 +4,27 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -27,16 +33,17 @@ using GorillaTag.Rendering;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
+using iiMenu.Managers;
+using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
 {
@@ -47,12 +54,12 @@ namespace iiMenu.Mods
             string text = "";
             text += "<color=blue><b>ii's Stupid Menu </b></color>" + PluginInfo.Version + "\\n \\n";
             
-            string red = "<color=red>" + MathF.Floor(PlayerPrefs.GetFloat("redValue") * 255f).ToString() + "</color>";
-            string green = ", <color=green>" + MathF.Floor(PlayerPrefs.GetFloat("greenValue") * 255f).ToString() + "</color>";
-            string blue = ", <color=blue>" + MathF.Floor(PlayerPrefs.GetFloat("blueValue") * 255f).ToString() + "</color>";
-            string redS = "<color=red>" + MathF.Round(PlayerPrefs.GetFloat("redValue") * 9f).ToString() + "</color>";
-            string greenS = ", <color=green>" + MathF.Round(PlayerPrefs.GetFloat("greenValue") * 9f).ToString() + "</color>";
-            string blueS = ", <color=blue>" + MathF.Round(PlayerPrefs.GetFloat("blueValue") * 9f).ToString() + "</color>";
+            string red = "<color=red>" + MathF.Floor(PlayerPrefs.GetFloat("redValue") * 255f) + "</color>";
+            string green = ", <color=green>" + MathF.Floor(PlayerPrefs.GetFloat("greenValue") * 255f) + "</color>";
+            string blue = ", <color=blue>" + MathF.Floor(PlayerPrefs.GetFloat("blueValue") * 255f) + "</color>";
+            string redS = "<color=red>" + MathF.Round(PlayerPrefs.GetFloat("redValue") * 9f) + "</color>";
+            string greenS = ", <color=green>" + MathF.Round(PlayerPrefs.GetFloat("greenValue") * 9f) + "</color>";
+            string blueS = ", <color=blue>" + MathF.Round(PlayerPrefs.GetFloat("blueValue") * 9f) + "</color>";
             text += "<color=green>Color</color><color=grey>:</color> " + red + green + blue + " <color=grey>[</color>"+ redS + greenS + blueS +"<color=grey>]</color>\\n";
 
             string master = PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient ? "<color=grey> [</color><color=red>Master</color><color=grey>]</color>" : "";
@@ -60,10 +67,10 @@ namespace iiMenu.Mods
 
             text += "<color=green>ID</color><color=grey>:</color> " + (Settings.hideId ? "Hidden" : PhotonNetwork.LocalPlayer.UserId) + "\\n";
             text += "<color=green>Clip</color><color=grey>:</color> " + (GUIUtility.systemCopyBuffer.Length > 35 ? GUIUtility.systemCopyBuffer[..35] : GUIUtility.systemCopyBuffer) + "\\n";
-            text += lastDeltaTime.ToString() + " <color=green>FPS</color> <color=grey>|</color> " + PhotonNetwork.GetPing().ToString() + " <color=green>Ping</color>\\n";
+            text += lastDeltaTime + " <color=green>FPS</color> <color=grey>|</color> " + PhotonNetwork.GetPing() + " <color=green>Ping</color>\\n";
 
             string room = PhotonNetwork.InRoom ? (NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public") : "Not in room";
-            text += "<color=green>" + NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper() + "</color> " + PhotonNetwork.PlayerList.Length.ToString() + " <color=green>Players</color> <color=grey>|</color> " + room + "\\n \\n";
+            text += "<color=green>" + NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper() + "</color> " + PhotonNetwork.PlayerList.Length + " <color=green>Players</color> <color=grey>|</color> " + room + "\\n \\n";
 
             string admin = "";
             if (Time.time > 5f)
@@ -72,9 +79,9 @@ namespace iiMenu.Mods
                     admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId]) ? "Super " : "") + "Admin</color>";
             }
             text += "<color=green>Theme</color> " + themeType + admin + "\n";
-            text += "<color=green>Preferences Directory</color><color=grey>:</color> " + System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}";
+            text += "<color=green>Preferences Directory</color><color=grey>:</color> " + Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}";
 
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = text;
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = text;
         }
 
         public static void WeatherChange(bool rain)
@@ -118,7 +125,7 @@ namespace iiMenu.Mods
                 {
                     GameObject v = mainCamera.transform.GetChild(i).gameObject;
                     if (v.name == "PropHaunt_Blindfold_ForCameras_Prefab(Clone)")
-                        UnityEngine.Object.Destroy(v);
+                        Object.Destroy(v);
                 }
             }
         }
@@ -126,8 +133,8 @@ namespace iiMenu.Mods
         public static void WatchOn()
         {
             GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
-            UnityEngine.Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
+            regwatchobject = Object.Instantiate(mainwatch, rightHand ? GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
             regwatchobject.SetActive(true);
 
             Transform thething = regwatchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
@@ -163,7 +170,7 @@ namespace iiMenu.Mods
             if (!infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode)
                 deafultWatch = true;
 
-            UnityEngine.UI.Text watchTextComponent = regwatchText.GetComponent<UnityEngine.UI.Text>();
+            Text watchTextComponent = regwatchText.GetComponent<Text>();
 
             if (infoWatchMenuName || deafultWatch) watchTextComponent.text = "ii's Stupid Menu\n<color=grey>";
             if (doCustomName && (infoWatchMenuName || deafultWatch))
@@ -171,7 +178,7 @@ namespace iiMenu.Mods
             if (!infoWatchMenuName && !deafultWatch)
                 watchTextComponent.text = "<color=grey>";
             
-            if (infoWatchFPS || deafultWatch) watchText += lastDeltaTime.ToString() + " FPS\n";
+            if (infoWatchFPS || deafultWatch) watchText += lastDeltaTime + " FPS\n";
             if (infoWatchTime || deafultWatch) watchText += DateTime.Now.ToString("hh:mm tt") + "\n";
             if (infoWatchCode) watchText += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
             if (infoWatchClip) watchText += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
@@ -186,9 +193,9 @@ namespace iiMenu.Mods
         }
 
         public static void WatchOff() =>
-            UnityEngine.Object.Destroy(regwatchobject);
+            Object.Destroy(regwatchobject);
 
-        public static Material oldSkyMat = null;
+        public static Material oldSkyMat;
         public static void DoCustomSkyboxColor()
         {
             GameObject sky = GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky");
@@ -244,7 +251,7 @@ namespace iiMenu.Mods
         public static void DisableDrawGun()
         {
             if (trailRenderer != null)
-                UnityEngine.Object.Destroy(trailRenderer.gameObject);
+                Object.Destroy(trailRenderer.gameObject);
 
             trailRenderer = null;
         }
@@ -296,7 +303,7 @@ namespace iiMenu.Mods
                 if (gameObject == null)
                 {
                     gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(gameObject.GetComponent<Collider>());
+                    Object.Destroy(gameObject.GetComponent<Collider>());
 
                     if (tapMat == null)
                     {
@@ -372,7 +379,7 @@ namespace iiMenu.Mods
             {
                 handTaps.Remove(removal);
                 if ((GameObject)removal[3] != null)
-                    UnityEngine.Object.Destroy((GameObject)removal[3]);
+                    Object.Destroy((GameObject)removal[3]);
             }
         }
 
@@ -389,7 +396,7 @@ namespace iiMenu.Mods
                 GameObject gameObject = (GameObject)handTapData[3] ?? null;
 
                 if (gameObject != null)
-                    UnityEngine.Object.Destroy(gameObject);
+                    Object.Destroy(gameObject);
             }
 
             handTaps.Clear();
@@ -411,7 +418,7 @@ namespace iiMenu.Mods
                 PerformanceModeStepIndex = 10;
 
             PerformanceModeStep = PerformanceModeStepIndex / 10f;
-            GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep + "</color><color=grey>]</color>";
         }
 
         public static float PerformanceVisualDelay;
@@ -433,12 +440,10 @@ namespace iiMenu.Mods
                 frames.Add(Time.frameCount);
                 return 0.1f + (Time.frameCount * 0.1f);
             }
-            else
-            {
-                frames.Clear();
-                frames.Add(Time.frameCount);
-                return 0.1f + (frames.Count * 0.1f);
-            }
+
+            frames.Clear();
+            frames.Add(Time.frameCount);
+            return 0.1f + (frames.Count * 0.1f);
         }
 
         public static void GetLabel(string codeName, bool leftHand, string text, Color color)
@@ -476,7 +481,7 @@ namespace iiMenu.Mods
         private static float playtime;
         public static void UpdatePlaytime()
         {
-            iiMenu.Managers.CoroutineManager.instance.StartCoroutine(Updateplaytime());
+            CoroutineManager.instance.StartCoroutine(Updateplaytime());
         }
         private static IEnumerator Updateplaytime() 
         {
@@ -501,9 +506,9 @@ namespace iiMenu.Mods
             );
         }
 
-        private static float startTime = 0f;
-        private static float endTime = 0f;
-        private static bool lastWasTagged = false;
+        private static float startTime;
+        private static float endTime;
+        private static bool lastWasTagged;
         public static void TimeLabel()
         {
             if (DoPerformanceCheck())
@@ -552,9 +557,9 @@ namespace iiMenu.Mods
                 }
             }
             if (closest != float.MaxValue)
-                Notifications.NotifiLib.information["Nearby"] = string.Format("{0:F1}m", closest);
+                NotifiLib.information["Nearby"] = string.Format("{0:F1}m", closest);
             else
-                Notifications.NotifiLib.information.Remove("Nearby");
+                NotifiLib.information.Remove("Nearby");
         }
 
         public static void NearbyTaggerLabel()
@@ -609,7 +614,7 @@ namespace iiMenu.Mods
                     (
                         "LastLabel",
                         true,
-                        left.ToString() + " left",
+                        left + " left",
                         left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white
                     );
                 }
@@ -630,8 +635,8 @@ namespace iiMenu.Mods
         {
             visualizerObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             visualizerOutline = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            UnityEngine.Object.Destroy(visualizerObject.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(visualizerOutline.GetComponent<Collider>());
+            Object.Destroy(visualizerObject.GetComponent<Collider>());
+            Object.Destroy(visualizerOutline.GetComponent<Collider>());
         }
 
         public static void AudioVisualizer()
@@ -661,8 +666,8 @@ namespace iiMenu.Mods
 
         public static void DestroyAudioVisualizer()
         {
-            UnityEngine.Object.Destroy(visualizerObject);
-            UnityEngine.Object.Destroy(visualizerOutline);
+            Object.Destroy(visualizerObject);
+            Object.Destroy(visualizerOutline);
         }
 
         private static GameObject headPos;
@@ -673,21 +678,21 @@ namespace iiMenu.Mods
             if (headPos == null)
             {
                 headPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(headPos.GetComponent<Collider>());
+                Object.Destroy(headPos.GetComponent<Collider>());
                 headPos.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             }
 
             if (leftHandPos == null)
             {
                 leftHandPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(leftHandPos.GetComponent<Collider>());
+                Object.Destroy(leftHandPos.GetComponent<Collider>());
                 leftHandPos.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             }
 
             if (rightHandPos == null)
             {
                 rightHandPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(rightHandPos.GetComponent<Collider>());
+                Object.Destroy(rightHandPos.GetComponent<Collider>());
                 rightHandPos.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             }
 
@@ -699,13 +704,13 @@ namespace iiMenu.Mods
         public static void DisableShowServerPosition()
         {
             if (headPos != null)
-                UnityEngine.Object.Destroy(headPos);
+                Object.Destroy(headPos);
 
             if (leftHandPos != null)
-                UnityEngine.Object.Destroy(leftHandPos);
+                Object.Destroy(leftHandPos);
 
             if (rightHandPos != null)
-                UnityEngine.Object.Destroy(rightHandPos);
+                Object.Destroy(rightHandPos);
         }
 
         private static readonly Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer>();
@@ -718,7 +723,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value.gameObject);
+                    Object.Destroy(lines.Value.gameObject);
                 }
             }
 
@@ -782,7 +787,7 @@ namespace iiMenu.Mods
         public static void DisableJumpPredictions()
         {
             foreach (KeyValuePair<VRRig, LineRenderer> pred in predictions)
-                UnityEngine.Object.Destroy(pred.Value.gameObject);
+                Object.Destroy(pred.Value.gameObject);
 
             predictions.Clear();
         }
@@ -807,7 +812,7 @@ namespace iiMenu.Mods
                 if (!key.Value.gameObject.activeSelf)
                 {
                     toRemoveTrajectories.Add(key.Key);
-                    UnityEngine.Object.Destroy(key.Value.gameObject);
+                    Object.Destroy(key.Value.gameObject);
                 }
                 else
                     key.Value.gameObject.SetActive(false);
@@ -937,7 +942,7 @@ namespace iiMenu.Mods
                 if (!localTrajectoryLine.gameObject.activeSelf)
                 {
                     localTrajectoryLine = null;
-                    UnityEngine.Object.Destroy(localTrajectoryLine.gameObject);
+                    Object.Destroy(localTrajectoryLine.gameObject);
                 }
                 else
                     localTrajectoryLine.gameObject.SetActive(false);
@@ -991,13 +996,13 @@ namespace iiMenu.Mods
         public static void DisablePaintbrawlTrajectories()
         {
             foreach (KeyValuePair<SlingshotProjectile, LineRenderer> pred in trajectoryPool)
-                UnityEngine.Object.Destroy(pred.Value.gameObject);
+                Object.Destroy(pred.Value.gameObject);
 
             trajectoryPool.Clear();
 
             if (localTrajectoryLine != null)
             {
-                UnityEngine.Object.Destroy(localTrajectoryLine.gameObject);
+                Object.Destroy(localTrajectoryLine.gameObject);
                 localTrajectoryLine = null;
             }
         }
@@ -1088,17 +1093,15 @@ namespace iiMenu.Mods
                 {
                     ntDistanceList[rig].Add(Time.frameCount);
                     return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
-                } else
-                {
-                    ntDistanceList[rig].Clear();
-                    ntDistanceList[rig].Add(Time.frameCount);
-                    return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
                 }
-            } else
-            {
-                ntDistanceList.Add(rig, new List<int> { Time.frameCount });
-                return 0.4f * rig.scaleFactor;
+
+                ntDistanceList[rig].Clear();
+                ntDistanceList[rig].Add(Time.frameCount);
+                return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
             }
+
+            ntDistanceList.Add(rig, new List<int> { Time.frameCount });
+            return 0.4f * rig.scaleFactor;
         }
 
         private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
@@ -1108,7 +1111,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     nametags.Remove(nametag.Key);
                 }
             }
@@ -1147,7 +1150,7 @@ namespace iiMenu.Mods
         public static void DisableNameTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
             
             nametags.Clear();
         }
@@ -1159,7 +1162,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     velnametags.Remove(nametag.Key);
                 }
             }
@@ -1201,7 +1204,7 @@ namespace iiMenu.Mods
         public static void DisableVelocityTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
             
             velnametags.Clear();
         }
@@ -1213,7 +1216,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     FPSnametags.Remove(nametag.Key);
                 }
             }
@@ -1255,7 +1258,7 @@ namespace iiMenu.Mods
         public static void DisableFPSTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             FPSnametags.Clear();
         }
@@ -1267,7 +1270,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     IDnametags.Remove(nametag.Key);
                 }
             }
@@ -1310,7 +1313,7 @@ namespace iiMenu.Mods
         public static void DisableIDTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in IDnametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             IDnametags.Clear();
         }
@@ -1322,7 +1325,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     platformTags.Remove(nametag.Key);
                 }
             }
@@ -1365,7 +1368,7 @@ namespace iiMenu.Mods
         public static void DisablePlatformTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in platformTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             platformTags.Clear();
         }
@@ -1377,7 +1380,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     creationDateTags.Remove(nametag.Key);
                 }
             }
@@ -1420,7 +1423,7 @@ namespace iiMenu.Mods
         public static void DisableCreationDateTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in creationDateTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             creationDateTags.Clear();
         }
@@ -1432,7 +1435,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     Pingnametags.Remove(nametag.Key);
                 }
             }
@@ -1475,7 +1478,7 @@ namespace iiMenu.Mods
         public static void DisablePingTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in Pingnametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             Pingnametags.Clear();
         }
@@ -1487,7 +1490,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     turnNameTags.Remove(nametag.Key);
                 }
             }
@@ -1515,7 +1518,7 @@ namespace iiMenu.Mods
                         int turnFactor = vrrig.turnFactor;
 
                         GameObject nameTag = turnNameTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor.ToString();
+                        nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor;
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -1532,7 +1535,7 @@ namespace iiMenu.Mods
         public static void DisableTurnTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             turnNameTags.Clear();
         }
@@ -1544,7 +1547,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     taggedNameTags.Remove(nametag.Key);
                 }
             }
@@ -1573,7 +1576,7 @@ namespace iiMenu.Mods
                         if (PlayerIsTagged(vrrig))
                         {
                             int taggedById = vrrig.taggedById;
-                            NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById, false);
+                            NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById);
 
                             if (tagger != null)
                                 nameTag.GetComponent<TextMesh>().text = "Tagged by " + tagger?.NickName;
@@ -1596,7 +1599,7 @@ namespace iiMenu.Mods
         public static void DisableTaggedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             taggedNameTags.Clear();
         }
@@ -1691,7 +1694,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     modNameTags.Remove(nametag.Key);
                 }
             }
@@ -1774,7 +1777,7 @@ namespace iiMenu.Mods
         public static void DisableModTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             modNameTags.Clear();
         }
@@ -1796,7 +1799,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     cosmeticNameTags.Remove(nametag.Key);
                 }
             }
@@ -1857,7 +1860,7 @@ namespace iiMenu.Mods
         public static void DisableCosmeticTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             cosmeticNameTags.Clear();
         }
@@ -1956,7 +1959,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     verifiedNameTags.Remove(nametag.Key);
                 }
             }
@@ -2017,7 +2020,7 @@ namespace iiMenu.Mods
         public static void DisableVerifiedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             modNameTags.Clear();
         }
@@ -2029,7 +2032,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     crashedNameTags.Remove(nametag.Key);
                 }
                 else
@@ -2037,7 +2040,7 @@ namespace iiMenu.Mods
                     bool crashed = Math.Abs((nametag.Key.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp) > 500;
                     if (!crashed)
                     {
-                        UnityEngine.Object.Destroy(nametag.Value);
+                        Object.Destroy(nametag.Value);
                         crashedNameTags.Remove(nametag.Key);
                     }
                 }
@@ -2106,7 +2109,7 @@ namespace iiMenu.Mods
         public static void DisableCrashedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             modNameTags.Clear();
         }
@@ -2308,7 +2311,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     cosmeticIndicators.Remove(nametag.Key);
                 }
             }
@@ -2340,7 +2343,7 @@ namespace iiMenu.Mods
                     if (!cosmeticIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
                         indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
+                        Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
 
@@ -2381,7 +2384,7 @@ namespace iiMenu.Mods
         public static void DisableCosmeticESP()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             cosmeticIndicators.Clear();
         }
@@ -2413,7 +2416,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     platformIndicators.Remove(nametag.Key);
                 }
             }
@@ -2425,7 +2428,7 @@ namespace iiMenu.Mods
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
                         indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
+                        Object.Destroy(indicator.GetComponent<Collider>());
 
                         if (platformMat == null)
                         {
@@ -2465,7 +2468,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     platformIndicators.Remove(nametag.Key);
                 }
             }
@@ -2477,7 +2480,7 @@ namespace iiMenu.Mods
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
                         indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
+                        Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
 
@@ -2507,7 +2510,7 @@ namespace iiMenu.Mods
         public static void DisablePlatformIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             platformIndicators.Clear();
         }
@@ -2523,7 +2526,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     voiceIndicators.Remove(nametag.Key);
                 }
             }
@@ -2542,7 +2545,7 @@ namespace iiMenu.Mods
                         if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
                             volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                            Object.Destroy(volIndicator.GetComponent<Collider>());
                             
                             if (voiceMat == null)
                             {
@@ -2573,7 +2576,7 @@ namespace iiMenu.Mods
                     {
                         if (voiceIndicators.TryGetValue(vrrig, out GameObject existing))
                         {
-                            UnityEngine.Object.Destroy(existing);
+                            Object.Destroy(existing);
                             voiceIndicators.Remove(vrrig);
                         }
                     }
@@ -2587,7 +2590,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     voiceIndicators.Remove(nametag.Key);
                 }
             }
@@ -2606,7 +2609,7 @@ namespace iiMenu.Mods
                         if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
                             volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                            Object.Destroy(volIndicator.GetComponent<Collider>());
 
                             if (voiceEspMat == null)
                                 voiceEspMat = new Material(Shader.Find("GUI/Text Shader"));
@@ -2629,7 +2632,7 @@ namespace iiMenu.Mods
                     {
                         if (voiceIndicators.TryGetValue(vrrig, out GameObject existing))
                         {
-                            UnityEngine.Object.Destroy(existing);
+                            Object.Destroy(existing);
                             voiceIndicators.Remove(vrrig);
                         }
                     }
@@ -2640,7 +2643,7 @@ namespace iiMenu.Mods
         public static void DisableVoiceIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             voiceIndicators.Clear();
         }
@@ -2659,12 +2662,12 @@ namespace iiMenu.Mods
         public static void StartNoLimb()
         {
             l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
+            Object.Destroy(l.GetComponent<SphereCollider>());
 
             l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
             r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
+            Object.Destroy(r.GetComponent<SphereCollider>());
 
             r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
@@ -2682,14 +2685,14 @@ namespace iiMenu.Mods
 
         public static void EndNoLimb()
         {
-            UnityEngine.Object.Destroy(l);
-            UnityEngine.Object.Destroy(r);
+            Object.Destroy(l);
+            Object.Destroy(r);
 
             VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
             VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 1f);
         }
 
-        private static readonly Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>() { };
+        private static readonly Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>();
         public static void CasualBoneESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
@@ -2706,7 +2709,7 @@ namespace iiMenu.Mods
                     toRemove.Add(boness.Key);
 
                     foreach (LineRenderer renderer in boness.Value)
-                        UnityEngine.Object.Destroy(renderer);
+                        Object.Destroy(renderer);
                 }
             }
 
@@ -2803,7 +2806,7 @@ namespace iiMenu.Mods
                     toRemove.Add(boness.Key);
 
                     foreach (LineRenderer renderer in boness.Value)
-                        UnityEngine.Object.Destroy(renderer);
+                        Object.Destroy(renderer);
                 }
             }
 
@@ -2910,7 +2913,7 @@ namespace iiMenu.Mods
                     toRemove.Add(boness.Key);
 
                     foreach (LineRenderer renderer in boness.Value)
-                        UnityEngine.Object.Destroy(renderer);
+                        Object.Destroy(renderer);
                 }
             }
 
@@ -3002,7 +3005,7 @@ namespace iiMenu.Mods
             foreach (KeyValuePair<VRRig, List<LineRenderer>> bones in boneESP)
             {
                 foreach (LineRenderer renderer in bones.Value)
-                    UnityEngine.Object.Destroy(renderer);
+                    Object.Destroy(renderer);
             }
 
             boneESP.Clear();
@@ -3018,7 +3021,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -3086,7 +3089,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -3160,7 +3163,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -3231,7 +3234,7 @@ namespace iiMenu.Mods
             foreach (KeyValuePair<VRRig, SkinnedWireframeRenderer> pred in wireframes)
             {
                 pred.Key.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
-                UnityEngine.Object.Destroy(pred.Value);
+                Object.Destroy(pred.Value);
             }
 
             wireframes.Clear();
@@ -3473,7 +3476,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static readonly Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>() { };
+        private static readonly Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>();
         public static void CasualBoxESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
@@ -3487,7 +3490,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3501,7 +3504,7 @@ namespace iiMenu.Mods
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
 
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -3539,7 +3542,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3553,7 +3556,7 @@ namespace iiMenu.Mods
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
 
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -3598,7 +3601,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3612,7 +3615,7 @@ namespace iiMenu.Mods
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
 
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -3644,12 +3647,12 @@ namespace iiMenu.Mods
         public static void DisableBoxESP()
         {
             foreach (KeyValuePair<VRRig, GameObject> box in boxESP)
-                UnityEngine.Object.Destroy(box.Value);
+                Object.Destroy(box.Value);
 
             boxESP.Clear();
         }
 
-        private static readonly Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>() { };
+        private static readonly Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>();
         public static void CasualHollowBoxESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
@@ -3664,7 +3667,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3679,7 +3682,7 @@ namespace iiMenu.Mods
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         box.transform.position = vrrig.transform.position;
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                         Renderer boxRenderer = box.GetComponent<Renderer>();
@@ -3689,7 +3692,7 @@ namespace iiMenu.Mods
                         GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3697,7 +3700,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3705,7 +3708,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3713,7 +3716,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3752,7 +3755,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3767,7 +3770,7 @@ namespace iiMenu.Mods
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         box.transform.position = vrrig.transform.position;
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                         Renderer boxRenderer = box.GetComponent<Renderer>();
@@ -3777,7 +3780,7 @@ namespace iiMenu.Mods
                         GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3785,7 +3788,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3793,7 +3796,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3801,7 +3804,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3844,7 +3847,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
                     toRemove.Add(box.Key);
-                    UnityEngine.Object.Destroy(box.Value);
+                    Object.Destroy(box.Value);
                 }
             }
 
@@ -3859,7 +3862,7 @@ namespace iiMenu.Mods
                     {
                         box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         box.transform.position = vrrig.transform.position;
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        Object.Destroy(box.GetComponent<BoxCollider>());
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                         Renderer boxRenderer = box.GetComponent<Renderer>();
@@ -3869,7 +3872,7 @@ namespace iiMenu.Mods
                         GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3877,7 +3880,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3885,7 +3888,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3893,7 +3896,7 @@ namespace iiMenu.Mods
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         outl.transform.SetParent(box.transform);
                         outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
-                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
                         outl.transform.localRotation = Quaternion.identity;
                         outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
@@ -3924,7 +3927,7 @@ namespace iiMenu.Mods
         public static void DisableHollowBoxESP()
         {
             foreach (KeyValuePair<VRRig, GameObject> box in hollowBoxESP)
-                UnityEngine.Object.Destroy(box.Value);
+                Object.Destroy(box.Value);
 
             hollowBoxESP.Clear();
         }
@@ -3939,7 +3942,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -4002,7 +4005,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -4071,7 +4074,7 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
                     toRemove.Add(lines.Key);
-                    UnityEngine.Object.Destroy(lines.Value);
+                    Object.Destroy(lines.Value);
                 }
             }
 
@@ -4135,7 +4138,7 @@ namespace iiMenu.Mods
         public static void DisableBreadcrumbs()
         {
             foreach (KeyValuePair<VRRig, TrailRenderer> pred in breadcrumbs)
-                UnityEngine.Object.Destroy(pred.Value);
+                Object.Destroy(pred.Value);
 
             breadcrumbs.Clear();
         }
@@ -4160,8 +4163,8 @@ namespace iiMenu.Mods
             return false;
         }
 
-        static GameObject LeftSphere = null;
-        static GameObject RightSphere = null;
+        static GameObject LeftSphere;
+        static GameObject RightSphere;
         public static void ShowButtonColliders()
         {
             if (LeftSphere == null || RightSphere == null)
@@ -4169,7 +4172,7 @@ namespace iiMenu.Mods
                 if (LeftSphere == null)
                 {
                     LeftSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(LeftSphere.GetComponent<SphereCollider>());
+                    Object.Destroy(LeftSphere.GetComponent<SphereCollider>());
 
                     LeftSphere.transform.parent = GorillaTagger.Instance.leftHandTransform;
                     LeftSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
@@ -4178,7 +4181,7 @@ namespace iiMenu.Mods
                 if (RightSphere == null)
                 {
                     RightSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(RightSphere.GetComponent<SphereCollider>());
+                    Object.Destroy(RightSphere.GetComponent<SphereCollider>());
 
                     RightSphere.transform.parent = GorillaTagger.Instance.leftHandTransform;
                     RightSphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
@@ -4194,8 +4197,8 @@ namespace iiMenu.Mods
 
         public static void HideButtonColliders()
         {
-            UnityEngine.Object.Destroy(LeftSphere);
-            UnityEngine.Object.Destroy(RightSphere);
+            Object.Destroy(LeftSphere);
+            Object.Destroy(RightSphere);
 
             LeftSphere = null;
             RightSphere = null;
@@ -4855,9 +4858,9 @@ namespace iiMenu.Mods
 
         private static readonly List<TextMesh> nameTagPool = new List<TextMesh>();
 
-        private static GameObject nameTagHolder = null;
+        private static GameObject nameTagHolder;
 
-        public static bool isNameTagQueued = false;
+        public static bool isNameTagQueued;
 
         private static TextMesh GetNameTag(bool hideOnCamera)
         {
@@ -4898,7 +4901,7 @@ namespace iiMenu.Mods
                 newMesh.color = Color.white;
 
                 GameObject backgroundObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(backgroundObject.GetComponent<Collider>());
+                Object.Destroy(backgroundObject.GetComponent<Collider>());
 
                 Renderer backgroundRender = backgroundObject.GetComponent<Renderer>();
 
@@ -4986,7 +4989,7 @@ namespace iiMenu.Mods
             foreach (TextMesh textMesh in nameTagPool)
             {
                 if (destroy || isNameTagQueued)
-                    UnityEngine.Object.Destroy(textMesh.gameObject);
+                    Object.Destroy(textMesh.gameObject);
                 else
                     textMesh.gameObject.SetActive(false);
             }
@@ -5000,7 +5003,7 @@ namespace iiMenu.Mods
 
         private static readonly List<LineRenderer> linePool = new List<LineRenderer>();
 
-        private static GameObject lineRenderHolder = null;
+        private static GameObject lineRenderHolder;
 
         public static bool isLineRenderQueued = false;
 
@@ -5056,7 +5059,7 @@ namespace iiMenu.Mods
             foreach (LineRenderer line in linePool)
             {
                 if (destroy || isLineRenderQueued)
-                    UnityEngine.Object.Destroy(line.gameObject);
+                    Object.Destroy(line.gameObject);
                 else
                     line.gameObject.SetActive(false);
             }
@@ -5072,7 +5075,7 @@ namespace iiMenu.Mods
 
             Color userColor = Color.red;
 
-            Notifications.NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + version + ".", 3000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + version + ".", 3000);
             VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
             VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
             GameObject line = new GameObject("Line");
@@ -5082,7 +5085,7 @@ namespace iiMenu.Mods
             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
             liner.material.shader = Shader.Find("GUI/Text Shader");
-            UnityEngine.Object.Destroy(line, 3f);
+            Object.Destroy(line, 3f);
         }
     }
 }

@@ -4,22 +4,31 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using ExitGames.Client.Photon;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -29,14 +38,6 @@ using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -44,6 +45,7 @@ using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using JoinType = GorillaNetworking.JoinType;
 
 namespace iiMenu.Managers
 {
@@ -365,7 +367,7 @@ namespace iiMenu.Managers
         {
             try
             {
-                NetPlayer Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                NetPlayer Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
                 if (data.Code == FriendByte && (IsPlayerFriend(Sender) || ServerData.Administrators.ContainsKey(Sender.UserId) || ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId)))
                 {
                     VRRig SenderRig = GetVRRigFromPlayer(Sender);
@@ -557,8 +559,6 @@ namespace iiMenu.Managers
 
                                 break;
                             }
-                        default:
-                            break;
                     }
                 }
             }
@@ -581,12 +581,12 @@ namespace iiMenu.Managers
             ExecuteCommand(command, new RaiseEventOptions { TargetActors = targets }, parameters);
 
         public static void ExecuteCommand(string command, int target, params object[] parameters) =>
-            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new int[] { target } }, parameters);
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new[] { target } }, parameters);
 
         public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
             ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
 
-        public static System.Collections.IEnumerator FadePing(GameObject line)
+        public static IEnumerator FadePing(GameObject line)
         {
             float startTime = Time.time;
             LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
@@ -618,7 +618,7 @@ namespace iiMenu.Managers
             Destroy(line);
         }
 
-        public System.Collections.IEnumerator UpdateFriendsList()
+        public IEnumerator UpdateFriendsList()
         {
             using UnityWebRequest request = new UnityWebRequest("https://iidk.online/getfriends", "GET");
             byte[] bodyRaw = Encoding.UTF8.GetBytes("{}");
@@ -756,7 +756,7 @@ namespace iiMenu.Managers
             }
         }
 
-        public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
+        public static IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
         {
             UnityWebRequest request = new UnityWebRequest($"https://iidk.online/{action}", "POST");
 
@@ -1022,13 +1022,13 @@ namespace iiMenu.Managers
 
             if (friend.online && friend.currentRoom != "")
             {
-                buttons.AddRange(new ButtonInfo[]
+                buttons.AddRange(new[]
                 {
                     new ButtonInfo
                     {
                         buttonText = $"JoinFriend{friendTarget}",
                         overlapText = "Join Friend",
-                        method = () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(instance.Friends.friends[friendTarget].currentRoom, GorillaNetworking.JoinType.Solo),
+                        method = () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(instance.Friends.friends[friendTarget].currentRoom, JoinType.Solo),
                         isTogglable = false,
                         toolTip = $"Joins the user {friend.currentName}'s current room."
                     },
@@ -1316,7 +1316,7 @@ namespace iiMenu.Managers
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
-                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
+                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, JoinType.Solo));
                                 break;
                             }
                         case "reqinvite":

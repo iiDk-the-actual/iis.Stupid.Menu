@@ -4,21 +4,24 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
@@ -33,14 +36,13 @@ using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
@@ -49,7 +51,7 @@ namespace iiMenu.Mods
         public static int platformMode;
         public static void ChangePlatformType(bool positive = true)
         {
-            string[] platformNames = new string[] {
+            string[] platformNames = {
                 "Normal",
                 "Invisible",
                 "Rainbow",
@@ -74,7 +76,7 @@ namespace iiMenu.Mods
         public static int platformShape;
         public static void ChangePlatformShape(bool positive = true)
         {
-            string[] platformShapes = new string[] {
+            string[] platformShapes = {
                 "Sphere",
                 "Cube",
                 "Cylinder",
@@ -167,7 +169,7 @@ namespace iiMenu.Mods
             if (GetIndex("Platform Outlines").enabled)
             {
                 GameObject gameObject = GameObject.CreatePrimitive(GetPlatformPrimitiveType());
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Collider>());
+                Object.Destroy(gameObject.GetComponent<Collider>());
                 gameObject.transform.parent = platform.transform;
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localRotation = Quaternion.identity;
@@ -253,11 +255,11 @@ namespace iiMenu.Mods
                     if (GetIndex("Platform Gravity").enabled)
                     {
                         leftplat.AddComponent(typeof(Rigidbody));
-                        UnityEngine.Object.Destroy(leftplat.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(leftplat, 2f);
+                        Object.Destroy(leftplat.GetComponent<Collider>());
+                        Object.Destroy(leftplat, 2f);
                     }
                     else
-                        UnityEngine.Object.Destroy(leftplat);
+                        Object.Destroy(leftplat);
                     
                     leftplat = null;
                     if (platformMode == 4 && rightplat == null)
@@ -318,11 +320,11 @@ namespace iiMenu.Mods
                     if (GetIndex("Platform Gravity").enabled)
                     {
                         rightplat.AddComponent(typeof(Rigidbody));
-                        UnityEngine.Object.Destroy(rightplat.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(rightplat, 2f);
+                        Object.Destroy(rightplat.GetComponent<Collider>());
+                        Object.Destroy(rightplat, 2f);
                     }
                     else
-                        UnityEngine.Object.Destroy(rightplat);
+                        Object.Destroy(rightplat);
                     
                     rightplat = null;
                     if (platformMode == 4 && leftplat == null)
@@ -344,7 +346,7 @@ namespace iiMenu.Mods
                 slipperyPlatform.transform.rotation = TrueLeftHand().rotation;
 
                 slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                UnityEngine.Object.Destroy(slipperyPlatform, 1);
+                Object.Destroy(slipperyPlatform, 1);
             }
 
             if (rightGrab)
@@ -356,7 +358,7 @@ namespace iiMenu.Mods
                 slipperyPlatform.transform.rotation = TrueRightHand().rotation;
 
                 slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                UnityEngine.Object.Destroy(slipperyPlatform, 1);
+                Object.Destroy(slipperyPlatform, 1);
             }
 
             GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
@@ -364,9 +366,9 @@ namespace iiMenu.Mods
 
         public static void ChangeSpeedBoostAmount(bool positive = true)
         {
-            float[] jspeedamounts = new float[] { 2f, 7.5f, 8f, 9f, 200f };
-            float[] jmultiamounts = new float[] { 0.5f, 1.1f, 1.5f, 2f, 10f };
-            string[] speedNames = new string[] { "Slow", "Normal", "Middle", "Fast", "Ultra Fast" };
+            float[] jspeedamounts = { 2f, 7.5f, 8f, 9f, 200f };
+            float[] jmultiamounts = { 0.5f, 1.1f, 1.5f, 2f, 10f };
+            string[] speedNames = { "Slow", "Normal", "Middle", "Fast", "Ultra Fast" };
 
             if (positive)
                 speedboostCycle++;
@@ -388,13 +390,13 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
+                Object.Destroy(platform.GetComponent<BoxCollider>());
                 platform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 platform.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/UberShader");
                 platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                 platform.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 platform.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-                UnityEngine.Object.Destroy(platform, 1f);
+                Object.Destroy(platform, 1f);
                 PhotonNetwork.RaiseEvent(69, new object[2] { platform.transform.position, platform.transform.rotation }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
@@ -409,13 +411,13 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
+                    Object.Destroy(platform.GetComponent<BoxCollider>());
                     platform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                     platform.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/UberShader");
                     platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     platform.transform.position = NewPointer.transform.position;
-                    platform.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360));
-                    UnityEngine.Object.Destroy(platform, 1f);
+                    platform.transform.rotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
+                    Object.Destroy(platform, 1f);
                     PhotonNetwork.RaiseEvent(69, new object[2] { platform.transform.position, platform.transform.rotation }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
                 }
             }
@@ -423,8 +425,8 @@ namespace iiMenu.Mods
 
         public static void ChangeFlySpeed(bool positive = true)
         {
-            float[] speedamounts = new float[] { 5f, 10f, 30f, 60f, 0.5f };
-            string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Extra Fast", "Extra Slow" };
+            float[] speedamounts = { 5f, 10f, 30f, 60f, 0.5f };
+            string[] speedNames = { "Slow", "Normal", "Fast", "Extra Fast", "Extra Slow" };
 
             if (positive)
                 flySpeedCycle++;
@@ -440,11 +442,11 @@ namespace iiMenu.Mods
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
-        public static int playspaceAbuseIndex = 0;
+        public static int playspaceAbuseIndex;
         public static void ChangePlayspaceAbuseSpeed(bool positive = true)
         {
-            float[] speedamounts = new float[] { 0.004f, 0.01f, 0.1f, 0.001f, 0.002f };
-            string[] speedNames = new string[] { "Normal", "Fast", "Extra Fast", "Extra Slow", "Slow" };
+            float[] speedamounts = { 0.004f, 0.01f, 0.1f, 0.001f, 0.002f };
+            string[] speedNames = { "Normal", "Fast", "Extra Fast", "Extra Slow", "Slow" };
 
             if (positive)
                 playspaceAbuseIndex++;
@@ -462,8 +464,8 @@ namespace iiMenu.Mods
 
         public static void ChangeArmLength(bool positive = true)
         {
-            float[] lengthAmounts = new float[] { 0.75f, 1.1f, 1.25f, 1.5f, 2f };
-            string[] lengthNames = new string[] { "Shorter", "Unnoticable", "Normal", "Long", "Extreme" };
+            float[] lengthAmounts = { 0.75f, 1.1f, 1.25f, 1.5f, 2f };
+            string[] lengthNames = { "Shorter", "Unnoticable", "Normal", "Long", "Extreme" };
 
             if (positive)
                 longarmCycle++;
@@ -689,12 +691,12 @@ namespace iiMenu.Mods
                 lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
         }
 
-        private static float driveSpeed = 0f;
-        public static int driveInt = 0;
+        private static float driveSpeed;
+        public static int driveInt;
         public static void ChangeDriveSpeed(bool positive = true)
         {
-            float[] speedamounts = new float[] { 10f, 30f, 50f, 3f };
-            string[] speedNames = new string[] { "Normal", "Fast", "Ultra Fast", "Slow" };
+            float[] speedamounts = { 10f, 30f, 50f, 3f };
+            string[] speedNames = { "Normal", "Fast", "Ultra Fast", "Slow" };
 
             if (positive)
                 driveInt++;
@@ -742,7 +744,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool lastaomfg = false;
+        private static bool lastaomfg;
         public static void Dash()
         {
             if (rightPrimary && !lastaomfg)
@@ -775,7 +777,7 @@ namespace iiMenu.Mods
         }
 
 
-        private static float loaoalsode = 0f;
+        private static float loaoalsode;
         private static BalloonHoldable GetTargetBalloon()
         {
             foreach (BalloonHoldable balloo in GetAllType<BalloonHoldable>())
@@ -795,8 +797,8 @@ namespace iiMenu.Mods
         public static Vector3 leftgrapplePoint;
         public static SpringJoint rightjoint;
         public static SpringJoint leftjoint;
-        public static bool isLeftGrappling = false;
-        public static bool isRightGrappling = false;
+        public static bool isLeftGrappling;
+        public static bool isRightGrappling;
 
         public static void SpiderMan()
         {
@@ -808,11 +810,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.linearVelocity += GorillaTagger.Instance.leftHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            true,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
                     } else
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     
@@ -846,7 +844,7 @@ namespace iiMenu.Mods
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, leftgrapplePoint);
                 liner.material.shader = Shader.Find("GorillaTag/UberShader");
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
             }
             else
             {
@@ -868,10 +866,10 @@ namespace iiMenu.Mods
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, EndPosition);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
 
                 isLeftGrappling = false;
-                UnityEngine.Object.Destroy(leftjoint);
+                Object.Destroy(leftjoint);
             }
 
             if (rightGrab)
@@ -882,11 +880,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.linearVelocity += GorillaTagger.Instance.rightHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            false,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
                         RPCProtection();
                     }
                     else
@@ -923,7 +917,7 @@ namespace iiMenu.Mods
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, rightgrapplePoint);
                 liner.material.shader = Shader.Find("GorillaTag/UberShader");
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
             }
             else
             {
@@ -945,10 +939,10 @@ namespace iiMenu.Mods
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, EndPosition);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
 
                 isRightGrappling = false;
-                UnityEngine.Object.Destroy(rightjoint);
+                Object.Destroy(rightjoint);
             }
         }
 
@@ -962,11 +956,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.linearVelocity += GorillaTagger.Instance.leftHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            true,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
@@ -989,7 +979,7 @@ namespace iiMenu.Mods
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, leftgrapplePoint);
                 liner.material.shader = Shader.Find("GorillaTag/UberShader");
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
             }
             else
             {
@@ -1011,10 +1001,10 @@ namespace iiMenu.Mods
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, EndPosition);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
 
                 isLeftGrappling = false;
-                UnityEngine.Object.Destroy(leftjoint);
+                Object.Destroy(leftjoint);
             }
 
             if (rightGrab)
@@ -1025,11 +1015,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.linearVelocity += GorillaTagger.Instance.rightHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            false,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
                         RPCProtection();
                     }
                     else
@@ -1051,7 +1037,7 @@ namespace iiMenu.Mods
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, rightgrapplePoint);
                 liner.material.shader = Shader.Find("GorillaTag/UberShader");
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
             }
             else
             {
@@ -1073,7 +1059,7 @@ namespace iiMenu.Mods
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, EndPosition);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Object.Destroy(line, Time.deltaTime);
 
                 isRightGrappling = false;
             }
@@ -1082,9 +1068,9 @@ namespace iiMenu.Mods
         public static void DisableSpiderMan()
         {
             isLeftGrappling = false;
-            UnityEngine.Object.Destroy(leftjoint);
+            Object.Destroy(leftjoint);
             isRightGrappling = false;
-            UnityEngine.Object.Destroy(rightjoint);
+            Object.Destroy(rightjoint);
         }
 
         public static void NetworkedGrappleMods()
@@ -1233,7 +1219,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static List<Vector3> posArchive = null;
+        private static List<Vector3> posArchive;
         public static Vector3[] GetAllTreeBranchPositions()
         {
             if (posArchive != null)
@@ -1241,8 +1227,7 @@ namespace iiMenu.Mods
 
             posArchive = new List<Vector3>();
 
-            Vector3[] TreeBranchOffsets = new Vector3[]
-            {
+            Vector3[] TreeBranchOffsets = {
                 new Vector3(-2.383f, 3.784f, 0.738f),
                 new Vector3(1.55f, 5.559f, -1.56f),
                 new Vector3(-2.225f, 7.214f, 0.063f),
@@ -1258,7 +1243,7 @@ namespace iiMenu.Mods
                 new Vector3(-1.249f, 18.93f, -1.62f),
             };
 
-            string[] SmallTreeTargets = new string[] {
+            string[] SmallTreeTargets = {
                 "Environment Objects/LocalObjects_Prefab/Forest/Terrain/SmallTrees/Group1",
                 "Environment Objects/LocalObjects_Prefab/Forest/Terrain/SmallTrees/Group2"
             };
@@ -1442,8 +1427,8 @@ namespace iiMenu.Mods
 
         public static void ChangeWallWalkStrength(bool positive = true)
         {
-            float[] strengthAmounts = new float[] { 2f, 5f, 9.81f, 15f, 50f };
-            string[] strengthNames = new string[] { "Very Weak", "Weak", "Normal", "Strong", "Very Strong" };
+            float[] strengthAmounts = { 2f, 5f, 9.81f, 15f, 50f };
+            string[] strengthNames = { "Very Weak", "Weak", "Normal", "Strong", "Very Strong" };
 
             if (positive)
                 wallWalkStrengthIndex++;
@@ -1535,81 +1520,80 @@ namespace iiMenu.Mods
         }
 
         private static int rememberPageNumber;
-        public static readonly string[][] mapData = new string[][]
-        {
-            new string[] // Forest
+        public static readonly string[][] mapData = {
+            new[] // Forest
             {
                 "Forest",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/TreeRoomSpawnForestZone",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit"
             },
-            new string[] // City
+            new[] // City
             {
                 "City",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCity",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front"
             },
-            new string[] // Canyons
+            new[] // Canyons
             {
                 "Canyons",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestCanyonTransition",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon"
             },
-            new string[] // Clouds
+            new[] // Clouds
             {
                 "Clouds",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToSkyJungle",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds From Computer"
             },
-            new string[] // Caves
+            new[] // Caves
             {
                 "Caves",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCave",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave"
             },
-            new string[] // Beach
+            new[] // Beach
             {
                 "Beach",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BeachToForest",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach for Computer"
             },
-            new string[] // Mountains
+            new[] // Mountains
             {
                 "Mountains",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToMountain",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain"
             },
-            new string[] // Basement
+            new[] // Basement
             {
                 "Basement",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToBasement",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer"
             },
-            new string[] // Metropolis
+            new[] // Metropolis
             {
                 "Metropolis",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MetropolisOnly",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Metropolis from Computer"
             },
-            new string[] // Arcade
+            new[] // Arcade
             {
                 "Arcade",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
             },
-            new string[] // Rotating
+            new[] // Rotating
             {
                 "Rotating",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToRotating",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Rotating Map"
             },
-            new string[] // Bayou
+            new[] // Bayou
             {
                 "Bayou",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BayouOnly",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2"
             },
-            new string[] // Virtual Stump
+            new[] // Virtual Stump
             {
                 "Virtual Stump",
                 "VSTUMP",
@@ -1625,7 +1609,7 @@ namespace iiMenu.Mods
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToMap(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
 
             foreach (string[] Data in mapData)
-                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count.ToString(), overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
+                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count, overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
             
             Buttons.buttons[29] = tpbuttons.ToArray();
         }
@@ -1684,7 +1668,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static GameObject CheckPoint = null;
+        public static GameObject CheckPoint;
         public static void Checkpoint()
         {
             if (rightGrab)
@@ -1692,7 +1676,7 @@ namespace iiMenu.Mods
                 if (CheckPoint == null)
                 {
                     CheckPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(CheckPoint.GetComponent<SphereCollider>());
+                    Object.Destroy(CheckPoint.GetComponent<SphereCollider>());
                     CheckPoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 }
                 CheckPoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -1714,7 +1698,7 @@ namespace iiMenu.Mods
         {
             if (CheckPoint != null)
             {
-                UnityEngine.Object.Destroy(CheckPoint);
+                Object.Destroy(CheckPoint);
                 CheckPoint = null;
             }
         }
@@ -1740,7 +1724,7 @@ namespace iiMenu.Mods
                 if (!isNearCheckpoint)
                 {
                     GameObject newCheckpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(newCheckpoint.GetComponent<SphereCollider>());
+                    Object.Destroy(newCheckpoint.GetComponent<SphereCollider>());
                     newCheckpoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     newCheckpoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     newCheckpoint.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -1773,7 +1757,7 @@ namespace iiMenu.Mods
                     if (Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, checkpoint.transform.position) < 0.2f)
                     {
                         checkpoints.Remove(checkpoint);
-                        UnityEngine.Object.Destroy(checkpoint);
+                        Object.Destroy(checkpoint);
                     }
                 }
             }
@@ -1820,7 +1804,7 @@ namespace iiMenu.Mods
             go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
             go.transform.LookAt(Camera.main.transform.position);
             go.transform.Rotate(0f, 180f, 0f);
-            UnityEngine.Object.Destroy(go, Time.deltaTime);
+            Object.Destroy(go, Time.deltaTime);
         }
 
         public static void DisableAdvancedCheckpoints()
@@ -1828,12 +1812,12 @@ namespace iiMenu.Mods
             selectedCheckpoint = 0;
 
             foreach (GameObject checkpoint in checkpoints)
-                UnityEngine.Object.Destroy(checkpoint);
+                Object.Destroy(checkpoint);
             
             checkpoints.Clear();
         }
 
-        public static GameObject BombObject = null;
+        public static GameObject BombObject;
         public static void Bomb()
         {
             if (rightGrab)
@@ -1841,7 +1825,7 @@ namespace iiMenu.Mods
                 if (BombObject == null)
                 {
                     BombObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(BombObject.GetComponent<SphereCollider>());
+                    Object.Destroy(BombObject.GetComponent<SphereCollider>());
                     BombObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 }
                 BombObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -1853,7 +1837,7 @@ namespace iiMenu.Mods
                     Vector3 dir = (GorillaTagger.Instance.bodyCollider.transform.position - BombObject.transform.position);
                     dir.Normalize();
                     GorillaTagger.Instance.rigidbody.linearVelocity += 25f * dir;
-                    UnityEngine.Object.Destroy(BombObject);
+                    Object.Destroy(BombObject);
                     BombObject = null;
                 }
                 else
@@ -1865,15 +1849,15 @@ namespace iiMenu.Mods
         {
             if (BombObject != null)
             {
-                UnityEngine.Object.Destroy(BombObject);
+                Object.Destroy(BombObject);
                 BombObject = null;
             }
         }
 
-        private static GameObject pearl = null;
-        private static Texture2D pearltxt = null;
-        private static Material pearlmat = null;
-        private static bool isrighthandedpearl = false;
+        private static GameObject pearl;
+        private static Texture2D pearltxt;
+        private static Material pearlmat;
+        private static bool isrighthandedpearl;
         public static void EnderPearl()
         {
             if (rightGrab || leftGrab)
@@ -1881,7 +1865,7 @@ namespace iiMenu.Mods
                 if (pearl == null)
                 {
                     pearl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(pearl.GetComponent<Collider>());
+                    Object.Destroy(pearl.GetComponent<Collider>());
 
                     pearl.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
                     if (pearlmat == null)
@@ -1910,7 +1894,7 @@ namespace iiMenu.Mods
                 }
 
                 if (pearl.GetComponent<Rigidbody>() != null)
-                    UnityEngine.Object.Destroy(pearl.GetComponent<Rigidbody>());
+                    Object.Destroy(pearl.GetComponent<Rigidbody>());
                 
                 isrighthandedpearl = rightGrab;
                 pearl.transform.position = rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
@@ -1929,17 +1913,13 @@ namespace iiMenu.Mods
                         TeleportPlayer(pearl.transform.position);
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                84,
-                                true,
-                                999999f
-                            });
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 84, true, 999999f);
                         }
                         else
                             VRRig.LocalRig.PlayHandTapLocal(84, true, 999999f);
                         
                         RPCProtection();
-                        UnityEngine.Object.Destroy(pearl);
+                        Object.Destroy(pearl);
                     }
                 }
             }
@@ -1953,7 +1933,7 @@ namespace iiMenu.Mods
         public static void DestroyEnderPearl()
         {
             if (pearl != null)
-                UnityEngine.Object.Destroy(pearl);
+                Object.Destroy(pearl);
         }
 
         public static void SpeedBoost()
@@ -2340,7 +2320,7 @@ namespace iiMenu.Mods
             TorsoPatch.mode = mode;
 
             if (!enabled && recBodyRotary != null)
-                UnityEngine.Object.Destroy(recBodyRotary);
+                Object.Destroy(recBodyRotary);
         }
 
         public static GameObject recBodyRotary;
@@ -2370,14 +2350,14 @@ namespace iiMenu.Mods
             {
                 VRRig.LocalRig.enabled = false;
 
-                Vector3 bodyOffset = (GorillaTagger.Instance.bodyCollider.transform.right * (Mathf.Cos((float)Time.frameCount / 20f) * 0.3f)) + (new Vector3(0f, Mathf.Abs(Mathf.Sin((float)Time.frameCount / 20f) * 0.2f), 0f));
+                Vector3 bodyOffset = (GorillaTagger.Instance.bodyCollider.transform.right * (Mathf.Cos(Time.frameCount / 20f) * 0.3f)) + (new Vector3(0f, Mathf.Abs(Mathf.Sin(Time.frameCount / 20f) * 0.2f), 0f));
                 VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f) + bodyOffset;
                 VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
                 
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * -0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * 0.2f));
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * 0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * -0.2f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * -0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin(Time.frameCount / 20f) * 0.2f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * 0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin(Time.frameCount / 20f) * -0.2f));
 
                 VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
                 VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
@@ -2398,8 +2378,8 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.transform.position = VRRig.LocalRig.transform.position + bodyOffset;
                 VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos(Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin(Time.frameCount / 10f))));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos(Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin(Time.frameCount / 10f))));
 
                 VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
                 VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
@@ -2640,8 +2620,8 @@ namespace iiMenu.Mods
 
             if (rightPrimary)
             {
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + (GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + -(GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + (GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin(Time.frameCount / 10f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + -(GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin(Time.frameCount / 10f));
             } else
             {
                 VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f);
@@ -2710,7 +2690,7 @@ namespace iiMenu.Mods
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.LookRotation(Vector3.Normalize(GetVRRigFromPlayer(Player).headMesh.transform.position)); //  - (VRRig.LocalRig.headConstraint.transform.position - new Vector3(0f, 1.5f, 0f))
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -2724,7 +2704,7 @@ namespace iiMenu.Mods
             offsetH = VRRig.LocalRig.head.trackingPositionOffset;
 
         public static void FloatingRig() =>
-            VRRig.LocalRig.head.trackingPositionOffset = offsetH + new Vector3(0f, 0.65f + (Mathf.Sin((float)Time.frameCount / 40f) * 0.2f), 0f);
+            VRRig.LocalRig.head.trackingPositionOffset = offsetH + new Vector3(0f, 0.65f + (Mathf.Sin(Time.frameCount / 40f) * 0.2f), 0f);
 
         public static void DisableFloatingRig() =>
             VRRig.LocalRig.head.trackingPositionOffset = offsetH;
@@ -2783,7 +2763,7 @@ namespace iiMenu.Mods
             GTPlayer.Instance.nativeScale = sizeScale;
         }
 
-        public static GameObject stickpart = null;
+        public static GameObject stickpart;
         public static void StickyHands()
         {
             if (stickpart == null)
@@ -2807,14 +2787,14 @@ namespace iiMenu.Mods
         {
             if (stickpart != null)
             {
-                UnityEngine.Object.Destroy(stickpart);
+                Object.Destroy(stickpart);
                 stickpart = null;
             }
         }
 
-        private static bool leftisclimbing = false;
-        private static bool rightisclimbing = false;
-        private static GameObject climb = null;
+        private static bool leftisclimbing;
+        private static bool rightisclimbing;
+        private static GameObject climb;
         public static void ClimbyHands()
         {
             if (climb == null)
@@ -2850,7 +2830,7 @@ namespace iiMenu.Mods
         {
             if (climb != null)
             {
-                UnityEngine.Object.Destroy(climb);
+                Object.Destroy(climb);
                 climb = null;
             }
         }
@@ -2876,8 +2856,8 @@ namespace iiMenu.Mods
         public static void DisableSlideControl() =>
             GTPlayer.Instance.slideControl = oldSlide;
 
-        public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
-        public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+        public static Vector3[] lastLeft = { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+        public static Vector3[] lastRight = { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
 
         public static void PunchMod()
         {
@@ -2908,8 +2888,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static VRRig sithlord = null;
-        private static bool sithright = false;
+        private static VRRig sithlord;
+        private static bool sithright;
         private static float sithdist = 1f;
         public static void Telekinesis()
         {
@@ -2996,7 +2976,7 @@ namespace iiMenu.Mods
             foreach (VRRig removeRig in toRemove)
             {
                 foreach (GameObject gameObject in rigColliders[removeRig])
-                    UnityEngine.Object.Destroy(gameObject);
+                    Object.Destroy(gameObject);
             }
 
             toRemove.Clear();
@@ -3043,7 +3023,7 @@ namespace iiMenu.Mods
             foreach (List<GameObject> gameObjects in rigColliders.Values)
             {
                 foreach (GameObject gameObject in gameObjects)
-                    UnityEngine.Object.Destroy(gameObject);
+                    Object.Destroy(gameObject);
             }
 
             rigColliders.Clear();
@@ -3052,15 +3032,13 @@ namespace iiMenu.Mods
         public static int pullPowerInt;
         public static void ChangePullModPower(bool positive = true)
         {
-            float[] powers = new float[]
-            {
+            float[] powers = {
                 0.05f,
                 0.1f,
                 0.2f,
                 0.4f
             };
-            string[] powerNames = new string[]
-            {
+            string[] powerNames = {
                 "Normal",
                 "Medium",
                 "Strong",
@@ -3081,8 +3059,8 @@ namespace iiMenu.Mods
         }
 
         private static float pullPower = 0.05f;
-        private static bool lasttouchleft = false;
-        private static bool lasttouchright = false;
+        private static bool lasttouchleft;
+        private static bool lasttouchright;
         public static void PullMod()
         {
             if (((!GTPlayer.Instance.IsHandTouching(true) && lasttouchleft) || (!GTPlayer.Instance.IsHandTouching(false) && lasttouchright)) && rightGrab)
@@ -3094,8 +3072,8 @@ namespace iiMenu.Mods
             lasttouchright = GTPlayer.Instance.IsHandTouching(false);
         }
 
-        public static GameObject leftThrow = null;
-        public static GameObject rightThrow = null;
+        public static GameObject leftThrow;
+        public static GameObject rightThrow;
         public static void ThrowControllers()
         {
             if (leftPrimary)
@@ -3109,7 +3087,7 @@ namespace iiMenu.Mods
                 {
                     leftThrow = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     leftThrow.GetComponent<Renderer>().enabled = false;
-                    UnityEngine.Object.Destroy(leftThrow.GetComponent<BoxCollider>());
+                    Object.Destroy(leftThrow.GetComponent<BoxCollider>());
 
                     leftThrow.transform.position = GTPlayer.Instance.leftControllerTransform.position;
                     leftThrow.transform.rotation = GTPlayer.Instance.leftControllerTransform.rotation;
@@ -3128,7 +3106,7 @@ namespace iiMenu.Mods
             {
                 if (leftThrow != null)
                 {
-                    UnityEngine.Object.Destroy(leftThrow);
+                    Object.Destroy(leftThrow);
                     leftThrow = null;
                 }
             }
@@ -3144,7 +3122,7 @@ namespace iiMenu.Mods
                 {
                     rightThrow = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     rightThrow.GetComponent<Renderer>().enabled = false;
-                    UnityEngine.Object.Destroy(rightThrow.GetComponent<BoxCollider>());
+                    Object.Destroy(rightThrow.GetComponent<BoxCollider>());
 
                     rightThrow.transform.position = GTPlayer.Instance.rightControllerTransform.position;
                     rightThrow.transform.rotation = GTPlayer.Instance.rightControllerTransform.rotation;
@@ -3163,7 +3141,7 @@ namespace iiMenu.Mods
             {
                 if (rightThrow != null)
                 {
-                    UnityEngine.Object.Destroy(rightThrow);
+                    Object.Destroy(rightThrow);
                     rightThrow = null;
                 }
             }
@@ -3174,7 +3152,7 @@ namespace iiMenu.Mods
         public static void EnableControllerFlick()
         {
             flickLeft = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(flickLeft.GetComponent<BoxCollider>());
+            Object.Destroy(flickLeft.GetComponent<BoxCollider>());
             flickLeft.GetComponent<Renderer>().enabled = false;
             flickLeft.AddComponent<GorillaVelocityTracker>();
             Rigidbody leftRigid = flickLeft.AddComponent<Rigidbody>();
@@ -3182,7 +3160,7 @@ namespace iiMenu.Mods
             leftRigid.useGravity = false;
 
             flickRight = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(flickRight.GetComponent<BoxCollider>());
+            Object.Destroy(flickRight.GetComponent<BoxCollider>());
             flickRight.GetComponent<Renderer>().enabled = false;
             flickRight.AddComponent<GorillaVelocityTracker>();
             Rigidbody rightRigid = flickRight.AddComponent<Rigidbody>();
@@ -3192,8 +3170,8 @@ namespace iiMenu.Mods
 
         public static void DisableControllerFlick()
         {
-            UnityEngine.Object.Destroy(flickLeft);
-            UnityEngine.Object.Destroy(flickRight);
+            Object.Destroy(flickLeft);
+            Object.Destroy(flickRight);
         }
 
         private static Quaternion initialRotationLeft = Quaternion.identity;
@@ -3303,35 +3281,33 @@ namespace iiMenu.Mods
         public static void CreateVelocityTrackers()
         {
             lvT = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(lvT.GetComponent<BoxCollider>());
+            Object.Destroy(lvT.GetComponent<BoxCollider>());
             lvT.GetComponent<Renderer>().enabled = false;
             lvT.AddComponent<GorillaVelocityTracker>();
 
             rvT = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(rvT.GetComponent<BoxCollider>());
+            Object.Destroy(rvT.GetComponent<BoxCollider>());
             rvT.GetComponent<Renderer>().enabled = false;
             rvT.AddComponent<GorillaVelocityTracker>();
         }
 
         public static void DestroyVelocityTrackers()
         {
-            UnityEngine.Object.Destroy(lvT);
-            UnityEngine.Object.Destroy(rvT);
+            Object.Destroy(lvT);
+            Object.Destroy(rvT);
         }
 
         public static float predCount = 0.0125f;
         public static int predInt = 1;
         public static void ChangePredictionAmount(bool positive = true)
         {
-            float[] predAmnts = new float[]
-            {
+            float[] predAmnts = {
                 0.00625f,
                 0.0125f,
                 0.025f,
                 0.05f
             };
-            string[] predAmntNames = new string[]
-            {
+            string[] predAmntNames = {
                 "Low",
                 "Normal",
                 "High",
@@ -3382,15 +3358,13 @@ namespace iiMenu.Mods
         public static int timerPowerIndex = 1;
         public static void ChangeTimerSpeed(bool positive = true)
         {
-            float[] timerPowers = new float[]
-            {
+            float[] timerPowers = {
                 0.5f,
                 1.25f,
                 2f,
                 5f
             };
-            string[] timerNames = new string[]
-            {
+            string[] timerNames = {
                 "Slow",
                 "Normal",
                 "Fast",
@@ -3485,9 +3459,9 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float preBounciness = 0f;
+        private static float preBounciness;
         private static PhysicsMaterialCombine whateverthisis = PhysicsMaterialCombine.Maximum;
-        private static float preFrictiness = 0f;
+        private static float preFrictiness;
 
         public static void PreBouncy()
         {
@@ -3537,18 +3511,18 @@ namespace iiMenu.Mods
             }
         }
 
-        public static GameObject airSwimPart = null;
+        public static GameObject airSwimPart;
         public static void AirSwim()
         {
             if (airSwimPart == null)
             {
-                airSwimPart = UnityEngine.Object.Instantiate(GetObject("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
+                airSwimPart = Object.Instantiate(GetObject("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
                 airSwimPart.transform.localScale = new Vector3(5f, 5f, 5f);
                 airSwimPart.GetComponent<Renderer>().enabled = false;
             }
             else
             {
-                GTPlayer.Instance.audioManager.UnsetMixerSnapshot(0.1f);
+                GTPlayer.Instance.audioManager.UnsetMixerSnapshot();
                 airSwimPart.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 2.5f, 0f);
             }
         }
@@ -3556,7 +3530,7 @@ namespace iiMenu.Mods
         public static void DisableAirSwim()
         {
             if (airSwimPart != null)
-                UnityEngine.Object.Destroy(airSwimPart);
+                Object.Destroy(airSwimPart);
         }
 
         public static void SetSwimSpeed(float speed = 3f) =>
@@ -3601,7 +3575,7 @@ namespace iiMenu.Mods
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     VRRig.LocalRig.transform.position = GetVRRigFromPlayer(Player).headMesh.transform.position;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3697,7 +3671,7 @@ namespace iiMenu.Mods
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     CopyMovementPlayer(Player, false);
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3837,7 +3811,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3868,7 +3842,7 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    VRRig.LocalRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                    VRRig.LocalRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f));
                     VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
 
                     VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
@@ -3936,7 +3910,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    VRRig.LocalRig.transform.position = targetRig.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                    VRRig.LocalRig.transform.position = targetRig.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f));
                     VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
 
                     VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
@@ -3946,7 +3920,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3977,7 +3951,7 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    VRRig.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * UnityEngine.Random.Range(0.1f, 0.5f));
+                    VRRig.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * Random.Range(0.1f, 0.5f));
                     VRRig.LocalRig.head.rigTarget.transform.LookAt(lockTarget.headMesh.transform.position);
                     Quaternion dirLook = VRRig.LocalRig.head.rigTarget.transform.rotation;
 
@@ -4049,7 +4023,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    VRRig.LocalRig.transform.position = targetRig.headMesh.transform.position + targetRig.headMesh.transform.forward * UnityEngine.Random.Range(0.1f, 0.5f);
+                    VRRig.LocalRig.transform.position = targetRig.headMesh.transform.position + targetRig.headMesh.transform.forward * Random.Range(0.1f, 0.5f);
                     VRRig.LocalRig.head.rigTarget.transform.LookAt(targetRig.headMesh.transform.position);
                     Quaternion dirLook = VRRig.LocalRig.head.rigTarget.transform.rotation;
 
@@ -4063,7 +4037,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4174,7 +4148,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4208,15 +4182,7 @@ namespace iiMenu.Mods
 
                     if (Time.time > Fun.splashDel)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), new object[]
-                        {
-                            lockTarget.transform.position + RandomVector3(0.5f),
-                            RandomQuaternion(),
-                            4f,
-                            100f,
-                            true,
-                            false
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), lockTarget.transform.position + RandomVector3(0.5f), RandomQuaternion(), 4f, 100f, true, false);
                         RPCProtection();
                         Fun.splashDel = Time.time + 0.1f;
                     }
@@ -4253,7 +4219,7 @@ namespace iiMenu.Mods
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
                     VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up * 2f;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4270,15 +4236,7 @@ namespace iiMenu.Mods
             {
                 Fun.splashDel = Time.time + 0.05f;
                 VRRig rig = GetRandomVRRig(false);
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(rig), new object[]
-                {
-                    rig.transform.position + RandomVector3(0.5f),
-                    RandomQuaternion(),
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(rig), rig.transform.position + RandomVector3(0.5f), RandomQuaternion(), 4f, 100f, true, false);
             }
         }
 
@@ -4301,13 +4259,13 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () => 
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
 
-                            VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+                            VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -4346,13 +4304,13 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () =>
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
 
-                            VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+                            VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -4454,11 +4412,7 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        64,
-                        true,
-                        999999f
-                    });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 64, true, 999999f);
 
                     if (GetIndex("Splash Intercourse").enabled)
                         Fun.BetaWaterSplash(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, 4f, 100f, true, false);
@@ -4517,7 +4471,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4631,7 +4585,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4662,9 +4616,9 @@ namespace iiMenu.Mods
         {
             if (VRRig.LocalRig.enabled)
             {
-                VRRig.LocalRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0f, 360f);
-                VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0f, 360f);
-                VRRig.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.x = Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.y = Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.z = Random.Range(0f, 360f);
             }
             else
                 VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
@@ -4679,7 +4633,7 @@ namespace iiMenu.Mods
                 if (Time.time > headspazDelay)
                 {
                     headspazType = false;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(1000f, 4000f) / 1000f;
+                    headspazDelay = Time.time + Random.Range(1000f, 4000f) / 1000f;
                 }
             }
             else
@@ -4688,7 +4642,7 @@ namespace iiMenu.Mods
                 if (Time.time > headspazDelay)
                 {
                     headspazType = true;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(200f, 1000f) / 1000f;
+                    headspazDelay = Time.time + Random.Range(200f, 1000f) / 1000f;
                 }
             }
         }
@@ -4698,7 +4652,7 @@ namespace iiMenu.Mods
             headoffs = VRRig.LocalRig.head.trackingPositionOffset;
 
         public static void SpazHeadPosition() =>
-            VRRig.LocalRig.head.trackingPositionOffset = headoffs + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
+            VRRig.LocalRig.head.trackingPositionOffset = headoffs + new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
 
         public static void FixHeadPosition() =>
             VRRig.LocalRig.head.trackingPositionOffset = headoffs;
@@ -4711,7 +4665,7 @@ namespace iiMenu.Mods
                 if (Time.time > headspazDelay)
                 {
                     headspazType = false;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(1000f, 4000f) / 1000f;
+                    headspazDelay = Time.time + Random.Range(1000f, 4000f) / 1000f;
                 }
             }
             else
@@ -4720,12 +4674,12 @@ namespace iiMenu.Mods
                 if (Time.time > headspazDelay)
                 {
                     headspazType = true;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(200f, 1000f) / 1000f;
+                    headspazDelay = Time.time + Random.Range(200f, 1000f) / 1000f;
                 }
             }
         }
 
-        public static bool idiotfixthingy = false;
+        public static bool idiotfixthingy;
         public static void LaggyRig()
         {
             ghostException = true;

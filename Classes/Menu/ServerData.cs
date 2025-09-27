@@ -4,27 +4,30 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using GorillaNetworking;
-using Photon.Pun;
-using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using GorillaNetworking;
+using iiMenu.Menu;
+using iiMenu.Mods;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
@@ -43,10 +46,10 @@ namespace iiMenu.Classes.Menu
         public static string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
-            iiMenu.Menu.Main.SetupAdminPanel(playername);
+            Main.SetupAdminPanel(playername);
 
         public static void JoinDiscordServer() => // Method used to join the Discord server
-            iiMenu.Mods.Important.JoinDiscord();
+            Important.JoinDiscord();
 
         #endregion
 
@@ -149,7 +152,7 @@ namespace iiMenu.Classes.Menu
 
         public static Dictionary<string, string> Administrators = new Dictionary<string, string>();
         public static List<string> SuperAdministrators = new List<string>();
-        public static System.Collections.IEnumerator LoadServerData()
+        public static IEnumerator LoadServerData()
         {
             using (UnityWebRequest request = UnityWebRequest.Get(ServerDataEndpoint))
             {
@@ -166,8 +169,8 @@ namespace iiMenu.Classes.Menu
 
                 JObject data = JObject.Parse(json);
 
-                iiMenu.Menu.Main.serverLink = (string)data["discord-invite"];
-                iiMenu.Menu.Main.motdTemplate = (string)data["motd"];
+                Main.serverLink = (string)data["discord-invite"];
+                Main.motdTemplate = (string)data["motd"];
 
                 // Version Check
                 string version = (string)data["menu-version"];
@@ -191,7 +194,7 @@ namespace iiMenu.Classes.Menu
                 // Lockdown check
                 if (version == "lockdown")
                 {
-                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {iiMenu.Menu.Main.motdTemplate}", 10000);
+                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {Main.motdTemplate}", 10000);
                     Console.DisableMenu = true;
                 }
 
@@ -226,7 +229,7 @@ namespace iiMenu.Classes.Menu
                     string detectedModName = detectedMod.ToString();
                     if (!DetectedModsLabelled.Contains(detectedModName))
                     {
-                        ButtonInfo Button = iiMenu.Menu.Main.GetIndex(detectedModName);
+                        ButtonInfo Button = Main.GetIndex(detectedModName);
                         if (Button != null)
                         {
                             string overlapText = Button.overlapText ?? Button.buttonText;
@@ -248,13 +251,13 @@ namespace iiMenu.Classes.Menu
                 foreach (var targetMutedData in muteIdData)
                     muteIds.Add(targetMutedData.ToString());
 
-                iiMenu.Menu.Main.muteIDs = muteIds;
+                Main.muteIDs = muteIds;
             }
 
             yield return null;
         }
 
-        public static System.Collections.IEnumerator TelementryRequest(string directory, string identity, string region, string userid, bool isPrivate, int playerCount, string gameMode)
+        public static IEnumerator TelementryRequest(string directory, string identity, string region, string userid, bool isPrivate, int playerCount, string gameMode)
         {
             if (DisableTelemetry)
                 yield break;
@@ -302,7 +305,7 @@ namespace iiMenu.Classes.Menu
             return false;
         }
 
-        public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
+        public static IEnumerator PlayerDataSync(string directory, string region)
         {
             if (DisableTelemetry)
                 yield break;
@@ -339,7 +342,7 @@ namespace iiMenu.Classes.Menu
             yield return request.SendWebRequest();
         }
 
-        public static System.Collections.IEnumerator ReportFailureMessage(string error)
+        public static IEnumerator ReportFailureMessage(string error)
         {
             if (DisableTelemetry)
                 yield break;
@@ -347,12 +350,12 @@ namespace iiMenu.Classes.Menu
             List<string> enabledMods = new List<string>();
 
             int categoryIndex = 0;
-            foreach (ButtonInfo[] category in iiMenu.Menu.Buttons.buttons)
+            foreach (ButtonInfo[] category in Buttons.buttons)
             {
                 foreach (ButtonInfo button in category)
                 {
-                    if (button.enabled && !iiMenu.Menu.Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(iiMenu.Menu.Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
+                    if (button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings"))
+                        enabledMods.Add(NoASCIIStringCheck(Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
                 }
 
                 categoryIndex++;
