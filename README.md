@@ -13,50 +13,54 @@
 
 ---
 
-# 🛠️ ii's Stupid Menu  
-ii's Stupid Menu is a **feature-packed** mod menu for Gorilla Tag, built by me, **iiDk**. Whether you're looking to experiment, explore, or just mess around, this menu has you covered. Designed to be **as useful as possible**, it includes a variety of features and options that let you customize your modding experience to your heart’s content.  
+# ii's Stupid Menu  
+ii's Stupid Menu is a **feature-packed** mod menu for Gorilla Tag, built by me, [**iiDk**](https://github.com/iiDk-the-actual). Whether you just want mods, are a developer, or anything inbetween, this menu has you covered. Designed to be **as useful as possible**, it includes a variety of features and options that let you customize your modding experience to your heart’s content.  
 
-> Why settle for boring when you can have **stupidly good**?  
+> Why settle for boring when you can have *stupidly* good?  
 
-## 💡 Why Open-Source?  
+## 💡 Why open-source?  
 Great question. The modding community used to be about **sharing, learning, and improving** together. But nowadays, everything’s locked behind **paywalls and obfuscation**. That’s not how it should be.  
 
-By making **ii's Stupid Menu** open-source, I'm giving **everyone** the opportunity to:  
-✅ **Learn** how mod menus work  
-✅ **Experiment** with new ideas  
-✅ **Contribute** to the Gorilla Tag modding scene  
-✅ **Keep modding free and accessible**  
+By making this menu open-source, I'm giving **everyone** the opportunity to:  
+- Learn how mod menus work 
+- Experiment with new ideas  
+- Contribute to the Gorilla Tag modding scene  
+- ⭐ **Keep modding free and accessible**  
 
-Let's bring back the **collaborative spirit** of modding. No paywalls. No secrets. Just **good code and great mods**.  
+Let's bring back the collaboration of modding. No paywalls, no secrets, no malware, just good mods.  
 
-## 📜 Can I Use This Code?  
-Yes! But there’s a catch—you gotta play fair. **GPL-3.0 License rules apply**, which means:  
-- If you use my code, your project **must** also be open-source.  
-- Give credit where it's due.  
-- No shady stuff. 
-
-Need help or want to collaborate? Contact me from the links on my [website](https://iidk.dev) or join the [Discord server](https://discord.gg/iidk).  
-Feel like something is missing? Read the [Contributing](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file) tab.
+## ❓ Can I use your code?  
+Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html) rules apply**, which means that if you use my code:  
+- Your project **must** also be open-source.  
+- Give credit where it's due.
+- No shady stuff.
+- [Follow the license.](https://www.gnu.org/licenses/gpl-3.0.html)
 
 > **"You wouldn’t steal a method."**  
-> [🎥 (Or would you?)](https://www.youtube.com/watch?v=zMBqPdMzZ9E)  
+> [🎥 (Or would you?)](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
 
 ---
 
 # 📥 Installation  
-1️⃣ **Download** the latest release 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)  
-2️⃣ **Drag & Drop** `iis_Stupid_Menu.dll` into your **plugins** folder  
-3️⃣ **Launch** Gorilla Tag and enjoy!
+1. **Download** the latest release [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)  
+2. **Drag & Drop** `iis_Stupid_Menu.dll` into your **plugins** folder  
+3. **Launch** Gorilla Tag and enjoy!
 
-## 🧱 Building from Source (For Developers)
+## 🧱 From source (for developers!)
 
-1️⃣ **Download** the source code 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)<br>
-2️⃣ **Edit** `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️<br>
-3️⃣ **Build** the project with `Ctrl + Shift + B`<br>
+1. Download the source code [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
+2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
+3. Build the project with `Ctrl + Shift + B`
 ✅ The DLL will automatically go into your Gorilla Tag **plugins folder**<br>
 
 ---
 
+## 🗣️ Contact Information
+
+Need help or want to collaborate? Contact me from the links on my **[website](https://iidk.dev)** or join the **[Discord server](https://discord.gg/iidk)**.  
+Feel like something is missing? Read the [Contributing](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file) tab.
+
+> [!NOTE] 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
 > Menu sends requests to [https://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for telemetry and administrative purposes. Menu connects to [wss://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for friend system and administrative purposes.<br>
 > Donate, search, star, speak symbols by [Icons8](https://icons8.com).
