@@ -4,23 +4,23 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using iiMenu.Classes.Menu;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using iiMenu.Classes.Menu;
 using static iiMenu.Mods.CustomMaps.Manager;
 
 namespace iiMenu.Mods.CustomMaps.Maps
@@ -28,7 +28,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
     public class MiningSimulator : CustomMap
     {
         public override long MapID => 4977315;
-        public override ButtonInfo[] Buttons => new ButtonInfo[]
+        public override ButtonInfo[] Buttons => new[]
         {
             new ButtonInfo { buttonText = "Instant Mine", enableMethod =() => InstantMine(), disableMethod =() => DisableInstantMine(), toolTip = "Instantly mines any blocks with your pickaxe."},
             new ButtonInfo { buttonText = "Mine Anything", enableMethod =() => MineAnything(), disableMethod =() => DisableMineAnything(), toolTip = "Lets you mine any block."},

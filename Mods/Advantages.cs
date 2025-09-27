@@ -4,29 +4,30 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaGameModes;
+using GorillaLocomotion;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
@@ -102,7 +103,7 @@ namespace iiMenu.Mods
             else
                 RemoveInfected(PhotonNetwork.LocalPlayer);
             
-            GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
+            GTPlayer.Instance.disableMovement = false;
         }
 
         public static void AntiTag()
@@ -312,15 +313,13 @@ namespace iiMenu.Mods
 
         public static void ChangeTagAuraRange(bool positive = true)
         {
-            string[] names = new string[]
-            {
+            string[] names = {
                 "Short",
                 "Normal",
                 "Far",
                 "Maximum"
             };
-            float[] distances = new float[]
-            {
+            float[] distances = {
                 0.777f,
                 1.666f,
                 3f,
@@ -344,16 +343,14 @@ namespace iiMenu.Mods
         private static float tagReachDistance = 0.3f;
         public static void ChangeTagReachDistance(bool positive = true)
         {
-            string[] names = new string[]
-            {
+            string[] names = {
                 "Unnoticable",
                 "Normal",
                 "Far",
                 "Maximum"
             };
 
-            float[] distances = new float[]
-            {
+            float[] distances = {
                 0.3f,
                 0.5f,
                 1f,
@@ -377,7 +374,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GorillaLocomotion.GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
+                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
                     ReportTag(vrrig);
             }
         }
@@ -388,7 +385,7 @@ namespace iiMenu.Mods
             {
                 float distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position);
 
-                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GorillaLocomotion.GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
+                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
                     TagPlayer(GetPlayerFromVRRig(vrrig));
             }
         }
@@ -625,16 +622,16 @@ namespace iiMenu.Mods
         {
             if (GetGunInput(false))
             {
-                var GunData = RenderGun(GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = NewPointer.transform.position;
+                    GTPlayer.Instance.rightControllerTransform.position = NewPointer.transform.position;
 
-                    if (Vector3.Distance(GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
+                    if (Vector3.Distance(GTPlayer.Instance.rightControllerTransform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
+                        GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GTPlayer.Instance.rightControllerTransform.position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
                 }
             }
         }
@@ -737,7 +734,7 @@ namespace iiMenu.Mods
             Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
             VRRig.LocalRig.transform.position = GetVRRigFromPlayer(Target).transform.position;
 
-            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
             GameMode.ReportTag(Target);
 
             VRRig.LocalRig.transform.position = archiveRigPosition;
@@ -745,7 +742,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        private static float tagGunDelay = 0f;
+        private static float tagGunDelay;
         public static void InstantTagGun()
         {
             if (GetGunInput(false))
@@ -781,14 +778,14 @@ namespace iiMenu.Mods
                 if (!PlayerIsTagged(vrrig))
                 {
                     VRRig.LocalRig.transform.position = vrrig.transform.position;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
                     GameMode.ReportTag(GetPlayerFromVRRig(vrrig));
                 }
             }
 
             VRRig.LocalRig.transform.position = archiveRigPosition;
 
-            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
             RPCProtection();
         }
 
@@ -796,7 +793,7 @@ namespace iiMenu.Mods
         {
             GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
+            if (!GTPlayer.Instance.disableMovement)
             {
                 VRRig vrrig = GetVRRigFromPlayer(target);
                 VRRig.LocalRig.enabled = false;
@@ -871,7 +868,7 @@ namespace iiMenu.Mods
             {
                 { "didTutorial", false }
             };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             PlayerPrefs.Save();
         }
 
@@ -886,7 +883,7 @@ namespace iiMenu.Mods
             {
                 { "didTutorial", true }
             };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(h);
             PlayerPrefs.Save();
         }
 
@@ -897,13 +894,13 @@ namespace iiMenu.Mods
                 if (PlayerIsTagged(VRRig.LocalRig))
                     return true;
 
-                MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(PhotonNetwork.MasterClient.ActorNumber) });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = AllActorNumbersExcept(PhotonNetwork.MasterClient.ActorNumber) });
 
                 VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
 
                 RPCProtection();
                 VRRig.LocalRig.transform.position = positionArchive;
@@ -1069,12 +1066,7 @@ namespace iiMenu.Mods
                 paintbrawlKillDelays[Target.ActorNumber] = Time.time + 3.1f;
 
                 VRRig rig = GetVRRigFromPlayer(Target);
-                GameMode.ActiveNetworkHandler.SendRPC("RPC_ReportSlingshotHit", false, new object[]
-                {
-                    NetPlayerToPlayer(Target),
-                    rig.transform.position,
-                    paintbrawlKillIndex
-                });
+                GameMode.ActiveNetworkHandler.SendRPC("RPC_ReportSlingshotHit", false, NetPlayerToPlayer(Target), rig.transform.position, paintbrawlKillIndex);
                 RPCProtection();
 
                 paintbrawlKillIndex++;
@@ -1166,7 +1158,7 @@ namespace iiMenu.Mods
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                 brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
-                GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
+                GTPlayer.Instance.disableMovement = false;
             }
         }
     }

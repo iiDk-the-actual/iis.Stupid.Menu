@@ -4,24 +4,24 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.IO;
 using iiMenu.Managers;
 using iiMenu.Notifications;
-using System.IO;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -30,8 +30,7 @@ namespace iiMenu.Mods
     {
         public static void LegitimatePreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "Joystick Menu",
                 "Thin Menu",
                 "Disable Enabled GUI",
@@ -64,8 +63,7 @@ namespace iiMenu.Mods
 
         public static void GhostPreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>",
                 "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>",
                 "Noclip <color=grey>[</color><color=green>T</color><color=grey>]</color>",
@@ -90,14 +88,14 @@ namespace iiMenu.Mods
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/SavedPresets"))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/SavedPresets");
             
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id + ".txt", Settings.SavePreferencesToText());
         }
 
         public static void LoadCustomPreset(int id)
         {
             if (Directory.Exists($"{PluginInfo.BaseDirectory}/SavedPresets"))
             {
-                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt");
+                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id + ".txt");
                 LogManager.Log(text);
                 Settings.LoadPreferencesFromText(text);
             }
@@ -105,8 +103,7 @@ namespace iiMenu.Mods
 
         public static void GoldentrophyPreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "Inner Outline Menu",
                 "Outline Menu",
                 "Freeze Player in Menu",
@@ -146,8 +143,7 @@ namespace iiMenu.Mods
 
         public static void PerformancePreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "Disable Enabled GUI",
                 "Disable Board Colors",
                 "Disable FPS Counter",
@@ -172,8 +168,7 @@ namespace iiMenu.Mods
 
         public static void SafetyPreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "No Finger Movement",
                 "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>",
                 "Disable Gamemode Buttons",
@@ -200,8 +195,7 @@ namespace iiMenu.Mods
         
         public static void SimplePreset()
         {
-            string[] presetMods = new string[]
-            {
+            string[] presetMods = {
                 "Disable Enabled GUI",
                 "Accept TOS",
                 "Player Scale Menu",

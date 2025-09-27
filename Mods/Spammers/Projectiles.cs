@@ -4,44 +4,45 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using ExitGames.Client.Photon;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaLocomotion;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods.Spammers
 {
     public class Projectiles
     {
         // This file needs to be rewritten
-        public static string[] ProjectileObjectNames = new string[]
-        {
+        public static string[] ProjectileObjectNames = {
             "GrowingSnowballLeftAnchor",
             "GrowingSnowballRightAnchor",
             "WaterBalloonLeftAnchor",
@@ -182,7 +183,7 @@ namespace iiMenu.Mods.Spammers
                         {
                             if (friendSided)
                             {
-                                Color32 color32 = (Color32)color;
+                                Color32 color32 = color;
 
                                 object[] projectileSendData = new object[8];
                                 projectileSendData[0] = "sendSnowball";
@@ -231,7 +232,7 @@ namespace iiMenu.Mods.Spammers
                         {
                             int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
-                            Color32 color32 = (Color32)color;
+                            Color32 color32 = color;
 
                             object[] projectileSendData = new object[9];
                             projectileSendData[0] = position;
@@ -298,7 +299,7 @@ namespace iiMenu.Mods.Spammers
         public static int projmode;
         public static void ChangeProjectile(bool positive = true)
         {
-            string[] shortProjectileNames = new string[] {
+            string[] shortProjectileNames = {
                 "Snowball",
                 "Water Balloon",
                 "Lava Rock",
@@ -333,8 +334,7 @@ namespace iiMenu.Mods.Spammers
         public static int shootCycle = 1;
         public static void ChangeShootSpeed(bool positive = true)
         {
-            float[] ShootStrengthTypes = new float[]
-            {
+            float[] ShootStrengthTypes = {
                 9.72f,
                 19.44f,
                 38.88f,
@@ -342,8 +342,7 @@ namespace iiMenu.Mods.Spammers
                 1000000f
             };
 
-            string[] ShootStrengthNames = new string[]
-            {
+            string[] ShootStrengthNames = {
                 "Slow",
                 "Medium",
                 "Fast",
@@ -379,7 +378,7 @@ namespace iiMenu.Mods.Spammers
             if (red < 0)
                 red = 10;
 
-            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + red.ToString() + "</color><color=grey>]</color>";
+            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + red + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseGreen(bool positive = true)
@@ -393,7 +392,7 @@ namespace iiMenu.Mods.Spammers
             if (green < 0)
                 green = 10;
 
-            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + green.ToString() + "</color><color=grey>]</color>";
+            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + green + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseBlue(bool positive = true)
@@ -407,7 +406,7 @@ namespace iiMenu.Mods.Spammers
             if (blue < 0)
                 blue = 10;
 
-            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
+            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue + "</color><color=grey>]</color>";
         }
 
         public static float projDebounce;
@@ -429,7 +428,7 @@ namespace iiMenu.Mods.Spammers
 
             projDebounceType = projDebounceIndex / 20f;
             Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
-            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType + "</color><color=grey>]</color>";
         }
 
         public static Color CalculateProjectileColor()
@@ -440,9 +439,9 @@ namespace iiMenu.Mods.Spammers
 
             if (GetIndex("Random Color").enabled)
             {
-                r = (byte)UnityEngine.Random.Range(0, 255);
-                g = (byte)UnityEngine.Random.Range(0, 255);
-                b = (byte)UnityEngine.Random.Range(0, 255);
+                r = (byte)Random.Range(0, 255);
+                g = (byte)Random.Range(0, 255);
+                b = (byte)Random.Range(0, 255);
             }
 
             if (GetIndex("Rainbow Projectiles").enabled)
@@ -480,16 +479,16 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 if (GetIndex("Random Projectile").enabled)
-                    projIndex = UnityEngine.Random.Range(0, ProjectileObjectNames.Length - 1);
+                    projIndex = Random.Range(0, ProjectileObjectNames.Length - 1);
                 
                 string projectilename = ProjectileObjectNames[projIndex];
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
-                Vector3 charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity;
+                Vector3 charvel = GTPlayer.Instance.RigidbodyVelocity;
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
+                    charvel = GTPlayer.Instance.RigidbodyVelocity + (GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -511,7 +510,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Rain Projectiles").enabled)
                 {
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-2f, 2f), 2f, UnityEngine.Random.Range(-2f, 2f));
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-2f, 2f), 2f, Random.Range(-2f, 2f));
                     charvel = Vector3.zero;
                 }
 
@@ -524,18 +523,18 @@ namespace iiMenu.Mods.Spammers
                 if (GetIndex("True Projectile Aura").enabled)
                 {
                     float time = Time.frameCount;
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                     charvel = RandomVector3(10f);
                 }
 
                 if (GetIndex("Projectile Fountain").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-                    charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
+                    charvel = new Vector3(Random.Range(-10, 10), 15, Random.Range(-10, 10));
                 }
 
                 if (GetIndex("Include Hand Velocity").enabled)
-                    charvel = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    charvel = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
 
                 BetaFireProjectile(projectilename, startpos, charvel, CalculateProjectileColor());
             }
@@ -554,7 +553,7 @@ namespace iiMenu.Mods.Spammers
                     int projIndex = projmode * 2;
                     
                     if (GetIndex("Random Projectile").enabled)
-                        projIndex = UnityEngine.Random.Range(0, ProjectileObjectNames.Length);
+                        projIndex = Random.Range(0, ProjectileObjectNames.Length);
                     
                     string projectilename = ProjectileObjectNames[projIndex];
 
@@ -565,7 +564,7 @@ namespace iiMenu.Mods.Spammers
                         charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
 
                     if (GetIndex("Random Direction").enabled)
-                        charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                        charvel = new Vector3(Random.Range(-33, 33), Random.Range(-33, 33), Random.Range(-33, 33));
 
                     if (GetIndex("Above Players").enabled)
                     {
@@ -575,7 +574,7 @@ namespace iiMenu.Mods.Spammers
 
                     if (GetIndex("Rain Projectiles").enabled)
                     {
-                        startpos = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
+                        startpos = lockTarget.headMesh.transform.position + new Vector3(Random.Range(-3f, 3f), 3f, Random.Range(-3f, 3f));
                         charvel = Vector3.zero;
                     }
 
@@ -588,14 +587,14 @@ namespace iiMenu.Mods.Spammers
                     if (GetIndex("True Projectile Aura").enabled)
                     {
                         float time = Time.frameCount;
-                        startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
+                        startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                         charvel = RandomVector3(10f);
                     }
 
                     if (GetIndex("Projectile Fountain").enabled)
                     {
                         startpos = lockTarget.headMesh.transform.position + new Vector3(0, 1, 0);
-                        charvel = new Vector3(UnityEngine.Random.Range(-10, 10), -15, UnityEngine.Random.Range(-10, 10));
+                        charvel = new Vector3(Random.Range(-10, 10), -15, Random.Range(-10, 10));
                     }
 
                     BetaFireProjectile(projectilename, startpos, charvel, CalculateProjectileColor());
@@ -644,7 +643,7 @@ namespace iiMenu.Mods.Spammers
                 }
 
                 if (GetIndex("Rain Projectiles").enabled)
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-3f, 3f), 3f, Random.Range(-3f, 3f));
 
                 if (GetIndex("Projectile Aura").enabled)
                 {
@@ -655,7 +654,7 @@ namespace iiMenu.Mods.Spammers
                 if (GetIndex("True Projectile Aura").enabled)
                 {
                     float time = Time.frameCount;
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                 }
 
                 if (GetIndex("Projectile Fountain").enabled)
@@ -675,7 +674,7 @@ namespace iiMenu.Mods.Spammers
         {
             int projIndex = projmode * 2;
             if (GetIndex("Random Projectile").enabled)
-                projIndex = UnityEngine.Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
+                projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
 
             if (leftGrab && !lastLeftGrab)
             {
@@ -987,9 +986,9 @@ namespace iiMenu.Mods.Spammers
                         VRRig rig = GetVRRigFromPlayer(Player);
                         VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
 
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
 
-                        BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                        BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
                     }
 
                     RPCProtection();
@@ -1008,7 +1007,7 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileBlindPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
-            BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+            BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
 
         public static void ProjectileBlindPlayer(VRRig player) => ProjectileBlindPlayer(GetPlayerFromVRRig(player));
@@ -1054,9 +1053,9 @@ namespace iiMenu.Mods.Spammers
                         VRRig rig = GetVRRigFromPlayer(Player);
                         VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
 
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
 
-                        BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                        BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
                     }
 
                     RPCProtection();
@@ -1075,7 +1074,7 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileLagPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
-            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
 
         public static void ProjectileLagPlayer(VRRig player) => ProjectileLagPlayer(GetPlayerFromVRRig(player));

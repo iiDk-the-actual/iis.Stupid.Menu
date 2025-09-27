@@ -4,21 +4,28 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -30,15 +37,13 @@ using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 using Console = iiMenu.Classes.Menu.Console;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
@@ -62,7 +67,7 @@ namespace iiMenu.Mods
                     previousNames.Add(button.buttonText);
                 }
             }
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons.ToString() + " broken buttons.");
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons + " broken buttons.");
         }
 
         private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material>();
@@ -117,7 +122,7 @@ namespace iiMenu.Mods
                 try
                 {
                     text += "\n====================================\n";
-                    text += i.ToString() + " ; " + oneshot.matName + " ; " + oneshot.slidePercent.ToString() + "% ; " + (oneshot.audio == null ? "none" : oneshot.audio.name);
+                    text += i + " ; " + oneshot.matName + " ; " + oneshot.slidePercent + "% ; " + (oneshot.audio == null ? "none" : oneshot.audio.name);
                 }
                 catch { LogManager.Log("Failed to log sound"); }
                 i++;
@@ -128,7 +133,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
 
             Process.Start(filePath);
@@ -143,7 +148,7 @@ namespace iiMenu.Mods
                 try
                 {
                     text += "\n====================================\n";
-                    text += hat.itemName + " ; " + hat.displayName + " (override " + hat.overrideDisplayName + ") ; " + hat.cost.ToString() + "SR ; canTryOn = " + hat.canTryOn.ToString();
+                    text += hat.itemName + " ; " + hat.displayName + " (override " + hat.overrideDisplayName + ") ; " + hat.cost + "SR ; canTryOn = " + hat.canTryOn;
                 }
                 catch { LogManager.Log("Failed to log hat"); }
                 i++;
@@ -154,7 +159,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
 
             Process.Start(filePath);
@@ -168,7 +173,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    text += hat.itemName + ";;" + hat.overrideDisplayName + ";;" + hat.cost.ToString() + "\n";
+                    text += hat.itemName + ";;" + hat.overrideDisplayName + ";;" + hat.cost + "\n";
                 }
                 catch { LogManager.Log("Failed to log hat"); }
                 i++;
@@ -177,7 +182,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
 
             Process.Start(filePath);
@@ -192,7 +197,7 @@ namespace iiMenu.Mods
                 try
                 {
                     text += "\n====================================\n";
-                    text += i.ToString() + " ; " + name;
+                    text += i + " ; " + name;
                 }
                 catch { LogManager.Log("Failed to log RPC"); }
                 i++;
@@ -203,7 +208,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
             
             Process.Start(filePath);
@@ -222,8 +227,8 @@ namespace iiMenu.Mods
             GUIUtility.systemCopyBuffer = id;
         }
         
-        public static int restartIndex = 0;
-        public static float restartDelay = 0f;
+        public static int restartIndex;
+        public static float restartDelay;
         public static Vector3 restartPosition;
         public static string restartRoom;
         public static void SafeRestartGame()
@@ -231,7 +236,7 @@ namespace iiMenu.Mods
             switch (restartIndex)
             {
                 case 0:
-                    string readPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    string readPath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
                     if (File.Exists(readPath))
                     {
                         string data = File.ReadAllText(readPath);
@@ -249,13 +254,13 @@ namespace iiMenu.Mods
                     restartDelay = Time.time + 6f;
                     break;
                 case 1:
-                    string writePath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    string writePath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
                     Settings.SavePreferences();
                     File.WriteAllText(writePath, restartRoom + $";{restartPosition.x},{restartPosition.y},{restartPosition.z}");
                     restartIndex = 2;
                     break;
                 case 2:
-                    string existsPath = System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt";
+                    string existsPath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
                     if (File.Exists(existsPath) && Time.time > restartDelay)
                     {
                         Important.RestartGame();
@@ -271,7 +276,7 @@ namespace iiMenu.Mods
                     else
                     {
                         TeleportPlayer(restartPosition);
-                        File.Delete(System.Reflection.Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"RestartData.txt");
+                        File.Delete(Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt");
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
                         restartIndex = 4;
                         GetIndex("Safe Restart Game").enabled = false;
@@ -687,7 +692,7 @@ namespace iiMenu.Mods
         }
 
         private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
-        private static System.Collections.IEnumerator FreezeCoroutine(VRRig rig)
+        private static IEnumerator FreezeCoroutine(VRRig rig)
         {
             Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(rig).ActorNumber, "Zero Gravity", true);
             Vector3 pos = rig.transform.position;
@@ -866,9 +871,9 @@ namespace iiMenu.Mods
                 FullToggleMenu(Player.ActorNumber, enable);
         }
 
-        private static float stdell = 0f;
-        private static VRRig thestrangled = null;
-        private static VRRig thestrangledleft = null;
+        private static float stdell;
+        private static VRRig thestrangled;
+        private static VRRig thestrangledleft;
         public static void AdminStrangle()
         {
             if (leftGrab)
@@ -884,11 +889,7 @@ namespace iiMenu.Mods
                                 thestrangledleft = rig;
                                 if (PhotonNetwork.InRoom)
                                 {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                        89,
-                                        true,
-                                        999999f
-                                    });
+                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
                                 }
                                 else
                                     VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
@@ -915,11 +916,7 @@ namespace iiMenu.Mods
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            true,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
@@ -939,11 +936,7 @@ namespace iiMenu.Mods
                                 thestrangled = rig;
                                 if (PhotonNetwork.InRoom)
                                 {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                        89,
-                                        false,
-                                        999999f
-                                    });
+                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
                                 }
                                 else
                                     VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
@@ -970,11 +963,7 @@ namespace iiMenu.Mods
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            89,
-                            false,
-                            999999f
-                        });
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, false, 999999f);
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
@@ -1009,14 +998,14 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), RandomVector3(360f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
+                    Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), RandomVector3(360f), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
                 }
             }
         }
 
         private static float lastnetscale = 1f;
-        private static float scalenetdel = 0f;
-        private static int lastplayercount = 0;
+        private static float scalenetdel;
+        private static int lastplayercount;
         public static void AdminNetworkScale()
         {
             if (Time.time > scalenetdel && (lastnetscale != VRRig.LocalRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
@@ -1061,7 +1050,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f), 10f, UnityEngine.Random.Range(-10f, 10f)), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+                Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-10f, 10f), 10f, Random.Range(-10f, 10f)), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
                 VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                 if (gunTarget && !PlayerIsLocal(gunTarget))
                 {
@@ -1097,17 +1086,17 @@ namespace iiMenu.Mods
                         whereOriginalPlayerPos = gunTarget.transform.position;
 
                         int actorNumber = GetPlayerFromVRRig(gunTarget).ActorNumber;
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f));
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f));
                         
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f));
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f));
                         
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
-                        Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
+                        Console.ExecuteCommand("platf", new[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
 
                         GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(platform, 60f);
+                        Object.Destroy(platform, 60f);
                         platform.GetComponent<Renderer>().material.color = Color.black;
                         platform.transform.position = new Vector3(0f, 20f, 0f);
                         platform.transform.localScale = new Vector3(10f, 1f, 10f);
@@ -1168,7 +1157,7 @@ namespace iiMenu.Mods
         {
             try
             {
-                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
                 if (data.Code == Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
@@ -1244,7 +1233,7 @@ namespace iiMenu.Mods
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    UnityEngine.Object.Destroy(nametag.Value);
+                    Object.Destroy(nametag.Value);
                     nametags.Remove(nametag.Key);
                 } else
                 {
@@ -1262,7 +1251,7 @@ namespace iiMenu.Mods
         public static void DisableAdminMenuUserTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
-                UnityEngine.Object.Destroy(nametag.Value);
+                Object.Destroy(nametag.Value);
 
             nametags.Clear();
         }
@@ -1282,7 +1271,7 @@ namespace iiMenu.Mods
         {
             try
             {
-                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
                 if (data.Code == Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
@@ -1394,7 +1383,7 @@ namespace iiMenu.Mods
                 else
                     conductText += item.Value + "\\n";
             }
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TMPro.TextMeshPro>().text = conductText;
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = conductText;
         }
 
         public static float FindUserTime;
@@ -1424,7 +1413,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float thingdeb = 0f;
+        private static float thingdeb;
         public static void AdminPunchMod()
         {
             if (Time.time > thingdeb)
@@ -1514,7 +1503,7 @@ namespace iiMenu.Mods
             Console.ExecuteCommand("isusing", ReceiverGroup.All);
         }
 
-        private static bool lastLasering = false;
+        private static bool lastLasering;
         public static void AdminLaser()
         {
             if (leftPrimary || rightPrimary)
@@ -1541,7 +1530,7 @@ namespace iiMenu.Mods
             lastLasering = isLasering;
         }
 
-        private static float beamDelay = 0f;
+        private static float beamDelay;
         public static void AdminBeam()
         {
             if (rightTrigger > 0.5f && Time.time > beamDelay)
@@ -1553,8 +1542,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float startTimeTrigger = 0f;
-        private static bool lastTriggerLaserSpam = false;
+        private static float startTimeTrigger;
+        private static bool lastTriggerLaserSpam;
         public static void AdminFractals()
         {
             if (rightTrigger > 0.5f && !lastTriggerLaserSpam)
@@ -1567,7 +1556,7 @@ namespace iiMenu.Mods
                 beamDelay = Time.time + 0.5f;
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
-                Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
+                Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
             }
         }
 
@@ -1669,7 +1658,7 @@ namespace iiMenu.Mods
 
             if (!string.IsNullOrEmpty(concat))
             {
-                Console.ExecuteCommand("cosmetic", new int[] { player.ActorNumber }, concat);
+                Console.ExecuteCommand("cosmetic", new[] { player.ActorNumber }, concat);
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
             }
         }

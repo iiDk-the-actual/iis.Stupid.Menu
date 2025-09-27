@@ -4,21 +4,25 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -26,15 +30,14 @@ using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
+using iiMenu.Patches.Safety;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
@@ -44,14 +47,14 @@ namespace iiMenu.Mods
         {
             if (!GetIndex("Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>").enabled) AntiReportDisconnect();
             if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = true;
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) Patches.Safety.AntiCheat.AntiACReport = true;
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheat.AntiACReport = true;
             if (!GetIndex("Anti Moderator").enabled) AntiModerator();
         }
 
         public static void DisableGeneral()
         {
             if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = false;
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) Patches.Safety.AntiCheat.AntiACReport = false;
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheat.AntiACReport = false;
         }
 
         public static void NoFinger()
@@ -145,13 +148,13 @@ namespace iiMenu.Mods
         public static void SpoofSupportPage() =>
             GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
 
-        private static float lastCacheClearedTime = 0f;
+        private static float lastCacheClearedTime;
         public static void AutoClearCache()
         {
             if (Time.time > lastCacheClearedTime)
             {
                 lastCacheClearedTime = Time.time + 60f;
-                System.GC.Collect();
+                GC.Collect();
             }
         }
 
@@ -160,14 +163,12 @@ namespace iiMenu.Mods
 
         public static void ChangeAntiReportRange(bool positive = true)
         {
-            string[] names = new string[]
-            {
+            string[] names = {
                 "Default", // The report button
                 "Large", // The report button within the range of 3 people
                 "Massive" // The entire fucking board
             };
-            float[] distances = new float[]
-            {
+            float[] distances = {
                 0.35f,
                 0.7f,
                 1.5f
@@ -209,7 +210,7 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static void AntiReport(System.Action<VRRig, Vector3> onReport)
+        public static void AntiReport(Action<VRRig, Vector3> onReport)
         {
             if (NetworkSystem.Instance.InRoom)
             {
@@ -337,8 +338,7 @@ namespace iiMenu.Mods
             if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
             {
                 int antiReportType = 0;
-                string[] types = new string[]
-                {
+                string[] types = {
                     "Disconnect",
                     "Reconnect",
                     "Join Random",
@@ -414,20 +414,7 @@ namespace iiMenu.Mods
                             try
                             {
                                 text += "\n====================================\n";
-                                text += string.Concat(new string[]
-                                {
-                                    "Player Name: \"",
-                                    player.NickName,
-                                    "\", Player ID: \"",
-                                    player.UserId,
-                                    "\", Player Color: (R: ",
-                                    r.ToString(),
-                                    ", G: ",
-                                    g.ToString(),
-                                    ", B: ",
-                                    b.ToString(),
-                                    ")"
-                                });
+                                text += string.Concat("Player Name: \"", player.NickName, "\", Player ID: \"", player.UserId, "\", Player Color: (R: ", r.ToString(), ", G: ", g.ToString(), ", B: ", b.ToString(), ")");
                             }
                             catch { LogManager.Log("Failed to log player"); }
 
@@ -504,7 +491,7 @@ namespace iiMenu.Mods
 
             Hashtable toRemove = new Hashtable();
 
-            foreach (var keyObj in player.CustomProperties.Keys.Cast<object>().ToList())
+            foreach (var keyObj in player.CustomProperties.Keys.ToList())
             {
                 string key = keyObj?.ToString();
                 if (key == null) continue;
@@ -538,8 +525,7 @@ namespace iiMenu.Mods
             string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
             ChangeName(fName.Length > 12 ? fName[..12] : fName);
 
-            Color[] colors = new Color[]
-            {
+            Color[] colors = {
                 Color.cyan,
                 Color.yellow,
                 Color.blue,
@@ -560,7 +546,7 @@ namespace iiMenu.Mods
             ChangeColor(colors[Random.Range(0, colors.Length - 1)]);
         }
 
-        private static bool lastinlobbyagain = false;
+        private static bool lastinlobbyagain;
         public static void ChangeIdentityOnDisconnect()
         {
             if (!PhotonNetwork.InRoom && lastinlobbyagain)
@@ -609,7 +595,7 @@ namespace iiMenu.Mods
                     string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
                     ChangeName(fName.Length > 12 ? fName[..12] : fName, true);
 
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), new object[] { Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f) });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
                 }
             }
 
@@ -635,7 +621,7 @@ namespace iiMenu.Mods
             {
                 if (rig.isLocal) continue;
                 if (!spoofedRigs.Contains(rig))
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), new object[] { Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f) });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             }
         }
 
@@ -658,19 +644,16 @@ namespace iiMenu.Mods
             if (fpsSpoofValue < 5)
                 fpsSpoofValue = 140;
 
-            GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue + "</color><color=grey>]</color>";
         }
 
-        public static string[] namePrefix = new string[]
-        {
+        public static string[] namePrefix = {
             "EPIC", "EPIK", "REAL", "NOT", "SILLY", "LITTLE", "BIG", "MAYBE", "MONKE", "SUB2", "OG"
         };
-        public static string[] nameSuffix = new string[]
-        {
+        public static string[] nameSuffix = {
             "GT", "VR", "LOL", "GTVR", "FAN", "XD", "LOL", "MONK", "YT"
         };
-        public static string[] names = new string[]
-        {
+        public static string[] names = {
             "0", "SHIBA", "PBBV", "J3VU", "BEES", "NAMO", "MANGO", "FROSTY", "FRISH", "LEMMING", 
             "BILLY", "TIMMY", "MINIGAMES", "JMANCURLY", "VMT", "ELLIOT", "POLAR", "3CLIPCE", "DAISY09",
             "SHARKPUPPET", "DUCKY", "EDDIE", "EDDY", "RAKZZ", "CASEOH", "SKETCH", "SKY", "RETURN",
@@ -717,8 +700,7 @@ namespace iiMenu.Mods
 
         public static void ChangeBadgeTier(bool positive = true)
         {
-            string[] badgeNames = new string[]
-            {
+            string[] badgeNames = {
                 "Wood",
                 "Rock",
                 "Bronze",

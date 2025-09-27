@@ -4,30 +4,32 @@
  *
  * Copyright (C) 2025  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using HarmonyLib;
-using Photon.Pun;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using GorillaGameModes;
+using HarmonyLib;
+using iiMenu.Menu;
+using Photon.Pun;
 using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaGameModes.GameMode), "ReportTag")]
+    [HarmonyPatch(typeof(GameMode), "ReportTag")]
     public class TagPatch
     {
         public static List<NetPlayer> taggedPlayers = new List<NetPlayer>();
@@ -56,27 +58,27 @@ namespace iiMenu.Patches.Menu
                     switch (tagCount)
                     {
                         case 1:
-                            if (iiMenu.Menu.Main.InfectedList().Count <= 1)
-                                iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/firstblood.wav", "firstblood.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            if (Main.InfectedList().Count <= 1)
+                                Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/firstblood.wav", "firstblood.wav"), Main.buttonClickVolume / 10f);
                             
                             break;
                         case 2:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/doublekill.wav", "doublekill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/doublekill.wav", "doublekill.wav"), Main.buttonClickVolume / 10f);
                             break;
                         case 3:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/triplekill.wav", "triplekill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/triplekill.wav", "triplekill.wav"), Main.buttonClickVolume / 10f);
                             break;
                         case 4:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/killingspree.wav", "killingspree.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/killingspree.wav", "killingspree.wav"), Main.buttonClickVolume / 10f);
                             break;
                         case 5:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/wickedsick.wav", "wickedsick.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/wickedsick.wav", "wickedsick.wav"), Main.buttonClickVolume / 10f);
                             break;
                         case 6:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/monsterkill.wav", "monsterkill.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/monsterkill.wav", "monsterkill.wav"), Main.buttonClickVolume / 10f);
                             break;
                         case 7:
-                            iiMenu.Menu.Main.Play2DAudio(iiMenu.Menu.Main.LoadSoundFromURL($"{killsounds}/rampage.wav", "rampage.wav"), iiMenu.Menu.Main.buttonClickVolume / 10f);
+                            Main.Play2DAudio(Main.LoadSoundFromURL($"{killsounds}/rampage.wav", "rampage.wav"), Main.buttonClickVolume / 10f);
                             break;
                     }
                 }
