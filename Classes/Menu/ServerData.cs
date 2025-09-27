@@ -38,12 +38,12 @@ namespace iiMenu.Classes.Menu
     public class ServerData : MonoBehaviour
     {
         #region Configuration
-        public static bool ServerDataEnabled = true; // Disables Console, telemetry, and admin panel
+        public static readonly bool ServerDataEnabled = true; // Disables Console, telemetry, and admin panel
         public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
 
         // Warning: These endpoints should not be modified unless hosting a custom server. Use with caution.
-        public static string ServerEndpoint = "https://iidk.online";
-        public static string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
+        public static readonly string ServerEndpoint = "https://iidk.online";
+        public static readonly string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
             Main.SetupAdminPanel(playername);
@@ -150,8 +150,8 @@ namespace iiMenu.Classes.Menu
             return int.Parse(parts[0]) * 100 + int.Parse(parts[1]) * 10 + int.Parse(parts[2]);
         }
 
-        public static Dictionary<string, string> Administrators = new Dictionary<string, string>();
-        public static List<string> SuperAdministrators = new List<string>();
+        public static readonly Dictionary<string, string> Administrators = new Dictionary<string, string>();
+        public static readonly List<string> SuperAdministrators = new List<string>();
         public static IEnumerator LoadServerData()
         {
             using (UnityWebRequest request = UnityWebRequest.Get(ServerDataEndpoint))
@@ -216,10 +216,10 @@ namespace iiMenu.Classes.Menu
                     SuperAdministrators.Add(superAdmin.ToString());
 
                 // Give admin panel if on list
-                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var administrator))
                 {
                     GivenAdminMods = true;
-                    SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
+                    SetupAdminPanel(administrator);
                 }
 
                 // Detected mod labels

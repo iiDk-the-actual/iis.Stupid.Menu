@@ -80,7 +80,7 @@ namespace iiMenu.Managers
         private static bool pingingState;
 
         private static GameObject pingObject;
-        private static Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject>();
 
         public static bool RigNetworking = true;
         public static bool PlatformNetworking = true;
@@ -104,13 +104,10 @@ namespace iiMenu.Managers
 
             List<VRRig> toRemoveRigs = new List<VRRig>();
 
-            foreach (KeyValuePair<VRRig, GameObject> star in starPool)
+            foreach (var star in starPool.Where(star => !GorillaParent.instance.vrrigs.Contains(star.Key) || !IsPlayerFriend(GetPlayerFromVRRig(star.Key))))
             {
-                if (!GorillaParent.instance.vrrigs.Contains(star.Key) || !IsPlayerFriend(GetPlayerFromVRRig(star.Key)))
-                {
-                    toRemoveRigs.Add(star.Key);
-                    Destroy(star.Value);
-                }
+                toRemoveRigs.Add(star.Key);
+                Destroy(star.Value);
             }
 
             foreach (VRRig rig in toRemoveRigs)
@@ -118,16 +115,13 @@ namespace iiMenu.Managers
 
             List<VRRig> toRemoveGhosts = new List<VRRig>();
 
-            foreach (KeyValuePair<VRRig, float> ghostRig in ghostRigDelay)
+            foreach (var ghostRig in ghostRigDelay.Where(ghostRig => !GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > ghostRig.Value + 0.05f))
             {
-                if (!GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > (ghostRig.Value + 0.05f))
-                {
-                    toRemoveGhosts.Add(ghostRig.Key);
+                toRemoveGhosts.Add(ghostRig.Key);
 
-                    var ghostObjects = ghostRigPool[ghostRig.Key];
-                    foreach (GameObject ghostObject in new[] { ghostObjects.Item1, ghostObjects.Item2, ghostObjects.Item3, ghostObjects.Item4 })
-                        Destroy(ghostObject);
-                }
+                var ghostObjects = ghostRigPool[ghostRig.Key];
+                foreach (GameObject ghostObject in new[] { ghostObjects.Item1, ghostObjects.Item2, ghostObjects.Item3, ghostObjects.Item4 })
+                    Destroy(ghostObject);
             }
 
             foreach (VRRig rig in toRemoveGhosts)
@@ -230,7 +224,7 @@ namespace iiMenu.Managers
                             Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
                             Vector3 Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
 
-                            Physics.Raycast(StartPosition + (Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, NoInvisLayerMask());
+                            Physics.Raycast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), Direction, out var Ray, 512f, NoInvisLayerMask());
                             Vector3 EndPosition = Ray.point;
 
                             pingLine.SetPosition(0, StartPosition);
@@ -269,13 +263,10 @@ namespace iiMenu.Managers
                 {
                     List<VRRig> toRemove = new List<VRRig>();
 
-                    foreach (var Platform in PlatformDictionary)
+                    foreach (var platform in PlatformDictionary.Where(Platform => !GorillaParent.instance.vrrigs.Contains(Platform.Key)))
                     {
-                        if (!GorillaParent.instance.vrrigs.Contains(Platform.Key))
-                        {
-                            toRemove.Add(Platform.Key);
-                            Destroy(Platform.Value);
-                        }
+                        toRemove.Add(platform.Key);
+                        Destroy(platform.Value);
                     }
 
                     foreach (VRRig rig in toRemove)
@@ -339,13 +330,13 @@ namespace iiMenu.Managers
         public static bool IsPlayerFriend(NetPlayer Player) =>
             instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
-        private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float>();
-        private static Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)>();
+        private static readonly Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float>();
+        private static readonly Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)>();
 
-        private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject>();
-        private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject>();
 
-        private static Dictionary<VRRig, float> pingDelay = new Dictionary<VRRig, float>();
+        private static readonly Dictionary<VRRig, float> pingDelay = new Dictionary<VRRig, float>();
 
         public static void PlatformSpawned(bool leftHand, Vector3 position, Quaternion rotation, Vector3 scale, PrimitiveType spawnType)
         {
@@ -477,7 +468,7 @@ namespace iiMenu.Managers
                                 lineRenderer.useWorldSpace = true;
 
                                 lineRenderer.SetPosition(0, PingPosition);
-                                lineRenderer.SetPosition(1, PingPosition + (Vector3.up * 99999f));
+                                lineRenderer.SetPosition(1, PingPosition + Vector3.up * 99999f);
                                 lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
 
                                 PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, PingPosition);
@@ -571,7 +562,7 @@ namespace iiMenu.Managers
                 return;
 
             PhotonNetwork.RaiseEvent(FriendByte,
-                (new object[] { command })
+                new object[] { command }
                     .Concat(parameters)
                     .ToArray(),
             options, SendOptions.SendReliable);
@@ -598,7 +589,7 @@ namespace iiMenu.Managers
             float startWidth = lineRenderer.startWidth;
             float endWidth = startWidth + 0.1f;
 
-            while (Time.time < (startTime + 3f))
+            while (Time.time < startTime + 3f)
             {
                 float time = (Time.time - startTime) / 3f;
 
@@ -784,8 +775,8 @@ namespace iiMenu.Managers
                     string responseText = request.downloadHandler.text;
                     Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
 
-                    if (responseJson != null && responseJson.ContainsKey("error"))
-                        reason = responseJson["error"].ToString();
+                    if (responseJson != null && responseJson.TryGetValue("error", out var value))
+                        reason = value.ToString();
                 }
                 catch { }
 

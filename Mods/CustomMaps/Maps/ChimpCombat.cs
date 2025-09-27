@@ -20,6 +20,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
 using iiMenu.Notifications;
@@ -37,18 +38,18 @@ namespace iiMenu.Mods.CustomMaps.Maps
         public override long MapID => 5135423;
         public override ButtonInfo[] Buttons => new[]
         {
-            new ButtonInfo { buttonText = "Kill All Players", method =() => KillAll(), toolTip = "Kills everyone in the room."},
-            new ButtonInfo { buttonText = "God Mode_", overlapText = "God Mode", enableMethod =() => GodMode(), disableMethod =() => DisableGodMode(), toolTip = "Prevents you from getting killed."},
-            new ButtonInfo { buttonText = "No Grenade Cooldown", enableMethod =() => NoGrenadeCooldown(), disableMethod =() => DisableNoGrenadeCooldown(), toolTip = "Disables the cooldown on spawning grenades."},
-            new ButtonInfo { buttonText = "No Shoot Cooldown", enableMethod =() => NoShootCooldown(), disableMethod =() => DisableNoShootCooldown(), toolTip = "Disables the cooldown on shooting."},
-            new ButtonInfo { buttonText = "Rapid Fire", enableMethod =() => RapidFire(), disableMethod =() => DisableRapidFire(), toolTip = "Automatically shoots when holding down right trigger."},
-            new ButtonInfo { buttonText = "Instant Kill", enableMethod =() => InstantKill(), disableMethod =() => DisableInstantKill(), toolTip = "Makes your gun instant kill players."},
-            new ButtonInfo { buttonText = "Infinite Points", enableMethod =() => InfinitePoints(), disableMethod =() => DisableInfinitePoints(), toolTip = "Gives you an infinite amount of points."},
-            new ButtonInfo { buttonText = "Infinite Ammo", enableMethod =() => InfiniteAmmo(), disableMethod =() => DisableInfiniteAmmo(), toolTip = "Gives you an infinite amount of ammo."},
-            new ButtonInfo { buttonText = "Crash Gun", method =() => CrashGun(), toolTip = "Crashes whoever your hand desires in the custom map." },
-            new ButtonInfo { buttonText = "Crash All", method =() => CrashAll(), isTogglable = false, toolTip = "Crashes everyone in the custom map." },
-            new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => AntiReportCrash(), toolTip = "Crashes everyone who tries to report you." },
-            new ButtonInfo { buttonText = "Crash On Touch", method =() => CrashOnTouch(), toolTip = "Crashes whoever you touch in the custom map." }
+            new ButtonInfo { buttonText = "Kill All Players", method = KillAll, toolTip = "Kills everyone in the room."},
+            new ButtonInfo { buttonText = "God Mode_", overlapText = "God Mode", enableMethod = GodMode, disableMethod = DisableGodMode, toolTip = "Prevents you from getting killed."},
+            new ButtonInfo { buttonText = "No Grenade Cooldown", enableMethod = NoGrenadeCooldown, disableMethod = DisableNoGrenadeCooldown, toolTip = "Disables the cooldown on spawning grenades."},
+            new ButtonInfo { buttonText = "No Shoot Cooldown", enableMethod = NoShootCooldown, disableMethod = DisableNoShootCooldown, toolTip = "Disables the cooldown on shooting."},
+            new ButtonInfo { buttonText = "Rapid Fire", enableMethod = RapidFire, disableMethod = DisableRapidFire, toolTip = "Automatically shoots when holding down right trigger."},
+            new ButtonInfo { buttonText = "Instant Kill", enableMethod = InstantKill, disableMethod = DisableInstantKill, toolTip = "Makes your gun instant kill players."},
+            new ButtonInfo { buttonText = "Infinite Points", enableMethod = InfinitePoints, disableMethod = DisableInfinitePoints, toolTip = "Gives you an infinite amount of points."},
+            new ButtonInfo { buttonText = "Infinite Ammo", enableMethod = InfiniteAmmo, disableMethod = DisableInfiniteAmmo, toolTip = "Gives you an infinite amount of ammo."},
+            new ButtonInfo { buttonText = "Crash Gun", method = CrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
+            new ButtonInfo { buttonText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
+            new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
+            new ButtonInfo { buttonText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
         };
 
         public static void KillAll()
@@ -153,7 +154,6 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null && Time.time > crashDelay)
                 {
@@ -182,26 +182,19 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time < crashDelay)
                 return;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            foreach (var netPlayer in from rig in GorillaParent.instance.vrrigs where !rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f) select GetPlayerFromVRRig(rig))
             {
-                if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
-                {
-                    NetPlayer Player = GetPlayerFromVRRig(rig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = Time.time + 0.2f;
-                }
+                CrashPlayer(netPlayer.ActorNumber);
+                crashDelay = Time.time + 0.2f;
             }
         }
         public static void CrashAll()
         {
-            if (Time.time > crashDelay)
-            {
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-                {
-                    CrashPlayer(Player.ActorNumber);
-                }
-                crashDelay = Time.time + 0.1f;
-            }
+            if (!(Time.time > crashDelay)) return;
+            foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                CrashPlayer(player.ActorNumber);
+                
+            crashDelay = Time.time + 0.1f;
         }
         public static void AntiReportCrash()
         {
@@ -210,8 +203,8 @@ namespace iiMenu.Mods.CustomMaps.Maps
 
                 if (Time.time > crashDelay)
                 {
-                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
-                    CrashPlayer(Player.ActorNumber);
+                    NetPlayer netPlayer = GetPlayerFromVRRig(vrrig);
+                    CrashPlayer(netPlayer.ActorNumber);
                     crashDelay = Time.time + 0.5f;
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
                 }

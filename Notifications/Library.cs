@@ -44,11 +44,11 @@ namespace iiMenu.Notifications
 
         private GameObject MainCamera;
 
-        private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
+        private readonly Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
 
         public static string PreviousNotifi;
 
-        public static Dictionary<string, string> information = new Dictionary<string, string>();
+        public static readonly Dictionary<string, string> information = new Dictionary<string, string>();
 
         public static Text NotifiText;
         public static Text ModText;
@@ -288,7 +288,7 @@ namespace iiMenu.Notifications
                         }
                     }
 
-                    if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
+                    if (notificationSoundIndex != 0 && Time.time > timeMenuStarted + 5f)
                         PlayNotificationSound();
 
                     if (inputTextColor != "green")
@@ -418,7 +418,7 @@ namespace iiMenu.Notifications
             }
         }
 
-        public static List<Coroutine> clearCoroutines = new List<Coroutine>();
+        public static readonly List<Coroutine> clearCoroutines = new List<Coroutine>();
 
     }
 }

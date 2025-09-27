@@ -39,10 +39,10 @@ namespace iiMenu.Classes.Menu
         public Color GetColor(int index)
         {
             if (rainbow)
-                return Color.HSVToRGB((Time.time + (index / 8)) % 1f, 1f, 1f);
+                return Color.HSVToRGB((Time.time + index / 8) % 1f, 1f, 1f);
 
             if (pastelRainbow)
-                return Color.HSVToRGB((Time.time + (index / 8)), 0.3f, 1f);
+                return Color.HSVToRGB(Time.time + index / 8, 0.3f, 1f);
 
             if (epileptic)
                 return Main.RandomColor();
@@ -128,7 +128,7 @@ namespace iiMenu.Classes.Menu
         }
 
         public Color GetCurrentColor(float offset = 0f) =>
-            GetColorTime((offset + (Time.time / (Main.slowFadeColors ? 10f : 2f))) % 1f);
+            GetColorTime((offset + Time.time / (Main.slowFadeColors ? 10f : 2f)) % 1f);
 
         public bool IsFlat() =>
             !rainbow && !pastelRainbow && !epileptic && !copyRigColor &&

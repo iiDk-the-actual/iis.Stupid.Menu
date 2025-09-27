@@ -29,7 +29,7 @@ namespace iiMenu.Patches.Menu
     public class ThrowPatch
     {
         public static bool enabled;
-        public static int extraCount = 5;
+        public static readonly int extraCount = 5;
 
         public static bool Prefix(GrowingSnowballThrowable __instance)
         {
