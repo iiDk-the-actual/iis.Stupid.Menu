@@ -1455,7 +1455,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = Pingnametags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = $"{playerPing[vrrig]}ms";
+                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPing().ToString()}ms";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
