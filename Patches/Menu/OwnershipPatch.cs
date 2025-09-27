@@ -29,7 +29,7 @@ namespace iiMenu.Patches.Menu
     public class OwnershipPatch
     {
         public static bool enabled;
-        public static List<RequestableOwnershipGuard> blacklistedGuards = new List<RequestableOwnershipGuard>();
+        public static readonly List<RequestableOwnershipGuard> blacklistedGuards = new List<RequestableOwnershipGuard>();
 
         public static bool Prefix(RequestableOwnershipGuard __instance, string nonce, PhotonMessageInfo info) =>
             !enabled || (__instance.photonView.IsMine && !blacklistedGuards.Contains(__instance));

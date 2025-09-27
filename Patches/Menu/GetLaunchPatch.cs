@@ -85,7 +85,6 @@ namespace iiMenu.Patches.Menu
 
             Vector3 displacement = targetPos - origin;
             Vector3 displacementXZ = new Vector3(displacement.x, 0, displacement.z);
-            Vector3 velocityXZ = new Vector3(targetVel.x, 0, targetVel.z);
 
             float g = -Physics.gravity.y;
 

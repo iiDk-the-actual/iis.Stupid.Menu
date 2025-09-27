@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
         public static bool enabled;
 
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand) =>
-            !(enabled);
+            !enabled;
     }
 
     [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]

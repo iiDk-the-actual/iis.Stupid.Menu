@@ -54,11 +54,11 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    VRRig rig = GorillaParent.instance.vrrigs.Where(rig => PlayerIsTagged(rig)).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
+                    VRRig rig = GorillaParent.instance.vrrigs.Where(PlayerIsTagged).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
                     if (PlayerIsTagged(rig))
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
+                        if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
                         if (GetIndex("Obnoxious Tag").enabled)
                         {
@@ -162,7 +162,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -226,7 +225,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -264,7 +262,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -372,22 +369,14 @@ namespace iiMenu.Mods
 
         public static void TagAura()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
-                    ReportTag(vrrig);
-            }
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance))
+                ReportTag(vrrig);
         }
 
         public static void TagAuraPlayer(VRRig giving)
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                float distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position);
-
-                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
-                    TagPlayer(GetPlayerFromVRRig(vrrig));
-            }
+            foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs let distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position) where PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig) select vrrig)
+                TagPlayer(GetPlayerFromVRRig(vrrig));
         }
 
         public static void TagAuraGun()
@@ -396,7 +385,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                     TagAuraPlayer(lockTarget);
@@ -450,7 +438,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -602,7 +589,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -623,7 +609,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -672,48 +657,45 @@ namespace iiMenu.Mods
                     }
                     if (isInfectedPlayers)
                     {
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !PlayerIsTagged(vrrig)))
                         {
-                            if (!PlayerIsTagged(vrrig))
+                            VRRig.LocalRig.enabled = false;
+
+                            if (!GetIndex("Obnoxious Tag").enabled)
+                                VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
+                            else
                             {
-                                VRRig.LocalRig.enabled = false;
-
-                                if (!GetIndex("Obnoxious Tag").enabled)
-                                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
-                                else
-                                {
-                                    Vector3 position = vrrig.transform.position + RandomVector3();
+                                Vector3 position = vrrig.transform.position + RandomVector3();
                                     
-                                    VRRig.LocalRig.transform.position = position;
-                                    VRRig.LocalRig.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.transform.position = position;
+                                VRRig.LocalRig.transform.rotation = RandomQuaternion();
 
-                                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                    VRRig.LocalRig.leftIndex.calcT = 0f;
-                                    VRRig.LocalRig.leftMiddle.calcT = 0f;
-                                    VRRig.LocalRig.leftThumb.calcT = 0f;
+                                VRRig.LocalRig.leftIndex.calcT = 0f;
+                                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                    VRRig.LocalRig.rightIndex.calcT = 0f;
-                                    VRRig.LocalRig.rightMiddle.calcT = 0f;
-                                    VRRig.LocalRig.rightThumb.calcT = 0f;
+                                VRRig.LocalRig.rightIndex.calcT = 0f;
+                                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
-                                }
-
-                                if (ValidateTag(vrrig))
-                                    ReportTag(vrrig);
+                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                             }
+
+                            if (ValidateTag(vrrig))
+                                ReportTag(vrrig);
                         }
                     }
                     else
@@ -749,7 +731,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > tagGunDelay)
                 {
@@ -773,14 +754,11 @@ namespace iiMenu.Mods
 
             Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
 
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !PlayerIsTagged(vrrig)))
             {
-                if (!PlayerIsTagged(vrrig))
-                {
-                    VRRig.LocalRig.transform.position = vrrig.transform.position;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
-                    GameMode.ReportTag(GetPlayerFromVRRig(vrrig));
-                }
+                VRRig.LocalRig.transform.position = vrrig.transform.position;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
+                GameMode.ReportTag(GetPlayerFromVRRig(vrrig));
             }
 
             VRRig.LocalRig.transform.position = archiveRigPosition;
@@ -966,7 +944,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -1031,7 +1008,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {
@@ -1052,7 +1028,7 @@ namespace iiMenu.Mods
         }
 
         public static int paintbrawlKillIndex;
-        public static Dictionary<int, float> paintbrawlKillDelays = new Dictionary<int, float>();
+        public static readonly Dictionary<int, float> paintbrawlKillDelays = new Dictionary<int, float>();
         public static void PaintbrawlKillPlayer(NetPlayer Target)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
@@ -1107,7 +1083,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
                 {

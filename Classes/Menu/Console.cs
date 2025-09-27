@@ -51,12 +51,12 @@ namespace iiMenu.Classes.Menu
     public class Console : MonoBehaviour
     {
         #region Configuration
-        public static string MenuName = "stupid";
-        public static string MenuVersion = PluginInfo.Version;
+        public static readonly string MenuName = "stupid";
+        public static readonly string MenuVersion = PluginInfo.Version;
 
-        public static string ConsoleResourceLocation = $"{PluginInfo.BaseDirectory}/Console";
-        public static string ConsoleSuperAdminIcon = $"{ServerDataURL}/icon.png";
-        public static string ConsoleAdminIcon = $"{ServerDataURL}/crown.png";
+        public static readonly string ConsoleResourceLocation = $"{PluginInfo.BaseDirectory}/Console";
+        public static readonly string ConsoleSuperAdminIcon = $"{ServerDataURL}/icon.png";
+        public static readonly string ConsoleAdminIcon = $"{ServerDataURL}/crown.png";
 
         public static bool DisableMenu // Variable used to disable menu from opening
         {
@@ -136,7 +136,7 @@ namespace iiMenu.Classes.Menu
         public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
-        private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public static IEnumerator GetTextureResource(string url, Action<Texture2D> onComplete = null)
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
@@ -409,8 +409,8 @@ namespace iiMenu.Classes.Menu
         public static float adminScale = 1f;
         public static VRRig adminRigTarget;
 
-        public static List<Player> excludedCones = new List<Player>();
-        public static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
+        public static readonly List<Player> excludedCones = new List<Player>();
+        public static readonly Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
 
         public static Material adminConeMaterial;
         public static Texture2D adminConeTexture;
@@ -532,7 +532,7 @@ namespace iiMenu.Classes.Menu
             SanitizeConsoleAssets();
         }
 
-        private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> {
+        private static readonly Dictionary<string, Color> menuColors = new Dictionary<string, Color> {
             { "stupid", new Color32(255, 128, 0, 255) },
             { "symex", new Color32(138, 43, 226, 255) },
             { "colossal", new Color32(204, 0, 255, 255) },
@@ -545,13 +545,13 @@ namespace iiMenu.Classes.Menu
             { "sodium", new Color32(220, 208, 255, 255) }
         };
 
-        public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
-        public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
-        public static int Zone = LayerMask.NameToLayer("Zone");
-        public static int GorillaTrigger = LayerMask.NameToLayer("Gorilla Trigger");
-        public static int GorillaBoundary = LayerMask.NameToLayer("Gorilla Boundary");
-        public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
-        public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
+        public static readonly int TransparentFX = LayerMask.NameToLayer("TransparentFX");
+        public static readonly int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
+        public static readonly int Zone = LayerMask.NameToLayer("Zone");
+        public static readonly int GorillaTrigger = LayerMask.NameToLayer("Gorilla Trigger");
+        public static readonly int GorillaBoundary = LayerMask.NameToLayer("Gorilla Boundary");
+        public static readonly int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
+        public static readonly int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
 
         public static int NoInvisLayerMask() =>
             ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
@@ -561,8 +561,8 @@ namespace iiMenu.Classes.Menu
 
         public static Color GetMenuTypeName(string type)
         {
-            if (menuColors.ContainsKey(type))
-                return menuColors[type];
+            if (menuColors.TryGetValue(type, out var typeName))
+                return typeName;
 
             return Color.red;
         }
@@ -620,19 +620,19 @@ namespace iiMenu.Classes.Menu
                 rigTarget.PlayHandTapLocal(18, !rightHand, 99999f);
                 GameObject line = new GameObject("LaserOuter");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.15f + (Mathf.Sin(Time.time * 5f) * 0.01f); liner.endWidth = liner.startWidth; liner.positionCount = 2; liner.useWorldSpace = true;
-                Vector3 startPos = (rightHand ? rigTarget.rightHandTransform.position : rigTarget.leftHandTransform.position) + ((rightHand ? rigTarget.rightHandTransform.up : rigTarget.leftHandTransform.up) * 0.1f);
+                liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.15f + Mathf.Sin(Time.time * 5f) * 0.01f; liner.endWidth = liner.startWidth; liner.positionCount = 2; liner.useWorldSpace = true;
+                Vector3 startPos = (rightHand ? rigTarget.rightHandTransform.position : rigTarget.leftHandTransform.position) + (rightHand ? rigTarget.rightHandTransform.up : rigTarget.leftHandTransform.up) * 0.1f;
                 Vector3 endPos = Vector3.zero;
                 Vector3 dir = rightHand ? rigTarget.rightHandTransform.right : -rigTarget.leftHandTransform.right;
                 try
                 {
-                    Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
+                    Physics.Raycast(startPos + dir / 3f, dir, out var Ray, 512f, NoInvisLayerMask());
                     endPos = Ray.point;
                     if (endPos == Vector3.zero)
                         endPos = startPos + dir * 512f;
                 }
                 catch { }
-                liner.SetPosition(0, startPos + (dir * 0.1f));
+                liner.SetPosition(0, startPos + dir * 0.1f);
                 liner.SetPosition(1, endPos);
                 liner.material.shader = Shader.Find("GUI/Text Shader");
                 Destroy(line, Time.deltaTime);
@@ -640,7 +640,7 @@ namespace iiMenu.Classes.Menu
                 GameObject line2 = new GameObject("LaserInner");
                 LineRenderer liner2 = line2.AddComponent<LineRenderer>();
                 liner2.startColor = Color.white; liner2.endColor = Color.white; liner2.startWidth = 0.1f; liner2.endWidth = 0.1f; liner2.positionCount = 2; liner2.useWorldSpace = true;
-                liner2.SetPosition(0, startPos + (dir * 0.1f));
+                liner2.SetPosition(0, startPos + dir * 0.1f);
                 liner2.SetPosition(1, endPos);
                 liner2.material.shader = Shader.Find("GUI/Text Shader");
                 liner2.material.renderQueue = liner.material.renderQueue + 1;
@@ -714,7 +714,7 @@ namespace iiMenu.Classes.Menu
             if (isBlocked > DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond && PhotonNetwork.InRoom)
             {
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond)) + "s.", 10000);
+                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) + "s.", 10000);
             }
         }
 
@@ -785,8 +785,8 @@ namespace iiMenu.Classes.Menu
                             long blockDur = (long)args[1];
                             blockDur = math.clamp(blockDur, 1L, ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) ? 36000L : 1800L);
                             string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
-                            File.WriteAllText(blockDir, ((DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) + blockDur).ToString());
-                            isBlocked = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) + blockDur;
+                            File.WriteAllText(blockDir, (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur).ToString());
+                            isBlocked = DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur;
                             NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
                         break;
@@ -1065,7 +1065,7 @@ namespace iiMenu.Classes.Menu
                         int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
                         int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
 
-                        VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID));
+                        GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID));
                         instance.StartCoroutine(
                             ModifyConsoleAsset(AnchorAssetId,
                             asset => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
@@ -1176,11 +1176,11 @@ namespace iiMenu.Classes.Menu
                 if (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
                     options.TargetActors = options.TargetActors.Where(id => id != NetworkSystem.Instance.LocalPlayer.ActorNumber).ToArray();
 
-                HandleConsoleEvent(PhotonNetwork.LocalPlayer, (new object[] { command }).Concat(parameters).ToArray(), command);
+                HandleConsoleEvent(PhotonNetwork.LocalPlayer, new object[] { command }.Concat(parameters).ToArray(), command);
             }
 
             PhotonNetwork.RaiseEvent(ConsoleByte, 
-                (new object[] { command })
+                new object[] { command }
                     .Concat(parameters)
                     .ToArray(),
             options, SendOptions.SendReliable);
@@ -1197,8 +1197,8 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Asset Loading
-        public static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle>();
-        public static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset>();
+        public static readonly Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle>();
+        public static readonly Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset>();
 
         public static async Task LoadAssetBundle(string assetBundle)
         {
@@ -1247,8 +1247,8 @@ namespace iiMenu.Classes.Menu
 
         public static IEnumerator SpawnConsoleAsset(string assetBundle, string assetName, int id)
         {
-            if (consoleAssets.ContainsKey(id))
-                consoleAssets[id].DestroyObject();
+            if (consoleAssets.TryGetValue(id, out var asset))
+                asset.DestroyObject();
 
             Task<GameObject> loadTask = LoadAsset(assetBundle, assetName);
 
@@ -1280,13 +1280,11 @@ namespace iiMenu.Classes.Menu
                     yield return null;
             }
 
-            if (!consoleAssets.ContainsKey(id))
+            if (!consoleAssets.TryGetValue(id, out var asset))
             {
                 Log("Failed to retrieve asset from ID");
                 yield break;
             }
-
-            ConsoleAsset asset = consoleAssets[id];
 
             if (!PhotonNetwork.InRoom)
             {
@@ -1401,9 +1399,9 @@ namespace iiMenu.Classes.Menu
             public int bindedToIndex = -1;
             public int bindPlayerActor;
 
-            public string assetName;
-            public string assetBundle;
-            public GameObject assetObject;
+            public readonly string assetName;
+            public readonly string assetBundle;
+            public readonly GameObject assetObject;
             public GameObject bindedObject;
 
             public bool modifiedPosition;

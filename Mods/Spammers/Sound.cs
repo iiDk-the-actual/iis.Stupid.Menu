@@ -145,8 +145,7 @@ namespace iiMenu.Mods.Spammers
             if (File.Exists($"{PluginInfo.BaseDirectory}/{filename}"))
                 File.Delete($"{PluginInfo.BaseDirectory}/{filename}");
             
-            if (audioFilePool.ContainsKey(name))
-                audioFilePool.Remove(name);
+            audioFilePool.Remove(name);
             
             AudioClip soundDownloaded = LoadSoundFromURL(url, filename);
             if (soundDownloaded.length < 20f)
