@@ -2269,9 +2269,7 @@ namespace iiMenu.Mods
 
         public static void NoSmoothRigs()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (!vrrig.isLocal)
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
                 {
                     vrrig.lerpValueBody = 2f;
                     vrrig.lerpValueFingers = 1f;
@@ -2281,9 +2279,7 @@ namespace iiMenu.Mods
 
         public static void ReSmoothRigs()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (!vrrig.isLocal)
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
                 {
                     vrrig.lerpValueBody = VRRig.LocalRig.lerpValueBody;
                     vrrig.lerpValueFingers = VRRig.LocalRig.lerpValueFingers;
