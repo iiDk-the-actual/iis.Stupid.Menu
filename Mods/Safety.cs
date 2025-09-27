@@ -19,10 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -34,6 +30,10 @@ using iiMenu.Patches.Safety;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;

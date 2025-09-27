@@ -19,9 +19,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.IO;
 using iiMenu.Managers;
 using iiMenu.Notifications;
+using System.IO;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods

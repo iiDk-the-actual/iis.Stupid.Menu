@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System.Collections.Generic;
 using iiMenu.Classes.Menu;
+﻿using System.Collections.Generic;
 using static iiMenu.Mods.CustomMaps.Manager;
 
 namespace iiMenu.Mods.CustomMaps.Maps

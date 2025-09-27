@@ -19,11 +19,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using HarmonyLib;
+using iiMenu.Managers;
 using System;
 using System.Linq;
 using System.Reflection;
-using HarmonyLib;
-using iiMenu.Managers;
 
 namespace iiMenu.Patches
 {

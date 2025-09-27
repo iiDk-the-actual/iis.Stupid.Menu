@@ -19,9 +19,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Menu;
 ﻿using System;
 using System.Linq;
-using iiMenu.Menu;
 using UnityEngine;
 
 namespace iiMenu.Classes.Menu

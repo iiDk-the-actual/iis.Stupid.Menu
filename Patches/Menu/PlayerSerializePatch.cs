@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System;
 using HarmonyLib;
+﻿using System;
 
 namespace iiMenu.Patches.Menu
 {

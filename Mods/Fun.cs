@@ -19,13 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
@@ -52,6 +45,13 @@ using Photon.Voice.Unity.UtilityScripts;
 using PlayFab;
 using PlayFab.ClientModels;
 using POpusCodec.Enums;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;

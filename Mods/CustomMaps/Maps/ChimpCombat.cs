@@ -19,13 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using System.Linq;
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
