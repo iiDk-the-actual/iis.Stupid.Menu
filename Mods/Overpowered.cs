@@ -2544,9 +2544,9 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers)
             {
-                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
+                if (heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Warudo").enabled)
                 {
                     SerializePatch.OverrideSerialization = () => false;
 
@@ -2571,7 +2571,7 @@ namespace iiMenu.Mods
 
                     Movement.LowGravity();
 
-                    if (Time.time > freezeAllDelay)
+                    if (Time.time > freezeAllDelay && !GetIndex("No Freeze Za Warudo").enabled)
                     {
                         for (int i = 0; i < 11; i++)
                         {
