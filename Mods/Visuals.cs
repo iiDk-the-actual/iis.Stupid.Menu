@@ -19,12 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -37,6 +31,12 @@ using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -535,6 +535,18 @@ namespace iiMenu.Mods
                 else
                     startTime = Time.time;
             }
+        }
+
+        public static void PingOverlay()
+        {
+            VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
+            if (!PhotonNetwork.InRoom || PhotonNetwork.IsMasterClient || masterRig == null || !playerPing.ContainsKey(masterRig))
+            {
+                NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString() + "ms";
+                return;
+            }
+
+            NotifiLib.information["Ping"] = (masterRig.GetPing() + PhotonNetwork.GetPing()).ToString() + "ms";
         }
 
         public static void NearbyTaggerOverlay()

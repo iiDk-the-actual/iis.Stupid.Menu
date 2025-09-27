@@ -19,9 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Diagnostics;
-using System.IO;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
@@ -34,6 +31,9 @@ using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using Photon.Pun;
+using System;
+using System.Diagnostics;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -738,6 +738,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Time Label", method = Visuals.TimeLabel, toolTip = "Puts text on your right hand, showing how long you've been playing for without getting tagged."},
 
                 new ButtonInfo { buttonText = "FPS Overlay", method =() => NotifiLib.information["FPS"] = lastDeltaTime.ToString(), disableMethod =() => NotifiLib.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
+                new ButtonInfo { buttonText = "Ping Overlay", method = Visuals.PingOverlay, disableMethod =() => NotifiLib.information.Remove("Ping"), toolTip = "Displays the server's ping on your screen."},
                 new ButtonInfo { buttonText = "Time Overlay", method =() => NotifiLib.information["Time"] = DateTime.Now.ToString("hh:mm tt"), disableMethod =() => NotifiLib.information.Remove("Time"), toolTip = "Displays your current time on your screen."},
                 new ButtonInfo { buttonText = "Playtime Overlay", method =() => { NotifiLib.information["Playtime"] = Visuals.OverallPlaytime; Visuals.UpdatePlaytime(); }, disableMethod =() => NotifiLib.information.Remove("Playtime"), toolTip = "Displays your play time from when the mod was enabled on your screen."},
                 new ButtonInfo { buttonText = "Room Information Overlay", method =() => { if (PhotonNetwork.InRoom) { NotifiLib.information["Room Code"] = PhotonNetwork.CurrentRoom.Name; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); } else { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); } }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
