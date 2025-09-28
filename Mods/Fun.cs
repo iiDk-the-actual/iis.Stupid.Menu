@@ -29,6 +29,7 @@ using GorillaTag;
 using GorillaTag.Cosmetics;
 using GorillaTag.Rendering;
 using GorillaTagScripts;
+using GorillaTagScripts.Builder;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
@@ -37,6 +38,7 @@ using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
+using Ionic.Zlib;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -3511,6 +3513,40 @@ Piece Name: {gunTarget.name}";
                         RequestRecyclePiece(piece, true, 2);
                 }
             }
+        }
+
+        public static void SaveBuilderTableData()
+        {
+            string fileName = $"{PluginInfo.BaseDirectory}/BuilderTableData.json";
+
+            File.WriteAllText(fileName, GetBuilderTable().WriteTableToJson());
+
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
+            filePath = filePath.Split("BepInEx\\")[0] + fileName;
+
+            Process.Start(filePath);
+        }
+
+        public static void LoadBuilderTableData()
+        {
+            string fileName = $"{PluginInfo.BaseDirectory}/BuilderTableData.json";
+
+            if (!File.Exists(fileName))
+                return;
+
+            string tableData = File.ReadAllText(fileName);
+            BuilderTable table = GetBuilderTable();
+
+            if (table.tableData == null)
+                table.tableData = new BuilderTableData();
+
+            table.SetIsDirty(false);
+            table.tableData.numEdits++;
+
+            tableData = Convert.ToBase64String(GZipStream.CompressString(tableData));
+            SharedBlocksManager.instance.OnSavePrivateScanSuccess += table.OnSaveScanSuccess;
+            SharedBlocksManager.instance.OnSavePrivateScanFailed += table.OnSaveScanFailure;
+            SharedBlocksManager.instance.RequestSavePrivateScan(table.currentSaveSlot, tableData);
         }
 
         public static Coroutine DisableThrowableCoroutine;
