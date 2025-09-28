@@ -1146,7 +1146,11 @@ namespace iiMenu.Menu
                                 if (dynamicSounds)
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
 
-                                Toggle(joystickSelectedButton, true);
+                                ButtonInfo button = GetIndex(joystickSelectedButton);
+                                if (button.incremental)
+                                    ToggleIncremental(joystickSelectedButton, leftTrigger < 0.5f);
+                                else
+                                    Toggle(joystickSelectedButton, true);
                                 ReloadMenu();
                                 joystickDelay = Time.time + 0.2f;
                             }
