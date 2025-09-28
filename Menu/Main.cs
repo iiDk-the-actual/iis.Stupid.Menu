@@ -2343,7 +2343,7 @@ namespace iiMenu.Menu
                 }.AddComponent<Text>();
 
                 keyboardInputObject.font = activeFont;
-                keyboardInputObject.text = keyboardInput + (Time.frameCount / 45 % 2 == 0 ? "|" : "");
+                keyboardInputObject.text = keyboardInput + ((Time.time % 1f) > 0.5f ? "|" : "");
                 if (lowercaseMode)
                     keyboardInputObject.text = keyboardInputObject.text.ToLower();
 
