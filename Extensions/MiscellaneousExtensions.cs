@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -70,6 +71,12 @@ namespace iiMenu.Extensions
                 case KeyCode.RightBracket: return "]";
                 default: return ""; // Unknown key
             }
+        }
+
+        public static IEnumerable<Transform> Children(this Transform t)
+        {
+            for (int i = 0; i < t.childCount; i++)
+                yield return t.GetChild(i);
         }
 
         public static void Play(this AudioClip clip, float volume = 1f) =>
