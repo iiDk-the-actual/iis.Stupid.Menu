@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -26,8 +27,12 @@ namespace iiMenu.Classes.Menu
 {
     public class KeyboardKey : MonoBehaviour
 	{
+		public static readonly Dictionary<string, KeyboardKey> keyLookupDictionary = new Dictionary<string, KeyboardKey>();
 		public string key;
 		public static float delay;
+
+		public void Start() =>
+            keyLookupDictionary[gameObject.name] = this;
 		
 		public void OnTriggerEnter(Collider collider)
 		{
