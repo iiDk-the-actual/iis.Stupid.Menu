@@ -694,8 +694,8 @@ namespace iiMenu.Mods
         public static int driveInt;
         public static void ChangeDriveSpeed(bool positive = true)
         {
-            float[] speedamounts = { 10f, 30f, 50f, 3f };
-            string[] speedNames = { "Normal", "Fast", "Ultra Fast", "Slow" };
+            float[] speedamounts = { 10f, 30f, 50f, 100f, 3f };
+            string[] speedNames = { "Normal", "Fast", "Ultra Fast", "Flash", "Slow",  };
 
             if (positive)
                 driveInt++;
