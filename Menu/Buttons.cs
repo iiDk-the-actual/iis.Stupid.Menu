@@ -1073,6 +1073,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method = Fun.DestroyBlockGun, toolTip = "Shreds whatever building block your hand desires." },
                 new ButtonInfo { buttonText = "Destroy Building Blocks", method = Fun.DestroyBlocks, toolTip = "Shreds every building block." },
 
+                new ButtonInfo { buttonText = "Save Builder Table Data", method = Fun.SaveBuilderTableData, isTogglable = false, toolTip = "Dumps the data of your current build to a JSON file." },
+                new ButtonInfo { buttonText = "Load Builder Table Data", method = Fun.LoadBuilderTableData, isTogglable = false, toolTip = "Loads the data of the dumped JSON files in your game directory and saves it to your current slot." },
+
                 new ButtonInfo { buttonText = "Critter Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.CritterSpam, toolTip = "Spawns critters on your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.CritterMinigun, toolTip = "Shoots critters out of your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Gun", method = Overpowered.CritterGun, toolTip = "Spawns critters at wherever your hand desires."},
