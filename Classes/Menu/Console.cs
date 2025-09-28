@@ -1385,11 +1385,12 @@ namespace iiMenu.Classes.Menu
 
         public static int GetFreeAssetID()
         {
-            int i = 0;
-            while (consoleAssets.ContainsKey(i))
-                i++;
-            
-            return i;
+            int id;
+            do
+                id = Random.Range(int.MinValue, int.MaxValue);
+            while (consoleAssets.ContainsKey(id));
+
+            return id;
         }
 
         public class ConsoleAsset
