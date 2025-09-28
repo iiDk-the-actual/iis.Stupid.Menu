@@ -225,7 +225,7 @@ namespace iiMenu.Managers
                             Vector3 Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
 
                             Physics.Raycast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), Direction, out var Ray, 512f, NoInvisLayerMask());
-                            Vector3 EndPosition = Ray.point;
+                            Vector3 EndPosition = Ray.point == Vector3.zero ? StartPosition + (Direction * 512f) : Ray.point;
 
                             pingLine.SetPosition(0, StartPosition);
                             pingLine.SetPosition(1, EndPosition);
