@@ -4572,14 +4572,14 @@ namespace iiMenu.Mods
                 Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 Direction = targetHand.forward;
 
-                Physics.Raycast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), Direction, out var Ray, 512f, NoInvisLayerMask());
-                Vector3 EndPosition = gunLocked ? lockTarget.transform.position : Ray.point;
+                Physics.SphereCast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), 0.15f, Direction, out var Ray, 512f, NoInvisLayerMask());
+                Vector3 EndPosition = Ray.point == Vector3.zero ? StartPosition + (Direction * 512f) : Ray.point;
 
                 pingLine.SetPosition(0, StartPosition);
                 pingLine.SetPosition(1, EndPosition);
 
                 VRRig rigTarget = Ray.collider.GetComponentInParent<VRRig>();
-                if (rigTarget != null)
+                if (Ray.collider != null && rigTarget != null && !rigTarget.IsLocal())
                 {
                     if (lastTarget != null && lastTarget != rigTarget)
                     {
