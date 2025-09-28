@@ -1357,7 +1357,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = platformTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = $"{(IsPlayerSteam(vrrig) ? "Steam" : "Quest")}";
+                        nameTag.GetComponent<TextMesh>().text = $"{(vrrig.IsSteam() ? "Steam" : "Quest")}";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -2424,26 +2424,11 @@ namespace iiMenu.Mods
             cosmeticIndicators.Clear();
         }
 
-        // Credits to zvbex for the 'FIRST LOGIN' concat check
-        // Credits to HanSolo1000Falcon/WhoIsThatMonke for improved checks
-
         private static Material platformMat;
         private static Material platformEspMat;
         private static Texture2D steamtxt;
         private static Texture2D oculustxt;
         private static readonly Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
-
-        public static bool IsPlayerSteam(VRRig Player)
-        {
-            string concat = Player.concatStringOfCosmeticsAllowed;
-            int customPropsCount = NetPlayerToPlayer(GetPlayerFromVRRig(Player)).CustomProperties.Count;
-
-            if (concat.Contains("S. FIRST LOGIN")) return true;
-            if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
-            if (concat.Contains("LMAKT.")) return false;
-
-            return false;
-        }
 
         public static void PlatformIndicators()
         {
@@ -2487,7 +2472,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
 
-                    indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = PlayerIsSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
@@ -2532,7 +2517,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
 
-                    indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.IsSteam() ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;

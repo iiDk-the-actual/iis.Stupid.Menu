@@ -4225,6 +4225,21 @@ namespace iiMenu.Menu
         public static bool PlayerIsLocal(VRRig Player) => 
             Player.isLocal || Player == GhostRig;
 
+        // Credits to zvbex for the 'FIRST LOGIN' concat check
+        // Credits to HanSolo1000Falcon/WhoIsThatMonke for improved checks
+
+        public static bool PlayerIsSteam(VRRig Player)
+        {
+            string concat = Player.concatStringOfCosmeticsAllowed;
+            int customPropsCount = NetPlayerToPlayer(GetPlayerFromVRRig(Player)).CustomProperties.Count;
+
+            if (concat.Contains("S. FIRST LOGIN")) return true;
+            if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
+            if (concat.Contains("LMAKT.")) return false;
+
+            return false;
+        }
+
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == (NetworkSystem.Instance.LocalPlayer ?? null) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 

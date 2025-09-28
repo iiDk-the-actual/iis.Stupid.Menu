@@ -713,7 +713,7 @@ namespace iiMenu.Mods
                         {
                             buttonText = "Player Color",
                             overlapText =
-                                $"Player Color: {playerColor.ToRichRGBString()}",
+                                $"Color: {playerColor.ToRichRGBString()}",
                             method = () => ChangeColor(playerColor),
                             isTogglable = false,
                             toolTip = $"Sets your color to the same as {targetName}."
@@ -737,6 +737,13 @@ namespace iiMenu.Mods
                             buttonText = "Player Creation Date",
                             overlapText =
                                 $"Creation Date: {GetCreationDate(player.UserId, creationDate => { GetIndex("Player Creation Date").overlapText = $"Creation Date: {creationDate}"; ReloadMenu(); })}",
+                            label = true
+                        },
+                        new ButtonInfo
+                        {
+                            buttonText = "Player Platform",
+                            overlapText =
+                                $"Platform: {((playerRig?.IsSteam() ?? false) ? "Steam" : "Quest")}",
                             label = true
                         },
                         new ButtonInfo

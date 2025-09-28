@@ -35,6 +35,9 @@ namespace iiMenu.Extensions
         public static bool IsTagged(this VRRig rig) =>
             PlayerIsTagged(rig);
 
+        public static bool IsSteam(this VRRig rig) =>
+            PlayerIsSteam(rig);
+
         public static Color GetColor(this VRRig rig) =>
             GetPlayerColor(rig);
 
