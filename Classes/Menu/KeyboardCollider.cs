@@ -38,7 +38,8 @@ namespace iiMenu.Classes.Menu
 		{
 			if ((collider == lKeyCollider || collider == rKeyCollider) && menu != null && Time.time > delay)
 			{
-				delay = Time.time + 0.1f;
+				if (!GetIndex("Disable Keyboard Delay").enabled)
+					delay = Time.time + 0.1f;
 
                 if (doButtonsVibrate)
 					GorillaTagger.Instance.StartVibration(collider == lKeyCollider, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);

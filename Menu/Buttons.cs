@@ -219,6 +219,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Board Colors", overlapText = "Disable Custom Boards", enableMethod = Settings.DisableBoardColors, disableMethod = Settings.EnableBoardColors, toolTip = "Disables the board colors to look legitimate on screen share."},
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => disableBoardTextColor = true, disableMethod =() => disableBoardTextColor = false, toolTip = "Disables the text colors on the boards to make them match their original theme."},
 
+                new ButtonInfo { buttonText = "Disable Keyboard Delay", toolTip = "Disables the delay between pressing keys on the keyboard."},
+
                 new ButtonInfo { buttonText = "Info Hide ID", enableMethod =() => Settings.hideId = true, disableMethod =() => Settings.hideId = false, toolTip = "Hides your ID in the information page."},
                 new ButtonInfo { buttonText = "Conduct Info", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "DEBUG INFO"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method = Visuals.ConductDebug, toolTip = "Shows debug information on the code of conduct."},
 
