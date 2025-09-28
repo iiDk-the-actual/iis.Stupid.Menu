@@ -726,7 +726,7 @@ namespace iiMenu.Mods
 
         public static void HardDrive()
         {
-            if (Mathf.Abs(leftJoystick.x) > 0.05f || Mathf.Abs(leftJoystick.y) > 0.05f)
+            if ((Mathf.Abs(leftJoystick.x) > 0.05f || Mathf.Abs(leftJoystick.y) > 0.05f) && closePosition == Vector3.zero)
             {
                 Vector3 direction = GorillaTagger.Instance.bodyCollider.transform.forward * leftJoystick.y
                                   + GorillaTagger.Instance.bodyCollider.transform.right * leftJoystick.x;
