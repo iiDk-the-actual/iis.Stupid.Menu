@@ -487,11 +487,10 @@ namespace iiMenu.Menu
                                         GUIUtility.systemCopyBuffer = keyboardInput;
                                         break;
                                     case KeyCode.V:
-                                        keyboardInput = GUIUtility.systemCopyBuffer;
+                                        keyboardInput += GUIUtility.systemCopyBuffer;
                                         break;
                                     case KeyCode.Backspace:
-                                        if (keyboardInput.Length > 0)
-                                            keyboardInput = string.Join(" ", keyboardInput.Split(' ').SkipLast(1));
+                                        keyboardInput = keyboardInput[..^1];
                                         break;
                                 }
                             }
@@ -4108,23 +4107,6 @@ namespace iiMenu.Menu
             }
         }
 
-        public static IEnumerator KeyboardClick(GameObject targetKey)
-        {
-            Renderer render = targetKey.GetComponent<Renderer>();
-            ColorChanger colorChanger = targetKey.GetComponent<ColorChanger>();
-
-            colorChanger.enabled = false;
-            float elapsedTime = 0f;
-            while (elapsedTime < 0.1f)
-            {
-                render.material.color = Color.Lerp(buttonColors[1].GetCurrentColor(), buttonColors[0].GetCurrentColor(), elapsedTime / 0.1f);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            colorChanger.enabled = true;
-        }
-
         public static SnowballThrowable[] snowballs = { };
         public static Dictionary<string, SnowballThrowable> snowballDict;
         public static SnowballThrowable GetProjectile(string projectileName)
@@ -5532,25 +5514,43 @@ namespace iiMenu.Menu
 
         public static void PressKeyboardKey(string key)
         {
-            if (key == "Space")
-                keyboardInput += " ";
-            else
+            switch (key)
             {
-                if (key == "Backspace")
-                {
+                case "Space":
+                    keyboardInput += " ";
+                    break;
+                case "Backspace":
                     if (keyboardInput.Length > 0)
                         keyboardInput = keyboardInput[..^1];
-                }
-                else
-                {
-                    if (invertShift)
-                        keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToLower() : key.ToUpper();
-                    else
-                        keyboardInput += leftTrigger > 0.5f && !disableShift ? key.ToUpper() : key.ToLower();
-                }
+                    break;
+                case "Shift":
+                    shift = !shift;
+                    break;
+                case "CapsLock":
+                    lockShift = !lockShift;
+                    break;
+
+                case "Clear":
+                    keyboardInput = "";
+                    break;
+                case "Copy":
+                    GUIUtility.systemCopyBuffer = keyboardInput;
+                    break;
+                case "Paste":
+                    keyboardInput += GUIUtility.systemCopyBuffer;
+                    break;
+
+                default:
+                    keyboardInput += (lockShift ^ shift) ? key.ToUpper() : key.ToLower();
+                    shift = false;
+                    break;
             }
-            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+
+            KeyboardKey.keyLookupDictionary["CapsLock"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[lockShift ? 1 : 0];
+            KeyboardKey.keyLookupDictionary["Shift"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[shift ? 1 : 0];
+
             pageNumber = 0;
+
             ReloadMenu();
         }
 
@@ -6518,8 +6518,7 @@ jgs \_   _/ |Oo\
         public static bool AntiOculusReport;
 
         public static bool shift;
-        public static bool disableShift;
-        public static bool invertShift;
+        public static bool lockShift; // Konekokitten KTOH
 
         public static bool lastHit;
         public static bool lastHit2;

@@ -70,7 +70,10 @@ namespace iiMenu.Mods
             isKeyboardPc = isOnPC;
             inTextInput = true;
             keyboardInput = "";
-            
+
+            shift = false;
+            lockShift = false;
+
             if (isOnPC)
                 lastPressedKeys.Add(KeyCode.Q);
 
@@ -78,12 +81,12 @@ namespace iiMenu.Mods
             {
                 if (VRKeyboard == null)
                 {
-                    VRKeyboard = LoadObject<GameObject>("keyboard");
+                    VRKeyboard = LoadObject<GameObject>("VRKeyboard");
                     VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                     VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
                     menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
-                    VRKeyboard.transform.Find("Canvas/Text").AddComponent<TextColorChanger>().colors = textColors[1];
+                    VRKeyboard.transform.Find("Canvas").AddComponent<ColorChanger>().colors = textColors[1];
 
                     VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
                     menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
@@ -91,24 +94,31 @@ namespace iiMenu.Mods
                     ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
                     backgroundColorChanger.colors = backgroundColor;
 
-                    ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
-                    keyColorChanger.colors = buttonColors[0];
+                    foreach (GameObject key in VRKeyboard.transform.Find("Seperate").Children()
+                        .Select(t => t.gameObject)
+                        .Concat(new[] { VRKeyboard.transform.Find("Keys/default").gameObject }))
+                    {
+                        ColorChanger keyColorChanger = key.AddComponent<ColorChanger>();
+                        keyColorChanger.colors = buttonColors[0];
+                    }
+                    
 
                     if (shouldOutline)
                         OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
 
-                    for (int i = 0; i < VRKeyboard.transform.childCount; i++)
+                    var keys = new[] { "Numbers", "Letters", "Special", "Seperate" }
+                        .Select(name => VRKeyboard.transform.Find(name))
+                        .Where(t => t != null)
+                        .SelectMany(t => t.Children())
+                        .Select(t => t.gameObject); 
+
+                    foreach (GameObject v in keys)
                     {
-                        GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
+                        v.AddComponent<KeyboardKey>().key = v.name;
+                        v.layer = 2;
 
-                        if (v.name != "Canvas" && v.name != "MenuSpawnPosition" && v.name != "Background" && v.name != "Keys" && !v.name.Contains("Cube"))
-                        {
-                            v.AddComponent<KeyboardKey>().key = v.name;
-                            v.layer = 2;
-
-                            if (shouldOutline)
-                                OutlineObjNonMenu(v, true);
-                        }
+                        if (shouldOutline)
+                            OutlineObjNonMenu(v, true);
                     }
                 }
             }

@@ -75,8 +75,10 @@ namespace iiMenu.Extensions
 
         public static IEnumerable<GameObject> Children(this Transform t)
         {
+            var list = new List<GameObject>();
             for (int i = 0; i < t.childCount; i++)
-                yield return t.GetChild(i).gameObject;
+                list.Add(t.GetChild(i).gameObject);
+            return list;
         }
 
         public static void Play(this AudioClip clip, float volume = 1f) =>
