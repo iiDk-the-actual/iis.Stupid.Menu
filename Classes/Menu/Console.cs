@@ -1387,7 +1387,7 @@ namespace iiMenu.Classes.Menu
         {
             int id;
             do
-                id = Random.Range(int.MinValue, int.MaxValue);
+                id = Random.Range(0, int.MaxValue);
             while (consoleAssets.ContainsKey(id));
 
             return id;
