@@ -76,7 +76,6 @@ If you wish to support me, here are some of the ways you can!
 | Litecoin   | [![LTC](https://img.shields.io/badge/Litecoin-Donate-lightgrey?style=for-the-badge&logo=litecoin)](litecoin:LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5) | [LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5](litecoin:LaoNB7KADaGGb5ik8RhEBhAFdhM9pu5se5) |
 | CashApp    | [![CashApp](https://img.shields.io/badge/CashApp-$iiWasHere-green?style=for-the-badge&logo=cashapp)](https://cash.app/$iiWasHere) | [$iiWasHere](https://cash.app/$iiWasHere) |
 
-
 > [!NOTE] 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
 > Menu sends requests to [https://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for telemetry and administrative purposes. Menu connects to [wss://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for friend system and administrative purposes.<br>
