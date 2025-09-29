@@ -20,6 +20,7 @@
  */
 
 using GorillaNetworking;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using Photon.Pun;
@@ -27,6 +28,7 @@ using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -66,6 +68,12 @@ namespace iiMenu.Classes.Menu
         private static bool VersionWarning;
         private static bool GivenAdminMods;
 
+        private static string LastPollAnswered;
+
+        private static string CurrentPoll = "What goes well with cheeseburgers?";
+        private static string OptionA = "Fries";
+        private static string OptionB = "Chips";
+
         public void Awake()
         {
             instance = this;
@@ -75,6 +83,9 @@ namespace iiMenu.Classes.Menu
 
             NetworkSystem.Instance.OnPlayerJoined += UpdatePlayerCount;
             NetworkSystem.Instance.OnPlayerLeft += UpdatePlayerCount;
+
+            if (File.Exists($"{PluginInfo.BaseDirectory}/LastPollAnswered.txt"))
+                LastPollAnswered = File.ReadAllText($"{PluginInfo.BaseDirectory}/LastPollAnswered.txt");
         }
 
         public void Update()
@@ -222,6 +233,20 @@ namespace iiMenu.Classes.Menu
                     SetupAdminPanel(administrator);
                 }
 
+                // Polls
+                CurrentPoll = (string)data["poll"];
+                OptionA = (string)data["option-a"];
+                OptionB = (string)data["option-b"];
+
+                if (LastPollAnswered != CurrentPoll)
+                {
+                    Main.Prompt(CurrentPoll, () => CoroutineManager.instance.StartCoroutine(SendVote("a-votes")), () => CoroutineManager.instance.StartCoroutine(SendVote("b-votes")), OptionA, OptionB);
+                    Console.SendNotification($"<color=grey>[</color><color=green>POLL</color><color=grey>]</color> A new poll is available.", 10000);
+
+                    LastPollAnswered = CurrentPoll;
+                    File.WriteAllText($"{PluginInfo.BaseDirectory}/LastPollAnswered.txt", CurrentPoll);
+                }
+
                 // Detected mod labels
                 JArray detectedMods = (JArray)data["detected-mods"];
                 foreach (var detectedMod in detectedMods)
@@ -341,7 +366,9 @@ namespace iiMenu.Classes.Menu
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
         }
+        #endregion
 
+        #region Menu Specific
         public static IEnumerator ReportFailureMessage(string error)
         {
             if (DisableTelemetry)
@@ -379,6 +406,62 @@ namespace iiMenu.Classes.Menu
             yield return request.SendWebRequest();
         }
 
+        public static IEnumerator SendVote(string category)
+        {
+            UnityWebRequest request = new UnityWebRequest($"https://iidk.online/vote", "POST");
+
+            string json = JsonConvert.SerializeObject(new { option = category });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
+
+            request.uploadHandler = new UploadHandlerRaw(raw);
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                try
+                {
+                    string responseText = request.downloadHandler.text;
+                    Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
+
+                    int avotes = Convert.ToInt32(responseJson["a-votes"]);
+                    int bvotes = Convert.ToInt32(responseJson["b-votes"]);
+
+                    int total = avotes + bvotes;
+
+                    string result;
+                    if (total > 0)
+                    {
+                        double aPercent = (double)avotes / total * 100;
+                        double bPercent = (double)bvotes / total * 100;
+
+                        result = $"{OptionA}: {aPercent:F2}%\n{OptionB}: {bPercent:F2}%";
+                    }
+                    else
+                        result = "No votes yet.";
+
+                    Main.PromptSingle(result);
+                }
+                catch { }
+            }
+            else
+            {
+                string reason = request.error.IsNullOrEmpty() ? "Unknown error" : request.error;
+
+                try
+                {
+                    string responseText = request.downloadHandler.text;
+                    Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
+
+                    if (responseJson != null && responseJson.TryGetValue("error", out var value))
+                        reason = value.ToString();
+                }
+                catch { }
+            }
+        }
         #endregion
     }
 }
