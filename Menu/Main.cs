@@ -5325,8 +5325,11 @@ namespace iiMenu.Menu
             Type[] Types = Assembly.GetTypes();
             foreach (Type Type in Types)
             {
-                MethodInfo Method = Type.GetMethod("OnEnable", BindingFlags.Public | BindingFlags.Static);
-                Method?.Invoke(null, null);
+                try
+                {
+                    MethodInfo Method = Type.GetMethod("OnEnable", BindingFlags.Public | BindingFlags.Static);
+                    Method?.Invoke(null, null);
+                } catch { }
             }
         }
 
@@ -5335,8 +5338,11 @@ namespace iiMenu.Menu
             Type[] Types = Assembly.GetTypes();
             foreach (Type Type in Types)
             {
-                MethodInfo Method = Type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.Static);
-                Method?.Invoke(null, null);
+                try
+                {
+                    MethodInfo Method = Type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.Static);
+                    Method?.Invoke(null, null);
+                } catch { }
             }
         }
 

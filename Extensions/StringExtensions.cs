@@ -25,10 +25,10 @@ namespace iiMenu.Extensions
 {
     public static class StringExtensions
     {
-        public static void ClearTags(this string input) =>
+        public static string ClearTags(this string input) =>
             NoRichtextTags(input);
 
-        public static void ISO8601(this string input) =>
+        public static string ISO8601(this string input) =>
             ISO8601(input);
 
         public static string Random(this string input, int length) =>

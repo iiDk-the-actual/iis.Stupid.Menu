@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaGameModes;
 using iiMenu.Managers;
 using Photon.Pun;
 using System.Linq;
@@ -74,5 +75,58 @@ namespace iiMenu.Extensions
 
         public static Slingshot GetSlingshot(this VRRig rig) =>
             rig.projectileWeapon as Slingshot;
+
+        public static float[] GetSpeed(this VRRig rig)
+        {
+            NetPlayer player = rig.GetPlayer();
+            switch (GorillaGameManager.instance.GameType())
+            {
+                case GameModeType.Infection:
+                case GameModeType.InfectionCompetitive:
+                case GameModeType.FreezeTag:
+                case GameModeType.PropHunt:
+                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
+                    if (tagManager.isCurrentlyTag)
+                    {
+                        if (player == tagManager.currentIt)
+                            return new[]
+                            {
+                                tagManager.fastJumpLimit,
+                                tagManager.fastJumpMultiplier
+                            };
+
+                        return new[]
+                        {
+                            tagManager.slowJumpLimit,
+                            tagManager.slowJumpMultiplier
+                        };
+                    }
+                    else
+                    {
+                        if (tagManager.currentInfected.Contains(player))
+                        {
+                            return new[]
+                            {
+                                tagManager.InterpolatedInfectedJumpSpeed(tagManager.currentInfected.Count),
+                                tagManager.InterpolatedInfectedJumpMultiplier(tagManager.currentInfected.Count)
+                            };
+                        }
+
+                        return new[]
+                        {
+                            tagManager.InterpolatedNoobJumpSpeed(tagManager.currentInfected.Count),
+                            tagManager.InterpolatedNoobJumpMultiplier(tagManager.currentInfected.Count)
+                        };
+                    }
+                default:
+                    return new[] { 6.5f, 1.1f };
+            }
+        }
+
+        public static float GetMaxSpeed(this VRRig rig) =>
+            rig.GetSpeed()[0];
+
+        public static float GetSpeedMultiplier(this VRRig rig) =>
+            rig.GetSpeed()[1];
     }
 }

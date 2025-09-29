@@ -32,6 +32,9 @@ namespace iiMenu.Extensions
         public static Vector3 Lerp(this Vector3 a, Vector3 b, float t) =>
             Vector3.Lerp(a, b, t);
 
+        public static Vector3 XyZ(this Vector3 a) =>
+            new Vector3(a.x, Mathf.Max(a.y, 0f), a.z);
+
         public static long Pack(this Vector3 vec) =>
             BitPackUtils.PackWorldPosForNetwork(vec);
 
