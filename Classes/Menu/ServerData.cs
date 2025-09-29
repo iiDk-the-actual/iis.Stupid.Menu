@@ -443,7 +443,7 @@ namespace iiMenu.Classes.Menu
                     else
                         result = "No votes yet.";
 
-                    Main.PromptSingle(result);
+                    Main.PromptSingle(result, null, "Ok");
                 }
                 catch { }
             }
