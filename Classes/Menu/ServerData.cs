@@ -438,7 +438,7 @@ namespace iiMenu.Classes.Menu
                         double aPercent = (double)avotes / total * 100;
                         double bPercent = (double)bvotes / total * 100;
 
-                        result = $"Total Votes: {result}\n{OptionA}: {aPercent:F2}%\n{OptionB}: {bPercent:F2}%";
+                        result = $"Total Votes: {total}\n{OptionA}: {aPercent:F2}%\n{OptionB}: {bPercent:F2}%";
                     }
                     else
                         result = "No votes yet.";
