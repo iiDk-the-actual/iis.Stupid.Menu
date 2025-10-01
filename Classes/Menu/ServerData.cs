@@ -408,7 +408,7 @@ namespace iiMenu.Classes.Menu
 
         public static IEnumerator SendVote(string category)
         {
-            UnityWebRequest request = new UnityWebRequest($"https://iidk.online/vote", "POST");
+            UnityWebRequest request = new UnityWebRequest($"{ServerEndpoint}/vote", "POST");
 
             string json = JsonConvert.SerializeObject(new { option = category });
 
