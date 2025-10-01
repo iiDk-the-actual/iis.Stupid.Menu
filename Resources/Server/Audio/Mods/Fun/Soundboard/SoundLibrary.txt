@@ -168,7 +168,7 @@ Eminem Extreme Gym Remix;Eminemextremegymremix.wav
 Fake Location;Fakelocation.wav
 Ghost Sounds;Ghostsounds.MP3
 Monoxide Ghost;Monoxideghost.mp3
-Monster Mash;35930009.ogg
+Monster Mash;MonsterMash.ogg
 Rainbow Tylenol;Kitsune%5E2%20-%20Rainbow%20Tylenol.mp3
 Kurt Angle Stare;Kurtangle.mp3
 Void in Blue;Voidinblue.mp3
@@ -196,3 +196,4 @@ Armed and Dangerous - King Von;Armedanddangerous.mp3
 Enrique;Enrique.mp3
 His Eyes Were Like Mine;His%20eyes%20were%20like%20mine.mp3
 You Spin Me Round;Youspinmeround.mp3
+Funky Town;funky_town.mp3
