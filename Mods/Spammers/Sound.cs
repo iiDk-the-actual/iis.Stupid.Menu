@@ -41,9 +41,10 @@ namespace iiMenu.Mods.Spammers
         public static bool LoopAudio = false;
         public static int BindMode;
         public static string Subdirectory = "";
-        public static void LoadSoundboard()
+        public static void LoadSoundboard(bool openCategory = true)
         {
-            currentCategoryName = "Soundboard";
+            if (openCategory)
+                currentCategoryName = "Soundboard";
 
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
