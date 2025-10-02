@@ -5928,7 +5928,7 @@ namespace iiMenu.Menu
 
             try
             {
-                Sound.LoadSoundboard();
+                Sound.LoadSoundboard(false);
             }
             catch (Exception exc) { LogManager.LogError(string.Format("Error with Sound.LoadSoundboard() at {0}: {1}", exc.StackTrace, exc.Message)); }
 
