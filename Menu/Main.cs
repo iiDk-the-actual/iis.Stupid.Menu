@@ -5926,6 +5926,12 @@ namespace iiMenu.Menu
             }
             catch (Exception exc) { LogManager.LogError(string.Format("Error with Settings.LoadPlugins() at {0}: {1}", exc.StackTrace, exc.Message)); }
 
+            try
+            {
+                Sound.LoadSoundboard();
+            }
+            catch (Exception exc) { LogManager.LogError(string.Format("Error with Sound.LoadSoundboard() at {0}: {1}", exc.StackTrace, exc.Message)); }
+
             loadPreferencesTime = Time.time;
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
             {
