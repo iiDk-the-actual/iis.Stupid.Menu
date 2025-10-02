@@ -22,6 +22,7 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -68,7 +69,7 @@ namespace iiMenu.Mods.Spammers
                 index++;
                 int substringLength = ($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory + "/").Length;
                 string FolderName = folder.Replace("\\", "/")[substringLength..];
-                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + index, overlapText = "▶ " + FolderName, method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
+                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + FolderName.Hash(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
             }
 
             index = 0;
@@ -81,18 +82,18 @@ namespace iiMenu.Mods.Spammers
                 {
                     string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                     bool enabled = enabledSounds.Contains(soundName);
-                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index, overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     
                 } else
                 {
+                    string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                     if (LoopAudio)
                     {
-                        string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                         bool enabled = enabledSounds.Contains(soundName);
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index, overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     }
                     else
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index, overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                 }
             }
             soundbuttons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = () => FixMicrophone(), isTogglable = false, toolTip = "Stops all currently playing sounds." });
