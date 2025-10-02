@@ -72,6 +72,7 @@ namespace iiMenu
                 "/Sounds",
                 "/Plugins",
                 "/Backups",
+                "/Macros",
                 "/TTS",
                 "/PlayerInfo",
                 "/CustomScripts",

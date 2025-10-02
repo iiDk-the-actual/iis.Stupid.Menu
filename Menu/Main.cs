@@ -4558,6 +4558,53 @@ namespace iiMenu.Menu
             auraRenderer.material.color = clr;
         }
 
+        public static GameObject VisualizeAuraObject(Vector3 position, float range, Color color, float alpha = 0.25f)
+        {
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Destroy(visualizeGO.GetComponent<Collider>());
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = new Vector3(range, range, range);
+
+            if (GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+
+            return visualizeGO;
+        }
+
+        public static GameObject VisualizeCubeObject(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
+        {
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Destroy(visualizeGO.GetComponent<Collider>());
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = scale;
+            visualizeGO.transform.rotation = rotation;
+
+            if (GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+
+            return visualizeGO;
+        }
+
         public static GameObject audiomgr;
         public static void Play2DAudio(AudioClip sound, float volume = 1f)
         {
@@ -5931,6 +5978,12 @@ namespace iiMenu.Menu
                 Sound.LoadSoundboard(false);
             }
             catch (Exception exc) { LogManager.LogError(string.Format("Error with Sound.LoadSoundboard() at {0}: {1}", exc.StackTrace, exc.Message)); }
+
+            try
+            {
+                Movement.LoadMacros();
+            }
+            catch (Exception exc) { LogManager.LogError(string.Format("Error with Movement.LoadMacros() at {0}: {1}", exc.StackTrace, exc.Message)); }
 
             loadPreferencesTime = Time.time;
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))

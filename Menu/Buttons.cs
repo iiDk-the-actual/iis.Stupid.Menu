@@ -533,6 +533,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reverse Gravity", method = Movement.ReverseGravity, disableMethod = Movement.UnflipCharacter, toolTip = "Reverses gravity on your character."},
 
                 new ButtonInfo { buttonText = "Rewind <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.Rewind, disableMethod = Movement.ClearRewind, toolTip = "Brings you back in time when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Macros", method =() => currentCategoryName = "Macros", isTogglable = false, toolTip = "Opens a category to manage your macros."},
 
                 new ButtonInfo { buttonText = "Wall Walk <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.WallWalk, toolTip = "Makes you get brought towards any wall you touch when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Legitimate Wall Walk <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.LegitimateWallWalk, toolTip = "Makes you get brought towards any wall you touch when holding <color=green>grip</color>, but less noticable."},
@@ -1864,7 +1865,7 @@ namespace iiMenu.Menu
             },
 
             new[] { // Sound Library [26]
-                new ButtonInfo { buttonText = "Exit Sound Library", method = Sound.LoadSoundboard, isTogglable = false, toolTip = "Returns you back to the soundboard." }
+                new ButtonInfo { buttonText = "Exit Sound Library", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." }
             },
 
             new[] { // Experimental Mods [27]
@@ -2038,6 +2039,13 @@ namespace iiMenu.Menu
             },
 
             new ButtonInfo[] { }, // Chat Messages [41] 
+
+            new[] // Macros [42]
+            {
+                new ButtonInfo { buttonText = "Exit Macros", method =() => currentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods." },
+                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.RecordMacro, toolTip = "Record your macros with this mod." },
+                new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
+            }, 
         };
 
         public static string[] categoryNames = {
@@ -2082,7 +2090,8 @@ namespace iiMenu.Menu
             "Credits",
             "Custom Maps",
             "Mod Givers",
-            "Chat Messages"
+            "Chat Messages",
+            "Macros"
         };
     }
 }
