@@ -26,6 +26,7 @@ using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -2681,7 +2682,7 @@ namespace iiMenu.Mods
                 Quaternion headRotArchive = VRRig.LocalRig.head.rigTarget.transform.rotation;
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.LookRotation(Vector3.Normalize(GetVRRigFromPlayer(Player).headMesh.transform.position)); //  - (VRRig.LocalRig.headConstraint.transform.position - new Vector3(0f, 1.5f, 0f))
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.LookRotation(Vector3.Normalize(GetVRRigFromPlayer(Player).headMesh.transform.position));
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
@@ -2690,6 +2691,18 @@ namespace iiMenu.Mods
 
                 return false;
             };
+        }
+
+        public static void EyeContact()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+            {
+                if (Physics.SphereCast(rig.headMesh.transform.position + (rig.headMesh.transform.forward * 0.25f), 0.25f, rig.headMesh.transform.forward, out var ray, 512f, NoInvisLayerMask()))
+                {
+                    VRRig.LocalRig.head.rigTarget.LookAt(rig.headMesh.transform.position);
+                    break;
+                }
+            }
         }
 
         public static void EnableFloatingRig() =>
