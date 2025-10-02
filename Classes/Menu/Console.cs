@@ -719,7 +719,7 @@ namespace iiMenu.Classes.Menu
         }
 
         private static readonly Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
-        private static readonly Dictionary<Player, (string, string)> userDictionary = new Dictionary<Player, (string, string)>(); 
+        public static readonly Dictionary<Player, (string, string)> userDictionary = new Dictionary<Player, (string, string)>(); 
         public static float indicatorDelay = 0f;
         public static bool allowKickSelf;
         public static bool disableFlingSelf;
