@@ -1504,6 +1504,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Paintbrawl Revive Gun", method = Advantages.PaintbrawlReviveGun, toolTip = "Revives whoever your hand desires in paintbrawl." },
                 new ButtonInfo { buttonText = "Paintbrawl Revive All", method = Advantages.PaintbrawlReviveAll, isTogglable = false, toolTip = "Revives everyone in paintbrawl." },
 
+                new ButtonInfo { buttonText = "Paintbrawl No Delay", method = Advantages.PaintbrawlNoDelay, disableMethod = Advantages.DisablePaintbrawlNoDelay, toolTip = "Revives everyone in paintbrawl." },
+
                 new ButtonInfo { buttonText = "Paintbrawl God Mode", method = Advantages.PaintbrawlGodMode, toolTip = "Gives you god mode in paintbrawl." },
 
                 new ButtonInfo { buttonText = "Slow Self", method = Overpowered.SlowSelf, isTogglable = false, toolTip = "Forces tag freeze on yourself." },

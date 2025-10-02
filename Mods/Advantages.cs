@@ -1125,6 +1125,28 @@ namespace iiMenu.Mods
             }
         }
 
+        // Credits to Malachi for the idea
+        public static void PaintbrawlNoDelay()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient)
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            else
+            {
+                GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+                brawlManager.hitCooldown = 0f;
+                brawlManager.tagCoolDown = 0f;
+                brawlManager.stunGracePeriod = 0f;
+            }
+        }
+
+        public static void DisablePaintbrawlNoDelay()
+        {
+            GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
+            brawlManager.hitCooldown = 3f;
+            brawlManager.tagCoolDown = 5f;
+            brawlManager.stunGracePeriod = 2f;
+        }
+
         public static void PaintbrawlGodMode()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
