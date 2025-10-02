@@ -4499,7 +4499,7 @@ namespace iiMenu.Menu
         }
 
         public static readonly Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject>();
-        public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null)
+        public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null, float alpha = 0.25f)
         {
             long index = indexId ?? BitPackUtils.PackWorldPosForNetwork(position);
             var key = (index, range);
@@ -4523,13 +4523,13 @@ namespace iiMenu.Menu
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
             Color clr = color;
-            clr.a = 0.25f;
+            clr.a = alpha;
             auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
             auraRenderer.material.color = clr;
         }
 
         public static readonly Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject>();
-        public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
+        public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
         {
             var key = (position, rotation, scale);
 
@@ -4553,7 +4553,7 @@ namespace iiMenu.Menu
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
 
             Color clr = color;
-            clr.a = 0.25f;
+            clr.a = alpha;
             auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
             auraRenderer.material.color = clr;
         }
