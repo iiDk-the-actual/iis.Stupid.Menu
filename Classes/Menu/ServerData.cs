@@ -198,7 +198,7 @@ namespace iiMenu.Classes.Menu
                     {
                         Console.Log("Version is outdated");
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to version {version}.", 10000);
-                        Main.Prompt($"You are using an outdated version of the menu. Would you like to update to version {version}?", Settings.UpdateMenu);
+                        Main.Prompt($"A new version is available ({version}). Would you like to update?", Settings.UpdateMenu);
                     }
                 }
 
