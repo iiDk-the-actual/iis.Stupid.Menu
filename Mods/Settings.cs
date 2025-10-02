@@ -807,6 +807,70 @@ namespace iiMenu.Mods
             BindInput = bind;
         }
 
+        // The code below is fully safe. I know, it seems suspicious.
+        public static void UpdateMenu()
+        {
+            string updateScript = @"@echo off
+title ii's Stupid Menu
+color 0E
+
+cls
+echo.
+echo      ••╹   ┏┓     • ┓  ┳┳┓      
+echo      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
+echo      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+echo                 ┛               
+echo.
+
+echo Your menu is updating, please wait...
+echo.
+
+set ""PLUGIN_PATH=BepInEx\plugins""
+dir ""%PLUGIN_PATH%\*iiMenu_AutoUpdater*.dll"" >nul 2>&1
+if %ERRORLEVEL%==0 (
+    goto restart
+)
+
+for %%F in (""%PLUGIN_PATH%\*stupid*menu*.dll"") do (
+    set ""MENU_FILE=%%F""
+    goto update
+)
+
+echo No menu file found, skipping update.
+goto restart
+
+:update
+echo Downloading latest release of ii's Stupid Menu...
+
+curl -L -o ""%MENU_FILE%"" ^
+""https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest/download/iis_Stupid_Menu.dll""
+
+goto restart
+
+:restart
+
+:WAIT_LOOP
+tasklist /FI ""IMAGENAME eq Gorilla Tag.exe"" | find /I ""Gorilla Tag.exe"" >nul
+if %ERRORLEVEL%==0 (
+    timeout /t 1 >nul
+    goto WAIT_LOOP
+)
+
+echo Launching Gorilla Tag...
+start steam://run/1533390
+exit";
+
+            string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.bat";
+
+            File.WriteAllText(fileName, updateScript);
+
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
+            filePath = filePath.Split("BepInEx\\")[0] + fileName;
+
+            Process.Start(filePath);
+            Application.Quit();
+        }
+
         public static void JoystickMenuOff()
         {
             joystickMenu = false;

@@ -197,8 +197,8 @@ namespace iiMenu.Classes.Menu
                     else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
                     {
                         Console.Log("Version is outdated");
-                        JoinDiscordServer();
-                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + version + ".", 10000);
+                        Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to version {version}.", 10000);
+                        Main.Prompt($"You are using an outdated version of the menu. Would you like to update to version {version}?", Settings.UpdateMenu);
                     }
                 }
 

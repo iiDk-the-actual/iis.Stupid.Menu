@@ -143,6 +143,7 @@ namespace iiMenu.Mods
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
         }
 
+        // The code below is fully safe. I know, it seems suspicious.
         public static void RestartGame()
         {
             string restartScript = @"@echo off
