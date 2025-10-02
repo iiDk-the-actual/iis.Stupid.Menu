@@ -36,12 +36,16 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
+using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Mods.Movement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -1419,6 +1423,356 @@ namespace iiMenu.Mods
         }
 
         public static void ClearRewind() => playerPositions.Clear();
+
+        public const float macroStepDuration = 0.1f;
+        public struct PlayerPosition
+        {
+            public Vector3 position;
+            public Vector3 velocity;
+
+            public (Vector3 position, Quaternion rotation) leftHand;
+            public (Vector3 position, Quaternion rotation) rightHand;
+
+            public readonly void MoveTo()
+            {
+                TeleportPlayer(position);
+                GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
+
+                GorillaTagger.Instance.leftHandTransform.position = leftHand.position;
+                GorillaTagger.Instance.leftHandTransform.rotation = leftHand.rotation;
+
+                GorillaTagger.Instance.rightHandTransform.position = rightHand.position;
+                GorillaTagger.Instance.rightHandTransform.rotation = rightHand.rotation;
+            }
+
+            public static PlayerPosition CurrentPosition() =>
+                new PlayerPosition
+                {
+                    position = GorillaTagger.Instance.bodyCollider.transform.position,
+                    velocity = GorillaTagger.Instance.rigidbody.linearVelocity,
+
+                    leftHand = (GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.rotation),
+                    rightHand = (GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation)
+                };
+
+            public JObject ToJObject()
+            {
+                return new JObject
+                {
+                    ["position"] = Vec3ToJObject(position),
+                    ["velocity"] = Vec3ToJObject(velocity),
+
+                    ["leftHand"] = new JObject
+                    {
+                        ["position"] = Vec3ToJObject(leftHand.position),
+                        ["rotation"] = QuatToJObject(leftHand.rotation)
+                    },
+                    ["rightHand"] = new JObject
+                    {
+                        ["position"] = Vec3ToJObject(rightHand.position),
+                        ["rotation"] = QuatToJObject(rightHand.rotation)
+                    }
+                };
+            }
+
+            public static PlayerPosition FromJObject(JObject obj)
+            {
+                return new PlayerPosition
+                {
+                    position = JObjectToVec3((JObject)obj["position"]),
+                    velocity = JObjectToVec3((JObject)obj["velocity"]),
+
+                    leftHand = (
+                        JObjectToVec3((JObject)obj["leftHand"]["position"]),
+                        JObjectToQuat((JObject)obj["leftHand"]["rotation"])
+                    ),
+                    rightHand = (
+                        JObjectToVec3((JObject)obj["rightHand"]["position"]),
+                        JObjectToQuat((JObject)obj["rightHand"]["rotation"])
+                    )
+                };
+            }
+
+            private static JObject Vec3ToJObject(Vector3 v) =>
+                new JObject { ["x"] = v.x, ["y"] = v.y, ["z"] = v.z };
+
+            private static Vector3 JObjectToVec3(JObject obj) =>
+                new Vector3((float)obj["x"], (float)obj["y"], (float)obj["z"]);
+
+            private static JObject QuatToJObject(Quaternion q) =>
+                new JObject { ["x"] = q.x, ["y"] = q.y, ["z"] = q.z, ["w"] = q.w };
+
+            private static Quaternion JObjectToQuat(JObject obj) =>
+                new Quaternion((float)obj["x"], (float)obj["y"], (float)obj["z"], (float)obj["w"]);
+        }
+
+
+        public struct Macro
+        {
+            public List<PlayerPosition> positions;
+            public string name;
+            public bool enabled;
+
+            public readonly string DumpJSON()
+            {
+                var obj = new JObject
+                {
+                    ["name"] = name,
+                    ["enabled"] = enabled,
+                    ["positions"] = new JArray(positions.ConvertAll(p => p.ToJObject()))
+                };
+
+                return obj.ToString();
+            }
+
+            public static Macro LoadJSON(string json)
+            {
+                var obj = JObject.Parse(json);
+
+                var macro = new Macro
+                {
+                    name = (string)obj["name"],
+                    enabled = (bool)obj["enabled"],
+                    positions = new List<PlayerPosition>()
+                };
+
+                foreach (var token in (JArray)obj["positions"])
+                    macro.positions.Add(PlayerPosition.FromJObject((JObject)token));
+
+                return macro;
+            }
+        }
+
+        public static Dictionary<string, Macro> macros = new Dictionary<string, Macro>();
+        public static void LoadMacros()
+        {
+            macros.Clear();
+
+            string[] files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Macros");
+            for (int i = 0; i < files.Length; i++)
+            {
+                string file = files[i];
+                if (!file.EndsWith(".json")) continue;
+
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                Macro macro = Macro.LoadJSON(File.ReadAllText(file));
+
+                macros[fileName] = macro;
+            }
+
+            List<ButtonInfo> buttons = new List<ButtonInfo>
+            {
+                new ButtonInfo { buttonText = "Exit Macros", method =() => currentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods."},
+            };
+
+            int index = 0;
+            foreach (KeyValuePair<string, Macro> macroData in macros)
+            {
+                Macro macro = macroData.Value;
+                string macroName = macroData.Key;
+                
+                buttons.Add(new ButtonInfo { buttonText = $"Macro{macroName}", overlapText = macro.name, enabled = macro.enabled, enableMethod =() => ToggleMacro(macroName, true), method =() => ExecuteMacroButton(macro), disableMethod = () => ToggleMacro(macroName, false), toolTip = $"Toggles on and off the {macro.name} macro." });
+                index++;
+            }
+
+            buttons.AddRange(new[]
+            {
+                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = RecordMacro, toolTip = "Record your macros with this mod." },
+                new ButtonInfo { buttonText = "Reload Macros", method = LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
+            });
+            Buttons.buttons[42] = buttons.ToArray();
+        }
+
+        public static void ToggleMacro(string macroName, bool enabled)
+        {
+            string filePath = $"{PluginInfo.BaseDirectory}/Macros/{macroName}.json";
+            if (!File.Exists(filePath))
+                return;
+
+            Macro macro = macros[macroName];
+            macro.enabled = enabled;
+
+            File.WriteAllText(filePath, macro.DumpJSON());
+        }
+
+        public static bool recordingMacro;
+        public static float positionDelay;
+        public static List<PlayerPosition> recordingData = new List<PlayerPosition>();
+
+        public static void RecordMacro()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (!recordingMacro)
+                {
+                    recordingData.Clear();
+                    recordingMacro = true;
+
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Started recording...");
+                }
+
+                if (recordingMacro && Time.time > positionDelay)
+                {
+                    positionDelay = Time.time + macroStepDuration;
+                    recordingData.Add(PlayerPosition.CurrentPosition());
+                }
+            } else
+            {
+                if (recordingMacro)
+                {
+                    recordingMacro = false;
+
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Stopped recording.");
+                    FinalizeRecording();
+                }
+            }
+        }
+
+        public static void FinalizeRecording()
+        {
+            List<PlayerPosition> savedRecordingData = recordingData;
+            Prompt("Would you like to save your macro?", () =>
+            {
+                PromptText("Please name your macro:", () =>
+                {
+                    string name = keyboardInput;
+                    if (name.IsNullOrEmpty())
+                        name = $"Macro #{macros.Count + 1}";
+
+                    Macro macro = new Macro
+                    {
+                        name = name,
+                        positions = savedRecordingData,
+                        enabled = true
+                    };
+
+                    string macroHash = name.Hash();
+                    string filePath = $"{PluginInfo.BaseDirectory}/Macros/{macroHash}.json";
+
+                    File.WriteAllText(filePath, macro.DumpJSON());
+                    LoadMacros();
+                }, null, "Done", "Cancel");
+            });
+        }
+
+        public static Coroutine activeMacro;
+        public static System.Collections.IEnumerator PlayMacro(Macro macro)
+        {
+            List<PlayerPosition> positions = macro.positions;
+            PlayerPosition startPosition = PlayerPosition.CurrentPosition();
+
+            float macroStartTime = Time.time;
+            float macroEndTime = positions.Count * macroStepDuration;
+
+            while (Time.time < macroStartTime + macroEndTime)
+            {
+                if (rightTrigger < 0.5f)
+                {
+                    StopMacro();
+                    yield break;
+                }
+
+                float elapsed = Time.time - macroStartTime;
+                float stepElapsed = elapsed % macroStepDuration;
+
+                int currentMacroPosition = Mathf.FloorToInt(elapsed / macroStepDuration);
+
+                currentMacroPosition = Mathf.Clamp(currentMacroPosition, 0, positions.Count);
+
+                PlayerPosition lastPosition = currentMacroPosition - 1 < 0 ? startPosition : positions[currentMacroPosition - 1];
+                PlayerPosition currentPosition = positions[currentMacroPosition];
+
+                float t = stepElapsed / macroStepDuration;
+                TeleportPlayer(lastPosition.position.Lerp(currentPosition.position, t));
+                GorillaTagger.Instance.rigidbody.linearVelocity = lastPosition.velocity.Lerp(currentPosition.velocity, t);
+
+                GorillaTagger.Instance.leftHandTransform.position = lastPosition.leftHand.position.Lerp(currentPosition.leftHand.position, t);
+                GorillaTagger.Instance.leftHandTransform.rotation = lastPosition.leftHand.rotation.Lerp(currentPosition.leftHand.rotation, t);
+
+                GorillaTagger.Instance.rightHandTransform.position = lastPosition.rightHand.position.Lerp(currentPosition.rightHand.position, t);
+                GorillaTagger.Instance.rightHandTransform.rotation = lastPosition.rightHand.rotation.Lerp(currentPosition.rightHand.rotation, t);
+
+                NotifiLib.information["Macro"] = $"{macroEndTime - elapsed:F1}s";
+
+                yield return null;
+
+                if (currentMacroPosition + 5 < positions.Count)
+                {
+                    PlayerPosition futurePosition = positions[currentMacroPosition + 5];
+                    VisualizePositionCoroutine(futurePosition, Color.cyan);
+                }
+                else
+                    RemovePosition(Color.cyan);
+
+                VisualizePositionCoroutine(positions[^1], Color.green);
+            }
+
+            StopMacro();
+            yield break;
+        }
+
+        public static void StopMacro()
+        {
+            if (activeMacro != null)
+            {
+                CoroutineManager.instance.StopCoroutine(activeMacro);
+                activeMacro = null;
+            }
+
+            NotifiLib.information.Remove("Macro");
+
+            RemovePosition(Color.cyan);
+            RemovePosition(Color.green);
+        }
+
+        public static void VisualizePlayerPosition(PlayerPosition position, Color color)
+        {
+            VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color);
+            VisualizeAura(position.leftHand.position, 0.15f, color);
+            VisualizeAura(position.rightHand.position, 0.15f, color);
+        }
+
+        // Unity decided to vomit on my day and not let me run my VisualizeCube or VisualizeAura methods properly, so here's my bad workaround.
+        public static Dictionary<Color, (GameObject head, GameObject leftHand, GameObject rightHand)> positions = new Dictionary<Color, (GameObject head, GameObject leftHand, GameObject rightHand)>();
+        public static void VisualizePositionCoroutine(PlayerPosition position, Color color)
+        {
+            if (!positions.TryGetValue(color, out var data))
+            {
+                data = (VisualizeCubeObject(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color), VisualizeAuraObject(position.leftHand.position, 0.15f, color), VisualizeAuraObject(position.rightHand.position, 0.15f, color));
+                positions[color] = data;
+            }
+
+            data.head.transform.position = position.position;
+            data.head.transform.rotation = Quaternion.LookRotation(position.velocity);
+            data.leftHand.transform.position = position.leftHand.position;
+            data.rightHand.transform.position = position.rightHand.position;
+        }
+
+        public static void RemovePosition(Color color)
+        {
+            if (positions.TryGetValue(color, out var data))
+            {
+                Object.Destroy(data.head);
+                Object.Destroy(data.leftHand);
+                Object.Destroy(data.rightHand);
+
+                positions.Remove(color);
+            }
+        }
+
+        public static void ExecuteMacroButton(Macro macro)
+        {
+            if (rightTrigger < 0.5f || activeMacro != null)
+                return;
+
+            PlayerPosition startPosition = macro.positions[0];
+            VisualizePlayerPosition(startPosition, buttonColors[1].GetCurrentColor());
+
+            VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
+
+            if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, startPosition.position) < 1f)
+                activeMacro = CoroutineManager.instance.StartCoroutine(PlayMacro(macro));
+        }
 
         private static Vector3 walkPos;
         private static Vector3 walkNormal;
