@@ -653,6 +653,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stare at Nearby", overlapText = "Stare At Player Nearby", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.StareAtNearby, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtNearby, toolTip = "Makes you stare at the nearest player."},
                 new ButtonInfo { buttonText = "Stare at Player Gun", method = Movement.StareAtGun, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtTarget, toolTip = "Makes you stare at whoever your hand desires."},
                 new ButtonInfo { buttonText = "Stare at All Players", enableMethod = Movement.StareAtAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you stare at everyone in the room."},
+                new ButtonInfo { buttonText = "Eye Contact", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.EyeContact, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.EyeContact, toolTip = "Makes you stare at anyone who is looking at you."},
                 new ButtonInfo { buttonText = "Floating Rig", enableMethod = Movement.EnableFloatingRig, method = Movement.FloatingRig, disableMethod = Movement.DisableFloatingRig, toolTip = "Makes your rig float."},
 
                 new ButtonInfo { buttonText = "Bees", method = Movement.Bees, disableMethod = Movement.EnableRig, toolTip = "Makes your rig teleport to random players, imitating the bees ghost."},
