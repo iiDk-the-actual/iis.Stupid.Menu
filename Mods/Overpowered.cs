@@ -1419,8 +1419,8 @@ namespace iiMenu.Mods
                         case 0:
                             int increment = GetProjectileIncrement(Pos, Vel, snowballScale);
 
-                            GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
-                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize ?? snowballScale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+                            GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped(default(PhotonMessageInfo)));
+                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize ?? snowballScale }, new PhotonMessageInfoWrapped(default(PhotonMessageInfo)));
 
                             GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
                             GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
