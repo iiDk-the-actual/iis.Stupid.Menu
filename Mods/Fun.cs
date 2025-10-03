@@ -716,6 +716,22 @@ namespace iiMenu.Mods
             FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
+        public static void FlipCamera()
+        {
+            if (FreeCamObject == null)
+            {
+                FreeCamObject = new GameObject("iiMenu_CameraObj");
+                FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            }
+
+            Camera FreeCamera = FreeCamObject.GetOrAddComponent<Camera>();
+            FreeCamera.nearClipPlane = 0.01f;
+            FreeCamera.cameraType = CameraType.Game;
+
+            FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+        }
+
         public static void Nausea()
         {
             if (FreeCamObject == null)
