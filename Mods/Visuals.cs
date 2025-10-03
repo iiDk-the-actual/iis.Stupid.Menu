@@ -99,6 +99,27 @@ namespace iiMenu.Mods
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
+        private static GameObject urpGlass;
+        public static void CrystalBallVision()
+        {
+            if (urpGlass == null)
+            {
+                urpGlass = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Object.Destroy(urpGlass.GetComponent<Collider>());
+                urpGlass.transform.SetParent(GorillaTagger.Instance.headCollider.transform, false);
+                urpGlass.transform.localPosition = new Vector3(0f, 0f, 0.25f);
+                urpGlass.transform.localScale = new Vector3(10f, 10f, 0f);
+                urpGlass.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/URPScryGlass");
+                urpGlass.GetComponent<Renderer>().material.color = Color.clear;
+            }
+        }
+
+        public static void DisableCrystalBallVision()
+        {
+            if (urpGlass != null)
+                Object.Destroy(urpGlass);
+        }
+
         private static bool previousFullbrightStatus;
         public static void SetFullbrightStatus(bool fullBright)
         {
