@@ -283,6 +283,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Max Speed Modification", toolTip = "Makes your max speed not change, so you can't be detected of using a speed boost."},
                 new ButtonInfo { buttonText = "Disable Size Changer Buttons", toolTip = "Disables the size changer's buttons, so hitting grip or trigger or whatever won't do anything."},
 
+                new ButtonInfo { buttonText = "Change Macro Playback Range", overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeMacroPlaybackRange(), enableMethod =() => Movement.ChangeMacroPlaybackRange(), disableMethod =() => Movement.ChangeMacroPlaybackRange(false), incremental = true, isTogglable = false, toolTip = "Changes the range where macros can play."},
+
                 new ButtonInfo { buttonText = "Hand Oriented Strafe", toolTip = "Makes the strafe mods move you in the forward direction of your hand."},
                 new ButtonInfo { buttonText = "Disable Stationary WASD Fly", toolTip = "Disables WASD Fly keeping you in-place when not moving."},
 
@@ -2043,7 +2045,7 @@ namespace iiMenu.Menu
             new[] // Macros [42]
             {
                 new ButtonInfo { buttonText = "Exit Macros", method =() => currentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods." },
-                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.RecordMacro, toolTip = "Record your macros with this mod." },
+                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.RecordMacro, toolTip = "Record your macros with your <color=green>left trigger</color>." },
                 new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
             }, 
         };

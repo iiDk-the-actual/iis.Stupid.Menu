@@ -4803,7 +4803,8 @@ exit";
                 Safety.targetBadge.ToString(),
                 Movement.playspaceAbuseIndex.ToString(),
                 Movement.wallWalkStrengthIndex.ToString(),
-                Fun.headSpinIndex.ToString()
+                Fun.headSpinIndex.ToString(),
+                Movement.macroPlaybackRangeIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -4906,8 +4907,6 @@ exit";
 
                 Safety.fpsSpoofValue = string.IsNullOrWhiteSpace(data[15]) ? 85 : int.Parse(data[15]) - 5;
                 Safety.ChangeFPSSpoofValue();
-
-                // The blank spot is here, it was used for the old hotkey system
 
                 buttonClickIndex = int.Parse(data[16]) - 1;
                 ChangeButtonSound();
@@ -5029,6 +5028,9 @@ exit";
 
                 Fun.headSpinIndex = int.Parse(data[56]) - 1;
                 Fun.ChangeHeadSpinSpeed();
+
+                Movement.macroPlaybackRangeIndex = int.Parse(data[57]) - 1;
+                Movement.ChangeMacroPlaybackRange();
             }
             catch { LogManager.Log("Save file out of date"); }
 
