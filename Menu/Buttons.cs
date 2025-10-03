@@ -571,7 +571,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Velocity Multiplier", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method = Movement.VelocityMultiplier, toolTip = "Multiplies your velocity frequently."},
 
                 new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
-                new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
+                new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slip Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
                 new ButtonInfo { buttonText = "Sticky Hands", method = Movement.StickyHands, disableMethod = Movement.DisableStickyHands, toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method = Movement.ClimbyHands, disableMethod = Movement.DisableClimbyHands, toolTip = "Lets you climb everything like a rope."},
                 new ButtonInfo { buttonText = "Disable Hands", method =() => Movement.SetHandEnabled(false), disableMethod =() => Movement.SetHandEnabled(true), toolTip = "Disables your hand colliders."},
