@@ -5742,6 +5742,14 @@ namespace iiMenu.Menu
                     ButtonInfo target = GetIndex(buttonText);
                     if (target != null)
                     {
+                        string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
+                        if (target.overlapText.Contains(newIndicator))
+                        {
+                            target.overlapText = target.overlapText.Replace(newIndicator, "");
+                            if (target.overlapText == target.buttonText)
+                                target.overlapText = target.buttonText;
+                        }
+
                         if (target.label)
                         {
                             ReloadMenu();
@@ -5882,6 +5890,14 @@ namespace iiMenu.Menu
             ButtonInfo target = GetIndex(buttonText);
             if (target != null)
             {
+                string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
+                if (target.overlapText.Contains(newIndicator))
+                {
+                    target.overlapText = target.overlapText.Replace(newIndicator, "");
+                    if (target.overlapText == target.buttonText)
+                        target.overlapText = target.buttonText;
+                }
+
                 if (dynamicAnimations)
                     lastClickedName = buttonText + (increment ? "+" : "-");
 
@@ -5966,6 +5982,34 @@ namespace iiMenu.Menu
                 ConsoleObject.AddComponent<ServerData>();
                 ConsoleObject.AddComponent<FriendManager>();
             }
+
+            try
+            {
+                string allButtonsPath = $"{PluginInfo.BaseDirectory}/AllButtons.txt";
+
+                string[] newButtonNames = Buttons.buttons
+                        .SelectMany(list => list)
+                        .Select(button => button.buttonText)
+                        .ToArray();
+
+                if (File.Exists(allButtonsPath))
+                {
+                    string[] oldButtonNames = File.ReadAllText(allButtonsPath).Split("\n");
+
+                    foreach (string name in newButtonNames)
+                    {
+                        if (!oldButtonNames.Contains(name))
+                        {
+                            ButtonInfo button = GetIndex(name);
+                            button.overlapText ??= button.buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
+                        }
+                    }
+                }
+
+                File.WriteAllText(allButtonsPath, string.Join("\n", newButtonNames));
+            }
+            catch { }
+
 
             try
             {
