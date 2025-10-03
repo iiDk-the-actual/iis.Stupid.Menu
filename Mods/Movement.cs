@@ -36,8 +36,10 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -1617,9 +1619,17 @@ namespace iiMenu.Mods
             buttons.AddRange(new[]
             {
                 new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = RecordMacro, toolTip = "Record your macros with your <color=green>left trigger</color>." },
+                new ButtonInfo { buttonText = "Open Macros Folder", method = OpenMacrosFolder, isTogglable = false, toolTip = "Opens the folder in which your plugins are located." },
                 new ButtonInfo { buttonText = "Reload Macros", method = LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
             });
             Buttons.buttons[42] = buttons.ToArray();
+        }
+
+        public static void OpenMacrosFolder()
+        {
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Macros");
+            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Macros";
+            Process.Start(filePath);
         }
 
         public static void ToggleMacro(string macroName, bool enabled)
