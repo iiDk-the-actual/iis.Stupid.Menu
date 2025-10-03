@@ -184,6 +184,7 @@ namespace iiMenu.Classes.Menu
                 Main.motdTemplate = (string)data["motd"];
 
                 // Version Check
+                string minimumVersion = (string)data["min-version"];
                 string version = (string)data["menu-version"];
                 if (!VersionWarning)
                 {
@@ -194,19 +195,17 @@ namespace iiMenu.Classes.Menu
                         Console.Log("User is on beta build");
                         Console.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> You are using a testing build of the menu. Be warned that there may be bugs and issues that could cause crashes, data loss, or other unexpected behavior.", 10000);
                     }
+                    else if (VersionToNumber(version) < VersionToNumber(minimumVersion))
+                    {
+                        Console.DisableMenu = true;
+                        Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a severely outdated version of the menu. For security, it has been disabled. Please update your menu.", 10000);
+                    }
                     else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
                     {
                         Console.Log("Version is outdated");
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to version {version}.", 10000);
                         Main.Prompt($"A new version is available ({version}). Would you like to update?", Settings.UpdateMenu);
                     }
-                }
-
-                // Lockdown check
-                if (version == "lockdown")
-                {
-                    Console.SendNotification($"<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> {Main.motdTemplate}", 10000);
-                    Console.DisableMenu = true;
                 }
 
                 // Admin dictionary
