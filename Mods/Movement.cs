@@ -1425,6 +1425,27 @@ namespace iiMenu.Mods
         public static void ClearRewind() => playerPositions.Clear();
 
         public const float macroStepDuration = 0.1f;
+
+        public static float macroPlaybackRange = 1f;
+        public static int macroPlaybackRangeIndex = 1;
+        public static void ChangeMacroPlaybackRange(bool positive = true)
+        {
+            float[] rangeAmounts = { 0.5f, 1f, 2f, 3f, 0.25f };
+            string[] rangeNames = { "Small", "Normal", "Large", "Extra Large", "Extra Small", };
+
+            if (positive)
+                macroPlaybackRangeIndex++;
+            else
+                macroPlaybackRangeIndex--;
+
+            macroPlaybackRangeIndex %= rangeNames.Length;
+            if (macroPlaybackRangeIndex < 0)
+                macroPlaybackRangeIndex = rangeNames.Length - 1;
+
+            macroPlaybackRange = rangeAmounts[macroPlaybackRangeIndex];
+            GetIndex("Change Macro Playback Range").overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>" + rangeNames[macroPlaybackRangeIndex] + "</color><color=grey>]</color>";
+        }
+
         public struct PlayerPosition
         {
             public Vector3 position;
@@ -1577,7 +1598,7 @@ namespace iiMenu.Mods
 
             buttons.AddRange(new[]
             {
-                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = RecordMacro, toolTip = "Record your macros with this mod." },
+                new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = RecordMacro, toolTip = "Record your macros with your <color=green>left trigger</color>." },
                 new ButtonInfo { buttonText = "Reload Macros", method = LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
             });
             Buttons.buttons[42] = buttons.ToArray();
@@ -1601,7 +1622,7 @@ namespace iiMenu.Mods
 
         public static void RecordMacro()
         {
-            if (rightTrigger > 0.5f)
+            if (leftTrigger > 0.5f)
             {
                 if (!recordingMacro)
                 {
