@@ -520,7 +520,7 @@ namespace iiMenu.Menu
                                                         if (v.overlapText != null)
                                                             buttonText = v.overlapText;
 
-                                                        if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                        if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                             searchedMods.Add(v);
                                                     }
                                                     catch { }
@@ -2403,7 +2403,7 @@ namespace iiMenu.Menu
                                     if (v.overlapText != null)
                                         buttonText = v.overlapText;
 
-                                    if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                    if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                         searchedMods.Add(v);
                                 }
                                 catch { }
@@ -5685,7 +5685,7 @@ namespace iiMenu.Menu
                             if (v.overlapText != null)
                                 buttonTextt = v.overlapText;
 
-                            if (buttonTextt.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                            if (buttonTextt.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                 searchedMods.Add(v);
                         }
                         catch { }
