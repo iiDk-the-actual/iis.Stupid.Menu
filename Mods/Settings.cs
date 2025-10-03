@@ -101,7 +101,6 @@ namespace iiMenu.Mods
                         ColorChanger keyColorChanger = key.AddComponent<ColorChanger>();
                         keyColorChanger.colors = buttonColors[0];
                     }
-                    
 
                     if (shouldOutline)
                         OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
