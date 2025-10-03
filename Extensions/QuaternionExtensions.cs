@@ -20,7 +20,6 @@
  */
 
 using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Extensions
 {

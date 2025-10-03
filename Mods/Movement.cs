@@ -44,11 +44,9 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
-using static iiMenu.Mods.Movement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
