@@ -732,6 +732,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
                 new ButtonInfo { buttonText = "Disable Fog", method = Visuals.DisableFog, disableMethod = Visuals.ResetFog, toolTip = "Disables the fog."},
                 new ButtonInfo { buttonText = "Enable Fog", method = Visuals.EnableFog, disableMethod = Visuals.ResetFog, toolTip = "Enables the fog."},
+                new ButtonInfo { buttonText = "Crystal Ball Vision", method = Visuals.CrystalBallVision, disableMethod = Visuals.DisableCrystalBallVision, toolTip = "Enables the fog."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod = Visuals.DoCustomSkyboxColor, method = Visuals.CustomSkyboxColor, disableMethod = Visuals.UnCustomSkyboxColor, toolTip = "Changes the skybox color to match the menu."},
 
