@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -1564,6 +1565,23 @@ namespace iiMenu.Mods
             }
         }
 
+        public static string FormatMacroName(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            StringBuilder result = new StringBuilder();
+            foreach (char c in input)
+            {
+                if (char.IsLetterOrDigit(c))
+                    result.Append(c);
+                else
+                    result.Append('-');
+            }
+
+            return result.ToString();
+        }
+
         public static Dictionary<string, Macro> macros = new Dictionary<string, Macro>();
         public static void LoadMacros()
         {
@@ -1667,8 +1685,7 @@ namespace iiMenu.Mods
                         enabled = true
                     };
 
-                    string macroHash = name.Hash();
-                    string filePath = $"{PluginInfo.BaseDirectory}/Macros/{macroHash}.json";
+                    string filePath = $"{PluginInfo.BaseDirectory}/Macros/{FormatMacroName(name)}.json";
 
                     File.WriteAllText(filePath, macro.DumpJSON());
                     LoadMacros();
