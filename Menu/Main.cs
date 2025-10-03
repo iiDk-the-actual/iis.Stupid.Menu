@@ -5743,7 +5743,7 @@ namespace iiMenu.Menu
                     if (target != null)
                     {
                         string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
-                        if (target.overlapText.Contains(newIndicator))
+                        if (target.overlapText != null && target.overlapText.Contains(newIndicator))
                         {
                             target.overlapText = target.overlapText.Replace(newIndicator, "");
                             if (target.overlapText == target.buttonText)
@@ -5891,7 +5891,7 @@ namespace iiMenu.Menu
             if (target != null)
             {
                 string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
-                if (target.overlapText.Contains(newIndicator))
+                if (target.overlapText != null && target.overlapText.Contains(newIndicator))
                 {
                     target.overlapText = target.overlapText.Replace(newIndicator, "");
                     if (target.overlapText == target.buttonText)
