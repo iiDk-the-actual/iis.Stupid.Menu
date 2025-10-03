@@ -182,6 +182,12 @@ exit";
             Application.Quit();
         }
 
+        public static void OpenGorillaTagFolder()
+        {
+            string filePath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0];
+            Process.Start(filePath);
+        }
+
 #pragma warning disable CS0618 // Type or member is obsolete
         private static bool wasenabled = true;
 

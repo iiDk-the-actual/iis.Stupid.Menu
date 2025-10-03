@@ -395,9 +395,9 @@ namespace iiMenu.Mods
                 catch (Exception e) { LogManager.Log("Error with enabling plugin " + Plugin.Key + ": " + e); }
             }
 
-            AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = () => OpenPluginsFolder(), isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
-            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = () => ReloadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." });
-            AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = () => LoadPluginLibrary(), isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = OpenPluginsFolder, isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = LoadPluginLibrary, isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
         }
 
         public static void ReloadPlugins()
