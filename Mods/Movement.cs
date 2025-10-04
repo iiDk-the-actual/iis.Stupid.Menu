@@ -1663,6 +1663,9 @@ namespace iiMenu.Mods
                     positionDelay = Time.time + macroStepDuration;
                     recordingData.Add(PlayerPosition.CurrentPosition());
                 }
+
+                if (recordingMacro && recordingData.Count > 0)
+                    VisualizePlayerPosition(recordingData[0], Color.green);
             } else
             {
                 if (recordingMacro)
@@ -1753,7 +1756,7 @@ namespace iiMenu.Mods
                 else
                     RemovePosition(Color.cyan);
 
-                VisualizePositionCoroutine(positions[^1], Color.green);
+                VisualizePositionCoroutine(positions[^1], Color.red);
             }
 
             StopMacro();
@@ -1771,7 +1774,7 @@ namespace iiMenu.Mods
             NotifiLib.information.Remove("Macro");
 
             RemovePosition(Color.cyan);
-            RemovePosition(Color.green);
+            RemovePosition(Color.red);
         }
 
         public static void VisualizePlayerPosition(PlayerPosition position, Color color, float alpha = 0.15f)
