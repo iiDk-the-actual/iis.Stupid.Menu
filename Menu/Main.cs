@@ -1509,7 +1509,7 @@ namespace iiMenu.Menu
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
                     colorChanger.colors = buttonColors[shouldSwap ^ method.enabled ? 1 : 0];
 
-                    if (joystickMenu && buttonIndex == joystickButtonSelected)
+                    if (joystickMenu && themeType != 30 && buttonIndex == joystickButtonSelected)
                     {
                         joystickSelectedButton = method.buttonText;
 
@@ -2546,7 +2546,7 @@ namespace iiMenu.Menu
             bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (inTextInput && isKeyboardPc);
             if (joystickMenu)
             {
-                menu.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward + GorillaTagger.Instance.headCollider.transform.right * 0.3f + GorillaTagger.Instance.headCollider.transform.up * 0.2f;
+                menu.transform.position = GorillaTagger.Instance.headCollider.transform.TransformPoint(joystickMenuPositions[joystickMenuPosition]);
                 menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform);
                 Vector3 rotModify = menu.transform.rotation.eulerAngles;
                 rotModify += new Vector3(-90f, 0f, -90f);
@@ -2558,7 +2558,7 @@ namespace iiMenu.Menu
                 {
                     if (oneHand)
                     {
-                        menu.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward * 0.5f + GorillaTagger.Instance.headCollider.transform.up * -0.1f;
+                        menu.transform.position = GorillaTagger.Instance.headCollider.transform.TransformPoint(new Vector3(0f, -0.1f, 0.5f));
                         menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform);
                         Vector3 rotModify = menu.transform.rotation.eulerAngles;
                         rotModify += new Vector3(-90f, 0f, -90f);
@@ -6258,6 +6258,20 @@ jgs \_   _/ |Oo\
         public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";
         public static float joystickDelay;
+
+        public static int joystickMenuPosition;
+        public static Vector3[] joystickMenuPositions = new[]
+        {
+            new Vector3(0.3f, 0.2f, 1f),
+            new Vector3(-0.3f, 0.2f, 1f),
+            new Vector3(0.3f, -0.2f, 1f),
+            new Vector3(-0.3f, -0.2f, 1f),
+            new Vector3(0f, -0.1f, 0.5f),
+            new Vector3(0.3f, -0.1f, 1f),
+            new Vector3(-0.3f, -0.1f, 1f),
+            new Vector3(0f, 0.2f, 1f),
+            new Vector3(0f, -0.2f, 1f),
+        };
 
         public static bool rightHand;
         public static bool isRightHand;

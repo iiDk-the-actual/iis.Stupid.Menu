@@ -4209,6 +4209,18 @@ exit";
                 pcbg = 5;
         }
 
+        public static void ChangeJoystickMenuPosition(bool positive = true)
+        {
+            if (positive)
+                joystickMenuPosition++;
+            else
+                joystickMenuPosition--;
+
+            joystickMenuPosition %= joystickMenuPositions.Length;
+            if (joystickMenuPosition < 0)
+                joystickMenuPosition = joystickMenuPositions.Length - 1;
+        }
+
         public static void ChangeNotificationTime(bool positive = true)
         {
             if (positive)
@@ -4804,7 +4816,8 @@ exit";
                 Movement.playspaceAbuseIndex.ToString(),
                 Movement.wallWalkStrengthIndex.ToString(),
                 Fun.headSpinIndex.ToString(),
-                Movement.macroPlaybackRangeIndex.ToString()
+                Movement.macroPlaybackRangeIndex.ToString(),
+                joystickMenuPosition.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5031,6 +5044,9 @@ exit";
 
                 Movement.macroPlaybackRangeIndex = int.Parse(data[57]) - 1;
                 Movement.ChangeMacroPlaybackRange();
+
+                joystickMenuPosition = int.Parse(data[58]) - 1;
+                ChangeJoystickMenuPosition();
             }
             catch { LogManager.Log("Save file out of date"); }
 
