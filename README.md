@@ -44,12 +44,12 @@ Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https
 > [🎥 *(Or would you?)*](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
 
 # 🎛️ System Compatibility
-| Operating System | Menu | Images | Sounds | Videos |
+| Operating System | Menu | Fonts | Images | Sounds | Videos |
 |------------------|------|--------|--------|--------|
-|<img src="Resources/GitHub/windows-10.png" height=20px> Windows 10|✅|✅|✅|✅|
-|<img src="Resources/GitHub/windows-11.png" height=20px> Windows 11|✅|✅|✅|✅|
-|<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|❌|
-|<img src="Resources/GitHub/linux.png" height=20px> Linux|✅|✅|✅|❌|
+|<img src="Resources/GitHub/windows-10.png" height=20px> Windows 10|✅|✅|✅|✅|✅|
+|<img src="Resources/GitHub/windows-11.png" height=20px> Windows 11|✅|✅|✅|✅|✅|
+|<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|✅|❌|
+|<img src="Resources/GitHub/linux.png" height=20px> Linux|✅|[🪲](https://github.com/iiDk-the-actual/iis.Stupid.Menu/issues/626)|✅|✅|❌|
 
 ---
 
