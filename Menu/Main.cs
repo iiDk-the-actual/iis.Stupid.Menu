@@ -2754,6 +2754,9 @@ namespace iiMenu.Menu
             }
             catch { }
 
+            if (promptVideoPlayer != null)
+                promptVideoPlayer.Stop();
+
             smoothTargetPosition = Vector3.zero;
             smoothTargetRotation = Quaternion.identity;
             if (!dynamicAnimations)
@@ -2925,8 +2928,8 @@ namespace iiMenu.Menu
 
             if (promptImageUrl != null)
             {
-                component.sizeDelta = new Vector2(component.sizeDelta.x, 0.03f);
-                component.localPosition = new Vector3(0.06f, 0f, 0.1f);
+                string fileName = promptImageUrl.Split("/")[^1];
+                string fileExtension = GetFileExtension(fileName);
 
                 Image promptImage = new GameObject
                 {
@@ -2936,20 +2939,51 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Image>();
 
+                component.sizeDelta = new Vector2(component.sizeDelta.x, 0.03f);
+                component.localPosition = new Vector3(0.06f, 0f, 0.1f);
+
                 if (promptMat == null)
                     promptMat = new Material(promptImage.material);
 
                 promptImage.material = promptMat;
-                promptImage.material.SetTexture("_MainTex", LoadTextureFromURL(promptImageUrl, promptImageUrl.Split("/")[^1]));
-                promptImage.AddComponent<ImageColorChanger>().colors = textColors[isSearching ? 2 : 1];
 
                 RectTransform imageTransform = promptImage.GetComponent<RectTransform>();
                 imageTransform.localPosition = Vector3.zero;
                 imageTransform.sizeDelta = new Vector2(.2f, .2f);
 
-                imageTransform.localPosition = new Vector3(0.06f, 0f, -0.03f);
-
+                imageTransform.localPosition = new Vector3(0.06f, 0f, PromptMessage.IsNullOrEmpty() ? 0f : -0.03f);
                 imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                switch (fileExtension)
+                {
+                    case "png":
+                    case "jpg":
+                        {
+                            promptImage.material.SetTexture("_MainTex", LoadTextureFromURL(promptImageUrl, fileName));
+                            promptImage.material.color = Color.white;
+                        }
+                        break;
+                    case "mp4":
+                    case "webm":
+                    case "mov":
+                        {
+                            promptVideoPlayer = new GameObject("iiMenu_PromptVideoPlayer").AddComponent<VideoPlayer>();
+                            promptVideoPlayer.playOnAwake = true;
+                            promptVideoPlayer.isLooping = true;
+                            promptVideoPlayer.url = promptImageUrl;
+
+                            RenderTexture rt = new RenderTexture(192, 144, 0);
+                            rt.Create();
+
+                            promptVideoPlayer.targetTexture = rt;
+
+                            promptImage.material = promptMat;
+                            promptImage.material.color = Color.white;
+                            promptImage.material.SetTexture("_MainTex", rt);
+                        }
+                        break;
+                }
+                
             }
 
             if (outlineText)
@@ -6515,6 +6549,7 @@ jgs \_   _/ |Oo\
         public static GameObject pcBackground;
         public static GameObject reference;
         public static VideoPlayer videoPlayer;
+        public static VideoPlayer promptVideoPlayer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;
