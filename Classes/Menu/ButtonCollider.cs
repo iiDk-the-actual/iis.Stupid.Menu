@@ -33,7 +33,7 @@ namespace iiMenu.Classes.Menu
 
 		public void OnTriggerEnter(Collider collider)
 		{
-			if (Time.time > buttonCooldown && (collider == buttonCollider || collider == lKeyCollider || collider == rKeyCollider) && menu != null)
+			if (Time.time > buttonCooldown && (collider == buttonCollider || collider == lKeyCollider || collider == rKeyCollider) && !joystickMenu && menu != null)
 			{
                 buttonCooldown = Time.time + 0.2f;
                 PlayButtonSound(relatedText);
