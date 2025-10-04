@@ -24,6 +24,7 @@ using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
@@ -1447,20 +1448,33 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Chaser Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(48354877), toolTip = "Spawns chasing enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
-                new ButtonInfo { buttonText = "Spawn Red Lucy", method = Overpowered.SpawnRedLucy, isTogglable = false, toolTip = "Summons the red Lucy in forest." },
-                new ButtonInfo { buttonText = "Spawn Blue Lucy", method = Overpowered.SpawnBlueLucy, isTogglable = false, toolTip = "Summons the blue Lucy in forest." },
-                new ButtonInfo { buttonText = "Despawn Lucy", method = Overpowered.DespawnLucy, isTogglable = false, toolTip = "Despawns the ghost Lucy in forest." },
-                new ButtonInfo { buttonText = "Spaz Lucy", method = Overpowered.SpazLucy, toolTip = "Gives the ghost Lucy a seizure." },
+                new ButtonInfo { buttonText = "Spawn Red Lucy", method = Overpowered.SpawnRedLucy, isTogglable = false, toolTip = "Summons the red lucy in forest." },
+                new ButtonInfo { buttonText = "Spawn Blue Lucy", method = Overpowered.SpawnBlueLucy, isTogglable = false, toolTip = "Summons the blue lucy in forest." },
+                new ButtonInfo { buttonText = "Despawn Lucy", method = Overpowered.DespawnLucy, isTogglable = false, toolTip = "Despawns lucy in forest." },
 
-                new ButtonInfo { buttonText = "Lucy Chase Self", method = Overpowered.LucyChaseSelf, isTogglable = false, toolTip = "Makes the ghost Lucy chase you." },
-                new ButtonInfo { buttonText = "Lucy Chase Gun", method = Overpowered.LucyChaseGun, toolTip = "Makes the ghost Lucy chase whoever your hand desires." },
+                new ButtonInfo { buttonText = "Lucy Chase Self", method = Overpowered.LucyChaseSelf, isTogglable = false, toolTip = "Makes lucy chase you." },
+                new ButtonInfo { buttonText = "Lucy Chase Gun", method = Overpowered.LucyChaseGun, toolTip = "Makes lucy chase whoever your hand desires." },
 
-                new ButtonInfo { buttonText = "Lucy Attack Self", method = Overpowered.LucyAttackSelf, isTogglable = false, toolTip = "Makes the ghost Lucy attack you." },
-                new ButtonInfo { buttonText = "Lucy Attack Gun", method = Overpowered.LucyAttackGun, toolTip = "Makes the ghost Lucy attack whoever your hand desires." },
-                new ButtonInfo { buttonText = "Annoying Lucy", method = Overpowered.AnnoyingLucy, toolTip = "Makes the ghost Lucy really annoying, by attacking everyone and making sounds of the bells." },
+                new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes lucy attack you." },
+                new ButtonInfo { buttonText = "Lucy Attack Gun", method = Overpowered.LucyAttackGun, toolTip = "Makes lucy attack whoever your hand desires." },
+                new ButtonInfo { buttonText = "Lucy Attack All", method = Overpowered.LucyAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes lucy attack everyone in the room." },
 
-                new ButtonInfo { buttonText = "Fast Lucy", method = Overpowered.FastLucy, toolTip = "Makes the ghost Lucy become really fast." },
-                new ButtonInfo { buttonText = "Slow Lucy", method = Overpowered.SlowLucy, toolTip = "Makes the ghost Lucy become really slow." },
+                new ButtonInfo { buttonText = "Spaz Lucy", method = Overpowered.SpazLucy, toolTip = "Gives lucy a seizure." },
+                new ButtonInfo { buttonText = "Break Lucy", method =() => { Overpowered.SpazLucy(); Overpowered.lucyDelay = 0f; }, toolTip = "Breaks lucy." },
+                new ButtonInfo { buttonText = "Annoying Lucy", method = Overpowered.AnnoyingLucy, toolTip = "Makes lucy really annoying, by attacking everyone and making sounds of the bells." },
+
+                new ButtonInfo { buttonText = "Fast Lucy", method = Overpowered.FastLucy, toolTip = "Makes lucy become really fast." },
+                new ButtonInfo { buttonText = "Slow Lucy", method = Overpowered.SlowLucy, toolTip = "Makes lucy become really slow." },
+
+                new ButtonInfo { buttonText = "Move Lurker Gun", method = Overpowered.MoveLurkerGun, toolTip = "Moves the lurker ghost to wherever your hand desires." },
+
+                new ButtonInfo { buttonText = "Lucy Chase Self", method =() => Overpowered.LurkerAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes the lurker ghost attack you." },
+                new ButtonInfo { buttonText = "Lurker Attack Gun", method = Overpowered.LurkerAttackGun, toolTip = "Makes the lurker ghost attack whoever your hand desires." },
+                new ButtonInfo { buttonText = "Lurker Attack All", method = Overpowered.LurkerAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes the lurker ghost attack everyone in the room." },
+
+                new ButtonInfo { buttonText = "Spaz Lurker", method = Overpowered.SpazLurker, toolTip = "Gives the lurker ghost a seizure." },
+                new ButtonInfo { buttonText = "Break Lurker", method = Overpowered.BreakLurker, toolTip = "Breaks the lurker ghost." },
+                new ButtonInfo { buttonText = "Annoying Lurker", method = Overpowered.AnnoyingLurker, toolTip = "Makes the lurker ghost really annoying, by attacking everyone and making laugh sounds." },
 
                 new ButtonInfo { buttonText = "Unlimited Building", enableMethod = Fun.UnlimitedBuilding, disableMethod = Fun.DisableUnlimitedBuilding, toolTip = "Unlimits building, disabling drop zones and letting you place on people's plots." },
 
@@ -2342,16 +2356,16 @@ new ButtonInfo { buttonText = "Spaz Moon Event", method =() => Overpowered.Flash
 
 new ButtonInfo { buttonText = "Spawn Red Lucy", method =() => Overpowered.SpawnRedLucy(), isTogglable = false, toolTip = "Summons the red Lucy in forest." },
 new ButtonInfo { buttonText = "Spawn Blue Lucy", method =() => Overpowered.SpawnBlueLucy(), isTogglable = false, toolTip = "Summons the blue Lucy in forest." },
-new ButtonInfo { buttonText = "Despawn Lucy", method =() => Overpowered.DespawnLucy(), isTogglable = false, toolTip = "Despawns the ghost Lucy in forest." },
-new ButtonInfo { buttonText = "Spaz Lucy", method =() => Overpowered.SpazLucy(), toolTip = "Gives the ghost Lucy a seizure." },
+new ButtonInfo { buttonText = "Despawn Lucy", method =() => Overpowered.DespawnLucy(), isTogglable = false, toolTip = "Despawns lucy in forest." },
+new ButtonInfo { buttonText = "Spaz Lucy", method =() => Overpowered.SpazLucy(), toolTip = "Gives lucy a seizure." },
 
-new ButtonInfo { buttonText = "Lucy Chase Self", method =() => Overpowered.LucyChaseSelf(), isTogglable = false, toolTip = "Makes the ghost Lucy chase you." },
-new ButtonInfo { buttonText = "Lucy Chase Gun", method =() => Overpowered.LucyChaseGun(), toolTip = "Makes the ghost Lucy chase whoever your hand desires." },
+new ButtonInfo { buttonText = "Lucy Chase Self", method =() => Overpowered.LucyChaseSelf(), isTogglable = false, toolTip = "Makes lucy chase you." },
+new ButtonInfo { buttonText = "Lucy Chase Gun", method =() => Overpowered.LucyChaseGun(), toolTip = "Makes lucy chase whoever your hand desires." },
                 
-new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttackSelf(), isTogglable = false, toolTip = "Makes the ghost Lucy attack you." },
-new ButtonInfo { buttonText = "Lucy Attack Gun", method =() => Overpowered.LucyAttackGun(), toolTip = "Makes the ghost Lucy attack whoever your hand desires." },
-new ButtonInfo { buttonText = "Annoying Lucy", method =() => Overpowered.AnnoyingLucy(), toolTip = "Makes the ghost Lucy really annoying, by attacking everyone and making sounds of the bells." },
+new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttackSelf(), isTogglable = false, toolTip = "Makes lucy attack you." },
+new ButtonInfo { buttonText = "Lucy Attack Gun", method =() => Overpowered.LucyAttackGun(), toolTip = "Makes lucy attack whoever your hand desires." },
+new ButtonInfo { buttonText = "Annoying Lucy", method =() => Overpowered.AnnoyingLucy(), toolTip = "Makes lucy really annoying, by attacking everyone and making sounds of the bells." },
 
-new ButtonInfo { buttonText = "Fast Lucy", method =() => Overpowered.FastLucy(), toolTip = "Makes the ghost Lucy become really fast." },
-new ButtonInfo { buttonText = "Slow Lucy", method =() => Overpowered.SlowLucy(), toolTip = "Makes the ghost Lucy become really slow." },
+new ButtonInfo { buttonText = "Fast Lucy", method =() => Overpowered.FastLucy(), toolTip = "Makes lucy become really fast." },
+new ButtonInfo { buttonText = "Slow Lucy", method =() => Overpowered.SlowLucy(), toolTip = "Makes lucy become really slow." },
  */
