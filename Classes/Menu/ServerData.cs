@@ -237,7 +237,7 @@ namespace iiMenu.Classes.Menu
                 OptionA = (string)data["option-a"];
                 OptionB = (string)data["option-b"];
 
-                if (LastPollAnswered != CurrentPoll)
+                if (!Plugin.FirstLaunch && LastPollAnswered != CurrentPoll)
                 {
                     Main.Prompt(CurrentPoll, () => CoroutineManager.instance.StartCoroutine(SendVote("a-votes")), () => CoroutineManager.instance.StartCoroutine(SendVote("b-votes")), OptionA, OptionB);
                     Console.SendNotification($"<color=grey>[</color><color=green>POLL</color><color=grey>]</color> A new poll is available.", 10000);
