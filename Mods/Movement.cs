@@ -2437,6 +2437,13 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.jumpMultiplier = 99999f;
         }
 
+        public static Playspace playspace;
+        public static void DisableVelocityCap()
+        {
+            playspace = GetAllType<Playspace>().FirstOrDefault();
+            playspace.enabled = false;
+        }
+
         public static void UpdateClipColliders(bool enabled)
         {
             foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
