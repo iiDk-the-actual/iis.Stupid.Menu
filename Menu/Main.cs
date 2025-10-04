@@ -1509,14 +1509,17 @@ namespace iiMenu.Menu
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
                     colorChanger.colors = buttonColors[shouldSwap ^ method.enabled ? 1 : 0];
 
-                    if (joystickMenu && themeType != 30 && buttonIndex == joystickButtonSelected)
+                    if (joystickMenu && buttonIndex == joystickButtonSelected)
                     {
                         joystickSelectedButton = method.buttonText;
 
-                        ExtGradient gradient = colorChanger.colors.Clone();
-                        gradient.SetColor(0, Color.red);
+                        if (themeType != 30)
+                        {
+                            ExtGradient gradient = colorChanger.colors.Clone();
+                            gradient.SetColor(0, Color.red);
 
-                        colorChanger.colors = gradient;
+                            colorChanger.colors = gradient;
+                        }
                     }
                 }
                 else
