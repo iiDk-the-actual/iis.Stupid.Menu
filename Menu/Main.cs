@@ -3450,8 +3450,12 @@ namespace iiMenu.Menu
             return LoadSoundFromFile(fileName);
         }
 
+        public static readonly Dictionary<string, Texture2D> textureResourceDictionary = new Dictionary<string, Texture2D>();
         public static Texture2D LoadTextureFromResource(string resourcePath)
         {
+            if (textureResourceDictionary.TryGetValue(resourcePath, out Texture2D existingTexture))
+                return existingTexture;
+
             Texture2D texture = new Texture2D(2, 2);
 
             Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
@@ -3464,11 +3468,17 @@ namespace iiMenu.Menu
             else
                 LogManager.LogError("Failed to load texture from resource: " + resourcePath);
 
+            textureResourceDictionary[resourcePath] = texture;
+
             return texture;
         }
 
+        public static readonly Dictionary<string, Texture2D> textureUrlDictionary = new Dictionary<string, Texture2D>();
         public static Texture2D LoadTextureFromURL(string resourcePath, string fileName)
         {
+            if (textureUrlDictionary.TryGetValue(resourcePath, out Texture2D existingTexture))
+                return existingTexture;
+
             string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
             string directory = Path.GetDirectoryName(filePath);
             if (!Directory.Exists(directory))
@@ -3485,6 +3495,8 @@ namespace iiMenu.Menu
 
             byte[] bytes = File.ReadAllBytes(filePath);
             texture.LoadImage(bytes);
+
+            textureUrlDictionary[resourcePath] = texture;
 
             return texture;
         }
