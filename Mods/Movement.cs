@@ -1702,10 +1702,13 @@ namespace iiMenu.Mods
         }
 
         public static Coroutine activeMacro;
-        public static System.Collections.IEnumerator PlayMacro(Macro macro)
+        public static System.Collections.IEnumerator PlayMacro(Macro macro, int startFromPosition = 0)
         {
             List<PlayerPosition> positions = macro.positions;
             PlayerPosition startPosition = PlayerPosition.CurrentPosition();
+
+            if (startFromPosition > 0 && startFromPosition < positions.Count)
+                positions = positions.GetRange(startFromPosition, positions.Count - startFromPosition);
 
             float macroStartTime = Time.time;
             float macroEndTime = positions.Count * macroStepDuration;
@@ -1807,18 +1810,34 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool midpointMacros;
+        public static bool didMacro;
         public static void ExecuteMacroButton(Macro macro)
         {
-            if (rightTrigger < 0.5f || activeMacro != null)
+            didMacro = midpointMacros && (didMacro
+                ? rightTrigger >= 0.5f
+                : activeMacro != null);
+
+            if (rightTrigger < 0.5f || activeMacro != null || didMacro)
                 return;
 
-            PlayerPosition startPosition = macro.positions[0];
+            int position = 0;
+            if (midpointMacros)
+            {
+                position = macro.positions
+                    .Select((position, index) => new { position, index, distance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position.position) })
+                    .OrderBy(x => x.distance)
+                    .FirstOrDefault()
+                    .index;
+            }
+
+            PlayerPosition startPosition = macro.positions[position];
             VisualizePlayerPosition(startPosition, buttonColors[1].GetCurrentColor());
 
             VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
 
             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, startPosition.position) < 1f)
-                activeMacro = CoroutineManager.instance.StartCoroutine(PlayMacro(macro));
+                activeMacro = CoroutineManager.instance.StartCoroutine(PlayMacro(macro, position));
         }
 
         private static Vector3 walkPos;
