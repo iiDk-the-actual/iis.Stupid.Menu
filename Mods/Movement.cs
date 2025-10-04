@@ -1774,12 +1774,12 @@ namespace iiMenu.Mods
             RemovePosition(Color.green);
         }
 
-        public static void VisualizePlayerPosition(PlayerPosition position, Color color)
+        public static void VisualizePlayerPosition(PlayerPosition position, Color color, float alpha = 0.15f)
         {
-            VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color);
-            VisualizeCube(position.position + position.velocity.normalized * 0.125f, Quaternion.LookRotation(position.velocity), new Vector3(0.15f, 0.15f, 0.05f), color);
-            VisualizeAura(position.leftHand.position, 0.15f, color);
-            VisualizeAura(position.rightHand.position, 0.15f, color);
+            VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color, alpha);
+            VisualizeCube(position.position + position.velocity.normalized * 0.125f, Quaternion.LookRotation(position.velocity), new Vector3(0.15f, 0.15f, 0.05f), color, alpha);
+            VisualizeAura(position.leftHand.position, 0.15f, color, null, alpha);
+            VisualizeAura(position.rightHand.position, 0.15f, color, null, alpha);
         }
 
         // Unity decided to vomit on my day and not let me run my VisualizeCube or VisualizeAura methods properly, so here's my bad workaround.
@@ -1812,6 +1812,7 @@ namespace iiMenu.Mods
 
         public static bool midpointMacros;
         public static bool didMacro;
+        public static bool directionBased;
         public static void ExecuteMacroButton(Macro macro)
         {
             didMacro = midpointMacros && (didMacro
@@ -1832,9 +1833,13 @@ namespace iiMenu.Mods
             }
 
             PlayerPosition startPosition = macro.positions[position];
-            VisualizePlayerPosition(startPosition, buttonColors[1].GetCurrentColor());
+            bool doMacro = !directionBased || (GorillaTagger.Instance.rigidbody.linearVelocity.magnitude > 2f && Vector3.Angle(startPosition.velocity.normalized, GorillaTagger.Instance.rigidbody.linearVelocity.normalized) < 70f);
 
-            VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
+            VisualizePlayerPosition(startPosition, doMacro ? buttonColors[1].GetCurrentColor() : Color.white, doMacro ? 0.15f : 0.05f);
+            if (doMacro) VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
+
+            if (!doMacro)
+                return;
 
             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, startPosition.position) < 1f)
                 activeMacro = CoroutineManager.instance.StartCoroutine(PlayMacro(macro, position));
