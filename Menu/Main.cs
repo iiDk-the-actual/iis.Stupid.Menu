@@ -2581,19 +2581,6 @@ namespace iiMenu.Menu
                             menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                             menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                         }
-                        if (inTextInput && !isKeyboardPc)
-                        {
-                            if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
-                            {
-                                VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
-                                VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                            }
-                            menu.transform.position = menuSpawnPosition.transform.position;
-                            menu.transform.rotation = menuSpawnPosition.transform.rotation;
-                            Vector3 rotModify = menu.transform.rotation.eulerAngles;
-                            rotModify += new Vector3(-90f, 90f, -90f);
-                            menu.transform.rotation = Quaternion.Euler(rotModify);
-                        }
                         if (flipMenu)
                         {
                             Vector3 rotation = menu.transform.rotation.eulerAngles;
@@ -2616,6 +2603,19 @@ namespace iiMenu.Menu
                     rotModify += new Vector3(-90f, 0f, -90f);
                     menu.transform.rotation = Quaternion.Euler(rotModify);
                 }
+            }
+            if (inTextInput && !isKeyboardPc)
+            {
+                if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
+                {
+                    VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                }
+                menu.transform.position = menuSpawnPosition.transform.position;
+                menu.transform.rotation = menuSpawnPosition.transform.rotation;
+                Vector3 rotModify = menu.transform.rotation.eulerAngles;
+                rotModify += new Vector3(-90f, 90f, -90f);
+                menu.transform.rotation = Quaternion.Euler(rotModify);
             }
             if (isKeyboardCondition)
             {
