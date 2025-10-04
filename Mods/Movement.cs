@@ -1774,6 +1774,7 @@ namespace iiMenu.Mods
         public static void VisualizePlayerPosition(PlayerPosition position, Color color)
         {
             VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color);
+            VisualizeCube(position.position + position.velocity.normalized * 0.125f, Quaternion.LookRotation(position.velocity), new Vector3(0.15f, 0.15f, 0.05f), color);
             VisualizeAura(position.leftHand.position, 0.15f, color);
             VisualizeAura(position.rightHand.position, 0.15f, color);
         }
