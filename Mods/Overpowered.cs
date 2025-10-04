@@ -25,6 +25,7 @@ using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
 using GorillaTagScripts;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
@@ -1012,11 +1013,24 @@ namespace iiMenu.Mods
             get 
             {
                 if (_lucy == null)
-                    lucy = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                    _lucy = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
 
                 return _lucy;
             }
             set => _lucy = value;
+        }
+
+        public static LurkerGhost _lurker;
+        public static LurkerGhost lurker
+        {
+            get
+            {
+                if (_lurker == null)
+                    _lurker = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lurker Ghost/GhostLurker_Prefab").GetComponent<LurkerGhost>();
+
+                return _lurker;
+            }
+            set => _lurker = value;
         }
 
         public static void SpawnBlueLucy()
@@ -1106,16 +1120,24 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LucyAttackSelf()
+        public static void LucyAttack(NetPlayer player)
         {
             HalloweenGhostChaser hgc = lucy;
             if (hgc.IsMine)
             {
-                hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
-                hgc.grabTime = Time.time;
-                hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
+                if (Time.time > hgc.grabTime + hgc.grabDuration + 0.1f)
+                {
+                    if (hgc.targetPlayer != player)
+                    {
+                        hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
+                        SendSerialize(hgc.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                    }
+                    hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
+                    hgc.grabTime = Time.time;
+                    hgc.targetPlayer = player;
+                }
             }
-            else 
+            else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
@@ -1127,20 +1149,8 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    HalloweenGhostChaser hgc = lucy;
-                    if (hgc.IsMine)
-                    {
-                        if (Time.time > hgc.grabTime + hgc.grabDuration + 0.1f)
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
-                            hgc.grabTime = Time.time;
-                            hgc.targetPlayer = GetPlayerFromVRRig(lockTarget);
-                        }
-                    }
-                    else 
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
-                }
+                    LucyAttack(lockTarget.GetPlayer());
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -1158,18 +1168,46 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float lasttimethingblahblabhabja = 0f;
+        public static void LucyAttackAll()
+        {
+            HalloweenGhostChaser hgc = lucy;
+            if (SerializePatch.OverrideSerialization != null)
+            {
+                SerializePatch.OverrideSerialization = () => {
+                    MassSerialize(true, new[] { hgc.GetView });
+                    return false;
+                };
+            }
+
+            if (hgc.IsMine)
+            {
+                if (Time.time > hgc.grabTime + hgc.grabDuration + 0.1f)
+                {
+                    foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
+                        hgc.grabTime = Time.time;
+                        hgc.targetPlayer = player;
+                        SendSerialize(lucy.GetView, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
+                    }
+                }
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static float lucyDelay;
         public static void SpazLucy()
         {
             HalloweenGhostChaser hgc = lucy;
             if (hgc.IsMine)
             {
-                if (Time.time > lasttimethingblahblabhabja)
+                if (Time.time > lucyDelay)
                 {
                     hgc.timeGongStarted = hgc.timeGongStarted == 0f ? Time.time : 0f;
                     hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
                     hgc.isSummoned = true;
-                    lasttimethingblahblabhabja = Time.time + 0.1f;
+                    lucyDelay = Time.time + 0.1f;
                 }
             }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
@@ -1180,13 +1218,13 @@ namespace iiMenu.Mods
             HalloweenGhostChaser hgc = lucy;
             if (hgc.IsMine)
             {
-                if (Time.time > lasttimethingblahblabhabja)
+                if (Time.time > lucyDelay)
                 {
                     hgc.timeGongStarted = Time.time;
                     hgc.grabTime = Time.time;
                     hgc.currentState = hgc.currentState == HalloweenGhostChaser.ChaseState.Gong ? HalloweenGhostChaser.ChaseState.Grabbing : HalloweenGhostChaser.ChaseState.Gong;
                     hgc.targetPlayer = GetRandomPlayer(true);
-                    lasttimethingblahblabhabja = Time.time + 0.1f;
+                    lucyDelay = Time.time + 0.1f;
                 }
             }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
@@ -1205,6 +1243,146 @@ namespace iiMenu.Mods
             HalloweenGhostChaser hgc = lucy;
             if (hgc.IsMine)
                 hgc.currentSpeed = 1f;
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void SpawnLurker()
+        {
+            if (lurker.IsMine)
+                lurker.currentState = LurkerGhost.ghostState.patrol;
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void MoveLurkerGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (lurker.IsMine)
+                    {
+                        lurker.currentState = LurkerGhost.ghostState.seek;
+                        lurker.targetPosition = NewPointer.transform.position;
+                    }
+                    else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                }
+            }
+        }
+
+        public static void LurkerAttack(NetPlayer player)
+        {
+            if (lurker.IsMine)
+            {
+                if (Time.time > lucyDelay)
+                {
+                    if (lurker.targetPlayer != player)
+                    {
+                        lurker.ChangeState(LurkerGhost.ghostState.patrol);
+                        SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                    }
+
+                    lurker.currentState = LurkerGhost.ghostState.possess;
+                    lurker.targetPlayer = player;
+                    lucyDelay = Time.time + 0.1f;
+                }
+            }
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void LurkerAttackGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    LurkerAttack(lockTarget.GetPlayer());
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void LurkerAttackAll()
+        {
+            if (SerializePatch.OverrideSerialization != null)
+            {
+                SerializePatch.OverrideSerialization = () => {
+                    MassSerialize(true, new[] { lurker.GetView });
+                    return false;
+                };
+            }
+
+            if (lurker.IsMine)
+            {
+                if (lurker.currentState != LurkerGhost.ghostState.possess)
+                {
+                    foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        lurker.currentState = LurkerGhost.ghostState.possess;
+                        lurker.targetPlayer = player;
+                        SendSerialize(lucy.GetView, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
+                    }
+                }
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static float lurkerDelay;
+        public static void SpazLurker()
+        {
+            if (lurker.IsMine)
+            {
+                if (Time.time > lurkerDelay)
+                {
+                    lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.seek : LurkerGhost.ghostState.charge;
+                    lurker.targetPlayer = GetRandomPlayer(false);
+                    lurkerDelay = Time.time + 0.1f;
+                }
+            }
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void BreakLurker()
+        {
+            if (lurker.IsMine)
+            {
+                lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.seek : LurkerGhost.ghostState.charge;
+                lurker.targetPlayer = GetRandomPlayer(false);
+
+                SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+            }
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void AnnoyingLurker()
+        {
+            if (lurker.IsMine)
+            {
+                if (Time.time > lurkerDelay)
+                {
+                    lurker.currentState = lurker.currentState == LurkerGhost.ghostState.possess ? LurkerGhost.ghostState.charge : LurkerGhost.ghostState.possess;
+                    lurker.targetPlayer = GetRandomPlayer(true);
+                    lurkerDelay = Time.time + 0.1f;
+                }
+            }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
