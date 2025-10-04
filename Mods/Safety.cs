@@ -301,7 +301,10 @@ namespace iiMenu.Mods
                 }
             });
 
-            NotifiLib.information["Anti-Report"] = notifyText;
+            if (notifyText.IsNullOrEmpty())
+                NotifiLib.information.Remove("Anti-Report");
+            else
+                NotifiLib.information["Anti-Report"] = notifyText;
         }
 
         public static void AntiReportFRT(Player subject, bool doNotification = true)
