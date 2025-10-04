@@ -2895,6 +2895,10 @@ namespace iiMenu.Menu
             promptText.font = activeFont;
             promptText.text = PromptMessage;
 
+            string promptImageUrl = ExtractPromptImage(PromptMessage);
+            if (promptImageUrl != null)
+                promptText.text = promptText.text.Replace($"<{promptImageUrl}>", "");
+
             if (translate)
                 promptText.text = TranslateText(promptText.text, output => ReloadMenu());
 
@@ -2918,6 +2922,35 @@ namespace iiMenu.Menu
 
             component.localPosition = new Vector3(0.06f, 0f, IsText ? -0.025f : 0f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (promptImageUrl != null)
+            {
+                component.sizeDelta = new Vector2(component.sizeDelta.x, 0.03f);
+                component.localPosition = new Vector3(0.06f, 0f, 0.1f);
+
+                Image promptImage = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Image>();
+
+                if (promptMat == null)
+                    promptMat = new Material(promptImage.material);
+
+                promptImage.material = promptMat;
+                promptImage.material.SetTexture("_MainTex", LoadTextureFromURL(promptImageUrl, promptImageUrl.Split("/")[^1]));
+                promptImage.AddComponent<ImageColorChanger>().colors = textColors[isSearching ? 2 : 1];
+
+                RectTransform imageTransform = promptImage.GetComponent<RectTransform>();
+                imageTransform.localPosition = Vector3.zero;
+                imageTransform.sizeDelta = new Vector2(.2f, .2f);
+
+                imageTransform.localPosition = new Vector3(0.06f, 0f, -0.03f);
+
+                imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
 
             if (outlineText)
                 OutlineCanvasObject(promptText);
@@ -2975,7 +3008,6 @@ namespace iiMenu.Menu
 
                 if (uppercaseMode)
                     text.text = text.text.ToUpper();
-
 
                 RectTransform textRect = text.GetComponent<RectTransform>();
                 textRect.sizeDelta = new Vector2(0.2f, 0.03f);
@@ -3091,6 +3123,18 @@ namespace iiMenu.Menu
                 RoundObj(prevButton);
                 RoundObj(nextButton);
             }
+        }
+
+        private static string ExtractPromptImage(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return null;
+
+            var match = Regex.Match(input, @"<(?<url>https?://[^>]+)>");
+            if (match.Success)
+                return match.Groups["url"].Value;
+
+            return null;
         }
 
         private static GameObject AdvancedAddButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, ExtGradient color, Vector2? textSize, int arrowIndex)
@@ -6490,6 +6534,7 @@ jgs \_   _/ |Oo\
         public static Material GhostMaterial;
         public static Material CrystalMaterial;
         public static Material searchMat;
+        public static Material promptMat;
         public static Material returnMat;
         public static Material debugMat;
         public static Material donateMat;
