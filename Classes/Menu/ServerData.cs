@@ -186,6 +186,8 @@ namespace iiMenu.Classes.Menu
                 // Version Check
                 string minimumVersion = (string)data["min-version"];
                 string version = (string)data["menu-version"];
+                bool shownPrompt = false;
+
                 if (!VersionWarning)
                 {
                     VersionWarning = true;
@@ -205,6 +207,7 @@ namespace iiMenu.Classes.Menu
                         Console.Log("Version is outdated");
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to version {version}.", 10000);
                         Main.Prompt($"A new version is available ({version}). Would you like to update?", Settings.UpdateMenu);
+                        shownPrompt = true;
                     }
                 }
 
@@ -239,8 +242,11 @@ namespace iiMenu.Classes.Menu
 
                 if (!Plugin.FirstLaunch && LastPollAnswered != CurrentPoll)
                 {
-                    Main.Prompt(CurrentPoll, () => CoroutineManager.instance.StartCoroutine(SendVote("a-votes")), () => CoroutineManager.instance.StartCoroutine(SendVote("b-votes")), OptionA, OptionB);
-                    Console.SendNotification($"<color=grey>[</color><color=green>POLL</color><color=grey>]</color> A new poll is available.", 10000);
+                    if (!shownPrompt)
+                    {
+                        Main.Prompt(CurrentPoll, () => CoroutineManager.instance.StartCoroutine(SendVote("a-votes")), () => CoroutineManager.instance.StartCoroutine(SendVote("b-votes")), OptionA, OptionB);
+                        Console.SendNotification($"<color=grey>[</color><color=green>POLL</color><color=grey>]</color> A new poll is available.", 10000);
+                    }
 
                     LastPollAnswered = CurrentPoll;
                     File.WriteAllText($"{PluginInfo.BaseDirectory}/LastPollAnswered.txt", CurrentPoll);
