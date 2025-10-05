@@ -3022,26 +3022,26 @@ exit";
                     {
                         new ExtGradient // Released
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            transparent = true
                         },
                         new ExtGradient // Pressed
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.black)
+                            transparent = true
                         }
                     };
                     textColors = new[]
                     {
                         new ExtGradient // Title
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            colors = ExtGradient.GetSolidGradient(Color.black)
                         },
                         new ExtGradient // Button Released
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            colors = ExtGradient.GetSolidGradient(Color.black)
                         },
                         new ExtGradient // Button Clicked
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.black)
+                            colors = ExtGradient.GetSolidGradient(Color.white)
                         }
                     };
                     break;
