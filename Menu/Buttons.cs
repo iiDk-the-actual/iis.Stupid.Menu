@@ -2086,7 +2086,8 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Macros", method =() => currentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods." },
                 new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.RecordMacro, toolTip = "Record your macros with your <color=green>left trigger</color>." },
-                new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." }
+                new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." },
+                new ButtonInfo { buttonText = "Disable Macros", enableMethod =() => Movement.disableMacros = true, disableMethod =() => Movement.disableMacros = false, toolTip = "Disables all macros." }
             }, 
         };
 
