@@ -1766,6 +1766,59 @@ namespace iiMenu.Menu
                 OutlineCanvasObject(searchImage, 3);
         }
 
+        private static void AddUpdateButton()
+        {
+            GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
+                buttonObject.layer = 2;
+
+            buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+            buttonObject.transform.parent = menu.transform;
+            buttonObject.transform.rotation = Quaternion.identity;
+
+            buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+            buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
+
+            buttonObject.AddComponent<Button>().relatedText = "Update Button";
+
+            if (shouldOutline)
+                OutlineObj(buttonObject, !swapButtonColors);
+
+            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+            colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
+
+            if (shouldRound)
+                RoundObj(buttonObject);
+
+            Image searchImage = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Image>();
+            if (updateIcon == null)
+                updateIcon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.update.png");
+
+            if (updateMat == null)
+                updateMat = new Material(searchImage.material);
+
+            searchImage.material = updateMat;
+            searchImage.material.SetTexture("_MainTex", updateIcon);
+            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
+
+            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.03f, .03f);
+
+            imageTransform.localPosition = thinMenu ? new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f) : new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
+
+            imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(searchImage, 4);
+        }
+
         private static void AddReturnButton(bool offcenteredPosition)
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2313,6 +2366,8 @@ namespace iiMenu.Menu
             {
                 if (!acceptedDonations)
                     AddDonateButton();
+                else if (ServerData.OutdatedVersion)
+                    AddUpdateButton();
             }
 
             if (!disablePageButtons && !IsPrompting)
@@ -3457,6 +3512,13 @@ namespace iiMenu.Menu
 
             if (menu != null)
                 ReloadMenu();
+        }
+
+        private static string versionArchive;
+        public static void UpdatePrompt(string newVersion = null)
+        {
+            versionArchive ??= newVersion;
+            Prompt($"A new version is available ({newVersion}). Would you like to update?", Settings.UpdateMenu);
         }
 
         private static void LoadAssetBundle()
@@ -6569,6 +6631,7 @@ jgs \_   _/ |Oo\
         public static Material GhostMaterial;
         public static Material CrystalMaterial;
         public static Material searchMat;
+        public static Material updateMat;
         public static Material promptMat;
         public static Material returnMat;
         public static Material debugMat;
@@ -6628,6 +6691,7 @@ jgs \_   _/ |Oo\
         public static Texture2D returnIcon;
         public static Texture2D debugIcon;
         public static Texture2D donateIcon;
+        public static Texture2D updateIcon;
         public static Texture2D fixTexture;
         public static Texture2D customMenuBackgroundImage;
 
