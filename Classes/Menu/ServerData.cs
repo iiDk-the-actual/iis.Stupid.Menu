@@ -67,6 +67,7 @@ namespace iiMenu.Classes.Menu
 
         private static bool VersionWarning;
         private static bool GivenAdminMods;
+        public static bool OutdatedVersion;
 
         private static string LastPollAnswered;
 
@@ -199,14 +200,17 @@ namespace iiMenu.Classes.Menu
                     }
                     else if (VersionToNumber(version) < VersionToNumber(minimumVersion))
                     {
+                        OutdatedVersion = true;
                         Console.DisableMenu = true;
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a severely outdated version of the menu. For security, it has been disabled. Please update your menu.", 10000);
+                        Main.UpdatePrompt(version);
                     }
                     else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
                     {
+                        OutdatedVersion = true;
                         Console.Log("Version is outdated");
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to version {version}.", 10000);
-                        Main.Prompt($"A new version is available ({version}). Would you like to update?", Settings.UpdateMenu);
+                        Main.UpdatePrompt(version);
                         shownPrompt = true;
                     }
                 }
