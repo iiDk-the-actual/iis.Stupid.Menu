@@ -1120,6 +1120,37 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LucyHarassGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    HalloweenGhostChaser hgc = lucy;
+                    if (hgc.IsMine)
+                    {
+                        VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                        if (gunTarget && !PlayerIsLocal(gunTarget))
+                        {   if (Time.time > lucyDelay)
+                            {
+                                hgc.currentState = hgc.currentState == HalloweenGhostChaser.ChaseState.Grabbing ? HalloweenGhostChaser.ChaseState.Chasing : HalloweenGhostChaser.ChaseState.Grabbing;
+                                hgc.transform.position = gunTarget.transform.position + Vector3.up;
+                                hgc.currentSpeed = 0f;
+                                hgc.targetPlayer = GetPlayerFromVRRig(gunTarget);
+                                hgc.followTarget = gunTarget.transform;
+                                lucyDelay = Time.time + 0.1f;
+                            }
+                        }
+                    }
+                    else
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                }
+            }
+        }
+
         public static void LucyAttack(NetPlayer player)
         {
             HalloweenGhostChaser hgc = lucy;
@@ -1353,7 +1384,7 @@ namespace iiMenu.Mods
                 if (Time.time > lurkerDelay)
                 {
                     lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.seek : LurkerGhost.ghostState.charge;
-                    lurker.targetPlayer = GetRandomPlayer(false);
+                    lurker.targetPlayer = GetRandomPlayer(true);
                     lurkerDelay = Time.time + 0.1f;
                 }
             }
@@ -1365,7 +1396,7 @@ namespace iiMenu.Mods
             if (lurker.IsMine)
             {
                 lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.seek : LurkerGhost.ghostState.charge;
-                lurker.targetPlayer = GetRandomPlayer(false);
+                lurker.targetPlayer = GetRandomPlayer(true);
 
                 SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
             }
