@@ -2951,7 +2951,7 @@ namespace iiMenu.Menu
                 imageTransform.localPosition = Vector3.zero;
                 imageTransform.sizeDelta = new Vector2(.2f, .2f);
 
-                imageTransform.localPosition = new Vector3(0.06f, 0f, PromptMessage.IsNullOrEmpty() ? 0f : -0.03f);
+                imageTransform.localPosition = new Vector3(0.06f, 0f, promptText.text.IsNullOrEmpty() ? 0f : -0.03f);
                 imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 switch (fileExtension)
