@@ -454,7 +454,7 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region PC Search Keyboard
-                if (inTextInput)
+                if (inTextInput && isKeyboardPc)
                 {
                     List<KeyCode> keysPressed = new List<KeyCode>();
                     foreach (KeyCode keyCode in detectedKeyCodes)
