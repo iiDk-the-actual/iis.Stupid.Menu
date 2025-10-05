@@ -1176,7 +1176,7 @@ namespace iiMenu.Menu
                             {
                                 foreach (ButtonInfo v in buttonlist)
                                 {
-                                    if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                    if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro")))
                                         enabledMods.Add(v);
                                 }
                                 categoryIndex++;
@@ -2518,7 +2518,7 @@ namespace iiMenu.Menu
                         {
                             foreach (ButtonInfo v in buttonlist)
                             {
-                                if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro")))
                                     enabledMods.Add(v);
                             }
                             categoryIndex++;
@@ -5819,7 +5819,7 @@ namespace iiMenu.Menu
                 {
                     foreach (ButtonInfo v in buttonlist)
                     {
-                        if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                        if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro")))
                             enabledMods.Add(v.buttonText);
                     }
                     categoryIndex++;
@@ -6449,6 +6449,7 @@ jgs \_   _/ |Oo\
         public static bool advancedArraylist;
         public static bool flipArraylist;
         public static bool hideSettings;
+        public static bool hideMacros;
         public static bool hideTextOnCamera;
         public static bool hidePointer;
         public static bool incrementalButtons = true;
