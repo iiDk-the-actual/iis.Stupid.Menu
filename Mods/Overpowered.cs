@@ -1799,7 +1799,7 @@ namespace iiMenu.Mods
         }
 
         public static bool SnowballHandIndex;
-        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customNetworkedSize = -1)
+        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customNetworkedSize = null)
         {
             for (int i = 0; i < snowballMultiplicationFactor; i++)
             {
@@ -1823,18 +1823,14 @@ namespace iiMenu.Mods
                     DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
 
                     GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
-                    GrowingSnowball.SetSnowballActiveLocal(true);
 
                     switch (Mode)
                     {
                         case 0:
                             int increment = GetProjectileIncrement(Pos, Vel, snowballScale);
 
-                            GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped(default(PhotonMessageInfo)));
-                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize ?? snowballScale }, new PhotonMessageInfoWrapped(default(PhotonMessageInfo)));
-
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
-                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
+                            GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize ?? snowballScale);
+                            GrowingSnowball.snowballThrowEvent.RaiseAll(Pos, Vel, increment);
                             break;
                         case 1:
                             GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
@@ -1870,6 +1866,9 @@ namespace iiMenu.Mods
                             });
                             break;
                     }
+
+                    GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
+                    nextGrowingSnowball.SetSnowballActiveLocal(true);
                 }
                 catch { }
             }
