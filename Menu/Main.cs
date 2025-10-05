@@ -2809,8 +2809,7 @@ namespace iiMenu.Menu
             }
             catch { }
 
-            if (promptVideoPlayer != null)
-                promptVideoPlayer.Stop();
+            promptVideoPlayer?.Stop();
 
             smoothTargetPosition = Vector3.zero;
             smoothTargetRotation = Quaternion.identity;
@@ -2824,6 +2823,14 @@ namespace iiMenu.Menu
 
                         if (zeroGravityMenu)
                             comp.useGravity = false;
+
+                        if (menuCollisions)
+                        {
+                            GameObject collision = new GameObject("Collision");
+                            collision.transform.SetParent(menuBackground.transform, false);
+                            collision.layer = 3;
+                            collision.AddComponent<BoxCollider>();
+                        }
 
                         if (rightHand || (bothHands && openedwithright))
                         {
@@ -2867,10 +2874,14 @@ namespace iiMenu.Menu
                         }
                         catch { }
                     }
-                }
 
-                Destroy(menu);
-                menu = null;
+                    Destroy(menu, 5f);
+                    menu = null;
+                } else
+                {
+                    Destroy(menu);
+                    menu = null;
+                }
 
                 Destroy(reference);
                 reference = null;
@@ -6325,6 +6336,7 @@ jgs \_   _/ |Oo\
         public static bool transparentMenu;
         public static bool crystallizemenu;
         public static bool zeroGravityMenu;
+        public static bool menuCollisions;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
         public static bool outlineText;
