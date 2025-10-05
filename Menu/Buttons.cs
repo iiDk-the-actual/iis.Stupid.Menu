@@ -24,7 +24,6 @@ using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Classes.Menu;
-using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
