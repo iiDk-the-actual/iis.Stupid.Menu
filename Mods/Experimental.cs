@@ -210,6 +210,12 @@ namespace iiMenu.Mods
             Process.Start(filePath);
         }
 
+        public static void BlankPage()
+        {
+            currentCategoryName = "Temporary Category";
+            Buttons.buttons[29] = Array.Empty<ButtonInfo>();
+        }
+
         public static void CopyCustomGamemodeScript()
         {
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Copied map script to your clipboard.", 5000);
