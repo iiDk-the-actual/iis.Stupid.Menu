@@ -1315,22 +1315,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void DespawnLurker()
+        {
+            if (lurker.IsMine)
+            {
+                lurker.currentState = LurkerGhost.ghostState.patrol;
+            }
+            else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
         public static void LurkerAttack(NetPlayer player)
         {
             if (lurker.IsMine)
             {
-                if (Time.time > lucyDelay)
+                if (lurker.targetPlayer != player)
                 {
-                    if (lurker.targetPlayer != player)
-                    {
-                        lurker.ChangeState(LurkerGhost.ghostState.patrol);
-                        SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
-                    }
-
-                    lurker.currentState = LurkerGhost.ghostState.possess;
-                    lurker.targetPlayer = player;
-                    lucyDelay = Time.time + 0.1f;
+                    lurker.ChangeState(LurkerGhost.ghostState.patrol);
+                    SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 }
+
+                lurker.currentState = LurkerGhost.ghostState.possess;
+                lurker.targetPlayer = player;
             }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
@@ -1407,7 +1412,7 @@ namespace iiMenu.Mods
         {
             if (lurker.IsMine)
             {
-                lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.seek : LurkerGhost.ghostState.charge;
+                lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.possess : LurkerGhost.ghostState.charge;
                 lurker.targetPlayer = GetRandomPlayer(true);
 
                 SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
