@@ -6452,7 +6452,7 @@ jgs \_   _/ |Oo\
 
         public static bool stackNotifications;
         public static bool narrateNotifications;
-        public static bool hideBrackets;
+        public static bool hidePrefix;
         public static bool disableNotifications;
         public static bool disableMasterClientNotifications;
         public static bool disableRoomNotifications;
