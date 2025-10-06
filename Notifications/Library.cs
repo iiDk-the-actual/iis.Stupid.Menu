@@ -294,7 +294,7 @@ namespace iiMenu.Notifications
                     if (inputTextColor != "green")
                         NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
                     
-                    if (hideBrackets)
+                    if (hidePrefix)
                         NotificationText = NotificationText.Replace("[", "").Replace("]", "");
 
                     NotificationText = NotificationText.TrimEnd('\n', '\r');
