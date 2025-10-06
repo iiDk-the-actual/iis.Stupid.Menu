@@ -931,8 +931,12 @@ namespace iiMenu.Menu
                 {
                     if (!legacyGhostview && GhostRig == null)
                     {
+                        // Patch to fix object being assigned as offlineVRRig for one frame
+                        VRRig.LocalRig.enabled = false;
                         GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
                         GhostRig.headBodyOffset = Vector3.zero;
+
+                        VRRig.LocalRig.enabled = true;
 
                         GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                         GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
