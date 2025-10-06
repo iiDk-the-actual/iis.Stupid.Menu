@@ -700,7 +700,7 @@ namespace iiMenu.Classes.Menu
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log("Failed to load custom script: " + request.error);
+                Log("Failed to load custom script: " + request.error);
                 yield break;
             }
             string response = request.downloadHandler.text;

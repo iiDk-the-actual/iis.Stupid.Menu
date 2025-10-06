@@ -931,12 +931,13 @@ namespace iiMenu.Menu
                 {
                     if (!legacyGhostview && GhostRig == null)
                     {
-                        // Patch to fix object being assigned as offlineVRRig for one frame
-                        VRRig.LocalRig.enabled = false;
+                        // Fix because I don't know what's wrong but GorillaTagger gets really mad when there's two rigs in existence
+                        VRRig.LocalRig.gameObject.SetActive(false);
+
                         GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
                         GhostRig.headBodyOffset = Vector3.zero;
 
-                        VRRig.LocalRig.enabled = true;
+                        VRRig.LocalRig.gameObject.SetActive(true);
 
                         GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                         GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);

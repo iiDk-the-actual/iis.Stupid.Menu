@@ -30,6 +30,7 @@ namespace iiMenu.Patches.Menu
             !__instance.isLocal;
     }
 
+    // Because of ghost view
     [HarmonyPatch(typeof(VRRig), "Awake")]
     public class RigPatch2
     {
