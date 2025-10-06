@@ -1135,8 +1135,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void NameTags()
         {
-            Dictionary<VRRig, GameObject> _nametags = nametags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _nametags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1187,8 +1186,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject>();
         public static void VelocityTags()
         {
-            Dictionary<VRRig, GameObject> _velnametags = velnametags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _velnametags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1242,8 +1240,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject>();
         public static void FPSTags()
         {
-            Dictionary<VRRig, GameObject> _FPSnametags = FPSnametags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _FPSnametags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1297,8 +1294,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> idNameTags = new Dictionary<VRRig, GameObject>();
         public static void IDTags()
         {
-            Dictionary<VRRig, GameObject> _idNameTags = idNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _idNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in idNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1353,8 +1349,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> platformTags = new Dictionary<VRRig, GameObject>();
         public static void PlatformTags()
         {
-            Dictionary<VRRig, GameObject> _platformTags = platformTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in platformTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1409,8 +1404,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();
         public static void CreationDateTags()
         {
-            Dictionary<VRRig, GameObject> _creationDateTags = creationDateTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _creationDateTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in creationDateTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1465,8 +1459,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> pingNameTags = new Dictionary<VRRig, GameObject>();
         public static void PingTags()
         {
-            Dictionary<VRRig, GameObject> _pingNameTags = pingNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _pingNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in pingNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1521,8 +1514,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject>();
         public static void TurnTags()
         {
-            Dictionary<VRRig, GameObject> _turnNameTags = turnNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _turnNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1579,8 +1571,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject>();
         public static void TaggedTags()
         {
-            Dictionary<VRRig, GameObject> _taggedNameTags = taggedNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _taggedNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1727,8 +1718,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
         public static void ModTags()
         {
-            Dictionary<VRRig, GameObject> _modNameTags = modNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _modNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1833,8 +1823,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject>();
         public static void CosmeticTags()
         {
-            Dictionary<VRRig, GameObject> _cosmeticNameTags = cosmeticNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _cosmeticNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -1994,8 +1983,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
         public static void VerifiedTags()
         {
-            Dictionary<VRRig, GameObject> _verifiedNameTags = verifiedNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _verifiedNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in verifiedNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
@@ -2068,8 +2056,7 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> crashedNameTags = new Dictionary<VRRig, GameObject>();
         public static void CrashedTags()
         {
-            Dictionary<VRRig, GameObject> _crashedNameTags = crashedNameTags;
-            foreach (KeyValuePair<VRRig, GameObject> nametag in _crashedNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
