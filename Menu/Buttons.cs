@@ -1471,6 +1471,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Move Lurker Gun", method = Overpowered.MoveLurkerGun, toolTip = "Moves the lurker ghost to wherever your hand desires." },
 
+                new ButtonInfo { buttonText = "Despawn Lurker", method = Overpowered.DespawnLurker, isTogglable = false, toolTip = "Despawns the lurker ghost." },
                 new ButtonInfo { buttonText = "Lurker Attack Self", method =() => Overpowered.LurkerAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes the lurker ghost attack you." },
                 new ButtonInfo { buttonText = "Lurker Attack Gun", method = Overpowered.LurkerAttackGun, toolTip = "Makes the lurker ghost attack whoever your hand desires." },
                 new ButtonInfo { buttonText = "Lurker Attack All", method = Overpowered.LurkerAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes the lurker ghost attack everyone in the room." },
