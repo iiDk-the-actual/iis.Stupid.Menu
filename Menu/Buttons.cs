@@ -1459,11 +1459,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes lucy attack you." },
                 new ButtonInfo { buttonText = "Lucy Attack Gun", method = Overpowered.LucyAttackGun, toolTip = "Makes lucy attack whoever your hand desires." },
                 new ButtonInfo { buttonText = "Lucy Attack All", method = Overpowered.LucyAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes lucy attack everyone in the room." },
+                
+                new ButtonInfo { buttonText = "Lucy Harass Gun", method = Overpowered.LucyHarassGun, toolTip = "Makes lucy attack harass your hand desires." },
 
                 new ButtonInfo { buttonText = "Spaz Lucy", method = Overpowered.SpazLucy, toolTip = "Gives lucy a seizure." },
                 new ButtonInfo { buttonText = "Break Lucy", method =() => { Overpowered.SpazLucy(); Overpowered.lucyDelay = 0f; }, toolTip = "Breaks lucy." },
                 new ButtonInfo { buttonText = "Annoying Lucy", method = Overpowered.AnnoyingLucy, toolTip = "Makes lucy really annoying, by attacking everyone and making sounds of the bells." },
-                new ButtonInfo { buttonText = "Lucy Harass Gun", method = Overpowered.LucyHarassGun, toolTip = "Makes lucy attack harass your hand desires." },
 
                 new ButtonInfo { buttonText = "Fast Lucy", method = Overpowered.FastLucy, toolTip = "Makes lucy become really fast." },
                 new ButtonInfo { buttonText = "Slow Lucy", method = Overpowered.SlowLucy, toolTip = "Makes lucy become really slow." },
