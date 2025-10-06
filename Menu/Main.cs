@@ -931,8 +931,16 @@ namespace iiMenu.Menu
                 {
                     if (!legacyGhostview && GhostRig == null)
                     {
-                        GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
+                        GameObject ghostRigHolder = new GameObject("ghostRigHolder");
+                        ghostRigHolder.SetActive(false);
+
+                        GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation, ghostRigHolder.transform);
                         GhostRig.headBodyOffset = Vector3.zero;
+
+                        GhostRig.gameObject.SetActive(false);
+                        GhostRig.transform.SetParent(VRRig.LocalRig.transform.parent);
+
+                        Destroy(ghostRigHolder);
 
                         GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                         GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
@@ -940,10 +948,8 @@ namespace iiMenu.Menu
                         GhostRig.GetComponent<OwnershipGaurd>().enabled = false; 
                             
                         Visuals.FixRigMaterialESPColors(GhostRig);
-                            
-                        GhostRig.mainSkin.enabled = false;
-                        GhostRig.enabled = false;
-                        GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+
+                        GhostRig.transform.position = Vector3.one * float.MaxValue;
                     }
 
                     if (GhostMaterial == null)
@@ -971,11 +977,10 @@ namespace iiMenu.Menu
 
                         if (legacyGhostview)
                         {
-                            if (GhostRig.enabled)
+                            if (GhostRig.gameObject.activeSelf)
                             {
-                                GhostRig.mainSkin.enabled = false;
-                                GhostRig.enabled = false;
-                                GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                                GhostRig.gameObject.SetActive(false);
+                                GhostRig.transform.position = Vector3.one * float.MaxValue;
                             }
 
                             legacyGhostViewLeft.SetActive(true);
@@ -988,8 +993,7 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            GhostRig.enabled = true;
-                            GhostRig.mainSkin.enabled = true;
+                            GhostRig.gameObject.SetActive(true);
 
                             Color ghm = color;
                             ghm.a = 0.5f;
@@ -1000,12 +1004,10 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        GhostRig.mainSkin.enabled = false;
-                        GhostRig.enabled = false;
-                        GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                        GhostRig.gameObject.SetActive(false);
+                        GhostRig.transform.position = Vector3.one * float.MaxValue;
 
                         legacyGhostViewLeft.SetActive(false);
-
                         legacyGhostViewRight.SetActive(false);
                     }
                 }
