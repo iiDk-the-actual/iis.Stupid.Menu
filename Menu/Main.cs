@@ -5284,8 +5284,14 @@ namespace iiMenu.Menu
         }
 
         public static readonly Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
-        public static void OnPlayerSerialize(VRRig rig) =>
-            playerPing[rig] = (int)Math.Abs(rig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp);
+
+        public static void OnPlayerSerialize(VRRig rig)
+        {
+            double ping = Math.Abs((rig.velocityHistoryList[0].time - PhotonNetwork.Time) * 1000);
+            int safePing = (int)Math.Clamp(Math.Round(ping), 0, int.MaxValue);
+
+            playerPing[rig] = safePing;
+        }
 
         public static bool onlySerializeNecessary;
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
