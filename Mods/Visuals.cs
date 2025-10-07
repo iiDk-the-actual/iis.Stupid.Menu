@@ -2082,7 +2082,7 @@ namespace iiMenu.Mods
                     {
                         if (!crashedNameTags.ContainsKey(vrrig))
                         {
-                            double crashPower = Math.Abs(vrrig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp);
+                            int crashPower = vrrig.GetPing();
                             bool crashed = crashPower > 500;
 
                             if (crashed)
@@ -2136,10 +2136,10 @@ namespace iiMenu.Mods
 
         public static void DisableCrashedTags()
         {
-            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTags)
                 Object.Destroy(nametag.Value);
 
-            modNameTags.Clear();
+            crashedNameTags.Clear();
         }
 
         public static void FixRigColors()
