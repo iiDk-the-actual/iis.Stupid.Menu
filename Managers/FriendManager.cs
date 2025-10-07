@@ -1305,6 +1305,9 @@ namespace iiMenu.Managers
                                 if (NetworkSystem.Instance.InRoom && PhotonNetwork.CurrentRoom.Name == to)
                                     break;
 
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
                                 Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, JoinType.Solo));
@@ -1318,6 +1321,9 @@ namespace iiMenu.Managers
                                 if (!NetworkSystem.Instance.InRoom)
                                     break;
 
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
 
                                 Prompt($"{friendName} has requested an invite from you, would you like to invite them?", () => InviteFriend(from));
@@ -1327,6 +1333,9 @@ namespace iiMenu.Managers
                             {
                                 if (!PreferenceSharing)
                                     break;
+
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
 
@@ -1338,6 +1347,9 @@ namespace iiMenu.Managers
                             {
                                 string message = (string)obj["message"];
                                 int time = (int)obj["time"];
+
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
                                 NotifiLib.SendNotification(message, time);
                                 break;
