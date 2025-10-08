@@ -2065,7 +2065,7 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    bool crashed = Math.Abs(nametag.Key.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp) > 500;
+                    bool crashed = nametag.Key.GetTruePing() > 500;
                     if (!crashed)
                     {
                         Object.Destroy(nametag.Value);
