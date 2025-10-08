@@ -3781,7 +3781,7 @@ Piece Name: {gunTarget.name}";
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - lockTarget.headMesh.transform.position;
-                    SendBarrelProjectile(lockTarget.transform.position + (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position + (lockTarget.headMesh.transform.position - new Vector3(-71.33718f, 101.4977f, -93.09029f)).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
                 }
 
                 if (GetGunInput(true))
@@ -3813,7 +3813,7 @@ Piece Name: {gunTarget.name}";
                 if (PlayerIsLocal(TargetRig)) continue;
 
                 Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - TargetRig.headMesh.transform.position;
-                SendBarrelProjectile(TargetRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+                SendBarrelProjectile(TargetRig.transform.position + (TargetRig.headMesh.transform.position - new Vector3(-71.33718f, 101.4977f, -93.09029f)).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
 
                 if (Time.time > barrelAllDelay)
                     throwableProjectileTimeout = 0f;
@@ -3876,7 +3876,7 @@ Piece Name: {gunTarget.name}";
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    SendBarrelProjectile(lockTarget.transform.position + (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+                    SendBarrelProjectile(lockTarget.transform.position + (lockTarget.transform.position - new Vector3(-71.14215f, 13.73829f, -95.17883f)).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
 
                 if (GetGunInput(true))
                 {
@@ -3901,7 +3901,7 @@ Piece Name: {gunTarget.name}";
         public static void CityKickAll()
         {
             VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position + (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+            SendBarrelProjectile(TargetRig.transform.position + (TargetRig.transform.position - new Vector3(-71.14215f, 13.73829f, -95.17883f)).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
         }
 
         private static float elevatorKickDelay;
@@ -3919,18 +3919,15 @@ Piece Name: {gunTarget.name}";
                     {
                         elevatorKickDelay = Time.time + 0.5f;
 
-                        Overpowered.SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { Receivers = ReceiverGroup.Others }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
+                        Overpowered.SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { TargetActors = new[] { gunTarget.GetPlayer().ActorNumber } }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
                         RPCProtection();
                     }
                 }
             }
         }
 
-        public static void ElevatorKickAll()
-        {
-            VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
-        }
+        public static void ElevatorKickAll() =>
+            Overpowered.SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { Receivers = ReceiverGroup.Others }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
 
         public static void WhiteColorTarget(VRRig rig)
         {
