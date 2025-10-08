@@ -68,7 +68,7 @@ namespace iiMenu.Extensions
         }
 
         public static int GetTruePing(this VRRig rig) =>
-            GetTruePing(rig);
+            Menu.Main.GetTruePing(rig);
 
         public static string GetName(this VRRig rig) =>
             RigManager.GetPlayerFromVRRig(rig)?.NickName ?? "null";
