@@ -2082,7 +2082,7 @@ namespace iiMenu.Mods
                     {
                         if (!crashedNameTags.ContainsKey(vrrig))
                         {
-                            int crashPower = vrrig.GetPing();
+                            int crashPower = vrrig.GetTruePing();
                             bool crashed = crashPower > 500;
 
                             if (crashed)

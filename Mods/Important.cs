@@ -440,7 +440,7 @@ exit";
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
-                bool thereIsTagLag = Math.Abs(masterRig.velocityHistoryList[0].time * 1000 - PhotonNetwork.ServerTimestamp) > 500;
+                bool thereIsTagLag = masterRig.GetTruePing() > 500;
 
                 switch (thereIsTagLag)
                 {

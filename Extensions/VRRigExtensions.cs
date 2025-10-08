@@ -67,6 +67,9 @@ namespace iiMenu.Extensions
                 return PhotonNetwork.GetPing();
         }
 
+        public static int GetTruePing(this VRRig rig) =>
+            GetTruePing(rig);
+
         public static string GetName(this VRRig rig) =>
             RigManager.GetPlayerFromVRRig(rig)?.NickName ?? "null";
 
