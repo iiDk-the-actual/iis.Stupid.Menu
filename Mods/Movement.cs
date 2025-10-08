@@ -628,6 +628,8 @@ namespace iiMenu.Mods
             bool D = UnityInput.Current.GetKey(KeyCode.D);
             bool Space = UnityInput.Current.GetKey(KeyCode.Space);
             bool Ctrl = UnityInput.Current.GetKey(KeyCode.LeftControl);
+            bool Shift = UnityInput.Current.GetKey(KeyCode.LeftShift);
+            bool Alt = UnityInput.Current.GetKey(KeyCode.LeftAlt);
 
             if (stationary || W || A || S || D || Space || Ctrl)
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
@@ -666,8 +668,10 @@ namespace iiMenu.Mods
                 }
 
                 float speed = flySpeed;
-                if (UnityInput.Current.GetKey(KeyCode.LeftShift))
+                if (Shift)
                     speed *= 2f;
+                else if (Alt)
+                    speed /= 2;
 
                 if (W)
                     GorillaTagger.Instance.rigidbody.transform.position += GTPlayer.Instance.rightControllerTransform.parent.forward * (Time.deltaTime * speed);
