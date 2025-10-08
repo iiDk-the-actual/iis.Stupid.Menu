@@ -3531,7 +3531,7 @@ namespace iiMenu.Menu
         public static void UpdatePrompt(string newVersion = null)
         {
             versionArchive ??= newVersion;
-            Prompt($"A new version is available ({newVersion}). Would you like to update?", Settings.UpdateMenu);
+            Prompt($"A new version is available ({versionArchive}). Would you like to update?", Settings.UpdateMenu);
         }
 
         private static void LoadAssetBundle()
