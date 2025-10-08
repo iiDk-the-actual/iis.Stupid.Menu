@@ -1273,6 +1273,22 @@ namespace iiMenu.Mods
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
+        public static void MoveLucyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (lucy.IsMine)
+                        lucy.transform.position = NewPointer.transform.position + Vector3.up;
+                    else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                }
+            }
+        }
+
         public static void FastLucy()
         {
             HalloweenGhostChaser hgc = lucy;
@@ -1306,10 +1322,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     if (lurker.IsMine)
-                    {
-                        lurker.currentState = LurkerGhost.ghostState.seek;
-                        lurker.targetPosition = NewPointer.transform.position;
-                    }
+                        lurker.transform.position = NewPointer.transform.position + Vector3.up;
                     else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
                 }
             }
