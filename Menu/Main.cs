@@ -5285,12 +5285,15 @@ namespace iiMenu.Menu
 
         public static readonly Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
 
-        public static void OnPlayerSerialize(VRRig rig)
+        public static void OnPlayerSerialize(VRRig rig) =>
+            playerPing[rig] = GetTruePing(rig);
+
+        public static int GetTruePing(VRRig rig)
         {
             double ping = Math.Abs((rig.velocityHistoryList[0].time - PhotonNetwork.Time) * 1000);
             int safePing = (int)Math.Clamp(Math.Round(ping), 0, int.MaxValue);
 
-            playerPing[rig] = safePing;
+            return safePing;
         }
 
         public static bool onlySerializeNecessary;
