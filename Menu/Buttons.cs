@@ -1464,6 +1464,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lucy Attack All", method = Overpowered.LucyAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes lucy attack everyone in the room." },
                 
                 new ButtonInfo { buttonText = "Lucy Harass Gun", method = Overpowered.LucyHarassGun, toolTip = "Makes lucy attack harass your hand desires." },
+                new ButtonInfo { buttonText = "Move Lucy Gun", method = Overpowered.MoveLucyGun, toolTip = "Moves lucy to wherever your hand desires." },
 
                 new ButtonInfo { buttonText = "Spaz Lucy", method = Overpowered.SpazLucy, toolTip = "Gives lucy a seizure." },
                 new ButtonInfo { buttonText = "Break Lucy", method =() => { Overpowered.SpazLucy(); Overpowered.lucyDelay = 0f; }, toolTip = "Breaks lucy." },
@@ -1471,13 +1472,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fast Lucy", method = Overpowered.FastLucy, toolTip = "Makes lucy become really fast." },
                 new ButtonInfo { buttonText = "Slow Lucy", method = Overpowered.SlowLucy, toolTip = "Makes lucy become really slow." },
-
-                new ButtonInfo { buttonText = "Move Lurker Gun", method = Overpowered.MoveLurkerGun, toolTip = "Moves the lurker ghost to wherever your hand desires." },
-
-                new ButtonInfo { buttonText = "Despawn Lurker", method = Overpowered.DespawnLurker, isTogglable = false, toolTip = "Despawns the lurker ghost." },
+                
                 new ButtonInfo { buttonText = "Lurker Attack Self", method =() => Overpowered.LurkerAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes the lurker ghost attack you." },
                 new ButtonInfo { buttonText = "Lurker Attack Gun", method = Overpowered.LurkerAttackGun, toolTip = "Makes the lurker ghost attack whoever your hand desires." },
                 new ButtonInfo { buttonText = "Lurker Attack All", method = Overpowered.LurkerAttackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes the lurker ghost attack everyone in the room." },
+
+                new ButtonInfo { buttonText = "Move Lurker Gun", method = Overpowered.MoveLurkerGun, toolTip = "Moves the lurker ghost to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Despawn Lurker", method = Overpowered.DespawnLurker, isTogglable = false, toolTip = "Despawns the lurker ghost." },
 
                 new ButtonInfo { buttonText = "Spaz Lurker", method = Overpowered.SpazLurker, toolTip = "Gives the lurker ghost a seizure." },
                 new ButtonInfo { buttonText = "Break Lurker", method = Overpowered.BreakLurker, toolTip = "Breaks the lurker ghost." },
