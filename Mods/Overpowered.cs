@@ -3209,7 +3209,17 @@ namespace iiMenu.Mods
         }
 
         public static void SetRoomStatus(bool status, bool props = false)
-        {   
+        {
+            if (props) /*&& NetworkSystem.Instance.SessionIsPrivate*/ /* can only do this in privates? don't think so, but will investigate further - kingofnetflix */
+            {
+                string gameMode = NetworkSystem.Instance.GameModeString.Replace("private", "forest"); /*PhotonNetworkController.Instance.currentJoinTrigger.GetDesiredNetworkZone()*/ /* this doesn't work for private rooms, just returns private, i need the map name - kingofnetflix */
+                Hashtable hashtable = new Hashtable
+                {
+                    { "gameMode", gameMode },
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            }
+
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
                 { 251, new Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },

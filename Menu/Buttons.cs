@@ -1680,6 +1680,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomStatus(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
                 new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomStatus(false), isTogglable = false, toolTip = "Unlocks the room so anyone can join."},
 
+                new ButtonInfo { buttonText = "Make Room Public", method =() => Overpowered.SetRoomStatus(true, true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
+                new ButtonInfo { buttonText = "Make Room Private", method =() => Overpowered.SetRoomStatus(false/*, true*/), isTogglable = false, toolTip = "Unlocks the room so anyone can join."},
+
                 new ButtonInfo { buttonText = "Destroy Gun", method = Overpowered.DestroyGun, toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method = Overpowered.DestroyAll, isTogglable = false, toolTip = "Block new players from seeing everyone."},
 
