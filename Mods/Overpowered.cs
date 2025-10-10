@@ -24,6 +24,7 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using GorillaTagScripts;
 using iiMenu.Extensions;
 using iiMenu.Managers;
@@ -3207,12 +3208,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SetRoomLock(bool status)
+        public static void SetRoomStatus(bool status)
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
                 { 251, new Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },
-                { 250, false },
+                { 250, true },
                 { 231, null }
             };
 
@@ -3222,7 +3223,6 @@ namespace iiMenu.Mods
                 SendOptions.SendReliable
             );
         }
-
         public static void DestroyGun()
         {
             if (GetGunInput(false))
