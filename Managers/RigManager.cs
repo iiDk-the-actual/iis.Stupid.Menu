@@ -96,10 +96,10 @@ namespace iiMenu.Managers
 
             PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = userId }, delegate (GetAccountInfoResult result) // Who designed this
             {
-                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
-                creationDateCache[userId] = date;
+                string creationDate = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
+                creationDateCache[userId] = creationDate;
 
-                onTranslated?.Invoke(date);
+                onTranslated?.Invoke(creationDate);
             }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke(date); });
         }
     }

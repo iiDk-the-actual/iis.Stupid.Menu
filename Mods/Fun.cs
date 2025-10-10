@@ -336,11 +336,7 @@ namespace iiMenu.Mods
                     FriendshipGroupDetection.Instance.myBraceletColor = targetColor;
 
                     List<int> members = new List<int> { PhotonNetwork.LocalPlayer.ActorNumber };
-                    foreach (Player player in PhotonNetwork.PlayerListOthers)
-                    {
-                        if (FriendshipGroupDetection.Instance.IsInMyGroup(player.UserId) || provisionalMembers.Contains(player.ActorNumber))
-                            members.Add(player.ActorNumber);
-                    }
+                    members.AddRange(from player in PhotonNetwork.PlayerListOthers where FriendshipGroupDetection.Instance.IsInMyGroup(player.UserId) || provisionalMembers.Contains(player.ActorNumber) select player.ActorNumber);
                     FriendshipGroupDetection.Instance.SendPartyFormedRPC(FriendshipGroupDetection.PackColor(targetColor), members.ToArray(), false);
                     RPCProtection();
                 }
@@ -448,26 +444,32 @@ namespace iiMenu.Mods
 
             try
             {
-                if (general is NetPlayer player)
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", NetPlayerToPlayer(player), parameters);
-                else if (general is RpcTarget target)
+                switch (general)
                 {
-                    if (target == RpcTarget.All)
+                    case NetPlayer player:
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", NetPlayerToPlayer(player), parameters);
+                        break;
+                    case RpcTarget target:
                     {
-                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
-                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.splashEffect, splashPosition, splashRotation, splashScale).GetComponent<WaterSplashEffect>().PlayEffect(bigSplash, enteringWater, splashScale);
+                        if (target == RpcTarget.All)
+                        {
+                            ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
+                            ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.splashEffect, splashPosition, splashRotation, splashScale).GetComponent<WaterSplashEffect>().PlayEffect(bigSplash, enteringWater, splashScale);
 
-                        target = RpcTarget.Others;
+                            target = RpcTarget.Others;
+                        }
+
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", target, parameters);
+                        break;
                     }
+                    case int[] targets:
+                    {
+                        if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                            ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
 
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", target, parameters);
-                }
-                else if (general is int[] targets)
-                {
-                    if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
-                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f);
-
-                    Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", new RaiseEventOptions { TargetActors = targets }, parameters);
+                        Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", new RaiseEventOptions { TargetActors = targets }, parameters);
+                        break;
+                    }
                 }
             } catch { }
 
@@ -497,10 +499,10 @@ namespace iiMenu.Mods
                     {
                         if (Time.time > splashDel)
                         {
-                            Vector3 position = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.position : lockTarget.leftHandTransform.position;
-                            Quaternion rotation = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.rotation : lockTarget.leftHandTransform.rotation;
+                            Vector3 splashPosition = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.position : lockTarget.leftHandTransform.position;
+                            Quaternion splashRotation = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.rotation : lockTarget.leftHandTransform.rotation;
 
-                            BetaWaterSplash(position, rotation, 4f, 100f, true, false);
+                            BetaWaterSplash(splashPosition, splashRotation, 4f, 100f, true, false);
                             splashDel = Time.time + 0.1f;
                         }
                     }
@@ -646,13 +648,10 @@ namespace iiMenu.Mods
             keyboardTrackerEnabled = true;
             if (keyLogs.Count > 0)
             {
-                foreach (object[] keylog in keyLogs)
+                foreach (var keylog in keyLogs.Where(keylog => Time.time > (float)keylog[2]).ToList())
                 {
-                    if (Time.time > (float)keylog[2])
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>KEYLOGS</color><color=grey>]</color> " + (string)keylog[1], 5000);
-                        keyLogs.Remove(keylog);
-                    }
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>KEYLOGS</color><color=grey>]</color> " + (string)keylog[1], 5000);
+                    keyLogs.Remove(keylog);
                 }
             }
         }
@@ -822,13 +821,10 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer == GetPlayerFromVRRig(gunTarget)))
                         {
-                            if (line.linePlayer == GetPlayerFromVRRig(gunTarget))
-                            {
-                                muteDelay = Time.time + 0.5f;
-                                line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
-                            }
+                            muteDelay = Time.time + 0.5f;
+                            line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
                         }
                     }
                 }
@@ -837,20 +833,14 @@ namespace iiMenu.Mods
 
         public static void MuteAll()
         {
-            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-            {
-                if (!line.muteButton.isAutoOn)
-                    line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-            }
+            foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.muteButton.isAutoOn))
+                line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
         }
 
         public static void UnmuteAll()
         {
-            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-            {
-                if (line.muteButton.isAutoOn)
-                    line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-            }
+            foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.muteButton.isAutoOn))
+                line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
         }
 
         public static void ReportGun()
@@ -894,16 +884,11 @@ namespace iiMenu.Mods
 
                     try
                     {
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where line.linePlayer == GetPlayerFromVRRig(lockTarget) && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f select line.reportButton.gameObject.transform)
                         {
-                            if (line.linePlayer == GetPlayerFromVRRig(lockTarget) && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
-                            {
-                                Transform report = line.reportButton.gameObject.transform;
-
-                                VRRig.LocalRig.transform.position = report.transform.position;
-                                VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
-                                VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
-                            }
+                            VRRig.LocalRig.transform.position = report.transform.position;
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
                         }
                     }
                     catch { }
@@ -943,16 +928,11 @@ namespace iiMenu.Mods
             try
             {
                 Player triggerAntiReportTarget = GetRandomPlayer(false);
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f select line.reportButton.gameObject.transform)
                 {
-                    if (NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
-                    {
-                        Transform report = line.reportButton.gameObject.transform;
-
-                        VRRig.LocalRig.transform.position = report.transform.position;
-                        VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
-                    }
+                    VRRig.LocalRig.transform.position = report.transform.position;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
                 }
             }
             catch { }
@@ -1297,21 +1277,12 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
-
-                if (plr.GetGameEntityId(GamePlayer.GetHandIndex(false)) == null)
+                foreach (var entity in GetObject("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges.Select(grBadge => grBadge.gameEntity).Where(entity => entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber))
                 {
-                    foreach (GRBadge grBadge in GetObject("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges)
-                    {
-                        GameEntity entity = grBadge.gameEntity;
-                        if (entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
-                        {
-                            VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = entity.transform.position;
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = entity.transform.position;
 
-                            GhostReactorManager.instance.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
-                        }
-                    }
+                    GhostReactorManager.instance.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                 }
             }
             else
@@ -1736,10 +1707,10 @@ namespace iiMenu.Mods
 
             Recorder mic = GorillaTagger.Instance.myRecorder;
 
-            if (pitch != 1f)
+            if (!Mathf.Approximately(pitch, 1f))
             {
-                MicPitchShifter pitchShifter = mic.gameObject.GetComponent<MicPitchShifter>() ?? null;
-                if (pitchShifter != null && pitchShifter.PitchFactor == pitch)
+                MicPitchShifter pitchShifter = mic.gameObject.GetComponent<MicPitchShifter>();
+                if (pitchShifter != null && Mathf.Approximately(pitchShifter.PitchFactor, pitch))
                     return;
 
                 MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
@@ -1890,6 +1861,7 @@ namespace iiMenu.Mods
         }
 
         public static Coroutine dropBoard;
+        // ReSharper disable once ParameterHidesMember
         public static void BetaDropBoard(Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 avelocity, Color boardColor)
         {
             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 5f)
@@ -1998,16 +1970,13 @@ Piece Name: {gunTarget.name}";
                     return new Dictionary<int, string>();
 
                 blocks = new Dictionary<int, string>();
-                foreach (List<BuilderPiece> list in GetBuilderTable().builderPool.piecePools)
+                foreach (var piece in GetBuilderTable().builderPool.piecePools.SelectMany(list => list))
                 {
-                    foreach (BuilderPiece piece in list)
+                    try
                     {
-                        try
-                        {
-                            blocks.Add(piece.name.Replace("(Clone)", "").GetStaticHash(), piece.displayName ?? piece.displayName);
-                        }
-                        catch { }
+                        blocks.Add(piece.name.Replace("(Clone)", "").GetStaticHash(), piece.displayName ?? piece.displayName);
                     }
+                    catch { }
                 }
             }
 
@@ -2028,11 +1997,11 @@ Piece Name: {gunTarget.name}";
             rememberdirectory = pageNumber;
             currentCategoryName = "Temporary Category";
 
-            Dictionary<int, string> blocks = GetAllBlockData();
-            List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
+            Dictionary<int, string> allBlockData = GetAllBlockData();
+            List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = RemoveCosmeticBrowser, isTogglable = false, toolTip = "Returns you back to the fun mods." } };
 
             int i = 0;
-            foreach (KeyValuePair<int, string> block in blocks)
+            foreach (KeyValuePair<int, string> block in allBlockData)
             {
                 blockButtons.Add
                 (
@@ -2148,12 +2117,8 @@ Piece Name: {gunTarget.name}";
                 SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
                 if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
 
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                {
-                    if (rig.IsLocal()) continue;
-                    if (rig.Distance(projectileInstance.transform.position) < 0.5f)
-                        projectileInstance.transform.position = rig.headMesh.transform.position;
-                }
+                foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()).Where(rig => rig.Distance(projectileInstance.transform.position) < 0.5f))
+                    projectileInstance.transform.position = rig.headMesh.transform.position;
             }
         }
 
@@ -2169,13 +2134,7 @@ Piece Name: {gunTarget.name}";
                     List<SnowballThrowable> activeSnowballs = new List<SnowballThrowable>();
 
                     foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
-                    {
-                        foreach (SnowballThrowable Throwable in Maker.snowballs)
-                        {
-                            if (Throwable.gameObject.activeSelf)
-                                activeSnowballs.Add(Throwable);
-                        }
-                    }
+                        activeSnowballs.AddRange(Maker.snowballs.Where(Throwable => Throwable.gameObject.activeSelf));
 
                     if (activeSnowballs.Count <= 0)
                     {
@@ -2395,7 +2354,7 @@ Piece Name: {gunTarget.name}";
             Vector3 angVel = rig.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
 
             Vector3 HoverboardPos = rig.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + rig.LatestVelocity() * 0.5f;
-            Quaternion HoverboardRotation = rig.headMesh.transform.rotation * Quaternion.Euler(angVel * Mathf.Rad2Deg * 0.1f) * Quaternion.Euler(0f, 90f, 270f);
+            Quaternion HoverboardRotation = rig.headMesh.transform.rotation * Quaternion.Euler(angVel * (Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
 
             VRRig.LocalRig.enabled = false;
             VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
@@ -2495,20 +2454,20 @@ Piece Name: {gunTarget.name}";
                 hoverboardSpamDelay = Time.time + 0.25f;
 
                 float offset = 0f;
-                Vector3 position = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
+                Vector3 vector3 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 offset = -25f;
                 Vector3 position2 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
-                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
+                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + vector3, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - vector3).normalized), (position2 - vector3).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
 
                 offset = 180f;
-                position = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
+                vector3 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
                 offset = 155f;
                 position2 = new Vector3(MathF.Cos(offset + (float)Time.frameCount / 30) * 2f, 1f, MathF.Sin(offset + (float)Time.frameCount / 30) * 2f);
 
-                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
+                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + vector3, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - vector3).normalized), (position2 - vector3).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
             }
         }
 
@@ -2658,7 +2617,7 @@ Piece Name: {gunTarget.name}";
             paintbrawlTriggerLine.startColor = Color.black;
             paintbrawlTriggerLine.endColor = Color.black;
 
-            Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * (EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x));
+            Vector3 localPosition = localSlingshot.drawingHand.transform.position + (localSlingshot.centerOrigin.position - localSlingshot.drawingHand.transform.position).normalized * ((EquipmentInteractor.instance.grabRadius - localSlingshot.dummyProjectileColliderRadius) * (localSlingshot.dummyProjectileInitialScale * Mathf.Abs(localSlingshot.transform.lossyScale.x)));
             Vector3 localVelocity = localSlingshot.GetLaunchVelocity();
 
             Visuals.DrawTrajectory(localPosition, localVelocity, paintbrawlTriggerLine, NoInvisLayerMask(), Vector3.down * 10.79f);
@@ -2706,7 +2665,7 @@ Piece Name: {gunTarget.name}";
         public static float getOwnershipDelay;
         public static ThrowableBug GetBugObject(string name)
         {
-            GameObject bugObject = null;
+            GameObject bugObject;
             bugObject = name == "Firefly" ? Firefly.gameObject : GetObject(name);
             if (bugObject == null)
                 return null;
@@ -2725,7 +2684,7 @@ Piece Name: {gunTarget.name}";
             if (bug == null)
                 return null;
 
-            GameObject bugObject = bug?.gameObject;
+            GameObject bugObject = bug.gameObject;
 
             if (!PhotonNetwork.InRoom)
                 return bug;
@@ -3700,9 +3659,8 @@ Piece Name: {gunTarget.name}";
         {
             SerializePatch.OverrideSerialization = () => false;
 
-            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+            foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
             {
-                if (PlayerIsLocal(TargetRig)) continue;
                 SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
                 
                 if (Time.time > barrelAllDelay)
@@ -3759,9 +3717,8 @@ Piece Name: {gunTarget.name}";
         {
             SerializePatch.OverrideSerialization = () => false;
 
-            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+            foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
             {
-                if (PlayerIsLocal(TargetRig)) continue;
                 SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
                 if (Time.time > barrelAllDelay)
                     throwableProjectileTimeout = 0f;
@@ -3860,11 +3817,8 @@ Piece Name: {gunTarget.name}";
             if (Time.time > throwableProjectileTimeout)
             {
                 throwableProjectileTimeout = Time.time + 0.31f;
-                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
-                {
-                    if (PlayerIsLocal(TargetRig)) continue;
+                foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
                     SendBarrelProjectile(TargetRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
-                }
             }
         }
 
@@ -4229,13 +4183,10 @@ Piece Name: {gunTarget.name}";
             if (Time.time > startTimeBuilding)
                 GetIndex("Attic Anti Report").enabled = false;
 
-            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer == NetworkSystem.Instance.LocalPlayer))
             {
-                if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                {
-                    RequestCreatePiece(-566818631, line.reportButton.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
-                    RPCProtection();
-                }
+                RequestCreatePiece(-566818631, line.reportButton.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
+                RPCProtection();
             }
         }
 

@@ -1572,12 +1572,7 @@ namespace iiMenu.Mods
 
             StringBuilder result = new StringBuilder();
             foreach (char c in input)
-            {
-                if (char.IsLetterOrDigit(c))
-                    result.Append(c);
-                else
-                    result.Append('-');
-            }
+                result.Append(char.IsLetterOrDigit(c) ? c : '-');
 
             return result.ToString();
         }
