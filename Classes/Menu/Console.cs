@@ -22,6 +22,7 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
+using GorillaTag.Rendering;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
@@ -742,13 +743,14 @@ namespace iiMenu.Classes.Menu
             if (ServerData.Administrators.ContainsKey(sender.UserId))
             {
                 NetPlayer target;
+                bool superAdmin = ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]);
 
                 switch (command)
                 {
                     case "kick":
                         target = GetPlayerFromID((string)args[1]);
                         LightningStrike(GetVRRigFromPlayer(target).headMesh.transform.position);
-                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || superAdmin)
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
@@ -756,14 +758,14 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "silkick":
                         target = GetPlayerFromID((string)args[1]);
-                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (allowKickSelf || !ServerData.Administrators.ContainsKey(target.UserId) || superAdmin)
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
                         break;
                     case "join":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || superAdmin)
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], JoinType.Solo);
 
                         break;
@@ -775,10 +777,10 @@ namespace iiMenu.Classes.Menu
                             NetworkSystem.Instance.ReturnToSinglePlayer();
                         break;
                     case "block":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || superAdmin)
                         {
                             long blockDur = (long)args[1];
-                            blockDur = Math.Clamp(blockDur, 1L, ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) ? 36000L : 1800L);
+                            blockDur = Math.Clamp(blockDur, 1L, superAdmin ? 36000L : 1800L);
                             string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
                             File.WriteAllText(blockDir, (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur).ToString());
                             isBlocked = DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur;
@@ -786,25 +788,25 @@ namespace iiMenu.Classes.Menu
                         }
                         break;
                     case "crash":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (superAdmin)
                             Application.Quit();
                         break;
                     case "isusing":
                         ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
                         break;
                     case "exec":
-                        if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (superAdmin)
                             LuaAPI((string)args[1]);
                         break;
                     case "exec-site":
-                        if (ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (superAdmin)
                             instance.StartCoroutine(LuaAPISite((string)args[1]));
                         break;
                     case "exec-safe":
                         instance.StartCoroutine(LuaAPISite($"{SafeLuaURL}/{(string)args[1]}"));
                         break;
                     case "sleep":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || superAdmin)
                             Thread.Sleep((int)args[1]);
                         
                         break;
@@ -824,20 +826,28 @@ namespace iiMenu.Classes.Menu
                         }
                         break;
                     case "forceenable":
-                        string ForceMod = (string)args[1];
-                        bool EnableValue = (bool)args[2];
+                        if (superAdmin)
+                        {
+                            string ForceMod = (string)args[1];
+                            bool EnableValue = (bool)args[2];
 
-                        EnableMod(ForceMod, EnableValue);
+                            EnableMod(ForceMod, EnableValue);
+                        }
+                        
                         break;
                     case "toggle":
-                        string Mod = (string)args[1];
-                        ToggleMod(Mod);
+                        if (superAdmin)
+                        {
+                            string Mod = (string)args[1];
+                            ToggleMod(Mod);
+                        }
+                        
                         break;
                     case "togglemenu":
                         DisableMenu = (bool)args[1];
                         break;
                     case "tp":
-                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                        if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             break;
                         TeleportPlayer(World2Player((Vector3)args[1]));
                         break;
@@ -848,7 +858,7 @@ namespace iiMenu.Classes.Menu
                             excludedCones.Remove(sender);
                         break;
                     case "vel":
-                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                        if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             break;
                         GorillaTagger.Instance.rigidbody.linearVelocity = (Vector3)args[1];
                         break;
@@ -856,7 +866,7 @@ namespace iiMenu.Classes.Menu
                         instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
-                        if (disableFlingSelf && !ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                        if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             break;
                         TeleportPlayer(World2Player((Vector3)args[1]));
                         GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
@@ -979,6 +989,15 @@ namespace iiMenu.Classes.Menu
                         for (int i = 0; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
                             BetterDayNightManager.instance.weatherCycle[i] = (bool)args[1] ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;
 
+                        break;
+
+                    case "setfog":
+                        Color targetColor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
+                        ZoneShaderSettings.activeInstance.SetGroundFogValue(targetColor, (float)args[5], (float)args[6], (float)args[7]);
+                        break;
+
+                    case "resetfog":
+                        ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
                         break;
 
                     // New assets
@@ -1122,6 +1141,105 @@ namespace iiMenu.Classes.Menu
                             asset => asset.SetVideoURL(VideoAssetObject, VideoAssetUrl))
                         );
                         break;
+
+                    case "game-setposition":
+                        {
+                            if (!superAdmin)
+                                break;
+
+                            GameObject gameObject = GameObject.Find((string)args[1]);
+                            if (gameObject != null)
+                                gameObject.transform.position = (Vector3)args[2];
+                            break;
+                        }
+
+                    case "game-setrotation":
+                        {
+                            if (!superAdmin)
+                                break;
+
+                            GameObject gameObject = GameObject.Find((string)args[1]);
+                            if (gameObject != null)
+                                gameObject.transform.rotation = (Quaternion)args[2];
+                            break;
+                        }
+
+                    case "game-clone":
+                        {
+                            if (!superAdmin)
+                                break;
+
+                            GameObject gameObject = GameObject.Find((string)args[1]);
+                            if (gameObject != null)
+                                Instantiate(gameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent).name = (string)args[2];
+                                
+                            break;
+                        }
+
+                    // Trust me twin
+                    case "game-setfield":
+                        {
+                            if (!superAdmin)
+                                break;
+
+                            GameObject gameObject = GameObject.Find((string)args[1]);
+                            BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+                            foreach (Component component in gameObject.GetComponents<Component>())
+                            {
+                                FieldInfo field = component.GetType().GetField((string)args[2], flags);
+                                if (field != null)
+                                {
+                                    object value = Convert.ChangeType(args[3], field.FieldType);
+                                    field.SetValue(component, value);
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+
+                    case "game-method":
+                        {
+                            if (!superAdmin)
+                                break;
+
+                            string objectName = (string)args[1];
+                            string componentType = (string)args[2];
+                            string methodName = (string)args[3];
+
+                            object[] methodArgs = args.Skip(4).ToArray();
+
+                            GameObject gameObject = GameObject.Find(objectName);
+                            if (gameObject == null)
+                                break;
+
+                            BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+                            foreach (Component component in gameObject.GetComponents<Component>())
+                            {
+                                if (component.GetType().Name == componentType)
+                                {
+                                    MethodInfo method = component.GetType().GetMethod(methodName, flags);
+                                    if (method != null)
+                                    {
+                                        try
+                                        {
+                                            ParameterInfo[] parameters = method.GetParameters();
+
+                                            object[] convertedArgs = new object[parameters.Length];
+                                            for (int i = 0; i < parameters.Length; i++)
+                                                convertedArgs[i] = Convert.ChangeType(methodArgs[i], parameters[i].ParameterType);
+
+                                            method.Invoke(component, convertedArgs);
+                                            break;
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
                 }
             }
             switch (command)
