@@ -28,13 +28,16 @@ namespace iiMenu.Extensions
         public static string ClearTags(this string input) =>
             NoRichtextTags(input);
 
-        public static string ISO8601(this string input) =>
+        public static string ISO8601(this string _) =>
             Menu.Main.ISO8601();
 
         public static string Hash(this string input) =>
             GetSHA256(input);
 
-        public static string Random(this string input, int length) =>
+        public static string EnforceLength(this string str, int maxLength) =>
+            str.Length > maxLength ? str[..maxLength] : str;
+
+        public static string Random(this string _, int length) =>
             GenerateRandomString(length);
     }
 }
