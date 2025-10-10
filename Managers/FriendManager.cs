@@ -487,7 +487,7 @@ namespace iiMenu.Managers
                                 Vector3 position = (Vector3)args[2];
                                 Quaternion rotation = (Quaternion)args[3];
 
-                                Vector3 scale = ((Vector3)args[4]).ClampMagnitudeSafe(5f);
+                                Vector3 scale = ((Vector3)args[4]).ClampMagnitudeSafe(1f);
                                 PrimitiveType spawnType = (PrimitiveType)(int)args[5];
 
                                 if (!position.IsValid() || !scale.IsValid())
