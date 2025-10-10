@@ -504,7 +504,7 @@ namespace iiMenu.Mods
             playtime += Time.deltaTime;
 
             TimeSpan time = TimeSpan.FromSeconds(playtime);
-            OverallPlaytime = string.Format("{0:D2}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+            OverallPlaytime = $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -517,7 +517,7 @@ namespace iiMenu.Mods
             (
                 "Velocity",
                 false,
-                string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.linearVelocity.magnitude),
+                $"{GorillaTagger.Instance.rigidbody.linearVelocity.magnitude:F1}m/s",
                 GorillaTagger.Instance.rigidbody.linearVelocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white
             );
         }
@@ -585,7 +585,7 @@ namespace iiMenu.Mods
                 }
             }
             if (closest != float.MaxValue)
-                NotifiLib.information["Nearby"] = string.Format("{0:F1}m", closest);
+                NotifiLib.information["Nearby"] = $"{closest:F1}m";
             else
                 NotifiLib.information.Remove("Nearby");
         }
@@ -1215,7 +1215,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = velnametags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = string.Format("{0:F1}m/s", vrrig.LatestVelocity().magnitude);
+                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.LatestVelocity().magnitude:F1}m/s";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -4676,7 +4676,8 @@ namespace iiMenu.Mods
                 nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                 nameTagText.color = tagColor;
 
-                string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
+                string finalString =
+                    $"{Vector3.Distance(Camera.main.transform.position, playerRig.transform.position):F1}m";
 
                 foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) //background color
                 {
@@ -4754,7 +4755,8 @@ namespace iiMenu.Mods
                 nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                 nameTagText.color = tagColor;
 
-                string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
+                string finalString =
+                    $"{Vector3.Distance(Camera.main.transform.position, playerRig.transform.position):F1}m";
 
                 foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) //background color
                 {
@@ -4831,7 +4833,8 @@ namespace iiMenu.Mods
                     nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                     nameTagText.color = tagColor;
 
-                    string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
+                    string finalString =
+                        $"{Vector3.Distance(Camera.main.transform.position, playerRig.transform.position):F1}m";
 
                     foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) // Background color
                     {
@@ -4871,7 +4874,8 @@ namespace iiMenu.Mods
                     nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                     nameTagText.color = tagColor;
 
-                    string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
+                    string finalString =
+                        $"{Vector3.Distance(Camera.main.transform.position, playerRig.transform.position):F1}m";
 
                     foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) // Background color
                     {

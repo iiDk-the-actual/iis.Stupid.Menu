@@ -376,14 +376,14 @@ namespace iiMenu.Managers
                                 if (Time.time < ghostDelayTime)
                                     break;
 
-                                object[] HeadTransform = (object[])args[1] ?? null;
-                                object[] LeftTransform = (object[])args[2] ?? null;
-                                object[] RightTransform = (object[])args[3] ?? null;
+                                object[] HeadTransform = (object[])args[1];
+                                object[] LeftTransform = (object[])args[2];
+                                object[] RightTransform = (object[])args[3];
 
-                                GameObject Head = null;
-                                GameObject LeftHand = null;
-                                GameObject RightHand = null;
-                                GameObject Nametag = null;
+                                GameObject Head;
+                                GameObject LeftHand;
+                                GameObject RightHand;
+                                GameObject Nametag;
 
                                 if (!ghostRigPool.TryGetValue(SenderRig, out var value))
                                 {
@@ -681,7 +681,7 @@ namespace iiMenu.Managers
                 return;
             }
 
-            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
             {
                 command = "invite",
                 target = uid,
@@ -693,7 +693,7 @@ namespace iiMenu.Managers
 
         public static void RequestInviteFriend(string uid)
         {
-            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
             {
                 command = "reqinvite",
                 target = uid
@@ -704,7 +704,7 @@ namespace iiMenu.Managers
 
         public static void SharePreferences(string uid)
         {
-            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
             {
                 command = "preferences",
                 target = uid,
@@ -716,7 +716,7 @@ namespace iiMenu.Managers
 
         public static void SendFriendMessage(string uid, string message)
         {
-            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
             {
                 command = "message",
                 target = uid,
@@ -792,16 +792,30 @@ namespace iiMenu.Managers
 
             public class Friend
             {
-                public bool online { get; set; }
-                public string currentRoom { get; set; }
-                public string currentName { get; set; }
-                public string currentUserID { get; set; }
+                public Friend(bool online, string currentRoom, string currentName, string currentUserID)
+                {
+                    this.online = online;
+                    this.currentRoom = currentRoom;
+                    this.currentName = currentName;
+                    this.currentUserID = currentUserID;
+                }
+
+                public bool online { get; }
+                public string currentRoom { get; }
+                public string currentName { get; }
+                public string currentUserID { get; }
             }
 
             public class PendingFriend
             {
-                public string currentName { get; set; }
-                public string currentUserID { get; set; }
+                public PendingFriend(string currentName, string currentUserID)
+                {
+                    this.currentName = currentName;
+                    this.currentUserID = currentUserID;
+                }
+
+                public string currentName { get; }
+                public string currentUserID { get; }
             }
         }
         #endregion
@@ -853,24 +867,20 @@ namespace iiMenu.Managers
                     toolTip = "Returns you back to the main page."
                 }
             };
-
-            for (int i = 0; i < organizedFriends.Length; i++)
+            
+            buttons.AddRange(organizedFriends.Select((friend, i) => new ButtonInfo
             {
-                FriendData.Friend friend = organizedFriends[i];
-                buttons.Add(new ButtonInfo
-                {
-                    buttonText = $"FriendButton{i}",
-                    overlapText = friend.currentName + (friend.online ? " <color=grey>[</color><color=green>Online</color><color=grey>]</color>" : " <color=grey>[</color><color=red>Offline</color><color=grey>]</color>"),
-                    method = () => InspectFriend(instance.Friends.friends.FirstOrDefault(x => x.Value == friend).Key),
-                    isTogglable = false,
-                    toolTip = $"See information on your friend {friend.currentName}."
-                });
-            }
+                buttonText = $"FriendButton{i}",
+                overlapText = friend.currentName + (friend.online ? " <color=grey>[</color><color=green>Online</color><color=grey>]</color>" : " <color=grey>[</color><color=red>Offline</color><color=grey>]</color>"),
+                method = () => InspectFriend(instance.Friends.friends.FirstOrDefault(x => x.Value == friend).Key),
+                isTogglable = false,
+                toolTip = $"See information on your friend {friend.currentName}."
+            }));
 
             buttons.Add(new ButtonInfo
             {
                 buttonText = "Add Friends",
-                method = () => AddFriendsUI(),
+                method = AddFriendsUI,
                 isTogglable = false,
                 toolTip = "Use this tab to add people as friends."
             });
@@ -893,7 +903,7 @@ namespace iiMenu.Managers
                 new ButtonInfo {
                     buttonText = "Incoming Friend Requests",
                     overlapText = $"Incoming Friend Requests{(instance.Friends.incoming.Count > 0 ? $" <color=grey>[</color><color=green>{instance.Friends.incoming.Count}</color><color=grey>]</color>" : " ")}",
-                    method =() => IncomingFriendRequests(),
+                    method = IncomingFriendRequests,
                     isTogglable = false,
                     toolTip = "Shows your current incoming friend requests."
                 },
@@ -901,26 +911,14 @@ namespace iiMenu.Managers
                 new ButtonInfo {
                     buttonText = "Outgoing Friend Requests",
                     overlapText = $"Outgoing Friend Requests{(instance.Friends.outgoing.Count > 0 ? $" <color=grey>[</color><color=green>{instance.Friends.outgoing.Count}</color><color=grey>]</color>" : " ")}",
-                    method =() => OutgoingFriendRequests(),
+                    method = OutgoingFriendRequests,
                     isTogglable = false,
                     toolTip = "Shows your current outgoing friend requests."
                 }
             };
 
             if (NetworkSystem.Instance.InRoom)
-            {
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-                {
-                    if (!IsPlayerFriend(Player))
-                        buttons.Add(new ButtonInfo
-                        {
-                            buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{Player.NickName}</color>",
-                            method = () => SendFriendRequest(Player.UserId),
-                            isTogglable = false,
-                            toolTip = $"Sends a friend request to {Player.NickName}."
-                        });
-                }
-            }
+                buttons.AddRange(from Player in NetworkSystem.Instance.PlayerListOthers where !IsPlayerFriend(Player) select new ButtonInfo { buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{Player.NickName}</color>", method = () => SendFriendRequest(Player.UserId), isTogglable = false, toolTip = $"Sends a friend request to {Player.NickName}." });
             else
                 buttons.Add(new ButtonInfo
                 {
@@ -938,7 +936,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Add Friends",
-                    method =() => AddFriendsUI(),
+                    method =AddFriendsUI,
                     isTogglable = false,
                     toolTip = "Returns you back to the add friends page."
                 }
@@ -948,18 +946,14 @@ namespace iiMenu.Managers
                .OrderBy(friend => friend.currentName)
                .ToArray();
 
-            for (int i = 0; i < organizedFriends.Length; i++)
+            buttons.AddRange(organizedFriends.Select((friend, i) => new ButtonInfo
             {
-                FriendData.PendingFriend friend = organizedFriends[i];
-                buttons.Add(new ButtonInfo
-                {
-                    buttonText = $"PendingFriend{i}",
-                    overlapText = friend.currentName,
-                    method = () => InspectPendingFriend(instance.Friends.incoming.FirstOrDefault(x => x.Value == friend).Key),
-                    isTogglable = false,
-                    toolTip = $"Inspect {friend.currentName}'s friend request."
-                });
-            }
+                buttonText = $"PendingFriend{i}",
+                overlapText = friend.currentName,
+                method = () => InspectPendingFriend(instance.Friends.incoming.FirstOrDefault(x => x.Value == friend).Key),
+                isTogglable = false,
+                toolTip = $"Inspect {friend.currentName}'s friend request."
+            }));
 
             Buttons.buttons[29] = buttons.ToArray();
         }
@@ -971,7 +965,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Add Friends",
-                    method =() => AddFriendsUI(),
+                    method = AddFriendsUI,
                     isTogglable = false,
                     toolTip = "Returns you back to the add friends page."
                 }
@@ -981,18 +975,14 @@ namespace iiMenu.Managers
                .OrderBy(friend => friend.currentName)
                .ToArray();
 
-            for (int i = 0; i < organizedFriends.Length; i++)
+            buttons.AddRange(organizedFriends.Select((friend, i) => new ButtonInfo
             {
-                FriendData.PendingFriend friend = organizedFriends[i];
-                buttons.Add(new ButtonInfo
-                {
-                    buttonText = $"CancelFriend{i}",
-                    overlapText = friend.currentName,
-                    method = () => CancelFriendRequest(instance.Friends.outgoing.FirstOrDefault(x => x.Value == friend).Key),
-                    isTogglable = false,
-                    toolTip = $"Cancels {friend.currentName}'s friend request."
-                });
-            }
+                buttonText = $"CancelFriend{i}",
+                overlapText = friend.currentName,
+                method = () => CancelFriendRequest(instance.Friends.outgoing.FirstOrDefault(x => x.Value == friend).Key),
+                isTogglable = false,
+                toolTip = $"Cancels {friend.currentName}'s friend request."
+            }));
 
             Buttons.buttons[29] = buttons.ToArray();
         }
@@ -1095,7 +1085,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Incoming Friend Requests",
-                    method =() => IncomingFriendRequests(),
+                    method = IncomingFriendRequests,
                     isTogglable = false,
                     toolTip = "Returns you back to the incoming friend requests page."
                 },
@@ -1154,16 +1144,7 @@ namespace iiMenu.Managers
             while (messages.Count < messageCount)
                 messages.Insert(0, "");
 
-            for (int i = 0; i < messages.Count; i++)
-            {
-                string message = messages[i];
-                buttons.Add(new ButtonInfo
-                {
-                    buttonText = $"FriendMessage{i}",
-                    overlapText = message,
-                    label = true
-                });
-            }
+            buttons.AddRange(messages.Select((message, i) => new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true }));
 
             buttons.Add(new ButtonInfo
             {
@@ -1185,9 +1166,9 @@ namespace iiMenu.Managers
             public bool connected;
             public float reconnectTime = 14f;
 
-            public static FriendWebSocket instance { get; private set; }
+            public static FriendWebSocket Instance { get; private set; }
             public void Awake() =>
-                instance = this;
+                Instance = this;
 
             public void Start() =>
                 cts = new CancellationTokenSource();

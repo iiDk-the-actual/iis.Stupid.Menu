@@ -29,7 +29,7 @@ namespace iiMenu.Extensions
             NoRichtextTags(input);
 
         public static string ISO8601(this string input) =>
-            ISO8601(input);
+            Menu.Main.ISO8601();
 
         public static string Hash(this string input) =>
             GetSHA256(input);

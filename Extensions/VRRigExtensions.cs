@@ -56,7 +56,7 @@ namespace iiMenu.Extensions
 
         public static VRRig GetClosest(this VRRig rig) =>
             GorillaParent.instance.vrrigs.Where(targetRig => targetRig != null && targetRig != rig)
-                                         .OrderBy(targetRig => rig.Distance(targetRig))
+                                         .OrderBy(rig.Distance)
                                          .FirstOrDefault();
 
         public static int GetPing(this VRRig rig)

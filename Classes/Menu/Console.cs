@@ -425,17 +425,13 @@ namespace iiMenu.Classes.Menu
                 {
                     List<VRRig> toRemove = new List<VRRig>();
 
-                    foreach (KeyValuePair<VRRig, GameObject> nametag in conePool)
+                    foreach (var nametag in from nametag in conePool let nametagPlayer = nametag.Key.Creator?.GetPlayerRef() where !GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
+                                 nametagPlayer == null ||
+                                 !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) ||
+                                 excludedCones.Contains(nametagPlayer) select nametag)
                     {
-                        Player nametagPlayer = nametag.Key.Creator?.GetPlayerRef() ?? null;
-                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
-                            nametagPlayer == null ||
-                            !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) ||
-                            excludedCones.Contains(nametagPlayer))
-                        {
-                            Destroy(nametag.Value);
-                            toRemove.Add(nametag.Key);
-                        }
+                        Destroy(nametag.Value);
+                        toRemove.Add(nametag.Key);
                     }
 
                     foreach (VRRig rig in toRemove)
@@ -512,7 +508,7 @@ namespace iiMenu.Classes.Menu
                     if (adminIsScaling && adminRigTarget != null)
                     {
                         adminRigTarget.NativeScale = adminScale;
-                        if (adminScale == 1f)
+                        if (Mathf.Approximately(adminScale, 1f))
                             adminIsScaling = false;
                     }
                 }
@@ -668,20 +664,20 @@ namespace iiMenu.Classes.Menu
                     case "lIndex": ControllerInputPoller.instance.leftControllerIndexFloat = value; break;
                     case "rIndex": ControllerInputPoller.instance.rightControllerIndexFloat = value; break;
                     case "lPrimary":
-                        ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = value > 0.33f;;
-                        ControllerInputPoller.instance.leftControllerPrimaryButton = value > 0.66f;;
+                        ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = value > 0.33f;
+                        ControllerInputPoller.instance.leftControllerPrimaryButton = value > 0.66f;
                         break;
                     case "lSecondary":
-                        ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = value > 0.33f;;
-                        ControllerInputPoller.instance.leftControllerSecondaryButton = value > 0.66f;;
+                        ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = value > 0.33f;
+                        ControllerInputPoller.instance.leftControllerSecondaryButton = value > 0.66f;
                         break;
                     case "rPrimary":
-                        ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = value > 0.33f;;
-                        ControllerInputPoller.instance.rightControllerPrimaryButton = value > 0.66f;;
+                        ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = value > 0.33f;
+                        ControllerInputPoller.instance.rightControllerPrimaryButton = value > 0.66f;
                         break;
                     case "rSecondary":
-                        ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = value > 0.33f;;
-                        ControllerInputPoller.instance.rightControllerSecondaryButton = value > 0.66f;;
+                        ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = value > 0.33f;
+                        ControllerInputPoller.instance.rightControllerSecondaryButton = value > 0.66f;
                         break;
                 }
                 yield return null;
@@ -745,7 +741,7 @@ namespace iiMenu.Classes.Menu
         {
             if (ServerData.Administrators.ContainsKey(sender.UserId))
             {
-                NetPlayer target = null;
+                NetPlayer target;
 
                 switch (command)
                 {
@@ -922,39 +918,31 @@ namespace iiMenu.Classes.Menu
 
                         break;
                     case "muteall":
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                        {
-                            if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId))
-                                line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                        }
+                        foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId)))
+                            line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                        
                         break;
                     case "unmuteall":
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                        {
-                            if (line.playerVRRig.muted)
-                                line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                        }
+                        foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.playerVRRig.muted))
+                            line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                        
                         break;
                     case "mute":
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                        {
-                            if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId) && line.playerVRRig.Creator.UserId == (string)args[1])
-                                line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                        }
+                        foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId) && line.playerVRRig.Creator.UserId == (string)args[1]))
+                            line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                        
                         break;
                     case "unmute":
-                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                        {
-                            if (line.playerVRRig.muted && line.playerVRRig.Creator.UserId == (string)args[1])
-                                line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                        }
+                        foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.playerVRRig.muted && line.playerVRRig.Creator.UserId == (string)args[1]))
+                            line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                        
                         break;
                     case "rigposition":
                         VRRig.LocalRig.enabled = (bool)args[1];
 
-                        object[] RigTransform = (object[])args[2] ?? null;
-                        object[] LeftTransform = (object[])args[3] ?? null;
-                        object[] RightTransform = (object[])args[4] ?? null;
+                        object[] RigTransform = (object[])args[2];
+                        object[] LeftTransform = (object[])args[3];
+                        object[] RightTransform = (object[])args[4];
 
                         if (RigTransform != null)
                         {
@@ -1201,7 +1189,7 @@ namespace iiMenu.Classes.Menu
 
         public static async Task LoadAssetBundle(string assetBundle)
         {
-            string fileName = "";
+            string fileName;
             if (assetBundle.Contains("/"))
             {
                 string[] split = assetBundle.Split("/");
@@ -1329,11 +1317,8 @@ namespace iiMenu.Classes.Menu
 
         public static void SanitizeConsoleAssets()
         {
-            foreach (ConsoleAsset asset in consoleAssets.Values)
-            {
-                if (asset.assetObject == null || !asset.assetObject.activeSelf)
-                    asset.DestroyObject();
-            }
+            foreach (var asset in consoleAssets.Values.Where(asset => asset.assetObject == null || !asset.assetObject.activeSelf))
+                asset.DestroyObject();
         }
 
         public static void SyncConsoleAssets(NetPlayer JoiningPlayer)

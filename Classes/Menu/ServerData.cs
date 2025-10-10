@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -135,7 +136,7 @@ namespace iiMenu.Classes.Menu
 
         public static string CleanString(string input, int maxLength = 12)
         {
-            input = new string(Array.FindAll(input.ToCharArray(), c => Utils.IsASCIILetterOrDigit(c)));
+            input = new string(Array.FindAll(input.ToCharArray(), Utils.IsASCIILetterOrDigit));
 
             if (input.Length > maxLength)
                 input = input[..(maxLength - 1)];
@@ -280,10 +281,8 @@ namespace iiMenu.Classes.Menu
                     }
                 }
 
-                List<string> muteIds = new List<string>();
                 JArray muteIdData = (JArray)data["blacklisted-ids"];
-                foreach (var targetMutedData in muteIdData)
-                    muteIds.Add(targetMutedData.ToString());
+                List<string> muteIds = muteIdData.Select(targetMutedData => targetMutedData.ToString()).ToList();
 
                 Main.muteIDs = muteIds;
             }
@@ -334,7 +333,6 @@ namespace iiMenu.Classes.Menu
 
             if (concat.Contains("S. FIRST LOGIN")) return true;
             if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
-            if (concat.Contains("LMAKT.")) return false;
 
             return false;
         }
@@ -388,11 +386,7 @@ namespace iiMenu.Classes.Menu
             int categoryIndex = 0;
             foreach (ButtonInfo[] category in Buttons.buttons)
             {
-                foreach (ButtonInfo button in category)
-                {
-                    if (button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
-                }
+                enabledMods.AddRange(from button in category where button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings") select NoASCIIStringCheck(Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
 
                 categoryIndex++;
             }
@@ -453,20 +447,6 @@ namespace iiMenu.Classes.Menu
                         result = "No votes yet.";
 
                     Main.PromptSingle(result, null, "Ok");
-                }
-                catch { }
-            }
-            else
-            {
-                string reason = request.error.IsNullOrEmpty() ? "Unknown error" : request.error;
-
-                try
-                {
-                    string responseText = request.downloadHandler.text;
-                    Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
-
-                    if (responseJson != null && responseJson.TryGetValue("error", out var value))
-                        reason = value.ToString();
                 }
                 catch { }
             }

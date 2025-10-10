@@ -37,7 +37,7 @@ namespace iiMenu.Menu
 {
     public class UI : MonoBehaviour
     {
-        private static UI instance;
+        public static UI Instance;
 
         private string inputText = "goldentrophy";
         private static GUIStyle labelStyle;
@@ -53,7 +53,7 @@ namespace iiMenu.Menu
 
         private void Start()
         {
-            instance = this;
+            Instance = this;
 
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt"))
                 isOpen = false;

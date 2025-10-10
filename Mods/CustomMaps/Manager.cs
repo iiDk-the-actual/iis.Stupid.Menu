@@ -56,9 +56,9 @@ namespace iiMenu.Mods.CustomMaps
                 buttons.AddRange(new[]
                 {
                     new ButtonInfo { buttonText = " ", label = true },
-                    new ButtonInfo { buttonText = "Edit Custom Script", method =() => EditUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." },
-                    new ButtonInfo { buttonText = "Delete Custom Script", method =() => DeleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." },
-                    new ButtonInfo { buttonText = "Run Custom Script", enableMethod =() => StartUserScript(), disableMethod =() => StopUserScript(), toolTip = "Runs your custom script for this map." }
+                    new ButtonInfo { buttonText = "Edit Custom Script", method = EditUserScript, isTogglable = false, toolTip = "Opens your custom script for this map." },
+                    new ButtonInfo { buttonText = "Delete Custom Script", method = DeleteUserScript, isTogglable = false, toolTip = "Deletes your custom script for this map." },
+                    new ButtonInfo { buttonText = "Run Custom Script", enableMethod = StartUserScript, disableMethod = StopUserScript, toolTip = "Runs your custom script for this map." }
                 });
             }
             else
@@ -128,9 +128,7 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void RevertCustomScript(int[] lines)
         {
-            Dictionary<int, string> replacements = new Dictionary<int, string>();
-            foreach (int line in lines)
-                replacements.Add(line, mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
+            Dictionary<int, string> replacements = lines.ToDictionary(line => line, line => mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
 
             ModifyCustomScript(replacements);
         }

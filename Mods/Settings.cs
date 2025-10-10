@@ -4269,7 +4269,7 @@ exit";
 
             if (fromMenu)
             {
-                audiomgr.GetComponent<AudioSource>().Stop();
+                audioMgr.GetComponent<AudioSource>().Stop();
                 NotifiLib.PlayNotificationSound();
             }
         }

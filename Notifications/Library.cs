@@ -307,10 +307,10 @@ namespace iiMenu.Notifications
 
                         if (lines.Length > 0)
                         {
-                            string lastLine = lines[lines.Length - 1];
-                            int counterIndex = lastLine.IndexOf(" <color=grey>(x");
+                            string lastLine = lines[^1];
+                            int counterIndex = lastLine.IndexOf(" <color=grey>(x", StringComparison.Ordinal);
                             if (counterIndex > 0)
-                                lastLine = lastLine.Substring(0, counterIndex);
+                                lastLine = lastLine[..counterIndex];
 
                             lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
                             NotifiText.text = string.Join(Environment.NewLine, lines);
@@ -383,9 +383,7 @@ namespace iiMenu.Notifications
 
             List<string> remainingLines = new List<string>();
             for (int i = amount; i < lines.Length; i++)
-            {
                 remainingLines.Add(lines[i]);
-            }
 
             NotifiText.text = string.Join(Environment.NewLine, remainingLines);
             NotifiText.text = NotifiText.text.TrimEnd('\n', '\r');

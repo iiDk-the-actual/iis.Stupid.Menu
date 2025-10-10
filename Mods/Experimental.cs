@@ -793,23 +793,25 @@ namespace iiMenu.Mods
             }
         }
 
-        private static readonly List<int> fullActorNumbers = new List<int>();
+        private static readonly List<int> FullActorNumbers = new List<int>();
         public static void FullToggleMenu(int actorNumber, bool enable)
         {
             if (enable)
             {
-                if (!fullActorNumbers.Contains(actorNumber))
+                if (!FullActorNumbers.Contains(actorNumber))
                 {
                     Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
                     Console.ExecuteCommand("forceenable", actorNumber, "Load Preferences");
+                    FullActorNumbers.Add(actorNumber);
                 }
             } else
             {
-                if (fullActorNumbers.Contains(actorNumber))
+                if (FullActorNumbers.Contains(actorNumber))
                 {
                     Console.ExecuteCommand("toggle", actorNumber, "Save Preferences");
                     Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
                     Console.ExecuteCommand("forceenable", actorNumber, "Panic", true);
+                    FullActorNumbers.Remove(actorNumber);
                 }
             }
 
