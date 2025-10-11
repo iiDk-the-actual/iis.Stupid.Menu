@@ -4777,7 +4777,7 @@ exit";
                 Safety.fpsSpoofValue.ToString(),
                 buttonClickIndex.ToString(),
                 buttonClickVolume.ToString(),
-                Safety.antireportrangeindex.ToString(),
+                Safety.antiReportRangeIndex.ToString(),
                 Advantages.tagRangeIndex.ToString(),
                 Sound.BindMode.ToString(),
                 Movement.driveInt.ToString(),
@@ -4927,7 +4927,7 @@ exit";
                 buttonClickVolume = int.Parse(data[17]) - 1;
                 ChangeButtonVolume();
 
-                Safety.antireportrangeindex = int.Parse(data[18]) - 1;
+                Safety.antiReportRangeIndex = int.Parse(data[18]) - 1;
                 Safety.ChangeAntiReportRange();
 
                 Advantages.tagRangeIndex = int.Parse(data[19]) - 1;
