@@ -47,6 +47,7 @@ namespace iiMenu.Menu
         private string b = "0";
 
         public static bool isOpen = true;
+        public static bool hidBefore;
         public static bool lastCondition;
 
         public static Texture2D icon;
@@ -65,6 +66,8 @@ namespace iiMenu.Menu
 
             if (isKeyboardCondition && !lastCondition)
             {
+                hidBefore = true;
+
                 isOpen = !isOpen;
                 if (isOpen)
                 {
@@ -102,7 +105,13 @@ namespace iiMenu.Menu
                         roomText = (translate ? TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
                 } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
-                
+
+                if (Plugin.FirstLaunch && !hidBefore)
+                {
+                    string hideText = translate ? TranslateText("Press Backslash to hide this UI") : "Press Backslash to hide this UI";
+                    GUI.Label(new Rect((Screen.width / 2f) - (GUI.skin.label.CalcSize(new GUIContent(hideText)).x / 2f), Screen.height - 35, Screen.width, 40), hideText);
+                }
+
                 if (icon == null)
                     icon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png");
 
