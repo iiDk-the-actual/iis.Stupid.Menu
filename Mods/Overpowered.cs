@@ -750,21 +750,37 @@ namespace iiMenu.Mods
             VRRig.LocalRig.enabled = true;
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
+                if (rig.IsLocal()) continue;
                 if ((rig.leftMiddle.calcT > 0.8f && rig.leftHandLink.grabbedPlayer == null) || (rig.rightMiddle.calcT > 0.8f && rig.rightHandLink.grabbedPlayer == null))
                 {
                     bool isLeftHand = rig.leftMiddle.calcT > 0.8f;
-                    Transform targetHand = isLeftHand ? rig.leftHandTransform : rig.rightHandTransform;
 
                     VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = targetHand.position - Vector3.up * 0.8f;
+                    VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up * 0.5f;
                     VRRig.LocalRig.transform.rotation = Quaternion.identity;
 
-                    (isLeftHand ? VRRig.LocalRig.rightHand : VRRig.LocalRig.leftHand).rigTarget.transform.position = targetHand.transform.position;
-                    (isLeftHand ? VRRig.LocalRig.leftHand : VRRig.LocalRig.rightHand).rigTarget.transform.position = VRRig.LocalRig.transform.position;
+                    VRMap targetHand = isLeftHand ? VRRig.LocalRig.leftHand : VRRig.LocalRig.rightHand;
+                    targetHand.rigTarget.transform.position = isLeftHand ? rig.leftHandTransform.position : rig.rightHandTransform.position;
+                    targetHand.rigTarget.transform.rotation = isLeftHand ? rig.leftHandTransform.rotation : rig.rightHandTransform.rotation;
 
-                    VRMapMiddle targetFinger = isLeftHand ? rig.rightMiddle : rig.leftMiddle;
-                    targetFinger.calcT = 1f;
-                    targetFinger.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.calcT = 1f;
+                    VRRig.LocalRig.leftMiddle.calcT = 1f;
+                    VRRig.LocalRig.leftThumb.calcT = 1f;
+
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+                    VRRig.LocalRig.rightIndex.calcT = 1f;
+                    VRRig.LocalRig.rightMiddle.calcT = 1f;
+                    VRRig.LocalRig.rightThumb.calcT = 1f;
+
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+
+                    HandLink link = isLeftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
+                    link.CreateLink(isLeftHand ? rig.leftHandLink : rig.rightHandLink);
 
                     break;
                 }
