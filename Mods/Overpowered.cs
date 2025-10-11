@@ -2121,7 +2121,7 @@ namespace iiMenu.Mods
 
             GrowingSnowballThrowable leftSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
             GrowingSnowballThrowable rightSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
-            GrowingSnowballThrowable[] snowballs = new[] { leftSnowball, rightSnowball };
+            GrowingSnowballThrowable[] snowballs = { leftSnowball, rightSnowball };
 
             foreach (GrowingSnowballThrowable snowball in snowballs)
                 snowball.SetSnowballActiveLocal(true);
