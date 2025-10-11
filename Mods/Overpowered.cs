@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static BuilderMaterialOptions;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -1131,7 +1132,7 @@ namespace iiMenu.Mods
                     if (hgc.targetPlayer != player)
                     {
                         hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
-                        SendSerialize(hgc.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                        SendSerialize(hgc.GetView);
                     }
                     hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
                     hgc.grabTime = Time.time;
@@ -1345,7 +1346,7 @@ namespace iiMenu.Mods
                 if (lurker.targetPlayer != player)
                 {
                     lurker.ChangeState(LurkerGhost.ghostState.patrol);
-                    SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                    SendSerialize(lurker.GetView);
                 }
 
                 lurker.currentState = LurkerGhost.ghostState.possess;
@@ -1429,7 +1430,7 @@ namespace iiMenu.Mods
                 lurker.currentState = lurker.currentState == LurkerGhost.ghostState.charge ? LurkerGhost.ghostState.possess : LurkerGhost.ghostState.charge;
                 lurker.targetPlayer = GetRandomPlayer(true);
 
-                SendSerialize(lurker.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                SendSerialize(lurker.GetView);
             }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
@@ -1707,19 +1708,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static Coroutine DisableCoroutine;
-        public static IEnumerator DisableSnowball(bool rigDisabled)
-        {
-            yield return new WaitForSeconds(0.3f);
-
-            if (rigDisabled)
-                VRRig.LocalRig.enabled = true;
-            DistancePatch.enabled = false;
-
-            GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
-            GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(false);
-        }
-
         private static int archiveIncrement;
         public static int GetProjectileIncrement(Vector3 Position, Vector3 Velocity, float Scale)
         {
@@ -1777,12 +1765,12 @@ namespace iiMenu.Mods
                 snowballScale--;
 
             if (snowballScale > 5)
-                snowballScale = 1;
+                snowballScale = 0;
 
-            if (snowballScale < 1)
+            if (snowballScale < 0)
                 snowballScale = 5;
 
-            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + snowballScale + "</color><color=grey>]</color>";
+            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale + 1) + "</color><color=grey>]</color>";
         }
 
         public static int snowballMultiplicationFactor = 1;
@@ -1802,26 +1790,6 @@ namespace iiMenu.Mods
             GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor + "</color><color=grey>]</color>";
         }
 
-        public static int lagIndex = 1;
-        public static int lagAmount;
-        public static float lagDelay;
-        public static void ChangeLagPower(bool positive = true)
-        {
-            if (positive)
-                lagIndex++;
-            else
-                lagIndex--;
-
-            lagIndex %= 3;
-            if (lagIndex < 0)
-                lagIndex = 2;
-
-            lagAmount = new[] { 40, 113, 425 } [lagIndex];
-            lagDelay = new[] { 0.1f, 0.25f, 1f } [lagIndex];
-
-            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
-        }
-
         public static float _snowballSpawnDelay = 0.1f;
         public static float snowballSpawnDelay
         {
@@ -1829,81 +1797,102 @@ namespace iiMenu.Mods
             set { _snowballSpawnDelay = value; }
         }
 
+        public static Coroutine DisableCoroutine;
+        public static IEnumerator DisableSnowball(bool rigDisabled)
+        {
+            yield return new WaitForSeconds(0.3f);
+
+            if (rigDisabled)
+                VRRig.LocalRig.enabled = true;
+            DistancePatch.enabled = false;
+
+            GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
+            GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(false);
+        }
+
         public static bool SnowballHandIndex;
+        public static bool NoTeleportSnowballs;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customNetworkedSize = null)
         {
-            for (int i = 0; i < snowballMultiplicationFactor; i++)
+            try
             {
-                try
+                RaiseEventOptions options = null;
+                switch (Mode)
+                {
+                    case 0:
+                        options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                        break;
+                    case 1:
+                        options = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
+                        break;
+                    case 2:
+                        options = new RaiseEventOptions { TargetActors = new[] { Target.ActorNumber } };
+                        break;
+                }
+
+                Vector3 archivePosition = VRRig.LocalRig.transform.position;
+                bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
+                if (isTooFar)
+                {
+                    if (!NoTeleportSnowballs)
+                        VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
+                }
+
+                if (NoTeleportSnowballs && isTooFar)
+                {
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -10);
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+                }
+
+                for (int i = 0; i < snowballMultiplicationFactor; i++)
                 {
                     SnowballHandIndex = !SnowballHandIndex;
                     Vel = Vel.ClampMagnitudeSafe(50f);
-
-                    bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
-                    if (isTooFar)
-                    {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
-                    }
 
                     DistancePatch.enabled = true;
 
                     if (DisableCoroutine != null)
                         CoroutineManager.EndCoroutine(DisableCoroutine);
 
-                    DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
+                    DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar && !NoTeleportSnowballs));
 
                     GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
 
-                    switch (Mode)
+                    PhotonNetwork.RaiseEvent(176, new object[]
                     {
-                        case 0:
-                            int increment = GetProjectileIncrement(Pos, Vel, snowballScale);
+                        GrowingSnowball.changeSizeEvent._eventId,
+                        customNetworkedSize ?? snowballScale,
+                    }, options, new SendOptions
+                    {
+                        Reliability = false,
+                        Encrypt = true
+                    });
 
-                            GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize ?? snowballScale);
-                            GrowingSnowball.snowballThrowEvent.RaiseAll(Pos, Vel, increment);
-                            break;
-                        case 1:
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize ?? snowballScale);
-                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, snowballScale));
-                            break;
-                        case 2:
-                            PhotonNetwork.RaiseEvent(176, new object[]
-                            {
-                                GrowingSnowball.changeSizeEvent._eventId,
-                                customNetworkedSize ?? snowballScale,
-                            }, new RaiseEventOptions
-                            {
-                                TargetActors = new[] { Target.ActorNumber }
-                            }, new SendOptions
-                            {
-                                Reliability = false,
-                                Encrypt = true
-                            });
-
-                            PhotonNetwork.RaiseEvent(176, new object[]
-                            {
-                                GrowingSnowball.snowballThrowEvent._eventId,
-                                Pos,
-                                Vel,
-                            GetProjectileIncrement(Pos, Vel, snowballScale)
-                            }, new RaiseEventOptions
-                            {
-                                TargetActors = new[] { Target.ActorNumber }
-                            }, new SendOptions
-                            {
-                                Reliability = false,
-                                Encrypt = true
-                            });
-                            break;
-                    }
+                    PhotonNetwork.RaiseEvent(176, new object[]
+                    {
+                        GrowingSnowball.snowballThrowEvent._eventId,
+                        Pos,
+                        Vel,
+                        GetProjectileIncrement(Pos, Vel, snowballScale)
+                    }, options, new SendOptions
+                    {
+                        Reliability = false,
+                        Encrypt = true
+                    });
 
                     GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
                     nextGrowingSnowball.SetSnowballActiveLocal(true);
                 }
-                catch { }
+
+                if (NoTeleportSnowballs && isTooFar)
+                {
+                    VRRig.LocalRig.transform.position = archivePosition;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+                }
             }
-            
+            catch { }
+
             RPCProtection();
         }
 
@@ -3120,6 +3109,26 @@ namespace iiMenu.Mods
             Fun.HueShift(Color.clear);
 
             ZaWarudo_EndCoroutineVariable = null;
+        }
+
+        public static int lagIndex = 1;
+        public static int lagAmount;
+        public static float lagDelay;
+        public static void ChangeLagPower(bool positive = true)
+        {
+            if (positive)
+                lagIndex++;
+            else
+                lagIndex--;
+
+            lagIndex %= 3;
+            if (lagIndex < 0)
+                lagIndex = 2;
+
+            lagAmount = new[] { 40, 113, 425 }[lagIndex];
+            lagDelay = new[] { 0.1f, 0.25f, 1f }[lagIndex];
+
+            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
         private static float lagDebounce;
