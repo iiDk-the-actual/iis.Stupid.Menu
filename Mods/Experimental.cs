@@ -431,6 +431,51 @@ namespace iiMenu.Mods
                 gunLocked = false;
             }
         }
+
+        public static bool AdminPlatformsLastLeft;
+        public static bool AdminPlatformsLastRight;
+        public static void AdminGivePlatforms()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > adminEventDelay)
+                    {
+                        if (lockTarget.leftMiddle.calcT > 0.5f && !AdminPlatformsLastLeft)
+                        {
+                            adminEventDelay = Time.time + 0.1f;
+                            Console.ExecuteCommand("platf", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.leftHandTransform.position - new Vector3(0f, 0.2f, 0f), new Vector3(0.1f, 0.5f, 0.3f), lockTarget.leftHandTransform.eulerAngles, Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f, 10f );
+                            RPCProtection();
+                        }
+                        if (lockTarget.rightMiddle.calcT > 0.5f && !AdminPlatformsLastRight)
+                        {
+                            adminEventDelay = Time.time + 0.1f;
+                            Console.ExecuteCommand("platf", GetPlayerFromVRRig(lockTarget).ActorNumber, lockTarget.rightHandTransform.position - new Vector3(0f, 0.2f, 0f), new Vector3(0.1f, 0.5f, 0.3f), lockTarget.rightHandTransform.eulerAngles, Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f, 10f );
+                            RPCProtection();
+                        }
+                        AdminPlatformsLastLeft = lockTarget.leftMiddle.calcT > 0.5f;
+                        AdminPlatformsLastRight = lockTarget.rightMiddle.calcT > 0.5f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                gunLocked = false;
+            }
+        }
         
         public static void AdminGiveTriggerFlyGun()
         {
