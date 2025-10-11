@@ -23,6 +23,7 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
@@ -103,7 +104,7 @@ namespace iiMenu.Mods
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GTPlayer.Instance.leftControllerTransform.position = GTPlayer.Instance.headCollider.transform.position + GTPlayer.Instance.headCollider.transform.up * -0.5f * GTPlayer.Instance.scale;
+            GTPlayer.Instance.leftControllerTransform.position = GTPlayer.Instance.headCollider.transform.position + GTPlayer.Instance.headCollider.transform.up * (-0.5f * GTPlayer.Instance.scale);
             GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
 
             GTPlayer.Instance.rightControllerTransform.position = Position;
@@ -158,12 +159,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static int antireportrangeindex;
+        public static int antiReportRangeIndex;
         public static float threshold = 0.35f;
 
         public static void ChangeAntiReportRange(bool positive = true)
         {
-            string[] names = {
+            string[] rangeNames = {
                 "Default", // The report button
                 "Large", // The report button within the range of 3 people
                 "Massive" // The entire fucking board
@@ -175,16 +176,16 @@ namespace iiMenu.Mods
             };
 
             if (positive)
-                antireportrangeindex++;
+                antiReportRangeIndex++;
             else
-                antireportrangeindex--;
+                antiReportRangeIndex--;
 
-            antireportrangeindex %= names.Length;
-            if (antireportrangeindex < 0)
-                antireportrangeindex = names.Length - 1;
+            antiReportRangeIndex %= rangeNames.Length;
+            if (antiReportRangeIndex < 0)
+                antiReportRangeIndex = rangeNames.Length - 1;
 
-            threshold = distances[antireportrangeindex];
-            GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
+            threshold = distances[antiReportRangeIndex];
+            GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + rangeNames[antiReportRangeIndex] + "</color><color=grey>]</color>";
         }
 
         public static bool smartarp;
@@ -534,18 +535,18 @@ namespace iiMenu.Mods
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
-        private static readonly List<VRRig> spoofedRigs = new List<VRRig>();
+        private static readonly List<VRRig> nameSpoofRigs = new List<VRRig>();
         public static void NameSpoof()
         {
             List<VRRig> toRemove = new List<VRRig>();
-            foreach (VRRig rig in spoofedRigs)
+            foreach (VRRig rig in nameSpoofRigs)
             {
                 if (!GorillaParent.instance.vrrigs.Contains(rig))
                     toRemove.Add(rig);
             }
 
             foreach (VRRig rig in toRemove)
-                spoofedRigs.Remove(rig);
+                nameSpoofRigs.Remove(rig);
 
             toRemove.Clear();
 
@@ -553,14 +554,15 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (rig.isLocal) continue;
-                if (!spoofedRigs.Contains(rig))
+                if (!nameSpoofRigs.Contains(rig))
                 {
                     string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
                     string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
                     string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
-                    ChangeName(fName.Length > 12 ? fName[..12] : fName, true);
+                    ChangeName(fName.EnforceLength(12), true);
 
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                    nameSpoofRigs.Add(rig);
                 }
             }
 
@@ -568,25 +570,25 @@ namespace iiMenu.Mods
                 PhotonNetwork.NickName = archiveNickname;
         }
 
+        private static readonly List<VRRig> colorSpoofRigs = new List<VRRig>();
         public static void ColorSpoof()
         {
             List<VRRig> toRemove = new List<VRRig>();
-            foreach (VRRig rig in spoofedRigs)
+            foreach (VRRig rig in colorSpoofRigs)
             {
                 if (!GorillaParent.instance.vrrigs.Contains(rig))
                     toRemove.Add(rig);
             }
 
             foreach (VRRig rig in toRemove)
-                spoofedRigs.Remove(rig);
+                colorSpoofRigs.Remove(rig);
 
             toRemove.Clear();
 
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).Where(rig => !colorSpoofRigs.Contains(rig)))
             {
-                if (rig.isLocal) continue;
-                if (!spoofedRigs.Contains(rig))
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+                colorSpoofRigs.Add(rig);
             }
         }
 
