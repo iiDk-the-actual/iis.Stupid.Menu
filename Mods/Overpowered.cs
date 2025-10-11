@@ -1070,30 +1070,17 @@ namespace iiMenu.Mods
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
-        public static void LucyChaseSelf()
+        public static void LucyChase(NetPlayer player)
         {
-            if (GetGunInput(false))
+            HalloweenGhostChaser hgc = lucy;
+            if (hgc.IsMine)
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
-                {
-                    HalloweenGhostChaser hgc = lucy;
-                    if (hgc.IsMine)
-                    {
-                        VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                        if (gunTarget && !PlayerIsLocal(gunTarget))
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
-                            hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
-                            hgc.followTarget = GorillaTagger.Instance.offlineVRRig.transform;
-                        }
-                    }
-                    else 
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
-                }
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                hgc.targetPlayer = player;
+                hgc.followTarget = GorillaTagger.Instance.offlineVRRig.transform;
             }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
         public static void LucyChaseGun()
@@ -1105,19 +1092,9 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    HalloweenGhostChaser hgc = lucy;
-                    if (hgc.IsMine)
-                    {
-                        VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                        if (gunTarget && !PlayerIsLocal(gunTarget))
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
-                            hgc.targetPlayer = GetPlayerFromVRRig(gunTarget);
-                            hgc.followTarget = gunTarget.transform;
-                        }
-                    }
-                    else 
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                        LucyChase(gunTarget.GetPlayer());
                 }
             }
         }
