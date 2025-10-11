@@ -70,7 +70,7 @@ namespace iiMenu.Mods
 
             instance.netState = NetSystemState.Connecting;
 
-            byte maxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
+            RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
 
             while (!instance.InRoom)
             {
@@ -264,7 +264,7 @@ exit";
                 PrivateUIRoom.overlayForcedActive = false;
                 PrivateUIRoom.StopOverlay();
 
-                RoomObject?.SetActive(false);
+                RoomObject.SetActive(false);
                 if (!TOSPatch.enabled)
                 {
                     GorillaTagger.Instance.tapHapticStrength = 0.5f;

@@ -554,21 +554,21 @@ namespace iiMenu.Mods
                     buttonText = "Copy Movement",
                     overlapText = $"Copy Movement {targetName}",
                     method =() => Movement.CopyMovementPlayer(player),
-                    disableMethod =() => Movement.EnableRig(),
+                    disableMethod = Movement.EnableRig,
                     toolTip = $"Copies the movement of {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Follow Player",
                     overlapText = $"Follow {targetName}",
                     method =() => Movement.FollowPlayer(player),
-                    disableMethod =() => Movement.EnableRig(),
+                    disableMethod = Movement.EnableRig,
                     toolTip = $"Follows {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Tag Player",
                     overlapText = $"Tag {targetName}",
                     method =() => Advantages.TagPlayer(player),
-                    disableMethod =() => Movement.EnableRig(),
+                    disableMethod = Movement.EnableRig,
                     toolTip = $"Tags {targetName}."
                 },
                 new ButtonInfo {
@@ -3802,9 +3802,9 @@ exit";
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
-                new ButtonInfo { buttonText = "Exit Buttons", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
-                new ButtonInfo { buttonText = "Enabled", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Choose what type of button color to modify." },
-                new ButtonInfo { buttonText = "Disabled", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Change the color of the second color of the background." },
+                new ButtonInfo { buttonText = "Exit Buttons", method = CustomMenuThemePage, isTogglable = false, toolTip = "Returns you back to the customize menu." },
+                new ButtonInfo { buttonText = "Enabled", method = CMTButtonEnabled, isTogglable = false, toolTip = "Choose what type of button color to modify." },
+                new ButtonInfo { buttonText = "Disabled", method = CMTButtonDisabled, isTogglable = false, toolTip = "Change the color of the second color of the background." },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -3814,8 +3814,8 @@ exit";
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
-                new ButtonInfo { buttonText = "Exit Enabled", method = () => CMTButton(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
-                new ButtonInfo { buttonText = "First Color", method = () => CMTButtonEnabledFirst(), isTogglable = false, toolTip = "Change the color of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Exit Enabled", method = CMTButton, isTogglable = false, toolTip = "Returns you back to the customize menu." },
+                new ButtonInfo { buttonText = "First Color", method = CMTButtonEnabledFirst, isTogglable = false, toolTip = "Change the color of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "Second Color", method = () => CMTButtonEnabledSecond(), isTogglable = false, toolTip = "Change the color of the second color of the enabled button color." },
             };
 
@@ -3884,7 +3884,7 @@ exit";
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
-                new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
+                new ButtonInfo { buttonText = "Exit Second Color", method = CMTButtonDisabled, isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(1).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(1).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(1).b * 10f) + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
@@ -3899,10 +3899,10 @@ exit";
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
-                new ButtonInfo { buttonText = "Exit Text", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
-                new ButtonInfo { buttonText = "Title", method = () => CMTTextTitle(), isTogglable = false, toolTip = "Change the color of the title." },
-                new ButtonInfo { buttonText = "Enabled", method = () => CMTTextEnabled(), isTogglable = false, toolTip = "Change the color of the enabled text." },
-                new ButtonInfo { buttonText = "Disabled", method = () => CMTTextDisabled(), isTogglable = false, toolTip = "Change the color of the disabled text." },
+                new ButtonInfo { buttonText = "Exit Text", method = CustomMenuThemePage, isTogglable = false, toolTip = "Returns you back to the customize menu." },
+                new ButtonInfo { buttonText = "Title", method = CMTTextTitle, isTogglable = false, toolTip = "Change the color of the title." },
+                new ButtonInfo { buttonText = "Enabled", method = CMTTextEnabled, isTogglable = false, toolTip = "Change the color of the enabled text." },
+                new ButtonInfo { buttonText = "Disabled", method = CMTTextDisabled, isTogglable = false, toolTip = "Change the color of the disabled text." },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -3913,7 +3913,7 @@ exit";
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
-                new ButtonInfo { buttonText = "Exit Title", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
+                new ButtonInfo { buttonText = "Exit Title", method = CMTText, isTogglable = false, toolTip = "Returns you back to the text menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(textColors[0].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the title color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(textColors[0].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the title color." },
                 new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + (int)Math.Round(textColors[0].GetColor(0).b * 10f) + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the title color." },
