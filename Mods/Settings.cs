@@ -4087,9 +4087,9 @@ exit";
             else
                 fontCycle--;
 
-            fontCycle %= 13;
+            fontCycle %= 14;
             if (fontCycle < 0)
-                fontCycle = 12;
+                fontCycle = 13;
 
             switch (fontCycle) {
                 case 0:
@@ -4143,6 +4143,12 @@ exit";
 
                     activeFont = OpenDyslexic;
                     return;
+                case 13:
+                    if (Taiko == null)
+                        Taiko = LoadAsset<Font>("Taiko");
+
+                    activeFont = Taiko;
+                    return;
             }
         }
 
@@ -4153,6 +4159,8 @@ exit";
             {
                 ChangeFontType();
                 fontTime = Time.time + 0.4f;
+
+                ReloadMenu();
             }
         }
 
