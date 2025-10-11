@@ -6667,6 +6667,7 @@ jgs \_   _/ |Oo\
         public static Font Minecraft;
         public static Font Terminal;
         public static Font OpenDyslexic;
+        public static Font Taiko;
         public static Font activeFont = AgencyFB;
         public static FontStyle activeFontStyle = FontStyle.Italic;
 
