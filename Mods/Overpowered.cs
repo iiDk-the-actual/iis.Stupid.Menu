@@ -1787,7 +1787,7 @@ namespace iiMenu.Mods
 
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
-        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customNetworkedSize = null)
+        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null)
         {
             try
             {
@@ -1837,7 +1837,7 @@ namespace iiMenu.Mods
                     PhotonNetwork.RaiseEvent(176, new object[]
                     {
                         GrowingSnowball.changeSizeEvent._eventId,
-                        customNetworkedSize ?? snowballScale,
+                        customScale ?? snowballScale,
                     }, options, new SendOptions
                     {
                         Reliability = false,
@@ -2066,6 +2066,144 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static AudioClip KameStart;
+        public static AudioClip KameStop;
+
+        public static Coroutine KameStartCoroutine;
+
+        public static void Enable_Kamehameha()
+        {
+            KameStart = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/start.ogg", "Audio/Mods/Overpowered/Kamehameha/start.ogg");
+            KameStop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/end.ogg", "Audio/Mods/Overpowered/Kamehameha/end.ogg");
+        }
+
+        public static void Kamehameha()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            bool kameing = leftGrab && rightGrab && leftTrigger > 0.5f && rightTrigger > 0.5f;
+            switch (kameing)
+            {
+                case true when KameStartCoroutine == null:
+                    KameStartCoroutine = CoroutineManager.RunCoroutine(StartKame());
+                    break;
+                case false when KameStartCoroutine != null:
+                    CoroutineManager.EndCoroutine(KameStartCoroutine);
+                    KameStartCoroutine = null;
+
+                    CoroutineManager.instance.StartCoroutine(EndKame());
+                    break;
+            }
+        }
+
+        public static GameObject cursor;
+        public static IEnumerator StartKame()
+        {
+            Sound.PlayAudio(KameStart);
+            yield return new WaitForSeconds(0.5f);
+
+            GrowingSnowballThrowable leftSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable rightSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable[] snowballs = new[] { leftSnowball, rightSnowball };
+
+            foreach (GrowingSnowballThrowable snowball in snowballs)
+                snowball.SetSnowballActiveLocal(true);
+
+            float startTime = Time.time;
+
+            while (true)
+            {
+                try
+                {
+                    if (cursor == null)
+                    {
+                        cursor = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        cursor.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+                        cursor.GetComponent<Renderer>().material.color = Color.white;
+
+                        Object.Destroy(cursor.GetComponent<Collider>());
+                    }
+
+                    Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.forward, out var RayPoint, 512f, GTPlayer.Instance.locomotionEnabledLayers);
+                    cursor.transform.position = RayPoint.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : RayPoint.point;
+                }
+                catch { }
+
+                try
+                {
+                    int sizeIndex = Mathf.Clamp((int)Mathf.Floor((Time.time - startTime) * 1.75f), 0, 5);
+
+                    foreach (GrowingSnowballThrowable snowball in snowballs)
+                    {
+                        if (snowball.sizeLevel != sizeIndex)
+                            snowball.SetSizeLevelAuthority(sizeIndex);
+                    }
+
+                    VRRig.LocalRig.SetThrowableProjectileColor(true, Color.white);
+                    leftSnowball.randomizeColor = true;
+                    leftSnowball.ApplyColor(Color.white);
+
+                    VRRig.LocalRig.SetThrowableProjectileColor(false, Color.cyan);
+                    rightSnowball.randomizeColor = true;
+                    rightSnowball.ApplyColor(Color.cyan);
+                }
+                catch { }
+
+                Vector3 snowballPosition = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
+
+                foreach (Transform handTransform in new[] { GorillaTagger.Instance.leftHandTransform, GorillaTagger.Instance.rightHandTransform })
+                {
+                    handTransform.position = snowballPosition;
+                    handTransform.rotation = RandomQuaternion();
+                }
+
+                yield return null;
+            }
+        }
+
+        public static IEnumerator EndKame()
+        {
+            Sound.PlayAudio(KameStop);
+            yield return new WaitForSeconds(0.5f);
+
+            float startTime = Time.time;
+
+            while (Time.time - startTime < 3f)
+            {
+                if (cursor == null)
+                {
+                    cursor = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    cursor.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+                    cursor.GetComponent<Renderer>().material.color = Color.white;
+
+                    Object.Destroy(cursor.GetComponent<Collider>());
+                }
+
+                try
+                {
+                    Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.forward, out var RayPoint, 512f, GTPlayer.Instance.locomotionEnabledLayers);
+                    cursor.transform.position = RayPoint.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : RayPoint.point;
+                } catch { }
+
+                Vector3 snowballPosition = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
+                Vector3 targetDirection = (cursor.transform.position - snowballPosition).normalized * 60f;
+
+                BetaSpawnSnowball(snowballPosition, targetDirection, 0);
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            Vector3 _ = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
+            Vector3 __ = (cursor.transform.position - _).normalized * 30f;
+
+            for (int i = 5; i >= 0; i--)
+            {
+                BetaSpawnSnowball(_, __, 0, null, i);
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            if (cursor != null)
+                Object.Destroy(cursor);
         }
 
         public static void SnowballSafetyBubble()
