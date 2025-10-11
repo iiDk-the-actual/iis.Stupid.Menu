@@ -1456,7 +1456,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spawn Blue Lucy", method = Overpowered.SpawnBlueLucy, isTogglable = false, toolTip = "Summons the blue lucy in forest." },
                 new ButtonInfo { buttonText = "Despawn Lucy", method = Overpowered.DespawnLucy, isTogglable = false, toolTip = "Despawns lucy in forest." },
 
-                new ButtonInfo { buttonText = "Lucy Chase Self", method = Overpowered.LucyChaseSelf, isTogglable = false, toolTip = "Makes lucy chase you." },
+                new ButtonInfo { buttonText = "Lucy Chase Self", method =() => Overpowered.LucyChase(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes lucy chase you." },
                 new ButtonInfo { buttonText = "Lucy Chase Gun", method = Overpowered.LucyChaseGun, toolTip = "Makes lucy chase whoever your hand desires." },
 
                 new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttack(NetworkSystem.Instance.LocalPlayer), isTogglable = false, toolTip = "Makes lucy attack you." },
