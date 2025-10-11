@@ -2086,6 +2086,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Give Trigger Fly Gun", method = Experimental.AdminGiveTriggerFlyGun, toolTip = "Gives whoever you want fly when they hold their trigger down if they're using console."},
                 new ButtonInfo { buttonText = "Give Speed Boost Gun", method = Experimental.AdminGiveSpeedGun, toolTip = "Gives whoever you want speed boost if they're using console."},
                 new ButtonInfo { buttonText = "Give Low Gravity Gun", method = Experimental.AdminGiveLowGravity, toolTip = "Gives whoever you want low gravity if they're using console."},
+                new ButtonInfo { buttonText = "Give Platforms Gun", method = Experimental.AdminGivePlatforms, toolTip = "Gives whoever you want platforms if they're using console."},
             },
 
             new ButtonInfo[] { }, // Chat Messages [41] 
