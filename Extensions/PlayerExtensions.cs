@@ -20,10 +20,12 @@
  */
 
 using ExitGames.Client.Photon;
+using GorillaLocomotion;
 using iiMenu.Managers;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine;
 
 namespace iiMenu.Extensions
 {
@@ -50,6 +52,14 @@ namespace iiMenu.Extensions
         public static bool InRoom(this Player self) =>
             PhotonNetwork.PlayerList.Contains(self);
 
+        #endregion
+
+        #region GorillaTagger
+        public static bool IsGrounded(this GorillaTagger tagger, float maxDistance = 0.15f)
+        {
+            return
+                Physics.Raycast(tagger.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, maxDistance, GTPlayer.Instance.locomotionEnabledLayers);
+        }
         #endregion
     }
 }
