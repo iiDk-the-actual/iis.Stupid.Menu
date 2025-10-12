@@ -25,12 +25,12 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(Slingshot), "LaunchProjectile")]
+    [HarmonyPatch(typeof(ProjectileWeapon), "LaunchProjectile")]
     public class LaunchProjectilePatch
     {
         public static bool enabled;
 
-        public static void Prefix(Slingshot __instance)
+        public static void Prefix(ProjectileWeapon __instance)
         {
             if (enabled)
             {
