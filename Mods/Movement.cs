@@ -736,6 +736,7 @@ namespace iiMenu.Mods
 
         public static void HardDrive()
         {
+            bool elevatedStickyDrive = GetIndex("Elevated Sticky Drive").enabled;
             if ((Mathf.Abs(leftJoystick.x) > 0.05f || Mathf.Abs(leftJoystick.y) > 0.05f) && closePosition == Vector3.zero)
             {
                 Vector3 direction = GorillaTagger.Instance.bodyCollider.transform.forward * leftJoystick.y
@@ -748,7 +749,7 @@ namespace iiMenu.Mods
 
                 Vector3 targetPosition = Ray.point == Vector3.zero ? raycastPosition : Ray.point;
 
-                TeleportPlayer(targetPosition + Vector3.up * 0.2f);
+                TeleportPlayer(targetPosition + Vector3.up * (elevatedStickyDrive ? 1f : 0.2f));
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
             }
         }
