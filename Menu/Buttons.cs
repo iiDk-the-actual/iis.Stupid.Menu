@@ -1787,7 +1787,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Short Breadcrumbs", toolTip = "Shortens the length of the breadcrumbs."},
                 new ButtonInfo { buttonText = "Follow Menu Theme", toolTip = "Makes visual mods match the theme of the menu, rather than the color of the player."},
                 new ButtonInfo { buttonText = "Follow Player Colors", toolTip = "Makes the infection tracers appear their normal color instead of orange for tagged players."},
-                new ButtonInfo { buttonText = "Transparent Theme", toolTip = "Makes visual mods transparent."},
+                new ButtonInfo { buttonText = "Transparent Theme", overlapText = "Transparent Visuals", toolTip = "Makes visual mods transparent."},
                 new ButtonInfo { buttonText = "Hidden on Camera", overlapText = "Streamer Mode Visuals", toolTip = "Makes visual mods only render on VR."},
                 new ButtonInfo { buttonText = "Hidden Labels", overlapText = "Streamer Mode Labels", toolTip = "Makes label mods only render on VR."},
                 new ButtonInfo { buttonText = "Thin Tracers", toolTip = "Makes the tracers thinner."},
