@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/GrabPatch.cs
+ * ii's Stupid Menu  Patches/Menu/LaunchProjectilePatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -19,31 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using HarmonyLib;
-using UnityEngine;
+using HarmonyLib;
+using iiMenu.Extensions;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "GrabbedByPlayer")]
-    public class GrabPatch
+    [HarmonyPatch(typeof(ProjectileWeapon), "LaunchProjectile")]
+    public class LaunchProjectilePatch
     {
         public static bool enabled;
 
-        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand) =>
-            !enabled;
-    }
+        public static void Prefix(ProjectileWeapon __instance)
+        {
+            if (enabled)
+            {
+                GorillaTagger.Instance.rigidbody.linearVelocity = __instance.GetLaunchVelocity();
 
-    [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
-    public class DropPatch
-    {
-        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity) =>
-            !GrabPatch.enabled;
-    }
-
-    [HarmonyPatch(typeof(GuardianRPCs), "GuardianLaunchPlayer")]
-    public class LaunchPatch
-    {
-        public static bool Prefix(Vector3 velocity) =>
-            !GrabPatch.enabled;
+                if (dynamicSounds)
+                    LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/AngryBirds/launch.ogg", "Audio/Mods/Fun/AngryBirds/launch.ogg").Play(buttonClickVolume / 10f);
+            }
+        }
     }
 }

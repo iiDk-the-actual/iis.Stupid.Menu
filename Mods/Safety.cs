@@ -22,6 +22,7 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
+using GorillaTagScripts;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
@@ -148,6 +149,13 @@ namespace iiMenu.Mods
 
         public static void SpoofSupportPage() =>
             GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
+
+        public static void AntiLurker()
+        {
+            LurkerGhost lurker = Overpowered.lurker;
+            if (lurker.currentState == LurkerGhost.ghostState.possess && lurker.targetPlayer == NetworkSystem.Instance.LocalPlayer)
+                lurker.ChangeState(LurkerGhost.ghostState.patrol);
+        }
 
         private static float lastCacheClearedTime;
         public static void AutoClearCache()
