@@ -1369,7 +1369,23 @@ namespace iiMenu.Mods
 
         public static void NoTagFreeze() =>
             GTPlayer.Instance.disableMovement = false;
+        public static void FeatherFalling()
+        {
+            Rigidbody rb = GorillaTagger.Instance.rigidbody;
 
+            if (rb.linearVelocity.magnitude > 0.1f || !GorillaTagger.Instance.IsGrounded(0.2f))
+            {
+                Vector3 velocityAdjustment = rb.linearVelocity * 4;
+                rb.linearVelocity -= velocityAdjustment * Time.fixedDeltaTime;
+
+                if (GorillaTagger.Instance.IsGrounded() && rb.linearVelocity.y < 0)
+                {
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x,
+                                                Mathf.Max(rb.linearVelocity.y, -2f),
+                                                rb.linearVelocity.z);
+                }
+            }
+        }
         public static void LowGravity() =>
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * 6.66f, ForceMode.Acceleration);
 
