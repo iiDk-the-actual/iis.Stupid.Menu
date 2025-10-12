@@ -39,30 +39,30 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             ModifyCustomScript(new Dictionary<int, string>
                     {
-                        { 844, "lastMinedTime = 0" }
+                        { 974, "lastMinedTime = 0" }
                     });
         }
         public static void DisableInstantMine() =>
-            RevertCustomScript(844);
+            RevertCustomScript(974);
 
         public static void MineAnything()
         {
             ModifyCustomScript(new Dictionary<int, string>
                     {
-                        { 831, "if true then" }
+                        { 965, "if true then" }
                     });
         }
         public static void DisableMineAnything() =>
-            RevertCustomScript(831);
+            RevertCustomScript(965);
 
         public static void InfiniteBackpack()
         {
             ModifyCustomScript(new Dictionary<int, string>
                     {
-                        { 810, "if false then" }
+                        { 981, "if false then" }
                     });
         }
         public static void DisableInfiniteBackpack() =>
-            RevertCustomScript(810);
+            RevertCustomScript(981);
     }
 }
