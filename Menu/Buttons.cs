@@ -300,7 +300,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Non-Togglable Invisible", toolTip = "Makes the invisible mod only activate when holding down the button"},
 
                 new ButtonInfo { buttonText = "Splash Intercourse", toolTip = "Splashes water when \"impacting\" another player with the intercourse gun."},
-                new ButtonInfo { buttonText = "Reverse Intercourse", toolTip = "Turns you into the receiver when using the intercourse gun."}
+                new ButtonInfo { buttonText = "Reverse Intercourse", toolTip = "Turns you into the receiver when using the intercourse gun."},
+
+                new ButtonInfo { buttonText = "Elevated Sticky Drive", toolTip = "Makes you float higher in the air whenever you use Sticky Drive."},
             },
 
             new[] { // Projectiles Settings [5]
