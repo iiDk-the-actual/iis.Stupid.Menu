@@ -308,6 +308,43 @@ namespace iiMenu.Mods
             }
         }
 
+        public static List<string> platExcluded = new List<string>();
+        public static void AdminPlatToggleGun(bool exclude)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        string id = GetPlayerFromVRRig(gunTarget).UserId;
+                        adminEventDelay = Time.time + 0.1f;
+                        if (exclude)
+                        {
+                            if (!platExcluded.Contains(id))
+                            {
+                                platExcluded.Add(id);
+                                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now excluded.");
+                            } else
+                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already excluded!");
+                        } else
+                        {
+                            if (platExcluded.Contains(id))
+                            {
+                                platExcluded.Remove(id);
+                                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now included.");
+                            } else
+                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already included!");
+                        }
+                    }
+                }
+            }
+        }
+
         public static void AdminKickAll() =>
             Console.ExecuteCommand("kickall", ReceiverGroup.All);
         
