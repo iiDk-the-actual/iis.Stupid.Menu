@@ -2576,6 +2576,21 @@ Piece Name: {gunTarget.name}";
             lastDrawing = slingshot.InDrawingState();
         }
 
+        public static int oldIndex = -1;
+        public static void SlingshotSelf(bool active = true)
+        {
+            try
+            {
+                var slingshot = VRRig.LocalRig.projectileWeapon;
+                if (oldIndex == -1)
+                    oldIndex = VRRig.LocalRig.ActiveTransferrableObjectIndex(0);
+                if (slingshot == null)
+                    slingshot = VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/Slingshot Chest Snap/DropZoneAnchor/Slingshot").GetComponent<Slingshot>();
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(0, active ? 212 : oldIndex);
+                slingshot.gameObject.SetActive(active);
+            }
+            catch { }
+        }
         public static void SlingshotHelper()
         {
             Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
@@ -4173,6 +4188,7 @@ Piece Name: {gunTarget.name}";
                 RPCProtection();
             }
         }
+
 
         private static float startTimeBuilding;
         public static void EnableAtticAntiReport() =>
