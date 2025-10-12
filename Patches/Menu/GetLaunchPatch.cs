@@ -20,8 +20,7 @@
  */
 
 using HarmonyLib;
-using iiMenu.Extensions;
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Managers.RigManager;
@@ -33,7 +32,6 @@ namespace iiMenu.Patches.Menu
     public class GetLaunchPatch
     {
         public static bool enabled;
-        public static bool angryBirds;
 
         public static void Postfix(Slingshot __instance, ref Vector3 __result)
         {
@@ -65,14 +63,6 @@ namespace iiMenu.Patches.Menu
                     return;
 
                 __result = CalcMinSpeed(__instance.center.transform.position, targetRig);
-            }
-
-            if (angryBirds)
-            {
-                GorillaTagger.Instance.rigidbody.linearVelocity = __result;
-
-                if (dynamicSounds)
-                    LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/AngryBirds/launch.ogg", "Audio/Mods/Fun/AngryBirds/launch.ogg").Play(buttonClickVolume / 10f);
             }
         }
 
