@@ -1108,6 +1108,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Save Builder Table Data", method = Fun.SaveBuilderTableData, isTogglable = false, toolTip = "Dumps the data of your current build to a JSON file." },
                 new ButtonInfo { buttonText = "Load Builder Table Data", method = Fun.LoadBuilderTableData, isTogglable = false, toolTip = "Loads the data of the dumped JSON files in your game directory and saves it to your current slot." },
 
+                new ButtonInfo { buttonText = "Disable Critters Dome", enableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(false), disableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(true), toolTip = "Disables the critters dome." },
+
                 new ButtonInfo { buttonText = "Critter Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.CritterSpam, toolTip = "Spawns critters on your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.CritterMinigun, toolTip = "Shoots critters out of your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Gun", method = Overpowered.CritterGun, toolTip = "Spawns critters at wherever your hand desires."},
@@ -1322,9 +1324,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Creation Date Gun", method = Fun.NarrateCreationDateGun, toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
                 new ButtonInfo { buttonText = "Narrate Creation Date Self", method = Fun.NarrateCreationDateSelf, isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
-                new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
-
-                new ButtonInfo { buttonText = "Disable Critters Dome", enableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(false), disableMethod =() => GetObject("Critters/Critters_Environment/Landscape/Critters_Landscape_Dome").SetActive(true), toolTip = "Disables the critters dome." },
+                new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." }
             },
 
             new[] { // Spam Mods [13]
