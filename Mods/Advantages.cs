@@ -373,6 +373,12 @@ namespace iiMenu.Mods
                 ReportTag(vrrig);
         }
 
+        public static void GripTagAura()
+        {
+            if (rightGrab)
+                TagAura();
+        }
+
         public static void TagAuraPlayer(VRRig giving)
         {
             foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs let distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position) where PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig) select vrrig)
