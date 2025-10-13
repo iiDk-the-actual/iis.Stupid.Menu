@@ -1989,7 +1989,7 @@ Piece Name: {gunTarget.name}";
         public static int GetRandomBlockType()
         {
             int[] blockTypes = GetAllBlockTypes();
-            return blockTypes[Random.Range(0, blockTypes.Length - 1)];
+            return blockTypes[Random.Range(0, blockTypes.Length)];
         }
 
         public static void BlockBrowser()
@@ -5603,7 +5603,7 @@ Piece Name: {gunTarget.name}";
                 Color.magenta
             };
 
-            BecomePlayer(names[Random.Range(0, names.Length - 1)], colors[Random.Range(0, colors.Length - 1)]);
+            BecomePlayer(names[Random.Range(0, names.Length)], colors[Random.Range(0, colors.Length)]);
         }
 
         public static void CopyIdentityGun()
@@ -5788,7 +5788,7 @@ Piece Name: {gunTarget.name}";
                 {
                     List<string> holyshit = new List<string>();
                     for (int i = 0; i <= amnt; i++)
-                        holyshit.Add(owned[Random.Range(0, owned.Length - 1)]);
+                        holyshit.Add(owned[Random.Range(0, owned.Length)]);
                     
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
@@ -5817,7 +5817,7 @@ Piece Name: {gunTarget.name}";
                 {
                     List<string> holyshit = new List<string>();
                     for (int i = 0; i <= amnt; i++)
-                        holyshit.Add(owned[Random.Range(0, owned.Length - 1)]);
+                        holyshit.Add(owned[Random.Range(0, owned.Length)]);
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
                         CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
