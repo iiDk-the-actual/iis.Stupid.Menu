@@ -187,6 +187,50 @@ namespace iiMenu.Mods
             return platform;
         }
 
+        public static void SetPlatformPosition(GameObject platform, bool left)
+        {
+            Transform handTransform = left ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
+            var trueHandTransform = left ? TrueLeftHand() : TrueRightHand();
+
+            platform.transform.position = trueHandTransform.position;
+            platform.transform.rotation = trueHandTransform.rotation;
+
+            if (GetIndex("Stick Long Arms").enabled)
+                platform.transform.position += handTransform.forward * (armlength - 0.917f);
+
+            if (GetIndex("Multiplied Long Arms").enabled)
+            {
+                Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
+                MultipliedLongArms();
+                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+            }
+            if (GetIndex("Vertical Long Arms").enabled)
+            {
+                Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
+                VerticalLongArms();
+                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+            }
+            if (GetIndex("Horizontal Long Arms").enabled)
+            {
+                Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
+                HorizontalLongArms();
+                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+            }
+            if (GetIndex("Non-Sticky Platforms").enabled)
+                platform.transform.position += trueHandTransform.right * ((left ? 1f : -1f) * ((0.025f + platform.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
+
+            FriendManager.PlatformSpawned(true, platform.transform.position, platform.transform.rotation, platform.transform.localScale, GetPlatformPrimitiveType());
+        }
+
         public static int flySpeedCycle = 1;
         public static float _flySpeed = 10f;
 
@@ -205,140 +249,53 @@ namespace iiMenu.Mods
 
         public static GameObject leftplat;
         public static GameObject rightplat;
+        public static void ProcessPlatform(bool left, bool value)
+        {
+            GameObject platform = left ? leftplat : rightplat;
+            switch (value)
+            {
+                case true when platform == null:
+                    {
+                        GameObject newPlatform = CreatePlatform();
+                        SetPlatformPosition(newPlatform, left);
+                        if (left)
+                            leftplat = newPlatform;
+                        else
+                            rightplat = newPlatform;
+
+                        break;
+                    }
+                case false when platform != null:
+                    {
+                        if (GetIndex("Platform Gravity").enabled)
+                        {
+                            platform.AddComponent(typeof(Rigidbody));
+                            Object.Destroy(platform.GetComponent<Collider>());
+                            Object.Destroy(platform, 2f);
+                        }
+                        else
+                            Object.Destroy(platform);
+
+                        if (left)
+                            leftplat = null;
+                        else
+                            rightplat = null;
+                        if (platformMode == 4 && rightplat == null)
+                            UpdateClipColliders(true);
+
+                        FriendManager.PlatformDespawned(true);
+                        break;
+                    }
+            }
+        }
+
         public static void Platforms(bool? left = null, bool? right = null)
         {
             if (platformMode == 6)
                 Projectiles.GrabProjectile();
 
-            if (left ?? leftGrab)
-            {
-                if (leftplat == null)
-                {
-                    leftplat = CreatePlatform();
-                    var leftHandTransform = TrueLeftHand();
-                    leftplat.transform.position = leftHandTransform.position;
-                    leftplat.transform.rotation = leftHandTransform.rotation;
-
-                    if (GetIndex("Stick Long Arms").enabled)
-                        leftplat.transform.position += GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
-                    if (GetIndex("Multiplied Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        MultipliedLongArms();
-                        leftplat.transform.position = TrueLeftHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Vertical Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        VerticalLongArms();
-                        leftplat.transform.position = TrueLeftHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Horizontal Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        HorizontalLongArms();
-                        leftplat.transform.position = TrueLeftHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Non-Sticky Platforms").enabled)
-                        leftplat.transform.position += TrueLeftHand().right * ((0.025f + leftplat.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
-
-                    FriendManager.PlatformSpawned(true, leftplat.transform.position, leftplat.transform.rotation, leftplat.transform.localScale, GetPlatformPrimitiveType());
-                }
-            }
-            else
-            {
-                if (leftplat != null)
-                {
-                    if (GetIndex("Platform Gravity").enabled)
-                    {
-                        leftplat.AddComponent(typeof(Rigidbody));
-                        Object.Destroy(leftplat.GetComponent<Collider>());
-                        Object.Destroy(leftplat, 2f);
-                    }
-                    else
-                        Object.Destroy(leftplat);
-                    
-                    leftplat = null;
-                    if (platformMode == 4 && rightplat == null)
-                        UpdateClipColliders(true);
-
-                    FriendManager.PlatformDespawned(true);
-                }
-            }
-
-            if (right ?? rightGrab)
-            {
-                if (rightplat == null)
-                {
-                    rightplat = CreatePlatform();
-                    var rightHandTransform = TrueRightHand();
-                    rightplat.transform.position = rightHandTransform.position;
-                    rightplat.transform.rotation = rightHandTransform.rotation;
-                    if (GetIndex("Stick Long Arms").enabled)
-                        rightplat.transform.position += GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
-                    
-                    if (GetIndex("Multiplied Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        MultipliedLongArms();
-                        rightplat.transform.position = TrueRightHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Vertical Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        VerticalLongArms();
-                        rightplat.transform.position = TrueRightHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Horizontal Long Arms").enabled)
-                    {
-                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
-                        HorizontalLongArms();
-                        rightplat.transform.position = TrueRightHand().position;
-                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
-                    }
-                    if (GetIndex("Non-Sticky Platforms").enabled)
-                        rightplat.transform.position -= TrueRightHand().right * ((0.025f + rightplat.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
-
-                    FriendManager.PlatformSpawned(false, rightplat.transform.position, rightplat.transform.rotation, rightplat.transform.localScale, GetPlatformPrimitiveType());
-                }
-            }
-            else
-            {
-                if (rightplat != null)
-                {
-                    if (GetIndex("Platform Gravity").enabled)
-                    {
-                        rightplat.AddComponent(typeof(Rigidbody));
-                        Object.Destroy(rightplat.GetComponent<Collider>());
-                        Object.Destroy(rightplat, 2f);
-                    }
-                    else
-                        Object.Destroy(rightplat);
-                    
-                    rightplat = null;
-                    if (platformMode == 4 && leftplat == null)
-                        UpdateClipColliders(true);
-
-                    FriendManager.PlatformDespawned(false);
-                }
-            }
+            ProcessPlatform(true, left ?? leftGrab);
+            ProcessPlatform(false, right ?? rightGrab);
         }
 
         public static void Frozone()
