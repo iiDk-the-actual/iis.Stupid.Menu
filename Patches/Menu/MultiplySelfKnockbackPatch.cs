@@ -19,9 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using GorillaLocomotion;
 using HarmonyLib;
-using UnityEngine;
+using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
@@ -29,13 +28,12 @@ namespace iiMenu.Patches.Menu
     public class MultiplySelfKnockbackPatch
     {
         public static bool enabled;
-        public static int multiplicationAmount;
 
         public static void Prefix(SlingshotProjectile __instance, ref float impactSpeed)
         {
             if (enabled && __instance.projectileOwner == VRRig.LocalRig.OwningNetPlayer)
             {
-                impactSpeed = impactSpeed * multiplicationAmount;
+                impactSpeed = impactSpeed * Movement.multiplicationAmount;
             }
         }
     }
