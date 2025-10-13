@@ -303,6 +303,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reverse Intercourse", toolTip = "Turns you into the receiver when using the intercourse gun."},
 
                 new ButtonInfo { buttonText = "Elevated Sticky Drive", toolTip = "Makes you float higher in the air whenever you use Sticky Drive."},
+
+                new ButtonInfo { buttonText = "Multiplication Amount", overlapText = "Multiplication Amount <color=grey>[</color><color=green>2</color><color=grey>]</color>", method =() => Movement.MultiplicationAmount(), enableMethod =() => Movement.MultiplicationAmount(), disableMethod =() => Movement.MultiplicationAmount(false), incremental = true, isTogglable = false, toolTip = "Adjusts how much your knockback is multiplied."},
             },
 
             new[] { // Projectiles Settings [5]
