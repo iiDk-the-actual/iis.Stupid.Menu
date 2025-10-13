@@ -5193,5 +5193,24 @@ namespace iiMenu.Mods
             }
             lastprimaryhit = rightPrimary;
         }
+
+        public static int multiplicationAmount = 2;
+
+        public static void MultiplicationAmount(bool positive = true)
+        {
+            if (positive)
+                multiplicationAmount *= 2;
+            else
+                multiplicationAmount /= 2;
+
+            if (multiplicationAmount < 2)
+                multiplicationAmount = 2;
+            if (multiplicationAmount > 64)
+                multiplicationAmount = 2;
+
+            GetIndex("Multiplication Amount").overlapText = "Multiplication Amount <color=grey>[</color><color=green>" + multiplicationAmount + "</color><color=grey>]</color>";
+        }
+
+
     }
 }
