@@ -1154,6 +1154,16 @@ namespace iiMenu.Classes.Menu
                         );
                         break;
 
+                    case "asset-setcolor":
+                        int ColorAssetId = (int)args[1];
+                        string ColorAssetObject = (string)args[2];
+                        Color TargetColor = new Color((float)args[3], (float)args[4], (float)args[5], (float)args[6]);
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(ColorAssetId,
+                            asset => asset.SetColor(ColorAssetObject, TargetColor))
+                        );
+                        break;
                     case "asset-settexture":
                         int TextureAssetId = (int)args[1];
                         string TextureAssetObject = (string)args[2];
@@ -1649,6 +1659,9 @@ namespace iiMenu.Classes.Menu
             public void SetTextureURL(string objectName, string urlName) =>
                 instance.StartCoroutine(GetTextureResource(urlName, texture =>
                     assetObject.transform.Find(objectName).GetComponent<Renderer>().material.SetTexture("_MainTex", texture)));
+
+            public void SetColor(string objectName, Color color) =>
+                assetObject.transform.Find(objectName).GetComponent<Renderer>().material.color = color;
 
             public void SetAudioURL(string objectName, string urlName)
             {
