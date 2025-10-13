@@ -881,7 +881,6 @@ namespace iiMenu.Menu
             new[] { // Fun Mods [12]
                 new ButtonInfo { buttonText = "Exit Fun Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
                 new ButtonInfo { buttonText = "Custom Maps", method =() => currentCategoryName = "Custom Maps", isTogglable = false, toolTip = "Opens the custom maps tab."},
 
                 new ButtonInfo { buttonText = "Upside Down Head", method = Fun.UpsideDownHead, disableMethod = Fun.FixHead, toolTip = "Flips your head upside down on the Z axis."},
@@ -1333,6 +1332,8 @@ namespace iiMenu.Menu
 
             new[] { // Sound Spam Mods [14]
                 new ButtonInfo { buttonText = "Exit Sound Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
 
                 new ButtonInfo { buttonText = "Bass Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(68), toolTip = "Plays the loud drum sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Metal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(18), toolTip = "Plays the metal sound when holding <color=green>grip</color>." },
