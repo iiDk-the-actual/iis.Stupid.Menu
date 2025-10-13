@@ -1005,7 +1005,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => GliderPatch.enabled = true, disableMethod =() => GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => GrabPatch.enabled = true, disableMethod =() => GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
-                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => KnockbackPatch.enabled = true, disableMethod =() => KnockbackPatch.enabled = false, toolTip = "Prevents players from knocking you back with snowballs."},
+                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => KnockbackPatch.enabled = true, disableMethod =() => KnockbackPatch.enabled = false, toolTip = "Prevents any force from knocking you back."},
 
                 new ButtonInfo { buttonText = "Fast Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 10f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
                 new ButtonInfo { buttonText = "Slow Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
