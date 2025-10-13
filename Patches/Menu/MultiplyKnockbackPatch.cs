@@ -34,7 +34,7 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled)
             {
-                speed = speed * Movement.multiplicationAmount;
+                speed = speed * Movement.multiplicationAmount / 10;
             }
         }
     }
