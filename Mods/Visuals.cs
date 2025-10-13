@@ -857,6 +857,8 @@ namespace iiMenu.Mods
                     SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
                     if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
 
+                    if (VRRig.LocalRig.GetSlingshot().dummyProjectile && VRRig.LocalRig.GetSlingshot().dummyProjectile.GetComponent<SlingshotProjectile>() == projectileInstance) continue;
+
                     if (!trajectoryPool.TryGetValue(projectileInstance, out LineRenderer Line))
                     {
                         GameObject LineObject = new GameObject("LineObject");
