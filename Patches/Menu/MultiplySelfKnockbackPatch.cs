@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/MultiplyKnockbackPatch.cs
+ * ii's Stupid Menu  Patches/Menu/MultiplySelfKnockbackPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -25,17 +25,17 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GTPlayer), "ApplyKnockback")]
-    public class MultiplyKnockbackPatch
+    [HarmonyPatch(typeof(SlingshotProjectile), "CheckForAOEKnockback")]
+    public class MultiplySelfKnockbackPatch
     {
         public static bool enabled;
         public static int multiplicationAmount;
 
-        public static void Prefix(ref float speed)
+        public static void Prefix(SlingshotProjectile __instance, ref float impactSpeed)
         {
-            if (enabled)
+            if (enabled && __instance.projectileOwner == VRRig.LocalRig.OwningNetPlayer)
             {
-                speed = speed * multiplicationAmount;
+                impactSpeed = impactSpeed * multiplicationAmount;
             }
         }
     }
