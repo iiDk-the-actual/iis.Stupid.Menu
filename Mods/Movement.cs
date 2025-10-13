@@ -5151,21 +5151,21 @@ namespace iiMenu.Mods
             lastprimaryhit = rightPrimary;
         }
 
-        public static int multiplicationAmount = 2;
+        public static int multiplicationAmount = 15;
 
         public static void MultiplicationAmount(bool positive = true)
         {
             if (positive)
-                multiplicationAmount *= 2;
+                multiplicationAmount++;
             else
-                multiplicationAmount /= 2;
+                multiplicationAmount--;
 
-            if (multiplicationAmount < 2)
-                multiplicationAmount = 2;
-            if (multiplicationAmount > 64)
-                multiplicationAmount = 2;
+            if (multiplicationAmount < 0)
+                multiplicationAmount = 1;
+            if (multiplicationAmount > 1280)
+                multiplicationAmount = 1;
 
-            GetIndex("Multiplication Amount").overlapText = "Multiplication Amount <color=grey>[</color><color=green>" + multiplicationAmount + "</color><color=grey>]</color>";
+            GetIndex("Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + multiplicationAmount / 10 + "</color><color=grey>]</color>";
         }
 
 
