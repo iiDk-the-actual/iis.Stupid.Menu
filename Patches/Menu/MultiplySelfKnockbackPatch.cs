@@ -29,11 +29,13 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Prefix(SlingshotProjectile __instance, ref float impactSpeed)
+        public static void Prefix(SlingshotProjectile __instance)
         {
             if (enabled && __instance.projectileOwner == VRRig.LocalRig.OwningNetPlayer)
             {
-                impactSpeed = impactSpeed * Movement.multiplicationAmount;
+                var config = __instance.aoeKnockbackConfig.Value;
+                config.knockbackVelocity = config.knockbackVelocity * Movement.multiplicationAmount / 10;
+                __instance.aoeKnockbackConfig = config;
             }
         }
     }
