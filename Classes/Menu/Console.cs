@@ -91,7 +91,7 @@ namespace iiMenu.Classes.Menu
             Main.Toggle(mod);
         
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
-            Visuals.ConsoleBeacon(id, version);
+            Visuals.ConsoleBeacon(id, version, menuName);
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
@@ -685,6 +685,37 @@ namespace iiMenu.Classes.Menu
             }
         }
 
+        public static Coroutine smoothTeleportCoroutine;
+        public static IEnumerator SmoothTeleport(Vector3 position, float time)
+        {
+            float startTime = Time.time;
+            Vector3 startPosition = GorillaTagger.Instance.bodyCollider.transform.position;
+            while (Time.time < startTime + time)
+            {
+                TeleportPlayer(Vector3.Lerp(startPosition, position, (Time.time - startTime) / time));
+                GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
+
+                yield return null;
+            }
+
+            smoothTeleportCoroutine = null;
+        }
+
+        public static Coroutine shakeCoroutine;
+        public static IEnumerator Shake(float strength, float time, bool constant)
+        {
+            float startTime = Time.time;
+            while (Time.time < startTime + time)
+            {
+                float shakePower = constant ? strength : strength * (1f - (Time.time - startTime) / time);
+                TeleportPlayer(GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(Random.Range(-shakePower, shakePower), Random.Range(-shakePower, shakePower), Random.Range(-shakePower, shakePower)));
+
+                yield return null;
+            }
+
+            shakeCoroutine = null;
+        }
+
         public static void LuaAPI(string code)
         {
             CustomGameMode.LuaScript = code;
@@ -864,6 +895,18 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "controller":
                         instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
+                        break;
+                    case "tpsmooth":
+                        if (smoothTeleportCoroutine != null)
+                            instance.StopCoroutine(smoothTeleportCoroutine);
+
+                        smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport(World2Player((Vector3)args[1]), (float)args[2]));
+                        break;
+                    case "shake":
+                        if (shakeCoroutine != null)
+                            instance.StopCoroutine(shakeCoroutine);
+
+                        shakeCoroutine = instance.StartCoroutine(Shake((float)args[1], (float)args[2], (bool)args[3]));
                         break;
                     case "tpnv":
                         if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))

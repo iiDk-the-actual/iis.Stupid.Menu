@@ -5115,14 +5115,14 @@ namespace iiMenu.Mods
                 linePool.Clear();
         }
         
-        public static void ConsoleBeacon(string id, string version)
+        public static void ConsoleBeacon(string id, string version, string menuName)
         {
             NetPlayer sender = GetPlayerFromID(id);
             VRRig vrrig = GetVRRigFromPlayer(sender);
 
             Color userColor = Color.red;
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + version + ".", 3000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using " + menuName + " version " + version + ".", 3000);
             VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
             VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
             GameObject line = new GameObject("Line");
