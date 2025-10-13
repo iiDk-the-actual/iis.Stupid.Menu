@@ -1008,6 +1008,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => GrabPatch.enabled = true, disableMethod =() => GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
                 new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => KnockbackPatch.enabled = true, disableMethod =() => KnockbackPatch.enabled = false, toolTip = "Prevents any force from knocking you back."},
+                new ButtonInfo { buttonText = "Multiply Knockback", enableMethod =() => MultiplyKnockback.enabled = true, disableMethod =() => MultiplyKnockback.enabled = false, toolTip = "Multiplies your knockback by an amount set in settings."},
                 new ButtonInfo { buttonText = "Multiply Self Knockback", enableMethod =() => MultiplySelfKnockbackPatch.enabled = true, disableMethod =() => MultiplySelfKnockbackPatch.enabled = false, toolTip = "Multiplies your projectile knockback by an amount set in settings."},
 
                 new ButtonInfo { buttonText = "Fast Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 10f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
