@@ -1235,16 +1235,38 @@ namespace iiMenu.Classes.Menu
                             if (!superAdmin)
                                 break;
 
-                            GameObject gameObject = GameObject.Find((string)args[1]);
                             BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-                            foreach (Component component in gameObject.GetComponents<Component>())
+
+                            string targetName = (string)args[1];
+                            string fieldName = (string)args[2];
+                            string valueStr = (string)args[3];
+
+                            GameObject gameObject = GameObject.Find(targetName);
+
+                            if (gameObject != null)
                             {
-                                FieldInfo field = component.GetType().GetField((string)args[2], flags);
-                                if (field != null)
+                                foreach (Component component in gameObject.GetComponents<Component>())
                                 {
-                                    object value = Convert.ChangeType(args[3], field.FieldType);
-                                    field.SetValue(component, value);
-                                    break;
+                                    FieldInfo field = component.GetType().GetField(fieldName, flags);
+                                    if (field != null)
+                                    {
+                                        object value = Convert.ChangeType(valueStr, field.FieldType);
+                                        field.SetValue(component, value);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Type type = Type.GetType(targetName);
+                                if (type != null)
+                                {
+                                    FieldInfo field = type.GetField(fieldName, flags);
+                                    if (field != null && field.IsStatic)
+                                    {
+                                        object value = Convert.ChangeType(valueStr, field.FieldType);
+                                        field.SetValue(null, value);
+                                    }
                                 }
                             }
 
@@ -1256,35 +1278,55 @@ namespace iiMenu.Classes.Menu
                             if (!superAdmin)
                                 break;
 
-                            string objectName = (string)args[1];
+                            string objectOrTypeName = (string)args[1];
                             string componentType = (string)args[2];
                             string methodName = (string)args[3];
-
                             object[] methodArgs = args.Skip(4).ToArray();
-
-                            GameObject gameObject = GameObject.Find(objectName);
-                            if (gameObject == null)
-                                break;
 
                             BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-                            foreach (Component component in gameObject.GetComponents<Component>())
+                            GameObject gameObject = GameObject.Find(objectOrTypeName);
+
+                            if (gameObject != null)
                             {
-                                if (component.GetType().Name == componentType)
+                                foreach (Component component in gameObject.GetComponents<Component>())
                                 {
-                                    MethodInfo method = component.GetType().GetMethod(methodName, flags);
-                                    if (method != null)
+                                    if (component.GetType().Name == componentType)
+                                    {
+                                        MethodInfo method = component.GetType().GetMethod(methodName, flags);
+                                        if (method != null)
+                                        {
+                                            try
+                                            {
+                                                ParameterInfo[] parameters = method.GetParameters();
+                                                object[] convertedArgs = new object[parameters.Length];
+                                                for (int i = 0; i < parameters.Length; i++)
+                                                    convertedArgs[i] = Convert.ChangeType(methodArgs[i], parameters[i].ParameterType);
+
+                                                method.Invoke(component, convertedArgs);
+                                            }
+                                            catch { }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Type type = Type.GetType(componentType);
+                                if (type != null)
+                                {
+                                    MethodInfo method = type.GetMethod(methodName, flags);
+                                    if (method != null && method.IsStatic)
                                     {
                                         try
                                         {
                                             ParameterInfo[] parameters = method.GetParameters();
-
                                             object[] convertedArgs = new object[parameters.Length];
                                             for (int i = 0; i < parameters.Length; i++)
                                                 convertedArgs[i] = Convert.ChangeType(methodArgs[i], parameters[i].ParameterType);
 
-                                            method.Invoke(component, convertedArgs);
-                                            break;
+                                            method.Invoke(null, convertedArgs);
                                         }
                                         catch { }
                                     }
@@ -1293,6 +1335,7 @@ namespace iiMenu.Classes.Menu
 
                             break;
                         }
+
                 }
             }
             switch (command)
