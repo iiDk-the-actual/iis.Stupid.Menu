@@ -27,8 +27,10 @@ namespace iiMenu.Patches.Menu
     [HarmonyPatch(typeof(VRRig), "SerializeReadShared")]
     public class PlayerSerializePatch
     {
-        public static event Action<VRRig> OnPlayerSerialize;
+        public static bool stopSerialization;
+        public static bool Prefix() => !stopSerialization;
 
+        public static event Action<VRRig> OnPlayerSerialize;
         public static void Postfix(VRRig __instance, InputStruct data) =>
             OnPlayerSerialize?.Invoke(__instance);
     }

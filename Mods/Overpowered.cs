@@ -979,7 +979,7 @@ namespace iiMenu.Mods
                 -175001459
             };
 
-            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length - 1)]);
+            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
         }
 
         private static float destroyDelay;

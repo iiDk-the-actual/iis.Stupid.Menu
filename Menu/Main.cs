@@ -2186,7 +2186,7 @@ namespace iiMenu.Menu
                 };
 
                 if (Random.Range(1, 5) == 2)
-                    title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length - 1)] + " v" + Random.Range(8, 159);
+                    title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length)] + " v" + Random.Range(8, 159);
             }
             if (translate)
                 title.text = TranslateText(title.text, output => ReloadMenu());
@@ -4945,6 +4945,13 @@ namespace iiMenu.Menu
 
         public static string ColorToHex(Color color) =>
             ColorUtility.ToHtmlStringRGB(color);
+
+        public static Color HexToColor(string hex)
+        {
+            if (!ColorUtility.TryParseHtmlString(hex, out var color))
+                return Color.black;
+            return color;
+        }
 
         public static string NoRichtextTags(string input, string replace = "")
         {

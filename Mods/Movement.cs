@@ -3763,6 +3763,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void Blink()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+            PlayerSerializePatch.stopSerialization = true;
+        }
+
+        public static void DisableBlink()
+        {
+            SerializePatch.OverrideSerialization = null;
+            PlayerSerializePatch.stopSerialization = false;
+        }
+
         public static int timerPowerIndex = 1;
         public static void ChangeTimerSpeed(bool positive = true)
         {
