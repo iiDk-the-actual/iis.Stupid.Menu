@@ -1431,6 +1431,12 @@ namespace iiMenu.Mods
             public (Vector3 position, Quaternion rotation) leftHand;
             public (Vector3 position, Quaternion rotation) rightHand;
 
+            public bool leftGrip;
+            public bool rightGrip;
+
+            public bool leftTrigger;
+            public bool rightTrigger;
+
             public readonly void MoveTo()
             {
                 TeleportPlayer(position);
@@ -1441,6 +1447,12 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.rightHandTransform.position = rightHand.position;
                 GorillaTagger.Instance.rightHandTransform.rotation = rightHand.rotation;
+
+                ControllerInputPoller.instance.leftControllerGripFloat = leftGrip ? 1f : 0f;
+                ControllerInputPoller.instance.rightControllerGripFloat = rightGrip ? 1f : 0f;
+
+                ControllerInputPoller.instance.leftControllerIndexFloat = leftTrigger ? 1f : 0f;
+                ControllerInputPoller.instance.rightControllerIndexFloat = rightTrigger ? 1f : 0f;
             }
 
             public static PlayerPosition CurrentPosition() =>
@@ -1450,7 +1462,13 @@ namespace iiMenu.Mods
                     velocity = GorillaTagger.Instance.rigidbody.linearVelocity,
 
                     leftHand = (GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.rotation),
-                    rightHand = (GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation)
+                    rightHand = (GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation),
+
+                    leftGrip = leftGrab,
+                    rightGrip = rightGrab,
+
+                    leftTrigger = false, // Main.leftTrigger > 0.5f, Disable due to being macro button
+                    rightTrigger = Main.rightTrigger > 0.5f
                 };
 
             public JObject ToJObject()
@@ -1469,13 +1487,17 @@ namespace iiMenu.Mods
                     {
                         ["position"] = Vec3ToJObject(rightHand.position),
                         ["rotation"] = QuatToJObject(rightHand.rotation)
-                    }
+                    },
+                    ["leftGrip"] = leftGrip,
+                    ["rightGrip"] = rightGrip,
+                    ["leftTrigger"] = leftTrigger,
+                    ["rightTrigger"] = rightTrigger
                 };
             }
 
             public static PlayerPosition FromJObject(JObject obj)
             {
-                return new PlayerPosition
+                var position = new PlayerPosition
                 {
                     position = JObjectToVec3((JObject)obj["position"]),
                     velocity = JObjectToVec3((JObject)obj["velocity"]),
@@ -1489,6 +1511,20 @@ namespace iiMenu.Mods
                         JObjectToQuat((JObject)obj["rightHand"]["rotation"])
                     )
                 };
+
+                if (obj["leftGrip"] != null)
+                    position.leftGrip = (bool)obj["leftGrip"];
+
+                if (obj["rightGrip"] != null)
+                    position.rightGrip = (bool)obj["rightGrip"];
+
+                if (obj["leftTrigger"] != null)
+                    position.leftTrigger = (bool)obj["leftTrigger"];
+
+                if (obj["rightTrigger"] != null)
+                    position.rightTrigger = (bool)obj["rightTrigger"];
+
+                return position;
             }
 
             private static JObject Vec3ToJObject(Vector3 v) =>
@@ -1503,7 +1539,6 @@ namespace iiMenu.Mods
             private static Quaternion JObjectToQuat(JObject obj) =>
                 new Quaternion((float)obj["x"], (float)obj["y"], (float)obj["z"], (float)obj["w"]);
         }
-
 
         public struct Macro
         {
@@ -1623,7 +1658,7 @@ namespace iiMenu.Mods
 
         public static bool recordingMacro;
         public static float positionDelay;
-        public const float defaultMacroStep = 0.01f;
+        public const float defaultMacroStep = 0.05f;
         public static List<PlayerPosition> recordingData = new List<PlayerPosition>();
 
         public static void RecordMacro()
@@ -1725,13 +1760,18 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.rightHandTransform.position = lastPosition.rightHand.position.Lerp(currentPosition.rightHand.position, t);
                 GorillaTagger.Instance.rightHandTransform.rotation = lastPosition.rightHand.rotation.Lerp(currentPosition.rightHand.rotation, t);
 
+                ControllerInputPoller.instance.leftControllerGripFloat = Mathf.Lerp(lastPosition.leftGrip ? 1f : 0f, currentPosition.leftGrip ? 1f : 0f, t);
+                ControllerInputPoller.instance.rightControllerGripFloat = Mathf.Lerp(lastPosition.rightGrip ? 1f : 0f, currentPosition.rightGrip ? 1f : 0f, t);
+                ControllerInputPoller.instance.leftControllerIndexFloat = Mathf.Lerp(lastPosition.leftTrigger ? 1f : 0f, currentPosition.leftTrigger ? 1f : 0f, t);
+                ControllerInputPoller.instance.rightControllerIndexFloat = Mathf.Lerp(lastPosition.rightTrigger ? 1f : 0f, currentPosition.rightTrigger ? 1f : 0f, t);
+
                 NotifiLib.information["Macro"] = $"{macroEndTime - elapsed:F1}s";
 
                 yield return null;
 
-                if (currentMacroPosition + 5 < positions.Count)
+                if (currentMacroPosition + (int)(1 / macro.macroStepDuration) < positions.Count)
                 {
-                    PlayerPosition futurePosition = positions[currentMacroPosition + 5];
+                    PlayerPosition futurePosition = positions[currentMacroPosition + (int)(1 / macro.macroStepDuration)];
                     VisualizePositionCoroutine(futurePosition, Color.cyan);
                 }
                 else
