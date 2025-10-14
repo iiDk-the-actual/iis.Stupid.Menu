@@ -5151,7 +5151,7 @@ namespace iiMenu.Mods
             lastprimaryhit = rightPrimary;
         }
 
-        public static int multiplicationAmount = 15;
+        public static float multiplicationAmount = 15;
 
         public static void MultiplicationAmount(bool positive = true)
         {
@@ -5160,10 +5160,9 @@ namespace iiMenu.Mods
             else
                 multiplicationAmount--;
 
+            multiplicationAmount %= 1281;
             if (multiplicationAmount < 0)
-                multiplicationAmount = 1;
-            if (multiplicationAmount > 1280)
-                multiplicationAmount = 1;
+                multiplicationAmount = 1280;
 
             GetIndex("Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + multiplicationAmount / 10 + "</color><color=grey>]</color>";
         }
