@@ -2039,6 +2039,12 @@ namespace iiMenu.Mods
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
             },
+            new []
+            {
+                "Critters",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToCritters",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City from Critters"
+            },
             new[] // Rotating
             {
                 "Rotating",
