@@ -1623,6 +1623,7 @@ namespace iiMenu.Mods
 
         public static bool recordingMacro;
         public static float positionDelay;
+        public const float defaultMacroStep = 0.01f;
         public static List<PlayerPosition> recordingData = new List<PlayerPosition>();
 
         public static void RecordMacro()
@@ -1639,7 +1640,7 @@ namespace iiMenu.Mods
 
                 if (recordingMacro && Time.time > positionDelay)
                 {
-                    positionDelay = Time.time + 0.01f;
+                    positionDelay = Time.time + defaultMacroStep;
                     recordingData.Add(PlayerPosition.CurrentPosition());
                 }
 
@@ -1672,7 +1673,8 @@ namespace iiMenu.Mods
                     {
                         name = name,
                         positions = savedRecordingData,
-                        enabled = true
+                        enabled = true,
+                        macroStepDuration = defaultMacroStep
                     };
 
                     string filePath = $"{PluginInfo.BaseDirectory}/Macros/{FormatMacroName(name)}.json";
