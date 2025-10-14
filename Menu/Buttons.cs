@@ -573,7 +573,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.LongJump, toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod = Movement.CreateVelocityTrackers, method = Movement.VelocityLongArms, disableMethod = Movement.DestroyVelocityTrackers, toolTip = "Moves your arms farther depending on how fast you move them."},
 
-                new ButtonInfo { buttonText = "Timer", method = Movement.Timer, toolTip = "Speeds up or slows down the time of your game."},
+                new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, disableMethod =() => TimerPatch.enabled = false, toolTip = "Speeds up or slows down the time of your game."},
                 new ButtonInfo { buttonText = "Lag Range", method = Movement.LagRange, toolTip = "Dynamically changes how much your rig updates depending on how close you are to others."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method = Movement.SpeedBoost, toolTip = "Changes your speed to whatever you set it to."},
