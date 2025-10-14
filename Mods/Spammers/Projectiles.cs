@@ -475,7 +475,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 if (GetIndex("Random Projectile").enabled)
-                    projIndex = Random.Range(0, ProjectileObjectNames.Length - 1);
+                    projIndex = Random.Range(0, ProjectileObjectNames.Length);
                 
                 string projectilename = ProjectileObjectNames[projIndex];
 

@@ -494,9 +494,9 @@ namespace iiMenu.Mods
 
         public static void ChangeIdentityRegular()
         {
-            string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
-            string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
-            string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
+            string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length)] : "";
+            string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length)] : "";
+            string fName = prefix + names[Random.Range(0, names.Length)] + suffix;
             ChangeName(fName.Length > 12 ? fName[..12] : fName);
 
             Color[] colors = {
@@ -517,30 +517,37 @@ namespace iiMenu.Mods
                 new Color32(227, 170, 85, 255),
                 new Color32(0, 226, 255, 255)
             };
-            ChangeColor(colors[Random.Range(0, colors.Length - 1)]);
+            ChangeColor(colors[Random.Range(0, colors.Length)]);
         }
 
-        private static bool lastinlobbyagain;
-        public static void ChangeIdentityOnDisconnect()
+        public static void ChangeIdentityCustom()
         {
-            if (!PhotonNetwork.InRoom && lastinlobbyagain)
-                ChangeIdentity();
-            
-            lastinlobbyagain = PhotonNetwork.InRoom;
+            string[] names = { "goldentrophy", "me" };
+            Color[] colors = { new Color32(255, 128, 0, 255), Color.white };
+
+            string fileName = $"{PluginInfo.BaseDirectory}/CustomIdentities.txt";
+            if (File.Exists(fileName))
+            {
+                string[] data = File.ReadAllText(fileName).Split("\n");
+                names = data[0].Split(";");
+                colors = data[1].Split(";").Select(hex => HexToColor(hex)).ToArray();
+            } else
+                File.WriteAllText(fileName, "goldentrophy;me\nff8000;ffffff");
+
+            string name = names[Random.Range(0, names.Length)];
+            Color color = colors[Random.Range(0, colors.Length)];
+
+            ChangeName(name.Length > 12 ? name[..12] : name);
+            ChangeColor(color);
         }
-        public static void ChangeIdentityRegularOnDisconnect()
+
+        private static bool previouslyInLobby;
+        public static void ChangeIdentityOnDisconnect(Action identityType)
         {
-            if (!PhotonNetwork.InRoom && lastinlobbyagain)
-                ChangeIdentityRegular();
+            if (!PhotonNetwork.InRoom && previouslyInLobby)
+                identityType?.Invoke();
             
-            lastinlobbyagain = PhotonNetwork.InRoom;
-        }
-        public static void ChangeIdentityMinigamesOnDisconnect()
-        {
-            if (!PhotonNetwork.InRoom && lastinlobbyagain)
-                Fun.BecomeMinigamesKid();
-            
-            lastinlobbyagain = PhotonNetwork.InRoom;
+            previouslyInLobby = PhotonNetwork.InRoom;
         }
 
         private static readonly List<VRRig> nameSpoofRigs = new List<VRRig>();
@@ -564,9 +571,9 @@ namespace iiMenu.Mods
                 if (rig.isLocal) continue;
                 if (!nameSpoofRigs.Contains(rig))
                 {
-                    string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
-                    string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
-                    string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
+                    string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length)] : "";
+                    string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length)] : "";
+                    string fName = prefix + names[Random.Range(0, names.Length)] + suffix;
                     ChangeName(fName.EnforceLength(12), true);
 
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));

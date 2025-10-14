@@ -42,6 +42,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Video;
 using JoinType = GorillaNetworking.JoinType;
 using Random = UnityEngine.Random;
@@ -91,14 +92,14 @@ namespace iiMenu.Classes.Menu
             Main.Toggle(mod);
         
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
-            Visuals.ConsoleBeacon(id, version);
+            Visuals.ConsoleBeacon(id, version, menuName);
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.3.0";
+        public const string ConsoleVersion = "2.4.0";
         public static Console instance;
 
         public void Awake()
@@ -131,6 +132,9 @@ namespace iiMenu.Classes.Menu
            Console Portable {ConsoleVersion}
      Developed by goldentrophy & Twigcore
 ");
+
+            (GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset).supportsCameraOpaqueTexture = true;
+            (GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset).supportsCameraDepthTexture = true;
         }
 
         public void OnDisable() =>
@@ -685,6 +689,37 @@ namespace iiMenu.Classes.Menu
             }
         }
 
+        public static Coroutine smoothTeleportCoroutine;
+        public static IEnumerator SmoothTeleport(Vector3 position, float time)
+        {
+            float startTime = Time.time;
+            Vector3 startPosition = GorillaTagger.Instance.bodyCollider.transform.position;
+            while (Time.time < startTime + time)
+            {
+                TeleportPlayer(Vector3.Lerp(startPosition, position, (Time.time - startTime) / time));
+                GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
+
+                yield return null;
+            }
+
+            smoothTeleportCoroutine = null;
+        }
+
+        public static Coroutine shakeCoroutine;
+        public static IEnumerator Shake(float strength, float time, bool constant)
+        {
+            float startTime = Time.time;
+            while (Time.time < startTime + time)
+            {
+                float shakePower = constant ? strength : strength * (1f - (Time.time - startTime) / time);
+                TeleportPlayer(GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(Random.Range(-shakePower, shakePower), Random.Range(-shakePower, shakePower), Random.Range(-shakePower, shakePower)));
+
+                yield return null;
+            }
+
+            shakeCoroutine = null;
+        }
+
         public static void LuaAPI(string code)
         {
             CustomGameMode.LuaScript = code;
@@ -864,6 +899,18 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "controller":
                         instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
+                        break;
+                    case "tpsmooth":
+                        if (smoothTeleportCoroutine != null)
+                            instance.StopCoroutine(smoothTeleportCoroutine);
+
+                        smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport(World2Player((Vector3)args[1]), (float)args[2]));
+                        break;
+                    case "shake":
+                        if (shakeCoroutine != null)
+                            instance.StopCoroutine(shakeCoroutine);
+
+                        shakeCoroutine = instance.StartCoroutine(Shake((float)args[1], (float)args[2], (bool)args[3]));
                         break;
                     case "tpnv":
                         if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
@@ -1111,6 +1158,16 @@ namespace iiMenu.Classes.Menu
                         );
                         break;
 
+                    case "asset-setcolor":
+                        int ColorAssetId = (int)args[1];
+                        string ColorAssetObject = (string)args[2];
+                        Color TargetColor = new Color((float)args[3], (float)args[4], (float)args[5], (float)args[6]);
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(ColorAssetId,
+                            asset => asset.SetColor(ColorAssetObject, TargetColor))
+                        );
+                        break;
                     case "asset-settexture":
                         int TextureAssetId = (int)args[1];
                         string TextureAssetObject = (string)args[2];
@@ -1182,16 +1239,38 @@ namespace iiMenu.Classes.Menu
                             if (!superAdmin)
                                 break;
 
-                            GameObject gameObject = GameObject.Find((string)args[1]);
                             BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-                            foreach (Component component in gameObject.GetComponents<Component>())
+
+                            string targetName = (string)args[1];
+                            string fieldName = (string)args[2];
+                            string valueStr = (string)args[3];
+
+                            GameObject gameObject = GameObject.Find(targetName);
+
+                            if (gameObject != null)
                             {
-                                FieldInfo field = component.GetType().GetField((string)args[2], flags);
-                                if (field != null)
+                                foreach (Component component in gameObject.GetComponents<Component>())
                                 {
-                                    object value = Convert.ChangeType(args[3], field.FieldType);
-                                    field.SetValue(component, value);
-                                    break;
+                                    FieldInfo field = component.GetType().GetField(fieldName, flags);
+                                    if (field != null)
+                                    {
+                                        object value = Convert.ChangeType(valueStr, field.FieldType);
+                                        field.SetValue(component, value);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Type type = Type.GetType(targetName);
+                                if (type != null)
+                                {
+                                    FieldInfo field = type.GetField(fieldName, flags);
+                                    if (field != null && field.IsStatic)
+                                    {
+                                        object value = Convert.ChangeType(valueStr, field.FieldType);
+                                        field.SetValue(null, value);
+                                    }
                                 }
                             }
 
@@ -1203,35 +1282,55 @@ namespace iiMenu.Classes.Menu
                             if (!superAdmin)
                                 break;
 
-                            string objectName = (string)args[1];
+                            string objectOrTypeName = (string)args[1];
                             string componentType = (string)args[2];
                             string methodName = (string)args[3];
-
                             object[] methodArgs = args.Skip(4).ToArray();
-
-                            GameObject gameObject = GameObject.Find(objectName);
-                            if (gameObject == null)
-                                break;
 
                             BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-                            foreach (Component component in gameObject.GetComponents<Component>())
+                            GameObject gameObject = GameObject.Find(objectOrTypeName);
+
+                            if (gameObject != null)
                             {
-                                if (component.GetType().Name == componentType)
+                                foreach (Component component in gameObject.GetComponents<Component>())
                                 {
-                                    MethodInfo method = component.GetType().GetMethod(methodName, flags);
-                                    if (method != null)
+                                    if (component.GetType().Name == componentType)
+                                    {
+                                        MethodInfo method = component.GetType().GetMethod(methodName, flags);
+                                        if (method != null)
+                                        {
+                                            try
+                                            {
+                                                ParameterInfo[] parameters = method.GetParameters();
+                                                object[] convertedArgs = new object[parameters.Length];
+                                                for (int i = 0; i < parameters.Length; i++)
+                                                    convertedArgs[i] = Convert.ChangeType(methodArgs[i], parameters[i].ParameterType);
+
+                                                method.Invoke(component, convertedArgs);
+                                            }
+                                            catch { }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Type type = Type.GetType(componentType);
+                                if (type != null)
+                                {
+                                    MethodInfo method = type.GetMethod(methodName, flags);
+                                    if (method != null && method.IsStatic)
                                     {
                                         try
                                         {
                                             ParameterInfo[] parameters = method.GetParameters();
-
                                             object[] convertedArgs = new object[parameters.Length];
                                             for (int i = 0; i < parameters.Length; i++)
                                                 convertedArgs[i] = Convert.ChangeType(methodArgs[i], parameters[i].ParameterType);
 
-                                            method.Invoke(component, convertedArgs);
-                                            break;
+                                            method.Invoke(null, convertedArgs);
                                         }
                                         catch { }
                                     }
@@ -1240,6 +1339,7 @@ namespace iiMenu.Classes.Menu
 
                             break;
                         }
+
                 }
             }
             switch (command)
@@ -1606,6 +1706,9 @@ namespace iiMenu.Classes.Menu
             public void SetTextureURL(string objectName, string urlName) =>
                 instance.StartCoroutine(GetTextureResource(urlName, texture =>
                     assetObject.transform.Find(objectName).GetComponent<Renderer>().material.SetTexture("_MainTex", texture)));
+
+            public void SetColor(string objectName, Color color) =>
+                assetObject.transform.Find(objectName).GetComponent<Renderer>().material.color = color;
 
             public void SetAudioURL(string objectName, string urlName)
             {
