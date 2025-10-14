@@ -5205,7 +5205,7 @@ namespace iiMenu.Mods
             if (multiplicationAmount < 0)
                 multiplicationAmount = 1280;
 
-            GetIndex("Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
+            GetIndex("Knockback Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
         }
 
 
