@@ -33,9 +33,7 @@ namespace iiMenu.Patches.Menu
         public static void Prefix(ref float speed)
         {
             if (enabled)
-            {
-                speed = speed * Movement.multiplicationAmount / 10;
-            }
+                speed = speed * Movement.multiplicationAmount / 10f;
         }
     }
 }
