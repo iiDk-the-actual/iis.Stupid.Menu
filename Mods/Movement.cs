@@ -1768,7 +1768,7 @@ namespace iiMenu.Mods
                 // Unity race condition bug. Fuck you. ControllerInputPoller.instance.rightControllerIndexFloat = Mathf.Lerp(lastPosition.rightTrigger ? 1f : 0f, currentPosition.rightTrigger ? 1f : 0f, t);
 
                 NotifiLib.information["Macro Time"] = $"{macroEndTime - elapsed:F1}s";
-                NotifiLib.information["Macro Nane"] = macro.name;
+                NotifiLib.information["Macro Name"] = macro.name;
 
                 yield return null;
 
@@ -1795,8 +1795,8 @@ namespace iiMenu.Mods
                 activeMacro = null;
             }
 
-            NotifiLib.information.Remove("Macro Name");
             NotifiLib.information.Remove("Macro Time");
+            NotifiLib.information.Remove("Macro Name");
 
             RemovePosition(Color.cyan);
             RemovePosition(Color.red);
