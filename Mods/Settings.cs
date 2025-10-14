@@ -4843,7 +4843,8 @@ exit";
                 Movement.wallWalkStrengthIndex.ToString(),
                 Fun.headSpinIndex.ToString(),
                 Movement.macroPlaybackRangeIndex.ToString(),
-                joystickMenuPosition.ToString()
+                joystickMenuPosition.ToString(),
+                Movement.multiplicationAmount.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5073,6 +5074,9 @@ exit";
 
                 joystickMenuPosition = int.Parse(data[58]) - 1;
                 ChangeJoystickMenuPosition();
+
+                Movement.multiplicationAmount = int.Parse(data[59]) - 1;
+                Movement.MultiplicationAmount();
             }
             catch { LogManager.Log("Save file out of date"); }
 
