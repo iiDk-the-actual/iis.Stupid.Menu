@@ -3775,46 +3775,25 @@ namespace iiMenu.Mods
             PlayerSerializePatch.stopSerialization = false;
         }
 
-        public static int timerPowerIndex = 1;
+        public static int timerPowerIndex = 15;
         public static void ChangeTimerSpeed(bool positive = true)
         {
-            float[] timerPowers = {
-                0.5f,
-                1.25f,
-                2f,
-                5f
-            };
-            string[] timerNames = {
-                "Slow",
-                "Normal",
-                "Fast",
-                "Extreme"
-            };
-
             if (positive)
                 timerPowerIndex++;
             else
                 timerPowerIndex--;
 
-            timerPowerIndex %= timerPowers.Length;
+            timerPowerIndex %= 51;
             if (timerPowerIndex < 0)
-                timerPowerIndex = timerPowers.Length - 1;
+                timerPowerIndex = 50;
 
-            timerPower = timerPowers[timerPowerIndex];
-            GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + timerNames[timerPowerIndex] + "</color><color=grey>]</color>";
+            timerPower = timerPowerIndex / 10f;
+            GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + (timerPowerIndex / 10f) + "</color><color=grey>]</color>";
         }
 
-        private static float timerPower = 1.25f;
-        public static void Timer()
-        {
-            float extraFactor = timerPower - 1f;
-            if (extraFactor <= 0f) return;
-
-            Rigidbody rb = GorillaTagger.Instance.rigidbody;
-
-            Vector3 displacement = (rb.linearVelocity + Physics.gravity) * (Time.fixedDeltaTime * extraFactor);
-            rb.MovePosition(rb.position + displacement);
-        }
+        private static float timerPower = 1.5f;
+        public static void Timer() =>
+            Time.timeScale = timerPower;
 
         public static void FlickJump()
         {
@@ -5163,8 +5142,7 @@ namespace iiMenu.Mods
             lastprimaryhit = rightPrimary;
         }
 
-        public static float multiplicationAmount = 15;
-
+        public static int multiplicationAmount = 15;
         public static void MultiplicationAmount(bool positive = true)
         {
             if (positive)
@@ -5176,7 +5154,7 @@ namespace iiMenu.Mods
             if (multiplicationAmount < 0)
                 multiplicationAmount = 1280;
 
-            GetIndex("Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + multiplicationAmount / 10 + "</color><color=grey>]</color>";
+            GetIndex("Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
         }
 
 
