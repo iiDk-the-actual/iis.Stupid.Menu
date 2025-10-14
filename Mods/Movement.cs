@@ -2042,7 +2042,7 @@ namespace iiMenu.Mods
             new []
             {
                 "Critters",
-                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToCritters",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityCrittersTransition",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City from Critters"
             },
             new[] // Rotating
@@ -2085,7 +2085,7 @@ namespace iiMenu.Mods
                 VirtualStumpTeleporter tele = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<VirtualStumpTeleporter>();
 
                 tele.gameObject.transform.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true); // wtf
-                tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true);
+                tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true); 
 
                 tele.TeleportPlayer();
             } else
