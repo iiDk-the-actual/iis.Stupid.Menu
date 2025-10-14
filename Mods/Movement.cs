@@ -1673,6 +1673,8 @@ namespace iiMenu.Mods
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Started recording...");
                 }
 
+                ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
+
                 if (recordingMacro && Time.time > positionDelay)
                 {
                     positionDelay = Time.time + defaultMacroStep;
@@ -1763,9 +1765,10 @@ namespace iiMenu.Mods
                 ControllerInputPoller.instance.leftControllerGripFloat = Mathf.Lerp(lastPosition.leftGrip ? 1f : 0f, currentPosition.leftGrip ? 1f : 0f, t);
                 ControllerInputPoller.instance.rightControllerGripFloat = Mathf.Lerp(lastPosition.rightGrip ? 1f : 0f, currentPosition.rightGrip ? 1f : 0f, t);
                 ControllerInputPoller.instance.leftControllerIndexFloat = Mathf.Lerp(lastPosition.leftTrigger ? 1f : 0f, currentPosition.leftTrigger ? 1f : 0f, t);
-                ControllerInputPoller.instance.rightControllerIndexFloat = Mathf.Lerp(lastPosition.rightTrigger ? 1f : 0f, currentPosition.rightTrigger ? 1f : 0f, t);
+                // Unity race condition bug. Fuck you. ControllerInputPoller.instance.rightControllerIndexFloat = Mathf.Lerp(lastPosition.rightTrigger ? 1f : 0f, currentPosition.rightTrigger ? 1f : 0f, t);
 
-                NotifiLib.information["Macro"] = $"{macroEndTime - elapsed:F1}s";
+                NotifiLib.information["Macro Time"] = $"{macroEndTime - elapsed:F1}s";
+                NotifiLib.information["Macro Nane"] = macro.name;
 
                 yield return null;
 
@@ -1792,7 +1795,8 @@ namespace iiMenu.Mods
                 activeMacro = null;
             }
 
-            NotifiLib.information.Remove("Macro");
+            NotifiLib.information.Remove("Macro Name");
+            NotifiLib.information.Remove("Macro Time");
 
             RemovePosition(Color.cyan);
             RemovePosition(Color.red);
