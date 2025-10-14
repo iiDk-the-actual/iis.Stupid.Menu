@@ -1403,8 +1403,6 @@ namespace iiMenu.Mods
 
         public static void ClearRewind() => playerPositions.Clear();
 
-        public const float macroStepDuration = 0.1f;
-
         public static float macroPlaybackRange = 1f;
         public static int macroPlaybackRangeIndex = 1;
         public static void ChangeMacroPlaybackRange(bool positive = true)
@@ -1510,6 +1508,7 @@ namespace iiMenu.Mods
         public struct Macro
         {
             public List<PlayerPosition> positions;
+            public float macroStepDuration;
             public string name;
             public bool enabled;
 
@@ -1519,7 +1518,8 @@ namespace iiMenu.Mods
                 {
                     ["name"] = name,
                     ["enabled"] = enabled,
-                    ["positions"] = new JArray(positions.ConvertAll(p => p.ToJObject()))
+                    ["positions"] = new JArray(positions.ConvertAll(p => p.ToJObject())),
+                    ["step-time"] = macroStepDuration
                 };
 
                 return obj.ToString();
@@ -1538,6 +1538,11 @@ namespace iiMenu.Mods
 
                 foreach (var token in (JArray)obj["positions"])
                     macro.positions.Add(PlayerPosition.FromJObject((JObject)token));
+
+                if (obj.TryGetValue("step-time", out JToken stepTimeToken))
+                    macro.macroStepDuration = (float)stepTimeToken;
+                else
+                    macro.macroStepDuration = 0.1f;
 
                 return macro;
             }
@@ -1634,7 +1639,7 @@ namespace iiMenu.Mods
 
                 if (recordingMacro && Time.time > positionDelay)
                 {
-                    positionDelay = Time.time + macroStepDuration;
+                    positionDelay = Time.time + 0.01f;
                     recordingData.Add(PlayerPosition.CurrentPosition());
                 }
 
@@ -1688,7 +1693,7 @@ namespace iiMenu.Mods
                 positions = positions.GetRange(startFromPosition, positions.Count - startFromPosition);
 
             float macroStartTime = Time.time;
-            float macroEndTime = positions.Count * macroStepDuration;
+            float macroEndTime = positions.Count * macro.macroStepDuration;
 
             while (Time.time < macroStartTime + macroEndTime)
             {
@@ -1699,16 +1704,16 @@ namespace iiMenu.Mods
                 }
 
                 float elapsed = Time.time - macroStartTime;
-                float stepElapsed = elapsed % macroStepDuration;
+                float stepElapsed = elapsed % macro.macroStepDuration;
 
-                int currentMacroPosition = Mathf.FloorToInt(elapsed / macroStepDuration);
+                int currentMacroPosition = Mathf.FloorToInt(elapsed / macro.macroStepDuration);
 
                 currentMacroPosition = Mathf.Clamp(currentMacroPosition, 0, positions.Count);
 
                 PlayerPosition lastPosition = currentMacroPosition - 1 < 0 ? startPosition : positions[currentMacroPosition - 1];
                 PlayerPosition currentPosition = positions[currentMacroPosition];
 
-                float t = stepElapsed / macroStepDuration;
+                float t = stepElapsed / macro.macroStepDuration;
                 TeleportPlayer(lastPosition.position.Lerp(currentPosition.position, t));
                 GorillaTagger.Instance.rigidbody.linearVelocity = lastPosition.velocity.Lerp(currentPosition.velocity, t);
 
