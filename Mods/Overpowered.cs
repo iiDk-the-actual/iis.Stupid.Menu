@@ -2084,6 +2084,27 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float> { };
+        public static void SnowballBoxing()
+        {
+            foreach (VRRig rig1 in GorillaParent.instance.vrrigs)
+            {
+                if (Time.time < GetBoxingDelay(rig1))
+                    continue;
+
+                foreach (VRRig rig2 in GorillaParent.instance.vrrigs)
+                {
+                    if (rig2 == rig1) continue;
+                    if (Vector3.Distance(rig2.leftHandTransform.position, rig1.headMesh.transform.position) < 0.25f || Vector3.Distance(rig2.rightHandTransform.position, rig1.headMesh.transform.position) < 0.25f)
+                    {
+                        Vector3 targetDirection = rig2.headMesh.transform.position - rig1.headMesh.transform.position;
+                        Overpowered.BetaSpawnSnowball(rig1.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, rig1.OwningNetPlayer.GetPlayerRef());
+                        SetBoxingDelay(rig1);
+                    }
+                }
+            }
+        }
+
         public static AudioClip KameStart;
         public static AudioClip KameStop;
 
