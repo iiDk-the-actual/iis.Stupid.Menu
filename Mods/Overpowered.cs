@@ -2200,7 +2200,8 @@ namespace iiMenu.Mods
                 {
                     Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.forward, out var RayPoint, 512f, GTPlayer.Instance.locomotionEnabledLayers);
                     cursor.transform.position = RayPoint.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : RayPoint.point;
-                } catch { }
+                }
+                catch { }
 
                 Vector3 snowballPosition = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
                 Vector3 targetDirection = (cursor.transform.position - snowballPosition).normalized * 60f;
@@ -2220,6 +2221,12 @@ namespace iiMenu.Mods
 
             if (cursor != null)
                 Object.Destroy(cursor);
+        }
+
+        public static void Disable_Kamehameha()
+        {
+            VRRig.LocalRig.SetThrowableProjectileColor(false, Color.white);
+            VRRig.LocalRig.SetThrowableProjectileColor(false, Color.white);
         }
 
         public static void SnowballSafetyBubble()
