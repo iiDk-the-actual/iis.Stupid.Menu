@@ -1403,7 +1403,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method = Overpowered.SnowballImpactEffectGun, toolTip = "Spawns snowball impact events on whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Punch Mod", method = Overpowered.SnowballPunchMod, toolTip = "Flings people when you punch them."},
-                new ButtonInfo { buttonText = "Snowball Kamehameha", enableMethod = Overpowered.Enable_Kamehameha, method = Overpowered.Kamehameha, toolTip = "Spawns a flaming ball when holding down both triggers and grips.." },
+                new ButtonInfo { buttonText = "Snowball Kamehameha", enableMethod = Overpowered.Enable_Kamehameha, method = Overpowered.Kamehameha, disableMethod = Overpowered.Disable_Kamehameha, toolTip = "Spawns a flaming ball when holding down both triggers and grips.." },
 
                 new ButtonInfo { buttonText = "Snowball Fling Aura", method = Overpowered.SnowballSafetyBubble, toolTip = "Anyone who gets too close to you will be launched away."},
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method = Overpowered.SnowballFlingGun, toolTip = "Flings whoever your hand desires."},
