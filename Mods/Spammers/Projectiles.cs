@@ -420,7 +420,7 @@ namespace iiMenu.Mods.Spammers
                 projDebounceIndex = 20;
 
             if (projDebounceIndex < 8 && fromMenu && (!GetIndex("Friend Sided Projectiles").enabled || !GetIndex("Client Sided Projectiles").enabled))
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.4 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
             Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
