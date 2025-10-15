@@ -1405,7 +1405,67 @@ namespace iiMenu.Menu
 
                         try
                         {
+                            if (button.rebindKey != "")
+                            {
+                                float buttonAmount = 0f;
+                                switch (button.rebindKey)
+                                {
+                                    case "A":
+                                        buttonAmount = (_rightPrimary ? 1f : 0f);
+                                        break;
+                                    case "B":
+                                        buttonAmount = (_rightSecondary ? 1f : 0f);
+                                        break;
+                                    case "X":
+                                        buttonAmount = (_leftPrimary ? 1f : 0f);
+                                        break;
+                                    case "Y":
+                                        buttonAmount = (_leftSecondary ? 1f : 0f);
+                                        break;
+                                    case "LG":
+                                        buttonAmount = (_leftGrab ? 1f : 0f);
+                                        break;
+                                    case "RG":
+                                        buttonAmount = (_rightGrab ? 1f : 0f);
+                                        break;
+                                    case "LT":
+                                        buttonAmount = _leftTrigger;
+                                        break;
+                                    case "RT":
+                                        buttonAmount = _rightTrigger;
+                                        break;
+                                    case "LJ":
+                                        buttonAmount = (_leftJoystickClick ? 1f : 0f);
+                                        break;
+                                    case "RJ":
+                                        buttonAmount = (_rightJoystickClick ? 1f : 0f);
+                                        break;
+                                }
+                                leftPrimary = (buttonAmount > 0.5f);
+                                leftSecondary = (buttonAmount > 0.5f);
+                                rightPrimary = (buttonAmount > 0.5f);
+                                rightSecondary = (buttonAmount > 0.5f);
+                                leftGrab = (buttonAmount > 0.5f);
+                                rightGrab = (buttonAmount > 0.5f);
+                                leftTrigger = buttonAmount;
+                                rightTrigger = buttonAmount;
+                                leftJoystickClick = (buttonAmount > 0.5f);
+                                rightJoystickClick = (buttonAmount > 0.5f);
+                            }
                             button.method.Invoke();
+                            if (button.rebindKey != "")
+                            {
+                                leftPrimary = _leftPrimary;
+                                leftSecondary = _leftSecondary;
+                                rightPrimary = _rightPrimary;
+                                rightSecondary = _rightSecondary;
+                                leftGrab = _leftGrab;
+                                rightGrab = _rightGrab;
+                                leftTrigger = _leftTrigger;
+                                rightTrigger = _rightTrigger;
+                                leftJoystickClick = _leftJoystickClick;
+                                rightJoystickClick = _rightJoystickClick;
+                            }
                         }
                         catch (Exception exc)
                         {
@@ -5955,23 +6015,43 @@ namespace iiMenu.Menu
                                 }
                                 else
                                 {
-                                    if (target.buttonText != "Exit Favorite Mods")
+                                    if (IsRebinding)
                                     {
-                                        if (favorites.Contains(target.buttonText))
+                                        if (target.rebindKey != "")
                                         {
-                                            favorites.Remove(target.buttonText);
+                                            target.rebindKey = "";
                                             VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
-
                                             if (fromMenu)
-                                                NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
+                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
                                         }
                                         else
                                         {
-                                            favorites.Add(target.buttonText);
+                                            target.rebindKey = BindInput;
                                             VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
-
                                             if (fromMenu)
-                                                NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
+                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to " + BindInput + ".");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (target.buttonText != "Exit Favorite Mods")
+                                        {
+                                            if (favorites.Contains(target.buttonText))
+                                            {
+                                                favorites.Remove(target.buttonText);
+                                                VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                                if (fromMenu)
+                                                    NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
+                                            }
+                                            else
+                                            {
+                                                favorites.Add(target.buttonText);
+                                                VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                                if (fromMenu)
+                                                    NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
+                                            }
                                         }
                                     }
                                 }
@@ -6600,6 +6680,7 @@ jgs \_   _/ |Oo\
         public static bool OverwriteKeybinds;
         public static bool IsBinding;
         public static string BindInput = "";
+        public static bool IsRebinding;
 
         public static readonly Dictionary<string, List<string>> ModBindings = new Dictionary<string, List<string>> {
             { "A", new List<string>() },
