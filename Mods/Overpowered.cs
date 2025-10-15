@@ -2900,7 +2900,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static readonly Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float>();
         private static float GetBoxingDelay(VRRig rig) =>
             boxingDelay.GetValueOrDefault(rig, -1);
 
