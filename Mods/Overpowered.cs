@@ -3288,37 +3288,6 @@ namespace iiMenu.Mods
         }
 
         private static float lagDebounce;
-        public static void LagTarget(object general)
-        {
-            if (PhotonNetwork.InRoom && Time.time > lagDebounce)
-            {
-                switch (general)
-                {
-                    case NetPlayer player:
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", NetPlayerToPlayer(player), new object[] { null });
-                        break;
-                    }
-                    case RpcTarget target:
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", target, new object[] { null });
-                        break;
-                    }
-                    case int[] targets:
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = targets }, new object[] { null });
-                        break;
-                    }
-                }
-
-                RPCProtection();
-                lagDebounce = Time.time + lagDelay;
-            }
-        }
-
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -3327,7 +3296,15 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    LagTarget(GetPlayerFromVRRig(lockTarget));
+                {
+                    if (Time.time > lagDebounce)
+                    {
+                        for (int i = 0; i < lagAmount; i++)
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", lockTarget.GetPlayer().GetPlayer(), new object[] { null });
+                        lagDebounce = Time.time + lagDelay;
+                    }
+                    
+                }
 
                 if (GetGunInput(true))
                 {
@@ -3346,12 +3323,37 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll() => LagTarget(RpcTarget.Others);
+        public static void LagAll()
+        {
+            if (Time.time > lagDebounce)
+            {
+                for (int i = 0; i < lagAmount; i++)
+                    FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", RpcTarget.All, new object[] { null });
+                lagDebounce = Time.time + lagDelay;
+            }
+        }
 
         public static void LagAura()
         {
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig)))
-                LagTarget(GetPlayerFromVRRig(vrrig));
+            List<int> nearbyPlayers = new List<int>();
+
+            foreach (var vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                {
+                    nearbyPlayers.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
+                }
+                else if (nearbyPlayers.Contains(GetPlayerFromVRRig(vrrig).ActorNumber))
+                {
+                    nearbyPlayers.Remove(GetPlayerFromVRRig(vrrig).ActorNumber);
+                }
+            }
+            if (Time.time > lagDebounce)
+            {
+                for (int i = 0; i < lagAmount; i++)
+                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { null });
+                lagDebounce = Time.time + lagDelay;
+            }
         }
 
         private static float antiReportLagDelay;
@@ -3369,7 +3371,15 @@ namespace iiMenu.Mods
                 });
 
                 if (actors.Count > 0)
-                    LagTarget(actors.ToArray());
+                {
+                    if (Time.time > lagDebounce)
+                    {
+                        for (int i = 0; i < lagAmount; i++)
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = actors.ToArray() }, new object[] { null });
+                        lagDebounce = Time.time + lagDelay;
+                    }
+                }
+                    
             }
         }
 
