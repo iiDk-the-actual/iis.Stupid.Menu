@@ -2084,6 +2084,27 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float> { };
+        public static void SnowballBoxing()
+        {
+            foreach (VRRig rig1 in GorillaParent.instance.vrrigs)
+            {
+                if (Time.time < GetBoxingDelay(rig1))
+                    continue;
+
+                foreach (VRRig rig2 in GorillaParent.instance.vrrigs)
+                {
+                    if (rig2 == rig1) continue;
+                    if (Vector3.Distance(rig2.leftHandTransform.position, rig1.headMesh.transform.position) < 0.25f || Vector3.Distance(rig2.rightHandTransform.position, rig1.headMesh.transform.position) < 0.25f)
+                    {
+                        Vector3 targetDirection = rig2.headMesh.transform.position - rig1.headMesh.transform.position;
+                        Overpowered.BetaSpawnSnowball(rig1.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, rig1.OwningNetPlayer.GetPlayerRef());
+                        SetBoxingDelay(rig1);
+                    }
+                }
+            }
+        }
+
         public static AudioClip KameStart;
         public static AudioClip KameStop;
 
@@ -2200,7 +2221,8 @@ namespace iiMenu.Mods
                 {
                     Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.forward, out var RayPoint, 512f, GTPlayer.Instance.locomotionEnabledLayers);
                     cursor.transform.position = RayPoint.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : RayPoint.point;
-                } catch { }
+                }
+                catch { }
 
                 Vector3 snowballPosition = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
                 Vector3 targetDirection = (cursor.transform.position - snowballPosition).normalized * 60f;
@@ -2220,6 +2242,12 @@ namespace iiMenu.Mods
 
             if (cursor != null)
                 Object.Destroy(cursor);
+        }
+
+        public static void Disable_Kamehameha()
+        {
+            VRRig.LocalRig.SetThrowableProjectileColor(false, Color.white);
+            VRRig.LocalRig.SetThrowableProjectileColor(false, Color.white);
         }
 
         public static void SnowballSafetyBubble()
@@ -2872,7 +2900,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static readonly Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float>();
         private static float GetBoxingDelay(VRRig rig) =>
             boxingDelay.GetValueOrDefault(rig, -1);
 

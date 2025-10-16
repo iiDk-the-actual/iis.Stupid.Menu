@@ -77,6 +77,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Menu Settings", method =() => currentCategoryName = "Menu Settings", isTogglable = false, toolTip = "Opens the settings for the menu."},
 
                 new ButtonInfo { buttonText = "Keybind Settings", method =() => currentCategoryName = "Keybind Settings", isTogglable = false, toolTip = "Opens the settings for the keybinds."},
+                new ButtonInfo { buttonText = "Rebind Settings", method =() => currentCategoryName = "Rebind Settings", isTogglable = false, toolTip = "Opens the settings for rebinds."},
                 new ButtonInfo { buttonText = "Plugin Settings", method =() => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Opens the settings for the plugins."},
 
                 new ButtonInfo { buttonText = "Soundboard Settings", method =() => currentCategoryName = "Soundboard Settings", isTogglable = false, toolTip = "Opens the settings for the soundboard."},
@@ -1327,8 +1328,21 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." }
             },
 
-            new[] { // Spam Mods [13]
-                new ButtonInfo { buttonText = "Exit Spam Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+            new[] { // Rebind Settings [13]
+                new ButtonInfo { buttonText = "Exit Rebind Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
+                
+                new ButtonInfo { buttonText = "Rebind A", enableMethod =() => Settings.StartRebind("A"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind B", enableMethod =() => Settings.StartRebind("B"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind X", enableMethod =() => Settings.StartRebind("X"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Y", enableMethod =() => Settings.StartRebind("Y"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Left Grip", enableMethod =() => Settings.StartRebind("LG"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Right Grip", enableMethod =() => Settings.StartRebind("RG"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Left Trigger", enableMethod =() => Settings.StartRebind("LT"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Right Trigger", enableMethod =() => Settings.StartRebind("RT"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Left Joystick", enableMethod =() => Settings.StartRebind("LJ"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                new ButtonInfo { buttonText = "Rebind Right Joystick", enableMethod =() => Settings.StartRebind("RJ"), disableMethod =() => IsRebinding = false, toolTip = "Enables rebinding mode, letting you change a mods button."},
+                
+                new ButtonInfo { buttonText = "Clear Rebinds", method = () => Settings.RemoveRebinds(), isTogglable = false, toolTip = "Removes all rebinds."},
             },
 
             new[] { // Sound Spam Mods [14]
@@ -1403,7 +1417,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method = Overpowered.SnowballImpactEffectGun, toolTip = "Spawns snowball impact events on whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Punch Mod", method = Overpowered.SnowballPunchMod, toolTip = "Flings people when you punch them."},
-                new ButtonInfo { buttonText = "Snowball Kamehameha", enableMethod = Overpowered.Enable_Kamehameha, method = Overpowered.Kamehameha, toolTip = "Spawns a flaming ball when holding down both triggers and grips.." },
+                new ButtonInfo { buttonText = "Snowball Kamehameha", enableMethod = Overpowered.Enable_Kamehameha, method = Overpowered.Kamehameha, disableMethod = Overpowered.Disable_Kamehameha, toolTip = "Spawns a flaming ball when holding down both triggers and grips.." },
 
                 new ButtonInfo { buttonText = "Snowball Fling Aura", method = Overpowered.SnowballSafetyBubble, toolTip = "Anyone who gets too close to you will be launched away."},
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method = Overpowered.SnowballFlingGun, toolTip = "Flings whoever your hand desires."},
@@ -1958,7 +1972,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Change FPS Spoof Value", overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>90</color><color=grey>]</color>", method =() => Safety.ChangeFPSSpoofValue(), enableMethod =() => Safety.ChangeFPSSpoofValue(), disableMethod =() => Safety.ChangeFPSSpoofValue(false), incremental = true, isTogglable = false, toolTip = "Changes the target FPS for the FPS Spoof mod."},
-
+                
+                new ButtonInfo { buttonText = "Hide Anti Cheat Report Reasons", enableMethod =() => AntiCheat.AntiCheatReasonHide = true, disableMethod =() => AntiCheat.AntiCheatReasonHide = false, toolTip = "Hides the reason for Show Anti Cheat Reports."},
+                
                 new ButtonInfo { buttonText = "Visualize Anti Report", method = Safety.VisualizeAntiReport, toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
             },
@@ -2110,8 +2126,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." },
                 new ButtonInfo { buttonText = "Disable Macros", enableMethod =() => Movement.disableMacros = true, disableMethod =() => Movement.disableMacros = false, toolTip = "Disables all macros." }
             }
-
-            // go up there's an unused category (spam mods)
         };
 
         public static string[] categoryNames = {
@@ -2128,7 +2142,7 @@ namespace iiMenu.Menu
             "Advantage Mods",
             "Visual Mods",
             "Fun Mods",
-            "Spam Mods",
+            "Rebind Settings",
             "Sound Mods",
             "Projectile Mods",
             "Master Mods",
