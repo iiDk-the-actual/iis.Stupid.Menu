@@ -3328,7 +3328,7 @@ namespace iiMenu.Mods
             if (Time.time > lagDebounce)
             {
                 for (int i = 0; i < lagAmount; i++)
-                    FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", RpcTarget.All, new object[] { null });
+                    FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", RpcTarget.Others, new object[] { null });
                 lagDebounce = Time.time + lagDelay;
             }
         }
