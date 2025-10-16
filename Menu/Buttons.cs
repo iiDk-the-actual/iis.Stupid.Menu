@@ -375,7 +375,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Join Room \"STATUE\"", method =() => Important.QueueRoom("STATUE"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"STATUE\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"ECHO\"", method =() => Important.QueueRoom("ECHO"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"ECHO\" every couple of seconds until connected." },
 
-
                 new ButtonInfo { buttonText = "Auto Join Room \"MOD\"", method =() => Important.QueueRoom("MOD"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"MOD\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"MODS\"", method =() => Important.QueueRoom("MODS"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"MODS\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"LEMUR\"", method =() => Important.QueueRoom("LEMUR"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"LEMUR\" every couple of seconds until connected. Lemming joins this code very often." },
