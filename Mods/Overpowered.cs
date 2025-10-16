@@ -3340,15 +3340,12 @@ namespace iiMenu.Mods
             foreach (var vrrig in GorillaParent.instance.vrrigs)
             {
                 if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
-                {
                     nearbyPlayers.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
-                }
                 else if (nearbyPlayers.Contains(GetPlayerFromVRRig(vrrig).ActorNumber))
-                {
                     nearbyPlayers.Remove(GetPlayerFromVRRig(vrrig).ActorNumber);
-                }
             }
-            if (Time.time > lagDebounce)
+
+            if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
             {
                 for (int i = 0; i < lagAmount; i++)
                     SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { null });
