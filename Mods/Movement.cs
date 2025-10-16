@@ -5207,7 +5207,5 @@ namespace iiMenu.Mods
 
             GetIndex("Knockback Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
         }
-
-
     }
 }
