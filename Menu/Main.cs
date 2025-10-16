@@ -1597,10 +1597,19 @@ namespace iiMenu.Menu
 
             if (method.overlapText != null)
                 buttonText.text = method.overlapText;
-
+            
+            if (method.rebindKey != "")
+            {
+                if (buttonText.text.Contains("</color><color=grey>]</color>"))
+                {
+                    string button = buttonText.text.Split("<color=grey>[</color><color=green>")[1].Split("</color><color=grey>]</color>")[0];
+                    buttonText.text = buttonText.text.Split("<color=grey>[</color><color=green>")[0] + "<color=grey>[</color><color=green>" + method.rebindKey + "</color><color=grey>]</color>";
+                }
+            }
+            
             if (translate)
                 buttonText.text = TranslateText(buttonText.text, output => ReloadMenu());
-
+            
             if (method.customBind != null)
             {
                 if (buttonText.text.Contains("</color><color=grey>]</color>"))
