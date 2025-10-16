@@ -3325,6 +3325,7 @@ namespace iiMenu.Mods
 
         public static void LagAll()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > lagDebounce)
             {
                 for (int i = 0; i < lagAmount; i++)
@@ -3335,6 +3336,7 @@ namespace iiMenu.Mods
 
         public static void LagAura()
         {
+            if (!PhotonNetwork.InRoom) return;
             List<int> nearbyPlayers = new List<int>();
 
             foreach (var vrrig in GorillaParent.instance.vrrigs)
