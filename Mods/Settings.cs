@@ -820,8 +820,29 @@ namespace iiMenu.Mods
 
         public static void StartBind(string bind)
         {
+            if (IsRebinding)
+                return;
             IsBinding = true;
             BindInput = bind;
+        }
+        public static void StartRebind(string bind)
+        {
+            if (IsBinding)
+                return;
+            IsRebinding = true;
+            BindInput = bind;
+        }
+
+        public static void RemoveRebinds()
+        {
+            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+            {
+                foreach (ButtonInfo v in buttonlist)
+                {
+                    v.rebindKey = "";
+                }
+            }
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed all rebinds.");
         }
 
         // The code below is fully safe. I know, it seems suspicious.
@@ -4863,7 +4884,22 @@ exit";
             }
 
             string quickActionString = string.Join(seperator, quickActions);
-
+            
+            string rebindingtext = "";
+            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+            {
+                foreach (ButtonInfo v in buttonlist)
+                {
+                    if (v.rebindKey != "")
+                    {
+                        if (rebindingtext == "")
+                            rebindingtext += v.buttonText + ";" + v.rebindKey;
+                        else
+                            rebindingtext += seperator + v.buttonText + ";" + v.rebindKey;
+                    }
+                }
+            }
+            
             string finaltext =
                 enabledtext + "\n" +
                 favoritetext + "\n" +
@@ -4872,7 +4908,8 @@ exit";
                 themeType + "\n" +
                 fontCycle + "\n" +
                 bindingtext + "\n" +
-                quickActionString;
+                quickActionString + "\n" +
+                rebindingtext;
 
             return finaltext;
         }
@@ -5118,6 +5155,18 @@ exit";
                     ButtonInfo button = GetIndex(quickAction);
                     if (button != null)
                         quickActions.Add(quickAction);
+                }
+            } catch { }
+            
+            try
+            {
+                foreach (string bind in textData[8].Split(";;"))
+                {
+                    string rebindText = bind.Split(";")[0];
+                    string rebindKey = bind.Split(";")[1];
+                    ButtonInfo button = GetIndex(rebindText);
+                    if (button != null)
+                        button.rebindKey = rebindKey;
                 }
             } catch { }
 
