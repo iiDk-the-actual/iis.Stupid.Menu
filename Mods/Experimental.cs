@@ -1450,6 +1450,7 @@ namespace iiMenu.Mods
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Found menu user!");
                     GetIndex("Admin Find User").enabled = false;
+                    isUserFound = false;
                     return;
                 }
                 NotifiLib.SendNotification("Nobody found, searching for players.");

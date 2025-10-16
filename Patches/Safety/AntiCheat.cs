@@ -31,6 +31,7 @@ namespace iiMenu.Patches.Safety
     {
         public static bool AntiCheatSelf;
         public static bool AntiCheatAll;
+        public static bool AntiCheatReasonHide;
         public static bool AntiACReport;
 
         private static bool Prefix(string susReason, string susId, string susNick)
@@ -42,7 +43,7 @@ namespace iiMenu.Patches.Safety
             {
                 if (susId == PhotonNetwork.LocalPlayer.UserId)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>You have been reported for " + susReason + ".</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>You have been reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
                     susNick.Remove(PhotonNetwork.LocalPlayer.NickName.Length);
                     susId.Remove(PhotonNetwork.LocalPlayer.UserId.Length);
                     RPCProtection();
@@ -50,7 +51,7 @@ namespace iiMenu.Patches.Safety
                 else
                 {
                     if (AntiCheatAll)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + susReason + ".</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
                 }
             }
 
