@@ -727,6 +727,12 @@ namespace iiMenu.Mods
             if (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 0.63f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 0.63f)
                 return;
 
+            if (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.rightHandTransform.position) < 1f)
+                return;
+
+            if (Physics.Raycast(GorillaTagger.Instance.bodyCollider.attachedRigidbody.position, Vector3.down, out RaycastHit hit, Physics.AllLayers))
+                return;
+
             UnityEngine.XR.InputDevice LeftHand = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
             UnityEngine.XR.InputDevice RightHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
 
@@ -734,11 +740,11 @@ namespace iiMenu.Mods
             {
                 if (Time.time - flapTime < 0.4f) return;
 
-                if (rightVel.y < -1.2f && rightVel.y < -1.2f)
+                if (leftVel.y < -1.2f && rightVel.y < -1.2f)
                 {
                     float force = Mathf.Min(6f * ((Mathf.Abs(leftVel.y) + Mathf.Abs(rightVel.y)) / 2f) / 1.2f, 9f);
                     GorillaTagger.Instance.bodyCollider.attachedRigidbody.AddForce(Vector3.up * force, ForceMode.VelocityChange);
-
+                        
                     flapTime = Time.time;
                 }
             }
