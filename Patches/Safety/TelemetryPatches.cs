@@ -20,18 +20,20 @@
  */
 
 using HarmonyLib;
+using JetBrains.Annotations;
 using PlayFab.EventsModels;
 
 namespace iiMenu.Patches.Safety
 {
-    [HarmonyPatch(typeof(GorillaTelemetry), "QueueTelemetryEventMothership")]
+    // Gorilla Tag's one weakness -- tracking data to get players banned. This is how they did it over the years.
+    [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
     public class TelemetryPatch1
     {
-        private static bool Prefix(string eventName, object content) =>
+        private static bool Prefix(string eventName, object content, [CanBeNull] string[] customTags = null) =>
             false;
     }
 
-    [HarmonyPatch(typeof(GorillaTelemetry), "QueueTelemetryEventPlayFab")]
+    [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEventPlayFab")]
     public class TelemetryPatch2
     {
         private static bool Prefix(EventContents eventContent) =>
