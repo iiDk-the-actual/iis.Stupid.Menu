@@ -1661,7 +1661,7 @@ namespace iiMenu.Mods
                     float spacing = 1f;
                     for (int i = 0; i < users.Count; i++)
                     {
-                        Console.ExecuteCommand("tpnv", users[i].ActorNumber, NewPointer.transform.position + Vector3.right * spacing * i);
+                        Console.ExecuteCommand("tpnv", users[i].ActorNumber, NewPointer.transform.position - Vector3.right * ((users.Count - 1) * spacing / 2f) + Vector3.right * (spacing * i));
                     }
                     adminEventDelay = Time.time + 0.05f;
                 }
