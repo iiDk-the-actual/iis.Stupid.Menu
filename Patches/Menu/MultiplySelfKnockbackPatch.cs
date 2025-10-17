@@ -33,9 +33,12 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled && __instance.projectileOwner == VRRig.LocalRig.OwningNetPlayer)
             {
-                var config = __instance.aoeKnockbackConfig.Value;
-                config.knockbackVelocity = config.knockbackVelocity * Movement.multiplicationAmount / 10;
-                __instance.aoeKnockbackConfig = config;
+                if (__instance.aoeKnockbackConfig != null)
+                {
+                    var config = __instance.aoeKnockbackConfig.Value;
+                    config.knockbackVelocity = config.knockbackVelocity * Movement.multiplicationAmount / 10;
+                    __instance.aoeKnockbackConfig = config;
+                }
             }
         }
     }
