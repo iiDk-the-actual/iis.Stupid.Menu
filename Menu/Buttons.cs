@@ -129,6 +129,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Menu Trail", enableMethod =() => menuTrail = true, disableMethod =() => menuTrail = false, toolTip = "Gives the menu a trail when you drop."},
 
                 new ButtonInfo { buttonText = "Dynamic Animations", enableMethod =() => dynamicAnimations = true, disableMethod =() => dynamicAnimations = false, toolTip = "Adds more animations to the menu, giving you a better sense of control."},
+                new ButtonInfo { buttonText = "Slow Dynamic Animations", enableMethod =() => slowDynamicAnimations = true, disableMethod =() => slowDynamicAnimations = false, toolTip = "Makes Dynamic Animations slower."},
                 new ButtonInfo { buttonText = "Dynamic Gradients", enableMethod =() => dynamicGradients = true, disableMethod =() => dynamicGradients = false, toolTip = "Makes gradients dynamic, showing you the full gradient instead of a pulsing color."},
                 new ButtonInfo { buttonText = "Horizontal Gradients", enableMethod =() => { horizontalGradients = true; cacheGradients.Clear(); }, disableMethod =() => { horizontalGradients = false; cacheGradients.Clear(); }, toolTip = "Rotates the dynamic gradients by 90 degrees."},
                 new ButtonInfo { buttonText = "Dynamic Sounds", enableMethod =() => dynamicSounds = true, disableMethod =() => dynamicSounds = false, toolTip = "Adds more sounds to the menu, giving you a better sense of control."},
