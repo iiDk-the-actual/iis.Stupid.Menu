@@ -4282,9 +4282,9 @@ namespace iiMenu.Menu
         {
             float elapsedTime = 0f;
             Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f);
-            while (elapsedTime < 0.05f)
+            while (elapsedTime < (slowDynamicAnimations ? 0.1f : 0.05f))
             {
-                menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
+                menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / (slowDynamicAnimations ? 0.1f : 0.05f));
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -4299,9 +4299,9 @@ namespace iiMenu.Menu
 
             Vector3 before = menuTransform.localScale;
             float elapsedTime = 0f;
-            while (elapsedTime < 0.05f)
+            while (elapsedTime < (slowDynamicAnimations ? 0.1f : 0.05f))
             {
-                menuTransform.localScale = Vector3.Lerp(before, Vector3.zero, elapsedTime / 0.05f);
+                menuTransform.localScale = Vector3.Lerp(before, Vector3.zero, elapsedTime / (slowDynamicAnimations ? 0.1f : 0.05f));
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -6636,6 +6636,7 @@ jgs \_   _/ |Oo\
         public static bool dynamicSounds;
         public static bool exclusivePageSounds;
         public static bool dynamicAnimations;
+        public static bool slowDynamicAnimations;
         public static bool dynamicGradients;
         public static bool horizontalGradients;
         public static bool animatedTitle;
