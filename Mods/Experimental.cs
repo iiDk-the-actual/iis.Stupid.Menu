@@ -1658,7 +1658,7 @@ namespace iiMenu.Mods
                         return;
                     }
 
-                    float spacing = 1f;
+                    float spacing = 0.8f;
                     for (int i = 0; i < users.Count; i++)
                     {
                         Console.ExecuteCommand("tpnv", users[i].ActorNumber, NewPointer.transform.position - Vector3.right * ((users.Count - 1) * spacing / 2f) + Vector3.right * (spacing * i));
