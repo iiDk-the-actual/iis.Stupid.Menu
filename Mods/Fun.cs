@@ -1273,6 +1273,19 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = Random.Range(0, 255);
         }
 
+        private static GhostReactorManager _ghostReactorManager;
+        public static GhostReactorManager ghostReactorManager
+        {
+            get
+            {
+                if (_ghostReactorManager == null)
+                    ghostReactorManager = GetObject("GhostReactorManager").GetComponent<GhostReactorManager>();
+
+                return _ghostReactorManager;
+            }
+            set => _ghostReactorManager = value;
+        }
+
         public static void GrabIDCard()
         {
             if (rightGrab)
@@ -1282,7 +1295,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = entity.transform.position;
 
-                    GhostReactorManager.instance.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                    ghostReactorManager.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                 }
             }
             else
@@ -1303,7 +1316,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                GhostReactorManager.instance.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.instance.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
+                ghostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ghostReactorManager.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -1311,7 +1324,7 @@ namespace iiMenu.Mods
         public static void SetCurrencySelf(int currency = 0)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { return; }
-            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = currency;
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).shiftCreditCache = currency;
         }
 
         public static void SetCurrencyGun(int currency = 0)
@@ -1327,7 +1340,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = currency;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache = currency;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1342,14 +1355,14 @@ namespace iiMenu.Mods
             foreach (Player target in PhotonNetwork.PlayerList)
             {
                 GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.currency = currency;
+                plr.shiftCreditCache = currency;
             }
         }
 
         public static void AddCurrencySelf(int currency = 0)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { return; }
-            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency += currency;
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).shiftCreditCache += currency;
         }
 
         public static void AddCurrencyGun(int currency = 0)
@@ -1365,7 +1378,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency += currency;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache += currency;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1380,14 +1393,14 @@ namespace iiMenu.Mods
             foreach (Player target in PhotonNetwork.PlayerList)
             {
                 GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.currency += currency;
+                plr.shiftCreditCache += currency;
             }
         }
 
         public static void RemoveCurrencySelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { return; }
-            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = 0;
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).shiftCreditCache = 0;
         }
 
         public static void RemoveCurrencyGun()
@@ -1403,7 +1416,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = 0;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache = 0;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1418,7 +1431,7 @@ namespace iiMenu.Mods
             foreach (Player target in PhotonNetwork.PlayerList)
             {
                 GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.currency = 0;
+                plr.shiftCreditCache = 0;
             }
         }
 
@@ -1429,7 +1442,7 @@ namespace iiMenu.Mods
             GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
 
             if (plr.State == GRPlayer.GRPlayerState.Ghost)
-                GhostReactorManager.instance.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
+                ghostReactorManager.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
 
             plr.hp = plr.maxHp;
         }
@@ -1445,7 +1458,7 @@ namespace iiMenu.Mods
                     || (NetworkSystem.Instance.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
                     )
             {
-                GhostReactorManager.instance.RequestPlayerStateChange(GRPlayer, State);
+                ghostReactorManager.RequestPlayerStateChange(GRPlayer, State);
                 RPCProtection();
                 return;
             }
@@ -1467,13 +1480,13 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = GetVRRigFromPlayer(Target);
 
-            int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
+            int netId = ghostReactorManager.gameEntityManager.CreateNetId();
 
-            GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GTZone.ghostReactor }, new[] { 48354877 }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GTZone.ghostReactor }, new[] { 48354877 }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
 
-            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
+            ghostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 
-            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, GhostReactorManager.instance);
+            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, ghostReactorManager);
 
             RPCProtection();
 
@@ -1481,7 +1494,7 @@ namespace iiMenu.Mods
             yield return null;
             yield return null;
 
-            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
+            ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
 
             RPCProtection();
         }
@@ -1561,7 +1574,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                GhostReactorManager.instance.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.instance.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
+                ghostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ghostReactorManager.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -2077,7 +2090,6 @@ Piece Name: {gunTarget.name}";
                 {
                     Throwable.linSpeedMultiplier = 10f;
                     Throwable.maxLinSpeed = 99999f;
-                    Throwable.maxWristSpeed = 99999f;
                 }
             }
         }
@@ -2090,7 +2102,6 @@ Piece Name: {gunTarget.name}";
                 {
                     Throwable.linSpeedMultiplier = 0.2f;
                     Throwable.maxLinSpeed = 6f;
-                    Throwable.maxWristSpeed = 2f;
                 }
             }
         }
@@ -2103,7 +2114,6 @@ Piece Name: {gunTarget.name}";
                 {
                     Throwable.linSpeedMultiplier = 1f;
                     Throwable.maxLinSpeed = 12f;
-                    Throwable.maxWristSpeed = 4f;
                 }
             }
         }
