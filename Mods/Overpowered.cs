@@ -885,7 +885,7 @@ namespace iiMenu.Mods
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
 
-            int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
+            int netId = Fun.ghostReactorManager.gameEntityManager.CreateNetId();
 
             if (target is NetPlayer)
                 target = NetPlayerToPlayer((NetPlayer)target);
@@ -904,10 +904,10 @@ namespace iiMenu.Mods
             switch (target)
             {
                 case RpcTarget rpcTarget:
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                    Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
                     break;
                 case Player player:
-                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                    Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
                     break;
             }
 
@@ -925,10 +925,10 @@ namespace iiMenu.Mods
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
                         break;
                     case Player player:
-                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
                         break;
                 }
 
@@ -946,10 +946,10 @@ namespace iiMenu.Mods
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
                         break;
                     case Player player:
-                        GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
                         break;
                 }
             }
@@ -1000,7 +1000,7 @@ namespace iiMenu.Mods
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
-                        foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
+                        foreach (GameEntity entity in Fun.ghostReactorManager.gameEntityManager.entities)
                         {
                             if (entity != null)
                             {
@@ -1015,7 +1015,7 @@ namespace iiMenu.Mods
 
                         if (gameEntity != null)
                         {
-                            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
                             RPCProtection();
                         }
                     }
