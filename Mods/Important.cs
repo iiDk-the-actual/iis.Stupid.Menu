@@ -445,10 +445,10 @@ exit";
                 switch (thereIsTagLag)
                 {
                     case true when !lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> There is currently tag lag.");
                         break;
                     case false when lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                         break;
                 }
 
@@ -456,7 +456,7 @@ exit";
             } else
             {
                 if (lastTagLag)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                 lastTagLag = false;
             }
         }
@@ -468,7 +468,7 @@ exit";
             if (playerOnSteam && !lastSteam)
             {
                 VRRig vrrig = GorillaParent.instance.vrrigs.First(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> <color=white>{vrrig} is on Steam.</color>");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig} is on Steam.");
 
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/steam.ogg", "Audio/Mods/steam.ogg"), buttonClickVolume / 10f);
             }
