@@ -720,6 +720,20 @@ namespace iiMenu.Mods
             
             previousDash = rightPrimary;
         }
+        
+        private static readonly float revCooldown = 0.5f;
+        public static void ReverseVelocity()
+        {
+            if (Time.time < nextrevTime)
+                return;
+
+            if (rightPrimary)
+            {
+                GorillaTagger.Instance.rigidbody.linearVelocity = -GorillaTagger.Instance.rigidbody.linearVelocity;
+
+                nextrevTime = Time.time + revCooldown;
+            }
+        }
 
         private static float flapTime;
         public static void BirdFly()
