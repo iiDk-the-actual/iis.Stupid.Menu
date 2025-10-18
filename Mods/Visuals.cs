@@ -4249,6 +4249,7 @@ namespace iiMenu.Mods
 
         public static void AutomaticESP(Action infection, Action hunt, Action other)
         {
+            if (!PhotonNetwork.InRoom) return;
             switch (GorillaGameManager.instance.GameType())
             {
                 case GameModeType.Infection:
