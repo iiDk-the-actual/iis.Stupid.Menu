@@ -55,6 +55,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -1828,6 +1829,38 @@ namespace iiMenu.Mods
                     Sound.FixMicrophone();
                 }
             }
+        }
+
+        public static DictationRecognizer drec;
+        public static void MaskVoice()
+        {
+            drec = new DictationRecognizer();
+            drec.DictationResult += (text, confidence) =>
+            {
+                LogManager.Log($"Dictation result: {text}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
+
+                if (GorillaTagger.Instance.myRecorder != null)
+                {
+                    GorillaTagger.Instance.myRecorder.IsRecording = true;
+                    NarrateText(text);
+                }
+            };
+            drec.DictationComplete += (completionCause) =>
+            {
+                drec.Start();
+            };
+            drec.DictationError += (error, hresult) =>
+            {
+                LogManager.LogError($"Dictation error: {error}; HResult = {hresult}.");
+            };
+            drec.DictationHypothesis += (text) =>
+            {
+                LogManager.Log($"Hypothesis: {text}");
+            };
+            drec.Start();
+
+            GorillaTagger.Instance.myRecorder.IsRecording = Sound.AudioIsPlaying;
         }
 
         public static void ProcessFrameBuffer(float[] data) =>
