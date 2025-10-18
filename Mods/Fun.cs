@@ -407,21 +407,31 @@ namespace iiMenu.Mods
             CoroutineManager.EndCoroutine(thisCoroutine);
         }
 
-        public static bool lastPartyKickThingy;
+        public static bool previousInParty;
         public static void AutoPartyKick()
         {
-            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
                 partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(false));
             
-            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
         }
 
         public static void AutoPartyBan()
         {
-            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
                 partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(true));
 
-            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
+        private static float breakDelay;
+        public static void PartyBreakNetworkTriggers()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && Time.time > breakDelay)
+            {
+                breakDelay = Time.time + 1f;
+                FriendshipGroupDetection.Instance.photonView.RPC("PartyMemberIsAboutToGroupJoin", RpcTarget.Others, Array.Empty<object>());
+            }
         }
 
         public static Coroutine waterSplashCoroutine;

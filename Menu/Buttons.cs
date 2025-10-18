@@ -1732,6 +1732,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Instant Party", method = Fun.InstantParty, toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
+                new ButtonInfo { buttonText = "Party Break Network Triggers", method = Fun.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },
 
                 new ButtonInfo { buttonText = "Kick All in Party", method = Fun.KickAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
                 new ButtonInfo { buttonText = "Ban All in Party", method = Fun.BanAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a bannable code." },
