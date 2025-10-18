@@ -3396,6 +3396,12 @@ namespace iiMenu.Mods
                 dictionary,
                 SendOptions.SendReliable
             );
+
+            // updating the board
+            // yes i know this is dumb - king
+            string name = PhotonNetwork.LocalPlayer.NickName;
+            PhotonNetwork.LocalPlayer.NickName = "update";
+            PhotonNetwork.LocalPlayer.NickName = name;
         }
         public static void DestroyGun()
         {
