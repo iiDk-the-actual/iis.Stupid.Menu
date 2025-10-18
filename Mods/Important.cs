@@ -415,20 +415,16 @@ exit";
                         Type compType = component.GetType();
                         string compName = compType.Name;
 
-                        if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPlayerLineButton")
+                        if (typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPressableButton" || compName == "GorillaPlayerLineButton" || compName == "CustomKeyboardKey")
                             compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-
-                        switch (compName)
-                        {
-                            case "CustomKeyboardKey":
-                                keyboardDelay = Time.time + 0.1f;
-                                compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                                break;
-                            case "GorillaKeyboardButton":
-                                keyboardDelay = Time.time + 0.1f;
-                                GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
-                                break;
-                        }
+                        else
+                            switch (compName)
+                            {
+                                case "GorillaKeyboardButton":
+                                    keyboardDelay = Time.time + 0.1f;
+                                    GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                                    break;
+                            }
                     }
                 }
             }
