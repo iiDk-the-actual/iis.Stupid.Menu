@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ii's Stupid Menu  Mods/Fun.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -244,12 +244,28 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
         }
 
-        public static IEnumerator StumpKickDelay(Action action, Action action2)
+        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = true)
         {
-            yield return new WaitForSeconds(0.2f);
+            PhotonNetworkController.Instance.FriendIDList.Clear();
+            yield return new WaitForSeconds(extraDelay);
+
+            bool joinedRoomPatchEnabled = JoinedRoomPatch.enabled;
+
+            string queueArchive = GorillaComputer.instance.currentQueue;
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = GenerateRandomString();
+
             action?.Invoke();
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.3f);
             action2?.Invoke();
+            yield return new WaitForSeconds(1f);
+
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = queueArchive;
+
+            yield return new WaitForSeconds(30f);
+
+            JoinedRoomPatch.enabled = joinedRoomPatchEnabled;
         }
 
         public static void StumpKickGun()
@@ -305,7 +321,7 @@ namespace iiMenu.Mods
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
 
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
                         BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
                     RPCProtection();
                 }, () =>
