@@ -3386,7 +3386,7 @@ namespace iiMenu.Mods
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
-                { 251, new Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },
+                { 251, new Hashtable { { 254, !status } } },
                 { 250, true },
                 { 231, null }
             };
