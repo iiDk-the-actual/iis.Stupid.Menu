@@ -467,10 +467,10 @@ exit";
             bool playerOnSteam = GorillaParent.instance.vrrigs.Any(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
             if (playerOnSteam && !lastSteam)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> <color=white>A player in your lobby is on Steam.</color>");
+                VRRig vrrig = GorillaParent.instance.vrrigs.First(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> <color=white>{vrrig} is on Steam.</color>");
 
-                VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
-                VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/steam.ogg", "Audio/Mods/steam.ogg"), buttonClickVolume / 10f);
             }
 
             lastSteam = playerOnSteam;
