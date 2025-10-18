@@ -289,8 +289,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
+                            Important.CreateRoom(GenerateRandomString(), false, PhotonNetworkController.Instance.FriendIDList, JoinType.JoinWithNearby);
                         }));
                     }
                 }
@@ -317,8 +316,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
+                    Important.CreateRoom(GenerateRandomString(), false, PhotonNetworkController.Instance.FriendIDList, JoinType.JoinWithNearby);
                 }));
             }
             else
