@@ -440,7 +440,7 @@ exit";
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 VRRig masterRig = PhotonNetwork.MasterClient.VRRig();
-                bool thereIsTagLag = masterRig.GetTruePing() > 500;
+                bool thereIsTagLag = masterRig.GetTruePing() > 1000;
 
                 switch (thereIsTagLag)
                 {
@@ -459,6 +459,21 @@ exit";
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
                 lastTagLag = false;
             }
+        }
+
+        private static bool lastSteam;
+        public static void SteamDetector()
+        {
+            bool playerOnSteam = GorillaParent.instance.vrrigs.Any(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
+            if (playerOnSteam && !lastSteam)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> <color=white>A player in your lobby is on Steam.</color>");
+
+                VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
+                VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+            }
+
+            lastSteam = playerOnSteam;
         }
 
         public static string RandomRoomName()
