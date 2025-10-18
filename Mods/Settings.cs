@@ -4564,6 +4564,7 @@ exit";
                 }
             }
 
+
             modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
             modPhrases.OnPhraseRecognized += ExecuteVoiceCommand;
             modPhrases.Start();
@@ -4663,6 +4664,37 @@ exit";
             
             mainPhrases = null;
             modPhrases = null;
+        }
+
+
+        public static DictationRecognizer drec;
+        public static void DictationOn()
+        {
+            drec = new DictationRecognizer();
+            drec.DictationResult += (text, confidence) =>
+            {
+                LogManager.Log($"Dictation result: {text}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> + {text}");
+            };
+            drec.DictationComplete += (completionCause) =>
+            {
+                drec.Start();
+            };
+            drec.DictationError += (error, hresult) =>
+            {
+                LogManager.LogError($"Dictation error: {error}; HResult = {hresult}.");
+            };
+            drec.DictationHypothesis += (text) =>
+            {
+                LogManager.Log($"Hypothesis: {text}");
+            };
+            drec.Start();
+        }
+
+        public static void DictationOff()
+        {
+            drec?.Stop();
+            drec?.Dispose();
         }
 
         public static GameObject selectObject;
