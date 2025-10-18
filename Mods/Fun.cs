@@ -244,16 +244,25 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
         }
 
-        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f)
+        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = true)
         {
             PhotonNetworkController.Instance.FriendIDList.Clear();
             yield return new WaitForSeconds(extraDelay);
 
             bool joinedRoomPatchEnabled = JoinedRoomPatch.enabled;
 
+            string queueArchive = GorillaComputer.instance.currentQueue;
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = GenerateRandomString();
+
             action?.Invoke();
             yield return new WaitForSeconds(0.3f);
             action2?.Invoke();
+            yield return new WaitForSeconds(1f);
+
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = queueArchive;
+
             yield return new WaitForSeconds(30f);
 
             JoinedRoomPatch.enabled = joinedRoomPatchEnabled;
@@ -289,7 +298,8 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            Important.CreateRoom(GenerateRandomString(), false, PhotonNetworkController.Instance.FriendIDList, JoinType.JoinWithNearby);
+                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
+                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
                         }));
                     }
                 }
@@ -316,7 +326,8 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(GenerateRandomString(), false, PhotonNetworkController.Instance.FriendIDList, JoinType.JoinWithNearby);
+                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
+                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
                 }));
             }
             else
