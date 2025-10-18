@@ -28,6 +28,7 @@ using iiMenu.Patches.Menu;
 using Photon.Pun;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -125,7 +126,7 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
-        public static void CreateRoom(string roomName, bool isPublic)
+        public static void CreateRoom(string roomName, bool isPublic, List<string> friendIds = null, JoinType joinType = JoinType.Solo)
         {
             RoomConfig roomConfig = new RoomConfig
             {
@@ -140,6 +141,12 @@ namespace iiMenu.Mods
                     { "queueName", GorillaComputer.instance.currentQueue }
                 }
             };
+
+            if (friendIds != null)
+                roomConfig.SetFriendIDs(friendIds);
+
+            PhotonNetworkController.Instance.currentJoinType = joinType;
+
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
         }
 
