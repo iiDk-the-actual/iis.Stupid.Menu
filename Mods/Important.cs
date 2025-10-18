@@ -471,9 +471,9 @@ exit";
             if (playerOnSteam && !lastSteam)
             {
                 VRRig vrrig = GorillaParent.instance.vrrigs.First(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig} is on Steam.");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig.GetName()} is on Steam.");
 
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/steam.ogg", "Audio/Mods/steam.ogg"), buttonClickVolume / 10f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Safety/steam.ogg", "Audio/Mods/Safety/steam.ogg"), buttonClickVolume / 10f);
             }
 
             lastSteam = playerOnSteam;
