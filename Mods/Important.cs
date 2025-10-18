@@ -415,20 +415,16 @@ exit";
                         Type compType = component.GetType();
                         string compName = compType.Name;
 
-                        if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPlayerLineButton")
+                        if (typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPressableButton" || compName == "GorillaPlayerLineButton" || compName == "CustomKeyboardKey")
                             compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-
-                        switch (compName)
-                        {
-                            case "CustomKeyboardKey":
-                                keyboardDelay = Time.time + 0.1f;
-                                compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                                break;
-                            case "GorillaKeyboardButton":
-                                keyboardDelay = Time.time + 0.1f;
-                                GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
-                                break;
-                        }
+                        else
+                            switch (compName)
+                            {
+                                case "GorillaKeyboardButton":
+                                    keyboardDelay = Time.time + 0.1f;
+                                    GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                                    break;
+                            }
                     }
                 }
             }
@@ -445,10 +441,10 @@ exit";
                 switch (thereIsTagLag)
                 {
                     case true when !lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> There is currently tag lag.");
                         break;
                     case false when lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                         break;
                 }
 
@@ -456,7 +452,7 @@ exit";
             } else
             {
                 if (lastTagLag)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                 lastTagLag = false;
             }
         }
@@ -467,10 +463,10 @@ exit";
             bool playerOnSteam = GorillaParent.instance.vrrigs.Any(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
             if (playerOnSteam && !lastSteam)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> <color=white>A player in your lobby is on Steam.</color>");
+                VRRig vrrig = GorillaParent.instance.vrrigs.First(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig} is on Steam.");
 
-                VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
-                VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/steam.ogg", "Audio/Mods/steam.ogg"), buttonClickVolume / 10f);
             }
 
             lastSteam = playerOnSteam;

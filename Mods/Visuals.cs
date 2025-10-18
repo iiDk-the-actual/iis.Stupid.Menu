@@ -2374,18 +2374,18 @@ namespace iiMenu.Mods
                 cosmeticIndicators.Remove(nametag.Key);
             }
 
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                List<(string codename, string name)> cosmetics = new List<(string codename, string name)>
+            List<(string codename, string name)> cosmetics = new List<(string codename, string name)>
                 {
-                    ("LBAAD.", "admin"),
-                    ("LBAAK.", "stick"),
-                    ("LMAPY.", "forestguide"),
-                    ("LBAGS.", "illustrator"),
+                    ("LBANI.", "aa"),
                     ("LBADE.", "fingerpainter"),
-                    ("LBANI.", "aa")
+                    ("LBAGS.", "illustrator"),
+                    ("LMAPY.", "forestguide"),
+                    ("LBAAK.", "stick"),
+                    ("LBAAD.", "admin")
                 };
 
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
                 string currentCosmetic = null;
                 foreach (var (codename, name) in cosmetics)
                 {
@@ -2420,13 +2420,13 @@ namespace iiMenu.Mods
                             platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                             platformMat.renderQueue = (int)RenderQueue.Transparent;
                         }
-                        indicator.GetComponent<Renderer>().material = platformEspMat;
+                        indicator.GetComponent<Renderer>().material = platformMat;
                         cosmeticIndicators.Add(vrrig, indicator);
                     }
 
                     if (!cosmeticTextures.TryGetValue(currentCosmetic, out Texture2D texture))
                     {
-                        texture = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/{currentCosmetic}.png", $"{currentCosmetic}.png");
+                        texture = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/{currentCosmetic}.png", $"Images/Mods/Visuals/{currentCosmetic}.png");
                         cosmeticTextures.Add(currentCosmetic, texture);
                     }
 

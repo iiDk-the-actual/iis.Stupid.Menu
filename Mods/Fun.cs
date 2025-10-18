@@ -407,21 +407,31 @@ namespace iiMenu.Mods
             CoroutineManager.EndCoroutine(thisCoroutine);
         }
 
-        public static bool lastPartyKickThingy;
+        public static bool previousInParty;
         public static void AutoPartyKick()
         {
-            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
                 partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(false));
             
-            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
         }
 
         public static void AutoPartyBan()
         {
-            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
                 partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(true));
 
-            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
+        private static float breakDelay;
+        public static void PartyBreakNetworkTriggers()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && Time.time > breakDelay)
+            {
+                breakDelay = Time.time + 1f;
+                FriendshipGroupDetection.Instance.photonView.RPC("PartyMemberIsAboutToGroupJoin", RpcTarget.Others, Array.Empty<object>());
+            }
         }
 
         public static Coroutine waterSplashCoroutine;
@@ -4163,8 +4173,7 @@ Piece Name: {gunTarget.name}";
 
         public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
-            if (options == null)
-                options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
             int index = 618;
             DistancePatch.enabled = true;
@@ -4190,15 +4199,15 @@ Piece Name: {gunTarget.name}";
             transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
             transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
-            if (Time.time > throwableProjectileTimeout)
+            if (transferrableObject.gameObject.activeSelf && Time.time > throwableProjectileTimeout)
             {
                 if (!disableCooldown)
                     throwableProjectileTimeout = Time.time + 0.3f;
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                VRRig.LocalRig.transform.position = pos - vel;
+                VRRig.LocalRig.transform.position = pos - (vel.normalized * 0.9f);
 
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -10);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -100);
 
                 VRRig.LocalRig.transform.position = pos;
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
@@ -4212,7 +4221,7 @@ Piece Name: {gunTarget.name}";
                     PhotonNetwork.ServerTimestamp,
                     BitPackUtils.PackWorldPosForNetwork(pos),
                     BitPackUtils.PackQuaternionForNetwork(rot),
-                    BitPackUtils.PackWorldPosForNetwork(vel)
+                    BitPackUtils.PackWorldPosForNetwork(vel * 100f)
                 };
 
                 PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
