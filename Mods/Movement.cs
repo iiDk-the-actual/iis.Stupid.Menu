@@ -722,6 +722,7 @@ namespace iiMenu.Mods
         }
         
         private static readonly float revCooldown = 0.5f;
+        private static float nextrevTime = 0f;
         public static void ReverseVelocity()
         {
             if (Time.time < nextrevTime)
