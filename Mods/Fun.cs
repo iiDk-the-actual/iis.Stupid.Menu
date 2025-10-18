@@ -4180,8 +4180,11 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
-            VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-            transferrableObject.gameObject.SetActive(true);
+            if (!transferrableObject.gameObject.activeSelf)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+                transferrableObject.gameObject.SetActive(true);
+            }
 
             transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
             transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
@@ -4192,7 +4195,7 @@ Piece Name: {gunTarget.name}";
                     throwableProjectileTimeout = Time.time + 0.3f;
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                VRRig.LocalRig.transform.position = pos - (vel.normalized * 0.95f);
+                VRRig.LocalRig.transform.position = pos - (vel.normalized * 0.9f);
 
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -100);
 
@@ -4208,7 +4211,7 @@ Piece Name: {gunTarget.name}";
                     PhotonNetwork.ServerTimestamp,
                     BitPackUtils.PackWorldPosForNetwork(pos),
                     BitPackUtils.PackQuaternionForNetwork(rot),
-                    BitPackUtils.PackWorldPosForNetwork(vel)
+                    BitPackUtils.PackWorldPosForNetwork(vel * 100f)
                 };
 
                 PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
