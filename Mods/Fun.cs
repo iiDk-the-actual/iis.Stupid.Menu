@@ -4163,8 +4163,7 @@ Piece Name: {gunTarget.name}";
 
         public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
-            if (options == null)
-                options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
             int index = 618;
             DistancePatch.enabled = true;
