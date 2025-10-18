@@ -4181,24 +4181,21 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
-            if (!transferrableObject.gameObject.activeSelf)
-            {
-                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-                transferrableObject.gameObject.SetActive(true);
-            }
+            VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+            transferrableObject.gameObject.SetActive(true);
 
             transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
             transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
-            if (Time.time > throwableProjectileTimeout)
+            if (transferrableObject.gameObject.activeSelf && Time.time > throwableProjectileTimeout)
             {
                 if (!disableCooldown)
                     throwableProjectileTimeout = Time.time + 0.3f;
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                VRRig.LocalRig.transform.position = pos - vel;
+                VRRig.LocalRig.transform.position = pos - (vel.normalized * 0.95f);
 
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -10);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -100);
 
                 VRRig.LocalRig.transform.position = pos;
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
