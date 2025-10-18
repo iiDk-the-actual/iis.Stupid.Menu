@@ -430,7 +430,7 @@ namespace iiMenu.Mods
             if (FriendshipGroupDetection.Instance.IsInParty && Time.time > breakDelay)
             {
                 breakDelay = Time.time + 1f;
-                FriendshipGroupDetection.Instance.photonView.RPC("PartyMemberIsAboutToGroupJoin", RpcTarget.Others, Array.Empty<object>());
+                FriendshipGroupDetection.Instance.photonView.RPC("PartyMemberIsAboutToGroupJoin", RpcTarget.All, Array.Empty<object>());
             }
         }
 

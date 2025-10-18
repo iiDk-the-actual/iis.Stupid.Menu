@@ -124,6 +124,12 @@ namespace iiMenu.Menu
                     ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
                 }
 
+                if ((ControllerInputPoller.instance?.leftControllerDevice.name ?? "Unknown").Contains("Knuckles"))
+                {
+                    leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
+                    rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
+                }
+
                 if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
                 {
                     Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
