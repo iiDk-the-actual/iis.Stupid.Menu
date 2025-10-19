@@ -4530,6 +4530,15 @@ exit";
             customMenuName = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt");
         }
 
+        private static bool lastFocused;
+        public static void CheckFocus()
+        {
+            if (!Application.isFocused && lastFocused)
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERRROR</color><color=grey>]</color> You are not focused on Gorilla Tag. Voice transcription mods will not function. Please focus/click on the game.");
+
+            lastFocused = Application.isFocused;
+        }
+
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
