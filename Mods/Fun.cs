@@ -1870,6 +1870,8 @@ namespace iiMenu.Mods
         {
             drec?.Stop();
             drec?.Dispose();
+
+            GorillaTagger.Instance.myRecorder.IsRecording = true;
         }
 
         public static void ProcessFrameBuffer(float[] data) =>
