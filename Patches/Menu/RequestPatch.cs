@@ -88,15 +88,17 @@ namespace iiMenu.Patches.Menu
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = target;
 
+                string[] cosmeticArray = new[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
+
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
-                CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
+                CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(cosmeticArray, CosmeticsController.instance);
 
                 while (Vector3.Distance(Main.ServerPos, target) > 0.2f)
                     yield return null;
                 
                 yield return new WaitForSeconds(0.1f);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray());
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, Fun.PackCosmetics(cosmeticArray), CosmeticsController.instance.currentWornSet.ToPackedIDArray());
                 VRRig.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 
