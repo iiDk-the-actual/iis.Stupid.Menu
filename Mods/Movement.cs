@@ -48,6 +48,7 @@ using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static Modio.API.ModioAPI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -2996,6 +2997,9 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = true;
             }
         }
+
+        public static void TorsoPatch_VRRigLateUpdate() =>
+            VRRig.LocalRig.transform.rotation *= Quaternion.Euler(0f, Time.time * 180f % 360f, 0f);
 
         public static void Fan()
         {
