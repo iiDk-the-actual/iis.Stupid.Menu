@@ -140,6 +140,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Chain Voice Commands", toolTip = "Makes voice commands chain together, so you don't have to repeatedly ask it to listen to you."},
                 new ButtonInfo { buttonText = "Voice Assistant", enableMethod = Settings.DictationOn, disableMethod = Settings.DictationOff, toolTip = "A voice assistant with artificial intelligence capabilities."},
 
+                new ButtonInfo { buttonText = "Narrate Assistant", toolTip = "Narrates what the voice assistant says locally."},
+                new ButtonInfo { buttonText = "Global Narrate Assistant", toolTip = "Narrates what the voice assistant says globally."},
+
                 new ButtonInfo { buttonText = "Player Select", method = Settings.PlayerSelect, toolTip = "Spawns a line in your hand when moving your hand away from the menu that you can select players with."},
 
                 new ButtonInfo { buttonText = "Annoying Mode", enableMethod =() => annoyingMode = true, disableMethod = Settings.AnnoyingModeOff, toolTip = "Turns on the April Fools 2024 settings."},
