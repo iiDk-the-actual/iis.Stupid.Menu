@@ -48,7 +48,6 @@ using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
-using static Modio.API.ModioAPI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
