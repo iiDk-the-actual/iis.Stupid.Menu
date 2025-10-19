@@ -1305,9 +1305,7 @@ namespace iiMenu.Mods
         {
             get
             {
-                if (_ghostReactorManager == null)
-                    ghostReactorManager = GetObject("GhostReactorManager").GetComponent<GhostReactorManager>();
-
+                _ghostReactorManager ??= GetObject("GhostReactorManager").GetComponent<GhostReactorManager>();
                 return _ghostReactorManager;
             }
             set => _ghostReactorManager = value;

@@ -887,8 +887,8 @@ namespace iiMenu.Mods
 
             int netId = Fun.ghostReactorManager.gameEntityManager.CreateNetId();
 
-            if (target is NetPlayer)
-                target = NetPlayerToPlayer((NetPlayer)target);
+            if (target is NetPlayer netPlayer)
+                target = NetPlayerToPlayer(netPlayer);
 
             sendData ??= new[] { 0L };
 
@@ -957,6 +957,17 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        private static Dictionary<string, int> _idByName;
+        public static Dictionary<string, int> objectByName
+        {
+            get
+            {
+                _idByName ??= Fun.ghostReactorManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key);
+                return _idByName;
+            }
+            set => _idByName = value;
+        }
+
         public static void SpamObjectGun(int objectId)
         {
             if (GetGunInput(false))
@@ -971,14 +982,7 @@ namespace iiMenu.Mods
 
         public static void ToolSpamGun()
         {
-            int[] objectIds = {
-                225241881,
-                1115277044,
-                1165678479,
-                1989693521,
-                -175001459
-            };
-
+            int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
             SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
         }
 
@@ -1028,9 +1032,7 @@ namespace iiMenu.Mods
         {
             get 
             {
-                if (_lucy == null)
-                    _lucy = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-
+                _lucy ??= GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
                 return _lucy;
             }
             set => _lucy = value;
@@ -1041,9 +1043,7 @@ namespace iiMenu.Mods
         {
             get
             {
-                if (_lurker == null)
-                    _lurker = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lurker Ghost/GhostLurker_Prefab").GetComponent<LurkerGhost>();
-
+                _lurker ??= GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/Halloween Ghosts/Lurker Ghost/GhostLurker_Prefab").GetComponent<LurkerGhost>();
                 return _lurker;
             }
             set => _lurker = value;
