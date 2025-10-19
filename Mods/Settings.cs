@@ -4685,6 +4685,7 @@ exit";
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
+                LogManager.Log($"Dictation result: {text}");
                 if (!listening)
                 {
                     if (keyWords.Contains(text.ToLower()))
@@ -4694,11 +4695,13 @@ exit";
                         NotifiLib.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
                         listening = true;
                         return;
+                    } else
+                    {
+                        LogManager.LogWarning("Ignoring input as we aren't supposted to be listening");
                     }
                 }
                 if (listening)
                 {
-                    LogManager.Log($"Dictation result: {text}");
                     if (cancelKeywords.Contains(text.ToLower()))
                     {
                         if (dynamicSounds)
@@ -4711,11 +4714,7 @@ exit";
                     NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                     CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 }
-                else
-                {
-                    LogManager.Log("Ignoring request as we are not supposted to be listening");
-                    return;
-                }
+                else return;
                 
                     
             };
