@@ -199,8 +199,27 @@ namespace iiMenu.Mods
             TutorialObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * 1f + Vector3.up * 0.25f;
             TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
 
+            Dictionary<string, string> videoByName = new Dictionary<string, string>
+            {
+                { "quest2", "q2" },
+                { "quest3", "q3" },
+                { "knuckles", "index" }
+            };
+
+            string videoName = "q3";
+            string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
+
+            foreach (var video in videoByName)
+            {
+                if (controllerName.Contains(video.Key))
+                {
+                    videoName = video.Value;
+                    break;
+                }
+            }
+
             VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Tutorial/tutorial-q{(XRSettings.isDeviceActive && ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
+            videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Tutorial/tutorial-{videoName}.mp4";
             videoPlayer.isLooping = true;
 
             videoPlayer.AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Pause;
