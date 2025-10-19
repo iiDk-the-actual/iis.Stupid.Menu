@@ -284,11 +284,15 @@ namespace iiMenu.Mods
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
                         kgDebounce = Time.time + 0.5f;
 
-                        if (!NetworkSystem.Instance.SessionIsPrivate)
+                        if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId))
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
                             return;
                         }
+
+                        bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPublic)
+                            Overpowered.SetRoomStatus(true);
 
                         CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                         {
@@ -301,7 +305,7 @@ namespace iiMenu.Mods
                         {
                             GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
                             PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
-                        }));
+                        }, sessionIsPublic ? 0.5f : 0f));
                     }
                 }
             }
@@ -317,19 +321,23 @@ namespace iiMenu.Mods
                     return;
                 }
 
+                bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPublic)
+                    Overpowered.SetRoomStatus(true);
+
                 CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
 
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(rig.GetPlayer().UserId)))
                         BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
                     RPCProtection();
                 }, () =>
                 {
                     GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
                     PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
-                }));
+                }, sessionIsPublic ? 0.5f : 0f));
             }
             else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
