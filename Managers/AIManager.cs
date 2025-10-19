@@ -20,6 +20,7 @@
  */
 
 // clanker
+// Thanks to kingofnetflix for inspiration and support with voice recognition
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
