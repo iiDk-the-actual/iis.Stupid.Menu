@@ -960,7 +960,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => CoroutineManager.RunCoroutine(SpeakText(keyboardInput)), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
-                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method = Settings.CheckFocus, isTogglable = false, toolTip = "Masks your voice with a TTS bot."},
+                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method = Settings.CheckFocus, toolTip = "Masks your voice with a TTS bot."},
 
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method = Important.DisablePitchScaling, disableMethod = Important.EnablePitchScaling, toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method = Important.DisableMouthMovement, disableMethod = Important.EnableMouthMovement, toolTip = "Disables your mouth from moving."},
