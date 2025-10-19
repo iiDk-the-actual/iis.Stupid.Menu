@@ -4695,7 +4695,7 @@ exit";
             if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
                 PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
             else if (Application.platform != RuntimePlatform.WindowsPlayer) 
-                PromptSingle("You must be on Microsoft Windows 10 or greater for this mod to run.", () => mod.enabled = false);
+                PromptSingle("You must be on Windows 10 or greater for this mod to run.", () => mod.enabled = false);
 
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
