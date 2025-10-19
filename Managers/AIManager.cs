@@ -111,6 +111,8 @@ Example:
 
 - Q: Turn me into Iron Man
 - Command: <ENABLEMOD_""Iron Man"">
+
+**Do not say that you can not do anything, it is most likely a mod and assume to the best of your ability.**
 ";
 
         public static string URLEncode(string input) => Uri.EscapeDataString(input);
