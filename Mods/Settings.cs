@@ -4684,6 +4684,7 @@ exit";
         public static DictationRecognizer drec;
         public static bool listening;
         public static bool debugDictation;
+        public static bool restartOnFocus;
         public static void DictationOn()
         {
             ButtonInfo mod = GetIndex("AI Assistant");
@@ -4734,12 +4735,17 @@ exit";
             drec.DictationComplete += (completionCause) =>
             {
                 if (debugDictation)
-                    LogManager.Log($"completion cause: completionCause");
+                    LogManager.Log($"completion cause: {completionCause}");
                 if (!listening)
                 {
-                    drec?.Start();
+                    if (Application.isFocused)
+                        drec?.Start();
+                    else
+                        restartOnFocus = true;
                     return;
                 }
+                if (dynamicSounds)
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                 NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
             };
             drec.DictationError += (error, hresult) =>
@@ -4763,6 +4769,16 @@ exit";
             drec?.Start();
         }
 
+        public static void FocusCheck()
+        {
+            if (!Application.isFocused)
+                restartOnFocus = true;
+            if (Application.isFocused && restartOnFocus)
+            {
+                drec?.Start();
+                restartOnFocus = false;
+            }
+        }
         public static void DictationOff()
         {
             drec?.Stop();
