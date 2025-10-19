@@ -19,12 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// clanker
-// Thanks to kingofnetflix for inspiration and support with voice recognition
+// Thanks to kingofnetflix for doing literally everything in this class. I barely even touched it.
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using iiMenu.Notifications;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Linq;
@@ -158,7 +158,7 @@ Example:
 
             if (narrate)
             {
-                if (globalNarrate)
+                if (globalNarrate && PhotonNetwork.InRoom)
                     CoroutineManager.instance.StartCoroutine(Main.SpeakText(formatResponse));
                 else
                     CoroutineManager.instance.StartCoroutine(Main.NarrateText(formatResponse));
