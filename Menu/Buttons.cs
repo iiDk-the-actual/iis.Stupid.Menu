@@ -136,7 +136,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exclusive Page Sounds", enableMethod =() => exclusivePageSounds = true, disableMethod =() => exclusivePageSounds = false, toolTip = "Makes the sound that joystick menu makes when switching pages using the menu."},
                 new ButtonInfo { buttonText = "Gradient Title", enableMethod =() => gradientTitle = true, disableMethod =() => gradientTitle = false, toolTip = "Gives a gradient to the title of the menu depending on your theme."},
                 new ButtonInfo { buttonText = "Animated Title", enableMethod =() => animatedTitle = true, disableMethod =() => animatedTitle = false, toolTip = "Animates the title of the menu."},
-                new ButtonInfo { buttonText = "Voice Commands", enableMethod = Settings.VoiceRecognitionOn, disableMethod = Settings.VoiceRecognitionOff, toolTip = "Enable and disable mods using your voice. Activate it like how you would any other voice assistant, such as \"Jarvis, Platforms\"."},
+                new ButtonInfo { buttonText = "Voice Commands", enableMethod = Settings.VoiceRecognitionOn, method = Settings.CheckFocus, disableMethod = Settings.VoiceRecognitionOff, toolTip = "Enable and disable mods using your voice. Activate it like how you would any other voice assistant, such as \"Jarvis, Platforms\"."},
                 new ButtonInfo { buttonText = "Chain Voice Commands", toolTip = "Makes voice commands chain together, so you don't have to repeatedly ask it to listen to you."},
                 new ButtonInfo { buttonText = "Voice Assistant", enableMethod = Settings.DictationOn, disableMethod = Settings.DictationOff, toolTip = "A voice assistant with artificial intelligence capabilities."},
 
@@ -961,7 +961,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => CoroutineManager.RunCoroutine(SpeakText(keyboardInput)), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
-                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, isTogglable = false, toolTip = "Masks your voice with a TTS bot."},
+                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method = Settings.CheckFocus, toolTip = "Masks your voice with a TTS bot."},
 
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method = Important.DisablePitchScaling, disableMethod = Important.EnablePitchScaling, toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method = Important.DisableMouthMovement, disableMethod = Important.EnableMouthMovement, toolTip = "Disables your mouth from moving."},
