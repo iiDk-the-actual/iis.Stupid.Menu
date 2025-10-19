@@ -32,6 +32,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Windows;
 
 namespace iiMenu.Managers
 {
@@ -62,6 +63,16 @@ Same as ENABLEMOD, but its counterpart instead disabling the mod of request.
 
 <TOGGLEMOD_""Modname"">
 Runs ENABLEMOD when mod is disabled, runs DISABLEMOD when mod is enabled, simply flipping the switch.
+
+Run these commands when a user asks for them.
+Example:
+- Q: Can you turn on Fly for me?
+- Command: <ENABLEMOD_""Fly"">
+
+- Q: Please disable Noclip.
+- Command: <DISABLEMOD_""Noclip"">
+
+Do not forget to also add your comment or whatever you want to say in addition to the command.
 
 ## Examples of mods:
 Platforms - Spawns platforms at your hands.
@@ -111,12 +122,16 @@ If a mod that wasn't listed here was requested, try to enable or disable or togg
             }
 
             string response = request.downloadHandler.text;
+            LogManager.Log($"AI Response: {response}");
+
+            MatchCollection matches = Regex.Matches(response, @"<([A-Z]+)(?:_""([^""]*)"")?>");
+
             if (Main.dynamicSounds)
                 Main.Play2DAudio(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
-            NotifiLib.ClearAllNotifications();
-            NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {response}", Duration(response));
 
-            MatchCollection matches = Regex.Matches(text, @"<([A-Z]+)(?:_""([^""]*)"")?>");
+            string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
+            NotifiLib.ClearAllNotifications();
+            NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
 
             foreach (Match match in matches)
             {
