@@ -1843,8 +1843,13 @@ namespace iiMenu.Mods
                 if (GorillaTagger.Instance.myRecorder != null)
                 {
                     GorillaTagger.Instance.myRecorder.IsRecording = true;
-                    CoroutineManager.instance.StartCoroutine(SpeakText(text));
+                    if (PhotonNetwork.InRoom)
+                        CoroutineManager.instance.StartCoroutine(SpeakText(text));
+                    else
+                        CoroutineManager.instance.StartCoroutine(NarrateText(text));
                 }
+                else
+                    CoroutineManager.instance.StartCoroutine(NarrateText(text));
             };
             drec.DictationComplete += (completionCause) =>
             {
