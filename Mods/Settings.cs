@@ -4682,6 +4682,11 @@ exit";
         public static bool listening;
         public static void DictationOn()
         {
+            ButtonInfo mod = GetIndex("AI Assistant");
+            if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
+                PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
+            else if (Application.platform != RuntimePlatform.WindowsPlayer) 
+                PromptSingle("You must be on Microsoft Windows 10 or greater for this mod to run.", () => mod.enabled = false);
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
@@ -4733,11 +4738,11 @@ exit";
                 LogManager.LogError($"Dictation error: {error}");
                 if (error.Contains("Dictation support is not enabled on this device"))
                 {
-                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
                     drec.Stop();
                     drec.Dispose();
-                    
-                    Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => GetIndex("AI Assistant").enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => GetIndex("AI Assistant").enabled = false, "Ok :("));
+
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
+                    Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => mod.enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => mod.enabled = false, "Ok :("));
                 }
             };
             drec.DictationHypothesis += (text) =>
