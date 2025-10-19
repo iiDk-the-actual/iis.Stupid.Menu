@@ -4673,7 +4673,7 @@ exit";
             mainPhrases?.Dispose();
             modPhrases?.Stop();
             modPhrases?.Dispose();
-            
+
             mainPhrases = null;
             modPhrases = null;
         }
@@ -4711,7 +4711,12 @@ exit";
                     NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                     CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 }
-                else return;
+                else
+                {
+                    LogManager.Log("Ignoring request as we are not supposted to be listening");
+                    return;
+                }
+                
                     
             };
             drec.DictationComplete += (completionCause) =>
@@ -4739,7 +4744,6 @@ exit";
         {
             drec?.Stop();
             drec?.Dispose();
-            drec = null;
         }
 
         public static GameObject selectObject;
