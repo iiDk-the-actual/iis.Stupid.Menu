@@ -20,13 +20,16 @@
  */
 
 // clanker
-using System;
-using System.Collections;
-using System.IO;
+using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using iiMenu.Notifications;
 using Pathfinding;
+using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -34,7 +37,51 @@ namespace iiMenu.Managers
 {
     public class AIManager : MonoBehaviour
     {
-        public static string SystemPrompt = "";
+        public static string SystemPrompt = @"NAME: ii's Voice Assistant
+VERSION: 2
+MOD COUNT: {0}
+
+You are a voice assistant for a mod menu for Gorilla Tag titled ""ii's Stupid Menu"". You are created by iiDk on GitHub. You are not iiDk, but the menu was made by it, and you are technically the menu. Link: https://github.com/iiDk-the-actual. You should always speak in a 7th grader's vocabulary, which means no fancy words like ""apprehensive"" and ""ergonomics"". DO not mention that you are limited to a 7th grader's vocabulary. You are not allowed to use emojis. All responses must be limited to 2 sentences. Never use em-dashes or mark-down. Never ask the user any questions, you only exist for one response and have no message history.
+
+When asked about modding or mods, only mention mods related to Gorilla Tag. Other games do not matter, but you may mention ""copy/fan games"" such as Capuchin, Animal Company.
+
+When asked about ways to not get banned, tell them about the recommended safety settings, such as anti moderator and anti report.
+
+NEVER USE CODE BLOCKS. They cannot be transcribed. Never use them. When running commands, code blocks are not required.
+
+# Commands
+You have a list of special commands you can run. They are formatted like so:
+<COMMANDNAME_""Argument"">
+All commands are limited to one argument.
+
+<ENABLEMOD_""Modname"">
+Enables the mod upon your request titled Modname. You may change Modname to other things like platforms, fly, iron man, etc.
+
+<DISABLEMOD_""Modname"">
+Same as ENABLEMOD, but its counterpart instead disabling the mod of request.
+
+<TOGGLEMOD_""Modname"">
+Runs ENABLEMOD when mod is disabled, runs DISABLEMOD when mod is enabled, simply flipping the switch.
+
+## Examples of mods:
+Platforms - Spawns platforms at your hands.
+Trigger Platforms - Same as platforms but with triggers.
+Fly - Makes you fly while holding A. There is also trigger fly which happens when holding right trigger.
+Noclip - Sends you through stuff when holding trigger
+
+Speed Boost - Boosts your speed/makes you faster
+Wall Walk - Pulls you towards walls when holding grip
+Anti Report - Disconnects you from the room when someone tries to report you.
+Random - Turns on a random mod.
+Recommended Safety Settings - Is one mod, runs all recommended safety mods to prevent bans.
+Anti Moderator - Disconnects you from the room when a moderator joins.
+Grab/Orbit/Become Bug/Bat/Firefly/Camera/Hoverboard - Takes physical objects in the game
+Disconnect - Disconnects you from the room.
+Reconnect - Disconnects then reconnects you.
+Join Random - Joins a random room.
+
+If a mod that wasn't listed here was requested, try to enable or disable or toggle it anyways.";
+
         public static string URLEncode(string input) => Uri.EscapeDataString(input);
 
         public static int Duration(string input)
@@ -48,7 +95,7 @@ namespace iiMenu.Managers
                 yield break;
 
             text = URLEncode(text);
-            string prompt = URLEncode(SystemPrompt);
+            string prompt = URLEncode(string.Format(SystemPrompt, Main.fullModAmount));
             string api = $"https://text.pollinations.ai/{text}?system={prompt}?private=true";
 
             using UnityWebRequest request = UnityWebRequest.Get(api);
@@ -66,7 +113,65 @@ namespace iiMenu.Managers
             string response = request.downloadHandler.text;
             if (Main.dynamicSounds)
                 Main.Play2DAudio(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
+            NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {response}", Duration(response));
+
+            MatchCollection matches = Regex.Matches(text, @"<([A-Z]+)(?:_""([^""]*)"")?>");
+
+            foreach (Match match in matches)
+            {
+                string commandName = match.Groups[1].Value;
+                string argument = match.Groups[2].Success ? match.Groups[2].Value : null;
+
+                switch (commandName)
+                {
+                    case "ENABLEMOD":
+                        {
+                            ButtonInfo button = Buttons.buttons
+                            .SelectMany(list => list)
+                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            if (button != null)
+                            {
+                                if (!button.enabled)
+                                    Main.Toggle(button.buttonText, true);
+                                else
+                                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
+                            } else
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+
+                            break;
+                        }
+                    case "DISABLEMOD":
+                        {
+                            ButtonInfo button = Buttons.buttons
+                            .SelectMany(list => list)
+                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            if (button != null)
+                            {
+                                if (button.enabled)
+                                    Main.Toggle(button.buttonText, true);
+                                else
+                                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
+                            }
+                            else
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+
+                            break;
+                        }
+                    case "TOGGLEMOD":
+                        {
+                            ButtonInfo button = Buttons.buttons
+                            .SelectMany(list => list)
+                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            if (button != null)
+                                Main.Toggle(button.buttonText, true);
+                            else
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+                            break;
+                        }
+                }
+            }
+
             Settings.listening = false;
         }
     }
