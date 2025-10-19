@@ -27,6 +27,7 @@ using iiMenu.Notifications;
 using Pathfinding;
 using System;
 using System.Collections;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -132,7 +133,7 @@ If a mod that wasn't listed here was requested, try to enable or disable or togg
             string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
-
+            
             foreach (Match match in matches)
             {
                 string commandName = match.Groups[1].Value;
@@ -142,9 +143,18 @@ If a mod that wasn't listed here was requested, try to enable or disable or togg
                 {
                     case "ENABLEMOD":
                         {
-                            ButtonInfo button = Buttons.buttons
-                            .SelectMany(list => list)
-                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            ButtonInfo button = Main.GetIndex(argument);
+                            button ??= Buttons.buttons
+                                .SelectMany(
+                                    (buttonList, i) =>
+                                        !Buttons.categoryNames[i].Contains("settings", StringComparison.OrdinalIgnoreCase)
+                                            ? buttonList
+                                            : Enumerable.Empty<ButtonInfo>()
+                                )
+                                .FirstOrDefault(b =>
+                                    (b.overlapText ?? b.buttonText)
+                                    .Contains(argument, StringComparison.OrdinalIgnoreCase));
+
                             if (button != null)
                             {
                                 if (!button.enabled)
@@ -158,9 +168,18 @@ If a mod that wasn't listed here was requested, try to enable or disable or togg
                         }
                     case "DISABLEMOD":
                         {
-                            ButtonInfo button = Buttons.buttons
-                            .SelectMany(list => list)
-                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            ButtonInfo button = Main.GetIndex(argument);
+                            button ??= Buttons.buttons
+                                .SelectMany(
+                                    (buttonList, i) =>
+                                        !Buttons.categoryNames[i].Contains("settings", StringComparison.OrdinalIgnoreCase)
+                                            ? buttonList
+                                            : Enumerable.Empty<ButtonInfo>()
+                                )
+                                .FirstOrDefault(b =>
+                                    (b.overlapText ?? b.buttonText)
+                                    .Contains(argument, StringComparison.OrdinalIgnoreCase));
+
                             if (button != null)
                             {
                                 if (button.enabled)
@@ -175,9 +194,18 @@ If a mod that wasn't listed here was requested, try to enable or disable or togg
                         }
                     case "TOGGLEMOD":
                         {
-                            ButtonInfo button = Buttons.buttons
-                            .SelectMany(list => list)
-                            .Where(button => (button.overlapText ?? button.buttonText).ToLower().Contains(argument.ToLower())).FirstOrDefault();
+                            ButtonInfo button = Main.GetIndex(argument);
+                            button ??= Buttons.buttons
+                                .SelectMany(
+                                    (buttonList, i) =>
+                                        !Buttons.categoryNames[i].Contains("settings", StringComparison.OrdinalIgnoreCase)
+                                            ? buttonList
+                                            : Enumerable.Empty<ButtonInfo>()
+                                )
+                                .FirstOrDefault(b =>
+                                    (b.overlapText ?? b.buttonText)
+                                    .Contains(argument, StringComparison.OrdinalIgnoreCase));
+
                             if (button != null)
                                 Main.Toggle(button.buttonText, true);
                             else
