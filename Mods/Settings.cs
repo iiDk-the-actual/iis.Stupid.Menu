@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Video;
@@ -4533,10 +4534,11 @@ exit";
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
+        private static readonly string[] keyWords = { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget", "monika", "wikipedia", "gideon" };
         private static readonly string[] cancelKeywords = { "nevermind", "cancel", "never mind", "stop", "i hate you", "die" };
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget", "monika", "wikipedia", "gideon" });
+            mainPhrases = new KeywordRecognizer(keyWords);
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }
@@ -4659,41 +4661,76 @@ exit";
         public static void VoiceRecognitionOff()
         {
             mainPhrases?.Stop();
-            
+            mainPhrases?.Dispose();
             modPhrases?.Stop();
+            modPhrases?.Dispose();
             
             mainPhrases = null;
             modPhrases = null;
         }
 
         public static DictationRecognizer drec;
+        public static bool listening;
         public static void DictationOn()
         {
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
-                LogManager.Log($"Dictation result: {text}");
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> + {text}");
+                if (!listening)
+                {
+                    if (keyWords.Contains(text.ToLower()))
+                    {
+                        if (dynamicSounds)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
+                        listening = true;
+                        return;
+                    }
+                }
+                if (listening)
+                {
+                    LogManager.Log($"Dictation result: {text}");
+                    if (cancelKeywords.Contains(text.ToLower()))
+                    {
+                        if (dynamicSounds)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                        NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
+                        listening = false;
+                        return;
+                    }
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
+                    CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
+                }
+                else return;
+                    
             };
             drec.DictationComplete += (completionCause) =>
             {
-                drec.Start();
+                LogManager.Log(completionCause);
+                if (!listening)
+                {
+                    drec?.Start();
+                    return;
+                }
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
             };
             drec.DictationError += (error, hresult) =>
             {
-                LogManager.LogError($"Dictation error: {error}; HResult = {hresult}.");
+                LogManager.LogError($"Dictation error: {error}");
             };
             drec.DictationHypothesis += (text) =>
             {
                 LogManager.Log($"Hypothesis: {text}");
             };
-            drec.Start();
+            drec?.Start();
         }
 
         public static void DictationOff()
         {
             drec?.Stop();
             drec?.Dispose();
+            drec = null;
         }
 
         public static GameObject selectObject;
