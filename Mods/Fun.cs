@@ -1859,8 +1859,6 @@ namespace iiMenu.Mods
                 LogManager.Log($"Hypothesis: {text}");
             };
             drec.Start();
-
-            GorillaTagger.Instance.myRecorder.IsRecording = Sound.AudioIsPlaying;
         }
 
         public static void ProcessFrameBuffer(float[] data) =>
