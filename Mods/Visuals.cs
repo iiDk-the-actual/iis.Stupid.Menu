@@ -2055,10 +2055,10 @@ namespace iiMenu.Mods
 
         public static void DisableVerifiedTags()
         {
-            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in verifiedNameTags)
                 Object.Destroy(nametag.Value);
 
-            modNameTags.Clear();
+            verifiedNameTags.Clear();
         }
 
         private static readonly Dictionary<VRRig, GameObject> crashedNameTags = new Dictionary<VRRig, GameObject>();
