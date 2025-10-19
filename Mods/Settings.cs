@@ -4677,6 +4677,7 @@ exit";
             modPhrases = null;
         }
 
+        // Thanks to kingofnetflix for inspiration and support with voice recognition
         public static DictationRecognizer drec;
         public static bool listening;
         public static void DictationOn()
@@ -4705,7 +4706,7 @@ exit";
                     {
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
-                        NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
+                        NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
                         listening = false;
                         return;
                     }
@@ -4730,6 +4731,14 @@ exit";
             drec.DictationError += (error, hresult) =>
             {
                 LogManager.LogError($"Dictation error: {error}");
+                if (error.Contains("Dictation support is not enabled on this device"))
+                {
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
+                    drec.Stop();
+                    drec.Dispose();
+                    
+                    Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => GetIndex("AI Assistant").enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => GetIndex("AI Assistant").enabled = false, "Ok :("));
+                }
             };
             drec.DictationHypothesis += (text) =>
             {
