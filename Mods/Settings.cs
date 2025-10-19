@@ -4680,6 +4680,7 @@ exit";
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         public static DictationRecognizer drec;
         public static bool listening;
+        public static bool debugDictation;
         public static void DictationOn()
         {
             ButtonInfo mod = GetIndex("AI Assistant");
@@ -4702,7 +4703,8 @@ exit";
                         return;
                     } else
                     {
-                        LogManager.LogWarning("Ignoring input as we aren't supposted to be listening");
+                        if (debugDictation)
+                            LogManager.LogWarning("Ignoring input as we aren't supposted to be listening");
                     }
                 }
                 if (listening)
@@ -4725,7 +4727,8 @@ exit";
             };
             drec.DictationComplete += (completionCause) =>
             {
-                LogManager.Log(completionCause);
+                if (debugDictation)
+                    LogManager.Log($"completion cause: completionCause");
                 if (!listening)
                 {
                     drec?.Start();
@@ -4735,7 +4738,8 @@ exit";
             };
             drec.DictationError += (error, hresult) =>
             {
-                LogManager.LogError($"Dictation error: {error}");
+                if (debugDictation)
+                    LogManager.LogError($"Dictation error: {error}");
                 if (error.Contains("Dictation support is not enabled on this device"))
                 {
                     drec.Stop();
@@ -4747,7 +4751,8 @@ exit";
             };
             drec.DictationHypothesis += (text) =>
             {
-                LogManager.Log($"Hypothesis: {text}");
+                if (debugDictation)
+                    LogManager.Log($"Hypothesis: {text}");
             };
             drec?.Start();
         }
