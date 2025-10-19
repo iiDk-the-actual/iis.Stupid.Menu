@@ -19,8 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// clanker
-// Thanks to kingofnetflix for inspiration and support with voice recognition
+// Thanks to kingofnetflix for doing literally everything in this class. I barely even touched it.
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
