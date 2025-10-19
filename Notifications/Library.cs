@@ -365,8 +365,15 @@ namespace iiMenu.Notifications
         public static void PlayNotificationSound() =>
             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg", $"Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg"), buttonClickVolume / 10f);
 
-        public static void ClearAllNotifications() =>
+        public static void ClearAllNotifications()
+        {
             NotifiText.text = "";
+
+            foreach (Coroutine clearCoroutine in clearCoroutines)
+                CoroutineManager.instance.StopCoroutine(clearCoroutine);
+
+            clearCoroutines.Clear();
+        }
 
         public static void ClearPastNotifications(int amount)
         {
