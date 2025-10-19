@@ -1866,6 +1866,12 @@ namespace iiMenu.Mods
             drec.Start();
         }
 
+        public static void DisableMaskVoice()
+        {
+            drec?.Stop();
+            drec?.Dispose();
+        }
+
         public static void ProcessFrameBuffer(float[] data) =>
             factory.Feed(data);
 
