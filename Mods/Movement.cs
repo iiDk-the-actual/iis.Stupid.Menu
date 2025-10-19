@@ -2997,6 +2997,9 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TorsoPatch_VRRigLateUpdate() =>
+            VRRig.LocalRig.transform.rotation *= Quaternion.Euler(0f, Time.time * 180f % 360f, 0f);
+
         public static void Fan()
         {
             if (rightPrimary)

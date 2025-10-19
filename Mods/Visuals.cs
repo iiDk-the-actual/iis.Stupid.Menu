@@ -99,12 +99,39 @@ namespace iiMenu.Mods
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
-        private static LightningManager lightningManager;
-        public static void SpawnLightning()
+        public static LightningManager _lightningManager;
+        public static LightningManager lightningManager
         {
-            if (!lightningManager) lightningManager = GameObject.Find("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/LightningManager").GetComponent<LightningManager>();
-            lightningManager.DoLightningStrike();
+            get
+            {
+                if (_lightningManager == null)
+                    _lightningManager = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/LightningManager").GetComponent<LightningManager>();
+
+                return _lightningManager;
+            }
+            set => _lightningManager = value;
         }
+
+        public static void SpawnLightning() =>
+            lightningManager.DoLightningStrike();
+
+        public static float GetTimeUntilNextLightningStrike()
+        {
+            if (lightningManager.lightningTimestampsRealtime == null ||
+                lightningManager.lightningTimestampsRealtime.Count == 0 ||
+                lightningManager.nextLightningTimestampIndex < 0 ||
+                lightningManager.nextLightningTimestampIndex >= lightningManager.lightningTimestampsRealtime.Count)
+                return -1f; 
+
+            float nextStrikeTime = lightningManager.lightningTimestampsRealtime[lightningManager.nextLightningTimestampIndex];
+            float timeUntilStrike = nextStrikeTime - Time.realtimeSinceStartup;
+
+            if (timeUntilStrike < 0f)
+                return 0f;
+
+            return timeUntilStrike;
+        }
+
         private static GameObject urpGlass;
         public static void CrystalBallVision()
         {
@@ -512,6 +539,17 @@ namespace iiMenu.Mods
             TimeSpan time = TimeSpan.FromSeconds(playtime);
             OverallPlaytime = $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
             yield return new WaitForSeconds(0.1f);
+        }
+
+        public static void StrikeTimeOverlay()
+        {
+            float timeUntilStrike = GetTimeUntilNextLightningStrike();
+            if (timeUntilStrike < 0f)
+            {
+                NotifiLib.information.Remove("Lightning");
+                return;
+            }
+            NotifiLib.information["Lightning"] = $"{timeUntilStrike:F1}s";
         }
 
         public static void VelocityLabel()
