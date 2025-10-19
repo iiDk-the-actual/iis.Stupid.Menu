@@ -24,16 +24,12 @@ using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using iiMenu.Notifications;
-using Pathfinding;
 using System;
 using System.Collections;
-using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Windows;
 
 namespace iiMenu.Managers
 {
