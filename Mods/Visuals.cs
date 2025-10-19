@@ -99,6 +99,12 @@ namespace iiMenu.Mods
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
+        private static LightningManager lightningManager;
+        public static void SpawnLightning()
+        {
+            if (!lightningManager) lightningManager = GameObject.Find("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/LightningManager").GetComponent<LightningManager>();
+            lightningManager.DoLightningStrike();
+        }
         private static GameObject urpGlass;
         public static void CrystalBallVision()
         {
