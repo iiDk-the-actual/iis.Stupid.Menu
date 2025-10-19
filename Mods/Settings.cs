@@ -4691,10 +4691,12 @@ exit";
             if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt"))
                 File.WriteAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt", keyWords);
             keyWords = File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt");
+
             if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
                 PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
             else if (Application.platform != RuntimePlatform.WindowsPlayer) 
                 PromptSingle("You must be on Microsoft Windows 10 or greater for this mod to run.", () => mod.enabled = false);
+
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
@@ -4705,6 +4707,7 @@ exit";
                     {
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+
                         NotifiLib.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
                         listening = true;
                         return;
@@ -4720,10 +4723,12 @@ exit";
                     {
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                        
                         NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
                         listening = false;
                         return;
                     }
+
                     NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
                     NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                     CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
@@ -4765,6 +4770,9 @@ exit";
             {
                 if (debugDictation)
                     LogManager.Log($"Hypothesis: {text}");
+
+                NotifiLib.ClearAllNotifications();
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
             };
             drec?.Start();
         }
