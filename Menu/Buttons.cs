@@ -47,7 +47,7 @@ namespace iiMenu.Menu
         public static ButtonInfo[][] buttons =
         {
             new[] { // Main [0]
-
+                
                 new ButtonInfo { buttonText = "Join Discord", method = Important.JoinDiscord, isTogglable = false, toolTip = "Invites you to join the ii's <b>Stupid</b> Mods Discord server."},
 
                 new ButtonInfo { buttonText = "Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Opens the settings tab."},
@@ -105,6 +105,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Physical Menu", enableMethod = Settings.PhysicalMenuOn, disableMethod = Settings.PhysicalMenuOff, toolTip = "Freezes the menu in world space."},
                 new ButtonInfo { buttonText = "Wrist Menu", enableMethod =() => wristMenu = true, disableMethod =() => wristMenu = false, toolTip = "Turns the menu into a weird wrist watch, click your hand to open it."},
                 new ButtonInfo { buttonText = "Watch Menu", enableMethod = Settings.WatchMenuOn, disableMethod = Settings.WatchMenuOff, toolTip = "Turns the menu into a watch, click your joystick to toggle, and move your joystick to select a mod."},
+                new ButtonInfo { buttonText = "Console Menu", method = Fun.ConsoleFrame, disableMethod = System.Console.Clear, toolTip = "Puts the menu in your debug console. Navigate with the arrow keys."},
                 new ButtonInfo { buttonText = "Shiny Menu", enableMethod =() => shinyMenu = true, disableMethod =() => shinyMenu = false, toolTip = "Makes the menu's textures use the old shader."},
                 new ButtonInfo { buttonText = "Transparent Menu", enableMethod =() => transparentMenu = true, disableMethod =() => transparentMenu = false, toolTip = "Makes the menu transparent."},
                 new ButtonInfo { buttonText = "Crystallize Menu", enableMethod =() => { crystallizemenu = true; OrangeUI = CrystalMaterial; hasFoundAllBoards = false; }, disableMethod =() => { crystallizemenu = false ; OrangeUI = new Material(Shader.Find("GorillaTag/UberShader")); hasFoundAllBoards = false; }, toolTip = "Turns the menu into crystals."},
