@@ -40,39 +40,75 @@ namespace iiMenu.Extensions
         public static string ToRGBString(this Color input, int roundAmount = 255) =>
             $"{Math.Round(input.r * roundAmount)} {Math.Round(input.g * roundAmount)} {Math.Round(input.b * roundAmount)}";
 
+        private static readonly Dictionary<KeyCode, string> normalMap = new Dictionary<KeyCode, string>
+        {
+            { KeyCode.Space, " " },
+            { KeyCode.Comma, "," },
+            { KeyCode.Period, "." },
+            { KeyCode.Slash, "/" },
+            { KeyCode.Backslash, "\\" },
+            { KeyCode.Minus, "-" },
+            { KeyCode.Equals, "=" },
+            { KeyCode.Semicolon, ";" },
+            { KeyCode.Quote, "'" },
+            { KeyCode.LeftBracket, "[" },
+            { KeyCode.RightBracket, "]" }
+        };
+
+        private static readonly Dictionary<KeyCode, string> shiftMap = new Dictionary<KeyCode, string>
+        {
+            { KeyCode.Alpha1, "!" },
+            { KeyCode.Alpha2, "@" },
+            { KeyCode.Alpha3, "#" },
+            { KeyCode.Alpha4, "$" },
+            { KeyCode.Alpha5, "%" },
+            { KeyCode.Alpha6, "^" },
+            { KeyCode.Alpha7, "&" },
+            { KeyCode.Alpha8, "*" },
+            { KeyCode.Alpha9, "(" },
+            { KeyCode.Alpha0, ")" },
+
+            { KeyCode.Minus, "_" },
+            { KeyCode.Equals, "+" },
+            { KeyCode.LeftBracket, "{" },
+            { KeyCode.RightBracket, "}" },
+            { KeyCode.Backslash, "|" },
+            { KeyCode.Semicolon, ":" },
+            { KeyCode.Quote, "\"" },
+            { KeyCode.Comma, "<" },
+            { KeyCode.Period, ">" },
+            { KeyCode.Slash, "?" }
+        };
+
         public static string Key(this KeyCode key)
         {
             if (key >= KeyCode.A && key <= KeyCode.Z)
-                return key.ToString();
+                return key.ToString().ToLower();
 
             if (key >= KeyCode.Alpha0 && key <= KeyCode.Alpha9)
                 return ((char)('0' + (key - KeyCode.Alpha0))).ToString();
 
+            if (normalMap.TryGetValue(key, out string value))
+                return value;
+
             switch (key)
             {
-                case KeyCode.Space:
-                    return " ";
                 case KeyCode.Return:
-                case KeyCode.KeypadEnter:
-                    return "\n";
-                case KeyCode.Tab:
-                    return "\t";
-                default:
-                    switch (key)
-                    {
-                        case KeyCode.Comma: return ",";
-                        case KeyCode.Period: return ".";
-                        case KeyCode.Slash: return "/";
-                        case KeyCode.Backslash: return "\\";
-                        case KeyCode.Minus: return "-";
-                        case KeyCode.Equals: return "=";
-                        case KeyCode.Semicolon: return ";";
-                        case KeyCode.Quote: return "'";
-                        case KeyCode.LeftBracket: return "[";
-                        case KeyCode.RightBracket: return "]";
-                        default: return ""; // Unknown key
-                    }
+                case KeyCode.KeypadEnter: return "\n";
+                case KeyCode.Tab: return "\t";
+                default: return "";
             }
+        }
+
+        public static string ShiftedKey(this KeyCode key)
+        {
+            if (key >= KeyCode.A && key <= KeyCode.Z)
+                return key.ToString();
+
+            if (shiftMap.TryGetValue(key, out string shifted))
+                return shifted;
+
+            return key.Key();
         }
 
         public static IEnumerable<GameObject> Children(this Transform t)
