@@ -4748,7 +4748,6 @@ exit";
                         return;
                     }
 
-                    NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
                     NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                     CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 }
