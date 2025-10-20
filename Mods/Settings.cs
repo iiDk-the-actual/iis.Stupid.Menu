@@ -4790,8 +4790,11 @@ exit";
                 if (debugDictation)
                     LogManager.Log($"Hypothesis: {text}");
 
-                NotifiLib.ClearAllNotifications();
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
+                if (listening)
+                {
+                    NotifiLib.ClearAllNotifications();
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
+                }
             };
             drec?.Start();
         }
