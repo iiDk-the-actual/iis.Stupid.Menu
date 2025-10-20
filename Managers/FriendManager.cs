@@ -1150,11 +1150,13 @@ namespace iiMenu.Managers
             for (int i = 0; i < messages.Count; i++)
             {
                 string message = messages[i];
-                string link = ExtractPromptImage(PromptMessage);
+                string link = ExtractPromptImage(message);
+                string text = link != null ? message.Replace($"<{link}>", "[Media]") : message;
+
                 if (link != null)
-                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message.Replace($"<{link}>", "<Media>"), isTogglable = false, method = () => PromptSingle($"<{link}>") });
+                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, isTogglable = false, method = () => PromptSingle($"<{link}>") });
                 else
-                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true });
+                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, label = true });
             }
 
             buttons.Add(new ButtonInfo
