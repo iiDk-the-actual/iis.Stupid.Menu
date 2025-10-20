@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Mods/CustomMaps/Manager.cs
+ * ii's Stupid Menu  Mods/CustomMaps/Maps/FlightSimulator.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
@@ -35,15 +36,17 @@ namespace iiMenu.Mods.CustomMaps
 {
     public static class Manager
     {
-        private static readonly Dictionary<long, string> mapScriptArchives = new Dictionary<long, string>();
+        public static readonly Dictionary<long, string> mapScriptArchives = new Dictionary<long, string>();
+        public static readonly Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap>();
+
         public static void UpdateCustomMapsTab(long? overwriteId = null)
         {
             int category = GetCategory("Custom Maps");
             List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
 
-            if (overwriteId != -1 && CustomMapLoader.IsMapLoaded())
+            if (overwriteId != -1)
             {
-                long mapID = overwriteId ?? CustomMapLoader.LoadedMapModId;
+                long mapID = overwriteId ?? -1;
                 if (!mapScriptArchives.ContainsKey(mapID))
                     mapScriptArchives.Add(mapID, CustomGameMode.LuaScript);
 
@@ -62,7 +65,9 @@ namespace iiMenu.Mods.CustomMaps
                 });
             }
             else
+            {
                 buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
+            }
 
             Buttons.buttons[category] = buttons.ToArray();
         }
@@ -72,7 +77,7 @@ namespace iiMenu.Mods.CustomMaps
             string input = CustomGameMode.LuaScript;
             string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            foreach (KeyValuePair<int, string> kvp in replacements)
+            foreach (var kvp in replacements)
             {
                 int lineIndex = kvp.Key;
                 if (lineIndex >= 0 && lineIndex < lines.Length)
@@ -80,7 +85,6 @@ namespace iiMenu.Mods.CustomMaps
                     LogManager.Log("Replacing " + lines[lineIndex] + " with " + kvp.Value);
                     lines[lineIndex] = kvp.Value;
                 }
-
             }
 
             CustomGameMode.LuaScript = string.Join(Environment.NewLine, lines);
@@ -114,6 +118,7 @@ namespace iiMenu.Mods.CustomMaps
 
             if (NetworkSystem.Instance.InRoom)
                 LuauHud.Instance.RestartLuauScript();
+
             CustomMapManager.ReturnToVirtualStump();
         }
 
@@ -123,27 +128,26 @@ namespace iiMenu.Mods.CustomMaps
 
             if (NetworkSystem.Instance.InRoom)
                 LuauHud.Instance.RestartLuauScript();
+
             CustomMapManager.ReturnToVirtualStump();
         }
 
         public static void RevertCustomScript(int[] lines)
         {
             Dictionary<int, string> replacements = lines.ToDictionary(line => line, line => mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
-
             ModifyCustomScript(replacements);
         }
 
         public static void RevertCustomScript(int line) =>
             RevertCustomScript(new[] { line });
 
-        public static readonly Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap>();
         public static CustomMap GetMapByID(long id)
         {
             if (!mapCache.TryGetValue(id, out var instance))
             {
                 var mapTypes = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
+                    .GetTypes()
+                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
 
                 foreach (var type in mapTypes)
                 {
