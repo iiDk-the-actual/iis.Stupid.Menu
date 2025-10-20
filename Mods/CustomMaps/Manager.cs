@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
@@ -65,9 +64,7 @@ namespace iiMenu.Mods.CustomMaps
                 });
             }
             else
-            {
                 buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
-            }
 
             Buttons.buttons[category] = buttons.ToArray();
         }
