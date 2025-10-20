@@ -4800,6 +4800,7 @@ exit";
 
         public static void FocusCheck()
         {
+            CheckFocus();
             if (!Application.isFocused)
                 restartOnFocus = true;
             if (Application.isFocused && restartOnFocus)
