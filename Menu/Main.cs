@@ -3095,6 +3095,13 @@ namespace iiMenu.Menu
             component.localPosition = new Vector3(0.06f, 0f, IsText ? -0.025f : 0f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+            if (promptVideoPlayer != null)
+            {
+                promptVideoPlayer.Stop();
+                promptVideoPlayer.gameObject.Destroy();
+                promptVideoPlayer = null;
+            }
+
             if (promptImageUrl != null)
             {
                 string fileName = promptImageUrl.Split("/")[^1];
@@ -3136,13 +3143,6 @@ namespace iiMenu.Menu
                     case "webm":
                     case "mov":
                         {
-                            if (promptVideoPlayer != null)
-                            {
-                                promptVideoPlayer.Stop();
-                                promptVideoPlayer.gameObject.Destroy();
-                                promptVideoPlayer = null;
-                            }
-
                             promptVideoPlayer = new GameObject("iiMenu_PromptVideoPlayer").AddComponent<VideoPlayer>();
                             promptVideoPlayer.playOnAwake = true;
                             promptVideoPlayer.isLooping = true;
