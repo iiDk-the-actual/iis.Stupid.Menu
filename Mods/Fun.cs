@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ii's Stupid Menu  Mods/Fun.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -243,6 +243,14 @@ namespace iiMenu.Mods
                 RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
             else if (!friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
+        }
+
+        public static IEnumerator KickRejoin(string roomCode)
+        {
+            yield return new WaitForSeconds(8f);
+            NetworkSystem.Instance.ReturnToSinglePlayer();
+            yield return new WaitForSeconds(3f);
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomCode, JoinType.Solo);
         }
 
         public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = true)
