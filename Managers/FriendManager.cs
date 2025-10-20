@@ -1155,7 +1155,7 @@ namespace iiMenu.Managers
                 string text = link != null ? message.Replace($"<{link}>", "[Media]") : message;
 
                 if (link != null)
-                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, isTogglable = false, method = () => PromptSingle($"<{link}>") });
+                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, isTogglable = false, method = () => Prompt($"<{link}>", null, () => GUIUtility.systemCopyBuffer = link, "Done", "Copy") });
                 else
                     buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, label = true });
             }
