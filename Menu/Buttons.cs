@@ -133,6 +133,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Dynamic Gradients", enableMethod =() => dynamicGradients = true, disableMethod =() => dynamicGradients = false, toolTip = "Makes gradients dynamic, showing you the full gradient instead of a pulsing color."},
                 new ButtonInfo { buttonText = "Horizontal Gradients", enableMethod =() => { horizontalGradients = true; cacheGradients.Clear(); }, disableMethod =() => { horizontalGradients = false; cacheGradients.Clear(); }, toolTip = "Rotates the dynamic gradients by 90 degrees."},
                 new ButtonInfo { buttonText = "Dynamic Sounds", enableMethod =() => dynamicSounds = true, disableMethod =() => dynamicSounds = false, toolTip = "Adds more sounds to the menu, giving you a better sense of control."},
+                new ButtonInfo { buttonText = "Page Scrolling", enableMethod =() => pageScrolling = true, disableMethod =() => pageScrolling = false, toolTip = "Allows you to scroll through the mods with your joystick instead of flipping through pages."},
                 new ButtonInfo { buttonText = "Exclusive Page Sounds", enableMethod =() => exclusivePageSounds = true, disableMethod =() => exclusivePageSounds = false, toolTip = "Makes the sound that joystick menu makes when switching pages using the menu."},
                 new ButtonInfo { buttonText = "Gradient Title", enableMethod =() => gradientTitle = true, disableMethod =() => gradientTitle = false, toolTip = "Gives a gradient to the title of the menu depending on your theme."},
                 new ButtonInfo { buttonText = "Animated Title", enableMethod =() => animatedTitle = true, disableMethod =() => animatedTitle = false, toolTip = "Animates the title of the menu."},
@@ -144,7 +145,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Global Narrate Assistant", toolTip = "Narrates what the voice assistant says globally."},
 
                 new ButtonInfo { buttonText = "Debug Dictation", enableMethod =() => Settings.debugDictation = true, disableMethod =() => Settings.debugDictation = false, toolTip = "Debug what you say to the AI Assistant in your Unity console."},
-
 
                 new ButtonInfo { buttonText = "Player Select", method = Settings.PlayerSelect, toolTip = "Spawns a line in your hand when moving your hand away from the menu that you can select players with."},
 
