@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ii's Stupid Menu  Mods/Overpowered.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -3780,7 +3780,9 @@ namespace iiMenu.Mods
                         bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                         if (sessionIsPrivate)
                             Overpowered.SetRoomStatus(false);
-
+                        
+                        if (GetIndex("Kick Gun Rejoin").enabled)
+                            CoroutineManager.instance.StartCoroutine(Fun.KickRejoin(PhotonNetwork.CurrentRoom.Name));
                         CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
                         {
                             PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
