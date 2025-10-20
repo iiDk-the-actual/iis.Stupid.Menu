@@ -24,6 +24,7 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using GorillaTagScripts;
 using iiMenu.Extensions;
 using iiMenu.Managers;
@@ -43,6 +44,7 @@ using static iiMenu.Menu.Main;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using JoinType = GorillaNetworking.JoinType;
 
 namespace iiMenu.Mods
 {
@@ -3353,6 +3355,512 @@ namespace iiMenu.Mods
                     SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { null });
                 lagDebounce = Time.time + lagDelay;
             }
+        }
+
+        public static void CrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > lagDebounce)
+                    {
+                        bool sessionIsPrivate = GetIndex("Unlock on Crash").enabled && NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPrivate)
+                            Overpowered.SetRoomStatus(false);
+
+                        SerializePatch.OverrideSerialization = () => false;
+                        for (int i = 0; i < 950; i++)
+                        {
+                            string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            object[] groupJoinSendData = new object[2];
+                            groupJoinSendData[0] = shuffler;
+                            groupJoinSendData[1] = keyStr;
+                            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { lockTarget.GetPlayer().ActorNumber } };
+
+                            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                        }
+
+                        lagDebounce = Time.time + 2f;
+                    }
+
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+                SerializePatch.OverrideSerialization = null;
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if (Time.time > lagDebounce)
+            {
+                bool sessionIsPrivate = GetIndex("Unlock on Crash").enabled && NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                SerializePatch.OverrideSerialization = () => false;
+                for (int i = 0; i < 950; i++)
+                {
+                    string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    object[] groupJoinSendData = new object[2];
+                    groupJoinSendData[0] = shuffler;
+                    groupJoinSendData[1] = keyStr;
+                    NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.others };
+
+                    RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                }
+
+                lagDebounce = Time.time + 2f;
+            }
+
+        }
+
+        public static void CrashAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<int> nearbyPlayers = new List<int>();
+
+            foreach (var vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+                else if (nearbyPlayers.Contains(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber))
+                    nearbyPlayers.Remove(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+            }
+
+            if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
+            {
+                bool sessionIsPrivate = GetIndex("Unlock on Crash").enabled && NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                SerializePatch.OverrideSerialization = () => false;
+                for (int i = 0; i < 950; i++)
+                {
+                    string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    object[] groupJoinSendData = new object[2];
+                    groupJoinSendData[0] = shuffler;
+                    groupJoinSendData[1] = keyStr;
+                    NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.others };
+
+                    RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                }
+
+                lagDebounce = Time.time + 2f;
+            }
+            else if (nearbyPlayers.Count == 0) SerializePatch.OverrideSerialization = null;
+        }
+
+        public static void StumpCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > lagDebounce)
+                    {
+                        if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(lockTarget.GetPlayer().UserId))
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
+                            return;
+                        }
+
+                        bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPrivate)
+                            Overpowered.SetRoomStatus(false);
+
+                        SerializePatch.OverrideSerialization = () => false;
+                        for (int i = 0; i < 935; i++)
+                        {
+                            string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            object[] groupJoinSendData = new object[2];
+                            groupJoinSendData[0] = shuffler;
+                            groupJoinSendData[1] = keyStr;
+                            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { lockTarget.GetPlayer().ActorNumber } };
+
+                            RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
+                        }
+
+                        lagDebounce = Time.time + 2f;
+                    }
+
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+                SerializePatch.OverrideSerialization = null;
+            }
+        }
+        public static void StumpCrashAll()
+        {
+            if (Time.time > lagDebounce)
+            {
+                int[] actors = GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(rig.GetPlayer().UserId)).Select(rig => rig.GetPlayer().ActorNumber).ToArray();
+                if (actors.Length <= 0)
+                    SerializePatch.OverrideSerialization = null;
+                else
+                {
+                    bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                    if (sessionIsPrivate)
+                        Overpowered.SetRoomStatus(false);
+
+                    SerializePatch.OverrideSerialization = () => false;
+                    for (int i = 0; i < 935; i++)
+                    {
+                        string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                        string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                        object[] groupJoinSendData = new object[2];
+                        groupJoinSendData[0] = shuffler;
+                        groupJoinSendData[1] = keyStr;
+                        NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.others };
+
+                        RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
+                    }
+                }
+
+                lagDebounce = Time.time + 2f;
+            }
+        }
+
+        public static void StumpCrashAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<int> nearbyPlayers = new List<int>();
+
+            foreach (var vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(vrrig.GetPlayer().UserId))
+                    continue;
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+                else if (nearbyPlayers.Contains(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber))
+                    nearbyPlayers.Remove(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+            }
+
+            if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
+            {
+                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                SerializePatch.OverrideSerialization = () => false;
+                for (int i = 0; i < 935; i++)
+                {
+                    string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    object[] groupJoinSendData = new object[2];
+                    groupJoinSendData[0] = shuffler;
+                    groupJoinSendData[1] = keyStr;
+                    NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.others };
+
+                    RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
+                }
+
+                lagDebounce = Time.time + 2f;
+            }
+            else if (nearbyPlayers.Count == 0) SerializePatch.OverrideSerialization = null;
+        }
+
+        public static void ShuttleLagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > lagDebounce)
+                    {
+                        for (int i = 0; i < Overpowered.lagAmount; i++)
+                        {
+                            string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            object[] groupJoinSendData = new object[2];
+                            groupJoinSendData[0] = shuffler;
+                            groupJoinSendData[1] = keyStr;
+                            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { lockTarget.GetPlayer().ActorNumber } };
+
+                            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                        }
+
+                        lagDebounce = Time.time + Overpowered.lagDelay;
+                    }
+
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void ShuttleLagAll()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            if (Time.time > lagDebounce)
+            {
+                for (int i = 0; i < Overpowered.lagAmount; i++)
+                {
+                    string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    object[] groupJoinSendData = new object[2];
+                    groupJoinSendData[0] = shuffler;
+                    groupJoinSendData[1] = keyStr;
+                    NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.others };
+
+                    RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                }
+
+                lagDebounce = Time.time + Overpowered.lagDelay;
+            }
+        }
+
+        public static void ShuttleLagAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<int> nearbyPlayers = new List<int>();
+
+            foreach (var vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+                else if (nearbyPlayers.Contains(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber))
+                    nearbyPlayers.Remove(RigManager.GetPlayerFromVRRig(vrrig).ActorNumber);
+            }
+
+            if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
+            {
+                for (int i = 0; i < Overpowered.lagAmount; i++)
+                {
+                    string shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    string keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    object[] groupJoinSendData = new object[2];
+                    groupJoinSendData[0] = shuffler;
+                    groupJoinSendData[1] = keyStr;
+                    NetEventOptions netEventOptions = new NetEventOptions { TargetActors = nearbyPlayers.ToArray() };
+
+                    RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                }
+
+                lagDebounce = Time.time + Overpowered.lagDelay;
+            }
+        }
+
+        public static void KickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > kgDebounce)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        NetPlayer player = RigManager.GetPlayerFromVRRig(gunTarget);
+                        kgDebounce = Time.time + 0.5f;
+
+                        bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPrivate)
+                            Overpowered.SetRoomStatus(false);
+
+                        CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                        {
+                            PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            BetaShuttleFollowCommand(NetPlayerToPlayer(player));
+                            RPCProtection();
+                        }, () =>
+                        {
+                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
+                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                        }, sessionIsPrivate ? 0.5f : 0f));
+                    }
+                }
+            }
+        }
+
+        public static void KickAll()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                        BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+
+                    RPCProtection();
+                }, () =>
+                {
+                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
+                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                }, sessionIsPrivate ? 0.5f : 0f));
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
+        public static void KIDKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > kgDebounce)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        NetPlayer player = RigManager.GetPlayerFromVRRig(gunTarget);
+                        kgDebounce = Time.time + 0.5f;
+
+                        bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPrivate)
+                            Overpowered.SetRoomStatus(false);
+
+                        PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                        PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                        BetaShuttleFollowCommand(NetPlayerToPlayer(player));
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void KIDKickAll()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                    BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+
+                RPCProtection();
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
+        public static void ChangeGamemode(string gamemode)
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                var oldGameMode = GorillaComputer.instance.currentGameMode.Value;
+                GorillaComputer.instance.currentGameMode.Value = gamemode;
+
+                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPrivate)
+                    Overpowered.SetRoomStatus(false);
+
+                CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                        BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+
+                    RPCProtection();
+                }, () =>
+                {
+                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
+                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                }, sessionIsPrivate ? 0.5f : 0f, false));
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
+        public static void BetaShuttleFollowCommand(Player player)
+        {
+            if (NetworkSystem.Instance.SessionIsPrivate)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
+                return;
+            }
+
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
+            object[] groupJoinSendData = new object[2];
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
+
+            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
         }
 
         private static float antiReportLagDelay;

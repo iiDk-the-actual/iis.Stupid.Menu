@@ -1705,6 +1705,36 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
 
+                new ButtonInfo { buttonText = "Crash Gun", method = Overpowered.CrashGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Crash All", method = Overpowered.CrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room."},
+                new ButtonInfo { buttonText = "Crash Aura", method = Overpowered.CrashAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes players nearby you."},
+
+                new ButtonInfo { buttonText = "Stump Crash Gun", method = Overpowered.StumpCrashGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes whoever your hand desires if they're in the stump."},
+                new ButtonInfo { buttonText = "Stump Crash All", method = Overpowered.StumpCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the stump."},
+                new ButtonInfo { buttonText = "Stump Crash Aura", method = Overpowered.StumpCrashAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes players nearby you in the stump."},
+
+                new ButtonInfo { buttonText = "Shuttle Lag Gun", method = Overpowered.ShuttleLagGun, toolTip = "Crashes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Shuttle Lag All", method = Overpowered.ShuttleLagAll, toolTip = "Crashes everyone in the room."},
+                new ButtonInfo { buttonText = "Shuttle Lag Aura", method = Overpowered.ShuttleLagAura, toolTip = "Crashes players nearby you."},
+
+                new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, toolTip = "Kicks whoever your hand desires. It will send you to the same room as them." },
+                new ButtonInfo { buttonText = "Kick All", method = Overpowered.KickAll, isTogglable = false, toolTip = "Kicks everyone in the room. It will send you to the same room as them." },
+
+                new ButtonInfo { buttonText = "K-ID Kick Gun", method = Overpowered.KIDKickGun, toolTip = "Kicks whoever your hand desires if they have the group joining permission disabled on K-ID." },
+                new ButtonInfo { buttonText = "K-ID Kick All", method = Overpowered.KIDKickAll, isTogglable = false, toolTip = "Kicks everyone in the room that has the group joining permission disabled on K-ID." },
+
+                new ButtonInfo { buttonText = "Set Master Client", method = Overpowered.KickAll, isTogglable = false, toolTip = "Sets yourself as master client." },
+
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Casual</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Casual"), isTogglable = false, toolTip = "Changes the game mode to casual." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Infection</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Infection"), isTogglable = false, toolTip = "Changes the game mode to infection." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Hunt</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("HuntDown"), isTogglable = false, toolTip = "Changes the game mode to hunt." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Paintbrawl</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Paintbrawl"), isTogglable = false, toolTip = "Changes the game mode to paintbrawl." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Ambush</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Ambush"), isTogglable = false, toolTip = "Changes the game mode to ambush." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Freeze Tag</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("FreezeTag"), isTogglable = false, toolTip = "Changes the game mode to freeze tag." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Ghost</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Ghost"), isTogglable = false, toolTip = "Changes the game mode to ghost." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Guardian</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("Guardian"), isTogglable = false, toolTip = "Changes the game mode to guardian." },
+                new ButtonInfo { buttonText = "Change Gamemode <color=grey>[</color><color=green>Prop Hunt</color><color=grey>]</color>", method =() => Overpowered.ChangeGamemode("PropHunt"), isTogglable = false, toolTip = "Changes the game mode to prop hunt." },
+
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method = Fun.BarrelFlingGun, toolTip = "Flings whoever your hand desires using the barrels."},
                 new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method = Fun.BarrelFlingAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
 
@@ -2017,6 +2047,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Freeze Za Warudo", toolTip = "Disables the freezing on the \"Za Warudo\" mod, turning it into a fun mod." },
 
                 new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(), enableMethod =() => Overpowered.ChangeLagPower(), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
+                new ButtonInfo { buttonText = "Unlock on Crash", toolTip = "Unlocks the room when crashing someone. This makes the mod more powerful." },
             },
 
             new[] { // Keybind Settings [32]
