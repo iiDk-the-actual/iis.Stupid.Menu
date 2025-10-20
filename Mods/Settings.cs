@@ -4810,6 +4810,7 @@ exit";
         }
         public static void DictationOff()
         {
+            listening = false;
             drec?.Stop();
             drec?.Dispose();
         }
