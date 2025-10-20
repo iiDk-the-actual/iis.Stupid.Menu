@@ -572,7 +572,7 @@ namespace iiMenu.Menu
                                     default:
                                         keyboardInput +=
                                             UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
-                                                keyCode.ToString().Capitalize() : keyCode.Key().ToLower();
+                                                keyCode.ShiftedKey().ToUpper() : keyCode.Key().ToLower();
                                         break;
                                 }
                             }
@@ -1096,72 +1096,72 @@ namespace iiMenu.Menu
                     }
                 }
 
-                    if (joystickMenu && joystickOpen)
+                if (joystickMenu && joystickOpen)
+                {
+                    Vector2 js = leftJoystick;
+                    if (Time.time > joystickDelay)
                     {
-                        Vector2 js = leftJoystick;
-                        if (Time.time > joystickDelay)
+                        int lastPage = pageSize;
+
+                        if (joystickMenuSearching)
+                            lastPage++;
+
+                        if (js.x > 0.5f)
                         {
-                            int lastPage = pageSize;
+                            if (dynamicSounds)
+                                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/next.ogg", "Audio/Menu/next.ogg"), buttonClickVolume / 10f);
 
-                            if (joystickMenuSearching)
-                                lastPage++;
+                            Toggle("NextPage");
+                            joystickDelay = Time.time + 0.2f;
+                        }
+                        if (js.x < -0.5f)
+                        {
+                            if (dynamicSounds)
+                                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/prev.ogg", "Audio/Menu/prev.ogg"), buttonClickVolume / 10f);
 
-                            if (js.x > 0.5f)
-                            {
-                                if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/next.ogg", "Audio/Menu/next.ogg"), buttonClickVolume / 10f);
+                            Toggle("PreviousPage");
+                            joystickDelay = Time.time + 0.2f;
+                        }
 
-                                Toggle("NextPage");
-                                joystickDelay = Time.time + 0.2f;
-                            }
-                            if (js.x < -0.5f)
-                            {
-                                if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/prev.ogg", "Audio/Menu/prev.ogg"), buttonClickVolume / 10f);
+                        if (js.y > 0.5f)
+                        {
+                            if (dynamicSounds)
+                                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/open.ogg", "Audio/Menu/up.ogg"), buttonClickVolume / 10f);
 
-                                Toggle("PreviousPage");
-                                joystickDelay = Time.time + 0.2f;
-                            }
+                            joystickButtonSelected--;
+                            if (joystickButtonSelected < 0)
+                                joystickButtonSelected = lastPage - 1;
 
-                            if (js.y > 0.5f)
-                            {
-                                if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/open.ogg", "Audio/Menu/up.ogg"), buttonClickVolume / 10f);
+                            ReloadMenu();
+                            joystickDelay = Time.time + 0.2f;
+                        }
+                        if (js.y < -0.5f)
+                        {
+                            if (dynamicSounds)
+                                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/down.ogg"), buttonClickVolume / 10f);
 
-                                joystickButtonSelected--;
-                                if (joystickButtonSelected < 0)
-                                    joystickButtonSelected = lastPage - 1;
+                            joystickButtonSelected++;
+                            joystickButtonSelected %= lastPage;
 
-                                ReloadMenu();
-                                joystickDelay = Time.time + 0.2f;
-                            }
-                            if (js.y < -0.5f)
-                            {
-                                if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/down.ogg"), buttonClickVolume / 10f);
+                            ReloadMenu();
+                            joystickDelay = Time.time + 0.2f;
+                        }
 
-                                joystickButtonSelected++;
-                                joystickButtonSelected %= lastPage;
+                        if (leftJoystickClick)
+                        {
+                            if (dynamicSounds)
+                                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
 
-                                ReloadMenu();
-                                joystickDelay = Time.time + 0.2f;
-                            }
-
-                            if (leftJoystickClick)
-                            {
-                                if (dynamicSounds)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
-
-                                ButtonInfo button = GetIndex(joystickSelectedButton);
-                                if (button.incremental)
-                                    ToggleIncremental(joystickSelectedButton, leftTrigger < 0.5f);
-                                else
-                                    Toggle(joystickSelectedButton, true);
-                                ReloadMenu();
-                                joystickDelay = Time.time + 0.2f;
-                            }
+                            ButtonInfo button = GetIndex(joystickSelectedButton);
+                            if (button.incremental)
+                                ToggleIncremental(joystickSelectedButton, leftTrigger < 0.5f);
+                            else
+                                Toggle(joystickSelectedButton, true);
+                            ReloadMenu();
+                            joystickDelay = Time.time + 0.2f;
                         }
                     }
+                }
 
                 if (pageScrolling)
                 {
@@ -5886,9 +5886,31 @@ namespace iiMenu.Menu
                     break;
 
                 default:
-                    keyboardInput += (lockShift ^ shift) ? key.ToUpper() : key.ToLower();
+                    Dictionary<string, string> shiftMap = new Dictionary<string, string>
+                    {
+                        { "1", "!" }, { "2", "@" }, { "3", "#" }, { "4", "$" }, { "5", "%" },
+                        { "6", "^" }, { "7", "&" }, { "8", "*" }, { "9", "(" }, { "0", ")" },
+                        { "-", "_" }, { "=", "+" }, { "[", "{" }, { "]", "}" }, { "\\", "|" },
+                        { ";", ":" }, { "'", "\"" }, { ",", "<" }, { ".", ">" }, { "/", "?" },
+                        { "`", "~" }
+                    };
+
+                    bool isShifted = lockShift ^ shift;
+                    string keyStr = key.ToLower();
+
+                    if (isShifted)
+                    {
+                        if (shiftMap.ContainsKey(keyStr))
+                            keyboardInput += shiftMap[keyStr];
+                        else
+                            keyboardInput += keyStr.ToUpper();
+                    }
+                    else
+                        keyboardInput += keyStr.ToLower();
+
                     shift = false;
                     break;
+
             }
 
             KeyboardKey.keyLookupDictionary["CapsLock"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[lockShift ? 1 : 0];
