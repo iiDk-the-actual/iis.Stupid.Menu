@@ -2542,6 +2542,13 @@ namespace iiMenu.Menu
                     OutlineCanvasObject(keyboardInputObject, true);
             }
 
+            if (promptVideoPlayer != null)
+            {
+                promptVideoPlayer.Stop();
+                promptVideoPlayer.gameObject.Destroy();
+                promptVideoPlayer = null;
+            }
+
             if (IsPrompting)
                 RenderPrompt();
             else
@@ -3094,13 +3101,6 @@ namespace iiMenu.Menu
 
             component.localPosition = new Vector3(0.06f, 0f, IsText ? -0.025f : 0f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
-            if (promptVideoPlayer != null)
-            {
-                promptVideoPlayer.Stop();
-                promptVideoPlayer.gameObject.Destroy();
-                promptVideoPlayer = null;
-            }
 
             if (promptImageUrl != null)
             {
