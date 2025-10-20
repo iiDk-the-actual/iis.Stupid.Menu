@@ -1096,8 +1096,6 @@ namespace iiMenu.Menu
                     }
                 }
 
-                try
-                {
                     if (joystickMenu && joystickOpen)
                     {
                         Vector2 js = leftJoystick;
@@ -1164,7 +1162,43 @@ namespace iiMenu.Menu
                             }
                         }
                     }
-                } catch { }
+
+                if (pageScrolling)
+                {
+                    bool shouldReload = false;
+                    if (pageNumber != 0)
+                    {
+                        pageNumber = 0;
+                        shouldReload = true;
+                    }
+
+                    Vector2 js = leftJoystick;
+                    if (Time.time > scrollDelay)
+                    {
+                        int lastPage = pageSize;
+
+                        if (joystickMenuSearching)
+                            lastPage++;
+
+                        if (js.y > 0.5f)
+                        {
+                            pageOffset = Mathf.Clamp(pageOffset - 1, 0, Buttons.buttons[currentCategoryIndex].Length - pageSize);
+
+                            shouldReload = true;
+                            scrollDelay = Time.time + 0.1f;
+                        }
+                        if (js.y < -0.5f)
+                        {
+                            pageOffset = Mathf.Clamp(pageOffset + 1, 0, Buttons.buttons[currentCategoryIndex].Length - pageSize);
+
+                            shouldReload = true;
+                            scrollDelay = Time.time + 0.1f;
+                        }
+                    }
+
+                    if (shouldReload)
+                        ReloadMenu();
+                }
 
                 try
                 {
@@ -2273,7 +2307,7 @@ namespace iiMenu.Menu
                 title.text = title.text.ToUpper();
 
             if (!noPageNumber)
-                title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
+                title.text += $" <color=grey>[</color><color=white>{(pageScrolling ? pageOffset : pageNumber) + 1}</color><color=grey>]</color>";
             
             if (hidetitle)
                 title.text = "";
@@ -2440,7 +2474,7 @@ namespace iiMenu.Menu
                     AddUpdateButton();
             }
 
-            if (!disablePageButtons && !IsPrompting)
+            if (!disablePageButtons && !IsPrompting && !pageScrolling)
                 AddPageButtons();
 
             if (inTextInput)
@@ -2605,7 +2639,7 @@ namespace iiMenu.Menu
 
                     if (!longmenu)
                         renderButtons = renderButtons
-                            .Skip(pageNumber * (pageSize - buttonIndexOffset))
+                            .Skip(pageNumber * (pageSize - buttonIndexOffset) + pageOffset)
                             .Take(pageSize - buttonIndexOffset)
                             .ToArray();
 
@@ -6460,7 +6494,9 @@ jgs \_   _/ |Oo\
             set => _pageSize = value;
         }
 
+        public static int pageOffset;
         public static int pageNumber;
+        public static bool pageScrolling;
         public static bool noPageNumber;
         public static bool disablePageButtons;
         public static bool swapButtonColors;
@@ -6488,6 +6524,7 @@ jgs \_   _/ |Oo\
             {
                 _currentCategoryIndex = value;
                 pageNumber = 0;
+                pageOffset = 0;
             }
         }
 
@@ -6531,6 +6568,7 @@ jgs \_   _/ |Oo\
         public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";
         public static float joystickDelay;
+        public static float scrollDelay;
 
         public static int joystickMenuPosition;
         public static Vector3[] joystickMenuPositions = {
