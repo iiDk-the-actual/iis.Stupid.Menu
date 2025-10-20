@@ -108,4 +108,12 @@ namespace iiMenu.Patches.Menu
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(RoomSystem), "SearchForShuttle")]
+    public class AntiCrashPatch6
+    {
+        private static readonly List<float> callTimestamps = new List<float>();
+        public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info) =>
+            !AntiCrashPatch.enabled;
+    }
 }
