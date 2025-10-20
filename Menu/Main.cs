@@ -3136,6 +3136,13 @@ namespace iiMenu.Menu
                     case "webm":
                     case "mov":
                         {
+                            if (promptVideoPlayer != null)
+                            {
+                                promptVideoPlayer.Stop();
+                                promptVideoPlayer.gameObject.Destroy();
+                                promptVideoPlayer = null;
+                            }
+
                             promptVideoPlayer = new GameObject("iiMenu_PromptVideoPlayer").AddComponent<VideoPlayer>();
                             promptVideoPlayer.playOnAwake = true;
                             promptVideoPlayer.isLooping = true;
