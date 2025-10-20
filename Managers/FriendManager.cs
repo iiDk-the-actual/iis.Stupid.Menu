@@ -1156,7 +1156,6 @@ namespace iiMenu.Managers
                 else
                     buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true });
             }
-            buttons.AddRange(messages.Select((message, i) => new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true }));
 
             buttons.Add(new ButtonInfo
             {
