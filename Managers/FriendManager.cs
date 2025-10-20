@@ -1147,6 +1147,15 @@ namespace iiMenu.Managers
             while (messages.Count < messageCount)
                 messages.Insert(0, "");
 
+            for (int i = 0; i < messages.Count; i++)
+            {
+                string message = messages[i];
+                string link = ExtractPromptImage(PromptMessage);
+                if (link != null)
+                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message.Replace($"<{link}>", "<Media>"), isTogglable = false, method = () => PromptSingle($"<{link}>") });
+                else
+                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true });
+            }
             buttons.AddRange(messages.Select((message, i) => new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = message, label = true }));
 
             buttons.Add(new ButtonInfo

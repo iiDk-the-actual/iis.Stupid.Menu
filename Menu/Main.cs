@@ -3294,7 +3294,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static string ExtractPromptImage(string input)
+        public static string ExtractPromptImage(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return null;
