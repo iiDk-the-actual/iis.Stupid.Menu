@@ -6278,5 +6278,131 @@ Piece Name: {gunTarget.name}";
 
             Process.Start(filePath);
         }
+
+        public static string consoleTyped = "";
+        public static int currentModIndex = 0;
+        public static int pageNumber = 0;
+        public static void ConsoleFrame()
+        {
+            int pageSize = 18;
+            if (Time.frameCount % 1000 == 0)
+                System.Console.Clear();
+
+            string largeNewLine = "";
+            for (int i = 0; i < 100; i++)
+            {
+                largeNewLine += Environment.NewLine;
+            }
+            string modList = "";
+
+            ButtonInfo[] categoryButtonsPre = Buttons.buttons[currentCategoryIndex];
+            ButtonInfo[] categoryButtons = new ButtonInfo[categoryButtonsPre.Length + 2];
+            int pageCount = (int)Math.Ceiling((double)categoryButtons.Length / pageSize) - 1;
+            categoryButtons[0] = new ButtonInfo { buttonText = "Previous Page", method =() => { pageNumber--; if (pageNumber < 0) { pageNumber = pageCount; } }, isTogglable = false, toolTip = "Takes you to the previous page."};
+            categoryButtons[1] = new ButtonInfo { buttonText = "Next Page", method =() => { pageNumber++; pageNumber %= (pageCount + 1); }, isTogglable = false, toolTip = "Takes you to the previous page."};
+            Array.Copy(categoryButtonsPre, 0, categoryButtons, 2, categoryButtonsPre.Length);
+            for (int index = 0; index < categoryButtons.Length; index++)
+            {
+                ButtonInfo mod = categoryButtons[index];
+                if (index != 0 && index != 1)
+                {
+                    int start = 2 + pageNumber * pageSize;
+                    int end = start + pageSize;
+
+                    if (index < start || index >= end)
+                        continue;
+                }
+                string modName = NoRichtextTags(mod.overlapText ?? mod.buttonText);
+                if (index == currentModIndex + (pageNumber * pageSize) || (index < 2 && index == currentModIndex))
+                {
+                    modList += Environment.NewLine + "> " + (mod.enabled ? "[E] " : "" ) + modName;
+                }
+                else
+                {
+                    modList += Environment.NewLine + "  " + (mod.enabled ? "[E] " : "" ) + modName;
+                }
+            }
+
+            if (System.Console.KeyAvailable)
+            {
+                var key = System.Console.ReadKey(true);
+                string stringKey = key.KeyChar.ToString();
+                int buttonCount = categoryButtonsPre.Length % pageSize;
+                if (pageCount != pageNumber)
+                    buttonCount = pageSize;
+                switch (key.Key)
+                {
+                    case ConsoleKey.Backspace:
+                        consoleTyped = (consoleTyped.Length != 0 ? consoleTyped.Substring(0, consoleTyped.Length - 1) : consoleTyped);
+                        break;
+                    case ConsoleKey.Enter:
+                        ButtonInfo selButton = Main.GetIndex(consoleTyped);
+                        selButton ??= Buttons.buttons
+                            .SelectMany(
+                                (buttonList, i) =>
+                                    !Buttons.categoryNames[i].Contains("settings", StringComparison.OrdinalIgnoreCase)
+                                        ? buttonList
+                                        : Enumerable.Empty<ButtonInfo>()
+                            )
+                            .FirstOrDefault(b =>
+                                (b.overlapText ?? b.buttonText)
+                                .Contains(consoleTyped, StringComparison.OrdinalIgnoreCase));
+
+                        if (selButton != null)
+                            Main.Toggle(selButton.buttonText, true);
+                        else
+                            NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{consoleTyped}\" does not exist.");
+                        consoleTyped = "";
+                        break;
+                    case ConsoleKey.UpArrow:
+                        currentModIndex--;
+                        if (currentModIndex < 0)
+                            currentModIndex = (buttonCount + 1);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        currentModIndex++;
+                        currentModIndex %= (buttonCount + 2);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        ButtonInfo button = categoryButtons[currentModIndex + (pageNumber * pageSize)];
+                        if (currentModIndex < 2)
+                        {
+                            button = categoryButtons[currentModIndex];
+                            button.method();
+                            break;
+                        }
+                        int prevCategory = currentCategoryIndex;
+                        Main.Toggle(button.buttonText, true);
+                        if (prevCategory != currentCategoryIndex)
+                        {
+                            pageNumber = 0;
+                            currentModIndex = 0;
+                        }
+                        break;
+                    default:
+                        if (stringKey == " ")
+                        {
+                            if (key.Key != ConsoleKey.Spacebar)
+                                break;
+                        }
+                        consoleTyped += stringKey;
+                        break;
+                }
+            }
+
+            System.Console.WriteLine(
+                largeNewLine +
+                @"
+                                          ••╹   ┏┓     • ┓  ┳┳┓      
+                                          ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
+                                          ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+                                       > Use the arrow keys to navigate.
+--------------------------------------------------------------------------------------------------------------------" + modList + @"
+--------------------------------------------------------------------------------------------------------------------
+
+" +
+                "> " + consoleTyped
+                );
+        }
     }
 }
