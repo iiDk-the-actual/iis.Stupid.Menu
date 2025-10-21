@@ -136,6 +136,18 @@ namespace iiMenu.Mods.CustomMaps.Maps
             RevertCustomScript(2041);
 
         // I don't know who made this
+        public static float crashDelay;
+        public static void CrashPlayer(int ActorNumber)
+        {
+            PhotonNetwork.RaiseEvent(180, new object[] { "leaveGame", (double)ActorNumber, false, (double)ActorNumber }, new RaiseEventOptions
+            {
+                TargetActors = new[]
+                {
+                    ActorNumber
+                }
+            }, SendOptions.SendReliable);
+            RPCProtection();
+        }
         public static void VSCrashGun()
         {
             if (GetGunInput(false))
