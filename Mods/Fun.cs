@@ -6337,24 +6337,33 @@ Piece Name: {gunTarget.name}";
                         consoleTyped = (consoleTyped.Length != 0 ? consoleTyped.Substring(0, consoleTyped.Length - 1) : consoleTyped);
                         break;
                     case ConsoleKey.Enter:
-                        ButtonInfo selButton = Main.GetIndex(consoleTyped);
-                        selButton ??= Buttons.buttons
-                            .SelectMany(
-                                (buttonList, i) =>
-                                    !Buttons.categoryNames[i].Contains("settings", StringComparison.OrdinalIgnoreCase)
-                                        ? buttonList
-                                        : Enumerable.Empty<ButtonInfo>()
-                            )
-                            .FirstOrDefault(b =>
-                                (b.overlapText ?? b.buttonText)
-                                .Contains(consoleTyped, StringComparison.OrdinalIgnoreCase));
+                        if (consoleTyped != "")
+                        {
 
-                        if (selButton != null)
-                            Main.Toggle(selButton.buttonText, true);
-                        else
-                            NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{consoleTyped}\" does not exist.");
-                        consoleTyped = "";
-                        break;
+                            ButtonInfo selButton = Main.GetIndex(consoleTyped);
+                            if (selButton == null)
+                            {
+                                for (int i = 0; i < Buttons.buttons.Length; i++)
+                                {
+                                    ButtonInfo[] buttonList = Buttons.buttons[i];
+                                    foreach (ButtonInfo buttonInfo in buttonList)
+                                    {
+                                        string text = (buttonInfo.overlapText ?? buttonInfo.buttonText).ToLower();
+                                        if (text.Contains(consoleTyped.ToLower()) &&
+                                            (selButton == null || i == currentCategoryIndex))
+                                            selButton = buttonInfo;
+                                    }
+                                }
+                            }
+
+                            if (selButton != null)
+                                Main.Toggle(selButton.buttonText, true);
+                            else
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{consoleTyped}\" does not exist.");
+                            consoleTyped = "";
+                            break;
+                        }
+                        goto case ConsoleKey.RightArrow;
                     case ConsoleKey.UpArrow:
                         currentModIndex--;
                         if (currentModIndex < 0)
