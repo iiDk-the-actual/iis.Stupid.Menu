@@ -4562,7 +4562,7 @@ exit";
         private static bool lastFocused;
         public static void CheckFocus()
         {
-            if (!Application.isFocused && lastFocused)
+            if (!Application.isFocused && lastFocused && Time.time > timeMenuStarted + 5f)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not focused on Gorilla Tag. Voice transcription mods will not function. Please focus/click on the game.");
 
             lastFocused = Application.isFocused;
