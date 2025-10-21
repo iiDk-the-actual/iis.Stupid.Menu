@@ -46,10 +46,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Instant Kill", enableMethod = InstantKill, disableMethod = DisableInstantKill, toolTip = "Makes your gun instant kill players."},
             new ButtonInfo { buttonText = "Infinite Points", enableMethod = InfinitePoints, disableMethod = DisableInfinitePoints, toolTip = "Gives you an infinite amount of points."},
             new ButtonInfo { buttonText = "Infinite Ammo", enableMethod = InfiniteAmmo, disableMethod = DisableInfiniteAmmo, toolTip = "Gives you an infinite amount of ammo."},
-            new ButtonInfo { buttonText = "Crash Gun", method = CrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
-            new ButtonInfo { buttonText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
+            new ButtonInfo { buttonText = "Crash Gun <color=grey>[</color><color=purple>Crash</color><color=grey>]</color>", method = VSCrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
+            new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=purple>Crash</color><color=grey>]</color>", method = VSCrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
             new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
-            new ButtonInfo { buttonText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
+            new ButtonInfo { buttonText = "Crash On Touch <color=grey>[</color><color=purple>Crash</color><color=grey>]</color>", method = VSCrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
         };
 
         public static void KillAll()
@@ -148,7 +148,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             }, SendOptions.SendReliable);
             RPCProtection();
         }
-        public static void CrashGun()
+        public static void VSCrashGun()
         {
             if (GetGunInput(false))
             {
@@ -178,7 +178,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                     gunLocked = false;
             }
         }
-        public static void CrashOnTouch()
+        public static void VSCrashOnTouch()
         {
             if (Time.time < crashDelay)
                 return;
@@ -188,7 +188,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                 crashDelay = Time.time + 0.2f;
             }
         }
-        public static void CrashAll()
+        public static void VSCrashAll()
         {
             if (!(Time.time > crashDelay)) return;
             foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
