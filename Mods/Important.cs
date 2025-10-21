@@ -20,12 +20,14 @@
  */
 
 using GorillaNetworking;
+using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
+using PlayFab;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -126,7 +128,7 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
-        public static void CreateRoom(string roomName, bool isPublic, List<string> friendIds = null, JoinType joinType = JoinType.Solo)
+        public static void CreateRoom(string roomName, bool isPublic, JoinType roomJoinType = JoinType.Solo)
         {
             RoomConfig roomConfig = new RoomConfig
             {
@@ -142,10 +144,16 @@ namespace iiMenu.Mods
                 }
             };
 
-            if (friendIds != null)
-                roomConfig.SetFriendIDs(friendIds);
 
-            PhotonNetworkController.Instance.currentJoinType = joinType;
+            PhotonNetworkController.Instance.currentJoinType = roomJoinType;
+
+            if (roomJoinType == JoinType.JoinWithParty || roomJoinType == JoinType.ForceJoinWithParty)
+                Task.Run(PhotonNetworkController.Instance.SendPartyFollowCommands);
+
+            if (roomJoinType == JoinType.JoinWithNearby || roomJoinType == JoinType.JoinWithElevator)
+                roomConfig.SetFriendIDs(PhotonNetworkController.Instance.FriendIDList);
+            else if (roomJoinType == JoinType.JoinWithParty || roomJoinType == JoinType.ForceJoinWithParty)
+                roomConfig.SetFriendIDs(FriendshipGroupDetection.Instance.PartyMemberIDs.ToList());
 
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
         }

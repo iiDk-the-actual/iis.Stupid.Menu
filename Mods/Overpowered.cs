@@ -3792,8 +3792,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                            Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
                         }, sessionIsPrivate ? 0.5f : 0f));
                     }
                 }
@@ -3819,8 +3818,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                    Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
                 }, sessionIsPrivate ? 0.5f : 0f));
             }
             else
@@ -3898,8 +3896,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithElevator);
+                    Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
                 }, sessionIsPrivate ? 0.5f : 0f, false));
             }
             else
