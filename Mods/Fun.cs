@@ -6285,7 +6285,7 @@ Piece Name: {gunTarget.name}";
         public static int pageNumber = 0;
         public static void ConsoleFrame()
         {
-            int pageSize = 18;
+            int pageSize = (System.Console.WindowHeight - 12);
             if (Time.frameCount % 1000 == 0)
                 System.Console.Clear();
 
@@ -6400,15 +6400,29 @@ Piece Name: {gunTarget.name}";
                 }
             }
 
+            int halfPoint = Mathf.FloorToInt((System.Console.WindowWidth - 1) / 2f);
+            
+            string screenLine = "";
+            for (int i = 0; i < System.Console.WindowWidth - 1; i++)
+                screenLine += "-";
+
+            string logoPrefix = "";
+            for (int i = 0; i < halfPoint - 13; i++)
+                logoPrefix += " ";
+            
+            string infoPrefix = "";
+            for (int i = 0; i < halfPoint - 16; i++)
+                infoPrefix += " ";
+            
             System.Console.WriteLine(
                 largeNewLine +
                 @"
-                                          ••╹   ┏┓     • ┓  ┳┳┓      
-                                          ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-                                          ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-                                       > Use the arrow keys to navigate.
---------------------------------------------------------------------------------------------------------------------" + modList + @"
---------------------------------------------------------------------------------------------------------------------
+" + logoPrefix + @"••╹   ┏┓     • ┓  ┳┳┓      
+" + logoPrefix + @"┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
+" + logoPrefix + @"┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+" + infoPrefix + @"> Use the arrow keys to navigate.
+" + screenLine + modList + @"
+" + screenLine + @"
 
 " +
                 "> " + consoleTyped
