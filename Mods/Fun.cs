@@ -277,6 +277,7 @@ namespace iiMenu.Mods
             JoinedRoomPatch.enabled = joinedRoomPatchEnabled;
         }
 
+        public static bool kickToPublic;
         public static void StumpKickGun()
         {
             if (GetGunInput(false))
@@ -311,8 +312,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
+                            Important.CreateRoom(GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
                         }, sessionIsPublic ? 0.5f : 0f));
                     }
                 }
@@ -340,11 +340,11 @@ namespace iiMenu.Mods
 
                     foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(rig.GetPlayer().UserId)))
                         BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+
                     RPCProtection();
                 }, () =>
                 {
-                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
-                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.JoinWithNearby);
+                    Important.CreateRoom(GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
                 }, sessionIsPublic ? 0.5f : 0f));
             }
             else

@@ -128,7 +128,7 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
-        public static void CreateRoom(string roomName, bool isPublic, List<string> friendIds = null, JoinType roomJoinType = JoinType.Solo)
+        public static void CreateRoom(string roomName, bool isPublic, JoinType roomJoinType = JoinType.Solo)
         {
             RoomConfig roomConfig = new RoomConfig
             {
@@ -144,8 +144,6 @@ namespace iiMenu.Mods
                 }
             };
 
-            if (friendIds != null)
-                roomConfig.SetFriendIDs(friendIds);
 
             PhotonNetworkController.Instance.currentJoinType = roomJoinType;
 
