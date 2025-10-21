@@ -3311,6 +3311,7 @@ namespace iiMenu.Mods
                     NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { lockTarget.GetPlayer().ActorNumber } };
 
                     RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+                    RPCProtection();
                 }
 
                 if (GetGunInput(true))
@@ -3346,6 +3347,7 @@ namespace iiMenu.Mods
             NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.all };
 
             RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+            RPCProtection();
         }
 
         private static float lagDebounce;
@@ -3364,7 +3366,6 @@ namespace iiMenu.Mods
                             FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", lockTarget.GetPlayer().GetPlayer(), new object[] { null });
                         lagDebounce = Time.time + lagDelay;
                     }
-                    
                 }
 
                 if (GetGunInput(true))
@@ -3446,8 +3447,8 @@ namespace iiMenu.Mods
                         }
 
                         lagDebounce = Time.time + 2f;
+                        RPCProtection();
                     }
-
                 }
 
                 if (GetGunInput(true))
@@ -3489,10 +3490,9 @@ namespace iiMenu.Mods
 
                     RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
                 }
-
                 lagDebounce = Time.time + 2f;
+                RPCProtection();
             }
-
         }
 
         public static void CrashAura()
@@ -3527,8 +3527,8 @@ namespace iiMenu.Mods
 
                     RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
                 }
-
                 lagDebounce = Time.time + 2f;
+                RPCProtection();
             }
             else if (nearbyPlayers.Count == 0) SerializePatch.OverrideSerialization = null;
         }
@@ -3567,10 +3567,9 @@ namespace iiMenu.Mods
 
                             RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
                         }
-
+                        RPCProtection();
                         lagDebounce = Time.time + 2f;
                     }
-
                 }
 
                 if (GetGunInput(true))
@@ -3617,7 +3616,7 @@ namespace iiMenu.Mods
                         RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
                     }
                 }
-
+                RPCProtection();
                 lagDebounce = Time.time + 2f;
             }
         }
@@ -3656,7 +3655,7 @@ namespace iiMenu.Mods
 
                     RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
                 }
-
+                RPCProtection();
                 lagDebounce = Time.time + 2f;
             }
             else if (nearbyPlayers.Count == 0) SerializePatch.OverrideSerialization = null;
@@ -3685,7 +3684,7 @@ namespace iiMenu.Mods
 
                             RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
                         }
-
+                        RPCProtection();
                         lagDebounce = Time.time + Overpowered.lagDelay;
                     }
 
@@ -3725,8 +3724,8 @@ namespace iiMenu.Mods
 
                     RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
                 }
-
                 lagDebounce = Time.time + Overpowered.lagDelay;
+                RPCProtection();
             }
         }
 
@@ -3757,6 +3756,7 @@ namespace iiMenu.Mods
 
                     RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
                 }
+                RPCProtection();
 
                 lagDebounce = Time.time + Overpowered.lagDelay;
             }
@@ -3942,9 +3942,9 @@ namespace iiMenu.Mods
                         for (int i = 0; i < lagAmount; i++)
                             SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = actors.ToArray() }, new object[] { null });
                         lagDebounce = Time.time + lagDelay;
+                        RPCProtection();
                     }
                 }
-                    
             }
         }
 
@@ -3962,12 +3962,7 @@ namespace iiMenu.Mods
                 dictionary,
                 SendOptions.SendReliable
             );
-
-            // updating the board
-            // yes i know this is dumb - king
-            string name = PhotonNetwork.LocalPlayer.NickName;
-            PhotonNetwork.LocalPlayer.NickName = "update";
-            PhotonNetwork.LocalPlayer.NickName = name;
+            GorillaScoreboardTotalUpdater.instance.UpdateActiveScoreboards();
         }
         public static void DestroyGun()
         {
