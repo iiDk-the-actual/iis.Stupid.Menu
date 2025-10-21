@@ -1714,18 +1714,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
 
-                new ButtonInfo { buttonText = "Crash Gun", method = Overpowered.CrashGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes whoever your hand desires."},
-                new ButtonInfo { buttonText = "Crash All", method = Overpowered.CrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room."},
-                new ButtonInfo { buttonText = "Crash Aura", method = Overpowered.CrashAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes players nearby you."},
-
-                new ButtonInfo { buttonText = "Stump Crash Gun", method = Overpowered.StumpCrashGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes whoever your hand desires if they're in the stump."},
-                new ButtonInfo { buttonText = "Stump Crash All", method = Overpowered.StumpCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the stump."},
-                new ButtonInfo { buttonText = "Stump Crash Aura", method = Overpowered.StumpCrashAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes players nearby you in the stump."},
-
-                new ButtonInfo { buttonText = "Shuttle Lag Gun", method = Overpowered.ShuttleLagGun, toolTip = "Crashes whoever your hand desires."},
-                new ButtonInfo { buttonText = "Shuttle Lag All", method = Overpowered.ShuttleLagAll, toolTip = "Crashes everyone in the room."},
-                new ButtonInfo { buttonText = "Shuttle Lag Aura", method = Overpowered.ShuttleLagAura, toolTip = "Crashes players nearby you."},
-
                 new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, toolTip = "Kicks whoever your hand desires. It will send you to the same room as them." },
                 new ButtonInfo { buttonText = "Kick All", method = Overpowered.KickAll, isTogglable = false, toolTip = "Kicks everyone in the room. It will send you to the same room as them." },
 
