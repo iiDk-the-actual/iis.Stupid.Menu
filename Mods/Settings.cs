@@ -4367,6 +4367,12 @@ exit";
             narratorName = narratorNames[narratorIndex];
         }
 
+        public static void KickToSpecificRoom()
+        {
+            if (Time.time < Main.timeMenuStarted + 5f)
+                return;
+            PromptText("What would you like the room code to be?", () => Fun.specificRoom = keyboardInput.ToUpper(), () => Toggle("Kick to Specific Room"), "Done", "Cancel");
+        }
         public static void ChangePointerPosition(bool positive = true)
         {
             Vector3[] pointerPos = {
