@@ -4370,7 +4370,11 @@ exit";
         public static void KickToSpecificRoom()
         {
             if (Time.time < timeMenuStarted + 5f)
+            {
+                GetIndex("Kick to Specific Room").enabled = false;
                 return;
+            }
+
             PromptText("What would you like the room code to be?", () => Fun.specificRoom = keyboardInput.ToUpper(), () => Toggle("Kick to Specific Room"), "Done", "Cancel");
         }
         public static void ChangePointerPosition(bool positive = true)
