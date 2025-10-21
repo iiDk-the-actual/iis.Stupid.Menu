@@ -576,8 +576,9 @@ namespace iiMenu.Menu
                                         break;
                                 }
                             }
-
-                            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                            
+                            if (pcKeyboardSounds)
+                                VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
                             pageNumber = 0;
                             ReloadMenu();
                         }
@@ -6550,6 +6551,8 @@ jgs \_   _/ |Oo\
         public static bool swapButtonColors;
         public static int pageButtonType = 1;
         public static float pageButtonChangeDelay;
+
+        public static bool pcKeyboardSounds = true;
 
         private static VRRig _giveGunTarget;
         public static VRRig giveGunTarget
