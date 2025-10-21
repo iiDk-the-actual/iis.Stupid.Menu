@@ -3633,6 +3633,25 @@ namespace iiMenu.Menu
                 ReloadMenu();
         }
 
+        public static void PromptSingleText(string Message, Action Accept = null, string AcceptButton = "Yes")
+        {
+            IsPrompting = true;
+            IsText = true;
+
+            PromptMessage = Message;
+
+            AcceptText = AcceptButton;
+            DeclineText = null;
+
+            AcceptAction = Accept;
+            DeclineAction = null;
+
+            Settings.SpawnKeyboard();
+
+            if (menu != null)
+                ReloadMenu();
+        }
+
         private static string versionArchive;
         public static void UpdatePrompt(string newVersion = null)
         {
