@@ -2054,7 +2054,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(), enableMethod =() => Overpowered.ChangeLagPower(), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
                 new ButtonInfo { buttonText = "Unlock on Crash", toolTip = "Unlocks the room when crashing someone. This makes the mod more powerful." },
-                new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Fun.kickToPublic = true, disableMethod =() => Fun.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." }
+                new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Fun.kickToPublic = true, disableMethod =() => Fun.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." },
+                new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod =() => PromptText("What would you like the room code to be?", () => Fun.specificRoom = keyboardInput, () => Toggle("Kick to Specific Room"), "Done", "Cancel"), disableMethod =() => Fun.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." }
             },
 
             new[] { // Keybind Settings [32]

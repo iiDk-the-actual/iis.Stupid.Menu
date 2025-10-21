@@ -3792,7 +3792,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                            Important.CreateRoom(Fun.specificRoom ?? GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
                         }, sessionIsPrivate ? 0.5f : 0f));
                     }
                 }
@@ -3818,7 +3818,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                    Important.CreateRoom(Fun.specificRoom ?? GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
                 }, sessionIsPrivate ? 0.5f : 0f));
             }
             else
@@ -3896,8 +3896,8 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
-                }, sessionIsPrivate ? 0.5f : 0f, false));
+                    Important.CreateRoom(Fun.specificRoom ?? GenerateRandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                }, sessionIsPrivate ? 0.5f : 0f));
             }
             else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
