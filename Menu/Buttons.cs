@@ -1343,7 +1343,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Creation Date Gun", method = Fun.NarrateCreationDateGun, toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
                 new ButtonInfo { buttonText = "Narrate Creation Date Self", method = Fun.NarrateCreationDateSelf, isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
-                new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." }
+                new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
+
+                new ButtonInfo { buttonText = "Pumpkin Watcher", enableMethod = WatcherEyesPatch.enabed = true, disableMethod = WatcherEyesPatch.enabed = false, toolTip = "Make the pumpkin in stump always look at you."}
             },
 
             new[] { // Rebind Settings [13]
