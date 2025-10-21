@@ -253,7 +253,7 @@ namespace iiMenu.Mods
             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomCode, JoinType.Solo);
         }
 
-        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = true)
+        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = false)
         {
             PhotonNetworkController.Instance.FriendIDList.Clear();
             yield return new WaitForSeconds(extraDelay);
@@ -278,6 +278,7 @@ namespace iiMenu.Mods
         }
 
         public static bool kickToPublic;
+        public static string specificRoom;
         public static void StumpKickGun()
         {
             if (GetGunInput(false))
@@ -312,7 +313,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            Important.CreateRoom(GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
+                            Important.CreateRoom(specificRoom ?? GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
                         }, sessionIsPublic ? 0.5f : 0f));
                     }
                 }
@@ -344,7 +345,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
+                    Important.CreateRoom(specificRoom ?? GenerateRandomString(), kickToPublic, JoinType.JoinWithNearby);
                 }, sessionIsPublic ? 0.5f : 0f));
             }
             else
