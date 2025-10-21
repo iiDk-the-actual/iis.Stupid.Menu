@@ -31,14 +31,16 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Prefix(HalloweenWatcherEyes __instance)
+        public static bool Prefix(HalloweenWatcherEyes __instance)
         {
             if (enabled)
             {
                 Quaternion normalized = Quaternion.LookRotation((GTPlayer.Instance.headCollider.transform.position - __instance.transform.position).normalized);
                 __instance.leftEye.transform.rotation = normalized;
                 __instance.rightEye.transform.rotation = normalized;
+                return false;
             }
+            return true;
         }
     }
 }
