@@ -1345,7 +1345,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
 
-                new ButtonInfo { buttonText = "Pumpkin Watcher", enableMethod = WatcherEyesPatch.enabed = true, disableMethod = WatcherEyesPatch.enabed = false, toolTip = "Make the pumpkin in stump always look at you."}
+                new ButtonInfo { buttonText = "Pumpkin Watcher", enableMethod =() => WatcherEyesPatch.enabled = true, disableMethod =() => WatcherEyesPatch.enabled = false, toolTip = "Make the pumpkin in stump always look at you."}
             },
 
             new[] { // Rebind Settings [13]
