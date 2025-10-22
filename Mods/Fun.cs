@@ -247,10 +247,13 @@ namespace iiMenu.Mods
 
         public static IEnumerator KickRejoin(string roomCode)
         {
-            yield return new WaitForSeconds(8f);
-            NetworkSystem.Instance.ReturnToSinglePlayer();
-            yield return new WaitForSeconds(3f);
+            yield return new WaitUntil(() => !PhotonNetwork.InRoom);
+            yield return new WaitUntil(() => PhotonNetwork.InRoom);
+            yield return new WaitForSeconds(1f);
             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomCode, JoinType.Solo);
+            yield return new WaitForSeconds(10f);
+            if (!PhotonNetwork.InRoom)
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Rejoining failed? (Room full, etc).");
         }
 
         public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = false)
