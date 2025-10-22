@@ -89,6 +89,7 @@ namespace iiMenu.Managers
 
         public static bool InviteNotifications = true;
         public static bool PreferenceSharing = true;
+        public static bool MacroSharing = true;
 
         public static bool SoundEffects = true;
         public static bool Messaging = true;
@@ -718,6 +719,32 @@ namespace iiMenu.Managers
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
         }
 
+        public static void ShareMacro(string uid, string name)
+        {
+            Movement.Macro? sendingMacro = null;
+            foreach (KeyValuePair<string, Movement.Macro> macroData in Movement.macros)
+            {
+                Movement.Macro macroItem = macroData.Value;
+                if (String.Equals(macroItem.name.ToLower(), name.ToLower()))
+                    sendingMacro = macroItem;
+            }
+
+            if (sendingMacro == null)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Macro \"" + name + "\" does not exist.", 5000);
+                return;
+            }
+                
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "macro",
+                target = uid,
+                macro = sendingMacro.Value.DumpJSON()
+            }));
+
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared macro.", 5000);
+        }
+
         public static void SendFriendMessage(string uid, string message)
         {
             _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
@@ -1043,6 +1070,14 @@ namespace iiMenu.Managers
                     },
                     new ButtonInfo
                     {
+                        buttonText = $"ShareMacro{friendTarget}",
+                        overlapText = "Share Macro",
+                        method = () => PromptText("What is the name of the macro you would like to send?", () => { ShareMacro(friendTarget, keyboardInput); }, null, "Done", "Cancel"),
+                        isTogglable = false,
+                        toolTip = $"Sends a macro to {friend.currentName}."
+                    },
+                    new ButtonInfo
+                    {
                         buttonText = $"MessageLogs{friendTarget}",
                         overlapText = "Message",
                         method = () => ShowChatMessages(friendTarget),
@@ -1336,6 +1371,19 @@ namespace iiMenu.Managers
 
                                 string preferences = (string)obj["data"];
                                 Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
+                                break;
+                            }
+                        case "macro":
+                            {
+                                if (!MacroSharing)
+                                    break;
+                                
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+
+                                Movement.Macro macro = Movement.Macro.LoadJSON((string)obj["data"]);
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their macro " + macro.name + " with you.", 5000);
+                                Prompt($"{friendName} has shared their macro " + macro.name + " with you, would you like to use it?", () => { Movement.macros[Movement.FormatMacroName(macro.name)] = macro; });
                                 break;
                             }
                         case "notification":
