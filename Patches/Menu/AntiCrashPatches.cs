@@ -113,7 +113,16 @@ namespace iiMenu.Patches.Menu
     public class AntiCrashPatch6
     {
         private static readonly List<float> callTimestamps = new List<float>();
-        public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info) =>
-            !AntiCrashPatch.enabled;
+        public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info)
+        {
+            if (AntiCrashPatch.enabled)
+            {
+                callTimestamps.Add(Time.time);
+                callTimestamps.RemoveAll(t => Time.time - t > 1);
+
+                return callTimestamps.Count < 15;
+            }
+            return true;
+        }
     }
 }
