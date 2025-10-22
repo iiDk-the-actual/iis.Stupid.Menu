@@ -1709,10 +1709,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method = Overpowered.AntiReportFling, toolTip = "Flings whoever tries to report you."},
 
-                // "We had it first" ~hamsterman, 5 hours after ghosting me about me asking him if we wanted to gatekeep together.. idiot
-                new ButtonInfo { buttonText = "Log Spam Gun", method = Overpowered.LogSpamGun, toolTip = "Spams the logs of whoever your hand desires."},
-                new ButtonInfo { buttonText = "Log Spam All", method = Overpowered.LogSpamAll, toolTip = "Spams the logs of everyone in the room."},
-
                 new ButtonInfo { buttonText = "Lag Gun", method = Overpowered.LagGun, toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},

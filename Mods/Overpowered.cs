@@ -3289,67 +3289,6 @@ namespace iiMenu.Mods
             GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
-        public static void LogSpamGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    string ascii = @"
-••╹   ┏┓     • ┓  ┳┳┓      
-┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-                ┛
-";
-
-                    object[] groupJoinSendData = new object[2];
-                    groupJoinSendData[0] = ascii;
-                    groupJoinSendData[1] = ascii;
-                    NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { lockTarget.GetPlayer().ActorNumber } };
-
-                    RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
-                    RPCProtection();
-                }
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void LogSpamAll()
-        {
-            if (!PhotonNetwork.InRoom) return;
-            string ascii = @"
-••╹   ┏┓     • ┓  ┳┳┓      
-┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-                ┛
-";
-
-            object[] groupJoinSendData = new object[2];
-            groupJoinSendData[0] = ascii;
-            groupJoinSendData[1] = ascii;
-            NetEventOptions netEventOptions = new NetEventOptions { Reciever = NetEventOptions.RecieverTarget.all };
-
-            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
-            RPCProtection();
-        }
-
         private static float lagDebounce;
         public static void LagGun()
         {
@@ -3363,7 +3302,7 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", lockTarget.GetPlayer().GetPlayer(), new object[] { null });
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { new int[] { 1 }, null });
                         lagDebounce = Time.time + lagDelay;
                     }
                 }
