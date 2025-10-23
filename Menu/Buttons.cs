@@ -431,7 +431,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotifiLib.information["REFUND"] = "Refund soon"; } else { NotifiLib.information.Remove("REFUND"); } }, enableMethod = Important.CheckNewAcc, disableMethod =() => NotifiLib.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
 
+                new ButtonInfo { buttonText = "120 FPS", method =() => Application.targetFrameRate = 120, toolTip = "Sets your FPS at 120 frames per second."},
                 new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
+                new ButtonInfo { buttonText = "80 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
                 new ButtonInfo { buttonText = "72 FPS", method =() => Important.CapFPS(72), toolTip = "Caps your FPS at 72 frames per second."},
                 new ButtonInfo { buttonText = "60 FPS", method =() => Important.CapFPS(60), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "45 FPS", method =() => Important.CapFPS(45), toolTip = "Caps your FPS at 45 frames per second."},
@@ -714,7 +716,8 @@ namespace iiMenu.Menu
             new[] { // Advantage Mods [10]
                 new ButtonInfo { buttonText = "Exit Advantage Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Tag Self", method = Advantages.TagSelf, disableMethod = Movement.EnableRig, toolTip = "Attempts to tags yourself."},
+                new ButtonInfo { buttonText = "Tag Self", method =() => Advantages.TagSelf(false), disableMethod = Movement.EnableRig, toolTip = "Attempts to tags yourself."},
+                new ButtonInfo { buttonText = "Tag Self [T]", method =() => Advantages.TagSelf(true), disableMethod = Movement.EnableRig, toolTip = "Attempts to tags yourself, use <color=green>Trigger</color> to activate" },
 
                 new ButtonInfo { buttonText = "Tag Aura", method = Advantages.TagAura, toolTip = "Moves your hand into nearby players when tagged."},
                 new ButtonInfo { buttonText = "Grip Tag Aura <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Advantages.GripTagAura, toolTip = "Moves your hand into nearby players when tagged and when holding <color=green>grip</color>."},
