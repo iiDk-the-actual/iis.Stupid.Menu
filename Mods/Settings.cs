@@ -867,7 +867,9 @@ namespace iiMenu.Mods
         // The code below is fully safe. I know, it seems suspicious.
         public static void UpdateMenu()
         {
-            string updateScript = @"@echo off
+            if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Windows))
+            {
+                string updateScript = @"@echo off
 title ii's Stupid Menu
 color 0E
 
@@ -917,15 +919,72 @@ echo Launching Gorilla Tag...
 start steam://run/1533390
 exit";
 
-            string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.bat";
+                string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.bat";
 
+                File.WriteAllText(fileName, updateScript);
+
+                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
+                filePath = filePath.Split("BepInEx\\")[0] + fileName;
+
+                Process.Start(filePath);
+                Application.Quit();   
+            }
+            if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Linux))
+            {
+        
+string updateScript = @"#!/bin/bash
+clear
+echo
+echo ""      ••╹   ┏┓     • ┓  ┳┳┓      ""
+echo ""      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏""
+echo ""      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻""
+echo ""                 ┛               ""
+echo
+echo ""Your menu is updating, please wait...""
+echo
+
+PLUGIN_PATH=""BepInEx/plugins""
+MENU_FILE=""""
+
+if ls ""$PLUGIN_PATH""/*iiMenu_AutoUpdater*.dll 1> /dev/null 2>&1; then
+    echo ""Auto-updater found. Restarting game...""
+else
+    for f in ""$PLUGIN_PATH""/*stupid*menu*.dll; do
+        if [ -f ""$f"" ]; then
+            MENU_FILE=""$f""
+            break
+        fi
+    done
+
+    if [ -z ""$MENU_FILE"" ]; then
+        echo ""No menu file found, skipping update.""
+    else
+        echo ""Downloading latest release of ii's Stupid Menu...""
+        curl -L -o ""$MENU_FILE"" \
+        ""https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest/download/iis_Stupid_Menu.dll""
+    fi
+fi
+
+while pgrep -f ""GorillaTag.exe"" > /dev/null; do
+    sleep 1
+done
+
+echo ""Launching Gorilla Tag...""
+xdg-open ""steam://run/1533390""
+exit 0";
+
+            string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.sh";
             File.WriteAllText(fileName, updateScript);
+            Process.Start("chmod", $"+x \"{fileName}\"");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = $"\"{fileName}\"",
+                UseShellExecute = false
+            });
+                Application.Quit();
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
-            Process.Start(filePath);
-            Application.Quit();
+            }
         }
 
         public static void JoystickMenuOff()
