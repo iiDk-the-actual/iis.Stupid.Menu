@@ -630,10 +630,10 @@ namespace iiMenu.Mods
         }
 
         public static readonly string[] namePrefix = {
-            "EPIC", "EPIK", "REAL", "NOT", "SILLY", "LITTLE", "BIG", "MAYBE", "MONKE", "SUB2", "OG"
+            "EPIC", "EPIK", "REAL", "NOT", "SILLY", "LITTLE", "BIG", "MAYBE", "MONKE", "SUB2", "OG", "FUN", "FR"
         };
         public static readonly string[] nameSuffix = {
-            "GT", "VR", "LOL", "GTVR", "FAN", "XD", "LOL", "MONK", "YT"
+            "GT", "VR", "LOL", "GTVR", "FAN", "XD", "LOL", "MONK", "YT", "NOT", "FR"
         };
         public static readonly string[] names = {
             "0", "SHIBA", "PBBV", "J3VU", "BEES", "NAMO", "MANGO", "FROSTY", "FRISH", "LEMMING", 
