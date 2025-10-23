@@ -36,57 +36,72 @@ namespace iiMenu.Mods
 {
     public static class Advantages
     {
-        public static void TagSelf()
-        {
-            if (PhotonNetwork.IsMasterClient)
+    public static float tagSelfTimer = 0f;
+
+    public static void TagSelf(bool TriggerEnabled = false)
+    {
+            if (TriggerEnabled == false || ((rightTrigger > 0.5f || leftTrigger > 0.5f) && Time.time >= tagSelfTimer))
             {
-                AddInfected(PhotonNetwork.LocalPlayer);
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
-                GetIndex("Tag Self").enabled = false;
-            }
-            else
-            {
-                if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
+                if (TriggerEnabled)
                 {
+                    tagSelfTimer = Time.time + 0.5f;
+                }
+
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    AddInfected(PhotonNetwork.LocalPlayer);
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
-                    VRRig.LocalRig.enabled = true;
-                    GetIndex("Tag Self").enabled = false;
+
+                    if (TriggerEnabled == false)
+                    {
+                        GetIndex("Tag Self").enabled = false;
+                    }
                 }
                 else
                 {
-                    VRRig rig = GorillaParent.instance.vrrigs.Where(PlayerIsTagged).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
-                    if (PlayerIsTagged(rig))
+                    if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                     {
-                        VRRig.LocalRig.enabled = false;
-                        if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-
-                        if (GetIndex("Obnoxious Tag").enabled)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
+                        VRRig.LocalRig.enabled = true;
+                        if (TriggerEnabled == false)
+                            GetIndex("Tag Self").enabled = false;
+                    }
+                    else
+                    {
+                        VRRig rig = GorillaParent.instance.vrrigs.Where(PlayerIsTagged).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
+                        if (PlayerIsTagged(rig))
                         {
-                            Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                            VRRig.LocalRig.transform.rotation = rotation;
+                            VRRig.LocalRig.enabled = false;
+                            if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
-                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                            if (GetIndex("Obnoxious Tag").enabled)
+                            {
+                                Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
+                                VRRig.LocalRig.transform.rotation = rotation;
 
-                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
 
-                            VRRig.LocalRig.leftIndex.calcT = 0f;
-                            VRRig.LocalRig.leftMiddle.calcT = 0f;
-                            VRRig.LocalRig.leftThumb.calcT = 0f;
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftIndex.calcT = 0f;
+                                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                            VRRig.LocalRig.rightIndex.calcT = 0f;
-                            VRRig.LocalRig.rightMiddle.calcT = 0f;
-                            VRRig.LocalRig.rightThumb.calcT = 0f;
+                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightIndex.calcT = 0f;
+                                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                VRRig.LocalRig.rightThumb.calcT = 0f;
+
+                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                            }
                         }
                     }
                 }
@@ -1163,6 +1178,11 @@ namespace iiMenu.Mods
                 brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
                 GTPlayer.Instance.disableMovement = false;
             }
+        }
+
+        internal static void TagSelf()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
