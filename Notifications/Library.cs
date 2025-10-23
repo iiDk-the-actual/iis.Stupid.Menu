@@ -103,7 +103,6 @@ namespace iiMenu.Notifications
             NotifiText.alignment = TextAnchor.LowerLeft;
             NotifiText.verticalOverflow = VerticalWrapMode.Overflow;
             NotifiText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            NotifiText.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
             NotifiText.material = AlertText;
 
             ModText = new GameObject
@@ -162,6 +161,7 @@ namespace iiMenu.Notifications
                     NotifiText.font = activeFont;
                     NotifiText.fontStyle = activeFontStyle;
                     NotifiText.fontSize = notificationScale;
+                    NotifiText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
 
                     StatsText.font = activeFont;
                     StatsText.fontStyle = activeFontStyle;
@@ -273,7 +273,7 @@ namespace iiMenu.Notifications
             if (clearTime < 0)
                 clearTime = notificationDecayTime;
 
-            if (!disableNotifications)
+            if (!disableNotifications || GetIndex("Conduct Notifications").enabled)
             {
                 try
                 {
