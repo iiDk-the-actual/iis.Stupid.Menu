@@ -3302,7 +3302,7 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { new int[] { 1 }, null });
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { new int[] { 6, 7 }, null });
                         lagDebounce = Time.time + lagDelay;
                     }
                 }
