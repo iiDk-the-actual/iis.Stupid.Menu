@@ -28,12 +28,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        private static bool Prefix(GorillaSpeakerLoudness __instance, ref bool ___isMicEnabled, ref bool ___isSpeaking, ref float ___loudness)
-        {
-            if (enabled && __instance.gameObject.name == "Local Gorilla Player")
-                return false;
-            
-            return true;
-        }
+        private static bool Prefix(GorillaSpeakerLoudness __instance, ref bool ___isMicEnabled, ref bool ___isSpeaking, ref float ___loudness) =>
+            !enabled || __instance.gameObject.name != "Local Gorilla Player";
     }
 }
