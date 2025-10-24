@@ -41,7 +41,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;
@@ -3486,7 +3486,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        NetPlayer player = RigManager.GetPlayerFromVRRig(gunTarget);
+                        NetPlayer player = RigUtilities.GetPlayerFromVRRig(gunTarget);
                         kgDebounce = Time.time + 0.5f;
 
                         bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
@@ -3549,7 +3549,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        NetPlayer player = RigManager.GetPlayerFromVRRig(gunTarget);
+                        NetPlayer player = RigUtilities.GetPlayerFromVRRig(gunTarget);
                         kgDebounce = Time.time + 0.5f;
 
                         bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;

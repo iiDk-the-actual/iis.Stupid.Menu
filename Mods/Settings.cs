@@ -43,7 +43,7 @@ using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
 using static iiMenu.Menu.Main;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 

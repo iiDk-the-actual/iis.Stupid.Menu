@@ -47,7 +47,7 @@ using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 

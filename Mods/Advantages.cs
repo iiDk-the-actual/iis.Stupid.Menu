@@ -31,7 +31,7 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 
 namespace iiMenu.Mods
 {

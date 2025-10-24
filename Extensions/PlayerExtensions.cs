@@ -33,10 +33,10 @@ namespace iiMenu.Extensions
     {
         #region NetPlayer
         public static Player GetPlayer(this NetPlayer self) =>
-            RigManager.NetPlayerToPlayer(self);
+            RigUtilities.NetPlayerToPlayer(self);
 
         public static VRRig VRRig(this NetPlayer self) =>
-            RigManager.GetVRRigFromPlayer(self);
+            RigUtilities.GetVRRigFromPlayer(self);
 
         public static bool InRoom(this NetPlayer self) =>
             NetworkSystem.Instance.AllNetPlayers.Contains(self);
@@ -47,7 +47,7 @@ namespace iiMenu.Extensions
 
         #region Player
         public static VRRig VRRig(this Player self) =>
-            RigManager.GetVRRigFromPlayer(self);
+            RigUtilities.GetVRRigFromPlayer(self);
 
         public static bool InRoom(this Player self) =>
             PhotonNetwork.PlayerList.Contains(self);

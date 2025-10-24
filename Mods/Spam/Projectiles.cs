@@ -34,7 +34,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods.Spam
