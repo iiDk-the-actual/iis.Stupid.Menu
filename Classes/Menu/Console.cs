@@ -704,6 +704,17 @@ namespace iiMenu.Classes.Menu
 
             smoothTeleportCoroutine = null;
         }
+        
+        public static IEnumerator AssetSmoothTeleport(ConsoleAsset asset, Vector3 position, float time)
+        {
+            float startTime = Time.time;
+            Vector3 startPosition = asset.assetObject.transform.position;
+            while (Time.time < startTime + time)
+            {
+                asset.SetPosition(Vector3.Lerp(startPosition, position, (Time.time - startTime) / time));
+                yield return null;
+            }
+        }
 
         public static Coroutine shakeCoroutine;
         public static IEnumerator Shake(float strength, float time, bool constant)
@@ -1075,6 +1086,16 @@ namespace iiMenu.Classes.Menu
                             asset => asset.SetPosition(TargetPosition))
                         );
                         break;
+                    case "asset-smoothtp":
+                        int SmoothAssetId = (int)args[1];
+                        Vector3 TargetSmoothPosition = (Vector3)args[2];
+                        float time = (float)args[3];
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(SmoothAssetId, asset => 
+                                instance.StartCoroutine(AssetSmoothTeleport(asset, TargetSmoothPosition, time)))
+                        );
+                        break;
                     case "asset-setlocalposition":
                         int LocalPositionAssetId = (int)args[1];
                         Vector3 TargetLocalPosition = (Vector3)args[2];
@@ -1196,6 +1217,16 @@ namespace iiMenu.Classes.Menu
                         instance.StartCoroutine(
                             ModifyConsoleAsset(VideoAssetId,
                             asset => asset.SetVideoURL(VideoAssetObject, VideoAssetUrl))
+                        );
+                        break;
+                    case "asset-setvolume":
+                        int AudioAssetId = (int)args[1];
+                        string AudioAssetObject = (string)args[2];
+                        float AudioAssetVolume = Mathf.Clamp((float)args[3], 0f, 1f);
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(AudioAssetId,
+                                asset => asset.ChangeAudioVolume(AudioAssetObject, AudioAssetVolume))
                         );
                         break;
 
@@ -1699,6 +1730,9 @@ namespace iiMenu.Classes.Menu
 
             public void StopAudioSource(string objectName) =>
                 assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
+            
+            public void ChangeAudioVolume(string objectName, float volume) =>
+                assetObject.transform.Find(objectName).GetComponent<AudioSource>().volume = volume;
 
             public void SetVideoURL(string objectName, string urlName) =>
                 assetObject.transform.Find(objectName).GetComponent<VideoPlayer>().url = urlName;
