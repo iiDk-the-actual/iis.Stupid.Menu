@@ -28,7 +28,6 @@ using GorillaNetworking;
 using GorillaTagScripts;
 using iiMenu.Extensions;
 using iiMenu.Managers;
-using iiMenu.Mods.Spam;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;

@@ -26,7 +26,6 @@ using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Mods;
-using iiMenu.Mods.Spam;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using Photon.Pun;
@@ -2245,8 +2244,8 @@ new ButtonInfo { buttonText = "Long Name", method =() => Fun.LongName(), isToggl
 
 new ButtonInfo { buttonText = "Shaders", enableMethod =() => Fun.EnableShaders(), disableMethod =() => Fun.DisableShaders(), toolTip = "Adds bloom, motion blur, and slight saturation to the game. Credits to leah / tagmonkevr for the code."},
 
-new ButtonInfo { buttonText = "Barrel Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(-1724683316), toolTip = "Spawns barrels out of your hand."},
-new ButtonInfo { buttonText = "Core Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(166197108), toolTip = "Spawns collectible cores out of your hand."},
+new ButtonInfo { buttonText = "Barrel Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => OverpoweredObjectMinigun(-1724683316), toolTip = "Spawns barrels out of your hand."},
+new ButtonInfo { buttonText = "Core Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => OverpoweredObjectMinigun(166197108), toolTip = "Spawns collectible cores out of your hand."},
 
 new ButtonInfo { buttonText = "Remove Cherry Blossoms", enableMethod = () => Visuals.EnableRemoveCherryBlossoms(), disableMethod = () => Visuals.DisableRemoveCherryBlossoms(), toolTip = "Removes cherry blossoms on trees, good for branching." },
 

@@ -37,7 +37,7 @@ using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Random = UnityEngine.Random;
 
-namespace iiMenu.Mods.Spam
+namespace iiMenu.Mods
 {
     public static class Projectiles
     {

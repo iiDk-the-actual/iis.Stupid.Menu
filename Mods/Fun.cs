@@ -35,7 +35,6 @@ using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods.Spam;
 using iiMenu.Patches.Menu;
 using Ionic.Zlib;
 using Photon.Pun;
