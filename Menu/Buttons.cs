@@ -1552,6 +1552,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Break Lucy", method =() => { Overpowered.SpazLucy(); Overpowered.lucyDelay = 0f; }, toolTip = "Breaks lucy." },
                 new ButtonInfo { buttonText = "Annoying Lucy", method = Overpowered.AnnoyingLucy, toolTip = "Makes lucy really annoying, by attacking everyone and making sounds of the bells." },
 
+                new ButtonInfo { buttonText = "Become Lucy", method = Overpowered.BecomeLucy, disableMethod = Movement.EnableRig, toolTip = "Turns you into the bug." },
+
                 new ButtonInfo { buttonText = "Fast Lucy", method = Overpowered.FastLucy, toolTip = "Makes lucy become really fast." },
                 new ButtonInfo { buttonText = "Slow Lucy", method = Overpowered.SlowLucy, toolTip = "Makes lucy become really slow." },
                 
@@ -1565,6 +1567,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Lurker", method = Overpowered.SpazLurker, toolTip = "Gives the lurker ghost a seizure." },
                 new ButtonInfo { buttonText = "Break Lurker", method = Overpowered.BreakLurker, toolTip = "Breaks the lurker ghost." },
                 new ButtonInfo { buttonText = "Annoying Lurker", method = Overpowered.AnnoyingLurker, toolTip = "Makes the lurker ghost really annoying, by attacking everyone and making laugh sounds." },
+
+                new ButtonInfo { buttonText = "Become Lurker", method = Overpowered.BecomeLurker, disableMethod =() => { Movement.EnableRig(); SerializePatch.OverrideSerialization = null; }, toolTip = "Turns you into the firefly." },
 
                 new ButtonInfo { buttonText = "Unlimited Building", enableMethod = Fun.UnlimitedBuilding, disableMethod = Fun.DisableUnlimitedBuilding, toolTip = "Unlimits building, disabling drop zones and letting you place on people's plots." },
 

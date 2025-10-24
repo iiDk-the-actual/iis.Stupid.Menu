@@ -1329,6 +1329,27 @@ namespace iiMenu.Mods
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
         }
 
+        public static void BecomeLucy()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            if (lucy != null)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+                lucy.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                lucy.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
+                lucy.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                lucy.targetPlayer = null;
+            }
+        }
+
         public static void MoveLucyGun()
         {
             if (GetGunInput(false))
@@ -1501,6 +1522,39 @@ namespace iiMenu.Mods
                 }
             }
             else NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        public static void BecomeLurker()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            if (lurker != null)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+                lurker.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                lurker.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
+                lurker.currentState = LurkerGhost.ghostState.seek;
+                SerializePatch.OverrideSerialization = () => {
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        lurker.targetPlayer = Player;
+                        SendSerialize(lurker.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                    }
+
+                    RPCProtection();
+
+                    return false;
+                };
+            }
         }
 
         public static void BetaSetVelocityPlayer(NetPlayer victim, Vector3 velocity)
