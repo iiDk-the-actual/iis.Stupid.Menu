@@ -130,11 +130,12 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
-        public static IEnumerator ForceCreateRoom(string name, Photon.Realtime.RoomOptions options)
+        public static async Task ForceCreateRoom(string name, RoomConfig options)
         {
-            NetworkSystem.Instance.ReturnToSinglePlayer();
-            yield return new WaitUntil(() => NetworkSystem.Instance.netState == NetSystemState.Idle && !PhotonNetwork.InRoom);
-            PhotonNetwork.CreateRoom(name, options, null);
+            if (NetworkSystem.Instance.InRoom)
+                await NetworkSystem.Instance.ReturnToSinglePlayer();
+
+            await (NetworkSystem.Instance as NetworkSystemPUN).TryCreateRoom(name, options);
         }
 
         public static bool instantCreate;
@@ -168,7 +169,7 @@ namespace iiMenu.Mods
             if (instantCreate)
             {
                 (NetworkSystem.Instance as NetworkSystemPUN).internalState = NetworkSystemPUN.InternalState.Searching_Creating;
-                CoroutineManager.instance.StartCoroutine(ForceCreateRoom(roomName, roomConfig.ToPUNOpts()));
+                _ = ForceCreateRoom(roomName, roomConfig);
             }
             else
                 NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
