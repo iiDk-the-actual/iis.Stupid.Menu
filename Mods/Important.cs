@@ -128,6 +128,7 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
+        public static bool instantCreate;
         public static void CreateRoom(string roomName, bool isPublic, JoinType roomJoinType = JoinType.Solo)
         {
             RoomConfig roomConfig = new RoomConfig
@@ -155,7 +156,13 @@ namespace iiMenu.Mods
             else if (roomJoinType == JoinType.JoinWithParty || roomJoinType == JoinType.ForceJoinWithParty)
                 roomConfig.SetFriendIDs(FriendshipGroupDetection.Instance.PartyMemberIDs.ToList());
 
-            NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
+            if (instantCreate)
+            {
+                NetworkSystem.Instance.netState = NetSystemState.Connecting;
+                PhotonNetwork.CreateRoom(roomName, roomConfig.ToPUNOpts(), null);
+            }
+            else
+                NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
         }
 
         // The code below is fully safe. I know, it seems suspicious.
