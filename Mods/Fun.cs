@@ -6104,14 +6104,23 @@ Piece Name: {gunTarget.name}";
         public static bool hasGivenCosmetics;
         public static void UnlockAllCosmetics()
         {
+            CosmeticPatch.enabled = true;
             if (PostGetData.CosmeticsInitialized && !hasGivenCosmetics)
             {
                 hasGivenCosmetics = true;
-
+                MethodInfo UnlockItem = typeof(CosmeticsController).GetMethod("UnlockItem", BindingFlags.Instance | BindingFlags.NonPublic);
                 foreach (CosmeticsController.CosmeticItem item in CosmeticsController.instance.allCosmetics)
                 {
-                    if (!CosmeticsOwned.Contains(item.itemName))
-                        CosmeticsController.instance.ProcessExternalUnlock(item.itemName, false, false);
+                    if (!CosmeticsController.instance.concatStringCosmeticsAllowed.Contains(item.itemName))
+                    {
+                        try
+                        {
+                            UnlockItem.Invoke(CosmeticsController.instance, new object[] { item.itemName, false });
+                        }
+                        catch
+                        {
+                        }
+                    }
                 }
             }
         }
