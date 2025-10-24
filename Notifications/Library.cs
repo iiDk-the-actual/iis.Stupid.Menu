@@ -289,7 +289,7 @@ namespace iiMenu.Notifications
                         }
                     }
 
-                    if ((notificationSoundIndex != 0 || (soundOnError && NotificationText.Contains("<color=red>ERROR</color>"))) && Time.time > timeMenuStarted + 5f)
+                    if ((notificationSoundIndex == 0 || !soundOnError || NotificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
                         PlayNotificationSound();
 
                     if (inputTextColor != "green")
