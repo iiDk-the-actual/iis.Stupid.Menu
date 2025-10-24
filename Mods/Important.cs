@@ -26,6 +26,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
+using MonoMod.RuntimeDetour;
 using Photon.Pun;
 using PlayFab;
 using System;
@@ -42,6 +43,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
+using static BuilderMaterialOptions;
 using static iiMenu.Menu.Main;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
@@ -128,6 +130,13 @@ namespace iiMenu.Mods
             JoinRandom();
         }
 
+        public static IEnumerator ForceCreateRoom(string name, Photon.Realtime.RoomOptions options)
+        {
+            NetworkSystem.Instance.ReturnToSinglePlayer();
+            yield return new WaitUntil(() => NetworkSystem.Instance.netState == NetSystemState.Idle && !PhotonNetwork.InRoom);
+            PhotonNetwork.CreateRoom(name, options, null);
+        }
+
         public static bool instantCreate;
         public static void CreateRoom(string roomName, bool isPublic, JoinType roomJoinType = JoinType.Solo)
         {
@@ -159,7 +168,7 @@ namespace iiMenu.Mods
             if (instantCreate)
             {
                 (NetworkSystem.Instance as NetworkSystemPUN).internalState = NetworkSystemPUN.InternalState.Searching_Creating;
-                PhotonNetwork.CreateRoom(roomName, roomConfig.ToPUNOpts(), null);
+                CoroutineManager.instance.StartCoroutine(ForceCreateRoom(roomName, roomConfig.ToPUNOpts()));
             }
             else
                 NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
