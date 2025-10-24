@@ -45,6 +45,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 using JoinType = GorillaNetworking.JoinType;
+using UnityEngine.UIElements;
 
 namespace iiMenu.Mods
 {
@@ -883,80 +884,135 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float ghostReactorDelay;
         public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null)
         {
-            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
-
-            int netId = Fun.ghostReactorManager.gameEntityManager.CreateNetId();
-
-            if (target is NetPlayer netPlayer)
-                target = NetPlayerToPlayer(netPlayer);
-
-            sendData ??= new[] { 0L };
-
-            object[] createData = {
-                new[] { netId },
-                new[] { (int)GTZone.ghostReactor },
-                new[] { hash },
-                new[] { BitPackUtils.PackWorldPosForNetwork(position) },
-                new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
-                sendData
-            };
-
-            switch (target)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
-                case RpcTarget rpcTarget:
-                    Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
-                    break;
-                case Player player:
-                    Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
-                    break;
-            }
+                int netId = Fun.ghostReactorManager.gameEntityManager.CreateNetId();
 
-            if (velocity != Vector3.zero || angVelocity != Vector3.zero)
-            {
-                velocity = velocity.ClampMagnitudeSafe(1600f);
+                if (target is NetPlayer netPlayer)
+                    target = NetPlayerToPlayer(netPlayer);
 
-                object[] grabData = {
-                    netId,
-                    true,
-                    BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
-                    PhotonNetwork.LocalPlayer
+                sendData ??= new[] { 0L };
+
+                object[] createData = {
+                    new[] { netId },
+                    new[] { (int)GTZone.ghostReactor },
+                    new[] { hash },
+                    new[] { BitPackUtils.PackWorldPosForNetwork(position) },
+                    new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
+                    sendData
                 };
 
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
                         break;
                     case Player player:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
                         break;
                 }
 
-                object[] dropData = {
-                    netId,
-                    true,
-                    position,
-                    rotation,
-                    velocity,
-                    angVelocity,
-                    PhotonNetwork.LocalPlayer,
-                    PhotonNetwork.Time
-                };
-
-                switch (target)
+                if (velocity != Vector3.zero || angVelocity != Vector3.zero)
                 {
-                    case RpcTarget rpcTarget:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
-                        break;
-                    case Player player:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
-                        break;
+                    velocity = velocity.ClampMagnitudeSafe(1600f);
+
+                    object[] grabData = {
+                        netId,
+                        true,
+                        BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
+                        PhotonNetwork.LocalPlayer
+                    };
+
+                    switch (target)
+                    {
+                        case RpcTarget rpcTarget:
+                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                            break;
+                        case Player player:
+                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                            break;
+                    }
+
+                    object[] dropData = {
+                        netId,
+                        true,
+                        position,
+                        rotation,
+                        velocity,
+                        angVelocity,
+                        PhotonNetwork.LocalPlayer,
+                        PhotonNetwork.Time
+                    };
+
+                    switch (target)
+                    {
+                        case RpcTarget rpcTarget:
+                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
+                            break;
+                        case Player player:
+                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
+                            break;
+                    }
+                }
+
+                RPCProtection();
+            }
+            else
+            {
+                float maxDistance = 15f;
+                if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
+                    position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
+
+                GameEntityManager gameEntityManager = Fun.ghostReactorManager.gameEntityManager;
+
+                GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
+                if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
+                    gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, velocity, angVelocity);
+
+                List<GameEntity> entities = gameEntityManager.entities.Where(e => 
+                    e != null && 
+                    e.typeId == hash && 
+                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance && 
+                    Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, e.transform.position) > 3f &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0)
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0)
+                    return;
+
+                GameEntity entity = entities[Random.Range(0, entities.Count)];
+
+                if (Vector3.Distance(entity.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > maxDistance)
+                {
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = entity.transform.position - Vector3.one * 5f;
+
+                    if (CritterCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                    CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                }
+
+                if (Vector3.Distance(entity.transform.position, ServerPos) < 25f && Time.time > ghostReactorDelay)
+                {
+                    ghostReactorDelay = Time.time + 0.05f;
+
+                    entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    entity.transform.rotation = RandomQuaternion();
+
+                    entity.RequestGrab(true, Vector3.zero, Quaternion.identity);
+                    entity.RequestThrow(true, position, velocity, angVelocity);
                 }
             }
-
-            RPCProtection();
         }
 
         private static Dictionary<string, int> _idByName;
@@ -1000,9 +1056,6 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > destroyDelay)
                     {
-                        destroyDelay = Time.time + 0.02f;
-                        if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
-
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
@@ -1021,8 +1074,16 @@ namespace iiMenu.Mods
 
                         if (gameEntity != null)
                         {
-                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
-                            RPCProtection();
+                            destroyDelay = Time.time + 0.02f;
+                            if (NetworkSystem.Instance.IsMasterClient)
+                            {
+                                Fun.ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                                RPCProtection();
+                            } else
+                            {
+                                gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity);
+                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Vector3.zero, Vector3.zero);
+                            }
                         }
                     }
                 }
@@ -4187,13 +4248,16 @@ namespace iiMenu.Mods
                 else
                 {
                     CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
-                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+
+                    if (critters.Count <= 0)
+                        return;
 
                     CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 

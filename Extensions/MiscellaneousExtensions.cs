@@ -124,5 +124,11 @@ namespace iiMenu.Extensions
 
         public static void PlayAt(this AudioClip clip, Vector3 position, float volume = 1f) =>
             PlayPositionAudio(clip, position, volume);
+
+        public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation) =>
+            Mods.Fun.ghostReactorManager.gameEntityManager.RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+
+        public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Vector3 velocity, Vector3 angVelocity) =>
+            Mods.Fun.ghostReactorManager.gameEntityManager.RequestThrowEntity(gameEntity.id, isLeftHand, position, velocity, angVelocity);
     }
 }

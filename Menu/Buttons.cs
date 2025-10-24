@@ -1161,6 +1161,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Critter Noise Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
 
+                new ButtonInfo { buttonText = "Gate Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnergyCostGate"]), toolTip = "Spawns gates at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Core Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleCore"]), toolTip = "Spawns collectible cores at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Tool Spam Gun", method = Overpowered.ToolSpamGun, toolTip = "Spawns random tools at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Flower Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleFlower"]), toolTip = "Spawns flowers at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Barrel Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorBreakableBarrel"]), toolTip = "Spawns barrels at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Ranged Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Chaser Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
+
                 new ButtonInfo { buttonText = "Fire Sound Spam <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method = Fun.FireSoundSpam, toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Bubble Gun", enableMethod =() => Fun.CheckOwnedThrowable(33), method =() => Fun.BubblerGun(33, Quaternion.identity, 0.1f), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
@@ -1524,15 +1533,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Kill Self", method = Fun.SpazKillSelf, toolTip = "Repeatedly kills and revives you."},
                 new ButtonInfo { buttonText = "Spaz Kill Gun", method = Fun.SpazKillGun, toolTip = "Repeatedly kills and revives whoever your hand desires."},
                 new ButtonInfo { buttonText = "Spaz Kill All", method = Fun.SpazKillAll, toolTip = "Repeatedly kills and revives everyone in the room."},
-
-                new ButtonInfo { buttonText = "Gate Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnergyCostGate"]), toolTip = "Spawns gates at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Core Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleCore"]), toolTip = "Spawns collectible cores at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Tool Spam Gun", method = Overpowered.ToolSpamGun, toolTip = "Spawns random tools at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Flower Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleFlower"]), toolTip = "Spawns flowers at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Barrel Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorBreakableBarrel"]), toolTip = "Spawns barrels at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Ranged Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Chaser Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
                 new ButtonInfo { buttonText = "Spawn Red Lucy", method = Overpowered.SpawnRedLucy, isTogglable = false, toolTip = "Summons the red lucy in forest." },
                 new ButtonInfo { buttonText = "Spawn Blue Lucy", method = Overpowered.SpawnBlueLucy, isTogglable = false, toolTip = "Summons the blue lucy in forest." },
