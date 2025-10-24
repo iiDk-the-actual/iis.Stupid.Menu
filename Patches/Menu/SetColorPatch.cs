@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool Prefix(VRRig __instance, float red, float green, float blue, PhotonMessageInfoWrapped info)
         {
-            NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
+            NetPlayer player = RigUtilities.GetPlayerFromVRRig(__instance) ?? null;
             if (player != null && Main.ShouldBypassChecks(player))
             {
                 if (info.senderID == NetworkSystem.Instance.GetOwningPlayerID(__instance.rigSerializer.gameObject))

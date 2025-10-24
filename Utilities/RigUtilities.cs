@@ -32,7 +32,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Utilities
 {
-    public class RigManager
+    public class RigUtilities
     {
         public static VRRig GetVRRigFromPlayer(NetPlayer p) =>
             GorillaGameManager.instance.FindPlayerVRRig(p);

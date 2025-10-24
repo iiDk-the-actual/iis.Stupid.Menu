@@ -39,7 +39,6 @@ namespace iiMenu.Managers
     {
         public static NotificationManager instance { get; private set; }
         public GameObject HUDObj;
-        public GameObject HUDObj2;
 
         private GameObject MainCamera;
 
@@ -69,10 +68,6 @@ namespace iiMenu.Managers
         {
             MainCamera = Camera.main.gameObject;
             HUDObj = new GameObject();
-            HUDObj2 = new GameObject
-            {
-                name = "NOTIFICATIONLIB_HUD_OBJ"
-            };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
             HUDObj.AddComponent<CanvasScaler>();
@@ -82,8 +77,7 @@ namespace iiMenu.Managers
             HUDObj.GetComponent<Canvas>().worldCamera = MainCamera.GetComponent<Camera>();
             HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
             HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
-            HUDObj.transform.parent = HUDObj2.transform;
+            HUDObj.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
             HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
             Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
             eulerAngles.y = -270f;
@@ -150,8 +144,8 @@ namespace iiMenu.Managers
 
                 HUDObj.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
 
-                HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-                HUDObj2.transform.rotation = MainCamera.transform.rotation;
+                HUDObj.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+                HUDObj.transform.rotation = MainCamera.transform.rotation;
                 try
                 {
                     ModText.font = activeFont;

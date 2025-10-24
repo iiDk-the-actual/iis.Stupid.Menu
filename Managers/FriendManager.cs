@@ -44,7 +44,7 @@ using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using JoinType = GorillaNetworking.JoinType;
 
 namespace iiMenu.Managers

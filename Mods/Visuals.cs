@@ -41,7 +41,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods

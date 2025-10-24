@@ -60,7 +60,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigManager;
+using static iiMenu.Utilities.RigUtilities;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
@@ -6390,7 +6390,6 @@ namespace iiMenu.Menu
             if (NotificationManager.instance != null)
             {
                 Destroy(NotificationManager.instance.HUDObj);
-                Destroy(NotificationManager.instance.HUDObj2);
                 Destroy(NotificationManager.ModText);
                 Destroy(NotificationManager.NotifiText);
                 Destroy(NotificationManager.instance.gameObject);

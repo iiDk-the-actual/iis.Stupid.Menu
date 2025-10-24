@@ -33,7 +33,7 @@ namespace iiMenu.Patches.Menu
 
         public static void Postfix(VRRig __instance, ref bool __result, Vector3 position, float range)
         {
-            NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
+            NetPlayer player = RigUtilities.GetPlayerFromVRRig(__instance) ?? null;
             if ((enabled && __instance.isLocal) || (player != null && Main.ShouldBypassChecks(player)))
                 __result = true;
         }

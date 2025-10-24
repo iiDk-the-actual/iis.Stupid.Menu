@@ -71,10 +71,10 @@ namespace iiMenu.Extensions
             Menu.Main.GetTruePing(rig);
 
         public static string GetName(this VRRig rig) =>
-            RigManager.GetPlayerFromVRRig(rig)?.NickName ?? "null";
+            RigUtilities.GetPlayerFromVRRig(rig)?.NickName ?? "null";
 
         public static NetPlayer GetPlayer(this VRRig rig) =>
-            RigManager.GetPlayerFromVRRig(rig);
+            RigUtilities.GetPlayerFromVRRig(rig);
 
         public static Slingshot GetSlingshot(this VRRig rig) =>
             rig.projectileWeapon as Slingshot;
