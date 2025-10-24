@@ -1711,7 +1711,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method = Overpowered.AntiReportFling, toolTip = "Flings whoever tries to report you."},
 
-
+                new ButtonInfo { buttonText = "Lag Gun", method = Overpowered.LagGun, toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
+                new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
 
                 new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, toolTip = "Kicks whoever your hand desires. It will send you to the same room as them." },
                 new ButtonInfo { buttonText = "Kick All", method = Overpowered.KickAll, isTogglable = false, toolTip = "Kicks everyone in the room. It will send you to the same room as them." },
