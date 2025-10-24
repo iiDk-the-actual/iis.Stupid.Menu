@@ -158,7 +158,7 @@ namespace iiMenu.Mods
 
             if (instantCreate)
             {
-                NetworkSystem.Instance.netState = NetSystemState.Connecting;
+                (NetworkSystem.Instance as NetworkSystemPUN).internalState = NetworkSystemPUN.InternalState.Searching_Creating;
                 PhotonNetwork.CreateRoom(roomName, roomConfig.ToPUNOpts(), null);
             }
             else
