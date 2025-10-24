@@ -26,7 +26,6 @@ using GorillaTagScripts;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
-using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using Photon.Pun;
@@ -37,8 +36,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigManager;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
@@ -237,7 +236,7 @@ namespace iiMenu.Mods
 
                 if (!(Time.time > antiReportDelay)) return;
                 antiReportDelay = Time.time + 1f;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
             });
         }
 
@@ -250,7 +249,7 @@ namespace iiMenu.Mods
                 RPCProtection();
 
                 antiReportDelay = Time.time + 1f;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
             });
         }
 
@@ -264,7 +263,7 @@ namespace iiMenu.Mods
                 RPCProtection();
 
                 antiReportDelay = Time.time + 1f;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
             });
         }
 
@@ -290,7 +289,7 @@ namespace iiMenu.Mods
             });
 
             if (notifyText != "")
-                NotifiLib.SendNotification($"<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> {notifyText} {(notifyText.Contains("&") || notifyText.Contains(",") ? "are" : "is")} reporting you.");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> {notifyText} {(notifyText.Contains("&") || notifyText.Contains(",") ? "are" : "is")} reporting you.");
         }
 
         public static void AntiReportOverlay()
@@ -311,9 +310,9 @@ namespace iiMenu.Mods
             });
 
             if (notifyText.IsNullOrEmpty())
-                NotifiLib.information.Remove("Anti-Report");
+                NotificationManager.information.Remove("Anti-Report");
             else
-                NotifiLib.information["Anti-Report"] = notifyText;
+                NotificationManager.information["Anti-Report"] = notifyText;
         }
 
         public static void AntiReportFRT(Player subject, bool doNotification = true)
@@ -342,26 +341,26 @@ namespace iiMenu.Mods
                         NetworkSystem.Instance.ReturnToSinglePlayer();
                         RPCProtection();
                         if (doNotification)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
                         
                         break;
                     case 1:
                         Important.Reconnect();
                         RPCProtection();
                         if (doNotification)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
                         
                         break;
                     case 2:
                         RPCProtection();
                         Important.JoinRandom();
                         if (doNotification)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
                         
                         break;
                     case 3:
                         if (doNotification)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " is reporting you.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " is reporting you.");
 
                         break;
                 }
@@ -408,7 +407,7 @@ namespace iiMenu.Mods
                 }
                 catch { }
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
             }
         }
 

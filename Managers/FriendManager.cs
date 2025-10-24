@@ -26,7 +26,6 @@ using GorillaNetworking;
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
-using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 ﻿using System;
@@ -44,8 +43,8 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigManager;
 using JoinType = GorillaNetworking.JoinType;
 
 namespace iiMenu.Managers
@@ -302,7 +301,7 @@ namespace iiMenu.Managers
         public static void CheckPlayerFriends(NetPlayer Player)
         {
             if (IsPlayerFriend(Player))
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> Your friend " + Player.NickName + " is in your current room.", 5000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> Your friend " + Player.NickName + " is in your current room.", 5000);
         }
 
         public static NetPlayer[] GetAllFriendsInRoom()
@@ -636,24 +635,24 @@ namespace iiMenu.Managers
         public static void SendFriendRequest(string uid)
         {
             instance.StartCoroutine(ExecuteAction(uid, "frienduser",
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
-                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
+                () => NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
+                error => NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
             ));
         }
 
         public static void AcceptFriendRequest(string uid)
         {
             instance.StartCoroutine(ExecuteAction(uid, "frienduser",
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully accepted friend request.", 5000),
-                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
+                () => NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully accepted friend request.", 5000),
+                error => NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
             ));
         }
 
         public static void RemoveFriend(string uid)
         {
             instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed friend from friends list.", 5000),
-                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
+                () => NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed friend from friends list.", 5000),
+                error => NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
             ));
         }
 
@@ -661,20 +660,20 @@ namespace iiMenu.Managers
         {
             instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000);
 
                     if (SoundEffects)
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/doorslam.ogg", "Audio/Friends/doorslam.ogg"), buttonClickVolume / 10f);
                 },
-                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
+                error => NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
         }
 
         public static void CancelFriendRequest(string uid)
         {
             instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Cancelled friend request.", 5000),
-                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
+                () => NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Cancelled friend request.", 5000),
+                error => NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
             ));
         }
 
@@ -682,7 +681,7 @@ namespace iiMenu.Managers
         {
             if (!NetworkSystem.Instance.InRoom)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
                 return;
             }
 
@@ -693,7 +692,7 @@ namespace iiMenu.Managers
                 room = PhotonNetwork.CurrentRoom.Name
             }));
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
         }
 
         public static void RequestInviteFriend(string uid)
@@ -704,7 +703,7 @@ namespace iiMenu.Managers
                 target = uid
             }));
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully requested invite from friend.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully requested invite from friend.", 5000);
         }
 
         public static void SharePreferences(string uid)
@@ -716,7 +715,7 @@ namespace iiMenu.Managers
                 preferences = Settings.SavePreferencesToText()
             }));
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
         }
 
         public static void ShareMacro(string uid, string name)
@@ -731,7 +730,7 @@ namespace iiMenu.Managers
 
             if (sendingMacro == null)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Macro \"" + name + "\" does not exist.", 5000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Macro \"" + name + "\" does not exist.", 5000);
                 return;
             }
                 
@@ -742,7 +741,7 @@ namespace iiMenu.Managers
                 macro = sendingMacro.Value.DumpJSON()
             }));
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared macro.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared macro.", 5000);
         }
 
         public static void SendFriendMessage(string uid, string message)
@@ -758,7 +757,7 @@ namespace iiMenu.Managers
             if (SoundEffects)
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/send.ogg", "Audio/Friends/send.ogg"), buttonClickVolume / 10f);
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
         }
 
         public static void UpdateFriendMessage(string friendTarget, string message)
@@ -874,7 +873,7 @@ namespace iiMenu.Managers
                 if (SoundEffects)
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/online.ogg", "Audio/Friends/online.ogg"), buttonClickVolume / 10f);
 
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
             }
 
             if (instance.Friends.incoming.Values.Count > previousIncomingCount && instance.Friends.incoming.Values.Count > 0)
@@ -882,7 +881,7 @@ namespace iiMenu.Managers
                 if (SoundEffects)
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/dooropen.ogg", "Audio/Friends/dooropen.ogg"), buttonClickVolume / 10f);
 
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend request{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")}.", 5000);
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend request{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")}.", 5000);
             }
 
             previousOnlineCount = onlineFriends.Length;
@@ -1338,7 +1337,7 @@ namespace iiMenu.Managers
                                 if (SoundEffects)
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
                                 Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, JoinType.Solo));
                                 break;
@@ -1354,7 +1353,7 @@ namespace iiMenu.Managers
                                 if (SoundEffects)
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
 
                                 Prompt($"{friendName} has requested an invite from you, would you like to invite them?", () => InviteFriend(from));
                                 break;
@@ -1367,7 +1366,7 @@ namespace iiMenu.Managers
                                 if (SoundEffects)
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
 
                                 string preferences = (string)obj["data"];
                                 Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
@@ -1382,7 +1381,7 @@ namespace iiMenu.Managers
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
                                 Movement.Macro macro = Movement.Macro.LoadJSON((string)obj["data"]);
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their macro " + macro.name + " with you.", 5000);
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their macro " + macro.name + " with you.", 5000);
                                 Prompt($"{friendName} has shared their macro " + macro.name + " with you, would you like to use it?", () => { Movement.macros[Movement.FormatMacroName(macro.name)] = macro; });
                                 break;
                             }
@@ -1394,7 +1393,7 @@ namespace iiMenu.Managers
                                 if (SoundEffects)
                                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotifiLib.SendNotification(message, time);
+                                NotificationManager.SendNotification(message, time);
                                 break;
                             }
                         case "message":
@@ -1408,7 +1407,7 @@ namespace iiMenu.Managers
                                 string message = (string)obj["message"];
                                 string color = (string)obj["color"];
 
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {Regex.Replace(message, @"<\s*https?://[^\s>]+\s*>", "[Media]")}", 5000);
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {Regex.Replace(message, @"<\s*https?://[^\s>]+\s*>", "[Media]")}", 5000);
                                 UpdateFriendMessage(from, $"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}        ");
 
                                 if (currentCategoryIndex == 41)

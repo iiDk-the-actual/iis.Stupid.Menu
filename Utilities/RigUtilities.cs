@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Managers/RigManager.cs
+ * ii's Stupid Menu  Utilities/RigUtilities.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -30,7 +30,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace iiMenu.Managers
+namespace iiMenu.Utilities
 {
     public class RigManager
     {

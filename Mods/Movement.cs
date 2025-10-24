@@ -29,8 +29,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+using iiMenu.Mods.Spam;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -46,8 +45,9 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.RigManager;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -799,7 +799,7 @@ namespace iiMenu.Mods
             }
             if (Time.time > loaoalsode)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must equip a balloon.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must equip a balloon.");
                 loaoalsode = Time.time + 1f;
             }
             return null;
@@ -1715,7 +1715,7 @@ namespace iiMenu.Mods
                     recordingData.Clear();
                     recordingMacro = true;
 
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Started recording...");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Started recording...");
                 }
 
                 ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
@@ -1734,7 +1734,7 @@ namespace iiMenu.Mods
                 {
                     recordingMacro = false;
 
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Stopped recording.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>RECORDING</color><color=grey>]</color> Stopped recording.");
                     FinalizeRecording();
                 }
             }
@@ -1812,8 +1812,8 @@ namespace iiMenu.Mods
                 ControllerInputPoller.instance.leftControllerIndexFloat = Mathf.Lerp(lastPosition.leftTrigger ? 1f : 0f, currentPosition.leftTrigger ? 1f : 0f, t);
                 // Unity race condition bug. Fuck you. ControllerInputPoller.instance.rightControllerIndexFloat = Mathf.Lerp(lastPosition.rightTrigger ? 1f : 0f, currentPosition.rightTrigger ? 1f : 0f, t);
 
-                NotifiLib.information["Macro Time"] = $"{macroEndTime - elapsed:F1}s";
-                NotifiLib.information["Macro Name"] = macro.name;
+                NotificationManager.information["Macro Time"] = $"{macroEndTime - elapsed:F1}s";
+                NotificationManager.information["Macro Name"] = macro.name;
 
                 yield return null;
 
@@ -1840,8 +1840,8 @@ namespace iiMenu.Mods
                 activeMacro = null;
             }
 
-            NotifiLib.information.Remove("Macro Time");
-            NotifiLib.information.Remove("Macro Name");
+            NotificationManager.information.Remove("Macro Time");
+            NotificationManager.information.Remove("Macro Name");
 
             RemovePosition(Color.cyan);
             RemovePosition(Color.red);

@@ -22,15 +22,16 @@
 using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaLocomotion;
-using iiMenu.Notifications;
+using iiMenu.Managers;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.RigManager;
 
 namespace iiMenu.Mods
 {
@@ -41,14 +42,14 @@ namespace iiMenu.Mods
             if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
                 GetIndex("Tag Self").enabled = false;
             }
             else
             {
                 if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
                     VRRig.LocalRig.enabled = true;
                     GetIndex("Tag Self").enabled = false;
                 }
@@ -130,7 +131,7 @@ namespace iiMenu.Mods
         public static void UntagAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 foreach (Player v in PhotonNetwork.PlayerList)
@@ -142,7 +143,7 @@ namespace iiMenu.Mods
         public static void SpamTagSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 if (Time.time > spamtagdelay)
@@ -166,7 +167,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     if (!NetworkSystem.Instance.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
                         if (Time.time > spamtagdelay)
@@ -202,7 +203,7 @@ namespace iiMenu.Mods
         public static void SpamTagAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 if (Time.time > spamtagdelay)
@@ -242,7 +243,7 @@ namespace iiMenu.Mods
                             ReportTagPatch.blacklistedPlayers.Add(GetPlayerFromVRRig(gunTarget));
 
                         } else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                 }
             }
@@ -280,7 +281,7 @@ namespace iiMenu.Mods
 
                         }
                         else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                 }
             }
@@ -297,7 +298,7 @@ namespace iiMenu.Mods
         public static void SetTagCooldown(float value)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaTagManager tagman = (GorillaTagManager)GorillaGameManager.instance;
@@ -540,7 +541,7 @@ namespace iiMenu.Mods
 
             if (!PlayerIsTagged(VRRig.LocalRig))
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                 Toggle("Tag Player");
                 return;
             }
@@ -604,7 +605,7 @@ namespace iiMenu.Mods
                         if (PhotonNetwork.IsMasterClient)
                             RemoveInfected(GetPlayerFromVRRig(gunTarget));
                         else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                 }
             }
@@ -641,13 +642,13 @@ namespace iiMenu.Mods
                     AddInfected(v);
                 
                 GetIndex("Tag All").enabled = false;
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
             }
             else
             {
                 if (!PlayerIsTagged(VRRig.LocalRig))
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                     GetIndex("Tag All").enabled = false;
                 }
                 else
@@ -706,7 +707,7 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                         VRRig.LocalRig.enabled = true;
                         GetIndex("Tag All").enabled = false;
                     }
@@ -754,7 +755,7 @@ namespace iiMenu.Mods
         {
             if (!PlayerIsTagged(VRRig.LocalRig))
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                 return;
             }
 
@@ -819,7 +820,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                 VRRig.LocalRig.enabled = true;
                 GetIndex("Tag All").enabled = false;
                 ReloadMenu();
@@ -896,7 +897,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlStartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -907,7 +908,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlEndGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -918,7 +919,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlRestartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -936,7 +937,7 @@ namespace iiMenu.Mods
             paintbrawlSpamDelay = Time.time + 0.1f;
 
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -954,7 +955,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     if (!NetworkSystem.Instance.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
                         if (Time.time > paintbrawlSpamDelay)
@@ -962,7 +963,7 @@ namespace iiMenu.Mods
                             paintbrawlSpamDelay = Time.time + 0.1f;
 
                             if (!NetworkSystem.Instance.IsMasterClient)
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                             else
                             {
                                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -999,7 +1000,7 @@ namespace iiMenu.Mods
             paintbrawlSpamDelay = Time.time + 0.1f;
 
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1022,7 +1023,7 @@ namespace iiMenu.Mods
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         else
                         {
                             GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1097,7 +1098,7 @@ namespace iiMenu.Mods
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         else
                         {
                             GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1111,7 +1112,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlReviveSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1122,7 +1123,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlReviveAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1135,7 +1136,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlNoDelay()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
@@ -1156,7 +1157,7 @@ namespace iiMenu.Mods
         public static void PaintbrawlGodMode()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;

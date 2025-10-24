@@ -26,7 +26,6 @@ using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -39,8 +38,9 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.RigManager;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -67,7 +67,7 @@ namespace iiMenu.Mods
                     previousNames.Add(button.buttonText);
                 }
             }
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons + " broken buttons.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons + " broken buttons.");
         }
 
         private static readonly Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material>();
@@ -218,14 +218,14 @@ namespace iiMenu.Mods
 
         public static void CopyCustomGamemodeScript()
         {
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Copied map script to your clipboard.", 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Copied map script to your clipboard.", 5000);
             GUIUtility.systemCopyBuffer = CustomGameMode.LuaScript;
         }
 
         public static void CopyCustomMapID()
         {
             string id = CustomMapManager.currentRoomMapModId._id.ToString();
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
             GUIUtility.systemCopyBuffer = id;
         }
         
@@ -279,7 +279,7 @@ namespace iiMenu.Mods
                     {
                         TeleportPlayer(restartPosition);
                         File.Delete(Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt");
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
                         restartIndex = 4;
                         GetIndex("Safe Restart Game").enabled = false;
                         Settings.SavePreferences();
@@ -328,17 +328,17 @@ namespace iiMenu.Mods
                             if (!platExcluded.Contains(id))
                             {
                                 platExcluded.Add(id);
-                                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now excluded.");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now excluded.");
                             } else
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already excluded!");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already excluded!");
                         } else
                         {
                             if (platExcluded.Contains(id))
                             {
                                 platExcluded.Remove(id);
-                                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now included.");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Player is now included.");
                             } else
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already included!");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Player is already included!");
                         }
                     }
                 }
@@ -1448,12 +1448,12 @@ namespace iiMenu.Mods
             {
                 if (isUserFound)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Found menu user!");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Found menu user!");
                     GetIndex("Admin Find User").enabled = false;
                     isUserFound = false;
                     return;
                 }
-                NotifiLib.SendNotification("Nobody found, searching for players.");
+                NotificationManager.SendNotification("Nobody found, searching for players.");
                 NetworkSystem.Instance.ReturnToSinglePlayer();
                 FindUserTime = Time.time + 2f;
             }

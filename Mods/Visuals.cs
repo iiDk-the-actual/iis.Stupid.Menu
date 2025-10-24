@@ -28,7 +28,6 @@ using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
-using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using System;
@@ -41,8 +40,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigManager;
 using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
@@ -546,10 +545,10 @@ namespace iiMenu.Mods
             float timeUntilStrike = GetTimeUntilNextLightningStrike();
             if (timeUntilStrike < 0f)
             {
-                NotifiLib.information.Remove("Lightning");
+                NotificationManager.information.Remove("Lightning");
                 return;
             }
-            NotifiLib.information["Lightning"] = $"{timeUntilStrike:F1}s";
+            NotificationManager.information["Lightning"] = $"{timeUntilStrike:F1}s";
         }
 
         public static void VelocityLabel()
@@ -607,11 +606,11 @@ namespace iiMenu.Mods
             VRRig masterRig = PhotonNetwork.MasterClient?.VRRig() ?? null;
             if (!PhotonNetwork.InRoom || PhotonNetwork.IsMasterClient || masterRig == null || !playerPing.ContainsKey(masterRig))
             {
-                NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString() + "ms";
+                NotificationManager.information["Ping"] = PhotonNetwork.GetPing().ToString() + "ms";
                 return;
             }
 
-            NotifiLib.information["Ping"] = (masterRig.GetPing() + PhotonNetwork.GetPing()).ToString() + "ms";
+            NotificationManager.information["Ping"] = (masterRig.GetPing() + PhotonNetwork.GetPing()).ToString() + "ms";
         }
 
         public static void NearbyTaggerOverlay()
@@ -629,9 +628,9 @@ namespace iiMenu.Mods
                 }
             }
             if (closest != float.MaxValue)
-                NotifiLib.information["Nearby"] = $"{closest:F1}m";
+                NotificationManager.information["Nearby"] = $"{closest:F1}m";
             else
-                NotifiLib.information.Remove("Nearby");
+                NotificationManager.information.Remove("Nearby");
         }
 
         public static void NearbyTaggerLabel()
@@ -5167,7 +5166,7 @@ namespace iiMenu.Mods
 
             Color userColor = Color.red;
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using " + menuName + " version " + version + ".", 3000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using " + menuName + " version " + version + ".", 3000);
             VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
             VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
             GameObject line = new GameObject("Line");

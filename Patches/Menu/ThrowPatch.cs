@@ -19,9 +19,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using HarmonyLib;
-using iiMenu.Menu;
+using HarmonyLib;
 using UnityEngine;
+using static iiMenu.Utilities.RandomUtilities;
 
 namespace iiMenu.Patches.Menu
 {
@@ -40,7 +40,7 @@ namespace iiMenu.Patches.Menu
                 Vector3 originalLinearVelocity = __instance.velocityEstimator.linearVelocity;
                 for (int i = 0; i < extraCount; i++)
                 {
-                    __instance.velocityEstimator.linearVelocity = originalLinearVelocity + Main.RandomVector3(2f);
+                    __instance.velocityEstimator.linearVelocity = originalLinearVelocity + RandomVector3(2f);
                     __instance.PerformSnowballThrowAuthority();
                 }
 

@@ -23,6 +23,7 @@ using iiMenu.Menu;
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using static iiMenu.Utilities.RandomUtilities;
 
 namespace iiMenu.Classes.Menu
 {
@@ -45,7 +46,7 @@ namespace iiMenu.Classes.Menu
                 return Color.HSVToRGB(Time.time + index / 8, 0.3f, 1f);
 
             if (epileptic)
-                return Main.RandomColor();
+                return RandomColor();
 
             if (copyRigColor)
                 return Main.GetPlayerColor(VRRig.LocalRig);
@@ -108,7 +109,7 @@ namespace iiMenu.Classes.Menu
                 return Color.HSVToRGB(time, 0.3f, 1f);
 
             if (epileptic)
-                return Main.RandomColor();
+                return RandomColor();
 
             if (copyRigColor)
                 return Main.GetPlayerColor(VRRig.LocalRig);

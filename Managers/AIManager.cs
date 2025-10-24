@@ -23,7 +23,6 @@
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
-using iiMenu.Notifications;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -139,7 +138,7 @@ Example:
             if (request.result != UnityWebRequest.Result.Success)
             {
                 LogManager.LogError($"Error contacting AI api {request.error}");
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
                 Settings.listening = false; 
                 yield break;
             }
@@ -153,8 +152,8 @@ Example:
                 Main.Play2DAudio(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
 
             string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
-            NotifiLib.ClearAllNotifications();
-            NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
+            NotificationManager.ClearAllNotifications();
+            NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
 
             bool narrate = Main.GetIndex("Narrate Assistant").enabled;
             bool globalNarrate = Main.GetIndex("Global Narrate Assistant").enabled;
@@ -193,9 +192,9 @@ Example:
                                 if (!button.enabled)
                                     Main.Toggle(button.buttonText, true);
                                 else
-                                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
+                                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
                             } else
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
 
                             break;
                         }
@@ -218,10 +217,10 @@ Example:
                                 if (button.enabled)
                                     Main.Toggle(button.buttonText, true);
                                 else
-                                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
+                                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod is already enabled.");
                             }
                             else
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
 
                             break;
                         }
@@ -242,7 +241,7 @@ Example:
                             if (button != null)
                                 Main.Toggle(button.buttonText, true);
                             else
-                                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
                             break;
                         }
                 }

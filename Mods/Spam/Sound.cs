@@ -23,8 +23,8 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
+using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -35,7 +35,7 @@ using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Mods.Spammers
+namespace iiMenu.Mods.Spam
 {
     public static class Sound
     {
@@ -153,7 +153,7 @@ namespace iiMenu.Mods.Spammers
             if (soundDownloaded.length < 20f)
                 Play2DAudio(soundDownloaded);
             
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to the soundboard.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to the soundboard.");
         }
 
         public static bool AudioIsPlaying;
@@ -259,7 +259,7 @@ namespace iiMenu.Mods.Spammers
         public static void BetaPlayTag(int id, float volume)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 if (Time.time > soundDebounce)

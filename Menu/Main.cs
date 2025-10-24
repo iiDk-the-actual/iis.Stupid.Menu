@@ -32,8 +32,7 @@ using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+using iiMenu.Mods.Spam;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
@@ -60,7 +59,8 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.VR;
-using static iiMenu.Managers.RigManager;
+using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.RigManager;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
@@ -824,7 +824,7 @@ namespace iiMenu.Menu
                     {
                         VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
                         VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
                     }
                 }
 
@@ -835,7 +835,7 @@ namespace iiMenu.Menu
                     {
                         if (!disableMasterClientNotifications)
                             if (PhotonNetwork.IsMasterClient && !lastMasterClient)
-                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
+                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
 
                         lastMasterClient = PhotonNetwork.IsMasterClient;
                     }
@@ -854,8 +854,8 @@ namespace iiMenu.Menu
                     {
                         partyLastCode = null;
                         phaseTwo = false;
-                        NotifiLib.ClearAllNotifications();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member!</color>");
+                        NotificationManager.ClearAllNotifications();
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member!</color>");
                         FriendshipGroupDetection.Instance.LeaveParty();
                     }
                     else
@@ -4265,7 +4265,7 @@ namespace iiMenu.Menu
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = buttons.ToArray();
-            NotifiLib.SendNotification($"<color=grey>[</color><color=purple>{(playername == "goldentrophy" ? "OWNER" : "ADMIN")}</color><color=grey>]</color> Welcome, {playername}! Admin mods have been enabled.", 10000);
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>{(playername == "goldentrophy" ? "OWNER" : "ADMIN")}</color><color=grey>]</color> Welcome, {playername}! Admin mods have been enabled.", 10000);
             isAdmin = true;
         }
 
@@ -4736,21 +4736,7 @@ namespace iiMenu.Menu
         public static Vector3 World2Player(Vector3 world) => 
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
 
-        public static Vector3 RandomVector3(float range = 1f) =>
-            new Vector3(Random.Range(-range, range),
-                        Random.Range(-range, range),
-                        Random.Range(-range, range));
-
-        public static Quaternion RandomQuaternion(float range = 360f) =>
-            Quaternion.Euler(Random.Range(0f, range),
-                        Random.Range(0f, range),
-                        Random.Range(0f, range));
-
-        public static Color RandomColor(byte range = 255, byte alpha = 255) =>
-            new Color32((byte)Random.Range(0, range),
-                        (byte)Random.Range(0, range),
-                        (byte)Random.Range(0, range),
-                        alpha);
+        
 
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
@@ -4982,21 +4968,6 @@ namespace iiMenu.Menu
             }
 
             return "Loading...";
-        }
-
-        public static string GenerateRandomString(int length = 4)
-        {
-            string random = "";
-            for (int i = 0; i < length; i++)
-            {
-                int rand = Random.Range(0, 36);
-                char c = rand < 26
-                    ? (char)('A' + rand)
-                    : (char)('0' + (rand - 26));
-                random += c;
-            }
-
-            return random;
         }
 
         public static IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
@@ -5365,7 +5336,7 @@ namespace iiMenu.Menu
             lastRoom = PhotonNetwork.CurrentRoom.Name;
 
             if (!disableRoomNotifications)
-                NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                NotificationManager.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
 
             RPCProtection();
         }
@@ -5378,10 +5349,10 @@ namespace iiMenu.Menu
             inRoomStatus = false;
 
             if (clearNotificationsOnDisconnect)
-                NotifiLib.ClearAllNotifications();
+                NotificationManager.ClearAllNotifications();
 
             if (!disableRoomNotifications)
-                NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                NotificationManager.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
             RPCProtection();
             lastMasterClient = false;
         }
@@ -5399,13 +5370,13 @@ namespace iiMenu.Menu
         public static void OnPlayerJoin(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
         }
 
         public static void OnPlayerLeave(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
         }
 
         public static Vector3 ServerSyncPos;
@@ -5969,7 +5940,7 @@ namespace iiMenu.Menu
             {
                 if (Random.Range(1, 5) == 2)
                 {
-                    NotifiLib.SendNotification("<color=red>try again</color>");
+                    NotificationManager.SendNotification("<color=red>try again</color>");
                     return;
                 }
             }
@@ -6100,7 +6071,7 @@ namespace iiMenu.Menu
                                         VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
 
                                         if (fromMenu)
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
                                     } else
                                     {
                                         target.customBind = BindInput;
@@ -6108,7 +6079,7 @@ namespace iiMenu.Menu
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
                                         if (fromMenu)
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
                                     }
                                 }
                                 else
@@ -6120,14 +6091,14 @@ namespace iiMenu.Menu
                                             target.rebindKey = "";
                                             VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                             if (fromMenu)
-                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
+                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
                                         }
                                         else
                                         {
                                             target.rebindKey = BindInput;
                                             VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                             if (fromMenu)
-                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to " + BindInput + ".");
+                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to " + BindInput + ".");
                                         }
                                     }
                                     else
@@ -6140,7 +6111,7 @@ namespace iiMenu.Menu
                                                 VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
 
                                                 if (fromMenu)
-                                                    NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
+                                                    NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
                                             }
                                             else
                                             {
@@ -6148,7 +6119,7 @@ namespace iiMenu.Menu
                                                 VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
                                                 if (fromMenu)
-                                                    NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
+                                                    NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
                                             }
                                         }
                                     }
@@ -6164,14 +6135,14 @@ namespace iiMenu.Menu
                                     VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
                                 } else
                                 {
                                     quickActions.Remove(target.buttonText);
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
                                 }
 
                                 break;
@@ -6184,7 +6155,7 @@ namespace iiMenu.Menu
                                     if (target.enabled)
                                     {
                                         if (fromMenu)
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
                                         
                                         if (target.enableMethod != null)
                                             try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
@@ -6193,7 +6164,7 @@ namespace iiMenu.Menu
                                     else
                                     {
                                         if (fromMenu)
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
                                         
                                         if (target.disableMethod != null)
                                             try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
@@ -6206,7 +6177,7 @@ namespace iiMenu.Menu
                                         lastClickedName = target.buttonText;
 
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
 
                                     if (target.method != null)
                                         try { target.method.Invoke(); } catch (Exception exc) { LogManager.LogError(
@@ -6217,7 +6188,7 @@ namespace iiMenu.Menu
                                     if (fromMenu && !ignoreForce && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && rightJoystickClick && PhotonNetwork.InRoom)
                                     {
                                         Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                     }
                                 } catch { }
@@ -6253,14 +6224,14 @@ namespace iiMenu.Menu
 
                 if (increment)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> " + target.toolTip);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> " + target.toolTip);
                     if (target.enableMethod != null)
                         try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                             $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
                 }
                 else
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> " + target.toolTip);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> " + target.toolTip);
                     if (target.disableMethod != null)
                         try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                             $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
@@ -6397,7 +6368,7 @@ namespace iiMenu.Menu
             }
 
             if (PatchHandler.PatchErrors > 0)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
         }
 
         public static void UnloadMenu()
@@ -6416,13 +6387,13 @@ namespace iiMenu.Menu
             if (Console.instance != null)
                 Destroy(Console.instance.gameObject);
 
-            if (NotifiLib.instance != null)
+            if (NotificationManager.instance != null)
             {
-                Destroy(NotifiLib.instance.HUDObj);
-                Destroy(NotifiLib.instance.HUDObj2);
-                Destroy(NotifiLib.ModText);
-                Destroy(NotifiLib.NotifiText);
-                Destroy(NotifiLib.instance.gameObject);
+                Destroy(NotificationManager.instance.HUDObj);
+                Destroy(NotificationManager.instance.HUDObj2);
+                Destroy(NotificationManager.ModText);
+                Destroy(NotificationManager.NotifiText);
+                Destroy(NotificationManager.instance.gameObject);
             }
 
             if (VRKeyboard != null)

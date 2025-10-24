@@ -22,6 +22,7 @@
 using GorillaLocomotion;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
 
 namespace iiMenu.Classes.Mods
 {

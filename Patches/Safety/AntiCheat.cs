@@ -20,7 +20,7 @@
  */
 
 ﻿using HarmonyLib;
-using iiMenu.Notifications;
+using iiMenu.Managers;
 using Photon.Pun;
 using static iiMenu.Menu.Main;
 
@@ -43,7 +43,7 @@ namespace iiMenu.Patches.Safety
             {
                 if (susId == PhotonNetwork.LocalPlayer.UserId)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>You have been reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>You have been reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
                     susNick.Remove(PhotonNetwork.LocalPlayer.NickName.Length);
                     susId.Remove(PhotonNetwork.LocalPlayer.UserId.Length);
                     RPCProtection();
@@ -51,14 +51,14 @@ namespace iiMenu.Patches.Safety
                 else
                 {
                     if (AntiCheatAll)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + (AntiCheatReasonHide ? "hidden reason" : susReason) + ".</color>");
                 }
             }
 
             if (AntiACReport)
             {
                 Mods.Safety.AntiReportFRT(null, false);
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
             }
 
             return false;
