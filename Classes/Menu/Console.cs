@@ -26,7 +26,6 @@ using GorillaTag.Rendering;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
-using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -67,7 +66,7 @@ namespace iiMenu.Classes.Menu
         }
 
         public static void SendNotification(string text, int sendTime = 1000) => // Method used to spawn notifications
-            NotifiLib.SendNotification(text, sendTime);
+            NotificationManager.SendNotification(text, sendTime);
 
         public static void TeleportPlayer(Vector3 position) // Only modify this if you need any special logic
         {

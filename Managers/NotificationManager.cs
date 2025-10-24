@@ -20,7 +20,6 @@
  */
 
 using iiMenu.Classes.Menu;
-using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using System;
@@ -31,14 +30,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Notifications
+namespace iiMenu.Managers
 {
     // Originally created by lars, he gave me permission
     // Modified by ii, not much though
 
-    public class NotifiLib : MonoBehaviour
+    public class NotificationManager : MonoBehaviour
     {
-        public static NotifiLib instance { get; private set; }
+        public static NotificationManager instance { get; private set; }
         public GameObject HUDObj;
         public GameObject HUDObj2;
 

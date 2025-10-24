@@ -26,8 +26,7 @@ using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Mods;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+using iiMenu.Mods.Spam;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using Photon.Pun;
@@ -37,6 +36,7 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
 using Console = iiMenu.Classes.Menu.Console;
 using Random = UnityEngine.Random;
 
@@ -176,7 +176,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Joystick Menu Position", method =() => Settings.ChangeJoystickMenuPosition(), enableMethod =() => Settings.ChangeJoystickMenuPosition(), disableMethod =() => Settings.ChangeJoystickMenuPosition(false), incremental = true, isTogglable = false, toolTip = "Changes the position of the joystick menu."},
                 new ButtonInfo { buttonText = "Change Notification Time", overlapText = "Change Notification Time <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Settings.ChangeNotificationTime(), enableMethod =() => Settings.ChangeNotificationTime(), disableMethod =() => Settings.ChangeNotificationTime(false), incremental = true, isTogglable = false, toolTip = "Changes the time before a notification is removed."},
                 new ButtonInfo { buttonText = "Change Notification Sound", overlapText = "Change Notification Sound <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Settings.ChangeNotificationSound(true, true), enableMethod =() => Settings.ChangeNotificationSound(true, true), disableMethod =() => Settings.ChangeNotificationSound(false, true), incremental = true, isTogglable = false, toolTip = "Changes the sound that plays when receiving a notification."},
-                new ButtonInfo { buttonText = "Notification Sound on Error", enableMethod =() => NotifiLib.soundOnError = true, disableMethod =() => NotifiLib.soundOnError = false, toolTip = "Plays your target notification sound when an error happens."},
+                new ButtonInfo { buttonText = "Notification Sound on Error", enableMethod =() => NotificationManager.soundOnError = true, disableMethod =() => NotificationManager.soundOnError = false, toolTip = "Plays your target notification sound when an error happens."},
                 new ButtonInfo { buttonText = "Change Narration Voice", overlapText = "Change Narration Voice <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeNarrationVoice(), enableMethod =() => Settings.ChangeNarrationVoice(), disableMethod =() => Settings.ChangeNarrationVoice(false), incremental = true, isTogglable = false, toolTip = "Changes the voice of the narrator."},
                 new ButtonInfo { buttonText = "Change Pointer Position", method =() => Settings.ChangePointerPosition(), enableMethod =() => Settings.ChangePointerPosition(), disableMethod =() => Settings.ChangePointerPosition(false), incremental = true, isTogglable = false, toolTip = "Changes the position of the pointer."},
 
@@ -212,8 +212,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
                 new ButtonInfo { buttonText = "Hide Notification Brackets", enableMethod =() => hideBrackets = true, disableMethod =() => hideBrackets = false, toolTip = "Hides brackets on all notifications."},
 
-                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = NotifiLib.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
-                new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotifiLib.noRichText = true, disableMethod =() => NotifiLib.noRichText = false, toolTip = "Removes rich text from notifications."},
+                new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = NotificationManager.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
+                new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotificationManager.noRichText = true, disableMethod =() => NotificationManager.noRichText = false, toolTip = "Removes rich text from notifications."},
 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
                 new ButtonInfo { buttonText = "Disable Master Client Notifications", enableMethod =() => disableMasterClientNotifications = true, disableMethod =() => disableMasterClientNotifications = false, toolTip = "Disables all notifications regarding master client."},
@@ -421,7 +421,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Copy Player Position", method = Important.CopyPlayerPosition, isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
-                new ButtonInfo { buttonText = "Clear Notifications", method = NotifiLib.ClearAllNotifications, isTogglable = false, toolTip = "Clears your notifications. Good for when they get stuck."},
+                new ButtonInfo { buttonText = "Clear Notifications", method = NotificationManager.ClearAllNotifications, isTogglable = false, toolTip = "Clears your notifications. Good for when they get stuck."},
 
                 new ButtonInfo { buttonText = "Anti AFK", enableMethod =() => PhotonNetworkController.Instance.disableAFKKick = true, disableMethod =() => PhotonNetworkController.Instance.disableAFKKick = false, toolTip = "Doesn't let you get kicked for being AFK."},
                 new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => NetworkTriggerPatch.enabled = true, disableMethod =() => NetworkTriggerPatch.enabled = false, toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
@@ -430,7 +430,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Physical Quit Box", enableMethod = Important.PhysicalQuitbox, disableMethod = Important.DisablePhysicalQuitbox, toolTip = "Makes the quitbox physical, letting you see and walk on it."},
                 new ButtonInfo { buttonText = "Stump Quit Box", enableMethod =() => QuitBoxPatch.teleportToStump = true, disableMethod =() => QuitBoxPatch.teleportToStump = false, toolTip = "Disables the box under the map that closes your game."},
 
-                new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotifiLib.information["REFUND"] = "Refund soon"; } else { NotifiLib.information.Remove("REFUND"); } }, enableMethod = Important.CheckNewAcc, disableMethod =() => NotifiLib.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
+                new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotificationManager.information["REFUND"] = "Refund soon"; } else { NotificationManager.information.Remove("REFUND"); } }, enableMethod = Important.CheckNewAcc, disableMethod =() => NotificationManager.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
 
                 new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
                 new ButtonInfo { buttonText = "72 FPS", method =() => Important.CapFPS(72), toolTip = "Caps your FPS at 72 frames per second."},
@@ -788,16 +788,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Last Label", method = Visuals.LastLabel, toolTip = "Puts text on your left hand, showing you how many untagged people are left."},
                 new ButtonInfo { buttonText = "Time Label", method = Visuals.TimeLabel, toolTip = "Puts text on your right hand, showing how long you've been playing for without getting tagged."},
 
-                new ButtonInfo { buttonText = "FPS Overlay", method =() => NotifiLib.information["FPS"] = lastDeltaTime.ToString(), disableMethod =() => NotifiLib.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
-                new ButtonInfo { buttonText = "Ping Overlay", method = Visuals.PingOverlay, disableMethod =() => NotifiLib.information.Remove("Ping"), toolTip = "Displays the server's ping on your screen."},
-                new ButtonInfo { buttonText = "Time Overlay", method =() => NotifiLib.information["Time"] = DateTime.Now.ToString("hh:mm tt"), disableMethod =() => NotifiLib.information.Remove("Time"), toolTip = "Displays your current time on your screen."},
-                new ButtonInfo { buttonText = "Playtime Overlay", method =() => { NotifiLib.information["Playtime"] = Visuals.OverallPlaytime; Visuals.UpdatePlaytime(); }, disableMethod =() => NotifiLib.information.Remove("Playtime"), toolTip = "Displays your play time from when the mod was enabled on your screen."},
-                new ButtonInfo { buttonText = "Lightning Time Overlay", method = Visuals.StrikeTimeOverlay, disableMethod =() => NotifiLib.information.Remove("Lightning"), toolTip = "Displays the time until lightning strikes again."},
-                new ButtonInfo { buttonText = "Room Information Overlay", method =() => { if (PhotonNetwork.InRoom) { NotifiLib.information["Room Code"] = PhotonNetwork.CurrentRoom.Name; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); } else { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); } }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
-                new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotifiLib.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotifiLib.information.Remove("Ping"); NotifiLib.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
-                new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotifiLib.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotifiLib.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
-                new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotifiLib.information["Velocity"] = $"{GorillaTagger.Instance.rigidbody.linearVelocity.magnitude:F1}m/s", disableMethod =() => NotifiLib.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
-                new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotifiLib.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
+                new ButtonInfo { buttonText = "FPS Overlay", method =() => NotificationManager.information["FPS"] = lastDeltaTime.ToString(), disableMethod =() => NotificationManager.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
+                new ButtonInfo { buttonText = "Ping Overlay", method = Visuals.PingOverlay, disableMethod =() => NotificationManager.information.Remove("Ping"), toolTip = "Displays the server's ping on your screen."},
+                new ButtonInfo { buttonText = "Time Overlay", method =() => NotificationManager.information["Time"] = DateTime.Now.ToString("hh:mm tt"), disableMethod =() => NotificationManager.information.Remove("Time"), toolTip = "Displays your current time on your screen."},
+                new ButtonInfo { buttonText = "Playtime Overlay", method =() => { NotificationManager.information["Playtime"] = Visuals.OverallPlaytime; Visuals.UpdatePlaytime(); }, disableMethod =() => NotificationManager.information.Remove("Playtime"), toolTip = "Displays your play time from when the mod was enabled on your screen."},
+                new ButtonInfo { buttonText = "Lightning Time Overlay", method = Visuals.StrikeTimeOverlay, disableMethod =() => NotificationManager.information.Remove("Lightning"), toolTip = "Displays the time until lightning strikes again."},
+                new ButtonInfo { buttonText = "Room Information Overlay", method =() => { if (PhotonNetwork.InRoom) { NotificationManager.information["Room Code"] = PhotonNetwork.CurrentRoom.Name; NotificationManager.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); } else { NotificationManager.information.Remove("Room Code"); NotificationManager.information.Remove("Players"); } }, disableMethod =() => { NotificationManager.information.Remove("Room Code"); NotificationManager.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
+                new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotificationManager.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotificationManager.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotificationManager.information.Remove("Ping"); NotificationManager.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
+                new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotificationManager.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotificationManager.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
+                new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotificationManager.information["Velocity"] = $"{GorillaTagger.Instance.rigidbody.linearVelocity.magnitude:F1}m/s", disableMethod =() => NotificationManager.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
+                new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotificationManager.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod = Visuals.WatchOn, method = Visuals.WatchStep, disableMethod = Visuals.WatchOff, toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
 
@@ -1982,11 +1982,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Search", method = Settings.Search, isTogglable = false, toolTip = "Lets you search for specific mods."},
                 new ButtonInfo { buttonText = "Global Return", method = Settings.GlobalReturn, isTogglable = false, toolTip = "Returns you to the previous category."},
                 new ButtonInfo { buttonText = "Info Screen", method = Settings.Debug, enableMethod = Settings.ShowDebug, disableMethod = Settings.HideDebug, toolTip = "Shows game and modding related information."},
-                new ButtonInfo { buttonText = "Donate Button", method =() => { NotifiLib.ClearAllNotifications(); acceptedDonations = true; File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt", "true"); Prompt("I've spent nearly two years building this menu. Your Patreon support helps me keep it growing, want to check it out?", () => Process.Start("https://patreon.com/iiDk")); }, isTogglable = false, toolTip = "An advertisement for my Patreon." },
+                new ButtonInfo { buttonText = "Donate Button", method =() => { NotificationManager.ClearAllNotifications(); acceptedDonations = true; File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt", "true"); Prompt("I've spent nearly two years building this menu. Your Patreon support helps me keep it growing, want to check it out?", () => Process.Start("https://patreon.com/iiDk")); }, isTogglable = false, toolTip = "An advertisement for my Patreon." },
                 new ButtonInfo { buttonText = "Update Button", method =() => UpdatePrompt(), isTogglable = false, toolTip = "Prompts you to update the menu." },
 
-                new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); AcceptAction?.Invoke(); }, isTogglable = false},
-                new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); DeclineAction?.Invoke(); }, isTogglable = false}
+                new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotificationManager.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); AcceptAction?.Invoke(); }, isTogglable = false},
+                new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotificationManager.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); DeclineAction?.Invoke(); }, isTogglable = false}
             },
 
             new[] { // Sound Library [26]
@@ -2152,7 +2152,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Will", method =() => Process.Start("https://github.com/64will64"), isTogglable = false, toolTip = "Will gave me the idea to make body rotation mods."},
                 new ButtonInfo { buttonText = "KyleTheScientist", method =() => Process.Start("https://github.com/KyleTheScientist"), isTogglable = false, toolTip = "KyleTheScientist gave me the idea to add \"Bark Fly\" to the menu."},
                 new ButtonInfo { buttonText = "Gorilla Dev", method =() => Process.Start("https://github.com/GorillerDev"), isTogglable = false, toolTip = "Gorilla Dev gave me the idea to add \"Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>\" to the menu."},
-                new ButtonInfo { buttonText = "Intelligence", method =() => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not find link."), isTogglable = false, toolTip = "Intelligence gave me the idea to add \"Auto Branch\" to the menu."},
+                new ButtonInfo { buttonText = "Intelligence", method =() => NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not find link."), isTogglable = false, toolTip = "Intelligence gave me the idea to add \"Auto Branch\" to the menu."},
 
                 new ButtonInfo { buttonText = "GPL v3", method =() => Process.Start("https://www.gnu.org/licenses/gpl-3.0.html"), isTogglable = false, toolTip = "The GNU General Public License Version 3 is the license that my menu uses. It proveides a \"free, copyleft license for software and other kinds of works.\""},
             },

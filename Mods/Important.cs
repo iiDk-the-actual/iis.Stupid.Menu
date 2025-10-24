@@ -24,14 +24,10 @@ using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
-using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
-using MonoMod.RuntimeDetour;
 using Photon.Pun;
-using PlayFab;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,8 +39,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
-using static BuilderMaterialOptions;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
 
@@ -315,7 +311,7 @@ exit";
             while (!newSessionDataTask.IsCompleted)
                 yield return null;
             if (newSessionDataTask.IsFaulted)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
 
             GetPlayerData_Data newSessionData = newSessionDataTask.Result;
             if (newSessionData.responseType == GetSessionResponseType.NOT_FOUND)
@@ -325,13 +321,13 @@ exit";
                 while (!optInTask.IsCompleted)
                     yield return null;
                 if (optInTask.IsFaulted)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
 
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully redeemed shiny rocks!");
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully redeemed shiny rocks!");
                 CosmeticsController.instance.GetCurrencyBalance();
             }
             else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
         }
 
         public static void JoinDiscord() =>
@@ -473,10 +469,10 @@ exit";
                 switch (thereIsTagLag)
                 {
                     case true when !lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> There is currently tag lag.");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> There is currently tag lag.");
                         break;
                     case false when lastTagLag:
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                         break;
                 }
 
@@ -484,7 +480,7 @@ exit";
             } else
             {
                 if (lastTagLag)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> There is no longer tag lag.");
                 lastTagLag = false;
             }
         }
@@ -496,7 +492,7 @@ exit";
             if (playerOnSteam && !lastSteam)
             {
                 VRRig vrrig = GorillaParent.instance.vrrigs.First(vrrig => !vrrig.IsLocal() && vrrig.IsSteam());
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig.GetName()} is on Steam.");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>STEAM</color><color=grey>]</color> {vrrig.GetName()} is on Steam.");
 
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Safety/steam.ogg", "Audio/Mods/Safety/steam.ogg"), buttonClickVolume / 10f);
             }
@@ -508,7 +504,7 @@ exit";
         {
             while (true)
             {
-                string text = GenerateRandomString();
+                string text = RandomString();
                 if (GorillaComputer.instance.CheckAutoBanListForName(text)) return text;
             }
         }

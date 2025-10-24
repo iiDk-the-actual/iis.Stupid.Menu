@@ -22,9 +22,9 @@
 using HarmonyLib;
 using PlayFab;
 using PlayFab.ClientModels;
-﻿using System;
+using System;
 using System.Collections.Generic;
-using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Patches.Safety
@@ -33,6 +33,6 @@ namespace iiMenu.Patches.Safety
     public class DisplayNamePatch
     {
         public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null) =>
-            request.DisplayName = GenerateRandomString(Random.Range(3, 12));
+            request.DisplayName = RandomString(Random.Range(1, 12));
     }
 }

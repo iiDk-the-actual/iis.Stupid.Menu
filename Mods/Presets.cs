@@ -20,7 +20,6 @@
  */
 
 using iiMenu.Managers;
-using iiMenu.Notifications;
 using System.IO;
 using static iiMenu.Menu.Main;
 
@@ -58,7 +57,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
             
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Legitimate preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Legitimate preset enabled successfully.");
         }
 
         public static void GhostPreset()
@@ -80,7 +79,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
         }
 
         public static void SaveCustomPreset(int id)
@@ -138,7 +137,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
             
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Goldentrophy preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Goldentrophy preset enabled successfully.");
         }
 
         public static void PerformancePreset()
@@ -163,7 +162,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Performance preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Performance preset enabled successfully.");
         }
 
         public static void SafetyPreset()
@@ -190,7 +189,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Safety preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Safety preset enabled successfully.");
         }
         
         public static void SimplePreset()
@@ -208,7 +207,7 @@ namespace iiMenu.Mods
             foreach (string mod in presetMods)
                 Toggle(mod);
             
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Simple preset enabled successfully.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Simple preset enabled successfully.");
         }
     }
 }

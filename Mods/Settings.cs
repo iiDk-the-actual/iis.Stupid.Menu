@@ -26,8 +26,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+using iiMenu.Mods.Spam;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -43,8 +42,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigManager;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 
@@ -182,7 +181,7 @@ namespace iiMenu.Mods
 
         public static void GlobalReturn()
         {
-            NotifiLib.ClearAllNotifications();
+            NotificationManager.ClearAllNotifications();
             Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
             IsPrompting = false;
         }
@@ -474,7 +473,7 @@ namespace iiMenu.Mods
             stream.DownloadFile(url, $"{PluginInfo.BaseDirectory}/Plugins/" + filename);
 
             LoadPlugins();
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to your plugins.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to your plugins.");
         }
 
         public static void TogglePlugin(KeyValuePair<string, Assembly> Plugin)
@@ -760,7 +759,7 @@ namespace iiMenu.Mods
                             overlapText = $"User ID: {player.UserId}",
                             method = () =>
                             {
-                                NotifiLib.SendNotification(
+                                NotificationManager.SendNotification(
                                     $"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully copied {player.UserId} to the clipboard!",
                                     5000);
                                 GUIUtility.systemCopyBuffer = player.UserId;
@@ -801,13 +800,13 @@ namespace iiMenu.Mods
             {
                 Toggle("Watch Menu");
                 Toggle("Watch Menu");
-                NotifiLib.ClearAllNotifications();
+                NotificationManager.ClearAllNotifications();
             }
 
             if (!GetIndex("Info Watch").enabled) return;
             Toggle("Info Watch");
             Toggle("Info Watch");
-            NotifiLib.ClearAllNotifications();
+            NotificationManager.ClearAllNotifications();
         }
 
         public static void LeftHand()
@@ -817,13 +816,13 @@ namespace iiMenu.Mods
             {
                 Toggle("Watch Menu");
                 Toggle("Watch Menu");
-                NotifiLib.ClearAllNotifications();
+                NotificationManager.ClearAllNotifications();
             }
 
             if (!GetIndex("Info Watch").enabled) return;
             Toggle("Info Watch");
             Toggle("Info Watch");
-            NotifiLib.ClearAllNotifications();
+            NotificationManager.ClearAllNotifications();
         }
 
         public static void ClearAllKeybinds()
@@ -861,7 +860,7 @@ namespace iiMenu.Mods
                     v.rebindKey = "";
                 }
             }
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed all rebinds.");
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed all rebinds.");
         }
 
         // The code below is fully safe. I know, it seems suspicious.
@@ -4395,7 +4394,7 @@ exit 0";
             if (fromMenu)
             {
                 audioMgr.GetComponent<AudioSource>().Stop();
-                NotifiLib.PlayNotificationSound();
+                NotificationManager.PlayNotificationSound();
             }
         }
 
@@ -4605,7 +4604,7 @@ exit 0";
             } else
             {
                 GetIndex("Disable Page Buttons").enabled = false;
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
             }
         }
 
@@ -4622,7 +4621,7 @@ exit 0";
         public static void CheckFocus()
         {
             if (!Application.isFocused && lastFocused && Time.time > timeMenuStarted + 5f)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not focused on Gorilla Tag. Voice transcription mods will not function. Please focus/click on the game.");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not focused on Gorilla Tag. Voice transcription mods will not function. Please focus/click on the game.");
 
             lastFocused = Application.isFocused;
         }
@@ -4673,7 +4672,7 @@ exit 0";
             if (dynamicSounds)
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
             
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
         }
 
         public static void ExecuteVoiceCommand(PhraseRecognizedEventArgs args)
@@ -4724,14 +4723,14 @@ exit 0";
             if (modTarget != null)
             {
                 ButtonInfo mod = GetIndex(modTarget);
-                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + ">VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + ">VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), buttonClickVolume / 10f);
                 
                 Toggle(modTarget, true, true);
             } else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+args.text+").", 3000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+args.text+").", 3000);
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
             }
@@ -4752,7 +4751,7 @@ exit 0";
                 CoroutineManager.EndCoroutine(timeoutCoroutine);
             } catch { }
             
-            NotifiLib.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
+            NotificationManager.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
             if (dynamicSounds)
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
         }
@@ -4796,7 +4795,7 @@ exit 0";
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
 
-                        NotifiLib.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
+                        NotificationManager.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
                         listening = true;
                         return;
                     } else
@@ -4812,12 +4811,12 @@ exit 0";
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                         
-                        NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
                         listening = false;
                         return;
                     }
 
-                    NotifiLib.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                     CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 }
                 else return;
@@ -4838,7 +4837,7 @@ exit 0";
                 }
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
             };
             drec.DictationError += (error, hresult) =>
             {
@@ -4849,7 +4848,7 @@ exit 0";
                     drec.Stop();
                     drec.Dispose();
 
-                    NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
                     Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => mod.enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => mod.enabled = false, "Ok :("));
                 }
             };
@@ -4860,8 +4859,8 @@ exit 0";
 
                 if (listening)
                 {
-                    NotifiLib.ClearAllNotifications();
-                    NotifiLib.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
+                    NotificationManager.ClearAllNotifications();
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
                 }
             };
             drec?.Start();
@@ -4961,7 +4960,7 @@ exit 0";
                         NavigatePlayer(GetPlayerFromVRRig(rigTarget));
                         ReloadMenu();
 
-                        NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {GetPlayerFromVRRig(rigTarget).NickName}.</color>");
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {GetPlayerFromVRRig(rigTarget).NickName}.</color>");
                     }
 
                     lastTriggerSelect = trigger;

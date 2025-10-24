@@ -23,7 +23,6 @@ using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion;
 using iiMenu.Managers;
-using iiMenu.Notifications;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -33,11 +32,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.RigManager;
 using Random = UnityEngine.Random;
 
-namespace iiMenu.Mods.Spammers
+namespace iiMenu.Mods.Spam
 {
     public static class Projectiles
     {
@@ -420,7 +420,7 @@ namespace iiMenu.Mods.Spammers
                 projDebounceIndex = 20;
 
             if (projDebounceIndex < 8 && fromMenu && (!GetIndex("Friend Sided Projectiles").enabled || !GetIndex("Client Sided Projectiles").enabled))
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.4 could get you banned. Use at your own caution.", 5000);
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.4 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
             Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);

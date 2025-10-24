@@ -24,7 +24,6 @@ using BepInEx.Logging;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Notifications;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
 using System.ComponentModel;
@@ -106,7 +105,7 @@ namespace iiMenu
 
             GameObject Loader = new GameObject("iiMenu_Loader");
             Loader.AddComponent<UI>();
-            Loader.AddComponent<NotifiLib>();
+            Loader.AddComponent<NotificationManager>();
             Loader.AddComponent<CoroutineManager>();
 
             DontDestroyOnLoad(Loader);

@@ -20,6 +20,7 @@
  */
 
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RandomUtilities;
 
 namespace iiMenu.Extensions
 {
@@ -38,6 +39,6 @@ namespace iiMenu.Extensions
             str.Length > maxLength ? str[..maxLength] : str;
 
         public static string Random(this string _, int length) =>
-            GenerateRandomString(length);
+            RandomString(length);
     }
 }

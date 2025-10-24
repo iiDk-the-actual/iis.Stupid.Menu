@@ -21,13 +21,13 @@
 
 using ExitGames.Client.Photon;
 using iiMenu.Classes.Menu;
-using iiMenu.Notifications;
+using iiMenu.Managers;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using UnityEngine;
-using static iiMenu.Managers.RigManager;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigManager;
 
 namespace iiMenu.Mods.CustomMaps.Maps
 {
@@ -268,7 +268,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                     NetPlayer Player = GetPlayerFromVRRig(vrrig);
                     CrashPlayer(Player.ActorNumber);
                     crashDelay = Time.time + 0.5f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
                 }
             });
         }
