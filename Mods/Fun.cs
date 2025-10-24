@@ -4649,7 +4649,7 @@ Piece Name: {gunTarget.name}";
                 if (Time.time > blockDelay)
                 {
                     blockDelay = Time.time + blockDebounce;
-                    BuilderPiece piece = GetAllType<BuilderPiece>()
+                    BuilderPiece piece = (GetAllType<BuilderPiece>()
                         .Where(piece => piece.gameObject.activeInHierarchy)
                         .Where(piece => piece.pieceType == pieceType)
                         .Where(piece => !piece.isBuiltIntoTable)
@@ -4657,10 +4657,7 @@ Piece Name: {gunTarget.name}";
                         .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
                         .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                         .FirstOrDefault()
-                        ?? null;
-
-                    if (piece == null)
-                        piece = GetAllType<BuilderPiece>()
+                        ?? null) ?? GetAllType<BuilderPiece>()
                             .Where(piece => piece.gameObject.activeInHierarchy)
                             .Where(piece => !piece.isBuiltIntoTable)
                             .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
