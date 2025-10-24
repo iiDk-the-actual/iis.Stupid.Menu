@@ -32,7 +32,6 @@ using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Mods;
-using iiMenu.Mods.Spam;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
 using Photon.Pun;

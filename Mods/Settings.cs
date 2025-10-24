@@ -26,7 +26,6 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods.Spam;
 using Photon.Pun;
 using Photon.Realtime;
 using System;

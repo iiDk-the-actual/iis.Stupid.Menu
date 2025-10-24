@@ -35,7 +35,7 @@ using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Mods.Spam
+namespace iiMenu.Mods
 {
     public static class Sound
     {
