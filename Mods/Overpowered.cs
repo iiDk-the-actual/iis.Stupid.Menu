@@ -3302,7 +3302,7 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembersWrapped", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { new int[] { 6, 7 }, null });
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { new int[] { 6, 7 }, null });
                         lagDebounce = Time.time + lagDelay;
                         RPCProtection();
                     }
@@ -3331,7 +3331,7 @@ namespace iiMenu.Mods
             if (Time.time > lagDebounce)
             {
                 for (int i = 0; i < lagAmount; i++)
-                    FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembersWrapped", RpcTarget.Others, new object[] { null });
+                    FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", RpcTarget.Others, new object[] { null });
                 lagDebounce = Time.time + lagDelay;
                 RPCProtection();
             }
@@ -3353,7 +3353,7 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
             {
                 for (int i = 0; i < lagAmount; i++)
-                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembersWrapped", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { null });
+                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { null });
                 lagDebounce = Time.time + lagDelay;
                 RPCProtection();
             }
@@ -3537,7 +3537,7 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembersWrapped", new RaiseEventOptions { TargetActors = actors.ToArray() }, new object[] { null });
+                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = actors.ToArray() }, new object[] { null });
                         lagDebounce = Time.time + lagDelay;
                         RPCProtection();
                     }
