@@ -1,0 +1,69 @@
+/*
+ * ii's Stupid Menu  Utilities/ControllerUtilities.cs
+ * A mod menu for Gorilla Tag with over 1000+ mods
+ *
+ * Copyright (C) 2025  Goldentrophy Software
+ * https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using iiMenu.Extensions;
+using Photon.Pun;
+using Photon.Realtime;
+using PlayFab;
+using PlayFab.ClientModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+namespace iiMenu.Utilities
+{
+    public class ControllerUtilities
+    {
+        public enum ControllerType
+        {
+            Unknown,
+            Quest2,
+            Quest3,
+            ValveIndex,
+            VIVE
+        }
+
+        public static ControllerType GetControllerType(bool left)
+        {
+            Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+            {
+                { "quest2", ControllerType.Quest2 },
+                { "quest3", ControllerType.Quest3 },
+                { "knuckles", ControllerType.ValveIndex },
+                { "vive", ControllerType.VIVE }
+            };
+
+            string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
+            foreach (var controller in controllerNames)
+            {
+                if (controllerName.Contains(controller.Key))
+                    return controller.Value;
+            }
+
+            return ControllerType.Unknown;
+        }
+
+        public static ControllerType GetLeftControllerType() => GetControllerType(true);
+        public static ControllerType GetRightControllerType() => GetControllerType(false);
+    }
+}
