@@ -43,24 +43,50 @@ namespace iiMenu.Utilities
             VIVE
         }
 
+        private static readonly Dictionary<bool, ControllerInfo> controllerInfo = new Dictionary<bool, ControllerInfo>
+        {
+            { true, new ControllerInfo { type = ControllerType.Unknown, dataCacheTime = -1f } },
+            { false, new ControllerInfo { type = ControllerType.Unknown, dataCacheTime = -1f } }
+        };
+
+        private struct ControllerInfo
+        {
+            public ControllerType type;
+            public float dataCacheTime;
+        }
+
         public static ControllerType GetControllerType(bool left)
         {
-            Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+            if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 60f)
             {
-                { "quest2", ControllerType.Quest2 },
-                { "quest3", ControllerType.Quest3 },
-                { "knuckles", ControllerType.ValveIndex },
-                { "vive", ControllerType.VIVE }
-            };
+                Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+                {
+                    { "quest2", ControllerType.Quest2 },
+                    { "quest3", ControllerType.Quest3 },
+                    { "knuckles", ControllerType.ValveIndex },
+                    { "vive", ControllerType.VIVE }
+                };
 
-            string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
-            foreach (var controller in controllerNames)
-            {
-                if (controllerName.Contains(controller.Key))
-                    return controller.Value;
+                ControllerType controllerType = ControllerType.Unknown;
+
+                string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
+                foreach (var controller in controllerNames)
+                {
+                    if (controllerName.Contains(controller.Key))
+                    {
+                        controllerType = controller.Value;
+                        break;
+                    }
+                }
+
+                controllerInfo[left] = new ControllerInfo
+                {
+                    type = controllerType,
+                    dataCacheTime = Time.time
+                };
             }
 
-            return ControllerType.Unknown;
+            return info.type;
         }
 
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
