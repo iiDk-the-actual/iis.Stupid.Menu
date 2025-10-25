@@ -6386,12 +6386,13 @@ namespace iiMenu.Menu
             if (Console.instance != null)
                 Destroy(Console.instance.gameObject);
 
-            if (NotificationManager.instance != null)
+            if (NotificationManager.Instance != null)
             {
-                Destroy(NotificationManager.instance.HUDObj);
+                Destroy(NotificationManager.Instance.HUDObj);
+                Destroy(NotificationManager.Instance.HUDObj2);
                 Destroy(NotificationManager.ModText);
                 Destroy(NotificationManager.NotifiText);
-                Destroy(NotificationManager.instance.gameObject);
+                Destroy(NotificationManager.Instance.gameObject);
             }
 
             if (VRKeyboard != null)
