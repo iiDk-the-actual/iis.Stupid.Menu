@@ -34,6 +34,7 @@ using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -123,10 +124,18 @@ namespace iiMenu.Menu
                     ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
                 }
 
-                if ((ControllerInputPoller.instance?.leftControllerDevice.name ?? "Unknown").Contains("Knuckles"))
+                switch (ControllerUtilities.GetLeftControllerType())
                 {
-                    leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
-                    rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
+                        break;
+                }
+
+                switch (ControllerUtilities.GetRightControllerType())
+                {
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
+                        break;
                 }
 
                 if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))

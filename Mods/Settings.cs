@@ -211,6 +211,9 @@ namespace iiMenu.Mods
                 case ControllerUtilities.ControllerType.ValveIndex:
                     videoName = "index";
                     break;
+                case ControllerUtilities.ControllerType.VIVE:
+                    videoName = "vive";
+                    break;
             }
 
             VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
