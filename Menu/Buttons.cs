@@ -452,6 +452,9 @@ namespace iiMenu.Menu
 
             new[] { // Safety Mods [8]
                 new ButtonInfo { buttonText = "Exit Safety Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "Disable Anti Telemetry", enableMethod =() => TelemetryPatch1.enabled = false, disableMethod =() => TelemetryPatch1.enabled = true, toolTip = "Sends client data to Another Axiom." },
+
                 new ButtonInfo { buttonText = "Recommended Safety Mods", method = Safety.GeneralSafety, disableMethod = Safety.DisableGeneral, toolTip = "Has the effects of some good general safety mods while enabled." },
 
                 new ButtonInfo { buttonText = "No Finger Movement", method = Safety.NoFinger, toolTip = "Makes your fingers not move, so you can use wall walk without getting called out." },

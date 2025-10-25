@@ -29,14 +29,15 @@ namespace iiMenu.Patches.Safety
     [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
     public class TelemetryPatch1
     {
+        public static bool enabled = true;
         private static bool Prefix(string eventName, object content, [CanBeNull] string[] customTags = null) =>
-            false;
+            !enabled;
     }
 
     [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEventPlayFab")]
     public class TelemetryPatch2
     {
         private static bool Prefix(EventContents eventContent) =>
-            false;
+            !TelemetryPatch1.enabled;
     }
 }
