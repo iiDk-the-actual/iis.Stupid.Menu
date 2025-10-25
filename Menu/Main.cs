@@ -1461,7 +1461,7 @@ namespace iiMenu.Menu
 
                         try
                         {
-                            if (button.rebindKey != "")
+                            if (button.rebindKey != null)
                             {
                                 float buttonAmount = 0f;
                                 switch (button.rebindKey)
@@ -1509,7 +1509,7 @@ namespace iiMenu.Menu
                                 rightJoystickClick = (buttonAmount > 0.5f);
                             }
                             button.method.Invoke();
-                            if (button.rebindKey != "")
+                            if (button.rebindKey != null)
                             {
                                 leftPrimary = _leftPrimary;
                                 leftSecondary = _leftSecondary;
@@ -1715,7 +1715,7 @@ namespace iiMenu.Menu
                 }
             }
             
-            if (method.rebindKey != "")
+            if (method.rebindKey != null)
             {
                 if (buttonText.text.Contains("</color><color=grey>]</color>"))
                 {
@@ -6162,9 +6162,9 @@ namespace iiMenu.Menu
                                 {
                                     if (IsRebinding)
                                     {
-                                        if (target.rebindKey != "")
+                                        if (target.rebindKey != null)
                                         {
-                                            target.rebindKey = "";
+                                            target.rebindKey = null;
                                             VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                             if (fromMenu)
                                                 NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
