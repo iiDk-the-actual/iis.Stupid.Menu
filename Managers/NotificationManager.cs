@@ -282,7 +282,7 @@ namespace iiMenu.Managers
                         }
                     }
 
-                    if ((notificationSoundIndex == 0 || !soundOnError || NotificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
+                    if (notificationSoundIndex != 0 && (!soundOnError || NotificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
                         PlayNotificationSound();
 
                     if (inputTextColor != "green")
@@ -421,6 +421,5 @@ namespace iiMenu.Managers
         }
 
         public static readonly List<Coroutine> clearCoroutines = new List<Coroutine>();
-
     }
 }
