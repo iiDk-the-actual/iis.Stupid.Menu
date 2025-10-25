@@ -855,9 +855,7 @@ namespace iiMenu.Mods
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
-                {
-                    v.rebindKey = "";
-                }
+                    v.rebindKey = null;
             }
             NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed all rebinds.");
         }
@@ -5109,7 +5107,7 @@ exit 0";
             {
                 foreach (ButtonInfo v in buttonlist)
                 {
-                    if (v.rebindKey != "")
+                    if (v.rebindKey != null)
                     {
                         if (rebindingtext == "")
                             rebindingtext += v.buttonText + ";" + v.rebindKey;

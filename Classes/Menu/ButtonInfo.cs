@@ -41,6 +41,6 @@ namespace iiMenu.Classes.Menu
         public bool incremental;
 
         public string customBind;
-        public string rebindKey = "";
+        public string rebindKey;
     }
 }
