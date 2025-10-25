@@ -198,7 +198,7 @@ namespace iiMenu.Menu
 
                     if (advancedArraylist)
                         labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
-                    if (flipArraylist)
+                    if (flipArraylist && !advancedArraylist)
                         labelStyle.alignment = TextAnchor.UpperRight;
 
                     GUI.color = guiColor;
