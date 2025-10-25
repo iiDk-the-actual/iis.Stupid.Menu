@@ -530,9 +530,7 @@ namespace iiMenu.Menu
                                                 {
                                                     try
                                                     {
-                                                        string buttonText = v.buttonText;
-                                                        if (v.overlapText != null)
-                                                            buttonText = v.overlapText;
+                                                        string buttonText = v.overlapText ?? v.buttonText;
 
                                                         if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                             searchedMods.Add(v);
@@ -552,9 +550,7 @@ namespace iiMenu.Menu
                                                             if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
                                                                 continue;
 
-                                                            string buttonText = v.buttonText;
-                                                            if (v.overlapText != null)
-                                                                buttonText = v.overlapText;
+                                                            string buttonText = v.overlapText ?? v.buttonText;
 
                                                             if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                                 searchedMods.Add(v);
@@ -1228,7 +1224,7 @@ namespace iiMenu.Menu
                                 enabledMods.AddRange(buttonList.Where(v => v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro"))));
                                 categoryIndex++;
                             }
-                            enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
+                            enabledMods = enabledMods.OrderBy(v => v.overlapText ?? v.buttonText).ToList();
                             enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
                             toSortOf = enabledMods.ToArray();
                         }
@@ -1646,6 +1642,43 @@ namespace iiMenu.Menu
 
             if (method.overlapText != null)
                 buttonText.text = method.overlapText;
+
+            if (adaptiveButtons)
+            {
+                switch (ControllerUtilities.GetLeftControllerType())
+                {
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "x", "la" },
+                                { "y", "lb" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                }
+
+                switch (ControllerUtilities.GetRightControllerType())
+                {
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "a", "ra" },
+                                { "b", "rb" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                }
+            }
             
             if (method.rebindKey != "")
             {
@@ -6690,6 +6723,7 @@ jgs \_   _/ |Oo\
         public static bool disableBoardColor;
         public static bool disableBoardTextColor;
         public static bool menuTrail;
+        public static bool adaptiveButtons = true;
         public static int pcbg;
 
         public static bool isSearching;
