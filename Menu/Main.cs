@@ -124,21 +124,8 @@ namespace iiMenu.Menu
                     ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
                 }
 
-                switch (ControllerUtilities.GetLeftControllerType())
-                {
-                    case ControllerUtilities.ControllerType.ValveIndex:
-                        leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
-                        break;
-                }
-
-                switch (ControllerUtilities.GetRightControllerType())
-                {
-                    case ControllerUtilities.ControllerType.ValveIndex:
-                        rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
-                        break;
-                }
-
-                if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
+                bool arrowKeysPressed = UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow);
+                if (arrowKeysPressed)
                 {
                     Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
                     if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
@@ -155,6 +142,29 @@ namespace iiMenu.Menu
                         leftJoystickClick = true;
                 }
 
+                if (adaptiveButtons)
+                {
+                    switch (ControllerUtilities.GetLeftControllerType())
+                    {
+                        case ControllerUtilities.ControllerType.ValveIndex:
+                            leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
+                            break;
+                        case ControllerUtilities.ControllerType.VIVE:
+                            leftPrimary = leftJoystickClick;
+                            break;
+                    }
+
+                    switch (ControllerUtilities.GetRightControllerType())
+                    {
+                        case ControllerUtilities.ControllerType.ValveIndex:
+                            rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
+                            break;
+                        case ControllerUtilities.ControllerType.VIVE:
+                            rightPrimary = rightJoystickClick;
+                            break;
+                    }
+                }
+
                 shouldBePC = UnityInput.Current.GetKey(KeyCode.E)
                             || UnityInput.Current.GetKey(KeyCode.R)
                             || UnityInput.Current.GetKey(KeyCode.F)
@@ -164,7 +174,8 @@ namespace iiMenu.Menu
                             || UnityInput.Current.GetKey(KeyCode.Minus)
                             || UnityInput.Current.GetKey(KeyCode.Equals)
                             || Mouse.current.leftButton.isPressed
-                            || Mouse.current.rightButton.isPressed;
+                            || Mouse.current.rightButton.isPressed
+                            || arrowKeysPressed;
             }
             catch { }
             #endregion
@@ -1660,6 +1671,18 @@ namespace iiMenu.Menu
 
                             break;
                         }
+                    case ControllerUtilities.ControllerType.VIVE:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "x", "ltp" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
                 }
 
                 switch (ControllerUtilities.GetRightControllerType())
@@ -1670,6 +1693,18 @@ namespace iiMenu.Menu
                             {
                                 { "a", "ra" },
                                 { "b", "rb" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                    case ControllerUtilities.ControllerType.VIVE:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "a", "rtp" }
                             };
 
                             foreach (var replacement in replacements)
