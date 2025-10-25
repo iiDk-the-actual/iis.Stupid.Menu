@@ -4360,21 +4360,22 @@ exit 0";
 
         public static readonly Dictionary<string, string> notificationSounds = new Dictionary<string, string>
         {
-            { "None",        "none" },
-            { "Pop",         "pop" },
-            { "Ding",        "ding" },
-            { "Twitter",     "twitter" },
-            { "Discord",     "discord" },
-            { "Whatsapp",    "whatsapp" },
-            { "Grindr",      "grindr" },
-            { "iOS",         "ios" },
-            { "XP Notify",   "xpnotify" },
-            { "XP Ding",   "xptrueding" },
-            { "XP Question", "xpding" },
-            { "XP Error",    "xperror" },
+            { "None",        "none"       },
+            { "Pop",         "pop"        },
+            { "Ding",        "ding"       },
+            { "Twitter",     "twitter"    },
+            { "Discord",     "discord"    },
+            { "Whatsapp",    "whatsapp"   },
+            { "Grindr",      "grindr"     },
+            { "iOS",         "ios"        },
+            { "XP Notify",   "xpnotify"   },
+            { "XP Ding",     "xptrueding" },
+            { "XP Question", "xpding"     },
+            { "XP Error",    "xperror"    },
             { "Roblox Bass", "robloxbass" },
-            { "Oculus",      "oculus" },
-            { "Nintendo",    "nintendo" }
+            { "Oculus",      "oculus"     },
+            { "Nintendo",    "nintendo"   },
+            { "Telegram",    "telegram"   }
         };
 
         public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
