@@ -26,6 +26,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -197,23 +198,19 @@ namespace iiMenu.Mods
             TutorialObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * 1f + Vector3.up * 0.25f;
             TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
 
-            Dictionary<string, string> videoByName = new Dictionary<string, string>
+            string videoName = "q2";
+            switch (ControllerUtilities.GetLeftControllerType())
             {
-                { "quest2", "q2" },
-                { "quest3", "q3" },
-                { "knuckles", "index" }
-            };
-
-            string videoName = "q3";
-            string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
-
-            foreach (var video in videoByName)
-            {
-                if (controllerName.Contains(video.Key))
-                {
-                    videoName = video.Value;
+                case ControllerUtilities.ControllerType.Unknown:
+                case ControllerUtilities.ControllerType.Quest2:
+                    videoName = "q2";
                     break;
-                }
+                case ControllerUtilities.ControllerType.Quest3:
+                    videoName = "q3";
+                    break;
+                case ControllerUtilities.ControllerType.ValveIndex:
+                    videoName = "index";
+                    break;
             }
 
             VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
