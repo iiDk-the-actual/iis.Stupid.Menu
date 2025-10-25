@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Notifications/Library.cs
+ * ii's Stupid Menu  Managers/NotificationManager.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,6 +20,7 @@
  */
 
 using iiMenu.Classes.Menu;
+using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using System;
@@ -37,8 +38,9 @@ namespace iiMenu.Managers
 
     public class NotificationManager : MonoBehaviour
     {
-        public static NotificationManager instance { get; private set; }
+        public static NotificationManager Instance { get; private set; }
         public GameObject HUDObj;
+        public GameObject HUDObj2;
 
         private GameObject MainCamera;
 
@@ -60,7 +62,7 @@ namespace iiMenu.Managers
 
         private void Start()
         {
-            instance = this;
+            Instance = this;
             LogManager.Log("Notifications loaded");
         }
 
@@ -68,6 +70,10 @@ namespace iiMenu.Managers
         {
             MainCamera = Camera.main.gameObject;
             HUDObj = new GameObject();
+            HUDObj2 = new GameObject
+            {
+                name = "NOTIFICATIONLIB_HUD_OBJ"
+            };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
             HUDObj.AddComponent<CanvasScaler>();
@@ -77,7 +83,8 @@ namespace iiMenu.Managers
             HUDObj.GetComponent<Canvas>().worldCamera = MainCamera.GetComponent<Camera>();
             HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
             HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-            HUDObj.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
+            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
+            HUDObj.transform.parent = HUDObj2.transform;
             HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
             Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
             eulerAngles.y = -270f;
@@ -144,8 +151,8 @@ namespace iiMenu.Managers
 
                 HUDObj.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
 
-                HUDObj.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-                HUDObj.transform.rotation = MainCamera.transform.rotation;
+                HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+                HUDObj2.transform.rotation = MainCamera.transform.rotation;
                 try
                 {
                     ModText.font = activeFont;
@@ -183,7 +190,8 @@ namespace iiMenu.Managers
 
                     StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
                     StatsText.color = Color.white;
-                } else
+                }
+                else
                     StatsText.text = "";
 
                 if (showEnabledModsVR)
@@ -287,7 +295,7 @@ namespace iiMenu.Managers
 
                     if (inputTextColor != "green")
                         NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
-                    
+
                     if (hideBrackets)
                         NotificationText = NotificationText.Replace("[", "").Replace("]", "");
 
@@ -374,7 +382,7 @@ namespace iiMenu.Managers
             if (string.IsNullOrEmpty(NotifiText.text))
                 return;
 
-            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries); 
+            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             if (amount >= lines.Length)
             {
