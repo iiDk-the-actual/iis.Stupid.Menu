@@ -34,6 +34,7 @@ using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Patches;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -123,13 +124,8 @@ namespace iiMenu.Menu
                     ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out rightJoystickClick);
                 }
 
-                if ((ControllerInputPoller.instance?.leftControllerDevice.name ?? "Unknown").Contains("Knuckles"))
-                {
-                    leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
-                    rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
-                }
-
-                if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
+                bool arrowKeysPressed = UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow);
+                if (arrowKeysPressed)
                 {
                     Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
                     if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
@@ -146,6 +142,29 @@ namespace iiMenu.Menu
                         leftJoystickClick = true;
                 }
 
+                if (adaptiveButtons)
+                {
+                    switch (ControllerUtilities.GetLeftControllerType())
+                    {
+                        case ControllerUtilities.ControllerType.ValveIndex:
+                            leftGrab = ControllerInputPoller.instance.leftControllerGripFloat > 0.75f;
+                            break;
+                        case ControllerUtilities.ControllerType.VIVE:
+                            leftPrimary = leftJoystickClick;
+                            break;
+                    }
+
+                    switch (ControllerUtilities.GetRightControllerType())
+                    {
+                        case ControllerUtilities.ControllerType.ValveIndex:
+                            rightGrab = ControllerInputPoller.instance.rightControllerGripFloat > 0.75f;
+                            break;
+                        case ControllerUtilities.ControllerType.VIVE:
+                            rightPrimary = rightJoystickClick;
+                            break;
+                    }
+                }
+
                 shouldBePC = UnityInput.Current.GetKey(KeyCode.E)
                             || UnityInput.Current.GetKey(KeyCode.R)
                             || UnityInput.Current.GetKey(KeyCode.F)
@@ -155,7 +174,8 @@ namespace iiMenu.Menu
                             || UnityInput.Current.GetKey(KeyCode.Minus)
                             || UnityInput.Current.GetKey(KeyCode.Equals)
                             || Mouse.current.leftButton.isPressed
-                            || Mouse.current.rightButton.isPressed;
+                            || Mouse.current.rightButton.isPressed
+                            || arrowKeysPressed;
             }
             catch { }
             #endregion
@@ -521,9 +541,7 @@ namespace iiMenu.Menu
                                                 {
                                                     try
                                                     {
-                                                        string buttonText = v.buttonText;
-                                                        if (v.overlapText != null)
-                                                            buttonText = v.overlapText;
+                                                        string buttonText = v.overlapText ?? v.buttonText;
 
                                                         if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                             searchedMods.Add(v);
@@ -543,9 +561,7 @@ namespace iiMenu.Menu
                                                             if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
                                                                 continue;
 
-                                                            string buttonText = v.buttonText;
-                                                            if (v.overlapText != null)
-                                                                buttonText = v.overlapText;
+                                                            string buttonText = v.overlapText ?? v.buttonText;
 
                                                             if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                                 searchedMods.Add(v);
@@ -1219,7 +1235,7 @@ namespace iiMenu.Menu
                                 enabledMods.AddRange(buttonList.Where(v => v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro"))));
                                 categoryIndex++;
                             }
-                            enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
+                            enabledMods = enabledMods.OrderBy(v => v.overlapText ?? v.buttonText).ToList();
                             enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
                             toSortOf = enabledMods.ToArray();
                         }
@@ -1445,7 +1461,7 @@ namespace iiMenu.Menu
 
                         try
                         {
-                            if (button.rebindKey != "")
+                            if (button.rebindKey != null)
                             {
                                 float buttonAmount = 0f;
                                 switch (button.rebindKey)
@@ -1493,7 +1509,7 @@ namespace iiMenu.Menu
                                 rightJoystickClick = (buttonAmount > 0.5f);
                             }
                             button.method.Invoke();
-                            if (button.rebindKey != "")
+                            if (button.rebindKey != null)
                             {
                                 leftPrimary = _leftPrimary;
                                 leftSecondary = _leftSecondary;
@@ -1637,8 +1653,69 @@ namespace iiMenu.Menu
 
             if (method.overlapText != null)
                 buttonText.text = method.overlapText;
+
+            if (adaptiveButtons)
+            {
+                switch (ControllerUtilities.GetLeftControllerType())
+                {
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "x", "la" },
+                                { "y", "lb" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                    case ControllerUtilities.ControllerType.VIVE:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "x", "ltp" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                }
+
+                switch (ControllerUtilities.GetRightControllerType())
+                {
+                    case ControllerUtilities.ControllerType.ValveIndex:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "a", "ra" },
+                                { "b", "rb" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                    case ControllerUtilities.ControllerType.VIVE:
+                        {
+                            Dictionary<string, string> replacements = new Dictionary<string, string>
+                            {
+                                { "a", "rtp" }
+                            };
+
+                            foreach (var replacement in replacements)
+                                buttonText.text = buttonText.text.Replace($"<color=green>{replacement.Key.ToUpper()}</color>", $"<color=green>{replacement.Value.ToUpper()}</color>");
+
+                            break;
+                        }
+                }
+            }
             
-            if (method.rebindKey != "")
+            if (method.rebindKey != null)
             {
                 if (buttonText.text.Contains("</color><color=grey>]</color>"))
                 {
@@ -6085,9 +6162,9 @@ namespace iiMenu.Menu
                                 {
                                     if (IsRebinding)
                                     {
-                                        if (target.rebindKey != "")
+                                        if (target.rebindKey != null)
                                         {
-                                            target.rebindKey = "";
+                                            target.rebindKey = null;
                                             VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                             if (fromMenu)
                                                 NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
@@ -6681,6 +6758,7 @@ jgs \_   _/ |Oo\
         public static bool disableBoardColor;
         public static bool disableBoardTextColor;
         public static bool menuTrail;
+        public static bool adaptiveButtons = true;
         public static int pcbg;
 
         public static bool isSearching;
