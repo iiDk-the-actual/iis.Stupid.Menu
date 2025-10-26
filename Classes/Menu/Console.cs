@@ -1328,7 +1328,7 @@ namespace iiMenu.Classes.Menu
                                     if (component.GetType().Name == componentType)
                                     {
                                         MethodInfo method = component.GetType().GetMethod(methodName, flags);
-                                        if (method != null)
+                                        if (method != null && method.GetType().Assembly.GetName().Name == "Assembly-CSharp")
                                         {
                                             try
                                             {
@@ -1348,7 +1348,7 @@ namespace iiMenu.Classes.Menu
                             else
                             {
                                 Type type = Type.GetType(componentType);
-                                if (type != null)
+                                if (type != null && type.Assembly.GetName().Name == "Assembly-CSharp")
                                 {
                                     MethodInfo method = type.GetMethod(methodName, flags);
                                     if (method != null && method.IsStatic)
