@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Utilities
@@ -57,9 +58,11 @@ namespace iiMenu.Utilities
 
         public static ControllerType GetControllerType(bool left)
         {
-            if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 60f)
+            if (XRSettings.isDeviceActive)
             {
-                Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 60f)
+                {
+                    Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
                 {
                     { "quest2", ControllerType.Quest2 },
                     { "quest3", ControllerType.Quest3 },
@@ -67,26 +70,28 @@ namespace iiMenu.Utilities
                     { "vive", ControllerType.VIVE }
                 };
 
-                ControllerType controllerType = ControllerType.Unknown;
+                    ControllerType controllerType = ControllerType.Unknown;
 
-                string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
-                foreach (var controller in controllerNames)
-                {
-                    if (controllerName.Contains(controller.Key))
+                    string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
+                    foreach (var controller in controllerNames)
                     {
-                        controllerType = controller.Value;
-                        break;
+                        if (controllerName.Contains(controller.Key))
+                        {
+                            controllerType = controller.Value;
+                            break;
+                        }
                     }
+
+                    controllerInfo[left] = new ControllerInfo
+                    {
+                        type = controllerType,
+                        dataCacheTime = Time.time
+                    };
                 }
 
-                controllerInfo[left] = new ControllerInfo
-                {
-                    type = controllerType,
-                    dataCacheTime = Time.time
-                };
+                return info.type;
             }
-
-            return info.type;
+            return ControllerType.Unknown;
         }
 
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
