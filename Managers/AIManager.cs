@@ -129,7 +129,7 @@ Example:
 
             text = URLEncode(text);
             string prompt = URLEncode(string.Format(SystemPrompt, Main.fullModAmount, Main.serverLink, PluginInfo.Version));
-            string api = $"https://text.pollinations.ai/{text}?system={prompt}?private=true";
+            string api = $"https://text.pollinations.ai/{text}?system={prompt}?private=true?model=openai";
 
             using UnityWebRequest request = UnityWebRequest.Get(api);
             request.downloadHandler = new DownloadHandlerBuffer();
