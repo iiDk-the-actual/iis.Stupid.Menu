@@ -117,10 +117,7 @@ namespace iiMenu.Patches.Menu
         {
             if (AntiCrashPatch.enabled)
             {
-                callTimestamps.Add(Time.time);
-                callTimestamps.RemoveAll(t => Time.time - t > 1);
-
-                return callTimestamps.Count < 15;
+                return false;
             }
             return true;
         }
