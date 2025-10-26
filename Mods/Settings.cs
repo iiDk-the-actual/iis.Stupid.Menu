@@ -27,6 +27,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Utilities;
+using Modio.Mods;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -4631,12 +4632,12 @@ exit 0";
         private static readonly string[] cancelKeywords = { "nevermind", "cancel", "never mind", "stop", "i hate you", "die" };
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(keyWords);
-            mainPhrases.OnPhraseRecognized += ModRecognition;
-            mainPhrases.Start();
             if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt"))
                 File.WriteAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt", keyWords);
             keyWords = File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt");
+            mainPhrases = new KeywordRecognizer(keyWords);
+            mainPhrases.OnPhraseRecognized += ModRecognition;
+            mainPhrases.Start();          
         }
 
         private static Coroutine timeoutCoroutine;
@@ -4756,68 +4757,75 @@ exit 0";
 
         public static void VoiceRecognitionOff()
         {
-            mainPhrases?.Stop();
             mainPhrases?.Dispose();
-            modPhrases?.Stop();
+            mainPhrases?.Stop();
             modPhrases?.Dispose();
-
+            modPhrases?.Stop();
             mainPhrases = null;
             modPhrases = null;
+            PhraseRecognitionSystem.Shutdown();
         }
 
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         public static DictationRecognizer drec;
-        public static bool listening;
+        public static KeywordRecognizer krec;
         public static bool debugDictation;
         public static bool restartOnFocus;
-        public static void DictationOn()
+
+        public static IEnumerator DictationOn()
         {
             ButtonInfo mod = GetIndex("AI Assistant");
+            ButtonInfo vc = GetIndex("Voice Commands");
+            if (vc.enabled)
+                Prompt("You currently have Voice Commands enabled. Would you like to disable it?", () => vc.enabled = false, () => mod.enabled = false);
+            else if (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
+                PromptSingle("You can not use AI Assistant while you have another voice-related mod on.", () => mod.enabled = false, "Ok");
+
             if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt"))
                 File.WriteAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt", keyWords);
             keyWords = File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt");
+
+            while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
+                yield return null;
+
+            krec = new KeywordRecognizer(keyWords);
+            krec.OnPhraseRecognized += (args) => CoroutineManager.instance.StartCoroutine(DictationRecognizer());
+            krec.Start();
+            yield break;
+        }
+        public static IEnumerator DictationRecognizer()
+        {
+            ButtonInfo mod = GetIndex("AI Assistant");
 
             if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
                 PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
             else if (Application.platform != RuntimePlatform.WindowsPlayer) 
                 PromptSingle("You must be on Windows 10 or greater for this mod to run.", () => mod.enabled = false);
 
+            PhraseRecognitionSystem.Shutdown();
+            while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
+                yield return null;
+
+            if (dynamicSounds)
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+            NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
+
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
                 LogManager.Log($"Dictation result: {text}");
-                if (!listening)
+                if (cancelKeywords.Contains(text.ToLower()))
                 {
-                    if (keyWords.Contains(text.ToLower()))
-                    {
-                        if (dynamicSounds)
-                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
-
-                        NotificationManager.SendNotification("<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Listening...", 3000);
-                        listening = true;
-                        return;
-                    } else
-                    {
-                        if (debugDictation)
-                            LogManager.LogWarning("Ignoring input as we aren't supposted to be listening");
-                    }
-                }
-                if (listening)
-                {
-                    if (cancelKeywords.Contains(text.ToLower()))
-                    {
-                        if (dynamicSounds)
-                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                    if (dynamicSounds)
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                         
-                        NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
-                        listening = false;
-                        return;
-                    }
-
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
-                    CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
+                    CoroutineManager.RunCoroutine(DictationRestart());
+                    return;
                 }
-                else return;
+
+                NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
+                CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 
                     
             };
@@ -4825,17 +4833,14 @@ exit 0";
             {
                 if (debugDictation)
                     LogManager.Log($"completion cause: {completionCause}");
-                if (!listening)
+                if (completionCause.ToString() == "TimeoutExceeded")
                 {
-                    if (Application.isFocused)
-                        drec?.Start();
-                    else
-                        restartOnFocus = true;
-                    return;
+                    if (dynamicSounds)
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
                 }
-                if (dynamicSounds)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
-                NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
+                
+
             };
             drec.DictationError += (error, hresult) =>
             {
@@ -4843,8 +4848,7 @@ exit 0";
                     LogManager.LogError($"Dictation error: {error}");
                 if (error.Contains("Dictation support is not enabled on this device"))
                 {
-                    drec.Stop();
-                    drec.Dispose();
+                    DictationOff();
 
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
                     Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => mod.enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => mod.enabled = false, "Ok :("));
@@ -4855,31 +4859,27 @@ exit 0";
                 if (debugDictation)
                     LogManager.Log($"Hypothesis: {text}");
 
-                if (listening)
-                {
-                    NotificationManager.ClearAllNotifications();
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
-                }
+                NotificationManager.ClearAllNotifications();
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
             };
             drec?.Start();
+            yield break;
         }
 
-        public static void FocusCheck()
+        public static IEnumerator DictationRestart()
         {
-            CheckFocus();
-            if (!Application.isFocused)
-                restartOnFocus = true;
-            if (Application.isFocused && restartOnFocus)
-            {
-                drec?.Start();
-                restartOnFocus = false;
-            }
+            DictationOff();
+            while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
+                yield return null;
+            CoroutineManager.RunCoroutine(DictationOn());
+            yield break;
         }
-        public static void DictationOff()
+        public static void DictationOff() 
         {
-            listening = false;
-            drec?.Stop();
             drec?.Dispose();
+            drec?.Stop();
+            drec = null;
+            PhraseRecognitionSystem.Shutdown();
         }
 
         public static GameObject selectObject;

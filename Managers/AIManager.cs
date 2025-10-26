@@ -68,6 +68,13 @@ Same as ENABLEMOD, but its counterpart instead disabling the mod of request.
 <TOGGLEMOD_""Modname"">
 Runs ENABLEMOD when mod is disabled, runs DISABLEMOD when mod is enabled, simply flipping the switch.
 
+<JOINROOM_""Roomcode"">
+If someone requests to join a room, run this command with the room name they specify inside the command.
+For example, if they say ""Join the room mod"", then do <JOINROOM_""MOD"">
+
+If they ask to join a random room, substitude the room code for ""random""
+For example, if they say ""Join a random room"", do <JOINROOM_""RANDOM"">
+
 Run these commands when a user asks for them.
 Example:
 - Q: Can you turn on Fly for me?
@@ -139,7 +146,6 @@ Example:
             {
                 LogManager.LogError($"Error contacting AI api {request.error}");
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
-                Settings.listening = false; 
                 yield break;
             }
 
@@ -244,10 +250,20 @@ Example:
                                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{argument}\" does not exist.");
                             break;
                         }
+                    case "JOINROOM":
+                        {
+                            if (argument.ToLower() == "random")
+                                Important.JoinRandom();
+                            Important.CreateRoom(argument.ToUpper(), false);
+                            break;
+                        }
                 }
             }
 
-            Settings.listening = false;
+            if (!Main.GetIndex("Chain Voice Commands").enabled)
+                CoroutineManager.RunCoroutine(Settings.DictationRestart());
+            yield break;
+            
         }
     }
 }
