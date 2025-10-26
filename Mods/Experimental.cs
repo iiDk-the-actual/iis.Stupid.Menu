@@ -27,6 +27,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using Modio.Mods;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -41,6 +42,7 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static UnityEngine.Rendering.DebugUI;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -758,6 +760,22 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static bool muted;
+        public static void AdminMute()
+        {
+            if (leftTrigger > 0.5f && !muted)
+            {
+                Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Mute Microphone", true);
+                muted = true;
+            }
+            else if (leftTrigger < 0.5f && muted)
+            {
+                Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Mute Microphone", false);
+                muted = false;
+            }
+            
         }
 
         private static readonly Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
