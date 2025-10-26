@@ -865,16 +865,16 @@ namespace iiMenu.Mods
         {
             if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Windows))
             {
+                string logoLines = "";
+                foreach (string line in PluginInfo.Logo.Split(@"
+"))
+                    logoLines += System.Environment.NewLine + @" ""    " + line + @" """;
                 string updateScript = @"@echo off
 title ii's Stupid Menu
 color 0E
 
 cls
-echo.
-echo      ••╹   ┏┓     • ┓  ┳┳┓      
-echo      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-echo      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-echo                 ┛               
+echo." + logoLines + @"
 echo.
 
 echo Your menu is updating, please wait...
@@ -928,13 +928,13 @@ exit";
             if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Linux))
             {
         
+                string logoLines = "";
+                foreach (string line in PluginInfo.Logo.Split(@"
+"))
+                    logoLines += System.Environment.NewLine + @" ""    " + line + @" """;
 string updateScript = @"#!/bin/bash
 clear
-echo
-echo ""      ••╹   ┏┓     • ┓  ┳┳┓      ""
-echo ""      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏""
-echo ""      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻""
-echo ""                 ┛               ""
+echo " + logoLines + @"
 echo
 echo ""Your menu is updating, please wait...""
 echo

@@ -52,6 +52,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
@@ -6293,7 +6294,17 @@ Piece Name: {gunTarget.name}";
         public static int pageNumber = 0;
         public static void ConsoleFrame()
         {
-            int pageSize = (System.Console.WindowHeight - 12);
+            int halfPoint = Mathf.FloorToInt((System.Console.WindowWidth - 1) / 2f);
+            string logoPrefix = "";
+            for (int i = 0; i < halfPoint - math.floor(PluginInfo.Logo.Split(@"
+")[0].Length * 0.5); i++)
+                logoPrefix += " ";
+            string logo = logoPrefix + PluginInfo.Logo.Replace(@"
+",  @"
+" + logoPrefix);
+            
+            int pageSize = (System.Console.WindowHeight - 9) - (logo.Split(@"
+").Length - 1);
             if (Time.frameCount % 1000 == 0)
                 System.Console.Clear();
 
@@ -6334,11 +6345,12 @@ Piece Name: {gunTarget.name}";
 
             if (System.Console.KeyAvailable)
             {
-                var key = System.Console.ReadKey(true);
-                string stringKey = key.KeyChar.ToString();
                 int buttonCount = categoryButtonsPre.Length % pageSize;
                 if (pageCount != pageNumber)
                     buttonCount = pageSize;
+                
+                var key = System.Console.ReadKey(true);
+                string stringKey = key.KeyChar.ToString();
                 switch (key.Key)
                 {
                     case ConsoleKey.Backspace:
@@ -6407,16 +6419,10 @@ Piece Name: {gunTarget.name}";
                         break;
                 }
             }
-
-            int halfPoint = Mathf.FloorToInt((System.Console.WindowWidth - 1) / 2f);
             
             string screenLine = "";
             for (int i = 0; i < System.Console.WindowWidth - 1; i++)
                 screenLine += "-";
-
-            string logoPrefix = "";
-            for (int i = 0; i < halfPoint - 13; i++)
-                logoPrefix += " ";
             
             string infoPrefix = "";
             for (int i = 0; i < halfPoint - 16; i++)
@@ -6425,9 +6431,7 @@ Piece Name: {gunTarget.name}";
             System.Console.WriteLine(
                 largeNewLine +
                 @"
-" + logoPrefix + @"••╹   ┏┓     • ┓  ┳┳┓      
-" + logoPrefix + @"┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-" + logoPrefix + @"┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+" + logo + @"
 " + infoPrefix + @"> Use the arrow keys to navigate.
 " + screenLine + modList + @"
 " + screenLine + @"

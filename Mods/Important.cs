@@ -174,16 +174,17 @@ namespace iiMenu.Mods
         // The code below is fully safe. I know, it seems suspicious.
         public static void RestartGame()
         {
+            string logoLines = "";
+            foreach (string line in PluginInfo.Logo.Split(@"
+"))
+                logoLines += System.Environment.NewLine + "echo      " + line;
+            
             string restartScript = @"@echo off
 title ii's Stupid Menu
 color 0E
 
 cls
-echo.
-echo      ••╹   ┏┓     • ┓  ┳┳┓      
-echo      ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-echo      ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-echo                 ┛               
+echo." + logoLines + @"
 echo.
 
 echo Your game is restarting, please wait...
@@ -198,7 +199,7 @@ if %ERRORLEVEL%==0 (
 
 start steam://run/1533390
 exit";
-
+            
             string fileName = $"{PluginInfo.BaseDirectory}/RestartScript.bat";
 
             File.WriteAllText(fileName, restartScript);
