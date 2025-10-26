@@ -50,9 +50,7 @@ Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https
 |<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|✅|❌|
 |<img src="Resources/GitHub/linux.png" height=20px> Linux|✅|⚠️|✅|✅|❌|
 
-> ✅ Works as intended
-> ⚠️ Semi functional
-> ❌ Does not work
+> ✅ Works as intended ; ⚠️ Semi functional ; ❌ Does not work
 
 ---
 
