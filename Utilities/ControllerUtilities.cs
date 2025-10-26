@@ -73,6 +73,8 @@ namespace iiMenu.Utilities
                     ControllerType controllerType = ControllerType.Unknown;
 
                     string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
+                    if (controllerName is null)
+                        return ControllerType.Unknown;
                     foreach (var controller in controllerNames)
                     {
                         if (controllerName.Contains(controller.Key))
