@@ -4813,7 +4813,8 @@ exit 0";
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
-                LogManager.Log($"Dictation result: {text}");
+                if (debugDictation)
+                    LogManager.Log($"Dictation result: {text}");
                 if (cancelKeywords.Contains(text.ToLower()))
                 {
                     if (dynamicSounds)
