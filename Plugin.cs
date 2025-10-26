@@ -48,12 +48,12 @@ namespace iiMenu
             Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
             instance = this;
 
-            LogManager.Log($@"
-
-     ••╹   ┏┓     • ┓  ┳┳┓      
-     ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
-     ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
-                ┛               
+            string logoLines = "";
+            foreach (string line in PluginInfo.Logo.Split(@"
+"))
+                logoLines += System.Environment.NewLine + "     " + line;
+            
+            LogManager.Log($@"{logoLines}
     ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
     
