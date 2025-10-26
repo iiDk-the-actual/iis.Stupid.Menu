@@ -329,6 +329,7 @@ exit";
             }
             else
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
+            yield break;
         }
 
         public static void JoinDiscord() =>
