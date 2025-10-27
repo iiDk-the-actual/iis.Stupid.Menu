@@ -986,6 +986,17 @@ namespace iiMenu.Mods
                     gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
 
                 if (entities.Count <= 0)
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0) // Desperate measures
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash).ToList();
+
+                if (entities.Count <= 0)
                     return;
 
                 GameEntity entity = entities[Random.Range(0, entities.Count)];
