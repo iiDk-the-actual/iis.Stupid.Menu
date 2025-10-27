@@ -64,7 +64,7 @@ namespace iiMenu.Utilities
                 if (controller == null)
                     return ControllerType.Unknown;
 
-                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 60f)
+                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 1f)
                 {
                     Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
                     {
