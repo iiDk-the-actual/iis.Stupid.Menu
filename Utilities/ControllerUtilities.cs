@@ -60,26 +60,28 @@ namespace iiMenu.Utilities
         {
             if (XRSettings.isDeviceActive)
             {
-                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 60f)
+                InputDevice controller = left ? ControllerInputPoller.instance.leftControllerDevice : ControllerInputPoller.instance.rightControllerDevice;
+                if (controller == null)
+                    return ControllerType.Unknown;
+
+                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 1f)
                 {
                     Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
-                {
-                    { "quest2", ControllerType.Quest2 },
-                    { "quest3", ControllerType.Quest3 },
-                    { "knuckles", ControllerType.ValveIndex },
-                    { "vive", ControllerType.VIVE }
-                };
+                    {
+                        { "quest2", ControllerType.Quest2 },
+                        { "quest3", ControllerType.Quest3 },
+                        { "knuckles", ControllerType.ValveIndex },
+                        { "vive", ControllerType.VIVE }
+                    };
 
                     ControllerType controllerType = ControllerType.Unknown;
-
-                    string controllerName = ControllerInputPoller.instance.leftControllerDevice.name.ToLower();
-                    if (controllerName is null)
-                        return ControllerType.Unknown;
-                    foreach (var controller in controllerNames)
+                    string controllerName = controller.name.ToLower();
+                    
+                    foreach (var controllerValue in controllerNames)
                     {
-                        if (controllerName.Contains(controller.Key))
+                        if (controllerName.Contains(controllerValue.Key))
                         {
-                            controllerType = controller.Value;
+                            controllerType = controllerValue.Value;
                             break;
                         }
                     }
@@ -93,6 +95,7 @@ namespace iiMenu.Utilities
 
                 return info.type;
             }
+
             return ControllerType.Unknown;
         }
 

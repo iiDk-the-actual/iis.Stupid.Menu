@@ -961,7 +961,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                float maxDistance = 15f;
+                float maxDistance = 12f;
                 if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
                     position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
 
@@ -969,7 +969,13 @@ namespace iiMenu.Mods
 
                 GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
                 if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
-                    gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, velocity, angVelocity);
+                {
+                    VRRig.LocalRig.enabled = true;
+                    if (ServerSyncLeftHandPos.Distance(position) < maxDistance)
+                        gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, velocity, angVelocity);
+                    else
+                        return;
+                }
 
                 List<GameEntity> entities = gameEntityManager.entities.Where(e => 
                     e != null && 
@@ -984,6 +990,17 @@ namespace iiMenu.Mods
                     e.typeId == hash &&
                     Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
                     gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0)
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0) // Desperate measures
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash).ToList();
 
                 if (entities.Count <= 0)
                     return;
@@ -1001,15 +1018,14 @@ namespace iiMenu.Mods
                     CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
                 }
 
-                if (Vector3.Distance(entity.transform.position, ServerPos) < 25f && Time.time > ghostReactorDelay)
+                if (Vector3.Distance(entity.transform.position, ServerPos) < maxDistance && Time.time > ghostReactorDelay)
                 {
-                    ghostReactorDelay = Time.time + 0.05f;
+                    ghostReactorDelay = Time.time + 0.1f;
 
                     entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     entity.transform.rotation = RandomQuaternion();
 
                     entity.RequestGrab(true, Vector3.zero, Quaternion.identity);
-                    entity.RequestThrow(true, position, velocity, angVelocity);
                 }
             }
         }
