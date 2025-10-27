@@ -167,9 +167,9 @@ Example:
             if (narrate)
             {
                 if (globalNarrate && PhotonNetwork.InRoom)
-                    CoroutineManager.instance.StartCoroutine(Main.SpeakText(formatResponse));
+                    Main.SpeakText(formatResponse);
                 else
-                    CoroutineManager.instance.StartCoroutine(Main.NarrateText(formatResponse));
+                    Main.NarrateText(formatResponse);
             }
             
             foreach (Match match in matches)
@@ -261,7 +261,7 @@ Example:
             }
 
             if (!Main.GetIndex("Chain Voice Commands").enabled)
-                CoroutineManager.RunCoroutine(Settings.DictationRestart());
+                CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
             yield break;
             
         }

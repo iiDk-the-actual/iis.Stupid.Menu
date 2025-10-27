@@ -335,7 +335,7 @@ namespace iiMenu.Managers
                             NotifiText.text = NotificationText;
                     }
 
-                    CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
+                    CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
 
                     if (noRichText)
                         NotifiText.text = NoRichtextTags(NotifiText.text);
@@ -352,7 +352,7 @@ namespace iiMenu.Managers
                     {
                         try
                         {
-                            CoroutineManager.RunCoroutine(NarrateText(NoRichtextTags(NotificationText)));
+                            NarrateText(NoRichtextTags(NotificationText));
                         }
                         catch { }
                     }

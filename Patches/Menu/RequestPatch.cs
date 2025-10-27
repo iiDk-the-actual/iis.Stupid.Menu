@@ -52,7 +52,7 @@ namespace iiMenu.Patches.Menu
 
                     if (enabled)
                     {
-                        currentCoroutine ??= CoroutineManager.RunCoroutine(LoadCosmetics());
+                        currentCoroutine ??= CoroutineManager.instance.StartCoroutine(LoadCosmetics());
                         return false;
                     }
 

@@ -58,6 +58,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.XR;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
@@ -1634,7 +1635,7 @@ namespace iiMenu.Menu
                     }
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
+                    CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
                     RoundObj(buttonObject);
@@ -2030,7 +2031,7 @@ namespace iiMenu.Menu
                 colorChanger.colors = colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
             }
             else
-                CoroutineManager.RunCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
+                CoroutineManager.instance.StartCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -2100,7 +2101,7 @@ namespace iiMenu.Menu
                     colorChanger.colors = buttonColors[0];
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
+                    CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
                     RoundObj(buttonObject);
@@ -2970,7 +2971,7 @@ namespace iiMenu.Menu
             CreateMenu();
 
             if (dynamicAnimations)
-                CoroutineManager.RunCoroutine(GrowCoroutine());
+                CoroutineManager.instance.StartCoroutine(GrowCoroutine());
 
             if (joystickMenu) return;
             if (reference == null)
@@ -3075,7 +3076,7 @@ namespace iiMenu.Menu
             }
             else
             {
-                CoroutineManager.RunCoroutine(ShrinkCoroutine());
+                CoroutineManager.instance.StartCoroutine(ShrinkCoroutine());
 
                 Destroy(reference);
                 reference = null;
@@ -3274,7 +3275,7 @@ namespace iiMenu.Menu
                     }
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(0, button.GetComponent<Renderer>()));
+                    CoroutineManager.instance.StartCoroutine(ButtonClick(0, button.GetComponent<Renderer>()));
 
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
@@ -3349,7 +3350,7 @@ namespace iiMenu.Menu
                     }
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(1, button.GetComponent<Renderer>()));
+                    CoroutineManager.instance.StartCoroutine(ButtonClick(1, button.GetComponent<Renderer>()));
 
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
@@ -3445,7 +3446,7 @@ namespace iiMenu.Menu
                 colorChanger.colors = color;
             }
             else
-                CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
+                CoroutineManager.instance.StartCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
 
             Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
             text.font = activeFont;
@@ -4233,10 +4234,13 @@ namespace iiMenu.Menu
         public static Vector3 GetGunDirection(Transform transform) =>
             new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? TrueRightHand().forward : TrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
 
-        public static IEnumerator NarrateText(string text)
+        public static IEnumerator TranscribeText(string text, Action<AudioClip> onComplete)
         {
             if (Time.time < timeMenuStarted + 5f)
+            {
+                onComplete?.Invoke(null);
                 yield break;
+            }
 
             string fileName = $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
             string directoryPath = $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
@@ -4247,93 +4251,143 @@ namespace iiMenu.Menu
 
             if (!File.Exists(filePath))
             {
-                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
-
-                if (narratorIndex == 0)
+                switch (narratorIndex)
                 {
-                    using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
-                    byte[] raw = Encoding.UTF8.GetBytes(postData);
+                    // My endpoint
+                    case 0:
+                        {
+                            string postData = JsonConvert.SerializeObject(new { text });
 
-                    request.uploadHandler = new UploadHandlerRaw(raw);
-                    request.SetRequestHeader("Content-Type", "application/json");
+                            using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                            byte[] raw = Encoding.UTF8.GetBytes(postData);
 
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                    yield return request.SendWebRequest();
+                            request.uploadHandler = new UploadHandlerRaw(raw);
+                            request.SetRequestHeader("Content-Type", "application/json");
+                            request.downloadHandler = new DownloadHandlerBuffer();
 
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        LogManager.LogError("Error downloading TTS: " + request.error);
-                        yield break;
-                    }
+                            yield return request.SendWebRequest();
 
-                    byte[] response = request.downloadHandler.data;
-                    File.WriteAllBytes(filePath, response);
-                } else
-                {
-                    using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
-                    yield return request.SendWebRequest();
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error downloading TTS: " + request.error);
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
 
-                    if (request.result != UnityWebRequest.Result.Success)
-                        LogManager.LogError("Error downloading TTS: " + request.error);
-                    else
-                        File.WriteAllBytes(filePath, request.downloadHandler.data);
+                            byte[] response = request.downloadHandler.data;
+                            File.WriteAllBytes(filePath, response);
+
+                            break;
+                        }
+
+                    // StreamElements TTS voices
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                        {
+                            using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + request.error);
+                            else
+                                File.WriteAllBytes(filePath, request.downloadHandler.data);
+
+                            break;
+                        }
+
+                    // TikTok via "gesserit"
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                        {
+                            Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
+                            {
+                                { 9, "en_us_001" },
+                                { 10, "en_female_grandma" },
+                                { 11, "en_male_grinch" },
+                                { 12, "en_male_ukneighbor" },
+                                { 13, "en_us_ghostface" },
+                            };
+
+                            string postData = JsonConvert.SerializeObject(new { text, voice = voiceCodenames[narratorIndex] });
+
+                            using UnityWebRequest request = new UnityWebRequest("https://gesserit.co/api/tiktok-tts", "POST");
+                            byte[] raw = Encoding.UTF8.GetBytes(postData);
+
+                            request.uploadHandler = new UploadHandlerRaw(raw);
+                            request.SetRequestHeader("Content-Type", "application/json");
+                            request.downloadHandler = new DownloadHandlerBuffer();
+
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error downloading TTS: " + request.error);
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResponse);
+
+                            if (responseData != null && responseData.ContainsKey("audioUrl"))
+                            {
+                                string audioUrl = responseData["audioUrl"];
+
+                                if (audioUrl.StartsWith("data:audio/mp3;base64,"))
+                                {
+                                    string base64Data = audioUrl["data:audio/mp3;base64,".Length..];
+
+                                    try
+                                    {
+                                        byte[] audioBytes = Convert.FromBase64String(base64Data);
+
+                                        if (!filePath.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+                                            filePath = Path.ChangeExtension(filePath, ".mp3");
+
+                                        File.WriteAllBytes(filePath, audioBytes);
+                                        LogManager.Log("TTS audio saved to: " + filePath);
+                                    }
+                                    catch (FormatException ex)
+                                    {
+                                        LogManager.LogError("Invalid base64 data in audioUrl: " + ex.Message);
+                                        onComplete?.Invoke(null);
+                                    }
+                                }
+                                else
+                                {
+                                    LogManager.LogError("Unexpected audioUrl format: " + audioUrl);
+                                    onComplete?.Invoke(null);
+                                }
+                            }
+                            else
+                            {
+                                LogManager.LogError("No audioUrl found in response");
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
+
+                            break;
+                        }
                 }
             }
 
-            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
-            Play2DAudio(clip, buttonClickVolume / 10f);
+            onComplete?.Invoke(LoadSoundFromFile($"{directoryPath[$"{PluginInfo.BaseDirectory}/".Length..]}/{fileName}"));
         }
 
-        public static IEnumerator SpeakText(string text)
-        {
-            if (Time.time < timeMenuStarted + 5f)
-                yield break;
+        public static void NarrateText(string text) =>
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
 
-            string fileName = $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
-            string directoryPath = $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
-            string filePath = directoryPath + "/" + fileName;
-
-            if (!Directory.Exists(directoryPath))
-                Directory.CreateDirectory(directoryPath);
-
-            if (!File.Exists(filePath))
-            {
-                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
-
-                if (narratorIndex == 0)
-                {
-                    using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
-                    byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                    request.uploadHandler = new UploadHandlerRaw(raw);
-                    request.SetRequestHeader("Content-Type", "application/json");
-
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                    yield return request.SendWebRequest();
-
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        LogManager.LogError("Error downloading TTS: " + request.error);
-                        yield break;
-                    }
-
-                    byte[] response = request.downloadHandler.data;
-                    File.WriteAllBytes(filePath, response);
-                }
-                else
-                {
-                    using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
-                    yield return request.SendWebRequest();
-
-                    if (request.result != UnityWebRequest.Result.Success)
-                        LogManager.LogError("Error downloading TTS: " + request.error);
-                    else
-                        File.WriteAllBytes(filePath, request.downloadHandler.data);
-                }
-            }
-
-            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
-        }
+        public static void SpeakText(string text) =>
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
 
         public static bool isAdmin;
         public static void SetupAdminPanel(string playername)
@@ -6439,7 +6493,7 @@ namespace iiMenu.Menu
                     Settings.LoadPreferences();
                 } catch
                 {
-                    CoroutineManager.RunCoroutine(DelayLoadPreferences());
+                    CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
                 }
             }
 

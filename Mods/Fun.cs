@@ -425,14 +425,14 @@ namespace iiMenu.Mods
             Coroutine thisCoroutine = partyKickDelayCoroutine;
             partyKickDelayCoroutine = null;
 
-            CoroutineManager.EndCoroutine(thisCoroutine);
+            CoroutineManager.instance.StopCoroutine(thisCoroutine);
         }
 
         public static bool previousInParty;
         public static void AutoPartyKick()
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
-                partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(false));
+                partyKickDelayCoroutine ??= CoroutineManager.instance.StartCoroutine(PartyKickDelay(false));
             
             previousInParty = FriendshipGroupDetection.Instance.IsInParty;
         }
@@ -440,7 +440,7 @@ namespace iiMenu.Mods
         public static void AutoPartyBan()
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
-                partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(true));
+                partyKickDelayCoroutine ??= CoroutineManager.instance.StartCoroutine(PartyKickDelay(true));
 
             previousInParty = FriendshipGroupDetection.Instance.IsInParty;
         }
@@ -1862,12 +1862,12 @@ namespace iiMenu.Mods
                 {
                     GorillaTagger.Instance.myRecorder.IsRecording = true;
                     if (PhotonNetwork.InRoom)
-                        CoroutineManager.instance.StartCoroutine(SpeakText(text));
+                        SpeakText(text);
                     else
-                        CoroutineManager.instance.StartCoroutine(NarrateText(text));
+                        NarrateText(text);
                 }
                 else
-                    CoroutineManager.instance.StartCoroutine(NarrateText(text));
+                    NarrateText(text);
             };
             drec.DictationComplete += (completionCause) =>
             {
@@ -3003,9 +3003,9 @@ Piece Name: {gunTarget.name}";
                 CoroutineManager.instance.StartCoroutine(Projectiles.DisableProjectile(projectile));
 
                 if (Overpowered.DisableCoroutine != null)
-                    CoroutineManager.EndCoroutine(Overpowered.DisableCoroutine);
+                    CoroutineManager.instance.StopCoroutine(Overpowered.DisableCoroutine);
 
-                Overpowered.DisableCoroutine = CoroutineManager.RunCoroutine(Overpowered.DisableSnowball(false));
+                Overpowered.DisableCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.DisableSnowball(false));
                 GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
 
                 everythingSpamDelay = Time.time + 0.0714f;
@@ -4324,7 +4324,7 @@ Piece Name: {gunTarget.name}";
                     if (!PhotonNetwork.IsMasterClient)
                         NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
-                        CoroutineManager.RunCoroutine(DrawSmallDelay(NewPointer.transform.position));
+                        CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position));
                 }
             }
         }
@@ -5232,10 +5232,10 @@ Piece Name: {gunTarget.name}";
                 ControllerInputPoller.instance.leftControllerGripFloat = 1f;
 
             if (rightGrab && !lastgripcrap)
-                CoroutineManager.RunCoroutine(CreateShotgun());
+                CoroutineManager.instance.StartCoroutine(CreateShotgun());
 
             if (rightGrab && rightTrigger > 0.5f && !lasttrigcrap)
-                CoroutineManager.RunCoroutine(FireShotgun());
+                CoroutineManager.instance.StartCoroutine(FireShotgun());
 
             lastgripcrap = rightGrab;
             lasttrigcrap = rightTrigger > 0.5f;
@@ -5262,7 +5262,7 @@ Piece Name: {gunTarget.name}";
         public static void MassiveBlock()
         {
             if (rightGrab && !lastgripcrap)
-                CoroutineManager.RunCoroutine(CreateMassiveBlock());
+                CoroutineManager.instance.StartCoroutine(CreateMassiveBlock());
 
             lastgripcrap = rightGrab;
         }
@@ -6032,7 +6032,7 @@ Piece Name: {gunTarget.name}";
         public static void AutoLoadCosmetics()
         {
             RequestPatch.enabled = true;
-            RequestPatch.currentCoroutine ??= CoroutineManager.RunCoroutine(RequestPatch.LoadCosmetics());
+            RequestPatch.currentCoroutine ??= CoroutineManager.instance.StartCoroutine(RequestPatch.LoadCosmetics());
             TryOnRoom.GetComponent<CosmeticBoundaryTrigger>().enabled = false;
         }
 
@@ -6167,7 +6167,7 @@ Piece Name: {gunTarget.name}";
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         idgundelay = Time.time + 0.5f;
-                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(gunTarget).UserId)));
+                        SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(gunTarget).UserId));
                     }
                 }
             }
@@ -6181,11 +6181,11 @@ Piece Name: {gunTarget.name}";
                 if (!vrrig.isLocal)
                     ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(vrrig).UserId) + ". ";
             }
-            CoroutineManager.RunCoroutine(SpeakText(ids));
+            SpeakText(ids);
         }
 
         public static void NarrateSelfID() =>
-            CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId)));
+            SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId));
 
         private static float cgdgd;
         public static void CopyCreationDateSelf()
@@ -6225,9 +6225,9 @@ Piece Name: {gunTarget.name}";
 
         public static void NarrateCreationDateSelf()
         {
-            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, date => CoroutineManager.RunCoroutine(SpeakText(date)));
+            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, date => SpeakText(date));
             if (date != "Loading...")
-                CoroutineManager.RunCoroutine(SpeakText(date));
+                SpeakText(date);
         }
 
         public static void NarrateCreationDateGun()
@@ -6244,9 +6244,9 @@ Piece Name: {gunTarget.name}";
                     {
                         cgdgd = Time.time + 0.5f;
 
-                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, date => CoroutineManager.RunCoroutine(SpeakText(date)));
+                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, date => SpeakText(date));
                         if (date != "Loading...")
-                            CoroutineManager.RunCoroutine(SpeakText(date));
+                            SpeakText(date);
                     }
                 }
             }
