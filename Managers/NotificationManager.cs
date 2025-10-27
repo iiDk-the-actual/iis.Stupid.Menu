@@ -57,6 +57,8 @@ namespace iiMenu.Managers
         private bool HasInit;
         public static bool noRichText;
         public static bool soundOnError;
+        public static bool noPrefix;
+        public static bool narrateNotifications;
 
         public static int NotifiCounter;
 
@@ -350,11 +352,7 @@ namespace iiMenu.Managers
 
                     if (narrateNotifications)
                     {
-                        try
-                        {
-                            NarrateText(NoRichtextTags(NotificationText));
-                        }
-                        catch { }
+                        NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(NotificationText) : NotificationText));
                     }
                 }
                 catch (Exception e)
@@ -426,6 +424,15 @@ namespace iiMenu.Managers
                 clearCoroutines.Remove(coroutine);
                 CoroutineManager.instance.StopCoroutine(coroutine);
             }
+        }
+
+        public static string RemovePrefix(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            string pattern = @"^<color=grey>\[</color><color=[^>]+>.*?</color><color=grey>\]</color> ";
+            return System.Text.RegularExpressions.Regex.Replace(text, pattern, "");
         }
 
         public static readonly List<Coroutine> clearCoroutines = new List<Coroutine>();
