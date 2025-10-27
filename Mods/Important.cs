@@ -112,7 +112,7 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom)
             {
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                CoroutineManager.RunCoroutine(JoinRandomDelay());
+                CoroutineManager.instance.StartCoroutine(JoinRandomDelay());
                 return;
             }
 

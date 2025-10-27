@@ -4408,7 +4408,12 @@ exit 0";
                 "Justin",
                 "Cristiano",
                 "Giorgio",
-                "Ewa"
+                "Ewa",
+                "TikTok",
+                "Grandma",
+                "Trickster",
+                "Elf",
+                "Ghostface"
             };
 
             if (positive)
@@ -4646,7 +4651,7 @@ exit 0";
             mainPhrases.Stop();
 
             if (!GetIndex("Chain Voice Commands").enabled)
-                timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout(string.Empty));
+                timeoutCoroutine = CoroutineManager.instance.StartCoroutine(Timeout(string.Empty));
             
             List<string> rawbuttonnames = cancelKeywords.ToList();
 
@@ -4680,7 +4685,7 @@ exit 0";
             {
                 modPhrases.Stop();
                 mainPhrases.Start();
-                CoroutineManager.EndCoroutine(timeoutCoroutine);
+                CoroutineManager.instance.StopCoroutine(timeoutCoroutine);
             }
 
             if (cancelKeywords.Contains(args.text))
@@ -4747,7 +4752,7 @@ exit 0";
             mainPhrases.Start();
             try
             {
-                CoroutineManager.EndCoroutine(timeoutCoroutine);
+                CoroutineManager.instance.StopCoroutine(timeoutCoroutine);
             } catch { }
             
             NotificationManager.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
@@ -4821,7 +4826,7 @@ exit 0";
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                         
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
-                    CoroutineManager.RunCoroutine(DictationRestart());
+                    CoroutineManager.instance.StartCoroutine(DictationRestart());
                     return;
                 }
 
@@ -4872,7 +4877,7 @@ exit 0";
             DictationOff();
             while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
                 yield return null;
-            CoroutineManager.RunCoroutine(DictationOn());
+            CoroutineManager.instance.StartCoroutine(DictationOn());
             yield break;
         }
         public static void DictationOff() 

@@ -168,9 +168,9 @@ For example, if someone asks for the mod ""Crash Gun"" and you say it's bannable
             if (narrate)
             {
                 if (globalNarrate && PhotonNetwork.InRoom)
-                    CoroutineManager.instance.StartCoroutine(Main.SpeakText(formatResponse));
+                    Main.SpeakText(formatResponse);
                 else
-                    CoroutineManager.instance.StartCoroutine(Main.NarrateText(formatResponse));
+                    Main.NarrateText(formatResponse);
             }
             
             foreach (Match match in matches)
@@ -262,7 +262,7 @@ For example, if someone asks for the mod ""Crash Gun"" and you say it's bannable
             }
 
             if (!Main.GetIndex("Chain Voice Commands").enabled)
-                CoroutineManager.RunCoroutine(Settings.DictationRestart());
+                CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
             yield break;
             
         }

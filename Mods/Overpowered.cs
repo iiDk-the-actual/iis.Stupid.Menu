@@ -1976,9 +1976,9 @@ namespace iiMenu.Mods
                     DistancePatch.enabled = true;
 
                     if (DisableCoroutine != null)
-                        CoroutineManager.EndCoroutine(DisableCoroutine);
+                        CoroutineManager.instance.StopCoroutine(DisableCoroutine);
 
-                    DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar && !NoTeleportSnowballs));
+                    DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableSnowball(isTooFar && !NoTeleportSnowballs));
 
                     GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
 
@@ -2255,10 +2255,10 @@ namespace iiMenu.Mods
             switch (kameing)
             {
                 case true when KameStartCoroutine == null:
-                    KameStartCoroutine = CoroutineManager.RunCoroutine(StartKame());
+                    KameStartCoroutine = CoroutineManager.instance.StartCoroutine(StartKame());
                     break;
                 case false when KameStartCoroutine != null:
-                    CoroutineManager.EndCoroutine(KameStartCoroutine);
+                    CoroutineManager.instance.StopCoroutine(KameStartCoroutine);
                     KameStartCoroutine = null;
 
                     CoroutineManager.instance.StartCoroutine(EndKame());

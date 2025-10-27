@@ -140,7 +140,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Animated Title", enableMethod =() => animatedTitle = true, disableMethod =() => animatedTitle = false, toolTip = "Animates the title of the menu."},
                 new ButtonInfo { buttonText = "Voice Commands", enableMethod = Settings.VoiceRecognitionOn, method = Settings.CheckFocus, disableMethod = Settings.VoiceRecognitionOff, toolTip = "Enable and disable mods using your voice. Activate it like how you would any other voice assistant, such as \"Jarvis, Platforms\"."},
                 new ButtonInfo { buttonText = "Chain Voice Commands", toolTip = "Makes voice commands chain together, so you don't have to repeatedly ask it to listen to you."},
-                new ButtonInfo { buttonText = "AI Assistant", enableMethod =() => CoroutineManager.RunCoroutine(Settings.DictationOn()), method = Settings.CheckFocus, disableMethod = Settings.DictationOff, toolTip = "A voice assistant with artificial intelligence capabilities."},
+                new ButtonInfo { buttonText = "AI Assistant", enableMethod =() => CoroutineManager.instance.StartCoroutine(Settings.DictationOn()), method = Settings.CheckFocus, disableMethod = Settings.DictationOff, toolTip = "A voice assistant with artificial intelligence capabilities."},
 
                 new ButtonInfo { buttonText = "Narrate Assistant", toolTip = "Narrates what the voice assistant says locally."},
                 new ButtonInfo { buttonText = "Global Narrate Assistant", toolTip = "Narrates what the voice assistant says globally."},
@@ -209,8 +209,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", enableMethod =() => clearNotificationsOnDisconnect = true, disableMethod =() => clearNotificationsOnDisconnect = false, toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
-                new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
-                new ButtonInfo { buttonText = "Hide Notification Brackets", enableMethod =() => hideBrackets = true, disableMethod =() => hideBrackets = false, toolTip = "Hides brackets on all notifications."},
+                new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => NotificationManager.narrateNotifications = true, disableMethod =() => NotificationManager.narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
+				new ButtonInfo { buttonText = "No Prefix Narration", enableMethod =() => NotificationManager.noPrefix = true, disableMethod =() => NotificationManager.noPrefix = false, toolTip = "Strops the prefix on notifications from narrating itself."},
+				new ButtonInfo { buttonText = "Hide Notification Brackets", enableMethod =() => hideBrackets = true, disableMethod =() => hideBrackets = false, toolTip = "Hides brackets on all notifications."},
 
                 new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = NotificationManager.NotifiText.text, toolTip = "Shows notifications on the code of conduct instead."},
                 new ButtonInfo { buttonText = "Disable Notification Rich Text", enableMethod =() => NotificationManager.noRichText = true, disableMethod =() => NotificationManager.noRichText = false, toolTip = "Removes rich text from notifications."},
@@ -417,7 +418,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Accept TOS", method = Important.AcceptTOS, disableMethod =() => TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
                 new ButtonInfo { buttonText = "Bypass K-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by K-ID for underage users."},
-                new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.RunCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
+                new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.instance.StartCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method = Important.CopyPlayerPosition, isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
@@ -981,7 +982,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.SetDebugEchoMode(true), disableMethod =() => Fun.SetDebugEchoMode(false), toolTip = "Plays sound coming through your microphone back to your speakers."},
                 new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, toolTip = "Copies the voice of whoever your hand desires."},
 
-                new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => CoroutineManager.RunCoroutine(SpeakText(keyboardInput)), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
+                new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => SpeakText(keyboardInput), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
                 new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method =() => { Settings.CheckFocus(); GorillaTagger.Instance.myRecorder.IsRecording = Sound.AudioIsPlaying; }, disableMethod = Fun.DisableMaskVoice, toolTip = "Masks your voice with a TTS bot."},
 
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method = Important.DisablePitchScaling, disableMethod = Important.EnablePitchScaling, toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
