@@ -53,7 +53,8 @@ namespace iiMenu
 "))
                 logoLines += System.Environment.NewLine + "     " + line;
             
-            LogManager.Log($@"{logoLines}
+            LogManager.Log($@"
+{logoLines}
     ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
     
