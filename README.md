@@ -1,3 +1,4 @@
+
 <p align="center">
   <a href="#"><img src="Resources/GitHub/icon.png"></a>
   <a href="#"><img src="Resources/GitHub/title.png"></a>
@@ -19,8 +20,9 @@ ii's Stupid Menu is a **feature-packed** mod menu for Gorilla Tag, built by me, 
 
 > Why settle for boring when you can have *stupidly* good?  
 
-## 💡 Why open-source?  
-
+<details>
+  <summary><b>💡 Why open-source?</b></summary>
+	
 Great question. The modding community used to be about **sharing, learning, and improving** together. But nowadays, everything’s locked behind **paywalls and obfuscation**. That’s not how it should be.  
 
 By making this menu open-source, I'm giving **everyone** the opportunity to:  
@@ -31,9 +33,12 @@ By making this menu open-source, I'm giving **everyone** the opportunity to:
 
 Let's bring back the collaboration of modding. No paywalls, no secrets, no malware, just good mods.  
 
-## ❓ Can I use your code?  
+</details>
 
-Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html) rules apply**, which means that if you use my code:  
+<details>
+  <summary><b>❓ Can I use your code?</b></summary>
+	
+**Of course!** But there’s a catch: you gotta play fair. **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html) rules apply**, which means that if you use my code:  
 - Your project **must** also be open-source.  
 - Give credit where it's due.
 - No shady stuff.
@@ -42,7 +47,29 @@ Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https
 > "You wouldn’t steal a method."<br>
 > [🎥 *(Or would you?)*](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
 
-# 🎛️ System Compatibility
+</details>
+
+<details>
+  <summary><b>💾 Installation</b></summary>
+	
+1. **Download** the latest release **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
+2. **Drag & Drop** `iis_Stupid_Menu.dll` into your plugins folder  
+3. **Launch** Gorilla Tag and enjoy!
+
+**🧱 From Source Code (for developers!)**
+
+1. Download the source code **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
+2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
+3. Build the project with `Ctrl + Shift + B`<Br>
+✅ The DLL will automatically go into your Gorilla Tag plugins folder
+
+</details>
+
+---
+
+<details>
+  <summary><b>🎛️ System Compatibility</b></summary>
+	
 | Operating System | Menu | Fonts | Images | Sounds | Videos |
 |------------------|------|--------|--------|--------|--------|
 |<img src="Resources/GitHub/windows-10.png" height=20px> Windows 10|✅|✅|✅|✅|✅|
@@ -50,32 +77,43 @@ Of course! But there’s a catch: you gotta play fair. **[GPL-3.0 License](https
 |<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|✅|❌|
 |<img src="Resources/GitHub/linux.png" height=20px> Linux|✅|⚠️|✅|✅|❌|
 
-> ✅ Works as intended ; ⚠️ Semi functional ; ❌ Does not work
+> ✅ Works as intended ; ⚠️ Semi functional ; ❌ Does not work ; ❓ Untested
 
----
+</details>
 
-# 📥 Installation  
+<details>
+  <summary><b>🔗 Headset Compatibility</b></summary>
+	
+| Headset | Menu | Mods |
+|---------|------|------|
+|Rift|✅|✅|
+|Rift S|✅|✅|
+|Quest 1|✅|✅|
+|Quest 2|✅|✅|
+|Quest 3/3s|✅|✅|
+|Pico 4|✅|✅|
+|Valve Index|✅|✅|
+|HTC VIVE/PRO|✅|⚠️|
+|HP Reverb G2|⚠️|❓|
 
-1. **Download** the latest release **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
-2. **Drag & Drop** `iis_Stupid_Menu.dll` into your plugins folder  
-3. **Launch** Gorilla Tag and enjoy!
+> ✅ Fully functional ; ⚠️ Limited functionality ; ❌ Not functionable ; ❓ Untested
 
-## 🧱 From Source Code (for developers!)
+</details>
 
-1. Download the source code **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
-2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
-3. Build the project with `Ctrl + Shift + B`<Br>
-✅ The DLL will automatically go into your Gorilla Tag plugins folder
+<details>
+  <summary><b>🗣️ Contact Information</b></summary>
+	
+Need help or want to collaborate? Here are some of my sources of contact:
+- Telegram: [@crimsoncauldron](https://t.me/crimsoncauldron)
+- Discord: [@crimsoncauldron](https://discord.gg/iidk)
+- YouTube: [@iiDk_](https://www.youtube.com/@iiDk_)
+- Email: [admin@goldentrophy.software](mailto:admin@goldentrophy.software)
 
----
+</details>
 
-# 🗣️ Contact Information
-
-Need help or want to collaborate? Contact me from the links on my **[website](https://iidk.dev)** or join the **[Discord server](https://discord.gg/iidk)**.  
-Feel like something is missing? Become a **[contributor](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file)**!
-
-# ❤️ Support
-
+<details open>
+  <summary><b>💖 Support</b></summary>
+	
 If you wish to support me, here are some of the ways you can!
 
 | Platform   | Link | Address |
@@ -86,6 +124,8 @@ If you wish to support me, here are some of the ways you can!
 | XRP        | [![XRP](https://img.shields.io/badge/XRP-Donate-23292F?style=for-the-badge&logo=xrp)](xrp:rpLLN1Gse5zFnVxwQkMvh6jvKKtPrAjvLV) | [rpLLN1Gse5zFnVxwQkMvh6jvKKtPrAjvLV](xrp:rpLLN1Gse5zFnVxwQkMvh6jvKKtPrAjvLV) |
 | Patreon    | [![Patreon](https://img.shields.io/badge/Patreon-iiDk-orange?style=for-the-badge&logo=patreon)](https://www.patreon.com/iiDk) | [iiDk](https://www.patreon.com/iiDk) |
 | CashApp    | [![CashApp](https://img.shields.io/badge/CashApp-$iiWasHere-green?style=for-the-badge&logo=cashapp)](https://cash.app/$iiWasHere) | [$iiWasHere](https://cash.app/$iiWasHere) |
+
+</details>
 
 > [!NOTE] 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
