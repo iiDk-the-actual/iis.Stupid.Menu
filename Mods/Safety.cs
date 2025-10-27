@@ -149,6 +149,17 @@ namespace iiMenu.Mods
         public static void SpoofSupportPage() =>
             GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
 
+        public static float flushCooldown;
+        public static void FlushRPCs()
+        {
+            if (Time.time > flushCooldown)
+            {
+                RPCProtection();
+                flushCooldown = Time.time + 5f;
+                return;
+            }
+            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not meant to spam Flush RPCs. Only call it once, after you are done spamming RPCs.");
+        }
         public static void AntiLurker()
         {
             LurkerGhost lurker = Overpowered.lurker;
