@@ -1453,6 +1453,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Minigun", method = Overpowered.SnowballMinigun, toolTip = "Spawns snowballs towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Give Snowball Minigun", method = Overpowered.GiveSnowballMinigun, toolTip = "Gives whoever your hand desires a snowball minigun." },
 
+                new ButtonInfo { buttonText = "Snowball Boxing", method = Overpowered.SnowballBoxing, toolTip = "Gives everyone punch mod with the snowballs."},
+                new ButtonInfo { buttonText = "Snowball Dash <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Overpowered.SnowballDash, toolTip = "Allows other players to dash themself into the air with the snowballs."},
+
+
                 new ButtonInfo { buttonText = "Snowball Particle Gun", method = Overpowered.SnowballParticleGun, toolTip = "Spawns snowball particles wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method = Overpowered.SnowballImpactEffectGun, toolTip = "Spawns snowball impact events on whoever your hand desires."},
 
