@@ -4384,7 +4384,7 @@ namespace iiMenu.Menu
         }
 
         public static void NarrateText(string text) =>
-            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Play2DAudio(audio, buttonClickSound / 10f)));
 
         public static void SpeakText(string text) =>
             CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
