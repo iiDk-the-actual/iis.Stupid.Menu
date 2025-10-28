@@ -29,6 +29,7 @@ namespace iiMenu.Patches.Safety
     public class TelemetryPatches
     {
         public static bool enabled;
+
         [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
         public class TelemetryPatch1
         {
