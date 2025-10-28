@@ -5000,6 +5000,19 @@ exit 0";
             }
         }
 
+
+        public static void ResetVoiceCommandsKeywords()
+        {
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt"))
+                File.WriteAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Keywords.txt", keyWords);
+        }
+
+        public static void ResetSystemPrompt()
+        {
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_SystemPrompt.txt"))
+                File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_SystemPrompt.txt", AIManager.SystemPrompt);
+        }
+
         public static string SavePreferencesToText()
         {
             string seperator = ";;";
