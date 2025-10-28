@@ -20,7 +20,6 @@
  */
 
 using iiMenu.Classes.Menu;
-using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using System;
