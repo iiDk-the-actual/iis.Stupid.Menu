@@ -19,8 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-
 namespace iiMenu
 {
     public class PluginInfo
@@ -28,7 +26,7 @@ namespace iiMenu
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @crimsoncauldron with love <3";
-        public const string BuildTimestamp = "2025-10-28T01:03:26Z";
+        public const string BuildTimestamp = "2025-10-28T21:33:35Z";
         public const string Version = "7.5.1";
 
         public const string BaseDirectory = "iisStupidMenu";

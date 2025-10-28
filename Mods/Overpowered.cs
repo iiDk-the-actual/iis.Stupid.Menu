@@ -3504,6 +3504,134 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BetaNearbyFollowCommand(GorillaFriendCollider friendCollider, Player player)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
+            object[] groupJoinSendData = new object[2];
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
+
+            if (friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) && friendCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
+                RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
+            else if (!friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
+        }
+
+        public static IEnumerator StumpKickDelay(Action action, Action action2, float extraDelay = 0f, bool changeQueue = false)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Clear();
+            yield return new WaitForSeconds(extraDelay);
+
+            bool joinedRoomPatchEnabled = JoinedRoomPatch.enabled;
+
+            string queueArchive = GorillaComputer.instance.currentQueue;
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = RandomString();
+
+            action?.Invoke();
+            yield return new WaitForSeconds(0.3f);
+            action2?.Invoke();
+            yield return new WaitForSeconds(1f);
+
+            if (changeQueue)
+                GorillaComputer.instance.currentQueue = queueArchive;
+
+            yield return new WaitForSeconds(30f);
+
+            JoinedRoomPatch.enabled = joinedRoomPatchEnabled;
+        }
+
+        public static bool kickToPublic;
+        public static bool rejoinOnKick;
+        public static string specificRoom;
+        public static void CreateKickRoom()
+        {
+            if (rejoinOnKick)
+            {
+                Important.BroadcastRoom(specificRoom ?? RandomString(), true, PhotonNetworkController.Instance.keyToFollow, PhotonNetworkController.Instance.shuffler);
+                Important.Reconnect();
+
+                return;
+            }
+
+            Important.CreateRoom(specificRoom ?? RandomString(), kickToPublic, JoinType.JoinWithNearby);
+        }
+
+        public static void StumpKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > kgDebounce)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        NetPlayer player = GetPlayerFromVRRig(gunTarget);
+                        kgDebounce = Time.time + 0.5f;
+
+                        if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId))
+                        {
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The player must be in stump.");
+                            return;
+                        }
+
+                        bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
+                        if (sessionIsPublic)
+                            Overpowered.SetRoomStatus(true);
+
+                        CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
+                        {
+                            PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(player));
+                            RPCProtection();
+                        }, () =>
+                        {
+                            CreateKickRoom();
+                        }, sessionIsPublic ? 0.5f : 0f));
+                    }
+                }
+            }
+        }
+
+        public static void StumpKickAll()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                if (!NetworkSystem.Instance.SessionIsPrivate)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                    return;
+                }
+
+                bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
+                if (sessionIsPublic)
+                    Overpowered.SetRoomStatus(true);
+
+                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(rig.GetPlayer().UserId)))
+                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+
+                    RPCProtection();
+                }, () =>
+                {
+                    CreateKickRoom();
+                }, sessionIsPublic ? 0.5f : 0f));
+            }
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -3521,11 +3649,9 @@ namespace iiMenu.Mods
 
                         bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                         if (sessionIsPrivate)
-                            Overpowered.SetRoomStatus(false);
-                        
-                        if (GetIndex("Kick Gun Rejoin").enabled)
-                            CoroutineManager.instance.StartCoroutine(Fun.KickRejoin(PhotonNetwork.CurrentRoom.Name));
-                        CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                            SetRoomStatus(false);
+
+                        CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                         {
                             PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                             PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -3534,7 +3660,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            Important.CreateRoom(Fun.specificRoom ?? RandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                            CreateKickRoom();
                         }, sessionIsPrivate ? 0.5f : 0f));
                     }
                 }
@@ -3547,9 +3673,9 @@ namespace iiMenu.Mods
             {
                 bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                 if (sessionIsPrivate)
-                    Overpowered.SetRoomStatus(false);
+                    SetRoomStatus(false);
 
-                CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -3560,7 +3686,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(Fun.specificRoom ?? RandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                    CreateKickRoom();
                 }, sessionIsPrivate ? 0.5f : 0f));
             }
             else
@@ -3584,7 +3710,7 @@ namespace iiMenu.Mods
 
                         bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                         if (sessionIsPrivate)
-                            Overpowered.SetRoomStatus(false);
+                            SetRoomStatus(false);
 
                         PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                         PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -3602,7 +3728,7 @@ namespace iiMenu.Mods
             {
                 bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                 if (sessionIsPrivate)
-                    Overpowered.SetRoomStatus(false);
+                    SetRoomStatus(false);
 
                 PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                 PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -3625,9 +3751,9 @@ namespace iiMenu.Mods
 
                 bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
                 if (sessionIsPrivate)
-                    Overpowered.SetRoomStatus(false);
+                    SetRoomStatus(false);
 
-                CoroutineManager.instance.StartCoroutine(Fun.StumpKickDelay(() =>
+                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -3638,7 +3764,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Important.CreateRoom(Fun.specificRoom ?? RandomString(), Fun.kickToPublic, JoinType.JoinWithNearby);
+                    CreateKickRoom();
                 }, sessionIsPrivate ? 0.5f : 0f));
             }
             else

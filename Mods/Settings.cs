@@ -27,7 +27,6 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Utilities;
-using Modio.Mods;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -4437,7 +4436,7 @@ exit 0";
                 return;
             }
 
-            PromptText("What would you like the room code to be?", () => Fun.specificRoom = keyboardInput.ToUpper(), () => Toggle("Kick to Specific Room"), "Done", "Cancel");
+            PromptText("What would you like the room code to be?", () => Overpowered.specificRoom = keyboardInput.ToUpper(), () => Toggle("Kick to Specific Room"), "Done", "Cancel");
         }
         public static void ChangePointerPosition(bool positive = true)
         {

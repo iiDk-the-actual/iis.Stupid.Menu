@@ -1776,17 +1776,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Destroy Gun", method = Overpowered.DestroyGun, toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method = Overpowered.DestroyAll, isTogglable = false, toolTip = "Block new players from seeing everyone."},
 
-                new ButtonInfo { buttonText = "Joystick Rope Control <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Overpowered.JoystickRopeControl, toolTip = "Control the ropes in the direction of your joystick."},
-
-                new ButtonInfo { buttonText = "Broken Ropes", method = Overpowered.SpazGrabbedRopes, toolTip = "Gives any ropes currently being held onto a seizure."},
-                new ButtonInfo { buttonText = "Spaz Rope Gun", method = Overpowered.SpazRopeGun, toolTip = "Gives whatever rope your hand desires a seizure."},
-                new ButtonInfo { buttonText = "Spaz All Ropes <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SpazAllRopes, toolTip = "Gives every rope a seizure when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Fling Rope Gun", method = Overpowered.FlingRopeGun, toolTip = "Flings whatever rope your hand desires away from you."},
-                new ButtonInfo { buttonText = "Fling All Ropes Gun", method = Overpowered.FlingAllRopesGun, toolTip = "Flings every rope in whatever direction your hand desires."},
-
-                new ButtonInfo { buttonText = "Stump Kick Gun", method = Fun.StumpKickGun, toolTip = "Kicks whoever your hand desires if they are in stump." },
-                new ButtonInfo { buttonText = "Stump Kick All", method = Fun.StumpKickAll, isTogglable = false, toolTip = "Kicks everyone in stump." },
+                new ButtonInfo { buttonText = "Stump Kick Gun", method = Overpowered.StumpKickGun, toolTip = "Kicks whoever your hand desires if they are in stump." },
+                new ButtonInfo { buttonText = "Stump Kick All", method = Overpowered.StumpKickAll, isTogglable = false, toolTip = "Kicks everyone in stump." },
 
                 new ButtonInfo { buttonText = "City Kick Gun", method = Fun.CityKickGun, toolTip = "Flings whoever your hand desires using the barrels into the clouds map to kick them."},
                 new ButtonInfo { buttonText = "City Kick All", method = Fun.CityKickAll, toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
@@ -2069,12 +2060,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Snowball Multiplication Factor", overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballMultiplicationFactor(), enableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(), disableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(false), incremental = true, isTogglable = false, toolTip = "Changes the multiplication factor of the snowballs." },
                 new ButtonInfo { buttonText = "No Teleport Snowballs", enableMethod =() => Overpowered.NoTeleportSnowballs = true, disableMethod =() => Overpowered.NoTeleportSnowballs = false, toolTip = "Stops snowball mods from teleporting you." },
                 new ButtonInfo { buttonText = "No Freeze Za Warudo", toolTip = "Disables the freezing on the \"Za Warudo\" mod, turning it into a fun mod." },
-                new ButtonInfo { buttonText = "Kick Gun Rejoin", overlapText = "Rejoin on Kick", toolTip = "Makes Kick Gun join the room you kicked the target in once they have been kicked." },
+                new ButtonInfo { buttonText = "Rejoin on Kick", enableMethod =() => Overpowered.rejoinOnKick = true, disableMethod =() => Overpowered.rejoinOnKick = false, toolTip = "Makes Kick Gun join the room you kicked the target in once they have been kicked." },
 
                 new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(), enableMethod =() => Overpowered.ChangeLagPower(), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
                 new ButtonInfo { buttonText = "Unlock on Crash", toolTip = "Unlocks the room when crashing someone. This makes the mod more powerful." },
-                new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Fun.kickToPublic = true, disableMethod =() => Fun.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." },
-                new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod = Settings.KickToSpecificRoom, disableMethod =() => Fun.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." },
+                new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Overpowered.kickToPublic = true, disableMethod =() => Overpowered.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." },
+                new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod = Settings.KickToSpecificRoom, disableMethod =() => Overpowered.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." },
                 new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." }
             },
 

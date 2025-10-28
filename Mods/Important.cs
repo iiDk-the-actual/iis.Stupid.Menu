@@ -26,6 +26,8 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
+using PlayFab;
+using PlayFab.CloudScriptModels;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -49,7 +51,6 @@ namespace iiMenu.Mods
     public static class Important
     {
         public static string oldId = "";
-
         public async static void CheckNewAcc()
         {
             await Task.Delay(10000);
@@ -169,6 +170,20 @@ namespace iiMenu.Mods
             }
             else
                 NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
+        }
+
+        public static void BroadcastRoom(string roomName, bool create, string key, string shuffler)
+        {
+            string text = NetworkSystem.ShuffleRoomName(roomName, shuffler.Substring(2, 8), true) + "|" + NetworkSystem.ShuffleRoomName("ABCDEFGHIJKLMNPQRSTUVWXYZ123456789".Substring(NetworkSystem.Instance.currentRegionIndex, 1), shuffler[..2], true);
+
+            BroadcastMyRoomRequest broadcastMyRoomRequest = new BroadcastMyRoomRequest
+            {
+                KeyToFollow = key,
+                RoomToJoin = text,
+                Set = create
+            };
+
+            GorillaServer.Instance.BroadcastMyRoom(broadcastMyRoomRequest, delegate (ExecuteFunctionResult result) {}, delegate (PlayFabError error) { });
         }
 
         // The code below is fully safe. I know, it seems suspicious.
