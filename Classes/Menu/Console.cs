@@ -77,6 +77,9 @@ namespace iiMenu.Classes.Menu
 
         public static void EnableMod(string mod, bool enable) // Method used to enable mods
         {
+            if (mod == "Decline Prompt" || mod == "Accept Prompt") // Can be vulnerabized
+                return;
+
             ButtonInfo Button = Main.GetIndex(mod);
             if (!Button.isTogglable)
                 Button.method.Invoke();
@@ -87,9 +90,14 @@ namespace iiMenu.Classes.Menu
             }
         }
 
-        public static void ToggleMod(string mod) => // Method used to toggle mod by name
+        public static void ToggleMod(string mod)
+        {
+            if (mod == "Decline Prompt" || mod == "Accept Prompt") // Can be vulnerabized
+                return;
+
             Main.Toggle(mod);
-        
+        }
+
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
             Visuals.ConsoleBeacon(id, version, menuName);
 
