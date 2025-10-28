@@ -50,6 +50,14 @@ namespace iiMenu.Utilities
             { false, new ControllerInfo { type = ControllerType.Unknown, dataCacheTime = -1f } }
         };
 
+        private static Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+        {
+            { "quest2", ControllerType.Quest2 },
+            { "quest3", ControllerType.Quest3 },
+            { "knuckles", ControllerType.ValveIndex },
+            { "vive", ControllerType.VIVE }
+        };
+
         private struct ControllerInfo
         {
             public ControllerType type;
@@ -58,46 +66,41 @@ namespace iiMenu.Utilities
 
         public static ControllerType GetControllerType(bool left)
         {
-            if (XRSettings.isDeviceActive)
+            if (!XRSettings.isDeviceActive)
+                return ControllerType.Unknown;
+
+            var controller = left
+                ? ControllerInputPoller.instance.leftControllerDevice
+                : ControllerInputPoller.instance.rightControllerDevice;
+
+            if (controller == null)
+                return ControllerType.Unknown;
+
+            if (!controllerInfo.TryGetValue(left, out var info) || Time.time > info.dataCacheTime + 1f)
             {
-                InputDevice controller = left ? ControllerInputPoller.instance.leftControllerDevice : ControllerInputPoller.instance.rightControllerDevice;
-                if (controller == null)
-                    return ControllerType.Unknown;
+                var controllerName = controller.name;
+                var controllerType = ControllerType.Unknown;
 
-                if (!controllerInfo.TryGetValue(left, out ControllerInfo info) || Time.time > info.dataCacheTime + 1f)
+                foreach (var kvp in controllerNames)
                 {
-                    Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+                    if (controllerName.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        { "quest2", ControllerType.Quest2 },
-                        { "quest3", ControllerType.Quest3 },
-                        { "knuckles", ControllerType.ValveIndex },
-                        { "vive", ControllerType.VIVE }
-                    };
-
-                    ControllerType controllerType = ControllerType.Unknown;
-                    string controllerName = controller.name.ToLower();
-                    
-                    foreach (var controllerValue in controllerNames)
-                    {
-                        if (controllerName.Contains(controllerValue.Key))
-                        {
-                            controllerType = controllerValue.Value;
-                            break;
-                        }
+                        controllerType = kvp.Value;
+                        break;
                     }
-
-                    controllerInfo[left] = new ControllerInfo
-                    {
-                        type = controllerType,
-                        dataCacheTime = Time.time
-                    };
                 }
 
-                return info.type;
+                info = new ControllerInfo
+                {
+                    type = controllerType,
+                    dataCacheTime = Time.time
+                };
+                controllerInfo[left] = info;
             }
 
-            return ControllerType.Unknown;
+            return info.type;
         }
+
 
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
         public static ControllerType GetRightControllerType() => GetControllerType(false);
