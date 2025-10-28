@@ -2101,7 +2101,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> crashedNameTags = new Dictionary<VRRig, GameObject>();
         public static void CrashedTags()
         {
-            foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTags)
+            List<KeyValuePair<VRRig, GameObject>> crashedNameTagsCopy = crashedNameTags.ToList();
+            foreach (KeyValuePair<VRRig, GameObject> nametag in crashedNameTagsCopy)
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {

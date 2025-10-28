@@ -26,6 +26,7 @@ using iiMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -135,6 +136,12 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
         }
         public static IEnumerator AskAI(string text)
         {
+            string filePath = $"{PluginInfo.BaseDirectory}/iiMenu_SystemPrompt.txt";
+            if (!File.Exists(filePath))
+                File.WriteAllText(filePath, SystemPrompt);
+            else
+                SystemPrompt = File.ReadAllText(filePath);
+
             if (Time.time < Main.timeMenuStarted + 5f)
                 yield break;
 
