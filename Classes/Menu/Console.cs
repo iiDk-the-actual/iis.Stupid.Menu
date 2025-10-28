@@ -712,13 +712,20 @@ namespace iiMenu.Classes.Menu
             smoothTeleportCoroutine = null;
         }
         
-        public static IEnumerator AssetSmoothTeleport(ConsoleAsset asset, Vector3 position, float time)
+        public static IEnumerator AssetSmoothTeleport(ConsoleAsset asset, Vector3? position, Quaternion? rotation, float time)
         {
             float startTime = Time.time;
+
             Vector3 startPosition = asset.assetObject.transform.position;
+            Quaternion startRotation = asset.assetObject.transform.rotation;
+
+            Vector3 targetPosition = position ?? startPosition;
+            Quaternion targetRotation = rotation ?? startRotation;
+
             while (Time.time < startTime + time)
             {
-                asset.SetPosition(Vector3.Lerp(startPosition, position, (Time.time - startTime) / time));
+                asset.SetPosition(Vector3.Lerp(startPosition, targetPosition, (Time.time - startTime) / time));
+                asset.SetRotation(Quaternion.Lerp(startRotation, targetRotation, (Time.time - startTime) / time));
                 yield return null;
             }
         }
@@ -1095,12 +1102,14 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "asset-smoothtp":
                         int SmoothAssetId = (int)args[1];
-                        Vector3 TargetSmoothPosition = (Vector3)args[2];
-                        float time = (float)args[3];
+                        float time = (float)args[2];
+
+                        Vector3? TargetSmoothPosition = (Vector3?)args[3];
+                        Quaternion? TargetSmoothRotation = (Quaternion?)args[4];
 
                         instance.StartCoroutine(
                             ModifyConsoleAsset(SmoothAssetId, asset => 
-                                instance.StartCoroutine(AssetSmoothTeleport(asset, TargetSmoothPosition, time)))
+                                instance.StartCoroutine(AssetSmoothTeleport(asset, TargetSmoothPosition, TargetSmoothRotation, time)))
                         );
                         break;
                     case "asset-setlocalposition":
