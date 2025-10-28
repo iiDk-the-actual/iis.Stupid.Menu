@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Safety/TelemetryPatches.cs
+ * ii's Stupid Menu  Patches/Safety/IncrementRPCPatches.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,27 +20,31 @@
  */
 
 using HarmonyLib;
-using JetBrains.Annotations;
-using PlayFab.EventsModels;
+using Photon.Pun;
 
 namespace iiMenu.Patches.Safety
 {
-    // Gorilla Tag's one weakness -- tracking data to get players banned. This is how they did it over the years.
-    public class TelemetryPatches
+    public class IncrementRPCPatches
     {
-        public static bool enabled = true;
-        [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
-        public class TelemetryPatch1
+        [HarmonyPatch(typeof(VRRig), "IncrementRPC", typeof(PhotonMessageInfoWrapped), typeof(string))]
+        public class NoIncrementRPC
         {
-            private static bool Prefix(string eventName, object content, [CanBeNull] string[] customTags = null) =>
-                !enabled;
+            private static bool Prefix(PhotonMessageInfoWrapped info, string sourceCall) =>
+                false;
         }
 
-        [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEventPlayFab")]
-        public class TelemetryPatch2
+        [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCall", typeof(PhotonMessageInfo), typeof(string))]
+        public class NoIncrementRPCCall
         {
-            private static bool Prefix(EventContents eventContent) =>
-                !enabled;
+            private static bool Prefix(PhotonMessageInfo info, string callingMethod = "") =>
+                false;
+        }
+
+        [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCallLocal")]
+        public class NoIncrementRPCCallLocal
+        {
+            private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction) =>
+                false;
         }
     }
 }
