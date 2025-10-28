@@ -4832,7 +4832,7 @@ exit 0";
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
                 CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
-                
+                yield break;
                     
             };
             drec.DictationComplete += (completionCause) =>
