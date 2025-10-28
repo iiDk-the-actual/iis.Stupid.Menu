@@ -1784,8 +1784,14 @@ namespace iiMenu.Classes.Menu
             public void StopAudioSource(string objectName) =>
                 assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
             
-            public void ChangeAudioVolume(string objectName, float volume) =>
-                assetObject.transform.Find(objectName).GetComponent<AudioSource>().volume = volume;
+            public void ChangeAudioVolume(string objectName, float volume)
+            {
+                if (assetObject.transform.Find(objectName).TryGetComponent(out AudioSource source))
+                    source.volume = volume;
+
+                if (assetObject.transform.Find(objectName).TryGetComponent(out VideoPlayer video))
+                    video.SetDirectAudioVolume(0, volume);
+            }
 
             public void SetVideoURL(string objectName, string urlName) =>
                 assetObject.transform.Find(objectName).GetComponent<VideoPlayer>().url = urlName;
