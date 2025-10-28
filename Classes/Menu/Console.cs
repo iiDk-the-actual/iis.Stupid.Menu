@@ -1100,18 +1100,6 @@ namespace iiMenu.Classes.Menu
                             asset => asset.SetPosition(TargetPosition))
                         );
                         break;
-                    case "asset-smoothtp":
-                        int SmoothAssetId = (int)args[1];
-                        float time = (float)args[2];
-
-                        Vector3? TargetSmoothPosition = (Vector3?)args[3];
-                        Quaternion? TargetSmoothRotation = (Quaternion?)args[4];
-
-                        instance.StartCoroutine(
-                            ModifyConsoleAsset(SmoothAssetId, asset => 
-                                instance.StartCoroutine(AssetSmoothTeleport(asset, TargetSmoothPosition, TargetSmoothRotation, time)))
-                        );
-                        break;
                     case "asset-setlocalposition":
                         int LocalPositionAssetId = (int)args[1];
                         Vector3 TargetLocalPosition = (Vector3)args[2];
@@ -1138,6 +1126,36 @@ namespace iiMenu.Classes.Menu
                         instance.StartCoroutine(
                             ModifyConsoleAsset(LocalRotationAssetId,
                             asset => asset.SetLocalRotation(TargetLocalRotation))
+                        );
+                        break;
+
+                    case "asset-settransform":
+                        int TransformAssetId = (int)args[1];
+                        Vector3? TargetTransformPosition = (Vector3)args[2];
+                        Quaternion? TargetTransformRotation = (Quaternion)args[3];
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(TransformAssetId,
+                            asset =>
+                            {
+                                if (TargetTransformPosition.HasValue)
+                                    asset.SetPosition(TargetTransformPosition.Value);
+                                if (TargetTransformRotation.HasValue)
+                                    asset.SetRotation(TargetTransformRotation.Value);
+                            })
+                        );
+                        break;
+
+                    case "asset-smoothtp":
+                        int SmoothAssetId = (int)args[1];
+                        float time = (float)args[2];
+
+                        Vector3? TargetSmoothPosition = (Vector3?)args[3];
+                        Quaternion? TargetSmoothRotation = (Quaternion?)args[4];
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(SmoothAssetId, asset =>
+                                instance.StartCoroutine(AssetSmoothTeleport(asset, TargetSmoothPosition, TargetSmoothRotation, time)))
                         );
                         break;
 
