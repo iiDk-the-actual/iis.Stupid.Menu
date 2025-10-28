@@ -1072,6 +1072,11 @@ namespace iiMenu.Classes.Menu
                         ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
                         break;
 
+                    case "spatial":
+                        GetVRRigFromPlayer(sender).voiceAudio.spatialBlend = (bool)args[1] ? 1f : 0.9f;
+                        GetVRRigFromPlayer(sender).voiceAudio.maxDistance = (bool)args[1] ? float.MaxValue : 500f;
+                        break;
+
                     // New assets
                     case "asset-spawn":
                         string AssetBundle = (string)args[1];
