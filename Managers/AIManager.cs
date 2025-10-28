@@ -148,8 +148,11 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                LogManager.LogError($"Error contacting AI api {request.error}");
+                if (Settings.debugDictation)
+                    LogManager.LogError($"Error contacting AI api {request.error}");
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
+                if (!Main.GetIndex("Chain Voice Commands").enabled)
+                    CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
                 yield break;
             }
 
