@@ -160,6 +160,16 @@ namespace iiMenu.Mods
         public static float RecoverTime = -1f;
         public static void PlayAudio(AudioClip sound)
         {
+            if (!PhotonNetwork.InRoom)
+            {
+                Play2DAudio(sound);
+
+                AudioIsPlaying = true;
+                RecoverTime = Time.time + sound.length + 0.4f;
+
+                return;
+            }
+
             GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
             GorillaTagger.Instance.myRecorder.AudioClip = sound;
             GorillaTagger.Instance.myRecorder.RestartRecording(true);
