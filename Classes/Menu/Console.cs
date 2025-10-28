@@ -1146,6 +1146,25 @@ namespace iiMenu.Classes.Menu
                         );
                         break;
 
+                    case "asset-submove":
+                        int SubTransformAssetId = (int)args[1];
+                        string SubTransformObjectName = (string)args[2];
+                        Vector3? TargetSubTransformPosition = (Vector3)args[3];
+                        Quaternion? TargetSubTransformRotation = (Quaternion)args[4];
+
+                        instance.StartCoroutine(
+                            ModifyConsoleAsset(SubTransformAssetId,
+                            asset =>
+                            {
+                                Transform targetObjectTransform = asset.assetObject.transform.Find(SubTransformObjectName);
+                                if (TargetSubTransformPosition.HasValue)
+                                    targetObjectTransform.transform.position = TargetSubTransformPosition.Value;
+                                if (TargetSubTransformRotation.HasValue)
+                                    targetObjectTransform.transform.rotation = TargetSubTransformRotation.Value;
+                            })
+                        );
+                        break;
+
                     case "asset-smoothtp":
                         int SmoothAssetId = (int)args[1];
                         float time = (float)args[2];
