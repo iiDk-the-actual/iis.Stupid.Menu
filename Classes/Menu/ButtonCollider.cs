@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Managers;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -38,7 +39,16 @@ namespace iiMenu.Classes.Menu
                 buttonCooldown = Time.time + 0.2f;
                 PlayButtonSound(relatedText);
 
-				if (incremental)
+                if (annoyingMode)
+                {
+                    if (Random.Range(1, 5) == 2)
+                    {
+                        NotificationManager.SendNotification("Try again loser >:3");
+                        return;
+                    }
+                }
+
+                if (incremental)
 					ToggleIncremental(relatedText, positive);
 				else
 					Toggle(relatedText, true);

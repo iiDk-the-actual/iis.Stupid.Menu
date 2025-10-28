@@ -6066,15 +6066,6 @@ namespace iiMenu.Menu
 
         public static void Toggle(string buttonText, bool fromMenu = false, bool ignoreForce = false)
         {
-            if (annoyingMode && fromMenu)
-            {
-                if (Random.Range(1, 5) == 2)
-                {
-                    NotificationManager.SendNotification("<color=red>try again</color>");
-                    return;
-                }
-            }
-
             int lastPage = (Buttons.buttons[currentCategoryIndex].Length + pageSize - 1) / pageSize - 1;
             if (currentCategoryName == "Favorite Mods")
                 lastPage = (favorites.Count + pageSize - 1) / pageSize - 1;
