@@ -147,8 +147,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Debug Dictation", enableMethod =() => Settings.debugDictation = true, disableMethod =() => Settings.debugDictation = false, toolTip = "Debug what you say to the AI Assistant in your Unity console."},
 
-                new ButtonInfo { buttonText = "Reset Voice Commands Keywords", method = Settings.ResetVoiceCommandsKeywords, toolTip = "Resets the keywords for all the voice command related mods."},
-                new ButtonInfo { buttonText = "Reset System Prompt", method = Settings.ResetSystemPrompt, toolTip = "Resets the system prompt for the AI Assistant."},
+                new ButtonInfo { buttonText = "Reset Voice Commands Keywords", method = Settings.ResetVoiceCommandsKeywords, isTogglable = false, toolTip = "Resets the keywords for all the voice command related mods."},
+                new ButtonInfo { buttonText = "Reset System Prompt", method = Settings.ResetSystemPrompt, isTogglable = false, toolTip = "Resets the system prompt for the AI Assistant."},
 
                 new ButtonInfo { buttonText = "Player Select", method = Settings.PlayerSelect, toolTip = "Spawns a line in your hand when moving your hand away from the menu that you can select players with."},
 
