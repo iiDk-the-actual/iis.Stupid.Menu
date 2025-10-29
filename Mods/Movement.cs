@@ -677,17 +677,17 @@ namespace iiMenu.Mods
             GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
         }
 
-        public static Vector2 lerpygerpy = Vector2.zero;
+        public static Vector2 driveLerpDirection = Vector2.zero;
         public static void Drive()
         {
             Vector2 joy = leftJoystick;
-            lerpygerpy = Vector2.Lerp(lerpygerpy, joy, 0.05f);
+            driveLerpDirection = Vector2.Lerp(driveLerpDirection, joy, 0.05f);
 
-            Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;
+            Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * driveLerpDirection.y + GorillaTagger.Instance.bodyCollider.transform.right * driveLerpDirection.x;
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
             Vector3 targetVelocity = addition * driveSpeed;
 
-            if (Ray.distance < 0.2f && (Mathf.Abs(lerpygerpy.x) > 0.05f || Mathf.Abs(lerpygerpy.y) > 0.05f))
+            if (Ray.distance < 0.2f && (Mathf.Abs(driveLerpDirection.x) > 0.05f || Mathf.Abs(driveLerpDirection.y) > 0.05f))
                 GorillaTagger.Instance.rigidbody.linearVelocity = new Vector3(targetVelocity.x, GorillaTagger.Instance.rigidbody.linearVelocity.y, targetVelocity.z);
         }
 

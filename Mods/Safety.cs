@@ -206,12 +206,12 @@ namespace iiMenu.Mods
             GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + rangeNames[antiReportRangeIndex] + "</color><color=grey>]</color>";
         }
 
-        public static bool smartarp;
+        public static bool smartAntiReport;
         public static int buttonClickTime;
         public static string buttonClickPlayer;
 
         public static bool SmartAntiReport(NetPlayer linePlayer) =>
-            smartarp && linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
+            smartAntiReport && linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
 
         public static void VisualizeAntiReport()
         {
@@ -223,16 +223,24 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+		public static VRRig reportRig;
         public static void AntiReport(Action<VRRig, Vector3> onReport)
         {
             if (!NetworkSystem.Instance.InRoom) return;
+
+            if (reportRig != null)
+            {
+                onReport?.Invoke(reportRig, reportRig.transform.position);
+                reportRig = null;
+                return;
+			}
             
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
                 if (line.linePlayer != NetworkSystem.Instance.LocalPlayer) continue;
                 Transform report = line.reportButton.gameObject.transform;
 
-                foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isLocal let D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position) let D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position) where D1 < threshold || D2 < threshold where !smartarp || SmartAntiReport(line.linePlayer) select vrrig)
+                foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isLocal let D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position) let D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position) where D1 < threshold || D2 < threshold where !smartAntiReport || SmartAntiReport(line.linePlayer) select vrrig)
                     onReport?.Invoke(vrrig, report.transform.position);
             }
         }
@@ -326,59 +334,10 @@ namespace iiMenu.Mods
                 NotificationManager.information["Anti-Report"] = notifyText;
         }
 
-        public static void AntiReportFRT(Player subject, bool doNotification = true)
-        {
-            if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-            {
-                int antiReportType = 0;
-                string[] types = {
-                    "Disconnect",
-                    "Reconnect",
-                    "Join Random",
-                    "Notify"
-                };
-                for (int i = 0; i < types.Length - 1; i++)
-                {
-                    ButtonInfo buttonInfo = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
-                    if (buttonInfo.enabled)
-                    {
-                        antiReportType = i;
-                        break;
-                    }
-                }
-                switch (antiReportType)
-                {
-                    case 0:
-                        NetworkSystem.Instance.ReturnToSinglePlayer();
-                        RPCProtection();
-                        if (doNotification)
-                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
-                        
-                        break;
-                    case 1:
-                        Important.Reconnect();
-                        RPCProtection();
-                        if (doNotification)
-                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
-                        
-                        break;
-                    case 2:
-                        RPCProtection();
-                        Important.JoinRandom();
-                        if (doNotification)
-                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
-                        
-                        break;
-                    case 3:
-                        if (doNotification)
-                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " is reporting you.");
+        public static void AntiReportFRT(Player subject) =>
+            reportRig = subject.VRRig();
 
-                        break;
-                }
-            }
-        }
-
-        public static void AntiModerator()
+		public static void AntiModerator()
         {
             foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY.")))
             {

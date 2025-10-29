@@ -5263,7 +5263,7 @@ namespace iiMenu.Menu
                     }
                 }
 
-                if (Safety.smartarp && data.Code == 200)
+                if (Safety.smartAntiReport && data.Code == 200)
                 {
                     string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
                     if (rpcName == "RPC_PlayHandTap")

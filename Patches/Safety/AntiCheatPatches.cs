@@ -54,7 +54,8 @@ namespace iiMenu.Patches.Safety
 
                 if (AntiACReport)
                 {
-                    Mods.Safety.AntiReportFRT(null, false);
+                    Mods.Safety.AntiReportFRT(PhotonNetwork.LocalPlayer);
+                    NotificationManager.ClearAllNotifications();
                     NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> The anti cheat attempted to report you, you have been disconnected.");
                 }
 
