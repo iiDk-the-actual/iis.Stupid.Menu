@@ -1422,7 +1422,7 @@ namespace iiMenu.Mods
 
             int netId = gameEntityManager.CreateNetId();
 
-            gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)gameEntityManager.zone }, new[] { 48354877 }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)gameEntityManager.zone }, new[] { Overpowered.objectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
 
             ghostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 
