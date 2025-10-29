@@ -888,7 +888,7 @@ namespace iiMenu.Mods
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                int netId = Fun.ghostReactorManager.gameEntityManager.CreateNetId();
+                int netId = Fun.gameEntityManager.CreateNetId();
 
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
@@ -897,7 +897,7 @@ namespace iiMenu.Mods
 
                 object[] createData = {
                     new[] { netId },
-                    new[] { (int)GTZone.ghostReactor },
+                    new[] { (int)Fun.gameEntityManager.zone },
                     new[] { hash },
                     new[] { BitPackUtils.PackWorldPosForNetwork(position) },
                     new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
@@ -907,10 +907,10 @@ namespace iiMenu.Mods
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                        Fun.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
                         break;
                     case Player player:
-                        Fun.ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                        Fun.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
                         break;
                 }
 
@@ -928,10 +928,10 @@ namespace iiMenu.Mods
                     switch (target)
                     {
                         case RpcTarget rpcTarget:
-                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                            Fun.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
                             break;
                         case Player player:
-                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                            Fun.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
                             break;
                     }
 
@@ -949,10 +949,10 @@ namespace iiMenu.Mods
                     switch (target)
                     {
                         case RpcTarget rpcTarget:
-                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
+                            Fun.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
                             break;
                         case Player player:
-                            Fun.ghostReactorManager.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
+                            Fun.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
                             break;
                     }
                 }
@@ -965,14 +965,14 @@ namespace iiMenu.Mods
                 if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
                     position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
 
-                GameEntityManager gameEntityManager = Fun.ghostReactorManager.gameEntityManager;
+                GameEntityManager gameEntityManager = Fun.gameEntityManager;
 
                 GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
-                if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
+                if (gamePlayer.IsHoldingEntity(gameEntityManager, true) && Time.time > ghostReactorDelay)
                 {
                     VRRig.LocalRig.enabled = true;
                     if (ServerSyncLeftHandPos.Distance(position) < maxDistance)
-                        gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, velocity, angVelocity);
+                        gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, rotation, velocity, angVelocity);
                     else
                         return;
                 }
@@ -1005,7 +1005,7 @@ namespace iiMenu.Mods
                 if (entities.Count <= 0)
                     return;
 
-                GameEntity entity = entities[Random.Range(0, entities.Count)];
+                GameEntity entity = entities.OrderByDescending(entity => entity.transform.position.Distance(GorillaTagger.Instance.bodyCollider.transform.position)).FirstOrDefault();
 
                 if (Vector3.Distance(entity.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > maxDistance)
                 {
@@ -1026,6 +1026,7 @@ namespace iiMenu.Mods
                     entity.transform.rotation = RandomQuaternion();
 
                     entity.RequestGrab(true, Vector3.zero, Quaternion.identity);
+                    RPCProtection();
                 }
             }
         }
@@ -1035,7 +1036,7 @@ namespace iiMenu.Mods
         {
             get
             {
-                _idByName ??= Fun.ghostReactorManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key);
+                _idByName ??= Fun.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key);
                 return _idByName;
             }
             set => _idByName = value;
@@ -1074,7 +1075,7 @@ namespace iiMenu.Mods
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
-                        foreach (GameEntity entity in Fun.ghostReactorManager.gameEntityManager.entities)
+                        foreach (GameEntity entity in Fun.gameEntityManager.entities)
                         {
                             if (entity != null)
                             {
@@ -1092,12 +1093,12 @@ namespace iiMenu.Mods
                             destroyDelay = Time.time + 0.02f;
                             if (NetworkSystem.Instance.IsMasterClient)
                             {
-                                Fun.ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                                Fun.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
                                 RPCProtection();
                             } else
                             {
                                 gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity);
-                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Vector3.zero, Vector3.zero);
+                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Quaternion.identity, Vector3.zero, Vector3.zero);
                             }
                         }
                     }

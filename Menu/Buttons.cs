@@ -1170,9 +1170,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Gate Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnergyCostGate"]), toolTip = "Spawns gates at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Core Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleCore"]), toolTip = "Spawns collectible cores at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Slime Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleSentientCore"]), toolTip = "Spawns sentient collectible cores at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Tool Spam Gun", method = Overpowered.ToolSpamGun, toolTip = "Spawns random tools at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Flower Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorCollectibleFlower"]), toolTip = "Spawns flowers at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Barrel Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorBreakableBarrel"]), toolTip = "Spawns barrels at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Bug Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyPest"]), toolTip = "Spawns the annoying bug enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Ranged Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Chaser Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},

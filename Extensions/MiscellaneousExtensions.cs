@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -126,9 +127,19 @@ namespace iiMenu.Extensions
             PlayPositionAudio(clip, position, volume);
 
         public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation) =>
-            Mods.Fun.ghostReactorManager.gameEntityManager.RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+            Mods.Fun.gameEntityManager.RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
 
-        public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Vector3 velocity, Vector3 angVelocity) =>
-            Mods.Fun.ghostReactorManager.gameEntityManager.RequestThrowEntity(gameEntity.id, isLeftHand, position, velocity, angVelocity);
+        public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
+        {
+            Mods.Fun.gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
+		    {
+				Mods.Fun.gameEntityManager.GetNetIdFromEntityId(gameEntity.id),
+			    isLeftHand,
+				position,
+			    rotation,
+			    velocity,
+			    angVelocity
+		    });
+		}
     }
 }

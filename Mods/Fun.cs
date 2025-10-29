@@ -1195,15 +1195,14 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = Random.Range(0, 255);
         }
 
-        private static GhostReactorManager _ghostReactorManager;
         public static GhostReactorManager ghostReactorManager
         {
-            get
-            {
-                _ghostReactorManager ??= GetObject("GhostReactorManager").GetComponent<GhostReactorManager>();
-                return _ghostReactorManager;
-            }
-            set => _ghostReactorManager = value;
+            get => GhostReactor.instance.grManager;
+        }
+
+        public static GameEntityManager gameEntityManager
+        {
+            get => GameEntityManager.GetManagerForZone(GhostReactor.instance.zone);
         }
 
         public static void GrabIDCard()
@@ -1215,7 +1214,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = entity.transform.position;
 
-                    ghostReactorManager.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                    gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                 }
             }
             else
@@ -1400,9 +1399,9 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = GetVRRigFromPlayer(Target);
 
-            int netId = ghostReactorManager.gameEntityManager.CreateNetId();
+            int netId = gameEntityManager.CreateNetId();
 
-            ghostReactorManager.gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GTZone.ghostReactor }, new[] { 48354877 }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GTZone.ghostReactor }, new[] { 48354877 }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
 
             ghostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 
@@ -1414,7 +1413,7 @@ namespace iiMenu.Mods
             yield return null;
             yield return null;
 
-            ghostReactorManager.gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
+            gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
 
             RPCProtection();
         }
