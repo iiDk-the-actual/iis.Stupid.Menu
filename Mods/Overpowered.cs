@@ -1042,6 +1042,18 @@ namespace iiMenu.Mods
             set => _idByName = value;
         }
 
+        public static void SpamObjectGrip(int objectId)
+        {
+            if (rightGrab)
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
+        }
+
+        public static void ToolSpamGrip()
+        {
+            int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
+            SpamObjectGrip(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
         public static void SpamObjectGun(int objectId)
         {
             if (GetGunInput(false))
@@ -1050,7 +1062,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, Quaternion.Euler(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f)), Vector3.zero, Vector3.zero);
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
             }
         }
 
