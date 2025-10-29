@@ -1366,6 +1366,27 @@ namespace iiMenu.Mods
             plr.hp = plr.maxHp;
         }
 
+        public static void StartShift()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            ghostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart ? true : false);
+            RPCProtection();
+        }
+
+        public static void EndShift()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            ghostReactorManager.RequestShiftEnd();
+            RPCProtection();
+        }
+
+        public static void SetQuota()
+        {
+            if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            GhostReactor.instance.shiftManager.shiftStats.SetShiftStat(GRShiftStatType.CoresCollected, GhostReactor.instance.shiftManager.coresRequiredToDelveDeeper);
+            RPCProtection();
+        }
+
         public static void SetPlayerState(Player Target, GRPlayer.GRPlayerState State)
         {
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);

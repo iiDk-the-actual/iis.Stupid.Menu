@@ -1545,6 +1545,10 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Invincibility", method = Fun.Invincibility, toolTip = "Makes you unable to die in the horror map."},
 
+                new ButtonInfo { buttonText = "Start Shift", method = Fun.StartShift, isTogglable = false, toolTip = "Starts a new ghost reactor shift."},
+                new ButtonInfo { buttonText = "End Shift", method = Fun.EndShift, isTogglable = false, toolTip = "Ends the current ghost reactor shift."},
+                new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Sets the quota ."},
+
                 new ButtonInfo { buttonText = "Kill Self", method =() => Fun.SetStateSelf(1), isTogglable = false, toolTip = "Turns you into a ghost."},
                 new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.SetStateGun(1), toolTip = "Turns whoever your hand desires into a ghost."},
                 new ButtonInfo { buttonText = "Kill All", method =() => Fun.SetStateAll(1), isTogglable = false, toolTip = "Turns everyone in the room into a ghost."},
