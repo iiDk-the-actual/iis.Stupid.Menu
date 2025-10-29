@@ -131,9 +131,13 @@ namespace iiMenu.Extensions
 
         public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
         {
-            Mods.Fun.gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
+            GameEntityManager gameEntityManager = Mods.Fun.gameEntityManager;
+            if (!gameEntityManager.IsAuthority())
+                gameEntityManager.ThrowEntityLocal(gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetPlayer.Get(PhotonNetwork.LocalPlayer));
+
+            gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
 		    {
-				Mods.Fun.gameEntityManager.GetNetIdFromEntityId(gameEntity.id),
+				gameEntityManager.GetNetIdFromEntityId(gameEntity.id),
 			    isLeftHand,
 				position,
 			    rotation,
