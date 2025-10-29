@@ -1077,6 +1077,11 @@ namespace iiMenu.Classes.Menu
                         GetVRRigFromPlayer(sender).voiceAudio.maxDistance = (bool)args[1] ? float.MaxValue : 500f;
                         break;
 
+                    case "setmaterial":
+                        VRRig rig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer((int)args[1]));
+                        rig.ChangeMaterialLocal((int)args[2]);
+                        break;
+
                     // New assets
                     case "asset-spawn":
                         string AssetBundle = (string)args[1];
