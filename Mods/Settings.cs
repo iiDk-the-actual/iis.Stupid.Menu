@@ -4673,7 +4673,7 @@ exit 0";
             modPhrases.Start();
 
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+                DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
             
             NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
         }
@@ -4728,14 +4728,14 @@ exit 0";
                 ButtonInfo mod = GetIndex(modTarget);
                 NotificationManager.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + ">VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), buttonClickVolume / 10f);
+                    DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), buttonClickVolume / 10f);
                 
                 Toggle(modTarget, true, true);
             } else
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+args.text+").", 3000);
                 if (dynamicSounds)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                    DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
             }
         }
 
@@ -4756,7 +4756,7 @@ exit 0";
             
             NotificationManager.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
         }
 
         public static void VoiceRecognitionOff()
@@ -4811,7 +4811,7 @@ exit 0";
                 yield return null;
 
             if (dynamicSounds)
-                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+                DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
             NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
 
             drec = new DictationRecognizer();
@@ -4822,7 +4822,7 @@ exit 0";
                 if (cancelKeywords.Contains(text.ToLower()))
                 {
                     if (dynamicSounds)
-                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                        DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                         
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> {(text.ToLower() == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
                     CoroutineManager.instance.StartCoroutine(DictationRestart());
@@ -4841,7 +4841,7 @@ exit 0";
                 if (completionCause.ToString() == "TimeoutExceeded")
                 {
                     if (dynamicSounds)
-                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
+                        DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
                 }
                 
@@ -4887,6 +4887,14 @@ exit 0";
             PhraseRecognitionSystem.Shutdown();
         }
 
+        public static void DictationPlay(AudioClip clip, float volume)
+        {
+            bool enabled = GetIndex("Global Dynamic Sounds").enabled;
+            if (enabled)
+                Sound.PlayAudio(clip);
+            else if (!enabled)
+                Play2DAudio(clip, volume);
+        }
         public static GameObject selectObject;
         public static VRRig lastTarget;
         public static bool lastTriggerSelect;

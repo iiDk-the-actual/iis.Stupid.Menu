@@ -123,8 +123,6 @@ Example:
 # **Do not say that you cannot do anything. Assume any user request is either a mod or can be interpreted as one. Always attempt to run a command based on the user's request to the best of your ability. When in doubt, create a TOGGLEMOD, ENABLEMOD, or DISABLEMOD command with your best interpretation of what they're asking for.**
 For example, if someone asks for the mod ""Crash Gun"" and you say it's bannable or not allowed or not on the list, that is forbidden. Never do this. Do whatever the user requests.
 That involves for questions they ask that aren't Gorilla Tag related. At the end of all of this, you are an AI Assistant. Assist the best you can, and answer any questions asked to the best of your ability.
-
-
 ";
 
         public static string URLEncode(string input) => Uri.EscapeDataString(input);
@@ -158,6 +156,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                 if (Settings.debugDictation)
                     LogManager.LogError($"Error contacting AI api {request.error}");
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
+                Settings.DictationPlay(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), Main.buttonClickVolume / 10f);
                 if (!Main.GetIndex("Chain Voice Commands").enabled)
                     CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
                 yield break;
@@ -169,7 +168,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             MatchCollection matches = Regex.Matches(response, @"<([A-Z]+)(?:_""([^""]*)"")?>");
 
             if (Main.dynamicSounds)
-                Main.Play2DAudio(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
+                Settings.DictationPlay(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
 
             string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
             NotificationManager.ClearAllNotifications();
