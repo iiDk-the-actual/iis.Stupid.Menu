@@ -144,6 +144,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Narrate Assistant", toolTip = "Narrates what the voice assistant says locally."},
                 new ButtonInfo { buttonText = "Global Narrate Assistant", toolTip = "Narrates what the voice assistant says globally."},
+                new ButtonInfo { buttonText = "Global Dynamic Sounds", toolTip = "Plays the dynamic sounds through your microphone."},
 
                 new ButtonInfo { buttonText = "Debug Dictation", enableMethod =() => Settings.debugDictation = true, disableMethod =() => Settings.debugDictation = false, toolTip = "Debug what you say to the AI Assistant in your Unity console."},
 
