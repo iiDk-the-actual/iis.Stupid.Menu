@@ -146,6 +146,46 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CoreESP()
+        {
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : new Color(0.41f, 0.05f, 0.70f);
+            if (tt)
+                coreESPColor.a = 0.5f;
+
+            List<GameEntity> cores = Fun.gameEntityManager.entities.Where(entity => entity != null && entity.typeId == Overpowered.objectByName["GhostReactorCollectibleCore"]).ToList();
+            if (cores.Count <= 0)
+                return;
+            
+            for (int i = 0; i < cores.Count; i++)
+            {
+                Transform corePosition = cores[i].transform;
+                VisualizeAura(corePosition.position, 0.15f, coreESPColor, i + 29875, coreESPColor.a);
+            }
+        }
+
+        public static void EnemyESP()
+        {
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : new Color(0.41f, 0.05f, 0.70f);
+            if (tt)
+                coreESPColor.a = 0.5f;
+
+            List<GameEntity> enemies = Fun.gameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.ToLower().Contains("enemy")).ToList();
+            if (enemies.Count <= 0)
+                return;
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                Transform enemy = enemies[i].transform;
+                VisualizeAura(enemy.position, 0.15f, coreESPColor, i + 451980, coreESPColor.a);
+            }
+        }
+
         public static void DisableCrystalBallVision()
         {
             if (urpGlass != null)
