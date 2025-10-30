@@ -3733,6 +3733,8 @@ namespace iiMenu.Menu
         private static string versionArchive;
         public static void UpdatePrompt(string newVersion = null)
         {
+            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/win7-exc.ogg", "Audio/Menu/Notifications/win7-exc.ogg"), buttonClickVolume / 10f);
+
             versionArchive ??= newVersion;
             Prompt($"A new version is available ({versionArchive}). Would you like to update?", Settings.UpdateMenu);
         }
