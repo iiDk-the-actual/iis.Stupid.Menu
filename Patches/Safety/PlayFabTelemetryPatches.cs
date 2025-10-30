@@ -78,7 +78,7 @@ namespace iiMenu.Patches.Safety
         public class DisplayNamePatch
         {
             public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null) =>
-                request.DisplayName = RandomString(Random.Range(1, 12));
+                request.DisplayName = RandomString(Random.Range(3, 12));
         }
     }
 }
