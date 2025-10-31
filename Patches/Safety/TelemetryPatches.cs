@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Safety
     // Gorilla Tag's one weakness -- tracking data to get players banned. This is how they did it over the years.
     public class TelemetryPatches
     {
-        public static bool enabled;
+        public static bool enabled = true;
 
         [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
         public class TelemetryPatch1

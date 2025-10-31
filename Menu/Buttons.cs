@@ -461,7 +461,7 @@ namespace iiMenu.Menu
             new[] { // Safety Mods [8]
                 new ButtonInfo { buttonText = "Exit Safety Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Anti Telemetry", enableMethod =() => TelemetryPatches.enabled = true, disableMethod =() => TelemetryPatches.enabled = false, toolTip = "Stops the game from sending log data to Gorilla Tag." },
+                new ButtonInfo { buttonText = "Disable Anti Telemetry", enableMethod =() => TelemetryPatches.enabled = false, disableMethod =() => TelemetryPatches.enabled = true, toolTip = "Allows the game to send log data to Gorilla Tag's servers." },
 
                 new ButtonInfo { buttonText = "Recommended Safety Mods", method = Safety.GeneralSafety, disableMethod = Safety.DisableGeneral, toolTip = "Has the effects of some good general safety mods while enabled." },
 
