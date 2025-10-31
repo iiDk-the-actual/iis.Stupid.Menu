@@ -95,6 +95,27 @@ namespace iiMenu.Mods
         public static void EnableFog() =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(new Color(0.9569f, 0.6941f, 0.502f, 0.1216f), 40f, 10f, 40f);
 
+        private static readonly List<TimeOfDayDependentAudio> disabledAmbientObjects = new List<TimeOfDayDependentAudio>();
+        public static void DisableAmbience()
+        {
+            foreach (TimeOfDayDependentAudio ambientObject in GetAllType<TimeOfDayDependentAudio>())
+            {
+                if (ambientObject.gameObject.activeSelf)
+                {
+                    disabledAmbientObjects.Add(ambientObject);
+                    ambientObject.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        public static void EnableAmbience()
+        {
+            foreach (TimeOfDayDependentAudio ambientObject in disabledAmbientObjects)
+                ambientObject.gameObject.SetActive(true);
+
+            disabledAmbientObjects.Clear();
+        }
+
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
