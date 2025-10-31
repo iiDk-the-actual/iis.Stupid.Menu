@@ -4479,16 +4479,24 @@ namespace iiMenu.Menu
 
         public static IEnumerator GrowCoroutine()
         {
+            GameObject menuObject = menu;
+
             float elapsedTime = 0f;
             Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * (menuScale * GTPlayer.Instance.scale) : new Vector3(0.1f, 0.3f, 0.3825f) * menuScale;
             while (elapsedTime < (slowDynamicAnimations ? 0.1f : 0.05f))
             {
-                menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / (slowDynamicAnimations ? 0.1f : 0.05f));
+                if (menuObject == null)
+                    yield break;
+
+                menuObject.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / (slowDynamicAnimations ? 0.1f : 0.05f));
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            menu.transform.localScale = target;
+            if (menuObject == null)
+                yield break;
+
+            menuObject.transform.localScale = target;
         }
 
         public static IEnumerator ShrinkCoroutine()
