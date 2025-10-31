@@ -83,10 +83,10 @@ namespace iiMenu.Mods
             {
                 NoFinger();
                 GTPlayer.Instance.inOverlay = true;
-                GTPlayer.Instance.LeftHand.controllerTransform.localPosition = new Vector3(238f, -90f, 0f);
-                GTPlayer.Instance.RightHand.controllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
-                GTPlayer.Instance.LeftHand.controllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
-                GTPlayer.Instance.RightHand.controllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
+                GTPlayer.Instance.GetControllerTransform(true).localPosition = new Vector3(238f, -90f, 0f);
+                GTPlayer.Instance.GetControllerTransform(false).localPosition = new Vector3(-190f, 90f, 0f);
+                GTPlayer.Instance.GetControllerTransform(true).rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+                GTPlayer.Instance.GetControllerTransform(false).rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
             }
 
         }
@@ -104,11 +104,11 @@ namespace iiMenu.Mods
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GTPlayer.Instance.LeftHand.controllerTransform.position = GTPlayer.Instance.headCollider.transform.position + GTPlayer.Instance.headCollider.transform.up * (-0.5f * GTPlayer.Instance.scale);
-            GTPlayer.Instance.LeftHand.controllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+            GTPlayer.Instance.GetControllerTransform(true).position = GTPlayer.Instance.headCollider.transform.position + GTPlayer.Instance.headCollider.transform.up * (-0.5f * GTPlayer.Instance.scale);
+            GTPlayer.Instance.GetControllerTransform(true).rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
 
-            GTPlayer.Instance.RightHand.controllerTransform.position = Position;
-            GTPlayer.Instance.RightHand.controllerTransform.rotation = Rotation;
+            GTPlayer.Instance.GetControllerTransform(false).position = Position;
+            GTPlayer.Instance.GetControllerTransform(false).rotation = Rotation;
 
             ControllerInputPoller.instance.leftControllerGripFloat = 0f;
             ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
