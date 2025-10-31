@@ -186,11 +186,11 @@ namespace iiMenu.Mods
             Quaternion lhr = GorillaTagger.Instance.leftHandTransform.rotation;
             Quaternion rhr = GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GTPlayer.Instance.rightControllerTransform.transform.position = lh;
-            GTPlayer.Instance.leftControllerTransform.transform.position = rh;
+            GTPlayer.Instance.RightHand.controllerTransform.transform.position = lh;
+            GTPlayer.Instance.LeftHand.controllerTransform.transform.position = rh;
 
-            GTPlayer.Instance.rightControllerTransform.transform.rotation = lhr;
-            GTPlayer.Instance.leftControllerTransform.transform.rotation = rhr;
+            GTPlayer.Instance.RightHand.controllerTransform.transform.rotation = lhr;
+            GTPlayer.Instance.LeftHand.controllerTransform.transform.rotation = rhr;
         }
 
         public static void FixHandTaps()

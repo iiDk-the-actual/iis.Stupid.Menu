@@ -620,10 +620,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GTPlayer.Instance.rightControllerTransform.position = NewPointer.transform.position;
+                    GTPlayer.Instance.RightHand.controllerTransform.position = NewPointer.transform.position;
 
-                    if (Vector3.Distance(GTPlayer.Instance.rightControllerTransform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
-                        GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GTPlayer.Instance.rightControllerTransform.position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
+                    if (Vector3.Distance(GTPlayer.Instance.RightHand.controllerTransform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
+                        GTPlayer.Instance.RightHand.controllerTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GTPlayer.Instance.RightHand.controllerTransform.position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
                 }
             }
         }

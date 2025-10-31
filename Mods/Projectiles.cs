@@ -529,7 +529,7 @@ namespace iiMenu.Mods
                 }
 
                 if (GetIndex("Include Hand Velocity").enabled)
-                    charvel = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    charvel = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
 
                 BetaFireProjectile(projectilename, startpos, charvel, CalculateProjectileColor());
             }

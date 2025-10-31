@@ -82,9 +82,9 @@ namespace iiMenu.Patches.Menu
                         audioClipIndex = material;
 
                         if (isLeftHand)
-                            GTPlayer.Instance.leftHandMaterialTouchIndex = material;
+                            GTPlayer.Instance.leftHand.materialTouchIndex = material;
                         else
-                            GTPlayer.Instance.rightHandMaterialTouchIndex = material;
+                            GTPlayer.Instance.rightHand.materialTouchIndex = material;
 
                         effectContext.soundFX = VRRig.LocalRig.GetHandSurfaceData(material).audio;
 

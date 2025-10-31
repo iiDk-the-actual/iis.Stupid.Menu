@@ -54,7 +54,7 @@ namespace iiMenu.Patches.Menu
 
                     if (grounded)
                     {
-                        Vector3 averageVelocity = (handLink.isLeftHand ? GTPlayer.Instance.leftHandCenterVelocityTracker : GTPlayer.Instance.rightHandCenterVelocityTracker).GetAverageVelocity(true).normalized * 20f;
+                        Vector3 averageVelocity = (handLink.isLeftHand ? GTPlayer.Instance.LeftHand.velocityTracker : GTPlayer.Instance.RightHand.velocityTracker).GetAverageVelocity(true).normalized * 20f;
                         __instance.myRig.netView.SendRPC("DroppedByPlayer", __instance.myRig.OwningNetPlayer, averageVelocity);
                         __instance.myRig.ApplyLocalTrajectoryOverride(averageVelocity);
                     }

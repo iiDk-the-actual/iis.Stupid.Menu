@@ -3051,7 +3051,7 @@ namespace iiMenu.Mods
 
                     if (!rig.isLocal && (leftHand || rightHand))
                     {
-                        Vector3 vel = rightHand ? GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                        Vector3 vel = rightHand ? GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0);
 
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), vel);
                         thingdeb = Time.time + 0.1f;

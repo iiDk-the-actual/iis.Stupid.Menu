@@ -988,7 +988,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
@@ -1025,7 +1025,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
+                        Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
@@ -1487,7 +1487,7 @@ namespace iiMenu.Mods
 
                     if (!rig.isLocal && (leftHand || rightHand))
                     {
-                        Vector3 vel = rightHand ? GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                        Vector3 vel = rightHand ? GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0);
 
                         Console.ExecuteCommand("vel", GetPlayerFromVRRig(rig).ActorNumber, vel);
                         thingdeb = Time.time + 0.1f;

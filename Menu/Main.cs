@@ -3022,12 +3022,12 @@ namespace iiMenu.Menu
 
                         if (rightHand || (bothHands && openedwithright))
                         {
-                            comp.linearVelocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.linearVelocity = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
                             comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                         }
                         else
                         {
-                            comp.linearVelocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.linearVelocity = GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0);
                             comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                         }
 
@@ -4881,14 +4881,14 @@ namespace iiMenu.Menu
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
-            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * (GTPlayer.Instance.leftHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.LeftHand.handRotOffset;
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * (GTPlayer.Instance.LeftHand.handOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
         {
-            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * (GTPlayer.Instance.rightHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.RightHand.handRotOffset;
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * (GTPlayer.Instance.RightHand.handOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
