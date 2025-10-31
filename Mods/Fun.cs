@@ -2719,7 +2719,7 @@ Piece Name: {gunTarget.name}";
             get
             {
                 if (_firefly == null)
-                    _firefly = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1];
+                    _firefly = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[0];
 
                 return _firefly;
             }
