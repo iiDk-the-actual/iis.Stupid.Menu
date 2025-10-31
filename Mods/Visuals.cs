@@ -83,6 +83,14 @@ namespace iiMenu.Mods
             GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = text;
         }
 
+        public static void ToggleSnow(bool enable)
+        {
+            GameObject snowObject = GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight").transform.Find("snow").gameObject;
+            snowObject.transform.position = Vector3.one * (enable ? 0.001f : -0.001f);
+            snowObject.GetComponent<TimeOfDayDependentAudio>().enabled = !enable;
+            snowObject.transform.Find("snow partic").gameObject.SetActive(enable);
+        }
+
         public static void WeatherChange(bool rain)
         {
             for (int i = 0; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
