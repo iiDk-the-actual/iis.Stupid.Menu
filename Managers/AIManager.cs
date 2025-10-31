@@ -69,6 +69,14 @@ Same as ENABLEMOD, but its counterpart instead disabling the mod of request.
 <TOGGLEMOD_""Modname"">
 Runs ENABLEMOD when mod is disabled, runs DISABLEMOD when mod is enabled, simply flipping the switch.
 
+<SETNAME_""Name"">
+If someone requests to change their name or become someone else, run this command with the name they specify inside the command.
+For example, if they say ""Change my name to daisy"", then do <SETNAME_""DAISY"">
+
+<SETCOLOR""Hex code"">
+If someone requests to change their color, run this command with the color they specify inside the command. It takes Hex values only.
+For example, if they say ""Change my color to blue"", then do <SETCOLOR""0000ff"">
+
 <JOINROOM_""Roomcode"">
 If someone requests to join a room, run this command with the room name they specify inside the command.
 For example, if they say ""Join the room mod"", then do <JOINROOM_""MOD"">
@@ -268,6 +276,16 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                             if (argument.ToLower() == "random")
                                 Important.JoinRandom();
                             Important.QueueRoom(argument.ToUpper());
+                            break;
+                        }
+                    case "SETNAME":
+                        {
+                           Main.ChangeName(argument.ToUpper());
+                           break;
+                        }
+                    case "SETCOLOR":
+                        {
+                            Main.ChangeColor(Main.HexToColor(argument));
                             break;
                         }
                 }

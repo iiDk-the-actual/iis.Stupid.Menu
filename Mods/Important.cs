@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using BepInEx;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -473,6 +474,30 @@ exit";
                     }
                 }
             }
+        }
+
+        public static void PCControllerEmulation()
+        {
+            ControllerInputPoller.instance.rightControllerPrimaryButton |= UnityInput.Current.GetKey(KeyCode.E);
+            ControllerInputPoller.instance.rightControllerSecondaryButton |= UnityInput.Current.GetKey(KeyCode.R);
+
+            ControllerInputPoller.instance.leftControllerPrimaryButton |= UnityInput.Current.GetKey(KeyCode.F);
+            ControllerInputPoller.instance.leftControllerSecondaryButton |= UnityInput.Current.GetKey(KeyCode.G);
+
+            ControllerInputPoller.instance.leftGrab |= UnityInput.Current.GetKey(KeyCode.LeftBracket);
+            ControllerInputPoller.instance.leftControllerGripFloat += UnityInput.Current.GetKey(KeyCode.LeftBracket) ? 1f : 0f;
+
+            ControllerInputPoller.instance.rightGrab |= UnityInput.Current.GetKey(KeyCode.RightBracket);
+            ControllerInputPoller.instance.rightControllerGripFloat += UnityInput.Current.GetKey(KeyCode.RightBracket) ? 1f : 0f;
+
+            ControllerInputPoller.instance.rightControllerTriggerButton |= UnityInput.Current.GetKey(KeyCode.Equals);
+            ControllerInputPoller.instance.rightControllerIndexFloat += UnityInput.Current.GetKey(KeyCode.Equals) ? 1f : 0f;
+
+            ControllerInputPoller.instance.leftControllerTriggerButton |= UnityInput.Current.GetKey(KeyCode.Minus);
+            ControllerInputPoller.instance.leftControllerIndexFloat += UnityInput.Current.GetKey(KeyCode.Minus) ? 1f : 0f;
+
+            ControllerInputPoller.instance.rightControllerTriggerButton |= UnityInput.Current.GetKey(KeyCode.Equals);
+            ControllerInputPoller.instance.rightControllerIndexFloat += UnityInput.Current.GetKey(KeyCode.Equals) ? 1f : 0f;
         }
 
         private static bool lastTagLag;

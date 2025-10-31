@@ -54,6 +54,7 @@ using System.Linq;
 using System.Reflection;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
@@ -674,12 +675,66 @@ namespace iiMenu.Mods
         public static void HueShift(Color color) =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
+        private static bool wasTagged;
+        public static void PreloadJumpscareData()
+        {
+            LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Fun/jumpscare.png", "Images/Mods/Fun/jumpscare.png");
+            LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/jumpscare.ogg", "Audio/Mods/Fun/jumpscare.ogg");
+        }
+        
+        public static void JumpscareOnTag()
+        {
+            bool isTagged = VRRig.LocalRig.IsTagged();
+
+            if (isTagged && !wasTagged && Random.Range(0, 2000) == 1)
+                Jumpscare();
+
+            wasTagged = isTagged;
+        }
+
+        public static void Jumpscare() =>
+            CoroutineManager.instance.StartCoroutine(JumpscareCoroutine());
+
+        public static IEnumerator JumpscareCoroutine()
+        {
+            LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/jumpscare.ogg", "Audio/Mods/Fun/jumpscare.ogg").Play();
+
+            HueShift(Color.black);
+            GameObject jumpscareObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            jumpscareObject.transform.SetParent(GorillaTagger.Instance.headCollider.transform, false);
+            jumpscareObject.transform.localPosition = Vector3.forward * 1f;
+            jumpscareObject.transform.localScale = new Vector3(1f, 1f, 0.01f);
+            jumpscareObject.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+            Object.Destroy(jumpscareObject.GetComponent<Collider>());
+
+            Material jumpscareMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+
+            jumpscareMaterial.SetFloat("_Surface", 1);
+            jumpscareMaterial.SetFloat("_Blend", 0);
+            jumpscareMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+            jumpscareMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+            jumpscareMaterial.SetFloat("_ZWrite", 0);
+            jumpscareMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            jumpscareMaterial.renderQueue = (int)RenderQueue.Transparent;
+
+            jumpscareObject.GetComponent<Renderer>().material = jumpscareMaterial;
+            jumpscareObject.GetComponent<Renderer>().material.mainTexture = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Fun/jumpscare.png", "Images/Mods/Fun/jumpscare.png");
+
+            for (int i = 0; i < 10; i++)
+            {
+                jumpscareObject.GetComponent<Renderer>().material.color = Color.white * ((i + 1) % 2);
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            Object.Destroy(jumpscareObject);
+
+            HueShift(Color.clear);
+        }
+
         public static void SpectateGun()
         {
             if (GetGunInput(false))
             {
-                
-
                 if (gunLocked && lockTarget != null)
                 {
                     if (FreeCamObject == null)
@@ -2664,7 +2719,7 @@ Piece Name: {gunTarget.name}";
             get
             {
                 if (_firefly == null)
-                    _firefly = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1];
+                    _firefly = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[0];
 
                 return _firefly;
             }

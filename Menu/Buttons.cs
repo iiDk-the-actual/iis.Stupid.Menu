@@ -288,6 +288,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
 
                 new ButtonInfo { buttonText = "Grip Noclip", toolTip = "Activates noclip with your <color=green>grip</color> instead."},
+                new ButtonInfo { buttonText = "Constant Noclip", toolTip = "Keeps your noclip activated even when not holding any buttons."},
                 new ButtonInfo { buttonText = "Left Hand Wall Walk", method =() => Movement.leftWallWalk = true, disableMethod =() => Movement.leftWallWalk = false, toolTip = "Swaps the wall walk mod to your left hand."},
                 new ButtonInfo { buttonText = "Both Hands Wall Walk", method =() => Movement.bothWallWalk = true, disableMethod =() => Movement.bothWallWalk = false, toolTip = "Allows you to use wall walk with both of your hands."},
 
@@ -446,6 +447,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Unlock FPS", method = Important.UncapFPS, disableMethod =() => Application.targetFrameRate = 144, toolTip = "Unlocks your FPS."},
 
                 new ButtonInfo { buttonText = "PC Button Click", method = Important.PCButtonClick, toolTip = "Lets you click in-game buttons with your mouse."},
+                new ButtonInfo { buttonText = "PC Controller Emulation", method = Important.PCControllerEmulation, toolTip = "Allows you to press buttons on your in-game controllers using your keyboard."},
                 new ButtonInfo { buttonText = "Unlock Competitive Queue", method =() => GorillaComputer.instance.CompQueueUnlockButtonPress(), isTogglable = false, toolTip = "Permanently unlocks the competitive queue."},
                 new ButtonInfo { buttonText = "Change Queue to Default", method =() => GorillaComputer.instance.currentQueue = "DEFAULT", isTogglable = false, toolTip = "Changes your queue to default."},
                 new ButtonInfo { buttonText = "Change Queue to Minigames", method =() => GorillaComputer.instance.currentQueue = "MINIGAMES", isTogglable = false, toolTip = "Changes your queue to minigames."},
@@ -477,6 +479,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Flush RPCs", method = RPCProtection, isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => AntiCrashPatch.enabled = true, disableMethod =() => AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
                 new ButtonInfo { buttonText = "Anti Kick", enableMethod =() => onlySerializeNecessary = true, method = Experimental.OnlySerializeNecessary, disableMethod =() => onlySerializeNecessary = false, toolTip = "Only networks the necessities to prevent getting kicked."},
+                new ButtonInfo { buttonText = "Anti Name Ban", enableMethod =() => BanPatches.enabled = true, method = Safety.AntiNameBan, disableMethod =() => BanPatches.enabled = false, toolTip = "Prevents you from getting banned for setting your name to bad things."},
                 new ButtonInfo { buttonText = "Anti Stump Kick", enableMethod =() => GroupPatch.enabled = true, disableMethod =() => GroupPatch.enabled = false, toolTip = "Stops people from group kicking you."},
                 new ButtonInfo { buttonText = "Anti Lucy", enableMethod =() => RisePatch.enabled = true, disableMethod =() => RisePatch.enabled = false, toolTip = "Prevents lucy from moving you."},
                 new ButtonInfo { buttonText = "Disable Lucy",  enableMethod =() => LucyPatch.enabled = true, disableMethod =() => LucyPatch.enabled = false, toolTip = "Prevents lucy from spawning."},
@@ -781,10 +784,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Core ESP", method = Visuals.CoreESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
                 new ButtonInfo { buttonText = "Enemy ESP", method = Visuals.EnemyESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
 
+                new ButtonInfo { buttonText = "Enable Snow", enableMethod =() => Visuals.ToggleSnow(true), disableMethod =() => Visuals.ToggleSnow(false), toolTip = "Forcibly enables the snow."},
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
                 new ButtonInfo { buttonText = "Disable Fog", method = Visuals.DisableFog, disableMethod = Visuals.ResetFog, toolTip = "Disables the fog."},
                 new ButtonInfo { buttonText = "Enable Fog", method = Visuals.EnableFog, disableMethod = Visuals.ResetFog, toolTip = "Enables the fog."},
+
+                new ButtonInfo { buttonText = "Disable Ambience", enableMethod = Visuals.DisableAmbience, disableMethod = Visuals.EnableAmbience, toolTip = "Disables all ambient effects."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod = Visuals.DoCustomSkyboxColor, method = Visuals.CustomSkyboxColor, disableMethod = Visuals.UnCustomSkyboxColor, toolTip = "Changes the skybox color to match the menu."},
                 new ButtonInfo { buttonText = "Draw Gun", method = Visuals.DrawGun, disableMethod = Visuals.DisableDrawGun, toolTip = "Lets you draw on whatever your hand desires." },
@@ -958,6 +964,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Nausea", method = Fun.Nausea, disableMethod = Fun.DisableFreecam, toolTip = "Gives you the Nausea effect from Minecraft."},
                 new ButtonInfo { buttonText = "LSD", method =() => { Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f); Fun.HueShift(new Color(rgb.r, rgb.g, rgb.b, 0.1f)); }, disableMethod =() => Fun.HueShift(Color.clear), toolTip = "Hue shifts your game to a rainbow color."},
+                new ButtonInfo { buttonText = "Jumpscare on Tag", enableMethod = Fun.PreloadJumpscareData, method = Fun.JumpscareOnTag, toolTip = "Gives a 1/2000 chance of a jumpscare happening when getting tagged."},
+                new ButtonInfo { buttonText = "Jumpscare", method = Fun.Jumpscare, isTogglable = false, toolTip = "Jumpscares you."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method = Fun.MuteGun, toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method = Fun.MuteAll, disableMethod = Fun.UnmuteAll, toolTip = "Mutes everyone in the room."},
