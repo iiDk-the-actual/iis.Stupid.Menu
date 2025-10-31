@@ -3595,7 +3595,7 @@ namespace iiMenu.Mods
 
                         bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
                         if (sessionIsPublic)
-                            Overpowered.SetRoomStatus(true);
+                            SetRoomStatus(true);
 
                         CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                         {
@@ -3625,7 +3625,7 @@ namespace iiMenu.Mods
 
                 bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
                 if (sessionIsPublic)
-                    Overpowered.SetRoomStatus(true);
+                    SetRoomStatus(true);
 
                 CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
@@ -3643,163 +3643,6 @@ namespace iiMenu.Mods
             }
             else
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-        }
-
-        public static void KickGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        NetPlayer player = RigUtilities.GetPlayerFromVRRig(gunTarget);
-                        kgDebounce = Time.time + 0.5f;
-
-                        bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
-                        if (sessionIsPrivate)
-                            SetRoomStatus(false);
-
-                        CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
-                        {
-                            PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                            PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                            BetaShuttleFollowCommand(NetPlayerToPlayer(player));
-                            RPCProtection();
-                        }, () =>
-                        {
-                            CreateKickRoom();
-                        }, sessionIsPrivate ? 0.5f : 0f));
-                    }
-                }
-            }
-        }
-
-        public static void KickAll()
-        {
-            if (PhotonNetwork.InRoom)
-            {
-                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
-                if (sessionIsPrivate)
-                    SetRoomStatus(false);
-
-                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
-                {
-                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
-                        BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
-
-                    RPCProtection();
-                }, () =>
-                {
-                    CreateKickRoom();
-                }, sessionIsPrivate ? 0.5f : 0f));
-            }
-            else
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-        }
-
-        public static void KIDKickGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        NetPlayer player = RigUtilities.GetPlayerFromVRRig(gunTarget);
-                        kgDebounce = Time.time + 0.5f;
-
-                        bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
-                        if (sessionIsPrivate)
-                            SetRoomStatus(false);
-
-                        PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                        PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                        BetaShuttleFollowCommand(NetPlayerToPlayer(player));
-                        RPCProtection();
-                    }
-                }
-            }
-        }
-
-        public static void KIDKickAll()
-        {
-            if (PhotonNetwork.InRoom)
-            {
-                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
-                if (sessionIsPrivate)
-                    SetRoomStatus(false);
-
-                PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
-                    BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
-
-                RPCProtection();
-            }
-            else
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-        }
-
-        public static void ChangeGamemode(string gamemode)
-        {
-            if (PhotonNetwork.InRoom)
-            {
-                var oldGameMode = GorillaComputer.instance.currentGameMode.Value;
-                GorillaComputer.instance.currentGameMode.Value = gamemode;
-
-                bool sessionIsPrivate = NetworkSystem.Instance.SessionIsPrivate;
-                if (sessionIsPrivate)
-                    SetRoomStatus(false);
-
-                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
-                {
-                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
-                        BetaShuttleFollowCommand(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
-
-                    RPCProtection();
-                }, () =>
-                {
-                    CreateKickRoom();
-                }, sessionIsPrivate ? 0.5f : 0f));
-            }
-            else
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-        }
-
-        public static void BetaShuttleFollowCommand(Player player)
-        {
-            if (NetworkSystem.Instance.SessionIsPrivate)
-            {
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
-                return;
-            }
-
-            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
-
-            object[] groupJoinSendData = new object[2];
-            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
-            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
-            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
-
-            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
         }
 
         private static float antiReportLagDelay;
