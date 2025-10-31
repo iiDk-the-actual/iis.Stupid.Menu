@@ -27,7 +27,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "LateUpdate")]
+    [HarmonyPatch(typeof(VRRig), "PostTick")]
     public class TorsoPatch
     {
         public static event Action VRRigLateUpdate;
