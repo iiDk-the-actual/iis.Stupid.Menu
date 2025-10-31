@@ -447,6 +447,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Unlock FPS", method = Important.UncapFPS, disableMethod =() => Application.targetFrameRate = 144, toolTip = "Unlocks your FPS."},
 
                 new ButtonInfo { buttonText = "PC Button Click", method = Important.PCButtonClick, toolTip = "Lets you click in-game buttons with your mouse."},
+                new ButtonInfo { buttonText = "PC Controller Emulation", method = Important.PCControllerEmulation, toolTip = "Allows you to press buttons on your in-game controllers using your keyboard."},
                 new ButtonInfo { buttonText = "Unlock Competitive Queue", method =() => GorillaComputer.instance.CompQueueUnlockButtonPress(), isTogglable = false, toolTip = "Permanently unlocks the competitive queue."},
                 new ButtonInfo { buttonText = "Change Queue to Default", method =() => GorillaComputer.instance.currentQueue = "DEFAULT", isTogglable = false, toolTip = "Changes your queue to default."},
                 new ButtonInfo { buttonText = "Change Queue to Minigames", method =() => GorillaComputer.instance.currentQueue = "MINIGAMES", isTogglable = false, toolTip = "Changes your queue to minigames."},
