@@ -2532,7 +2532,7 @@ namespace iiMenu.Mods
         public static void Noclip()
         {
             bool gripNoclip = GetIndex("Grip Noclip").enabled;
-            if (gripNoclip ? rightGrab : rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
+            if (gripNoclip ? rightGrab : rightTrigger > 0.5f || GetIndex("Constant Noclip").enabled)
             {
                 if (!noclip)
                 {

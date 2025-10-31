@@ -288,6 +288,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
 
                 new ButtonInfo { buttonText = "Grip Noclip", toolTip = "Activates noclip with your <color=green>grip</color> instead."},
+                new ButtonInfo { buttonText = "Constant Noclip", toolTip = "Keeps your noclip activated even when not holding any buttons."},
                 new ButtonInfo { buttonText = "Left Hand Wall Walk", method =() => Movement.leftWallWalk = true, disableMethod =() => Movement.leftWallWalk = false, toolTip = "Swaps the wall walk mod to your left hand."},
                 new ButtonInfo { buttonText = "Both Hands Wall Walk", method =() => Movement.bothWallWalk = true, disableMethod =() => Movement.bothWallWalk = false, toolTip = "Allows you to use wall walk with both of your hands."},
 
