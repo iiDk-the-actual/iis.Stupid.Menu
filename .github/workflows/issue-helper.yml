@@ -1,4 +1,4 @@
-name: Auto-Close Malware Reports
+name: Issue Helper
 
 on:
   issues:
@@ -18,6 +18,12 @@ jobs:
             const issue = context.payload.issue;
             const title = issue.title.toLowerCase();
             const body = (issue.body || "").toLowerCase();
+
+            await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: issue.number,
+                body: "Hello! Please note that by making false issues, your GitHub account will be blocked from making anymore. If you make any issues that are duplicates of existing ones, you will be directed to such issues. Please ensure that you are on the **latest version** of both the menu and Gorilla Tag, and that you have tried fixing these issues beforehand."
+              });
 
             const containsMalware = title.includes("virus") || title.includes("trojan");
 
