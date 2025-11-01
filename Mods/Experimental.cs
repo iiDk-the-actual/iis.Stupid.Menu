@@ -1629,6 +1629,22 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BouncyAllUsing()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.05f;
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    bool grounded = Physics.Raycast(rig.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, 0.15f, GTPlayer.Instance.locomotionEnabledLayers);
+                    if (grounded)
+                    {
+                        Console.ExecuteCommand("vel", ReceiverGroup.Others, rig.LatestVelocity() * 10f);
+                    }
+                }
+            }
+        }
+
         public static void AdminBringGun()
         {
             if (GetGunInput(false))
