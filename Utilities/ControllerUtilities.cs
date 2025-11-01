@@ -57,43 +57,50 @@ namespace iiMenu.Utilities
             public float dataCacheTime;
         }
 
+        // Barbecue chicken alert
         public static ControllerType GetControllerType(bool left)
         {
-            if (!XRSettings.isDeviceActive)
-                return ControllerType.Unknown;
-
-            var controller = left
-                ? ControllerInputPoller.instance.leftControllerDevice
-                : ControllerInputPoller.instance.rightControllerDevice;
-
-            if (controller == null)
-                return ControllerType.Unknown;
-
-            if (!controllerInfo.TryGetValue(left, out var info) || Time.time > info.dataCacheTime + 1f)
+            try
             {
-                var controllerName = controller.name;
-                var controllerType = ControllerType.Unknown;
+                if (!XRSettings.isDeviceActive)
+                    return ControllerType.Unknown;
 
-                foreach (var kvp in controllerNames)
+                var controller = left
+                    ? ControllerInputPoller.instance.leftControllerDevice
+                    : ControllerInputPoller.instance.rightControllerDevice;
+
+                if (controller == null)
+                    return ControllerType.Unknown;
+
+                if (!controllerInfo.TryGetValue(left, out var info) || Time.time > info.dataCacheTime + 1f)
                 {
-                    if (controllerName.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) >= 0)
+                    var controllerName = controller.name;
+                    var controllerType = ControllerType.Unknown;
+
+                    foreach (var kvp in controllerNames)
                     {
-                        controllerType = kvp.Value;
-                        break;
+                        if (controllerName.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            controllerType = kvp.Value;
+                            break;
+                        }
                     }
+
+                    info = new ControllerInfo
+                    {
+                        type = controllerType,
+                        dataCacheTime = Time.time
+                    };
+                    controllerInfo[left] = info;
                 }
 
-                info = new ControllerInfo
-                {
-                    type = controllerType,
-                    dataCacheTime = Time.time
-                };
-                controllerInfo[left] = info;
+                return info.type;
             }
-
-            return info.type;
+            catch
+            {
+                return ControllerType.Unknown;
+            }
         }
-
 
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
         public static ControllerType GetRightControllerType() => GetControllerType(false);
