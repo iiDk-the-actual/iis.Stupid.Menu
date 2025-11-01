@@ -1019,6 +1019,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Matchmaking Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
 
                 new ButtonInfo { buttonText = "Badge Tier Spoof", method = Safety.SpoofBadge, disableMethod =() => SetRankedPatch.enabled = false, toolTip = "Spoofs your competitive badge, showing that you have a higher rank than you really do."},
+                new ButtonInfo { buttonText = "Ignore Friend Privacy", method =() => PopulatePatch.enabled = true, disableMethod =() => PopulatePatch.enabled = false, toolTip = "Allows you to join friends that have their privacy setting set to private."},
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method = Fun.ArcadeTeleporterEffectSpam, toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method = Fun.StumpTeleporterEffectSpam, toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
