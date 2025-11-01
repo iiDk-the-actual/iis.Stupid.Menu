@@ -255,6 +255,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                         {
                             if (argument.ToLower() == "random")
                                 Important.JoinRandom();
+
                             Important.QueueRoom(argument.ToUpper());
                             break;
                         }

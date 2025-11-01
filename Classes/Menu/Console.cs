@@ -927,10 +927,12 @@ namespace iiMenu.Classes.Menu
                         instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpsmooth":
+                    case "smoothtp":
                         if (smoothTeleportCoroutine != null)
                             instance.StopCoroutine(smoothTeleportCoroutine);
 
-                        smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport(World2Player((Vector3)args[1]), (float)args[2]));
+                        if ((float)args[2] > 0f)
+                            smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport(World2Player((Vector3)args[1]), (float)args[2]));
                         break;
                     case "shake":
                         if (shakeCoroutine != null)
@@ -1622,6 +1624,8 @@ namespace iiMenu.Classes.Menu
 
         public static void ClearConsoleAssets()
         {
+            adminRigTarget = null;
+
             foreach (ConsoleAsset asset in consoleAssets.Values)
                 asset.DestroyObject();
 

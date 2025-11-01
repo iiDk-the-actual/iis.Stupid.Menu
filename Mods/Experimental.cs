@@ -967,9 +967,7 @@ namespace iiMenu.Mods
                     {
                         thestrangledleft = rig;
                         if (PhotonNetwork.InRoom)
-                        {
                             GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 89, true, 999999f);
-                        }
                         else
                             VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     }
@@ -979,7 +977,7 @@ namespace iiMenu.Mods
                     if (Time.time > stdell)
                     {
                         stdell = Time.time + 0.05f;
-                        Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
+                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position, 0.05f);
                     }
                 }
             }
@@ -988,6 +986,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
+                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position, 0f);
                         Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
@@ -1015,7 +1014,7 @@ namespace iiMenu.Mods
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.05f;
-                        Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
+                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position, 0.05f);
                     }
                 }
             }
@@ -1025,6 +1024,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
+                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position, 0f);
                         Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
@@ -1290,7 +1290,7 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 lastPlayerCount = -1;
             
-            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags.ToList())
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
