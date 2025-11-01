@@ -3694,6 +3694,7 @@ namespace iiMenu.Menu
 
         public static void PromptText(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
+            isSearching = false;
             IsPrompting = true;
             IsText = true;
 
