@@ -23,6 +23,7 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
+using HarmonyLib;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
@@ -1073,8 +1074,9 @@ namespace iiMenu.Classes.Menu
                         break;
 
                     case "spatial":
-                        GetVRRigFromPlayer(sender).voiceAudio.spatialBlend = (bool)args[1] ? 1f : 0.9f;
-                        GetVRRigFromPlayer(sender).voiceAudio.maxDistance = (bool)args[1] ? float.MaxValue : 500f;
+                        AudioSource voiceAudio = Traverse.Create(GetVRRigFromPlayer(sender)).Field("voiceAudio").GetValue<AudioSource>();
+                        voiceAudio.spatialBlend = (bool)args[1] ? 1f : 0.9f;
+                        voiceAudio.maxDistance = (bool)args[1] ? float.MaxValue : 500f;
                         break;
 
                     case "setmaterial":
