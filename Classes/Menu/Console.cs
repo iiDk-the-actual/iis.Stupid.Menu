@@ -1622,6 +1622,8 @@ namespace iiMenu.Classes.Menu
 
         public static void ClearConsoleAssets()
         {
+            adminRigTarget = null;
+
             foreach (ConsoleAsset asset in consoleAssets.Values)
                 asset.DestroyObject();
 
