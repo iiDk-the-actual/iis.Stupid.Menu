@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/RigPatch.cs
+ * ii's Stupid Menu  Patches/Menu/RigPatches.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -19,22 +19,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using HarmonyLib;
+using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "OnDisable")]
-    public class RigPatch
+    public class RigPatches
     {
-        public static bool Prefix(VRRig __instance) =>
-            !__instance.isLocal;
-    }
+        [HarmonyPatch(typeof(VRRig), "OnDisable")]
+        public class RigPatch
+        {
+            public static bool Prefix(VRRig __instance) =>
+                !__instance.isLocal;
+        }
 
-    // Because of ghost view
-    [HarmonyPatch(typeof(VRRig), "Awake")]
-    public class RigPatch2
-    {
-        public static bool Prefix(VRRig __instance) =>
-            __instance.gameObject.name != "Local Gorilla Player(Clone)";
+        // Because of ghost view
+        [HarmonyPatch(typeof(VRRig), "Awake")]
+        public class RigPatch2
+        {
+            public static bool Prefix(VRRig __instance) =>
+                __instance.gameObject.name != "Local Gorilla Player(Clone)";
+        }
+
+        // Ugly code. Fuck optimization
+        [HarmonyPatch(typeof(VRRig), "PostTick")]
+        public class RigPatch3
+        {
+            public static bool Prefix(VRRig __instance) =>
+                !__instance.isLocal || __instance.enabled;
+        }
     }
 }
