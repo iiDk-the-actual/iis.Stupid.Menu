@@ -6246,23 +6246,18 @@ Piece Name: {gunTarget.name}";
         {
             int halfPoint = Mathf.FloorToInt((System.Console.WindowWidth - 1) / 2f);
             string logoPrefix = "";
-            for (int i = 0; i < halfPoint - math.floor(PluginInfo.Logo.Split(@"
-")[0].Length * 0.5); i++)
+            for (int i = 0; i < halfPoint - math.floor(PluginInfo.Logo.Split("\n")[0].Length * 0.5); i++)
                 logoPrefix += " ";
-            string logo = logoPrefix + PluginInfo.Logo.Replace(@"
-",  @"
-" + logoPrefix);
+            string logo = logoPrefix + PluginInfo.Logo.Replace("\n", "\n" + logoPrefix);
             
-            int pageSize = (System.Console.WindowHeight - 9) - (logo.Split(@"
-").Length - 1);
+            int pageSize = (System.Console.WindowHeight - 9) - (logo.Split("\n").Length - 1);
             if (Time.frameCount % 1000 == 0)
                 System.Console.Clear();
 
             string largeNewLine = "";
             for (int i = 0; i < 100; i++)
-            {
                 largeNewLine += Environment.NewLine;
-            }
+            
             string modList = "";
 
             ButtonInfo[] categoryButtonsPre = Buttons.buttons[currentCategoryIndex];
@@ -6284,13 +6279,9 @@ Piece Name: {gunTarget.name}";
                 }
                 string modName = NoRichtextTags(mod.overlapText ?? mod.buttonText);
                 if (index == currentModIndex + (pageNumber * pageSize) || (index < 2 && index == currentModIndex))
-                {
                     modList += Environment.NewLine + "> " + (mod.enabled ? "[E] " : "" ) + modName;
-                }
                 else
-                {
                     modList += Environment.NewLine + "  " + (mod.enabled ? "[E] " : "" ) + modName;
-                }
             }
 
             if (System.Console.KeyAvailable)
@@ -6379,16 +6370,13 @@ Piece Name: {gunTarget.name}";
                 infoPrefix += " ";
             
             System.Console.WriteLine(
-                largeNewLine +
-                @"
-" + logo + @"
-" + infoPrefix + @"> Use the arrow keys to navigate.
-" + screenLine + modList + @"
-" + screenLine + @"
+$@"{largeNewLine}
+{logo}
+{infoPrefix}> Use the arrow keys to navigate.
+{screenLine}{modList}
+{screenLine}
 
-" +
-                "> " + consoleTyped
-                );
+> {consoleTyped}");
         }
     }
 }
