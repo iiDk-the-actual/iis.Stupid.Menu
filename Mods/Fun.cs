@@ -6250,7 +6250,7 @@ Piece Name: {gunTarget.name}";
                 logoPrefix += " ";
             string logo = logoPrefix + PluginInfo.Logo.Replace("\n", "\n" + logoPrefix);
             
-            int pageSize = (System.Console.WindowHeight - 9) - (logo.Split("\n").Length - 1);
+            int pageSize = System.Console.WindowHeight - 9 - (logo.Split("\n").Length - 1);
             if (Time.frameCount % 1000 == 0)
                 System.Console.Clear();
 
@@ -6264,7 +6264,7 @@ Piece Name: {gunTarget.name}";
             ButtonInfo[] categoryButtons = new ButtonInfo[categoryButtonsPre.Length + 2];
             int pageCount = (int)Math.Ceiling((double)categoryButtons.Length / pageSize) - 1;
             categoryButtons[0] = new ButtonInfo { buttonText = "Previous Page", method =() => { pageNumber--; if (pageNumber < 0) { pageNumber = pageCount; } }, isTogglable = false, toolTip = "Takes you to the previous page."};
-            categoryButtons[1] = new ButtonInfo { buttonText = "Next Page", method =() => { pageNumber++; pageNumber %= (pageCount + 1); }, isTogglable = false, toolTip = "Takes you to the previous page."};
+            categoryButtons[1] = new ButtonInfo { buttonText = "Next Page", method =() => { pageNumber++; pageNumber %= pageCount + 1; }, isTogglable = false, toolTip = "Takes you to the previous page."};
             Array.Copy(categoryButtonsPre, 0, categoryButtons, 2, categoryButtonsPre.Length);
             for (int index = 0; index < categoryButtons.Length; index++)
             {
@@ -6295,7 +6295,7 @@ Piece Name: {gunTarget.name}";
                 switch (key.Key)
                 {
                     case ConsoleKey.Backspace:
-                        consoleTyped = (consoleTyped.Length != 0 ? consoleTyped.Substring(0, consoleTyped.Length - 1) : consoleTyped);
+                        consoleTyped = consoleTyped.Length != 0 ? consoleTyped.Substring(0, consoleTyped.Length - 1) : consoleTyped;
                         break;
                     case ConsoleKey.Enter:
                         if (consoleTyped != "")
@@ -6328,11 +6328,11 @@ Piece Name: {gunTarget.name}";
                     case ConsoleKey.UpArrow:
                         currentModIndex--;
                         if (currentModIndex < 0)
-                            currentModIndex = (buttonCount + 1);
+                            currentModIndex = buttonCount + 1;
                         break;
                     case ConsoleKey.DownArrow:
                         currentModIndex++;
-                        currentModIndex %= (buttonCount + 2);
+                        currentModIndex %= buttonCount + 2;
                         break;
                     case ConsoleKey.RightArrow:
                         ButtonInfo button = categoryButtons[currentModIndex + (pageNumber * pageSize)];

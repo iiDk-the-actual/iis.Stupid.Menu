@@ -1468,22 +1468,22 @@ namespace iiMenu.Menu
                                 switch (button.rebindKey)
                                 {
                                     case "A":
-                                        buttonAmount = (_rightPrimary ? 1f : 0f);
+                                        buttonAmount = _rightPrimary ? 1f : 0f;
                                         break;
                                     case "B":
-                                        buttonAmount = (_rightSecondary ? 1f : 0f);
+                                        buttonAmount = _rightSecondary ? 1f : 0f;
                                         break;
                                     case "X":
-                                        buttonAmount = (_leftPrimary ? 1f : 0f);
+                                        buttonAmount = _leftPrimary ? 1f : 0f;
                                         break;
                                     case "Y":
-                                        buttonAmount = (_leftSecondary ? 1f : 0f);
+                                        buttonAmount = _leftSecondary ? 1f : 0f;
                                         break;
                                     case "LG":
-                                        buttonAmount = (_leftGrab ? 1f : 0f);
+                                        buttonAmount = _leftGrab ? 1f : 0f;
                                         break;
                                     case "RG":
-                                        buttonAmount = (_rightGrab ? 1f : 0f);
+                                        buttonAmount = _rightGrab ? 1f : 0f;
                                         break;
                                     case "LT":
                                         buttonAmount = _leftTrigger;
@@ -1492,22 +1492,22 @@ namespace iiMenu.Menu
                                         buttonAmount = _rightTrigger;
                                         break;
                                     case "LJ":
-                                        buttonAmount = (_leftJoystickClick ? 1f : 0f);
+                                        buttonAmount = _leftJoystickClick ? 1f : 0f;
                                         break;
                                     case "RJ":
-                                        buttonAmount = (_rightJoystickClick ? 1f : 0f);
+                                        buttonAmount = _rightJoystickClick ? 1f : 0f;
                                         break;
                                 }
-                                leftPrimary = (buttonAmount > 0.5f);
-                                leftSecondary = (buttonAmount > 0.5f);
-                                rightPrimary = (buttonAmount > 0.5f);
-                                rightSecondary = (buttonAmount > 0.5f);
-                                leftGrab = (buttonAmount > 0.5f);
-                                rightGrab = (buttonAmount > 0.5f);
+                                leftPrimary = buttonAmount > 0.5f;
+                                leftSecondary = buttonAmount > 0.5f;
+                                rightPrimary = buttonAmount > 0.5f;
+                                rightSecondary = buttonAmount > 0.5f;
+                                leftGrab = buttonAmount > 0.5f;
+                                rightGrab = buttonAmount > 0.5f;
                                 leftTrigger = buttonAmount;
                                 rightTrigger = buttonAmount;
-                                leftJoystickClick = (buttonAmount > 0.5f);
-                                rightJoystickClick = (buttonAmount > 0.5f);
+                                leftJoystickClick = buttonAmount > 0.5f;
+                                rightJoystickClick = buttonAmount > 0.5f;
                             }
                             button.method.Invoke();
                             if (button.rebindKey != null)
@@ -4680,7 +4680,7 @@ namespace iiMenu.Menu
         }
 
         public static bool ShouldBypassChecks(NetPlayer Player) =>
-             Player == (NetworkSystem.Instance.LocalPlayer) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
+             Player == NetworkSystem.Instance.LocalPlayer || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
