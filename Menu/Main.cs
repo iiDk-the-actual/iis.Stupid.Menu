@@ -6456,7 +6456,8 @@ namespace iiMenu.Menu
                         if (!oldButtonNames.Contains(name))
                         {
                             ButtonInfo button = GetIndex(name);
-                            button.overlapText ??= button.buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
+                            string buttonText = button.overlapText ?? button.buttonText;
+                            button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
                         }
                     }
                 }
