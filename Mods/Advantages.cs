@@ -847,30 +847,19 @@ namespace iiMenu.Mods
 
         public static void NoTagOnJoin()
         {
-            PlayerPrefs.SetString("tutorial", "nope");
-            PlayerPrefs.SetString("didTutorial", "nope");
-            Hashtable h = new Hashtable
+            PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("didTutorial", out object obj);
+
+            if (obj == null || (obj is bool @bool && @bool == true))
             {
-                { "didTutorial", false }
-            };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-            PlayerPrefs.Save();
+                PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
+                {
+                    { "didTutorial", false }
+                });
+            }
         }
 
-        public static void TagOnJoin()
-        {
-            if (ReportTagPatch.invinciblePlayers.Contains(NetworkSystem.Instance.LocalPlayer))
-                ReportTagPatch.invinciblePlayers.Remove(NetworkSystem.Instance.LocalPlayer);
-
-            PlayerPrefs.SetString("tutorial", "done");
-            PlayerPrefs.SetString("didTutorial", "done");
-            Hashtable h = new Hashtable
-            {
-                { "didTutorial", true }
-            };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(h);
-            PlayerPrefs.Save();
-        }
+        public static void TagOnJoin() =>
+            NetworkSystem.Instance.SetMyTutorialComplete();
 
         public static void ReportAntiTag()
         {
