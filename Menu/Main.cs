@@ -7188,7 +7188,10 @@ jgs \_   _/ |Oo\
             "Honeybees can recognize human faces.",
             "Cats have five toes on their front paws but only four on their back paws.",
             "The inventor of the frisbee was turned into a frisbee. Walter Morrison, the inventor, was cremated, and his ashes were turned into a frisbee after he passed away.",
-            "Penguins give each other pebbles as a way of proposing."
+            "Penguins give each other pebbles as a way of proposing.",
+            "You need oxygen to live.",
+            "You need to be nourished to live.",
+            "The letter \"A\" is at the beginning of the alphabet. The letter \"T\" is at the beginning of both of these sentences. Why are you looking there? You;re wasting time. You're wasting even MORE time reading this. Ok bye. STOP READING THIS!!!"
         };
     }
 }
