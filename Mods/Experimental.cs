@@ -1727,6 +1727,94 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AdminSpinGun() // iiDk should give Console admin to me cause cool :pray:
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        Console.ExecuteCommand("spin", GetPlayerFromVRRig(gunTarget).ActorNumber, 360f, 1f);
+                    }
+                }
+            }
+        }
+
+        public static void AdminSpinAll()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.05f;
+                Console.ExecuteCommand("spin", ReceiverGroup.Others, 360f, 1f);
+            }
+        }
+
+        public static void AdminBlindGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.2f;
+                        Console.ExecuteCommand("blind", GetPlayerFromVRRig(gunTarget).ActorNumber, true);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void AdminBlindAll()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.5f;
+                Console.ExecuteCommand("blind", ReceiverGroup.Others, true);
+                RPCProtection();
+            }
+        }
+
+        public static void AdminUnblindGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.2f;
+                        Console.ExecuteCommand("blind", GetPlayerFromVRRig(gunTarget).ActorNumber, false);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void AdminUnblindAll()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.5f;
+                Console.ExecuteCommand("blind", ReceiverGroup.Others, false);
+                RPCProtection();
+            }
+        }
+
         public static void ConfirmNotifyAllUsing() =>
             Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
 

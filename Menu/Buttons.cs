@@ -1987,9 +1987,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Bring Head All", method = Experimental.BringHeadAllUsing, toolTip = "Brings everyone using the menu to your head."},
                 new ButtonInfo { buttonText = "Admin Orbit All", method = Experimental.OrbitAllUsing, toolTip = "Makes everyone using the menu orbit you."},
 
+                new ButtonInfo { buttonText = "Admin Spin Gun", method = Experimental.AdminSpinGun, toolTip = "Makes whoever your hand desires spin around continuously."},
+                new ButtonInfo { buttonText = "Admin Spin All", method = Experimental.AdminSpinAll, toolTip = "Makes everyone using the menu spin around continuously."},
+
+                new ButtonInfo { buttonText = "Admin Blind Gun", method = Experimental.AdminBlindGun, toolTip = "Makes whoever your hand desires blind."},
+                new ButtonInfo { buttonText = "Admin Unblind Gun", method = Experimental.AdminUnblindGun, toolTip = "Makes whoever your hand desires able to see."},
+                new ButtonInfo { buttonText = "Admin Blind All", method = Experimental.AdminBlindAll, isTogglable = false, toolTip = "Makes everyone using the menu blind."},
+                new ButtonInfo { buttonText = "Admin Unblind All", method = Experimental.AdminUnblindAll, isTogglable = false, toolTip = "Makes everyone using the menu able to see."},
+
                 new ButtonInfo { buttonText = "Admin Lag Gun", method = Experimental.AdminLagGun, toolTip = "Lags whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Lag All", method = Experimental.AdminLagAll, toolTip = "Lags everyone using the menu."},
                 new ButtonInfo { buttonText = "Admin Lag Spike Gun", method = Experimental.AdminLagSpikeGun, toolTip = "Lag spikes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Lag Spike All", method = Experimental.AdminLagSpikeAll, isTogglable = false, toolTip = "Lag spikes everyone using the menu."},
+
                 new ButtonInfo { buttonText = "Admin Lag Spike All", method = Experimental.AdminLagSpikeAll, isTogglable = false, toolTip = "Lag spikes everyone using the menu."},
 
                 new ButtonInfo { buttonText = "Admin Vibrate Gun", method = Experimental.AdminVibrateGun, toolTip = "Vibrate whoever your hand desires if they're using the menu."},
