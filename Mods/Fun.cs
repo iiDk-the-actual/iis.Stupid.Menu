@@ -6310,7 +6310,7 @@ Piece Name: {gunTarget.name}";
                         if (consoleTyped != "")
                         {
 
-                            ButtonInfo selButton = Main.GetIndex(consoleTyped);
+                            ButtonInfo selButton = GetIndex(consoleTyped);
                             if (selButton == null)
                             {
                                 for (int i = 0; i < Buttons.buttons.Length; i++)
@@ -6327,7 +6327,7 @@ Piece Name: {gunTarget.name}";
                             }
 
                             if (selButton != null)
-                                Main.Toggle(selButton.buttonText, true);
+                                Toggle(selButton.buttonText, true);
                             else
                                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Mod \"{consoleTyped}\" does not exist.");
                             consoleTyped = "";
@@ -6352,7 +6352,7 @@ Piece Name: {gunTarget.name}";
                             break;
                         }
                         int prevCategory = currentCategoryIndex;
-                        Main.Toggle(button.buttonText, true);
+                        Toggle(button.buttonText, true);
                         if (prevCategory != currentCategoryIndex)
                         {
                             pageNumber = 0;

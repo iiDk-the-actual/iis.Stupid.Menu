@@ -193,7 +193,7 @@ namespace iiMenu.Mods
             string logoLines = "";
             foreach (string line in PluginInfo.Logo.Split(@"
 "))
-                logoLines += System.Environment.NewLine + "echo      " + line;
+                logoLines += Environment.NewLine + "echo      " + line;
             
             string restartScript = @"@echo off
 title ii's Stupid Menu

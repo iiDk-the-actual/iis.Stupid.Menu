@@ -1318,7 +1318,7 @@ namespace iiMenu.Managers
                 string command = (string)obj["command"];
                 string from = (string)obj["from"];
 
-                bool exists = FriendManager.instance.Friends.friends.TryGetValue(from, out FriendData.Friend friend);
+                bool exists = instance.Friends.friends.TryGetValue(from, out FriendData.Friend friend);
                 string friendName = exists ? friend.currentName : from;
 
                 if (from == "Server" || exists)

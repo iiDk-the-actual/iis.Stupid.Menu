@@ -868,7 +868,7 @@ namespace iiMenu.Mods
                 string logoLines = "";
                 foreach (string line in PluginInfo.Logo.Split(@"
 "))
-                    logoLines += System.Environment.NewLine + @" ""    " + line + @" """;
+                    logoLines += Environment.NewLine + @" ""    " + line + @" """;
                 string updateScript = @"@echo off
 title ii's Stupid Menu
 color 0E
@@ -931,7 +931,7 @@ exit";
                 string logoLines = "";
                 foreach (string line in PluginInfo.Logo.Split(@"
 "))
-                    logoLines += System.Environment.NewLine + @" ""    " + line + @" """;
+                    logoLines += Environment.NewLine + @" ""    " + line + @" """;
 string updateScript = @"#!/bin/bash
 clear
 echo " + logoLines + @"
