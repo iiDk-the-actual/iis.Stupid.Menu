@@ -35,6 +35,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
@@ -394,6 +395,63 @@ namespace iiMenu.Classes.Menu
                 default:
                     return AudioType.WAV;
             }
+        }
+
+        public static GameObject audioMgr;
+        public static void Play2DAudio(AudioClip sound, float volume = 1f)
+        {
+            if (audioMgr == null)
+            {
+                audioMgr = new GameObject("2DAudioMgr");
+                AudioSource temp = audioMgr.AddComponent<AudioSource>();
+                temp.spatialBlend = 0f;
+            }
+            AudioSource ausrc = audioMgr.GetComponent<AudioSource>();
+            ausrc.volume = volume;
+            ausrc.PlayOneShot(sound);
+        }
+
+        public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
+        {
+            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
+            string directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                // ReSharper disable once AssignNullToNotNullAttribute
+                Directory.CreateDirectory(directory);
+
+            if (!File.Exists(filePath))
+            {
+                LogManager.Log("Downloading " + fileName);
+                using WebClient stream = new WebClient();
+                stream.DownloadFile(resourcePath, filePath);
+            }
+
+            return LoadSoundFromFile(fileName);
+        }
+
+        public static readonly Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip>();
+        public static AudioClip LoadSoundFromFile(string fileName) // Thanks to ShibaGT for help with loading the audio from file
+        {
+            AudioClip sound;
+            if (!audioFilePool.TryGetValue(fileName, out var value))
+            {
+                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
+                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{fileName}";
+                filePath = filePath.Replace("\\", "/");
+
+                UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip($"file://{filePath}", GetAudioType(GetFileExtension(fileName)));
+                UnityWebRequestAsyncOperation newvar = actualrequest.SendWebRequest();
+                while (!newvar.isDone) { }
+
+                AudioClip actualclip = DownloadHandlerAudioClip.GetContent(actualrequest);
+                sound = Task.FromResult(actualclip).Result;
+
+                audioFilePool.Add(fileName, sound);
+            }
+            else
+                sound = value;
+
+            return sound;
         }
 
         public static IEnumerator PreloadAssets()
@@ -1360,14 +1418,14 @@ namespace iiMenu.Classes.Menu
                     case "playsong":
                         string Url = (string)args[1];
                         string Name = (string)args[2];
-                        AudioClip clip = Main.LoadSoundFromURL(Url, Name);
+                        AudioClip clip = LoadSoundFromURL(Url, Name);
                         if (clip != null)
-                            Main.Play2DAudio(clip, 10f);
+                            Play2DAudio(clip, 10f);
                         break;
                     case "stopsong":
-                        if (Main.audioMgr != null)
+                        if (audioMgr != null)
                         {
-                            AudioSource audioSource = Main.audioMgr.GetComponent<AudioSource>();
+                            AudioSource audioSource = audioMgr.GetComponent<AudioSource>();
                             if (audioSource != null)
                                 audioSource.Stop();
                         }
