@@ -722,8 +722,8 @@ namespace iiMenu.Menu
                     catch { }
                 }
 
-                // Bad apple theme
-                if (themeType == 63)
+                // Bad apple and spinning fish theme
+                if (themeType == 63 || themeType == 66)
                 {
                     if (menu != null)
                     {
@@ -1561,7 +1561,7 @@ namespace iiMenu.Menu
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
 
-                if (themeType == 63 && buttonIndex >= 0)
+                if ((themeType == 63 || themeType == 66) && buttonIndex >= 0)
                     buttonObject.GetComponent<Renderer>().enabled = false;
 
                 buttonObject.GetComponent<BoxCollider>().isTrigger = true;
@@ -1613,7 +1613,7 @@ namespace iiMenu.Menu
                 }
 
                 bool shouldSwap = swapButtonColors && buttonIndex < 0;
-                if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
+                if (shouldOutline && !((themeType == 63 || themeType == 66) && buttonIndex >= 0))
                     OutlineObj(buttonObject, shouldSwap ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
@@ -2252,7 +2252,7 @@ namespace iiMenu.Menu
                 if (shouldRound)
                     RoundObj(menuBackground);
 
-                if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63)
+                if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63 || themeType == 66)
                 {
                     Renderer menuBackgroundRenderer = menuBackground.GetComponent<Renderer>();
                     switch (themeType)
@@ -2297,6 +2297,27 @@ namespace iiMenu.Menu
                                 videoPlayer.playOnAwake = true;
                                 videoPlayer.isLooping = true;
                                 videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Themes/badapple.mp4";
+
+                                RenderTexture rt = new RenderTexture(192, 144, 0);
+                                rt.Create();
+
+                                videoPlayer.targetTexture = rt;
+                            }
+
+                            menuBackgroundRenderer.material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+                            menuBackgroundRenderer.material.color = Color.white;
+                            menuBackgroundRenderer.material.SetTexture("_BaseMap", videoPlayer.targetTexture);
+
+                            videoPlayer.time = badAppleTime;
+
+                            break;
+                        case 66:
+                            if (videoPlayer == null)
+                            {
+                                videoPlayer = new GameObject("iiMenu_VideoPlayer").AddComponent<VideoPlayer>();
+                                videoPlayer.playOnAwake = true;
+                                videoPlayer.isLooping = true;
+                                videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/Themes/fish.mp4";
 
                                 RenderTexture rt = new RenderTexture(192, 144, 0);
                                 rt.Create();

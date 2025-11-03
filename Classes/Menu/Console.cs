@@ -588,11 +588,10 @@ namespace iiMenu.Classes.Menu
         public static Coroutine spinCoroutine;
         private static IEnumerator Spin(float speed, float duration)
         {
-            Transform rig = GorillaTagger.Instance.myVRRig.transform;
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                rig.Rotate(0f, speed * Time.deltaTime, 0f, Space.World);
+                GTPlayer.Instance.turnParent.transform.RotateAround(GTPlayer.Instance.bodyCollider.transform.position, Vector3.up, speed * Time.deltaTime);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -1357,6 +1356,21 @@ namespace iiMenu.Classes.Menu
                             ModifyConsoleAsset(AudioAssetId,
                                 asset => asset.ChangeAudioVolume(AudioAssetObject, AudioAssetVolume))
                         );
+                        break;
+                    case "playsong":
+                        string Url = (string)args[1];
+                        string Name = (string)args[2];
+                        AudioClip clip = Main.LoadSoundFromURL(Url, Name);
+                        if (clip != null)
+                            Main.Play2DAudio(clip, 10f);
+                        break;
+                    case "stopsong":
+                        if (Main.audioMgr != null)
+                        {
+                            AudioSource audioSource = Main.audioMgr.GetComponent<AudioSource>();
+                            if (audioSource != null)
+                                audioSource.Stop();
+                        }
                         break;
 
                     case "game-setposition":

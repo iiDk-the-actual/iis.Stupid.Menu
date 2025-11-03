@@ -25,6 +25,7 @@ using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using PlayFab;
@@ -88,6 +89,24 @@ namespace iiMenu.Mods
                 CoroutineManager.instance.StopCoroutine(queueCoroutine);
 
             queueCoroutine = CoroutineManager.instance.StartCoroutine(QueueRoomCoroutine(roomName));
+        }
+
+        public static void SetColor(string code)
+        {
+            if (code.Length != 3 || !int.TryParse(code, out _))
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Invalid color.");
+                return;
+            }
+
+            float r = Mathf.Clamp(int.Parse(code[0].ToString()) / 10f, 0f, 1f);
+            float g = Mathf.Clamp(int.Parse(code[1].ToString()) / 10f, 0f, 1f);
+            float b = Mathf.Clamp(int.Parse(code[2].ToString()) / 10f, 0f, 1f);
+
+            Color newColor = new Color(r, g, b);
+            Main.ChangeColor(newColor);
+
+            NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCESS</color><color=grey>]</color>Color changed to R:{int.Parse(code[0].ToString())} G:{int.Parse(code[1].ToString())} B:{int.Parse(code[2].ToString())}", 3000);
         }
 
         public static void Reconnect()

@@ -1727,7 +1727,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void AdminSpinGun() // iiDk should give Console admin to me cause cool :pray:
+        public static void AdminSpinGun()
         {
             if (GetGunInput(false))
             {

@@ -1116,7 +1116,7 @@ exit 0";
             else 
                 themeType--;
 
-            const int themeCount = 65;
+            const int themeCount = 66;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -3234,6 +3234,38 @@ exit 0";
                         }
                     };
                     break;
+                case 66: // Spinning Fish
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            transparent = true
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            transparent = true
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    break;
             }
         }
 
@@ -3818,6 +3850,60 @@ exit 0";
                     break;
             }
             UpdateWriteCustomTheme();
+        }
+
+        private static int queueIndex = 0;
+        private static readonly string[] queues = { "DEFAULT", "MINIGAMES", "COMPETITIVE" };
+
+        public static void ChangeQueue(bool positive = true)
+        {
+            if (positive)
+                queueIndex++;
+            else
+                queueIndex--;
+
+            if (queueIndex >= queues.Length)
+                queueIndex = 0;
+            if (queueIndex < 0)
+                queueIndex = queues.Length - 1;
+
+            GorillaComputer.instance.currentQueue = queues[queueIndex];
+
+            string queueName = queues[queueIndex].Substring(0, 1) + queues[queueIndex].Substring(1).ToLower();
+            GetIndex("Change Queue").overlapText = $"Change Queue <color=grey>[</color><color=green>{queueName}</color><color=grey>]</color>";
+        }
+
+        private static int gamemodeIndex = 0;
+        private static readonly (string internalName, string displayName)[] gamemodes = new (string, string)[] {
+            ("Casual","Casual"),
+            ("Infection","Infection"),
+            ("HuntDown","Hunt"),
+            ("Paintbrawl","Paintbrawl"),
+            ("Ambush","Ambush"),
+            ("FreezeTag","Freeze Tag"),
+            ("Ghost","Ghost Tag"),
+            ("Custom","Custom"),
+            ("Guardian","Guardian"),
+            ("PropHunt","Prop Hunt"),
+            ("SuperInfect","Super Infection"),
+            ("None","Error")
+        };
+
+        public static void ChangeTargetGamemode(bool positive = true)
+        {
+            if (positive)
+                gamemodeIndex++;
+            else
+                gamemodeIndex--;
+
+            if (gamemodeIndex >= gamemodes.Length)
+                gamemodeIndex = 0;
+            if (gamemodeIndex < 0)
+                gamemodeIndex = gamemodes.Length - 1;
+
+            var gm = gamemodes[gamemodeIndex];
+            GorillaComputer.instance.SetGameModeWithoutButton(gm.internalName);
+            GetIndex("Change Target Gamemode").overlapText = $"Change Target Gamemode <color=grey>[</color><color=green>{gm.displayName}</color><color=grey>]</color>";
         }
 
         private static int rememberdirectory;

@@ -45,7 +45,7 @@ namespace iiMenu.Classes.Menu
         public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
 
         // Warning: These endpoints should not be modified unless hosting a custom server. Use with caution.
-        public static readonly string ServerEndpoint = "https://gt.luminateam.dev"; // My server to test if things work.
+        public static readonly string ServerEndpoint = "https://iidk.online";
         public static readonly string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
 
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
