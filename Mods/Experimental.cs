@@ -24,6 +24,7 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
@@ -1634,16 +1635,28 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+
+                var users = Console.userDictionary.Keys.Where(u => !u.IsLocal).ToList();
+
+                foreach (Player player in users)
                 {
-                    bool grounded = Physics.Raycast(rig.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, 0.15f, GTPlayer.Instance.locomotionEnabledLayers);
-                    if (grounded)
+                    VRRig rig = GetVRRigFromPlayer(player);
+                    if (Physics.Raycast(rig.bodyTransform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out RaycastHit hit, 512f, GTPlayer.Instance.locomotionEnabledLayers))
                     {
-                        Console.ExecuteCommand("vel", ReceiverGroup.Others, rig.LatestVelocity() * 10f);
+                        if (hit.distance < 0.1f)
+                        {
+                            Vector3 surfaceNormal = hit.normal;
+                            Vector3 bodyVelocity = rig.LatestVelocity();
+                            Vector3 reflectedVelocity = Vector3.Reflect(bodyVelocity, surfaceNormal);
+                            Vector3 finalVelocity = reflectedVelocity * 2f;
+                            Console.ExecuteCommand("vel", rig.GetPlayer().ActorNumber, finalVelocity);
+                        }
                     }
                 }
             }
         }
+
+
 
         public static void AdminBringGun()
         {

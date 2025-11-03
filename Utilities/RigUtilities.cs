@@ -100,7 +100,7 @@ namespace iiMenu.Utilities
                 creationDateCache[userId] = creationDate;
 
                 onTranslated?.Invoke(creationDate);
-            }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke(date); });
+            }, delegate { creationDateCache[userId] = "Error"; onTranslated?.Invoke("Error"); });
         }
     }
 }

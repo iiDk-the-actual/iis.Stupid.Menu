@@ -2278,8 +2278,8 @@ namespace iiMenu.Mods
         public static void Kamehameha()
         {
             if (!PhotonNetwork.InRoom) return;
-            bool kameing = leftGrab && rightGrab && leftTrigger > 0.5f && rightTrigger > 0.5f;
-            switch (kameing)
+            bool attacking = leftGrab && rightGrab && leftTrigger > 0.5f && rightTrigger > 0.5f;
+            switch (attacking)
             {
                 case true when KameStartCoroutine == null:
                     KameStartCoroutine = CoroutineManager.instance.StartCoroutine(StartKame());
