@@ -836,6 +836,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fake Unban Self", method = Visuals.FakeUnbanSelf, isTogglable = false, toolTip = "Makes it appear as if you're not banned." },
 
                 new ButtonInfo { buttonText = "Jump Predictions", overlapText = "Jump Trajectories", method = Visuals.JumpPredictions, disableMethod = Visuals.DisableJumpPredictions, toolTip = "Shows a visualizer of where the other players will jump."},
+                new ButtonInfo { buttonText = "Hitbox Predictions", method = Visuals.HitboxPredictions, disableMethod = Visuals.DisableHitboxPredictions, toolTip = "Shows capsules where other players' hitboxes are."},
                 new ButtonInfo { buttonText = "Paintbrawl Trajectories", overlapText = "Projectile Trajectories", method = Visuals.PaintbrawlTrajectories, disableMethod = Visuals.DisablePaintbrawlTrajectories, toolTip = "Shows a visualizer of where all projectiles and your slingshot will hit."},
 
                 new ButtonInfo { buttonText = "Audio Visualizer", enableMethod = Visuals.CreateAudioVisualizer, method = Visuals.AudioVisualizer, disableMethod = Visuals.DestroyAudioVisualizer, toolTip = "Shows a visualizer of your microphone loudness below your player."},

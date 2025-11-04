@@ -933,7 +933,68 @@ namespace iiMenu.Mods
             predictions.Clear();
         }
 
-        // This doesn't work.
+        private static readonly Dictionary<VRRig, GameObject> hitboxESP = new Dictionary<VRRig, GameObject>();
+        public static void HitboxPredictions()
+        {
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, GameObject> box in hitboxESP)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
+                {
+                    toRemove.Add(box.Key);
+                    Object.Destroy(box.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                hitboxESP.Remove(rig);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    if (!hitboxESP.TryGetValue(vrrig, out GameObject box))
+                    {
+                        box = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                        Object.Destroy(box.GetComponent<BoxCollider>());
+
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                        hitboxESP.Add(vrrig, box);
+                    }
+
+                    Color thecolor = vrrig.playerColor;
+                    if (fmt)
+                        thecolor = backgroundColor.GetCurrentColor();
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        box.layer = 19;
+
+                    Vector3 velocity = vrrig.LatestVelocity();
+                    
+                    box.GetComponent<Renderer>().enabled = velocity.magnitude > 1f;
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
+                    box.transform.position = vrrig.transform.position + (velocity * 0.5f);
+                }
+            }
+        }
+
+        public static void DisableHitboxPredictions()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> box in hitboxESP)
+                Object.Destroy(box.Value);
+
+            hitboxESP.Clear();
+        }
+
         // TODO: Fix the other players' slingshot trajectory prediction.
         // TODO: Fix gravity of slingshot prediction
 
