@@ -1851,9 +1851,7 @@ namespace iiMenu.Mods
                 GameObject SlingshotProjectileGameObject = new GameObject("SlingshotProjectileHolder");
                 SlingshotProjectile SlingshotProjectile = SlingshotProjectileGameObject.AddComponent<SlingshotProjectile>();
 
-                ProjectileTracker.ProjectileInfo LocalProjectileInfo = new ProjectileTracker.ProjectileInfo(PhotonNetwork.Time, Velocity, Position, Scale, SlingshotProjectile);
-
-                int Data = ProjectileTracker.m_localProjectiles.AddAndIncrement(LocalProjectileInfo);
+                int Data = ProjectileTracker.AddAndIncrementLocalProjectile(SlingshotProjectile, Velocity, Position, Scale);
                 archiveIncrement = Data;
 
                 Object.Destroy(SlingshotProjectileGameObject);
