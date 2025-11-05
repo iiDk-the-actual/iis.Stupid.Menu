@@ -1,6 +1,6 @@
 # Credits to Microsoft and Pelikhan
 
-name: Automatic New Issue Deduplication
+name: Automatic issue deduplication
 on:
   issues:
     types: [opened, reopened]
