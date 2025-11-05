@@ -295,96 +295,93 @@ namespace iiMenu.Menu
                         CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
                         CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
 
-                        bool foundStumpBoard = false;
-                        int stumpBoardIndex = 0;
-                        for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
-                        {
-                            GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                            if (!v.name.Contains("UnityTempFile")) continue;
-                            stumpBoardIndex++;
-                            if (stumpBoardIndex != StumpLeaderboardIndex) continue;
-                            foundStumpBoard = true;
-                            if (StumpMat == null)
-                                StumpMat = v.GetComponent<Renderer>().material;
+                        var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
+                           .Where(x => x.name.Contains("UnityTempFile"))
+                           .ToList();
 
-                            v.GetComponent<Renderer>().material = OrangeUI;
-                            break;
+                        if (StumpLeaderboardIndex >= 0 && StumpLeaderboardIndex < stumpChildren.Count)
+                        {
+                            var stumpBoard = stumpChildren[StumpLeaderboardIndex];
+                            if (stumpBoard != null)
+                            {
+                                if (StumpMat == null)
+                                    StumpMat = stumpBoard.GetComponent<Renderer>().material;
+
+                                stumpBoard.GetComponent<Renderer>().material = OrangeUI;
+                            }
                         }
 
-                        bool foundForestBoard = false;
-                        int forestBoardIndex = 0;
-                        for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
-                        {
-                            GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                            if (!v.name.Contains("UnityTempFile")) continue;
-                            forestBoardIndex++;
-                            if (forestBoardIndex != ForestLeaderboardIndex) continue;
-                            foundForestBoard = true;
-                            if (ForestMat == null)
-                                ForestMat = v.GetComponent<Renderer>().material;
+                        var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
+                            .Where(x => x.name.Contains("UnityTempFile"))
+                            .ToList(); 
 
-                            v.GetComponent<Renderer>().material = OrangeUI;
-                            break;
+                        if (ForestLeaderboardIndex >= 0 && ForestLeaderboardIndex < forestChildren.Count)
+                        {
+                            var forestBoard = forestChildren[ForestLeaderboardIndex];
+                            if (forestBoard != null)
+                            {
+                                if (ForestMat == null)
+                                    ForestMat = forestBoard.GetComponent<Renderer>().material;
+
+                                forestBoard.GetComponent<Renderer>().material = OrangeUI;
+                            }
                         }
 
-                        if (foundStumpBoard && foundForestBoard)
+                        foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
                         {
-                            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
+                            try
                             {
-                                try
-                                {
-                                    JoinTriggerUI ui = joinTrigger.ui;
-                                    JoinTriggerUITemplate temp = ui.template;
+                                JoinTriggerUI ui = joinTrigger.ui;
+                                JoinTriggerUITemplate temp = ui.template;
 
-                                    temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
-                                    temp.ScreenBG_AlreadyInRoom = OrangeUI;
-                                    temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
-                                    temp.ScreenBG_Error = OrangeUI;
-                                    temp.ScreenBG_InPrivateRoom = OrangeUI;
-                                    temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
-                                    temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
-                                    temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
+                                temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
+                                temp.ScreenBG_AlreadyInRoom = OrangeUI;
+                                temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
+                                temp.ScreenBG_Error = OrangeUI;
+                                temp.ScreenBG_InPrivateRoom = OrangeUI;
+                                temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
+                                temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
+                                temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
 
-                                    TextMeshPro text = ui.screenText;
-                                    if (!udTMP.Contains(text))
-                                        udTMP.Add(text);
-                                }
-                                catch { }
-                            }
-                            PhotonNetworkController.Instance.UpdateTriggerScreens();
-
-                            string[] objectsWithTMPro = {
-                                "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
-                                "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
-                                "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
-                                "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
-                            };
-                            foreach (string objectName in objectsWithTMPro)
-                            {
-                                GameObject obj = GetObject(objectName);
-                                if (obj != null)
-                                {
-                                    TextMeshPro text = obj.GetComponent<TextMeshPro>();
-                                    if (!udTMP.Contains(text))
-                                        udTMP.Add(text);
-                                }
-                                else
-                                    LogManager.Log("Could not find " + objectName);
-                            }
-
-                            Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
-                            for (int i = 0; i < forestTransform.transform.childCount; i++)
-                            {
-                                GameObject v = forestTransform.GetChild(i).gameObject;
-                                if ((!v.name.Contains("Board Text") && !v.name.Contains("Scoreboard_OfflineText")) ||
-                                    !v.activeSelf) continue;
-                                TextMeshPro text = v.GetComponent<TextMeshPro>();
+                                TextMeshPro text = ui.screenText;
                                 if (!udTMP.Contains(text))
                                     udTMP.Add(text);
                             }
-
-                            hasFoundAllBoards = true;
+                            catch { }
                         }
+                        PhotonNetworkController.Instance.UpdateTriggerScreens();
+
+                        string[] objectsWithTMPro = {
+                            "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
+                            "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
+                            "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
+                            "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
+                        };
+                        foreach (string objectName in objectsWithTMPro)
+                        {
+                            GameObject obj = GetObject(objectName);
+                            if (obj != null)
+                            {
+                                TextMeshPro text = obj.GetComponent<TextMeshPro>();
+                                if (!udTMP.Contains(text))
+                                    udTMP.Add(text);
+                            }
+                            else
+                                LogManager.Log("Could not find " + objectName);
+                        }
+
+                        Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
+                        for (int i = 0; i < forestTransform.transform.childCount; i++)
+                        {
+                            GameObject v = forestTransform.GetChild(i).gameObject;
+                            if ((!v.name.Contains("Board Text") && !v.name.Contains("Scoreboard_OfflineText")) ||
+                                !v.activeSelf) continue;
+                            TextMeshPro text = v.GetComponent<TextMeshPro>();
+                            if (!udTMP.Contains(text))
+                                udTMP.Add(text);
+                        }
+
+                        hasFoundAllBoards = true;
                     }
                     catch (Exception exc)
                     {
@@ -7017,8 +7014,8 @@ jgs \_   _/ |Oo\
         public static readonly List<TextMeshPro> udTMP = new List<TextMeshPro>();
         public static GameObject computerMonitor;
 
-        public static readonly int StumpLeaderboardIndex = 5;
-        public static readonly int ForestLeaderboardIndex = 10;
+        public static readonly int StumpLeaderboardIndex = 4;
+        public static readonly int ForestLeaderboardIndex = 9;
         
         public static Material[] ogScreenMats = { };
 
