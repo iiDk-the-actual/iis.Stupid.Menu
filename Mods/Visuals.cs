@@ -178,6 +178,9 @@ namespace iiMenu.Mods
 
         public static void CoreESP()
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
 
@@ -198,6 +201,9 @@ namespace iiMenu.Mods
 
         public static void EnemyESP()
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
 
@@ -213,6 +219,29 @@ namespace iiMenu.Mods
             {
                 Transform enemy = enemies[i].transform;
                 VisualizeAura(enemy.position, 0.15f, coreESPColor, i + 451980, coreESPColor.a);
+            }
+        }
+
+        public static void ResourceESP()
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : Color.green;
+            if (tt)
+                coreESPColor.a = 0.5f;
+
+            List<GameEntity> resources = SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.Contains("Resource")).ToList();
+            if (resources.Count <= 0)
+                return;
+
+            for (int i = 0; i < resources.Count; i++)
+            {
+                Transform resource = resources[i].transform;
+                VisualizeAura(resource.position, 0.15f, coreESPColor, i + 451961280, coreESPColor.a);
             }
         }
 
