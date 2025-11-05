@@ -883,11 +883,12 @@ namespace iiMenu.Mods
         }
 
         public static float ghostReactorDelay;
-        public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null)
+        public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null, GameEntityManager manager = null)
         {
+            GameEntityManager gameEntityManager = manager ?? Fun.gameEntityManager;
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                int netId = Fun.gameEntityManager.CreateNetId();
+                int netId = gameEntityManager.CreateNetId();
 
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
@@ -896,7 +897,6 @@ namespace iiMenu.Mods
 
                 object[] createData = {
                     new[] { netId },
-                    new[] { (int)Fun.gameEntityManager.zone },
                     new[] { hash },
                     new[] { BitPackUtils.PackWorldPosForNetwork(position) },
                     new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
@@ -906,10 +906,10 @@ namespace iiMenu.Mods
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        Fun.gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                        gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
                         break;
                     case Player player:
-                        Fun.gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                        gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
                         break;
                 }
 
@@ -927,10 +927,10 @@ namespace iiMenu.Mods
                     switch (target)
                     {
                         case RpcTarget rpcTarget:
-                            Fun.gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
+                            gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
                             break;
                         case Player player:
-                            Fun.gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
+                            gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
                             break;
                     }
 
@@ -948,10 +948,10 @@ namespace iiMenu.Mods
                     switch (target)
                     {
                         case RpcTarget rpcTarget:
-                            Fun.gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
+                            gameEntityManager.photonView.RPC("ThrowEntityRPC", rpcTarget, dropData);
                             break;
                         case Player player:
-                            Fun.gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
+                            gameEntityManager.photonView.RPC("ThrowEntityRPC", player, dropData);
                             break;
                     }
                 }
@@ -964,14 +964,12 @@ namespace iiMenu.Mods
                 if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
                     position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
 
-                GameEntityManager gameEntityManager = Fun.gameEntityManager;
-
                 GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
                 if (gamePlayer.IsHoldingEntity(gameEntityManager, true) && Time.time > ghostReactorDelay)
                 {
                     VRRig.LocalRig.enabled = true;
                     if (ServerSyncLeftHandPos.Distance(position) < maxDistance)
-                        gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, rotation, velocity, angVelocity);
+                        gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, rotation, velocity, angVelocity, gameEntityManager);
                     else
                         return;
                 }
@@ -1024,22 +1022,13 @@ namespace iiMenu.Mods
                     entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     entity.transform.rotation = RandomQuaternion();
 
-                    entity.RequestGrab(true, Vector3.zero, Quaternion.identity);
+                    entity.RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
                     RPCProtection();
                 }
             }
         }
 
-        private static Dictionary<string, int> _idByName;
-        public static Dictionary<string, int> objectByName
-        {
-            get
-            {
-                _idByName ??= Fun.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key);
-                return _idByName;
-            }
-            set => _idByName = value;
-        }
+        public static Dictionary<string, int> objectByName { get => Fun.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
 
         public static void SpamObjectGrip(int objectId)
         {
@@ -1110,6 +1099,96 @@ namespace iiMenu.Mods
                             {
                                 gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity);
                                 gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Quaternion.identity, Vector3.zero, Vector3.zero);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static Dictionary<string, int> gadgetByName { get => SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
+
+        public static void SpamGadgetGrip(int objectId)
+        {
+            if (rightGrab)
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+        }
+
+        public static void SpamGadgetGun(int objectId)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            }
+        }
+
+        public static void GadgetSpamGrip()
+        {
+            int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
+            SpamGadgetGrip(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
+        public static void GadgetSpamGun()
+        {
+            int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
+            SpamGadgetGun(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
+        public static void ResourceSpamGrip()
+        {
+            int[] objectIds = gadgetByName.Where(x => x.Key.Contains("Resource")).Select(x => x.Value).ToArray();
+            SpamGadgetGrip(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
+        public static void ResourceSpamGun()
+        {
+            int[] objectIds = gadgetByName.Where(x => x.Key.Contains("Resource")).Select(x => x.Value).ToArray();
+            SpamGadgetGun(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
+        public static void DestroyGadgetGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (Time.time > destroyDelay)
+                    {
+                        GameEntity gameEntity = null;
+                        float closestDist = float.MaxValue;
+
+                        foreach (GameEntity entity in SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.entities)
+                        {
+                            if (entity != null)
+                            {
+                                float distance = Vector3.Distance(NewPointer.transform.position, entity.transform.position);
+                                if (distance < 0.75f && distance < closestDist)
+                                {
+                                    gameEntity = entity;
+                                    closestDist = distance;
+                                }
+                            }
+                        }
+
+                        if (gameEntity != null)
+                        {
+                            destroyDelay = Time.time + 0.02f;
+                            if (NetworkSystem.Instance.IsMasterClient)
+                            {
+                                SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                                RPCProtection();
+                            }
+                            else
+                            {
+                                gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Quaternion.identity, Vector3.zero, Vector3.zero, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
                             }
                         }
                     }
