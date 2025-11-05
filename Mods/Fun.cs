@@ -785,6 +785,34 @@ namespace iiMenu.Mods
             }
         }
 
+        public static int targetFOV = 90;
+        public static void ChangeTargetFOV(bool positive = true)
+        {
+            if (positive)
+                targetFOV += 5;
+            else
+                targetFOV -= 5;
+
+            if (targetFOV > 180)
+                targetFOV = 0;
+            if (targetFOV < 0)
+                targetFOV = 180;
+
+            GetIndex("Change Target FOV").overlapText = "Change Target FOV <color=grey>[</color><color=green>" + targetFOV + "</color><color=grey>]</color>";
+        }
+
+        public static void CameraFOV()
+        {
+            if (TPC != null)
+                TPC.GetComponent<Camera>().fieldOfView = targetFOV;
+        }
+
+        public static void FixCameraFOV()
+        {
+            if (TPC != null)
+                TPC.GetComponent<Camera>().fieldOfView = 60f;
+        }
+
         private static float muteDelay;
         public static void MuteGun()
         {

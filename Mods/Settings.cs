@@ -5111,7 +5111,8 @@ exit 0";
                 Fun.headSpinIndex.ToString(),
                 Movement.macroPlaybackRangeIndex.ToString(),
                 joystickMenuPosition.ToString(),
-                Movement.multiplicationAmount.ToString()
+                Movement.multiplicationAmount.ToString(),
+                Fun.targetFOV.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5360,6 +5361,9 @@ exit 0";
 
                 Movement.multiplicationAmount = int.Parse(data[59]) - 1;
                 Movement.MultiplicationAmount();
+
+                Fun.targetFOV = int.Parse(data[60]) - 5;
+                Fun.ChangeTargetFOV();
             }
             catch { LogManager.Log("Save file out of date"); }
 
