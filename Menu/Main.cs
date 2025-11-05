@@ -4753,6 +4753,7 @@ namespace iiMenu.Menu
             {
                 case GameModeType.Infection:
                 case GameModeType.InfectionCompetitive:
+                case GameModeType.SuperInfect:
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -4789,6 +4790,7 @@ namespace iiMenu.Menu
             {
                 case GameModeType.Infection:
                 case GameModeType.InfectionCompetitive:
+                case GameModeType.SuperInfect:
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -4819,6 +4821,7 @@ namespace iiMenu.Menu
             {
                 case GameModeType.Infection:
                 case GameModeType.InfectionCompetitive:
+                case GameModeType.SuperInfect:
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -4859,6 +4862,7 @@ namespace iiMenu.Menu
             {
                 case GameModeType.Infection:
                 case GameModeType.InfectionCompetitive:
+                case GameModeType.SuperInfect:
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
@@ -4885,6 +4889,7 @@ namespace iiMenu.Menu
             {
                 case GameModeType.Infection:
                 case GameModeType.InfectionCompetitive:
+                case GameModeType.SuperInfect:
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
