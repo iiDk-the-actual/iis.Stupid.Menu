@@ -2998,13 +2998,53 @@ namespace iiMenu.Menu
 
             smoothTargetPosition = Vector3.zero;
             smoothTargetRotation = Quaternion.identity;
-            if (!dynamicAnimations)
+            if (!dynamicAnimations || explodeMenu)
             {
-                if (dropOnRemove)
+                if (!dropOnRemove)
+                {
+                    Destroy(menu);
+                    menu = null;
+
+                    Destroy(reference);
+                    reference = null;
+
+                    return;
+                }
+
+                if (explodeMenu)
                 {
                     try
                     {
-                        Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+                        if (dynamicSounds)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/explosion.ogg", "Audio/Menu/explosion.ogg"), buttonClickVolume / 10f);
+
+                        foreach (GameObject gameObject in menu.transform.Children().Select(transform => transform.gameObject))
+                        {
+                            gameObject.transform.SetParent(null, true);
+                            Rigidbody comp = gameObject.GetOrAddComponent<Rigidbody>();
+
+                            if (zeroGravityMenu)
+                                comp.useGravity = false;
+
+                            if (menuCollisions)
+                            {
+                                GameObject collision = new GameObject("Collision");
+                                collision.transform.SetParent(gameObject.transform, false);
+                                collision.layer = 3;
+                                collision.AddComponent<BoxCollider>();
+                            }
+
+                            comp.linearVelocity = RandomVector3(5f);
+                            comp.angularVelocity = RandomVector3(50f);
+
+                            Destroy(menu, 5f);
+                        }
+                    } catch { }
+                } else
+                {
+                    try
+                    {
+                        Rigidbody comp = menu.GetComponent<Rigidbody>();
 
                         if (zeroGravityMenu)
                             comp.useGravity = false;
@@ -3030,8 +3070,8 @@ namespace iiMenu.Menu
 
                         if (annoyingMode)
                         {
-                            comp.linearVelocity = RandomVector3(33f);
-                            comp.angularVelocity = RandomVector3(33f);
+                            comp.linearVelocity = RandomVector3(5f);
+                            comp.angularVelocity = RandomVector3(50f);
                         }
                     }
                     catch { }
@@ -3059,14 +3099,11 @@ namespace iiMenu.Menu
                         }
                         catch { }
                     }
-
-                    Destroy(menu, 5f);
-                    menu = null;
-                } else
-                {
-                    Destroy(menu);
-                    menu = null;
                 }
+
+
+                Destroy(menu, 5f);
+                menu = null;
 
                 Destroy(reference);
                 reference = null;
@@ -6739,6 +6776,7 @@ jgs \_   _/ |Oo\
         public static bool isRightHand;
         public static bool bothHands;
         public static bool wristMenu;
+        public static bool explodeMenu;
         public static bool watchMenu;
         public static bool wristOpen;
         public static float wristMenuDelay;
