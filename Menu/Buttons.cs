@@ -1816,6 +1816,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Elevator Kick Gun", method = Fun.ElevatorKickGun, toolTip = "Kicks whoever your hand desires if they are in the elevator."},
                 new ButtonInfo { buttonText = "Elevator Kick All", method = Fun.ElevatorKickAll, isTogglable = false, toolTip = "Kicks everyone in the elevator."},
 
+                new ButtonInfo { buttonText = "Kick Master Client", method = Fun.KickMasterClient, toolTip = "Kicks the master client from the room." },
+
                 new ButtonInfo { buttonText = "Instant Party", method = Fun.InstantParty, toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
                 new ButtonInfo { buttonText = "Party Break Network Triggers", method = Fun.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },

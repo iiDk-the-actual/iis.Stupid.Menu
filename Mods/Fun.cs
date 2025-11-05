@@ -3955,6 +3955,63 @@ Piece Name: {gunTarget.name}";
                 GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
         }
 
+        public static void BetaShuttleFollowCommand(Player player)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
+            object[] groupJoinSendData = new object[2];
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
+
+            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+        }
+
+        public static void KickMasterClient()
+        {
+            if (NetworkSystem.Instance.SessionIsPrivate)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
+                GetIndex("Kick Master Client").enabled = false;
+
+                return;
+            }
+
+            GRPlayer self = GRPlayer.GetLocal();
+
+            if (self == null) // how
+                return;
+
+            GorillaFriendCollider currentCollider = GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).friendCollider;
+            GorillaFriendCollider targetCollider = GRElevatorManager.GetShuttle(self.shuttleData.targetShuttleId).friendCollider;
+
+            if (currentCollider == null && targetCollider == null)
+                return;
+
+            GorillaFriendCollider collider = currentCollider ?? targetCollider;
+
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = collider.transform.position;
+
+            if (ServerPos.Distance(collider.transform.position) < 0.5f)
+            {
+                CoroutineManager.instance.StartCoroutine(Overpowered.StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    BetaShuttleFollowCommand(PhotonNetwork.MasterClient);
+                    RPCProtection();
+                }, () =>
+                {
+                    Overpowered.CreateKickRoom();
+                    GetIndex("Kick Master Client").enabled = false;
+                    VRRig.LocalRig.enabled = true;
+
+                }));
+            }
+        }
+
         public static void WhiteColorTarget(VRRig rig)
         {
             int index = 629;

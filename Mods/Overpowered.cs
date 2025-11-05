@@ -3592,7 +3592,7 @@ namespace iiMenu.Mods
 
                         if (!NetworkSystem.Instance.SessionIsPrivate)
                         {
-                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The room must be private.");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
                             return;
                         }
 
@@ -3619,12 +3619,6 @@ namespace iiMenu.Mods
                 if (!NetworkSystem.Instance.SessionIsPrivate)
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
-                    return;
-                }
-
-                if (!NetworkSystem.Instance.SessionIsPrivate)
-                {
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The room must be private.");
                     return;
                 }
 
