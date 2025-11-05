@@ -3590,9 +3590,11 @@ namespace iiMenu.Mods
                             return;
                         }
 
-                        bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
-                        if (sessionIsPublic)
-                            SetRoomStatus(true);
+                        if (!NetworkSystem.Instance.SessionIsPrivate)
+                        {
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The room must be private.");
+                            return;
+                        }
 
                         CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                         {
@@ -3604,7 +3606,7 @@ namespace iiMenu.Mods
                         }, () =>
                         {
                             CreateKickRoom();
-                        }, sessionIsPublic ? 0.5f : 0f));
+                        }));
                     }
                 }
             }
@@ -3620,9 +3622,11 @@ namespace iiMenu.Mods
                     return;
                 }
 
-                bool sessionIsPublic = !NetworkSystem.Instance.SessionIsPrivate;
-                if (sessionIsPublic)
-                    SetRoomStatus(true);
+                if (!NetworkSystem.Instance.SessionIsPrivate)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The room must be private.");
+                    return;
+                }
 
                 CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
@@ -3636,7 +3640,7 @@ namespace iiMenu.Mods
                 }, () =>
                 {
                     CreateKickRoom();
-                }, sessionIsPublic ? 0.5f : 0f));
+                }));
             }
             else
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
