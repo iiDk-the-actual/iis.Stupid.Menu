@@ -1925,6 +1925,7 @@ namespace iiMenu.Mods
         private static Vector3 walkNormal;
 
         public static int wallWalkStrengthIndex = 2;
+        private static float wallWalkStrength = 9.81f;
 
         public static bool leftWallWalk;
         public static bool bothWallWalk;
@@ -1942,6 +1943,8 @@ namespace iiMenu.Mods
             wallWalkStrengthIndex %= strengthAmounts.Length;
             if (wallWalkStrengthIndex < 0)
                 wallWalkStrengthIndex = strengthAmounts.Length - 1;
+
+            wallWalkStrength = strengthAmounts[wallWalkStrengthIndex];
 
             GetIndex("Change Wall Walk Strength").overlapText = "Change Wall Walk Strength <color=grey>[</color><color=green>" + strengthNames[wallWalkStrengthIndex] + "</color><color=grey>]</color>";
         }
@@ -1961,7 +1964,7 @@ namespace iiMenu.Mods
 
             if (walkPos != Vector3.zero && wallWalkKey)
             {
-                GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
+                GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -wallWalkStrength, ForceMode.Acceleration);
                 ZeroGravity();
             }
         }
