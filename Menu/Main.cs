@@ -947,94 +947,91 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region Ghostview
-                if (frameCount > 12)
+                try
                 {
-                    try
+                    if (!legacyGhostview && GhostRig == null)
                     {
-                        if (!legacyGhostview && GhostRig == null)
+                        GameObject ghostRigHolder = new GameObject("ghostRigHolder");
+                        ghostRigHolder.SetActive(false);
+
+                        GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation, ghostRigHolder.transform);
+                        GhostRig.headBodyOffset = Vector3.zero;
+
+                        GhostRig.gameObject.SetActive(false);
+                        GhostRig.transform.SetParent(VRRig.LocalRig.transform.parent);
+
+                        Destroy(ghostRigHolder);
+
+                        GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
+                        GhostRig.GetComponent<OwnershipGaurd>().enabled = false;
+
+                        Visuals.FixRigMaterialESPColors(GhostRig);
+
+                        GhostRig.transform.position = Vector3.one * float.MaxValue;
+                    }
+
+                    if (GhostMaterial == null)
+                        GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
+
+                    if (legacyGhostViewLeft == null)
+                    {
+                        legacyGhostViewLeft = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        Destroy(legacyGhostViewLeft.GetComponent<SphereCollider>());
+
+                        legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
+
+                    if (legacyGhostViewRight == null)
+                    {
+                        legacyGhostViewRight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        Destroy(legacyGhostViewRight.GetComponent<SphereCollider>());
+
+                        legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
+
+                    if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
+                    {
+                        Color color = GetIndex("Swap Ghostview Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
+
+                        if (legacyGhostview)
                         {
-                            GameObject ghostRigHolder = new GameObject("ghostRigHolder");
-                            ghostRigHolder.SetActive(false);
-
-                            GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation, ghostRigHolder.transform);
-                            GhostRig.headBodyOffset = Vector3.zero;
-
-                            GhostRig.gameObject.SetActive(false);
-                            GhostRig.transform.SetParent(VRRig.LocalRig.transform.parent);
-
-                            Destroy(ghostRigHolder);
-
-                            GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
-                            GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
-                            GhostRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
-                            GhostRig.GetComponent<OwnershipGaurd>().enabled = false;
-
-                            Visuals.FixRigMaterialESPColors(GhostRig);
-
-                            GhostRig.transform.position = Vector3.one * float.MaxValue;
-                        }
-
-                        if (GhostMaterial == null)
-                            GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
-
-                        if (legacyGhostViewLeft == null)
-                        {
-                            legacyGhostViewLeft = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Destroy(legacyGhostViewLeft.GetComponent<SphereCollider>());
-
-                            legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        }
-
-                        if (legacyGhostViewRight == null)
-                        {
-                            legacyGhostViewRight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Destroy(legacyGhostViewRight.GetComponent<SphereCollider>());
-
-                            legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        }
-
-                        if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
-                        {
-                            Color color = GetIndex("Swap Ghostview Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
-
-                            if (legacyGhostview)
+                            if (GhostRig.gameObject.activeSelf)
                             {
-                                if (GhostRig.gameObject.activeSelf)
-                                {
-                                    GhostRig.gameObject.SetActive(false);
-                                    GhostRig.transform.position = Vector3.one * float.MaxValue;
-                                }
-
-                                legacyGhostViewLeft.SetActive(true);
-                                legacyGhostViewLeft.transform.position = TrueLeftHand().position;
-                                legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
-
-                                legacyGhostViewRight.SetActive(true);
-                                legacyGhostViewRight.transform.position = TrueRightHand().position;
-                                legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
+                                GhostRig.gameObject.SetActive(false);
+                                GhostRig.transform.position = Vector3.one * float.MaxValue;
                             }
-                            else
-                            {
-                                GhostRig.gameObject.SetActive(true);
 
-                                Color ghm = color;
-                                ghm.a = 0.5f;
+                            legacyGhostViewLeft.SetActive(true);
+                            legacyGhostViewLeft.transform.position = TrueLeftHand().position;
+                            legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
 
-                                GhostMaterial.color = ghm;
-                                GhostRig.mainSkin.material = GhostMaterial;
-                            }
+                            legacyGhostViewRight.SetActive(true);
+                            legacyGhostViewRight.transform.position = TrueRightHand().position;
+                            legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
                         }
                         else
                         {
-                            GhostRig.gameObject.SetActive(false);
-                            GhostRig.transform.position = Vector3.one * float.MaxValue;
+                            GhostRig.gameObject.SetActive(true);
 
-                            legacyGhostViewLeft.SetActive(false);
-                            legacyGhostViewRight.SetActive(false);
+                            Color ghm = color;
+                            ghm.a = 0.5f;
+
+                            GhostMaterial.color = ghm;
+                            GhostRig.mainSkin.material = GhostMaterial;
                         }
                     }
-                    catch { }
+                    else
+                    {
+                        GhostRig.gameObject.SetActive(false);
+                        GhostRig.transform.position = Vector3.one * float.MaxValue;
+
+                        legacyGhostViewLeft.SetActive(false);
+                        legacyGhostViewRight.SetActive(false);
+                    }
                 }
+                catch { }
                 #endregion
 
                 #region Miscellaneous
