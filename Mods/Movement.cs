@@ -501,11 +501,12 @@ namespace iiMenu.Mods
             Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward.X_Z();
             Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right.X_Z();
 
-            ZeroGravity();
-
             Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
             velocity *= flySpeed;
             GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.linearVelocity, velocity, 0.12875f);
+
+            // Our brains are thinking
+            ZeroGravity();
         }
 
         public static void VelocityBarkFly()
