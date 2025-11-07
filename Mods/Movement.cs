@@ -3587,58 +3587,6 @@ namespace iiMenu.Mods
             lasttouchright = GTPlayer.Instance.IsHandTouching(false);
         }
 
-        private static Vector3 previousHeadPosition;
-        private static Vector3 previousHandPosition;
-        private static Vector3 handPullPosition;
-        private static bool pulling;
-        private static float pullTime;
-        public static void LegitimatePullMod()
-        {
-            Vector3 headVelocity = (GTPlayer.Instance.headCollider.transform.position - previousHeadPosition) / Time.deltaTime;
-           
-            Vector3 handPosition = GTPlayer.Instance.GetControllerTransform(false).position;
-            Vector3 handVelocity = (handPosition - previousHandPosition) / Time.deltaTime - headVelocity;
-            
-            float handMagnitude = handVelocity.magnitude;
-            float magnitudeThreshold = 2f;
-
-            if (GTPlayer.Instance.scale < 0.2f)
-            {
-                handMagnitude = handVelocity.magnitude * (1f / GTPlayer.Instance.scale);
-                magnitudeThreshold = 3f;
-            }
-
-            if (Vector3.Dot(handVelocity.normalized, Vector3.down) > 0.6f)
-                handMagnitude *= 0.4f;
-
-            if (!pulling && handMagnitude > magnitudeThreshold && GTPlayer.Instance.RightHand.wasColliding)
-            {
-                pulling = true;
-                pullTime = 0.5f;
-
-                var inverseTransform = GTPlayer.Instance.headCollider.transform.TransformDirection(GTPlayer.Instance.headCollider.transform.InverseTransformDirection(handVelocity.normalized));
-                // ReSharper disable once LocalVariableHidesMember
-                float pullPower = GTPlayer.Instance.scale < 0.2f ? 0.15f : 0.3f;
-                Vector3 direction = inverseTransform.normalized;
-                float verticality = Vector3.Dot(direction, Vector3.down);
-                if (verticality > 0.3f)
-                    direction = Vector3.Slerp(direction, Vector3.up, Mathf.Clamp01(pullPower)).normalized;
-                
-                handPullPosition = handPosition + direction * pullPower;
-            }
-
-            if (pulling)
-            {
-                pullTime -= Time.deltaTime;
-                if (pullTime <= 0f)
-                    pulling = false;
-            }
-            
-            previousHandPosition = handPosition;
-            previousHeadPosition = GTPlayer.Instance.headCollider.transform.position;
-            GTPlayer.Instance.GetControllerTransform(false).position = (pulling ? Vector3.Lerp(handPosition, handPullPosition, 0.1f) : handPosition);
-        }
-
         public static GameObject leftThrow;
         public static GameObject rightThrow;
         public static void ThrowControllers()
