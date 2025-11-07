@@ -3795,11 +3795,26 @@ namespace iiMenu.Mods
             GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
         }
 
-        public static void EnableSteamLongArms() =>
-            GTPlayer.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
+        public static bool passWorldScaleCheck;
+        public static void EnableSteamLongArms()
+        {
+            if (passWorldScaleCheck)
+            {
+                Vector3 headPosition = ControllerInputPoller.DevicePosition(XRNode.Head);
+                Vector3 leftHandPosition = ControllerInputPoller.DevicePosition(XRNode.LeftHand);
+                Vector3 rightHandPosition = ControllerInputPoller.DevicePosition(XRNode.RightHand);
+
+                if (headPosition.Distance(leftHandPosition) < 0.2f && headPosition.Distance(rightHandPosition) < 0.2f)
+                {
+                    DisableSteamLongArms();
+                    return;
+                }
+            }
+            GTPlayer.Instance.transform.localScale = Vector3.one * (VRRig.LocalRig.NativeScale * armlength);
+        }
 
         public static void DisableSteamLongArms() =>
-            GTPlayer.Instance.transform.localScale = Vector3.one;
+            GTPlayer.Instance.transform.localScale = Vector3.one * VRRig.LocalRig.NativeScale;
 
         public static float extendingTime;
         public static void Extenders()
