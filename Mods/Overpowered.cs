@@ -968,7 +968,7 @@ namespace iiMenu.Mods
                 if (gamePlayer.IsHoldingEntity(gameEntityManager, true) && Time.time > ghostReactorDelay)
                 {
                     VRRig.LocalRig.enabled = true;
-                    if (ServerSyncLeftHandPos.Distance(position) < maxDistance)
+                    if (ServerLeftHandPos.Distance(position) < maxDistance)
                         gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true))).RequestThrow(true, position, rotation, velocity, angVelocity, gameEntityManager);
                     else
                         return;
@@ -1105,6 +1105,9 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        public static void InfiniteResources() =>
+            ProgressionManager.Instance._inventory.Select(key => key.Value).ForEach(key => key.Quantity = int.MaxValue);
 
         public static Dictionary<string, int> gadgetByName { get => SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
 
