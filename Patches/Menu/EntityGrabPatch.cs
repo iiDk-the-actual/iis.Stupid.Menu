@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static bool Prefix(GameEntityManager __instance, Vector3 handPosition, ref GameEntityId __result)
+        public static bool Prefix(GameEntityManager __instance, Vector3 handPosition, bool isLeftHand, Vector3 closestPointOnBoundingBox, ref GameEntityId __result)
         {
             if (enabled)
             {
@@ -40,14 +40,15 @@ namespace iiMenu.Patches.Menu
                 float closestDist = float.MaxValue;
                 for (int i = 0; i < entities.Count; i++)
                 {
-                    if (entities[i] != null)
+                    GameEntity entity = entities[i];
+                    if (entity != null && __instance.ValidateGrab(entity, NetworkSystem.Instance.LocalPlayer.ActorNumber, isLeftHand))
                     {
-                        double reach = 5;
+                        double reach = 16;
 
-                        float distance = (handPosition - entities[i].transform.position).sqrMagnitude;
+                        float distance = (handPosition - entity.transform.position).sqrMagnitude;
                         if (distance < reach && distance < closestDist)
                         {
-                            gameEntityId = entities[i].id;
+                            gameEntityId = entity.id;
                             closestDist = distance;
                         }
                     }
