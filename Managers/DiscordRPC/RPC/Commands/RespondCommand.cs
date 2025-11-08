@@ -3,11 +3,17 @@ using Valve.Newtonsoft.Json;
 
 namespace iiMenu.Managers.DiscordRPC.RPC.Commands
 {
-	internal class RespondCommand : ICommand
+    internal class RespondCommand : ICommand
 	{
+		/// <summary>
+		/// The user ID that we are accepting / rejecting
+		/// </summary>
 		[JsonProperty("user_id")]
 		public string UserID { get; set; }
 
+		/// <summary>
+		/// If true, the user will be allowed to connect.
+		/// </summary>
 		[JsonIgnore]
 		public bool Accept { get; set; }
 

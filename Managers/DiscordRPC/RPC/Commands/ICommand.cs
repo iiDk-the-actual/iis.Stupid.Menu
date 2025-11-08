@@ -2,7 +2,7 @@
 
 namespace iiMenu.Managers.DiscordRPC.RPC.Commands
 {
-	internal interface ICommand
+    internal interface ICommand
 	{
 		IPayload PreparePayload(long nonce);
 	}

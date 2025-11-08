@@ -2,116 +2,150 @@
 
 namespace iiMenu.Managers.DiscordRPC.Logging
 {
+	/// <summary>
+	/// Logs the outputs to the console using <see cref="Console.WriteLine()"/>
+	/// </summary>
 	public class ConsoleLogger : ILogger
 	{
+		/// <summary>
+		/// The level of logging to apply to this logger.
+		/// </summary>
 		public LogLevel Level { get; set; }
 
+		/// <summary>
+		/// Should the output be coloured?
+		/// </summary>
 		public bool Coloured { get; set; }
-
-		[Obsolete("Use Coloured")]
-		public bool Colored
-		{
-			get
-			{
-				return Coloured;
-			}
-			set
-			{
-                Coloured = value;
-			}
+		
+		/// <summary>
+		/// A alias too <see cref="Coloured"/>
+		/// </summary>
+		public bool Colored {
+			get => Coloured;
+			set => Coloured = value;
 		}
-
-		public ConsoleLogger()
-		{
-            Level = LogLevel.Info;
+       
+        /// <summary>
+        /// Creates a new instance of a Console Logger.
+        /// </summary>
+        public ConsoleLogger()
+        {
+            this.Level = LogLevel.Info;
             Coloured = false;
-		}
+        }
 
-		public ConsoleLogger(LogLevel level) : this()
-		{
-            Level = level;
-		}
+		/// <summary>
+		/// Creates a new instance of a Console Logger
+		/// </summary>
+		/// <param name="level">The log level</param>
+		public ConsoleLogger(LogLevel level)
+			: this()
+        {
+			Level = level;
+        }
 
-		public ConsoleLogger(LogLevel level, bool coloured)
-		{
+        /// <summary>
+        /// Creates a new instance of a Console Logger with a set log level
+        /// </summary>
+        /// <param name="level">The log level</param>
+        /// <param name="coloured">Should the logs be in colour?</param>
+        public ConsoleLogger(LogLevel level, bool coloured)
+        {
             Level = level;
             Coloured = coloured;
+        }
+
+        /// <summary>
+        /// Informative log messages
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public void Trace(string message, params object[] args)
+        {
+            if (Level > LogLevel.Trace) return;
+
+            if (Coloured) Console.ForegroundColor = ConsoleColor.Gray;
+
+			string prefixedMessage = "TRACE: " + message;
+
+			if (args.Length > 0)
+			{
+				Console.WriteLine(prefixedMessage, args);
+			}
+			else
+			{
+				Console.WriteLine(prefixedMessage);
+			}
 		}
 
-		public void Trace(string message, params object[] args)
+        /// <summary>
+        /// Informative log messages
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public void Info(string message, params object[] args)
 		{
-			if (Level > LogLevel.Trace)
+			if (Level > LogLevel.Info) return;
+
+			if (Coloured) Console.ForegroundColor = ConsoleColor.White;
+
+			string prefixedMessage = "INFO: " + message;
+
+			if (args.Length > 0)
 			{
-				return;
+				Console.WriteLine(prefixedMessage, args);
 			}
-			if (Coloured)
+			else
 			{
-				Console.ForegroundColor = ConsoleColor.Gray;
+				Console.WriteLine(prefixedMessage);
 			}
-			string text = "TRACE: " + message;
-			if (args.Length != 0)
-			{
-				Console.WriteLine(text, args);
-				return;
-			}
-			Console.WriteLine(text);
 		}
 
-		public void Info(string message, params object[] args)
-		{
-			if (Level > LogLevel.Info)
-			{
-				return;
-			}
-			if (Coloured)
-			{
-				Console.ForegroundColor = ConsoleColor.White;
-			}
-			string text = "INFO: " + message;
-			if (args.Length != 0)
-			{
-				Console.WriteLine(text, args);
-				return;
-			}
-			Console.WriteLine(text);
-		}
-
+		/// <summary>
+		/// Warning log messages
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="args"></param>
 		public void Warning(string message, params object[] args)
 		{
-			if (Level > LogLevel.Warning)
+			if (Level > LogLevel.Warning) return;
+
+			if (Coloured) Console.ForegroundColor = ConsoleColor.Yellow;
+
+			string prefixedMessage = "WARN: " + message;
+
+			if (args.Length > 0)
 			{
-				return;
+				Console.WriteLine(prefixedMessage, args);
 			}
-			if (Coloured)
+			else
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine(prefixedMessage);
 			}
-			string text = "WARN: " + message;
-			if (args.Length != 0)
-			{
-				Console.WriteLine(text, args);
-				return;
-			}
-			Console.WriteLine(text);
 		}
 
+		/// <summary>
+		/// Error log messsages
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="args"></param>
 		public void Error(string message, params object[] args)
 		{
-			if (Level > LogLevel.Error)
+			if (Level > LogLevel.Error) return;
+
+			if (Coloured) Console.ForegroundColor = ConsoleColor.Red;
+
+			string prefixedMessage = "ERR : " + message;
+
+			if (args.Length > 0)
 			{
-				return;
+				Console.WriteLine(prefixedMessage, args);
 			}
-			if (Coloured)
+			else
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine(prefixedMessage);
 			}
-			string text = "ERR : " + message;
-			if (args.Length != 0)
-			{
-				Console.WriteLine(text, args);
-				return;
-			}
-			Console.WriteLine(text);
 		}
+
 	}
 }
