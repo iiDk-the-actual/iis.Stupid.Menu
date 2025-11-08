@@ -26,10 +26,19 @@
         public static void Log(object log) =>
             Plugin.PluginLogger.LogInfo(log);
 
+        public static void Log(object log, object[] args) =>
+            Plugin.PluginLogger.LogInfo(string.Format(log.ToString(), args));
+
         public static void LogError(object log) =>
             Plugin.PluginLogger.LogError(log);
 
+        public static void LogError(object log, object[] args) =>
+            Plugin.PluginLogger.LogError(string.Format(log.ToString(), args));
+
         public static void LogWarning(object log) =>
             Plugin.PluginLogger.LogDebug(log);
+
+        public static void LogWarning(object log, object[] args) =>
+            Plugin.PluginLogger.LogDebug(string.Format(log.ToString(), args));
     }
 }

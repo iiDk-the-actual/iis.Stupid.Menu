@@ -25,6 +25,7 @@ using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Managers.DiscordRPC;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using PlayFab;
@@ -231,6 +232,77 @@ exit";
         {
             string filePath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0];
             Process.Start(filePath);
+        }
+
+        private static DiscordRpcClient discord;
+        private static DateTime? startTime;
+        private static float updateTime;
+        public static void DiscordRPC()
+        {
+            if (discord == null)
+            {
+                discord = new DiscordRpcClient("1436519874368114850")
+                {
+                    Logger = new Managers.DiscordRPC.Logging.DiscordLogManager()
+                };
+
+                discord.Initialize();
+            }
+
+            if (NetworkSystem.Instance.InRoom)
+            {
+                if (startTime == null)
+                    startTime = DateTime.UtcNow;
+            }
+            else
+                startTime = null;
+
+            if (Time.time > updateTime)
+            {
+                updateTime = Time.time + 1f;
+                bool inRoom = NetworkSystem.Instance.InRoom;
+                string roomName = inRoom ? NetworkSystem.Instance.RoomName : "-";
+
+                discord.SetPresence(new RichPresence
+                {
+                    Details = inRoom ? $"Playing {GorillaGameManager.instance.GameType().ToString().ToLower()}" : "Playing alone",
+                    State = inRoom ? $"Room: {roomName} ({PhotonNetwork.PlayerList.Length}/{PhotonNetwork.CurrentRoom.MaxPlayers})" : "Not in a room",
+                    Assets = new Managers.DiscordRPC.Assets
+                    {
+                        LargeImageKey = "cone",
+                        LargeImageText = "ii's Stupid Menu",
+                        SmallImageKey = inRoom ? "online" : "offline",
+                        SmallImageText = inRoom ? "Online" : "Offline"
+                    },
+                    Timestamps = inRoom ? new Timestamps
+                    {
+                        Start = startTime
+                    } : null,
+                    Buttons = new Button[]
+                    {
+                        new Button
+                        {
+                            Label = "Discord Server",
+                            Url = serverLink
+                        },
+                        new Button
+                        {
+                            Label = "Download",
+                            Url = "https://github.com/iiDk-the-actual/iis.Stupid.Menu/"
+                        }
+                    }
+                });
+            }
+        }
+
+        public static void DisableDiscordRPC()
+        {
+            if (discord != null)
+            {
+                discord.ClearPresence();
+                discord.Dispose();
+                discord = null;
+            }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
