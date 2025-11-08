@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/FuelPatch.cs
+ * ii's Stupid Menu  Patches/Menu/PlatformPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,18 +20,19 @@
  */
 
 using HarmonyLib;
+using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetWristJet), "OnUpdateAuthority")]
-    public class FuelPatch
+    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), "CreateLocalPlatformInstance")]
+    public class PlatformPatch
     {
         public static bool enabled;
 
-        public static void Postfix(SIGadgetWristJet __instance, float dt)
+        public static void Prefix(SIGadgetPlatformDeployer __instance, Vector3 pos, Quaternion rot)
         {
             if (enabled)
-                __instance.currentFuel = __instance.fuelSize;
+                __instance.deployedPlatformCount = 0;
         }
     }
 }
