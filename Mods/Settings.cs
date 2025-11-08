@@ -183,8 +183,11 @@ namespace iiMenu.Mods
         {
             NotificationManager.ClearAllNotifications();
             Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
-            IsPrompting = false;
+            StopCurrentPrompt();
         }
+
+        public static void StopCurrentPrompt() =>
+            prompts.RemoveAt(0);
 
         public static GameObject TutorialObject;
         public static LineRenderer TutorialSelector;

@@ -578,7 +578,7 @@ namespace iiMenu.Menu
                                             else
                                                 Toggle(buttons[0].buttonText, true);
                                         }
-                                        else if (IsText)
+                                        else if (CurrentPrompt != null && CurrentPrompt.IsText)
                                             Toggle("Accept Prompt");
 
                                         break;
@@ -2549,7 +2549,7 @@ namespace iiMenu.Menu
                     AddUpdateButton();
             }
 
-            if (!disablePageButtons && !IsPrompting && !pageScrolling)
+            if (!disablePageButtons && CurrentPrompt == null && !pageScrolling)
                 AddPageButtons();
 
             if (inTextInput)
@@ -2624,7 +2624,7 @@ namespace iiMenu.Menu
                 promptVideoPlayer = null;
             }
 
-            if (IsPrompting)
+            if (CurrentPrompt != null)
                 RenderPrompt();
             else
             {
@@ -3184,9 +3184,9 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Text>();
             promptText.font = activeFont;
-            promptText.text = PromptMessage;
+            promptText.text = CurrentPrompt.Message;
 
-            string promptImageUrl = ExtractPromptImage(PromptMessage);
+            string promptImageUrl = ExtractPromptImage(CurrentPrompt.Message);
             if (promptImageUrl != null)
                 promptText.text = promptText.text.Replace($"<{promptImageUrl}>", "");
 
@@ -3209,9 +3209,9 @@ namespace iiMenu.Menu
             promptText.resizeTextForBestFit = true;
             promptText.resizeTextMinSize = 0;
             RectTransform component = promptText.GetComponent<RectTransform>();
-            component.sizeDelta = new Vector2(0.28f, IsText ? 0.25f : 0.28f);
+            component.sizeDelta = new Vector2(0.28f, CurrentPrompt.IsText ? 0.25f : 0.28f);
 
-            component.localPosition = new Vector3(0.06f, 0f, IsText ? -0.025f : 0f);
+            component.localPosition = new Vector3(0.06f, 0f, CurrentPrompt.IsText ? -0.025f : 0f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (promptImageUrl != null)
@@ -3288,8 +3288,8 @@ namespace iiMenu.Menu
                 button.GetComponent<BoxCollider>().isTrigger = true;
                 button.transform.parent = menu.transform;
                 button.transform.rotation = Quaternion.identity;
-                button.transform.localScale = new Vector3(0.09f, DeclineText == null ? 0.9f : 0.4375f, 0.08f);
-                button.transform.localPosition = new Vector3(0.56f, DeclineText == null ? 0f : 0.2375f, -0.43f);
+                button.transform.localScale = new Vector3(0.09f, CurrentPrompt.DeclineText == null ? 0.9f : 0.4375f, 0.08f);
+                button.transform.localPosition = new Vector3(0.56f, CurrentPrompt.DeclineText == null ? 0f : 0.2375f, -0.43f);
 
                 button.AddComponent<Button>().relatedText = "Accept Prompt";
 
@@ -3314,7 +3314,7 @@ namespace iiMenu.Menu
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = AcceptText;
+                text.text = CurrentPrompt.AcceptText;
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
@@ -3340,7 +3340,7 @@ namespace iiMenu.Menu
                 if (NoAutoSizeText)
                     textRect.sizeDelta = new Vector2(9f, 0.015f);
 
-                textRect.localPosition = new Vector3(0.064f, DeclineText != null ? 0.075f : 0f, -0.16f);
+                textRect.localPosition = new Vector3(0.064f, CurrentPrompt.DeclineText != null ? 0.075f : 0f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 if (outlineText)
@@ -3353,7 +3353,7 @@ namespace iiMenu.Menu
                     RoundObj(button);
             }
 
-            if (DeclineText != null)
+            if (CurrentPrompt.DeclineText != null)
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -3389,7 +3389,7 @@ namespace iiMenu.Menu
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = DeclineText;
+                text.text = CurrentPrompt.DeclineText;
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
@@ -3681,87 +3681,58 @@ namespace iiMenu.Menu
                 colorChanger.overrideTransparency = false;
         }
 
-        public static bool IsPrompting;
-        public static bool IsText;
+        public class PromptData
+        {
+            public bool IsText;
+            public string Message;
 
-        public static string PromptMessage;
+            public string AcceptText;
+            public string DeclineText;
 
-        public static string AcceptText = "Yes";
-        public static string DeclineText = "No";
+            public Action AcceptAction;
+            public Action DeclineAction;
+        }
 
-        public static Action AcceptAction;
-        public static Action DeclineAction;
+        public static List<PromptData> prompts = new List<PromptData>();
+        public static PromptData CurrentPrompt
+        {
+            get {
+                if (prompts.Count > 0)
+                    return prompts[0];
+                else
+                    return null;
+            }
+        }
 
         public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
-            IsPrompting = true;
-            IsText = false;
+            prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = false });
 
-            PromptMessage = Message;
-
-            AcceptText = AcceptButton;
-            DeclineText = DeclineButton;
-
-            AcceptAction = Accept;
-            DeclineAction = Decline;
-
-            if (menu != null)
+            if (menu != null && prompts.Count <= 1)
                 ReloadMenu();
         }
 
         public static void PromptSingle(string Message, Action Accept = null, string AcceptButton = "Yes")
         {
-            IsPrompting = true;
-            IsText = false;
+            prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = false });
 
-            PromptMessage = Message;
-
-            AcceptText = AcceptButton;
-            DeclineText = null;
-
-            AcceptAction = Accept;
-            DeclineAction = null;
-
-            if (menu != null)
+            if (menu != null && prompts.Count <= 1)
                 ReloadMenu();
         }
 
         public static void PromptText(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
-            isSearching = false;
-            IsPrompting = true;
-            IsText = true;
+            prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = true });
 
-            PromptMessage = Message;
-
-            AcceptText = AcceptButton;
-            DeclineText = DeclineButton;
-
-            AcceptAction = Accept;
-            DeclineAction = Decline;
-
-            Settings.SpawnKeyboard();
-
-            if (menu != null)
+            if (menu != null && prompts.Count <= 1)
                 ReloadMenu();
         }
 
         public static void PromptSingleText(string Message, Action Accept = null, string AcceptButton = "Yes")
         {
-            IsPrompting = true;
-            IsText = true;
+            prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = true });
 
-            PromptMessage = Message;
-
-            AcceptText = AcceptButton;
-            DeclineText = null;
-
-            AcceptAction = Accept;
-            DeclineAction = null;
-
-            Settings.SpawnKeyboard();
-
-            if (menu != null)
+            if (menu != null && prompts.Count <= 1)
                 ReloadMenu();
         }
 
