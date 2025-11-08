@@ -4185,9 +4185,9 @@ exit 0";
             else
                 fontCycle--;
 
-            fontCycle %= 14;
+            fontCycle %= 13;
             if (fontCycle < 0)
-                fontCycle = 13;
+                fontCycle = 12;
 
             switch (fontCycle) {
                 case 0:
@@ -4240,12 +4240,6 @@ exit 0";
                         OpenDyslexic = LoadAsset<Font>("OpenDyslexic");
 
                     activeFont = OpenDyslexic;
-                    return;
-                case 13:
-                    if (Taiko == null)
-                        Taiko = LoadAsset<Font>("Taiko");
-
-                    activeFont = Taiko;
                     return;
             }
         }
