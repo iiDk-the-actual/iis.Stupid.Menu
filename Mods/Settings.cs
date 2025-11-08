@@ -4379,7 +4379,9 @@ exit 0";
             { "Telegram",      "telegram"   },
             { "7 Ding",        "win7-ding"  },
             { "7 Error",       "win7-error" },
-            { "7 Exclamation", "win7-exc"   }
+            { "7 Exclamation", "win7-exc"   },
+            { "AOL Alert",     "aol-alert"  },
+            { "AOL Message",   "aol-msg"    }
         };
 
         public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
