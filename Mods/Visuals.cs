@@ -2579,14 +2579,14 @@ namespace iiMenu.Mods
             }
 
             List<(string codename, string name)> cosmetics = new List<(string codename, string name)>
-                {
-                    ("LBANI.", "aa"),
-                    ("LBADE.", "fingerpainter"),
-                    ("LBAGS.", "illustrator"),
-                    ("LMAPY.", "forestguide"),
-                    ("LBAAK.", "stick"),
-                    ("LBAAD.", "admin")
-                };
+            {
+                ("LBANI.", "aa"),
+                ("LBADE.", "fingerpainter"),
+                ("LBAGS.", "illustrator"),
+                ("LMAPY.", "forestguide"),
+                ("LBAAK.", "stick"),
+                ("LBAAD.", "admin")
+            };
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {

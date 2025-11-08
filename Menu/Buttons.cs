@@ -505,6 +505,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Lurker", enableMethod =() => LurkerPatch.enabled = true, method = Safety.AntiLurker, disableMethod =() => LurkerPatch.enabled = false, toolTip = "Prevents the lurker ghost from possessing you."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method = Safety.AutoClearCache, toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method = Safety.AntiModerator, toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
+                new ButtonInfo { buttonText = "Cosmetic Notifications", method = Safety.CosmeticNotifications, toolTip = "Sends you a notification if there is a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator in your room."},
 
                 new ButtonInfo { buttonText = "Bypass Automod", method = Safety.BypassAutomod, toolTip = "Attempts to bypass automod muting yourself and others."},
                 new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatch.enabled = true, method = Safety.BypassModCheckers, disableMethod =() => PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have ever mod possible."},

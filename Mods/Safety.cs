@@ -354,7 +354,7 @@ namespace iiMenu.Mods
 
 		public static void AntiModerator()
         {
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY.")))
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY")))
             {
                 try
                 {
@@ -392,8 +392,36 @@ namespace iiMenu.Mods
                 }
                 catch { }
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> {vrrig.GetName()} is a moderator, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
             }
+        }
+
+        private static bool previousSpecial;
+        public static void CosmeticNotifications()
+        {
+            VRRig specialRig = null;
+            string specialCosmetic = null;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+            {
+                foreach (var cosmetic in Visuals.specialCosmetics)
+                {
+                    if (rig.concatStringOfCosmeticsAllowed.Contains(cosmetic.Key))
+                    {
+                        specialRig = rig;
+                        specialCosmetic = cosmetic.Value;
+                        break;
+                    }
+                }
+
+                if (specialRig != null)
+                    break;
+            }
+
+            if (specialRig != null && !previousSpecial)
+                NotificationManager.SendNotification($"<color=grey>[</color><color=#{specialRig.GetColor().ToHex()}>COSMETIC</color><color=grey>]</color> {specialRig.GetName()} has {specialCosmetic}.");
+
+            previousSpecial = specialRig != null;
         }
 
         private static float lastVol;
