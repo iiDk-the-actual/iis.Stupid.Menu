@@ -558,6 +558,78 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GhostReactorCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void GhostReactorCrashAll()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
+        }
+
+        public static void SuperInfectionCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    int[] objectIds = gadgetByName.Select(x => x.Value).ToArray();
+                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void SuperInfectionCrashAll()
+        {
+            int[] objectIds = gadgetByName.Select(x => x.Value).ToArray();
+            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+        }
+
         private static float reportDelay;
         public static void DelayBanGun()
         {

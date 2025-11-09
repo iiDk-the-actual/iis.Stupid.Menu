@@ -1668,8 +1668,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.Shotgun, toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Block Crash Gun", method = Overpowered.BlockCrashGun, toolTip = "Crashes whoever your hand desires if they are inside of the block map."},
-                new ButtonInfo { buttonText = "Block Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlockCrashAll, toolTip = "Crashes everybody inside of the block map."},
+                new ButtonInfo { buttonText = "Block Crash Gun", overlapText = "Building Block Crash Gun", method = Overpowered.BlockCrashGun, toolTip = "Crashes whoever your hand desires if they are inside of the block map."},
+                new ButtonInfo { buttonText = "Block Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Building Block Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlockCrashAll, toolTip = "Crashes everybody inside of the block map."},
 
                 new ButtonInfo { buttonText = "Block Anti Report", enableMethod = Fun.EnableAtticAntiReport, method = Fun.AtticAntiReport, toolTip = "Automatically builds blocks around your report button."},
 
@@ -1793,6 +1793,12 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method = Overpowered.GuardianCrashGun, toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
+
+                new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
+                new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
+
+                new ButtonInfo { buttonText = "Super Infection Crash Gun", method = Overpowered.SuperInfectionCrashGun, toolTip = "Crashes whoever your hand desires in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Crash All", method = Overpowered.SuperInfectionCrashAll, toolTip = "Crashes everyone in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
