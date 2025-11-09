@@ -904,6 +904,9 @@ namespace iiMenu.Menu
                     }
                 }
                 catch { }
+
+                if (CurrentPrompt.IsText && !inTextInput)
+                    Settings.SpawnKeyboard();
                 #endregion
 
                 #region Preferences
