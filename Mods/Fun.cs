@@ -4028,7 +4028,7 @@ Piece Name: {gunTarget.name}";
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
 
-                    BetaShuttleFollowCommand(PhotonNetwork.MasterClient);
+                    BetaShuttleFollowCommand(GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).GetOwner());
                     RPCProtection();
                 }, () =>
                 {
