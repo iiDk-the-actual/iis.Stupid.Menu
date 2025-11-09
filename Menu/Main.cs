@@ -905,7 +905,7 @@ namespace iiMenu.Menu
                 }
                 catch { }
 
-                if (CurrentPrompt.IsText && !inTextInput)
+                if (CurrentPrompt != null && CurrentPrompt.IsText && !inTextInput)
                     Settings.SpawnKeyboard();
                 #endregion
 
