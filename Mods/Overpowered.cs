@@ -630,6 +630,36 @@ namespace iiMenu.Mods
             CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
         }
 
+        public static void SuperInfectionBreakAudioGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    CreateItem(lockTarget.GetPlayer(), Overpowered.gadgetByName["WristJetGadgetPropellor"], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void SuperInfectionBreakAudioAll() =>
+            CreateItem(RpcTarget.Others, Overpowered.gadgetByName["WristJetGadgetPropellor"], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+
         private static float reportDelay;
         public static void DelayBanGun()
         {
