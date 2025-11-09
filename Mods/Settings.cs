@@ -1007,7 +1007,7 @@ exit 0";
         public static void WatchMenuOn()
         {
             watchMenu = true;
-            GameObject mainwatch = VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            GameObject mainwatch = VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)").gameObject;
             watchobject = Object.Instantiate(mainwatch, 
                 rightHand ?
                 VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform :
