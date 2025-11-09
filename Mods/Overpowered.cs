@@ -1219,12 +1219,8 @@ namespace iiMenu.Mods
 
         public static void ClaimAllTerminals()
         {
-            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
-            {
-                if (terminal != null)
-                    terminal.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
-            }
+                terminal?.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
         }
 
         public static Dictionary<string, int> gadgetByName 
