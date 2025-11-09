@@ -604,7 +604,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     int[] objectIds = gadgetByName.Select(x => x.Value).ToArray();
-                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
                 }
 
                 if (GetGunInput(true))
@@ -627,7 +627,7 @@ namespace iiMenu.Mods
         public static void SuperInfectionCrashAll()
         {
             int[] objectIds = gadgetByName.Select(x => x.Value).ToArray();
-            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
         }
 
         private static float reportDelay;
@@ -955,7 +955,7 @@ namespace iiMenu.Mods
         }
 
         public static float ghostReactorDelay;
-        public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null, GameEntityManager manager = null)
+        public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long sendData = 0L, GameEntityManager manager = null)
         {
             GameEntityManager gameEntityManager = manager ?? Fun.gameEntityManager;
             if (NetworkSystem.Instance.IsMasterClient)
@@ -970,14 +970,12 @@ namespace iiMenu.Mods
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
 
-                sendData ??= new[] { 0L };
-
                 object[] createData = {
                     new[] { netId },
                     new[] { hash },
                     new[] { BitPackUtils.PackWorldPosForNetwork(position) },
                     new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
-                    sendData
+                    new[] { sendData }
                 };
 
                 switch (target)
@@ -1105,6 +1103,49 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CreateItems(object target, int[] hashes, Vector3[] positions, Quaternion[] rotations, long[] sendData = null, GameEntityManager manager = null)
+        {
+            GameEntityManager gameEntityManager = manager ?? Fun.gameEntityManager;
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                if (Time.time < ghostReactorDelay)
+                    return;
+
+                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[1].GetDelay();
+
+                List<int> netIds = new List<int>();
+                for (int i = 0; i < hashes.Length; i++)
+                    netIds.Add(gameEntityManager.CreateNetId());
+
+                if (target is NetPlayer netPlayer)
+                    target = NetPlayerToPlayer(netPlayer);
+
+                sendData ??= new[] { 0L };
+
+                object[] createData = {
+                    netIds,
+                    hashes,
+                    positions.Select(position => BitPackUtils.PackWorldPosForNetwork(position)).ToArray(),
+                    rotations.Select(rotation => BitPackUtils.PackQuaternionForNetwork(rotation)).ToArray(),
+                    sendData
+                };
+
+                switch (target)
+                {
+                    case RpcTarget rpcTarget:
+                        gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                        break;
+                    case Player player:
+                        gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                        break;
+                }
+
+                RPCProtection();
+            }
+            else
+                CreateItem(target, hashes[0], positions[0], rotations[0], Vector3.zero, Vector3.zero, sendData.Length > 0 ? sendData[1] : 0L, manager);
+        }
+
         public static Dictionary<string, int> objectByName { get => Fun.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
 
         public static void SpamObjectGrip(int objectId)
@@ -1210,7 +1251,7 @@ namespace iiMenu.Mods
         public static void SpamGadgetGrip(int objectId)
         {
             if (rightGrab)
-                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
         }
 
         public static void SpamGadgetGun(int objectId)
@@ -1221,7 +1262,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
             }
         }
 
