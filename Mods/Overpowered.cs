@@ -1140,6 +1140,12 @@ namespace iiMenu.Mods
                 CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero);
         }
 
+        public static void SpamEntityGrip()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            SpamObjectGrip(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
         public static void ToolSpamGrip()
         {
             int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
@@ -1156,6 +1162,12 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                     CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
             }
+        }
+
+        public static void SpamEntityGun()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
         }
 
         public static void ToolSpamGun()
