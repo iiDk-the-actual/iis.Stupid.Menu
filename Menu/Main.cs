@@ -2249,9 +2249,6 @@ namespace iiMenu.Menu
                 if (shouldOutline)
                     OutlineObj(menuBackground, false);
 
-                if (shouldRound)
-                    RoundObj(menuBackground);
-
                 if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63)
                 {
                     Renderer menuBackgroundRenderer = menuBackground.GetComponent<Renderer>();
@@ -2327,6 +2324,9 @@ namespace iiMenu.Menu
                         colorChanger.colors = backgroundColor;
                     }
                 }
+
+                if (shouldRound)
+                    RoundObj(menuBackground);
             }
 
             canvasObj = new GameObject();
