@@ -1007,11 +1007,11 @@ exit 0";
         public static void WatchMenuOn()
         {
             watchMenu = true;
-            GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            GameObject mainwatch = VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
             watchobject = Object.Instantiate(mainwatch, 
                 rightHand ?
-                GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform :
-                GetObject("Player Objects/Local VRRig/Local Gorilla Player/GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+                VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform :
+                VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
 
             Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);
