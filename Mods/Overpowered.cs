@@ -1111,8 +1111,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void InfiniteResources() =>
-            ProgressionManager.Instance._inventory.Select(key => key.Value).ForEach(key => key.Quantity = int.MaxValue);
+        public static void InfiniteResources()
+        {
+            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+            for (int i = 0; i < player.CurrentProgression.resourceArray.Length; i++)
+                player.CurrentProgression.resourceArray[i] = int.MaxValue;
+        }
 
         public static Dictionary<string, int> gadgetByName { get => SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
 
