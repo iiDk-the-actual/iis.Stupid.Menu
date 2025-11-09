@@ -1045,6 +1045,9 @@ namespace iiMenu.Menu
                 if (Settings.TutorialObject != null)
                     Settings.UpdateTutorial();
 
+                if (activeFont == null)
+                    activeFont = Arial;
+
                 try
                 {
                     if (PhotonNetwork.InRoom)
