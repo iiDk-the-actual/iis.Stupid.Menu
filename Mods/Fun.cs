@@ -4305,11 +4305,8 @@ Piece Name: {gunTarget.name}";
                     throwableProjectileTimeout = Time.time + 0.3f;
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                VRRig.LocalRig.transform.position = pos - (vel.normalized * 0.01f);
 
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -100);
-
-                VRRig.LocalRig.transform.position = pos;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
 
                 vel = vel.ClampMagnitudeSafe(50f);
