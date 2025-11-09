@@ -3748,6 +3748,7 @@ namespace iiMenu.Mods
         }
 
         public static bool passWorldScaleCheck;
+        public static Vector3? lastFramePosition;
         public static void EnableSteamLongArms()
         {
             if (passWorldScaleCheck)
@@ -3758,10 +3759,24 @@ namespace iiMenu.Mods
 
                 if (headPosition.Distance(leftHandPosition) < 0.2f && headPosition.Distance(rightHandPosition) < 0.2f)
                 {
+                    Vector3 position = GorillaTagger.Instance.bodyCollider.transform.position;
                     DisableSteamLongArms();
+
+                    if (lastFramePosition == null)
+                        TeleportPlayer(position);
+
+                    lastFramePosition = GorillaTagger.Instance.bodyCollider.transform.position;
+
                     return;
                 }
+
+                if (lastFramePosition != null)
+                {
+                    TeleportPlayer(lastFramePosition.Value);
+                    lastFramePosition = null;
+                }
             }
+
             GTPlayer.Instance.transform.localScale = Vector3.one * (VRRig.LocalRig.NativeScale * armlength);
         }
 
