@@ -995,23 +995,6 @@ namespace iiMenu.Mods
 
                     velocity = velocity.ClampSqrMagnitude(1600f);
 
-                    object[] grabData = {
-                        netId,
-                        true,
-                        BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
-                        PhotonNetwork.LocalPlayer
-                    };
-
-                    switch (target)
-                    {
-                        case RpcTarget rpcTarget:
-                            gameEntityManager.photonView.RPC("GrabEntityRPC", rpcTarget, grabData);
-                            break;
-                        case Player player:
-                            gameEntityManager.photonView.RPC("GrabEntityRPC", player, grabData);
-                            break;
-                    }
-
                     object[] dropData = {
                         netId,
                         true,
