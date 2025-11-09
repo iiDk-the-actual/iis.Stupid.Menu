@@ -1167,7 +1167,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Place Building Block Gun", method = Fun.PlaceBlockGun, toolTip = "Places whatever building block your hand desires on the last grid space you have placed blocks on." },
 
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method = Fun.DestroyBlockGun, toolTip = "Shreds whatever building block your hand desires." },
-                new ButtonInfo { buttonText = "Destroy Building Blocks", method = Fun.DestroyBlocks, toolTip = "Shreds every building block." },
+                new ButtonInfo { buttonText = "Destroy Building Blocks", overlapText = "Destroy All Building Blocks", method = Fun.DestroyBlocks, toolTip = "Shreds every building block." },
 
                 new ButtonInfo { buttonText = "Save Builder Table Data", method = Fun.SaveBuilderTableData, isTogglable = false, toolTip = "Dumps the data of your current build to a JSON file." },
                 new ButtonInfo { buttonText = "Load Builder Table Data", method = Fun.LoadBuilderTableData, isTogglable = false, toolTip = "Loads the data of the dumped JSON files in your game directory and saves it to your current slot." },
@@ -1234,6 +1234,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Chaser Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Entity Gun", method =() => Overpowered.SpamEntityGun(), toolTip = "Spawns a random entity at wherever your hand desires."},
 
+                new ButtonInfo { buttonText = "Rain Entities", method =() => Overpowered.RainEntities(), toolTip = "Makes random entities fall around you like rain."},
+                new ButtonInfo { buttonText = "Entity Aura", method =() => Overpowered.EntityAura(), toolTip = "Creates a ball of random entities around you."},
+                new ButtonInfo { buttonText = "Entity Fountain", method =() => Overpowered.EntityFountain(), toolTip = "Spurts random entities out of your head like a fountain."},
+
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
@@ -1255,6 +1259,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Platform Deployer Gun", method =() => Overpowered.SpamGadgetGun(Overpowered.gadgetByName["PlatformDeployerGadget"]), toolTip = "Spawns platform deployers at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Gadget Gun", method = Overpowered.GadgetSpamGun, toolTip = "Spawns random gadgets at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Resource Gun", method = Overpowered.ResourceSpamGun, toolTip = "Spawns random resources at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Rain Gadgets", method =() => Overpowered.RainGadgets(), toolTip = "Makes random gadgets fall around you like rain."},
+                new ButtonInfo { buttonText = "Gadget Aura", method =() => Overpowered.GadgetAura(), toolTip = "Creates a ball of random gadgets around you."},
+                new ButtonInfo { buttonText = "Gadget Fountain", method =() => Overpowered.GadgetFountain(), toolTip = "Spurts random gadgets out of your head like a fountain."},
 
                 new ButtonInfo { buttonText = "Destroy Gadget Gun", method = Overpowered.DestroyGadgetGun, toolTip = "Destroys any gadget which your hand desires."},
 

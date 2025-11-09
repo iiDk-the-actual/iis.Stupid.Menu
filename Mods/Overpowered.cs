@@ -1170,6 +1170,24 @@ namespace iiMenu.Mods
             SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
         }
 
+        public static void RainEntities()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + new Vector3(Random.Range(-3f, 3f), 4f, Random.Range(-3f, 3f)), Quaternion.identity, Vector3.down, Vector3.zero);
+        }
+
+        public static void EntityAura()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + RandomVector3().normalized * 2f, Quaternion.identity, Vector3.down, Vector3.zero);
+        }
+
+        public static void EntityFountain()
+        {
+            int[] objectIds = objectByName.Select(x => x.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero);
+        }
+
         public static void ToolSpamGun()
         {
             int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
@@ -1270,6 +1288,24 @@ namespace iiMenu.Mods
         {
             int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
             SpamGadgetGun(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
+        public static void RainGadgets()
+        {
+            int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + new Vector3(Random.Range(-3f, 3f), 4f, Random.Range(-3f, 3f)), Quaternion.identity, Vector3.down, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+        }
+
+        public static void GadgetAura()
+        {
+            int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + RandomVector3().normalized * 2f, Quaternion.identity, Vector3.down, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+        }
+
+        public static void GadgetFountain()
+        {
+            int[] objectIds = gadgetByName.Select(element => element.Value).ToArray();
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
         }
 
         public static void ResourceSpamGrip()
