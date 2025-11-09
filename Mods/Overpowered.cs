@@ -1118,7 +1118,22 @@ namespace iiMenu.Mods
                 player.CurrentProgression.resourceArray[i] = int.MaxValue;
         }
 
-        public static Dictionary<string, int> gadgetByName { get => SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
+        public static void ClaimAllTerminals()
+        {
+            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+            foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
+            {
+                if (terminal != null)
+                    terminal.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+            }
+        }
+
+        public static Dictionary<string, int> gadgetByName 
+        { 
+            get => 
+                SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory
+                .ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); 
+        }
 
         public static void SpamGadgetGrip(int objectId)
         {
