@@ -955,6 +955,7 @@ namespace iiMenu.Mods
         }
 
         public static float ghostReactorDelay;
+        public static float throwDelay;
         public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long sendData = 0L, GameEntityManager manager = null)
         {
             GameEntityManager gameEntityManager = manager ?? Fun.gameEntityManager;
@@ -963,7 +964,7 @@ namespace iiMenu.Mods
                 if (Time.time < ghostReactorDelay)
                     return;
 
-                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[0].GetDelay();
+                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
 
                 int netId = gameEntityManager.CreateNetId();
 
@@ -988,8 +989,10 @@ namespace iiMenu.Mods
                         break;
                 }
 
-                if (velocity != Vector3.zero || angVelocity != Vector3.zero)
+                if ((velocity != Vector3.zero || angVelocity != Vector3.zero || GetIndex("Entity Gravity").enabled) && Time.time > throwDelay)
                 {
+                    throwDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.ThrowEntity].GetDelay();
+
                     velocity = velocity.ClampSqrMagnitude(1600f);
 
                     object[] grabData = {
@@ -1111,7 +1114,7 @@ namespace iiMenu.Mods
                 if (Time.time < ghostReactorDelay)
                     return;
 
-                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[1].GetDelay();
+                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItems].GetDelay();
 
                 List<int> netIds = new List<int>();
                 for (int i = 0; i < hashes.Length; i++)
