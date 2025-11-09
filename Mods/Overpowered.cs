@@ -888,6 +888,11 @@ namespace iiMenu.Mods
             GameEntityManager gameEntityManager = manager ?? Fun.gameEntityManager;
             if (NetworkSystem.Instance.IsMasterClient)
             {
+                if (Time.time < ghostReactorDelay)
+                    return;
+
+                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[0].GetDelay();
+
                 int netId = gameEntityManager.CreateNetId();
 
                 if (target is NetPlayer netPlayer)
@@ -915,7 +920,7 @@ namespace iiMenu.Mods
 
                 if (velocity != Vector3.zero || angVelocity != Vector3.zero)
                 {
-                    velocity = velocity.ClampMagnitudeSafe(1600f);
+                    velocity = velocity.ClampSqrMagnitude(1600f);
 
                     object[] grabData = {
                         netId,
@@ -1033,7 +1038,7 @@ namespace iiMenu.Mods
         public static void SpamObjectGrip(int objectId)
         {
             if (rightGrab)
-                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero);
         }
 
         public static void ToolSpamGrip()
@@ -1114,7 +1119,7 @@ namespace iiMenu.Mods
         public static void SpamGadgetGrip(int objectId)
         {
             if (rightGrab)
-                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
         }
 
         public static void SpamGadgetGun(int objectId)
