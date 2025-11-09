@@ -1162,6 +1162,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Orbit Building Blocks", method = Fun.OrbitBlocks, toolTip = "Orbits the building blocks around you." },
                 new ButtonInfo { buttonText = "Rain Building Blocks", method = Fun.RainBuildingBlocks, toolTip = "Makes the building blocks fall around you like rain." },
+                new ButtonInfo { buttonText = "Building Block Fountain", method = Fun.BuildingBlockFountain, toolTip = "Spurts building blocks out of your head like a fountain." },
                 new ButtonInfo { buttonText = "Building Block Aura", method = Fun.BuildingBlockAura, toolTip = "Moves the building blocks around you at random positions." },
 
                 new ButtonInfo { buttonText = "Place Building Block Gun", method = Fun.PlaceBlockGun, toolTip = "Places whatever building block your hand desires on the last grid space you have placed blocks on." },

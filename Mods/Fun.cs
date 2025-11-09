@@ -4798,6 +4798,12 @@ Piece Name: {gunTarget.name}";
             RPCProtection();
         }
 
+        public static void BuildingBlockFountain()
+        {
+            RequestCreatePiece(pieceIdSet, VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, 0, velocity: RandomVector3(15f));
+            RPCProtection();
+        }
+
         public static void SpazObject(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
