@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), "CreateLocalPlatformInstance")]
+    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), "OnUpdateAuthority")]
     public class PlatformPatch
     {
         public static bool enabled;
@@ -32,7 +32,7 @@ namespace iiMenu.Patches.Menu
         public static void Prefix(SIGadgetPlatformDeployer __instance, Vector3 pos, Quaternion rot)
         {
             if (enabled)
-                __instance.deployedPlatformCount = 0;
+                __instance.remainingRechargeTime = 0f;
         }
     }
 }
