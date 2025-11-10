@@ -2607,6 +2607,12 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void RopeGrabReach()
+        {
+            foreach (GorillaHandClimber climber in new[] { EquipmentInteractor.instance.LeftClimber, EquipmentInteractor.instance.rightClimber })
+                (climber.col as SphereCollider).radius = 0.5f;
+        }
+
         public static void DebugSlingshotAimbot()
         {
             if (VRRig.LocalRig.GetSlingshot() == null)

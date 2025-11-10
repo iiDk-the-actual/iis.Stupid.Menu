@@ -1074,7 +1074,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Glider Blind Gun", method = Overpowered.GliderBlindGun, toolTip = "Moves all of the gliders to whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Glider Blind All", method = Overpowered.GliderBlindAll, toolTip = "Moves all of the gliders to everyone's faces." },
 
-                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => RopePatch.enabled = true, disableMethod =() => RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
+                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => RopePatch.enabled = true, disableMethod =() => RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => RopePatch.enabled = true, disableMethod =() => RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
+                new ButtonInfo { buttonText = "Rope Grab Reach", method = Fun.RopeGrabReach, disableMethod =() => ClimbablePatch.enabled = false, toolTip = "Allows you to grab ropes from farther away."},
 
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => GliderPatch.enabled = true, disableMethod =() => GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
