@@ -3047,7 +3047,7 @@ namespace iiMenu.Menu
                 {
                     try
                     {
-                        Rigidbody comp = menu.GetComponent<Rigidbody>();
+                        Rigidbody comp = menu.GetOrAddComponent<Rigidbody>();
 
                         if (zeroGravityMenu)
                             comp.useGravity = false;
