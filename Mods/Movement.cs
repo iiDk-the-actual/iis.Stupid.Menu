@@ -1140,22 +1140,125 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        // i know this code is ass its 1 am im tired - kingofnetflix
         public static GameObject portalGun;
+        public static GameObject bluePortal;
+        public static float bluePortalDelay;
+        public static GameObject orangePortal;
+        public static float orangePortalDelay;
+        public static GameObject crosshair;
+        public static Vector3 vel;
+        public static bool playedOpen;
+
         public static void PortalGun()
         {
             if (portalGun == null)
             {
                 portalGun = LoadObject<GameObject>("PortalGun");
                 portalGun.transform.SetParent(VRRig.LocalRig.rightHandTransform.parent, false);
+            }
+            if (portalGun)
+            {
+                Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
+                Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
+                
+                if (crosshair == null)
+                {
+                    crosshair = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    crosshair.transform.localScale = new Vector3(0.025f, 0.025f, 0.025f);
+                    crosshair.GetComponent<Renderer>().material.color = Color.white;
+                    Object.Destroy(crosshair.GetComponent<Collider>());
+                }
+                if (crosshair)
+                    crosshair.transform.position = ray.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : ray.point;
 
+                if (rightGrab && Time.time > bluePortalDelay)
+                {
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_blue.ogg", "Audio/Mods/Movement/PortalGun/portalgun_blue.ogg"), buttonClickVolume / 10f);
+                    if (bluePortal == null)
+                        bluePortal = LoadObject<GameObject>("BluePortal");
+                    bluePortal.transform.position = ray.point + ray.normal * 0.01f;
+
+                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Quaternion.AngleAxis(-5f, RayPoint.forward) * RayPoint.up) * Quaternion.Euler(90, 0, 0);
+                    bluePortalDelay = Time.time + 0.5f;
+                }
+                if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
+                {
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_orange.ogg", "Audio/Mods/Movement/PortalGun/portalgun_orange.ogg"), buttonClickVolume / 10f);
+                    if (orangePortal == null)
+                        orangePortal = LoadObject<GameObject>("OrangePortal");
+                    orangePortal.transform.position = ray.point + ray.normal * 0.01f;
+
+                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Quaternion.AngleAxis(-5f, RayPoint.forward) * RayPoint.up) * Quaternion.Euler(90, 0, 0);
+                    orangePortalDelay = Time.time + 0.5f;
+                }
+                if (bluePortal && orangePortal)
+                {
+                    GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
+                    GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
+                    if (!blueView.activeSelf)
+                    {
+                        blueView.SetActive(true);
+                        bluePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
+                    }
+                        
+                    if (!orangeView.activeSelf)
+                    {
+                        orangeView.SetActive(true);
+                        orangePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
+                    }
+
+                    if (blueView.activeSelf && orangeView.activeSelf && !playedOpen)
+                    {
+                        string sound = (bluePortalDelay > orangePortalDelay) ? "portal_open2.ogg" : "portal_open1.ogg";
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/{sound}", $"Audio/Mods/Movement/PortalGun/{sound}"), buttonClickVolume / 10f);
+                        playedOpen = true;
+                    }
+
+
+
+                    float distToBlue = Vector3.Distance(GTPlayer.Instance.bodyCollider.transform.position, bluePortal.transform.position);
+                    float distToOrange = Vector3.Distance(GTPlayer.Instance.bodyCollider.transform.position, orangePortal.transform.position);
+                    if (distToBlue < 0.5f)
+                        TeleportThroughPortal(bluePortal, orangePortal);
+                    if (distToOrange < 0.5f)
+                        TeleportThroughPortal(orangePortal, bluePortal);
+                }
+                if (rightPrimary && (bluePortal || orangePortal))
+                {
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_close.ogg", "Audio/Mods/Movement/PortalGun/portal_close.ogg"), buttonClickVolume / 10f);
+                    Object.Destroy(bluePortal);
+                    Object.Destroy(orangePortal);
+                    playedOpen = false;
+                }
             }
 
         }
 
+        private static void TeleportThroughPortal(GameObject fromPortal, GameObject toPortal)
+        {
+            Rigidbody rb = GTPlayer.Instance.playerRigidBody;
+            if (rb == null) return;
+            Vector3 oldVel = rb.linearVelocity;
+            float exitOffset = 0.5f; 
+            Vector3 newPos = toPortal.transform.position + toPortal.transform.forward * exitOffset;
+            TeleportPlayer(newPos);
+            Quaternion relativeRot = Quaternion.Inverse(fromPortal.transform.rotation) * GTPlayer.Instance.transform.rotation;
+            GTPlayer.Instance.transform.rotation = toPortal.transform.rotation * relativeRot;
+            Vector3 localVel = fromPortal.transform.InverseTransformDirection(oldVel);
+            Vector3 newVel = toPortal.transform.TransformDirection(localVel);
+            rb.linearVelocity = newVel;
+            rb.position += toPortal.transform.forward * 0.1f;
+        }
+
         public static void DisablePortalGun()
         {
-            if (portalGun)
-                Object.Destroy(portalGun);
+            Object.Destroy(portalGun);
+            Object.Destroy(bluePortal);
+            Object.Destroy(orangePortal);
+            Object.Destroy(crosshair);
+            playedOpen = false;
         }
         public static void UpAndDown()
         {
