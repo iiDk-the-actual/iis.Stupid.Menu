@@ -1148,7 +1148,6 @@ namespace iiMenu.Mods
         public static GameObject orangePortal;
         public static float orangePortalDelay;
         public static GameObject crosshair;
-        public static Vector3 vel;
         public static bool playedOpen;
 
         public static void PortalGun()
@@ -1180,7 +1179,7 @@ namespace iiMenu.Mods
                         bluePortal = LoadObject<GameObject>("BluePortal");
                     bluePortal.transform.position = ray.point + ray.normal * 0.01f;
 
-                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Quaternion.AngleAxis(-5f, RayPoint.forward) * RayPoint.up) * Quaternion.Euler(90, 0, 0);
+                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
                     bluePortalDelay = Time.time + 0.5f;
                 }
                 if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
@@ -1190,7 +1189,7 @@ namespace iiMenu.Mods
                         orangePortal = LoadObject<GameObject>("OrangePortal");
                     orangePortal.transform.position = ray.point + ray.normal * 0.01f;
 
-                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Quaternion.AngleAxis(-5f, RayPoint.forward) * RayPoint.up) * Quaternion.Euler(90, 0, 0);
+                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
                     orangePortalDelay = Time.time + 0.5f;
                 }
                 if (bluePortal && orangePortal)
@@ -1238,18 +1237,8 @@ namespace iiMenu.Mods
 
         private static void TeleportThroughPortal(GameObject fromPortal, GameObject toPortal)
         {
-            Rigidbody rb = GTPlayer.Instance.playerRigidBody;
-            if (rb == null) return;
-            Vector3 oldVel = rb.linearVelocity;
-            float exitOffset = 0.5f; 
-            Vector3 newPos = toPortal.transform.position + toPortal.transform.forward * exitOffset;
-            TeleportPlayer(newPos);
-            Quaternion relativeRot = Quaternion.Inverse(fromPortal.transform.rotation) * GTPlayer.Instance.transform.rotation;
-            GTPlayer.Instance.transform.rotation = toPortal.transform.rotation * relativeRot;
-            Vector3 localVel = fromPortal.transform.InverseTransformDirection(oldVel);
-            Vector3 newVel = toPortal.transform.TransformDirection(localVel);
-            rb.linearVelocity = newVel;
-            rb.position += toPortal.transform.forward * 0.1f;
+            // velocity is todo
+            TeleportPlayer(toPortal.transform.position);
         }
 
         public static void DisablePortalGun()
