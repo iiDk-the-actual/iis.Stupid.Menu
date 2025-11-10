@@ -1224,7 +1224,7 @@ namespace iiMenu.Mods
             CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero);
         }
 
-        private static Dictionary<string, bool[][]> Letters = new Dictionary<string, bool[][]> {
+        public static Dictionary<string, bool[][]> Letters = new Dictionary<string, bool[][]> {
             { "A", new bool[][] {
                 new bool[] { false, true, true, true, false },
                 new bool[] { true, false, false, false, true },
@@ -1431,9 +1431,9 @@ namespace iiMenu.Mods
         };
 
         public static string textToRender;
-        private static float textDelay;
-        private static int characterIndex;
-        private static Vector3? basePosition;
+        public static float textDelay;
+        public static int characterIndex;
+        public static Vector3? basePosition;
 
         public static void GhostReactorTextGun()
         {

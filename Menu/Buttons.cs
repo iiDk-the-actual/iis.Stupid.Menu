@@ -1166,6 +1166,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Building Block Fountain", method = Fun.BuildingBlockFountain, toolTip = "Spurts building blocks out of your head like a fountain." },
                 new ButtonInfo { buttonText = "Building Block Aura", method = Fun.BuildingBlockAura, toolTip = "Moves the building blocks around you at random positions." },
 
+                new ButtonInfo { buttonText = "Building Block Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput.ToUpper(), null, "Done", "Cancel"), method = Fun.BuildingBlockTextGun, toolTip = "Spawns entities in the shape of the text you desire in the ghost reactor."},
+
                 new ButtonInfo { buttonText = "Place Building Block Gun", method = Fun.PlaceBlockGun, toolTip = "Places whatever building block your hand desires on the last grid space you have placed blocks on." },
 
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method = Fun.DestroyBlockGun, toolTip = "Shreds whatever building block your hand desires." },
@@ -1240,7 +1242,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Entity Aura", method = Overpowered.EntityAura, toolTip = "Creates a ball of random entities around you."},
                 new ButtonInfo { buttonText = "Entity Fountain", method = Overpowered.EntityFountain, toolTip = "Spurts random entities out of your head like a fountain."},
 
-                new ButtonInfo { buttonText = "Ghost Reactor Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput, null, "Done", "Cancel"), method = Overpowered.GhostReactorTextGun, toolTip = "Spawns entities in the shape of the text you desire in the ghost reactor."},
+                new ButtonInfo { buttonText = "Ghost Reactor Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput.ToUpper(), null, "Done", "Cancel"), method = Overpowered.GhostReactorTextGun, toolTip = "Spawns entities in the shape of the text you desire in the ghost reactor."},
 
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
                 
@@ -1268,7 +1270,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Gadget Aura", method =() => Overpowered.GadgetAura(), toolTip = "Creates a ball of random gadgets around you."},
                 new ButtonInfo { buttonText = "Gadget Fountain", method =() => Overpowered.GadgetFountain(), toolTip = "Spurts random gadgets out of your head like a fountain."},
 
-                new ButtonInfo { buttonText = "Super Infection Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput, null, "Done", "Cancel"), method = Overpowered.SuperInfectionTextGun, toolTip = "Spawns entities in the shape of the text you desire in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput.ToUpper(), null, "Done", "Cancel"), method = Overpowered.SuperInfectionTextGun, toolTip = "Spawns entities in the shape of the text you desire in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Destroy Gadget Gun", method = Overpowered.DestroyGadgetGun, toolTip = "Destroys any gadget which your hand desires."},
 

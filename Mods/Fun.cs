@@ -4798,6 +4798,51 @@ Piece Name: {gunTarget.name}";
             RPCProtection();
         }
 
+        public static void BuildingBlockTextGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (Overpowered.basePosition == null)
+                        Overpowered.basePosition = NewPointer.transform.position + Vector3.up;
+
+                    if (Time.time > Overpowered.textDelay)
+                    {
+                        Overpowered.textDelay = Time.time + 0.1f;
+                        bool[][] characterData = Overpowered.Letters[Overpowered.textToRender[Overpowered.characterIndex].ToString()];
+
+                        List<Vector3> positions = new List<Vector3>();
+                        for (int i = 0; i < characterData.Length; i++)
+                        {
+                            bool[] column = characterData[i];
+
+                            for (int j = 0; j < column.Length; j++)
+                            {
+                                bool currentIndex = column[j];
+                                Vector3 offset = new Vector3((j * 0.2f) + (Overpowered.characterIndex * 1.2f), i * -0.2f, 0f);
+
+                                if (currentIndex)
+                                    positions.Add(Overpowered.basePosition.Value + offset);
+                            }
+                        }
+
+                        Overpowered.characterIndex++;
+
+                        foreach (Vector3 position in positions)
+                            RequestCreatePiece(pieceIdSet, position, Quaternion.identity, 0);
+
+                        RPCProtection();
+                    }
+                }
+                else
+                    Overpowered.basePosition = null;
+            }
+        }
+
         public static void RainBuildingBlocks()
         {
             RequestCreatePiece(pieceIdSet, VRRig.LocalRig.transform.position + new Vector3(Random.Range(-3f, 3f), 4f, Random.Range(-3f, 3f)), Quaternion.identity, 0);
