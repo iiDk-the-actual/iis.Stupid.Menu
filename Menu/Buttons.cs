@@ -1234,14 +1234,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Large Bug Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyPestBig"]), toolTip = "Spawns the large annoying bug enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Ranged Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Chaser Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.objectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Entity Gun", method =() => Overpowered.SpamEntityGun(), toolTip = "Spawns a random entity at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Entity Gun", method = Overpowered.SpamEntityGun, toolTip = "Spawns a random entity at wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Rain Entities", method =() => Overpowered.RainEntities(), toolTip = "Makes random entities fall around you like rain."},
-                new ButtonInfo { buttonText = "Entity Aura", method =() => Overpowered.EntityAura(), toolTip = "Creates a ball of random entities around you."},
-                new ButtonInfo { buttonText = "Entity Fountain", method =() => Overpowered.EntityFountain(), toolTip = "Spurts random entities out of your head like a fountain."},
+                new ButtonInfo { buttonText = "Rain Entities", method = Overpowered.RainEntities, toolTip = "Makes random entities fall around you like rain."},
+                new ButtonInfo { buttonText = "Entity Aura", method = Overpowered.EntityAura, toolTip = "Creates a ball of random entities around you."},
+                new ButtonInfo { buttonText = "Entity Fountain", method = Overpowered.EntityFountain, toolTip = "Spurts random entities out of your head like a fountain."},
+
+                new ButtonInfo { buttonText = "Ghost Reactor Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput, null, "Done", "Cancel"), method = Overpowered.GhostReactorTextGun, toolTip = "Spawns entities in the shape of the text you desire in the ghost reactor."},
 
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
-
+                
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
@@ -1265,6 +1267,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rain Gadgets", method =() => Overpowered.RainGadgets(), toolTip = "Makes random gadgets fall around you like rain."},
                 new ButtonInfo { buttonText = "Gadget Aura", method =() => Overpowered.GadgetAura(), toolTip = "Creates a ball of random gadgets around you."},
                 new ButtonInfo { buttonText = "Gadget Fountain", method =() => Overpowered.GadgetFountain(), toolTip = "Spurts random gadgets out of your head like a fountain."},
+
+                new ButtonInfo { buttonText = "Super Infection Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput, null, "Done", "Cancel"), method = Overpowered.SuperInfectionTextGun, toolTip = "Spawns entities in the shape of the text you desire in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Destroy Gadget Gun", method = Overpowered.DestroyGadgetGun, toolTip = "Destroys any gadget which your hand desires."},
 

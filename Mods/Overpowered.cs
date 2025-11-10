@@ -1136,7 +1136,7 @@ namespace iiMenu.Mods
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
 
-                sendData ??= new[] { 0L };
+                sendData ??= Enumerable.Repeat(0L, hashes.Length).ToArray();
 
                 object[] createData = {
                     netIds,
@@ -1182,6 +1182,12 @@ namespace iiMenu.Mods
             SpamObjectGrip(objectIds[Random.Range(0, objectIds.Length)]);
         }
 
+        public static void ToolSpamGun()
+        {
+            int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
+            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
+        }
+
         public static void SpamObjectGun(int objectId)
         {
             if (GetGunInput(false))
@@ -1218,10 +1224,297 @@ namespace iiMenu.Mods
             CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero);
         }
 
-        public static void ToolSpamGun()
+        private static Dictionary<string, bool[][]> Letters = new Dictionary<string, bool[][]> {
+            { "A", new bool[][] {
+                new bool[] { false, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "B", new bool[][] {
+                new bool[] { true, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "C", new bool[][] {
+                new bool[] { false, true, true, true, true },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { false, true, true, true, true },
+            } },
+            { "D", new bool[][] {
+                new bool[] { true, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, false },
+            } },
+            { "E", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, true, true, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "F", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, true, true, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+            } },
+            { "G", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, true, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "H", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "I", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "J", new bool[][] {
+                new bool[] { false, false, false, false, true },
+                new bool[] { false, false, false, false, true },
+                new bool[] { false, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, true, true, false },
+            } },
+            { "K", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, true, false },
+                new bool[] { true, true, true, false, false },
+                new bool[] { true, false, false, true, false },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "L", new bool[][] {
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "M", new bool[][] {
+                new bool[] { true, true, false, true, true },
+                new bool[] { true, false, true, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "N", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, false, false, true },
+                new bool[] { true, false, true, false, true },
+                new bool[] { true, false, false, true, true },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "O", new bool[][] {
+                new bool[] { false, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, true, true, false },
+            } },
+            { "P", new bool[][] {
+                new bool[] { true, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, false },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, false, false, false, false },
+            } },
+            { "Q", new bool[][] {
+                new bool[] { false, true, true, true, false },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, true, false, true },
+                new bool[] { true, false, false, true, false },
+                new bool[] { false, true, true, false, true },
+            } },
+            { "R", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, true, false },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "S", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { true, false, false, false, false },
+                new bool[] { true, true, true, true, true },
+                new bool[] { false, false, false, false, true },
+                new bool[] { true, true, true, true, true },
+            } },
+            { "T", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+            } },
+            { "U", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, true, true, false },
+            } },
+            { "V", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, false, true, false },
+                new bool[] { false, true, false, true, false },
+                new bool[] { false, false, true, false, false },
+            } },
+            { "W", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, false, false, true },
+                new bool[] { true, false, true, false, true },
+                new bool[] { false, true, false, true, false },
+            } },
+            { "X", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, false, true, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, true, false, true, false },
+                new bool[] { true, false, false, false, true },
+            } },
+            { "Y", new bool[][] {
+                new bool[] { true, false, false, false, true },
+                new bool[] { false, true, false, true, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, false, true, false, false },
+            } },
+            { "Z", new bool[][] {
+                new bool[] { true, true, true, true, true },
+                new bool[] { false, false, false, true, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, true, false, false, false },
+                new bool[] { true, true, true, true, true },
+            } },
+            { ".", new bool[][] {
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, true, false, false },
+            } },
+            { "/", new bool[][] {
+                new bool[] { false, false, false, false, true },
+                new bool[] { false, false, false, true, false },
+                new bool[] { false, false, true, false, false },
+                new bool[] { false, true, false, false, false },
+                new bool[] { true, false, false, false, false },
+            } },
+            { " ", new bool[][] {
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+                new bool[] { false, false, false, false, false },
+            } }
+        };
+
+        public static string textToRender;
+        private static float textDelay;
+        private static int characterIndex;
+        private static Vector3? basePosition;
+
+        public static void GhostReactorTextGun()
         {
-            int[] objectIds = objectByName.Where(x => x.Key.Contains("Tool")).Select(x => x.Value).ToArray();
-            SpamObjectGun(objectIds[Random.Range(0, objectIds.Length)]);
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (basePosition == null)
+                        basePosition = NewPointer.transform.position + Vector3.up;
+
+                    if (Time.time > textDelay)
+                    {
+                        textDelay = Time.time + 0.1f;
+                        bool[][] characterData = Letters[textToRender[characterIndex].ToString()];
+
+                        List<Vector3> position = new List<Vector3>();
+                        for (int i = 0; i < characterData.Length; i++)
+                        {
+                            bool[] column = characterData[i];
+
+                            for (int j = 0; j < column.Length; j++)
+                            {
+                                bool currentIndex = column[j];
+                                Vector3 offset = new Vector3((j * 0.2f) + (characterIndex * 1.2f), i * -0.2f, 0f);
+
+                                if (currentIndex)
+                                    position.Add(basePosition.Value + offset);
+                            }
+                        }
+
+                        CreateItems(RpcTarget.All, Enumerable.Repeat(objectByName["GhostReactorCollectibleFlower"], position.Count).ToArray(), position.ToArray(), Enumerable.Repeat(Quaternion.identity, position.Count).ToArray());
+                        characterIndex++;
+                    }
+                }
+                else
+                    basePosition = null;
+            }
+        }
+
+        public static void SuperInfectionTextGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (basePosition == null)
+                        basePosition = NewPointer.transform.position + Vector3.up;
+
+                    if (Time.time > textDelay)
+                    {
+                        textDelay = Time.time + 0.1f;
+                        bool[][] characterData = Letters[textToRender[characterIndex].ToString()];
+
+                        List<Vector3> position = new List<Vector3>();
+                        for (int i = 0; i < characterData.Length; i++)
+                        {
+                            bool[] column = characterData[i];
+
+                            for (int j = 0; j < column.Length; j++)
+                            {
+                                bool currentIndex = column[j];
+                                Vector3 offset = new Vector3((j * 0.2f) + (characterIndex * 1.2f), i * -0.2f, 0f);
+
+                                if (currentIndex)
+                                    position.Add(basePosition.Value + offset);
+                            }
+                        }
+
+                        CreateItems(RpcTarget.All, Enumerable.Repeat(gadgetByName["SIGadgetDashYoyo"], position.Count).ToArray(), position.ToArray(), Enumerable.Repeat(Quaternion.identity, position.Count).ToArray(), null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                        characterIndex++;
+                    }
+                }
+                else
+                    basePosition = null;
+            }
         }
 
         private static float destroyDelay;
