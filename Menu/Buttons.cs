@@ -1685,14 +1685,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Block Anti Report", enableMethod = Fun.EnableAtticAntiReport, method = Fun.AtticAntiReport, toolTip = "Automatically builds blocks around your report button."},
 
-                new ButtonInfo { buttonText = "Block Draw Gun", method = Fun.AtticDrawGun, toolTip = "Draw wherever your hand desires."},
-                new ButtonInfo { buttonText = "Block Build Gun", method = Fun.AtticBuildGun, toolTip = "Draw wherever your hand desires with no delay."},
-                new ButtonInfo { buttonText = "Block Tower Gun", method = Fun.AtticTowerGun, toolTip = "Builds a tower wherever your hand desires."},
+                new ButtonInfo { buttonText = "Block Draw Gun", overlapText = "Building Block Draw Gun", method = Fun.AtticDrawGun, toolTip = "Draw wherever your hand desires."},
+                new ButtonInfo { buttonText = "Block Build Gun", overlapText = "Building Block Build Gun",method = Fun.AtticBuildGun, toolTip = "Draw wherever your hand desires with no delay."},
+                new ButtonInfo { buttonText = "Block Tower Gun", overlapText = "Building Block Tower Gun",method = Fun.AtticTowerGun, toolTip = "Builds a tower wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Block Freeze Gun", method = Fun.AtticFreezeGun, toolTip = "Freeze whoever your hand desires."},
-                new ButtonInfo { buttonText = "Block Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.AtticFreezeAll, toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Block Freeze Gun", overlapText = "Building Block Freeze Gun", method = Fun.AtticFreezeGun, toolTip = "Freeze whoever your hand desires."},
+                new ButtonInfo { buttonText = "Block Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Building Block Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.AtticFreezeAll, toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Block Float Gun", method = Fun.AtticFloatGun, toolTip = "Makes whoever your hand desires float."},
+                new ButtonInfo { buttonText = "Block Float Gun", overlapText = "Building Block Float Gun", method = Fun.AtticFloatGun, toolTip = "Makes whoever your hand desires float."},
 
                 new ButtonInfo { buttonText = "Spaz Targets", method = Overpowered.TargetSpam, toolTip = "Gives the targets a seizure."},
 
