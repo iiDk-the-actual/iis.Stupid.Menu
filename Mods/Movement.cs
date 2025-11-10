@@ -1140,7 +1140,23 @@ namespace iiMenu.Mods
                 }
             }
         }
+        public static GameObject portalGun;
+        public static void PortalGun()
+        {
+            if (portalGun == null)
+            {
+                portalGun = LoadObject<GameObject>("PortalGun");
+                portalGun.transform.SetParent(VRRig.LocalRig.rightHandTransform.parent, false);
 
+            }
+
+        }
+
+        public static void DisablePortalGun()
+        {
+            if (portalGun)
+                Object.Destroy(portalGun);
+        }
         public static void UpAndDown()
         {
             if (rightTrigger > 0.5f || rightGrab)

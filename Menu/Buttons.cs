@@ -565,7 +565,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Iron Man", method = Movement.IronMan, toolTip = "Turns you into iron man, rotate your hands around to change direction."},
                 new ButtonInfo { buttonText = "Spider Man", method = Movement.SpiderMan, disableMethod = Movement.DisableSpiderMan, toolTip = "Turns you into spider man, use your <color=green>grips</color> to shoot webs."},
                 new ButtonInfo { buttonText = "Grappling Hooks", method = Movement.GrapplingHooks, disableMethod = Movement.DisableSpiderMan, toolTip = "Gives you grappling hooks, use your <color=green>grips</color> to shoot them."},
-                
+                new ButtonInfo { buttonText = "Portal Gun", method = Movement.PortalGun, disableMethod = Movement.DisablePortalGun, toolTip = "Gives you a gun to spawn portals that can be seen and walked through."},
+
                 new ButtonInfo { buttonText = "Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.Drive, toolTip = "Lets you drive around in your invisible car. Use the <color=green>joystick</color> to move."},
                 new ButtonInfo { buttonText = "Hard Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", overlapText = "Sticky Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.HardDrive, toolTip = "Similar to drive, but locks you to the ground."},
 
