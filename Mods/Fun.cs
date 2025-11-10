@@ -1470,6 +1470,39 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        public static void GhostReactorFreezeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    Overpowered.CreateItem(lockTarget.GetPlayer(), Overpowered.objectByName["GhostReactorEnergyCostGate"], lockTarget.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void GhostReactorFreezeAll()
+        {
+            VRRig randomPlayer = GetRandomVRRig(false);
+            Overpowered.CreateItem(randomPlayer.GetPlayer(), Overpowered.objectByName["GhostReactorEnergyCostGate"], randomPlayer.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
+        }
+
         public static void SetPlayerState(Player Target, GRPlayer.GRPlayerState State)
         {
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);

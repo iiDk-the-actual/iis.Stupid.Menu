@@ -1632,7 +1632,10 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Start Shift", method = Fun.StartShift, isTogglable = false, toolTip = "Starts a new ghost reactor shift."},
                 new ButtonInfo { buttonText = "End Shift", method = Fun.EndShift, isTogglable = false, toolTip = "Ends the current ghost reactor shift."},
-                new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Sets the quota ."},
+                new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Meets the quota fora you."},
+
+                new ButtonInfo { buttonText = "Ghost Reactor Freeze Gun", method = Fun.GhostReactorFreezeGun, toolTip = "Freezes whoever your hand desires in the ghost reactor."},
+                new ButtonInfo { buttonText = "Ghost Reactor Freeze All", method = Fun.GhostReactorFreezeAll, toolTip = "Freezes everyone in the ghost reactor."},
 
                 new ButtonInfo { buttonText = "Kill Self", method =() => Fun.SetStateSelf(1), isTogglable = false, toolTip = "Turns you into a ghost."},
                 new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.SetStateGun(1), toolTip = "Turns whoever your hand desires into a ghost."},
