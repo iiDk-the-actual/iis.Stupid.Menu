@@ -33,6 +33,7 @@ using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1144,9 +1145,9 @@ namespace iiMenu.Mods
         // i know this code is ass its 1 am im tired - kingofnetflix
         public static GameObject portalGun;
         public static GameObject bluePortal;
-        public static float bluePortalDelay;
+        public static float bluePortalDelay = 0.5f;
         public static GameObject orangePortal;
-        public static float orangePortalDelay;
+        public static float orangePortalDelay = 0.5f;
         public static GameObject crosshair;
         public static bool playedOpen;
 
@@ -1161,7 +1162,7 @@ namespace iiMenu.Mods
             {
                 Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
                 Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
-                
+
                 if (crosshair == null)
                 {
                     crosshair = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -1178,8 +1179,8 @@ namespace iiMenu.Mods
                     if (bluePortal == null)
                         bluePortal = LoadObject<GameObject>("BluePortal");
                     bluePortal.transform.position = ray.point + ray.normal * 0.01f;
-
                     bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(bluePortal, 0.4f));
                     bluePortalDelay = Time.time + 0.5f;
                 }
                 if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
@@ -1188,12 +1189,15 @@ namespace iiMenu.Mods
                     if (orangePortal == null)
                         orangePortal = LoadObject<GameObject>("OrangePortal");
                     orangePortal.transform.position = ray.point + ray.normal * 0.01f;
-
                     orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+
+                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(orangePortal, 0.4f));
+
                     orangePortalDelay = Time.time + 0.5f;
                 }
                 if (bluePortal && orangePortal)
                 {
+
                     GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
                     GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
                     if (!blueView.activeSelf)
@@ -1212,17 +1216,10 @@ namespace iiMenu.Mods
                     {
                         string sound = (bluePortalDelay > orangePortalDelay) ? "portal_open2.ogg" : "portal_open1.ogg";
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/{sound}", $"Audio/Mods/Movement/PortalGun/{sound}"), buttonClickVolume / 10f);
+
                         playedOpen = true;
+
                     }
-
-
-
-                    float distToBlue = Vector3.Distance(GTPlayer.Instance.bodyCollider.transform.position, bluePortal.transform.position);
-                    float distToOrange = Vector3.Distance(GTPlayer.Instance.bodyCollider.transform.position, orangePortal.transform.position);
-                    if (distToBlue < 0.5f)
-                        TeleportThroughPortal(bluePortal, orangePortal);
-                    if (distToOrange < 0.5f)
-                        TeleportThroughPortal(orangePortal, bluePortal);
                 }
                 if (rightPrimary && (bluePortal || orangePortal))
                 {
@@ -1235,12 +1232,27 @@ namespace iiMenu.Mods
 
         }
 
-        private static void TeleportThroughPortal(GameObject fromPortal, GameObject toPortal)
+        public static void TeleportThroughPortal(GameObject toPortal)
         {
-            // velocity is todo
-            TeleportPlayer(toPortal.transform.position);
+            TeleportPlayer(toPortal.transform.position + toPortal.transform.up * 0.3f, true);
         }
 
+        public static IEnumerator AnimatePortalScale(GameObject portal, float duration)
+        {
+            Vector3 originalScale = portal.transform.localScale;
+            portal.transform.localScale = Vector3.zero;
+
+            float timer = 0f;
+            while (timer < duration)
+            {
+                portal.transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, timer / duration);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            portal.transform.localScale = originalScale;
+            yield break;
+        }
         public static void DisablePortalGun()
         {
             Object.Destroy(portalGun);

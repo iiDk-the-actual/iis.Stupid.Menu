@@ -5647,9 +5647,9 @@ namespace iiMenu.Menu
             serializeViewBatch.Clear();
         }
 
-        public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
+        public static void TeleportPlayer(Vector3 pos, bool keepVelocity = false) // Prevents your hands from getting stuck on trees
         {
-            GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation);
+            GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation, keepVelocity);
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
             if (VRKeyboard != null)
