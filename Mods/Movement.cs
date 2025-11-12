@@ -1160,6 +1160,8 @@ namespace iiMenu.Mods
             }
             if (portalGun)
             {
+                GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
+                GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
                 Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
                 Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
 
@@ -1180,7 +1182,7 @@ namespace iiMenu.Mods
                         bluePortal = LoadObject<GameObject>("BluePortal");
                     bluePortal.transform.position = ray.point + ray.normal * 0.01f;
                     bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
-                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(bluePortal, 0.4f));
+                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(bluePortal, 0.3f));
                     bluePortalDelay = Time.time + 0.5f;
                 }
                 if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
@@ -1191,15 +1193,14 @@ namespace iiMenu.Mods
                     orangePortal.transform.position = ray.point + ray.normal * 0.01f;
                     orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
 
-                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(orangePortal, 0.4f));
+                    CoroutineManager.instance.StartCoroutine(AnimatePortalScale(orangePortal, 0.3f));
 
                     orangePortalDelay = Time.time + 0.5f;
                 }
                 if (bluePortal && orangePortal)
                 {
 
-                    GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
-                    GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
+                    
                     if (!blueView.activeSelf)
                     {
                         blueView.SetActive(true);
