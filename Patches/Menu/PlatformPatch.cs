@@ -29,7 +29,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Prefix(SIGadgetPlatformDeployer __instance, Vector3 pos, Quaternion rot)
+        public static void Prefix(SIGadgetPlatformDeployer __instance, float dt)
         {
             if (enabled)
                 __instance.remainingRechargeTime = 0f;
