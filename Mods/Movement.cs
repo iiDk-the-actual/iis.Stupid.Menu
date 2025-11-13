@@ -26,6 +26,7 @@ using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
 using iiMenu.Classes.Menu;
+using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -1176,33 +1177,35 @@ namespace iiMenu.Mods
 
                 if (rightGrab && Time.time > bluePortalDelay)
                 {
-                    if (orangePortal && Vector3.Distance(ray.point, orangePortal.transform.position) < 1.5f)
+                    if (orangePortal && Vector3.Distance(ray.point, orangePortal.transform.position) < 1f)
                     {
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_invalid.ogg",
                             "Audio/Mods/Movement/PortalGun/portal_invalid.ogg"), buttonClickVolume / 10f);
+                        bluePortalDelay = Time.time + 0.5f;
                         return;
                     }
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_blue.ogg", "Audio/Mods/Movement/PortalGun/portalgun_blue.ogg"), buttonClickVolume / 10f);
                     if (bluePortal == null)
                         bluePortal = LoadObject<GameObject>("BluePortal");
                     bluePortal.transform.position = ray.point + ray.normal * 0.01f;
-                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Vector3.left) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(bluePortal, 0.3f));
                     bluePortalDelay = Time.time + 0.5f;
                 }
                 if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
                 {
-                    if (bluePortal && Vector3.Distance(ray.point, bluePortal.transform.position) < 1.5f)
+                    if (bluePortal && Vector3.Distance(ray.point, bluePortal.transform.position) < 1f)
                     {
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_invalid.ogg",
                             "Audio/Mods/Movement/PortalGun/portal_invalid.ogg"), buttonClickVolume / 10f);
+                        orangePortalDelay = Time.time + 0.5f;
                         return;
                     }
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_orange.ogg", "Audio/Mods/Movement/PortalGun/portalgun_orange.ogg"), buttonClickVolume / 10f);
                     if (orangePortal == null)
                         orangePortal = LoadObject<GameObject>("OrangePortal");
                     orangePortal.transform.position = ray.point + ray.normal * 0.01f;
-                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, Vector3.left) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
 
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(orangePortal, 0.3f));
 
@@ -1230,6 +1233,12 @@ namespace iiMenu.Mods
                         string sound = (bluePortalDelay > orangePortalDelay) ? "portal_open2.ogg" : "portal_open1.ogg";
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/{sound}", $"Audio/Mods/Movement/PortalGun/{sound}"), buttonClickVolume / 10f);
 
+                        PortalTrigger blueTrigger = blueView.GetOrAddComponent<PortalTrigger>();
+                        PortalTrigger orangeTrigger = orangeView.GetOrAddComponent<PortalTrigger>();
+
+                        blueTrigger.destination = orangePortal;
+                        orangeTrigger.destination = bluePortal;
+
                         playedOpen = true;
 
                     }
@@ -1245,9 +1254,13 @@ namespace iiMenu.Mods
 
         }
 
-        public static void TeleportThroughPortal(GameObject toPortal)
+        public static void TeleportThroughPortal(GameObject fromPortal, GameObject toPortal)
         {
-            TeleportPlayer(toPortal.transform.position + toPortal.transform.up * 0.3f, true);
+            float vel = GTPlayer.Instance.RigidbodyVelocity.magnitude;
+
+            //TeleportPlayer(targetPos, true);
+
+            GTPlayer.Instance.SetPlayerVelocity(vel * toPortal.transform.forward);
         }
 
         public static IEnumerator AnimatePortalScale(GameObject portal, float duration)
