@@ -1160,8 +1160,7 @@ namespace iiMenu.Mods
             }
             if (portalGun)
             {
-                GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
-                GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
+                
                 Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
                 Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
 
@@ -1177,21 +1176,33 @@ namespace iiMenu.Mods
 
                 if (rightGrab && Time.time > bluePortalDelay)
                 {
+                    if (orangePortal && Vector3.Distance(ray.point, orangePortal.transform.position) < 1.5f)
+                    {
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_invalid.ogg",
+                            "Audio/Mods/Movement/PortalGun/portal_invalid.ogg"), buttonClickVolume / 10f);
+                        return;
+                    }
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_blue.ogg", "Audio/Mods/Movement/PortalGun/portalgun_blue.ogg"), buttonClickVolume / 10f);
                     if (bluePortal == null)
                         bluePortal = LoadObject<GameObject>("BluePortal");
                     bluePortal.transform.position = ray.point + ray.normal * 0.01f;
-                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    bluePortal.transform.rotation = Quaternion.LookRotation(ray.normal) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(bluePortal, 0.3f));
                     bluePortalDelay = Time.time + 0.5f;
                 }
                 if (rightTrigger > 0.5f && Time.time > orangePortalDelay)
                 {
+                    if (bluePortal && Vector3.Distance(ray.point, bluePortal.transform.position) < 1.5f)
+                    {
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_invalid.ogg",
+                            "Audio/Mods/Movement/PortalGun/portal_invalid.ogg"), buttonClickVolume / 10f);
+                        return;
+                    }
                     Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_orange.ogg", "Audio/Mods/Movement/PortalGun/portalgun_orange.ogg"), buttonClickVolume / 10f);
                     if (orangePortal == null)
                         orangePortal = LoadObject<GameObject>("OrangePortal");
                     orangePortal.transform.position = ray.point + ray.normal * 0.01f;
-                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal, RayPoint.up) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    orangePortal.transform.rotation = Quaternion.LookRotation(ray.normal) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
 
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(orangePortal, 0.3f));
 
@@ -1199,8 +1210,9 @@ namespace iiMenu.Mods
                 }
                 if (bluePortal && orangePortal)
                 {
+                    GameObject blueView = bluePortal.transform.Find("Rim/View").gameObject;
+                    GameObject orangeView = orangePortal.transform.Find("Rim/View").gameObject;
 
-                    
                     if (!blueView.activeSelf)
                     {
                         blueView.SetActive(true);
