@@ -4346,6 +4346,8 @@ Piece Name: {gunTarget.name}";
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
 
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+                VRRig.LocalRig.transform.position = pos;
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
 
                 vel = vel.ClampMagnitudeSafe(50f);
