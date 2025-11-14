@@ -76,7 +76,35 @@ namespace iiMenu.Mods
             "Papers_Anchor Variant_Left Hand",
             "Papers_Anchor Variant_Right Hand",
             "IceCreamScoopLeftAnchor",
-            "IceCreamScoopRightAnchor"
+            "IceCreamScoopRightAnchor",
+            "ChipsLeftAnchor",
+            "ChipsRightAnchor",
+            "SalsaLeftAnchor",
+            "SalsaRightAnchor",
+            "ApplePieLeftAnchor",
+            "ApplePieRightAnchor",
+            "GrowingMashedPotatoLeftAnchor",
+            "GrowingMashedPotatoRightAnchor",
+            "BerryPieLeftAnchor",
+            "BerryPieRightAnchor",
+            "LayerDipLeftAnchor",
+            "LayerDipRightAnchor",
+            "PumpkinPieLeftAnchor",
+            "PumpkinPieRightAnchor",
+            "GrowingStuffingLeftAnchor",
+            "GrowingStuffingRightAnchor",
+            "CornLeftAnchor",
+            "CornRightAnchor",
+            "TurkeyLegLeftAnchor",
+            "TurkeyLegRightAnchor",
+            "GoalpostFootball_Anchor_LeftHand",
+            "GoalpostFootball_Anchor_RightHand",
+            "PopcornBall_Anchor_Left",
+            "PopcornBall_Anchor_Right",
+            "CrackedPlate_Lump_Projectile_Anchor_LEFT",
+            "CrackedPlate_Lump_Projectile_Anchor_RIGHT",
+            "PortableBonfire_Sticks_Anchor_LeftHand",
+            "PortableBonfire_Sticks_Anchor_RightHand"
         };
 
         public static Coroutine RigCoroutine;
@@ -312,7 +340,21 @@ namespace iiMenu.Mods
                 "Hot Dog",
                 "Fireworks",
                 "Paper",
-                "Ice Cream Scoop"
+                "Ice Cream Scoop",
+                "Chips",
+                "Salsa",
+                "Apple Pie",
+                "Mashed Potatoes",
+                "Berry Pie",
+                "Layer Dip",
+                "Pumpkin Pie",
+                "Stuffing",
+                "Corn",
+                "Turkey Leg",
+                "Football",
+                "Popcorn Ball",
+                "Plate",
+                "Sticks"
             };
 
             if (positive)
