@@ -7035,7 +7035,7 @@ jgs \_   _/ |Oo\
         public static GameObject computerMonitor;
 
         public static readonly int StumpLeaderboardIndex = 4;
-        public static readonly int ForestLeaderboardIndex = 9;
+        public static readonly int ForestLeaderboardIndex = 8;
         
         public static Material[] ogScreenMats = { };
 
