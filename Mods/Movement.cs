@@ -1316,7 +1316,8 @@ namespace iiMenu.Mods
 
         public static IEnumerator TeleportPortal(GameObject portal)
         {
-            Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude;
+            // [Photo of white old guy shrugging]
+            Vector3 velocity = portal.transform.forward * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude;
             TeleportPlayer(portal.transform.position);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
 
