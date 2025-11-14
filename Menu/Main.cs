@@ -6351,6 +6351,9 @@ namespace iiMenu.Menu
             ReloadMenu();
         }
 
+        public static void Toggle(ButtonInfo buttonInfo, bool fromMenu = false, bool ignoreForce = false) =>
+            Toggle(buttonInfo.buttonText, fromMenu, ignoreForce);
+
         public static void ToggleIncremental(string buttonText, bool increment)
         { 
             ButtonInfo target = GetIndex(buttonText);

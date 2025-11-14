@@ -1404,7 +1404,15 @@ namespace iiMenu.Managers
                                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their theme with you.", 5000);
 
                                 string theme = (string)obj["data"];
-                                Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => { Settings.ImportCustomTheme(theme); });
+                                Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => 
+                                {
+                                    ButtonInfo customMenuTheme = GetIndex("Custom Menu Theme");
+
+                                    if (!customMenuTheme.enabled)
+                                        Toggle(customMenuTheme);
+
+                                    Settings.ImportCustomTheme(theme); 
+                                });
                                 break;
                             }
                         case "macro":
