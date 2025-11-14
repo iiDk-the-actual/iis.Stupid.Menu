@@ -21,6 +21,7 @@
 
 using GorillaNetworking;
 using HarmonyLib;
+using PlayFab;
 using PlayFab.CloudScriptModels;
 using System;
 
@@ -30,14 +31,14 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(GorillaComputer), "AutoBanPlayfabFunction")]
+        [HarmonyPatch(typeof(GorillaServer), "CheckForBadName")]
         public class AutoBanPlayfabFunction
         {
-            public static bool Prefix(string nameToCheck, bool forRoom, Action<ExecuteFunctionResult> resultCallback)
+            public static bool Prefix(CheckForBadNameRequest request, Action<ExecuteFunctionResult> successCallback, Action<PlayFabError> errorCallback)
             {
                 if (enabled)
                 {
-                    resultCallback?.Invoke(new ExecuteFunctionResult { FunctionResult = new PlayFab.Json.JsonObject { { "result", 0 } } });
+                    successCallback?.Invoke(new ExecuteFunctionResult { FunctionResult = new PlayFab.Json.JsonObject { { "result", 0 } } });
                     return false;
                 }
 
