@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaExtensions;
 using iiMenu.Menu;
 using UnityEngine;
 
@@ -67,6 +68,9 @@ namespace iiMenu.Classes.Menu
                         {
                             mainTexture = Main.GetGradientTexture(colors.GetColor(0), colors.GetColor(1))
                         };
+
+                        if (Main.scrollingGradients)
+                            gameObject.GetOrAddComponent<ScrollMaterial>();
                     }
                 }
             }

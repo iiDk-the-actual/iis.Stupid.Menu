@@ -3901,6 +3901,8 @@ namespace iiMenu.Menu
             }
 
             txt2d.SetPixels(pixels);
+            txt2d.wrapMode = TextureWrapMode.Mirror;
+
             txt2d.Apply();
 
             cacheGradients.Add(key, txt2d);
@@ -6856,6 +6858,7 @@ jgs \_   _/ |Oo\
         public static bool slowDynamicAnimations;
         public static bool dynamicGradients;
         public static bool horizontalGradients;
+        public static bool scrollingGradients;
         public static bool animatedTitle;
         public static bool gradientTitle;
         public static string lastClickedName = "";
