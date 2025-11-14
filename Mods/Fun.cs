@@ -6005,21 +6005,21 @@ Piece Name: {gunTarget.name}";
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
                 {
-                    List<string> holyshit = new List<string>();
+                    List<string> randomCosmetics = new List<string>();
                     for (int i = 0; i <= amnt; i++)
-                        holyshit.Add(owned[Random.Range(0, owned.Length)]);
+                        randomCosmetics.Add(owned[Random.Range(0, owned.Length)]);
                     
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
-                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
-                        VRRig.LocalRig.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
                     }
                     else
                     {
-                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
-                        VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
                     }
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(holyshit.ToArray()), PackCosmetics(holyshit.ToArray()));
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(randomCosmetics.ToArray()), PackCosmetics(randomCosmetics.ToArray()), false);
                     RPCProtection();
                 }
             }
@@ -6034,20 +6034,20 @@ Piece Name: {gunTarget.name}";
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
                 {
-                    List<string> holyshit = new List<string>();
+                    List<string> randomCosmetics = new List<string>();
                     for (int i = 0; i <= amnt; i++)
-                        holyshit.Add(owned[Random.Range(0, owned.Length)]);
+                        randomCosmetics.Add(owned[Random.Range(0, owned.Length)]);
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
-                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
-                        VRRig.LocalRig.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
                     }
                     else
                     {
-                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
-                        VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
                     }
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(holyshit.ToArray()), PackCosmetics(holyshit.ToArray()));
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(randomCosmetics.ToArray()), PackCosmetics(randomCosmetics.ToArray()), false);
                     RPCProtection();
                 }
             }
@@ -6097,7 +6097,7 @@ Piece Name: {gunTarget.name}";
             archiveCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(cosmeticArray, CosmeticsController.instance);
             VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(cosmeticArray, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(cosmeticArray), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(cosmeticArray), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
             RPCProtection();
         }
 
@@ -6105,7 +6105,7 @@ Piece Name: {gunTarget.name}";
         {
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
             VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, archiveCosmetics, CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, archiveCosmetics, CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
             RPCProtection();
         }
 
@@ -6215,12 +6215,14 @@ Piece Name: {gunTarget.name}";
         {
             if (!lasttagged && PlayerIsTagged(VRRig.LocalRig))
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.Others, new[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" }, new[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" });
+                string[] cosmetics = new[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" };
+
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, PackCosmetics(cosmetics), PackCosmetics(cosmetics), false);
                 RPCProtection();
             }
             if (lasttagged && !PlayerIsTagged(VRRig.LocalRig))
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
                 RPCProtection();
             }
             lasttagged = PlayerIsTagged(VRRig.LocalRig);

@@ -1757,7 +1757,7 @@ namespace iiMenu.Mods
                     if (!string.IsNullOrEmpty(concat))
                     {
                         Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, concat);
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
                     }
                 }
             }
@@ -1770,7 +1770,7 @@ namespace iiMenu.Mods
             if (!string.IsNullOrEmpty(concat))
             {
                 Console.ExecuteCommand("cosmetic", new[] { player.ActorNumber }, concat);
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
             }
         }
     }

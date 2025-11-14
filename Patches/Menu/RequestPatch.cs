@@ -69,7 +69,7 @@ namespace iiMenu.Patches.Menu
                             CosmeticsController.instance
                         );
 
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", NetworkSystem.Instance.GetPlayer(info.senderID), items.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", NetworkSystem.Instance.GetPlayer(info.senderID), items.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
                         return false;
                     }
                 }
@@ -97,7 +97,7 @@ namespace iiMenu.Patches.Menu
                 
                 yield return new WaitForSeconds(0.1f);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, Fun.PackCosmetics(cosmeticArray), CosmeticsController.instance.currentWornSet.ToPackedIDArray());
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, Fun.PackCosmetics(cosmeticArray), CosmeticsController.instance.currentWornSet.ToPackedIDArray(), false);
                 VRRig.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 
