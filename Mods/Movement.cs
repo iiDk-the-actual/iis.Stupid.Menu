@@ -46,7 +46,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
@@ -1144,15 +1143,31 @@ namespace iiMenu.Mods
             }
         }
 
-        // i know this code is ass its 1 am im tired - kingofnetflix
         public static GameObject portalGun;
         public static GameObject bluePortal;
-        public static float portalDelay = 0.5f;
         public static GameObject orangePortal;
-        public static float flipDelay = 0.5f;
         public static GameObject crosshair;
+
         public static bool playedOpen;
         public static bool flipped;
+        public static bool inPortal;
+
+        public static float portalDelay;
+        public static float flipDelay;
+
+        public static void SetPortalRotation(Transform transform, Vector3 normal) =>
+            transform.rotation = Quaternion.LookRotation(normal) * Quaternion.Euler(90f, 0f, 0f);
+
+        public static bool IsOverlapping(Collider collider, Vector3 center, float radius)
+        {
+            Vector3 closest = collider.ClosestPoint(center);
+            bool centerInside = closest == center;
+
+            float distSqr = (closest - center).sqrMagnitude;
+            bool overlaps = distSqr <= radius * radius;
+
+            return centerInside || overlaps;
+        }
 
         public static void PortalGun()
         {
@@ -1161,9 +1176,9 @@ namespace iiMenu.Mods
                 portalGun = LoadObject<GameObject>("PortalGun");
                 portalGun.transform.SetParent(VRRig.LocalRig.rightHandTransform.parent, false);
             }
+
             if (portalGun)
             {
-                
                 Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
                 Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
 
@@ -1174,9 +1189,9 @@ namespace iiMenu.Mods
                     crosshair.GetComponent<Renderer>().material.color = Color.white;
                     Object.Destroy(crosshair.GetComponent<Collider>());
                 }
+
                 if (crosshair)
                     crosshair.transform.position = ray.point == Vector3.zero ? (RayPoint.transform.position + (RayPoint.transform.forward * 20f)) : ray.point;
-
 
                 if (rightTrigger > 0.5f && Time.time > portalDelay)
                 {
@@ -1192,17 +1207,17 @@ namespace iiMenu.Mods
                     if (flipped)
                     {
                         if (orangePortal == null)
-                            orangePortal = LoadObject<GameObject>("OrangePortal");
+                            orangePortal = LoadObject<GameObject>("OrangePortal").transform.Find("Portal").gameObject;
                         portalToUse = orangePortal;
                     }
                     else
                     {
                         if (bluePortal == null)
-                            bluePortal = LoadObject<GameObject>("BluePortal");
+                            bluePortal = LoadObject<GameObject>("BluePortal").transform.Find("Portal").gameObject;
                         portalToUse = bluePortal;
                     }
                     portalToUse.transform.position = ray.point + ray.normal * 0.01f;
-                    portalToUse.transform.rotation = Quaternion.LookRotation(ray.normal, Vector3.left) * Quaternion.Euler(90, 0, 0); // this rotation is wrong
+                    SetPortalRotation(portalToUse.transform, ray.normal);
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(portalToUse, 0.3f));
                     portalDelay = Time.time + 0.5f;
                 }
@@ -1257,17 +1272,74 @@ namespace iiMenu.Mods
                 }
             }
 
+            if (bluePortal && orangePortal)
+            {
+                bool goingThrough = false;
+                foreach (GameObject portal in new[] { bluePortal, orangePortal })
+                {
+                    if (Vector3.Distance(portal.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 0.75f)
+                    {
+                        goingThrough = true;
+                        break;
+                    }
+                }
+
+                if (goingThrough && !inPortal)
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_enter1.ogg", "Audio/Mods/Movement/PortalGun/portal_enter1.ogg"), buttonClickVolume / 10f);
+
+                if (!goingThrough && inPortal)
+                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_exit1.ogg", "Audio/Mods/Movement/PortalGun/portal_exit1.ogg"), buttonClickVolume / 10f);
+
+                inPortal = goingThrough;
+
+                GTPlayer.Instance.leftHand.isHolding = false;
+                foreach (GameObject _ in new[] { bluePortal, orangePortal })
+                {
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.15f))
+                    {
+                        GTPlayer.Instance.leftHand.isHolding = true;
+                        break;
+                    }
+                }
+
+                GTPlayer.Instance.rightHand.isHolding = false;
+                foreach (GameObject _ in new[] { bluePortal, orangePortal })
+                {
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.15f))
+                    {
+                        GTPlayer.Instance.rightHand.isHolding = true;
+                        break;
+                    } 
+                }
+            }
         }
 
-        public static void TeleportThroughPortal(GameObject fromPortal, GameObject toPortal)
+        public static IEnumerator TeleportPortal(GameObject portal)
         {
-            Vector3 offsetDir = Vector3.Dot(toPortal.transform.forward, (toPortal.transform.position - fromPortal.transform.position).normalized) > 0
-                                ? toPortal.transform.forward
-                                : -toPortal.transform.forward;
-            Vector3 pos = toPortal.transform.position + offsetDir * 1.5f;
-            TeleportPlayer(pos);
-            GTPlayer.Instance.transform.rotation = Quaternion.LookRotation(offsetDir, Vector3.up);
-            GTPlayer.Instance.SetPlayerVelocity(GTPlayer.Instance.RigidbodyVelocity.magnitude * offsetDir);
+            Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude;
+            TeleportPlayer(portal.transform.position);
+            GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
+
+            float timer = 0f;
+            while (timer < 0.1f)
+            {
+                GorillaTagger.Instance.bodyCollider.enabled = false;
+                GorillaTagger.Instance.headCollider.enabled = false;
+
+                GTPlayer.Instance.leftHand.isHolding = true;
+                GTPlayer.Instance.rightHand.isHolding = true;
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            GorillaTagger.Instance.bodyCollider.enabled = true;
+            GorillaTagger.Instance.headCollider.enabled = true;
+
+            GTPlayer.Instance.leftHand.isHolding = false;
+            GTPlayer.Instance.rightHand.isHolding = false;
+
+            yield break;
         }
 
         public static IEnumerator AnimatePortalScale(GameObject portal, float duration)
@@ -1286,6 +1358,7 @@ namespace iiMenu.Mods
             portal.transform.localScale = originalScale;
             yield break;
         }
+
         public static void DisablePortalGun()
         {
             Object.Destroy(portalGun);

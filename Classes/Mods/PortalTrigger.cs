@@ -31,10 +31,10 @@ namespace iiMenu.Classes.Mods
         public GameObject destination;
         public void OnTriggerEnter(Collider other)
         {
-            if (other == GTPlayer.Instance.bodyCollider)
+            if (other == GTPlayer.Instance.bodyCollider || other == GTPlayer.Instance.headCollider)
             {
                 LogManager.Log(destination.name);
-                Movement.TeleportThroughPortal(gameObject, destination);
+                CoroutineManager.instance.StartCoroutine(Movement.TeleportPortal(destination));
             }
         }
     }
