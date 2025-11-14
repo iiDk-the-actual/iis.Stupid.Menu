@@ -43,5 +43,19 @@ namespace iiMenu.Patches.Safety
             private static bool Prefix(EventContents eventContent) =>
                 !enabled;
         }
+
+        [HarmonyPatch(typeof(GorillaTelemetry), "FlushPlayFabTelemetry")]
+        public class TelemetryPatch3
+        {
+            private static bool Prefix() =>
+                !enabled;
+        }
+
+        [HarmonyPatch(typeof(GorillaTelemetry), "FlushMothershipTelemetry")]
+        public class TelemetryPatch4
+        {
+            private static bool Prefix() =>
+                !enabled;
+        }
     }
 }
