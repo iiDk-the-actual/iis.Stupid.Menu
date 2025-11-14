@@ -1277,7 +1277,7 @@ namespace iiMenu.Mods
                 bool goingThrough = false;
                 foreach (GameObject portal in new[] { bluePortal, orangePortal })
                 {
-                    if (Vector3.Distance(portal.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 0.75f)
+                    if (Vector3.Distance(portal.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 0.6f)
                     {
                         goingThrough = true;
                         break;
@@ -1295,7 +1295,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.leftHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.15f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.1f))
                     {
                         GTPlayer.Instance.leftHand.isHolding = true;
                         break;
@@ -1305,7 +1305,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.rightHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.15f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.1f))
                     {
                         GTPlayer.Instance.rightHand.isHolding = true;
                         break;
@@ -1317,8 +1317,8 @@ namespace iiMenu.Mods
         public static IEnumerator TeleportPortal(GameObject portal)
         {
             // [Photo of white old guy shrugging]
-            Vector3 velocity = portal.transform.forward * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude;
-            TeleportPlayer(portal.transform.position);
+            Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude * 1.2f;
+            TeleportPlayer(portal.transform.position + portal.transform.up);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
 
             float timer = 0f;
