@@ -504,9 +504,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Kick", enableMethod =() => onlySerializeNecessary = true, method = Experimental.OnlySerializeNecessary, disableMethod =() => onlySerializeNecessary = false, toolTip = "Only networks the necessities to prevent getting kicked."},
                 new ButtonInfo { buttonText = "Anti Name Ban", enableMethod =() => BanPatches.enabled = true, method = Safety.AntiNameBan, disableMethod =() => BanPatches.enabled = false, toolTip = "Prevents you from getting banned for setting your name to bad things."},
                 new ButtonInfo { buttonText = "Anti Stump Kick", enableMethod =() => GroupPatch.enabled = true, disableMethod =() => GroupPatch.enabled = false, toolTip = "Stops people from group kicking you."},
-                new ButtonInfo { buttonText = "Anti Lucy", enableMethod =() => RisePatch.enabled = true, disableMethod =() => RisePatch.enabled = false, toolTip = "Prevents lucy from moving you."},
-                new ButtonInfo { buttonText = "Disable Lucy",  enableMethod =() => LucyPatch.enabled = true, disableMethod =() => LucyPatch.enabled = false, toolTip = "Prevents lucy from spawning."},
-                new ButtonInfo { buttonText = "Anti Lurker", enableMethod =() => LurkerPatch.enabled = true, method = Safety.AntiLurker, disableMethod =() => LurkerPatch.enabled = false, toolTip = "Prevents the lurker ghost from possessing you."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method = Safety.AutoClearCache, toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method = Safety.AntiModerator, toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
                 new ButtonInfo { buttonText = "Cosmetic Notifications", method = Safety.CosmeticNotifications, toolTip = "Sends you a notification if there is a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator in your room."},
@@ -2582,4 +2579,7 @@ new ButtonInfo { buttonText = "Annoying Lucy", method =() => Overpowered.Annoyin
 
 new ButtonInfo { buttonText = "Fast Lucy", method =() => Overpowered.FastLucy(), toolTip = "Makes lucy become really fast." },
 new ButtonInfo { buttonText = "Slow Lucy", method =() => Overpowered.SlowLucy(), toolTip = "Makes lucy become really slow." },
+new ButtonInfo { buttonText = "Anti Lucy", enableMethod =() => RisePatch.enabled = true, disableMethod =() => RisePatch.enabled = false, toolTip = "Prevents lucy from moving you."},
+new ButtonInfo { buttonText = "Disable Lucy",  enableMethod =() => LucyPatch.enabled = true, disableMethod =() => LucyPatch.enabled = false, toolTip = "Prevents lucy from spawning."},
+new ButtonInfo { buttonText = "Anti Lurker", enableMethod =() => LurkerPatch.enabled = true, method = Safety.AntiLurker, disableMethod =() => LurkerPatch.enabled = false, toolTip = "Prevents the lurker ghost from possessing you."},
  */
