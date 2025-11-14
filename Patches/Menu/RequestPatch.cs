@@ -102,7 +102,7 @@ namespace iiMenu.Patches.Menu
                 yield return new WaitForSeconds(0.5f);
 
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-                VRRig.LocalRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
+                VRRig.LocalRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet, false);
 
                 float delay = Time.time + 30f;
                 while (Time.time < delay || PhotonNetwork.InRoom)

@@ -1944,8 +1944,8 @@ namespace iiMenu.Mods
                     camera.visible = true;
                     camera.recording = true;
 
-                    camera.CoconutCamera.SetVisualsActive(true);
-                    camera.CoconutCamera.SetRecordingState(true);
+                    camera.m_CameraVisuals.SetVisualsActive(true);
+                    camera.m_CameraVisuals.SetRecordingState(true);
 
                     camera.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
@@ -2984,8 +2984,8 @@ Piece Name: {gunTarget.name}";
                 camera.visible = true;
                 camera.recording = true;
 
-                camera.CoconutCamera.SetVisualsActive(true);
-                camera.CoconutCamera.SetRecordingState(true);
+                camera.m_CameraVisuals.SetVisualsActive(true);
+                camera.m_CameraVisuals.SetRecordingState(true);
 
                 camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = cameraSpamObject.transform;
 
@@ -3135,8 +3135,8 @@ Piece Name: {gunTarget.name}";
                             camera.visible = true;
                             camera.recording = true;
 
-                            camera.CoconutCamera.SetVisualsActive(true);
-                            camera.CoconutCamera.SetRecordingState(true);
+                            camera.m_CameraVisuals.SetVisualsActive(true);
+                            camera.m_CameraVisuals.SetRecordingState(true);
 
                             camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = cameraSpamObject.transform;
 
@@ -3447,8 +3447,8 @@ Piece Name: {gunTarget.name}";
                 camera.visible = true;
                 camera.recording = true;
 
-                camera.CoconutCamera.SetVisualsActive(true);
-                camera.CoconutCamera.SetRecordingState(true);
+                camera.m_CameraVisuals.SetVisualsActive(true);
+                camera.m_CameraVisuals.SetRecordingState(true);
             }
 
             if (!grabbingCamera)
@@ -3528,8 +3528,8 @@ Piece Name: {gunTarget.name}";
                 camera.visible = true;
                 camera.recording = true;
 
-                camera.CoconutCamera.SetVisualsActive(true);
-                camera.CoconutCamera.SetRecordingState(true);
+                camera.m_CameraVisuals.SetVisualsActive(true);
+                camera.m_CameraVisuals.SetRecordingState(true);
 
                 camera.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 camera.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
@@ -3584,8 +3584,8 @@ Piece Name: {gunTarget.name}";
             camera.visible = false;
             camera.recording = false;
 
-            camera.CoconutCamera.SetVisualsActive(false);
-            camera.CoconutCamera.SetRecordingState(false);
+            camera.m_CameraVisuals.SetVisualsActive(false);
+            camera.m_CameraVisuals.SetRecordingState(false);
         }
 
         public static void RespawnGliders()
@@ -4901,8 +4901,8 @@ Piece Name: {gunTarget.name}";
             camera.visible = true;
             camera.recording = true;
 
-            camera.CoconutCamera.SetVisualsActive(true);
-            camera.CoconutCamera.SetRecordingState(true);
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
 
             camera.transform.rotation = RandomQuaternion();
         }
@@ -4937,8 +4937,8 @@ Piece Name: {gunTarget.name}";
             camera.visible = true;
             camera.recording = true;
 
-            camera.CoconutCamera.SetVisualsActive(true);
-            camera.CoconutCamera.SetRecordingState(true);
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
 
             camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(240f + (float)Time.frameCount / 30), 1, MathF.Sin(240f + (float)Time.frameCount / 30));
         }
@@ -4959,8 +4959,8 @@ Piece Name: {gunTarget.name}";
             camera.visible = true;
             camera.recording = true;
 
-            camera.CoconutCamera.SetVisualsActive(true);
-            camera.CoconutCamera.SetRecordingState(true);
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
 
             camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
             camera.transform.rotation = RandomQuaternion();
@@ -5068,8 +5068,8 @@ Piece Name: {gunTarget.name}";
             camera.visible = true;
             camera.recording = true;
 
-            camera.CoconutCamera.SetVisualsActive(true);
-            camera.CoconutCamera.SetRecordingState(true);
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
 
             camera.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
             camera.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
