@@ -802,7 +802,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Remove Blindfold", method = Visuals.RemoveBlindfold, toolTip = "Disables the blindfold in the prop hunt map."},
                 new ButtonInfo { buttonText = "Spawn Lightning", method = Visuals.SpawnLightning, isTogglable = false, toolTip = "Spawns a manual lightning strike client sided." },
-                new ButtonInfo { buttonText = "Crystal Ball Vision", method = Visuals.CrystalBallVision, disableMethod = Visuals.DisableCrystalBallVision, toolTip = "Allows you to see objects that are normally only visible through the crystal ball."},
 
                 new ButtonInfo { buttonText = "Core ESP", method = Visuals.CoreESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
                 new ButtonInfo { buttonText = "Enemy ESP", method = Visuals.EnemyESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},

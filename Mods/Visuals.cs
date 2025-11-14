@@ -161,21 +161,6 @@ namespace iiMenu.Mods
             return timeUntilStrike;
         }
 
-        private static GameObject urpGlass;
-        public static void CrystalBallVision()
-        {
-            if (urpGlass == null)
-            {
-                urpGlass = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                Object.Destroy(urpGlass.GetComponent<Collider>());
-                urpGlass.transform.SetParent(GorillaTagger.Instance.headCollider.transform, false);
-                urpGlass.transform.localPosition = new Vector3(0f, 0f, 0.25f);
-                urpGlass.transform.localScale = new Vector3(10f, 10f, 0f);
-                urpGlass.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/URPScryGlass");
-                urpGlass.GetComponent<Renderer>().material.color = Color.clear;
-            }
-        }
-
         public static void CoreESP()
         {
             if (!PhotonNetwork.InRoom)
@@ -243,12 +228,6 @@ namespace iiMenu.Mods
                 Transform resource = resources[i].transform;
                 VisualizeAura(resource.position, 0.15f, coreESPColor, i + 451961280, coreESPColor.a);
             }
-        }
-
-        public static void DisableCrystalBallVision()
-        {
-            if (urpGlass != null)
-                Object.Destroy(urpGlass);
         }
 
         private static bool previousFullbrightStatus;
