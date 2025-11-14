@@ -88,6 +88,7 @@ namespace iiMenu.Managers
 
         public static bool InviteNotifications = true;
         public static bool PreferenceSharing = true;
+        public static bool ThemeSharing = true;
         public static bool MacroSharing = true;
 
         public static bool SoundEffects = true;
@@ -718,6 +719,18 @@ namespace iiMenu.Managers
             NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
         }
 
+        public static void ShareTheme(string uid)
+        {
+            _ = FriendWebSocket.Instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "theme",
+                target = uid,
+                theme = Settings.ExportCustomTheme()
+            }));
+
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared theme.", 5000);
+        }
+
         public static void ShareMacro(string uid, string name)
         {
             Movement.Macro? sendingMacro = null;
@@ -966,7 +979,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Add Friends",
-                    method =AddFriendsUI,
+                    method = AddFriendsUI,
                     isTogglable = false,
                     toolTip = "Returns you back to the add friends page."
                 }
@@ -1066,6 +1079,14 @@ namespace iiMenu.Managers
                         method = () => SharePreferences(friendTarget),
                         isTogglable = false,
                         toolTip = $"Sends your preferences to {friend.currentName}."
+                    },
+                    new ButtonInfo
+                    {
+                        buttonText = $"ShareTheme{friendTarget}",
+                        overlapText = "Share Theme",
+                        method = () => ShareTheme(friendTarget),
+                        isTogglable = false,
+                        toolTip = $"Sends your theme to {friend.currentName}."
                     },
                     new ButtonInfo
                     {
@@ -1370,6 +1391,20 @@ namespace iiMenu.Managers
 
                                 string preferences = (string)obj["data"];
                                 Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
+                                break;
+                            }
+                        case "theme":
+                            {
+                                if (!ThemeSharing)
+                                    break;
+
+                                if (SoundEffects)
+                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their theme with you.", 5000);
+
+                                string theme = (string)obj["data"];
+                                Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => { Settings.ImportCustomTheme(theme); });
                                 break;
                             }
                         case "macro":

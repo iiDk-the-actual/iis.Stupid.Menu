@@ -42,6 +42,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
+using static BoingKit.BoingWork;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Console = iiMenu.Classes.Menu.Console;
@@ -3480,7 +3481,7 @@ exit 0";
                     GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
-            UpdateWriteCustomTheme();
+            WriteCustomTheme();
         }
         public static void CMTGreen(bool increase = true)
         {
@@ -3650,7 +3651,7 @@ exit 0";
                     GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
-            UpdateWriteCustomTheme();
+            WriteCustomTheme();
         }
         public static void CMTBlue(bool increase = true)
         {
@@ -3820,16 +3821,16 @@ exit 0";
                     GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
-            UpdateWriteCustomTheme();
+            WriteCustomTheme();
         }
 
         private static int rememberdirectory;
         public static void CustomMenuTheme()
         {
             if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt"))
-                UpdateWriteCustomTheme();
-            
-            UpdateReadCustomTheme();
+                WriteCustomTheme();
+
+            ReadCustomTheme();
         }
 
         public static void ChangeCustomMenuTheme()
@@ -4057,7 +4058,7 @@ exit 0";
             pageNumber = rememberdirectory;
         }
 
-        public static void UpdateReadCustomTheme()
+        public static void ReadCustomTheme()
         {
             string[] linesplit = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt").Split("\n");
 
@@ -4084,7 +4085,13 @@ exit 0";
             textColors[2].SetColors(new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
         }
 
-        public static void UpdateWriteCustomTheme()
+        public static void ImportCustomTheme(string theme)
+        {
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt", theme);
+            ReadCustomTheme();
+        }
+
+        public static string ExportCustomTheme()
         {
             Color[] clrs = {
                 backgroundColor.GetColor(0),
@@ -4106,8 +4113,12 @@ exit 0";
 
                 output += Math.Round(Mathf.Round(clr.r * 10) / 10 * 255f) + "," + Math.Round(Mathf.Round(clr.g * 10) / 10 * 255f) + "," + Math.Round(Mathf.Round(clr.b * 10) / 10 * 255f);
             }
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt", output);
+
+            return output;
         }
+
+        public static void WriteCustomTheme() =>
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt", ExportCustomTheme());
 
         public static void FixTheme()
         {
