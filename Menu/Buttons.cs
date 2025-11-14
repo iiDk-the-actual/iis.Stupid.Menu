@@ -359,6 +359,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Custom Colored Projectiles", toolTip = "Makes the projectile color the custom color (buttons above)." },
                 new ButtonInfo { buttonText = "Client Sided Projectiles", toolTip = "Makes projectiles only appear for you." },
 
+                new ButtonInfo { buttonText = "Override Projectile Index", method =() => IndexPatch.enabled = true, disableMethod =() => IndexPatch.enabled = false, toolTip = "Forces a specific projectile index on random projectiles." },
+                new ButtonInfo { buttonText = "Change Projectile Index", overlapText = "Change Projectile Index <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Projectiles.ChangeProjectileIndex(true), enableMethod =() => Projectiles.ChangeProjectileIndex(true), disableMethod =() => Projectiles.ChangeProjectileIndex(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted projectile index on the \"Override Projectile Index\" mod." },
+
                 new ButtonInfo { buttonText = "Change Projectile Delay", overlapText = "Change Projectile Delay <color=grey>[</color><color=green>0.1</color><color=grey>]</color>", method =() => Projectiles.ChangeProjectileDelay(true, true), enableMethod =() => Projectiles.ChangeProjectileDelay(true, true), disableMethod =() => Projectiles.ChangeProjectileDelay(false, true), incremental = true, isTogglable = false, toolTip = "Gives the projectiles a delay before spawning another." }
             },
 

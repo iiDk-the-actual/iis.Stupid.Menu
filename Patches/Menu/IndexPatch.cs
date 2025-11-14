@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/PlatformPatch.cs
+ * ii's Stupid Menu  Patches/Menu/IndexPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -20,18 +20,19 @@
  */
 
 using HarmonyLib;
+using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), "OnUpdateAuthority")]
-    public class PlatformPatch
+    [HarmonyPatch(typeof(SnowballThrowable), "GetRandomModelIndex")]
+    public class IndexPatch
     {
         public static bool enabled;
 
-        public static void Prefix(SIGadgetPlatformDeployer __instance, float dt)
+        public static void Postfix(int __result)
         {
             if (enabled)
-                __instance.remainingRechargeTime = 0f;
+                __result = Projectiles.targetProjectileIndex;
         }
     }
 }

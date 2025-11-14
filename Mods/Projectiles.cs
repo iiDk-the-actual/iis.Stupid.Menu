@@ -369,6 +369,21 @@ namespace iiMenu.Mods
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
 
+        public static int targetProjectileIndex;
+        public static void ChangeProjectileIndex(bool positive = true)
+        {
+            if (positive)
+                targetProjectileIndex++;
+            else
+                targetProjectileIndex--;
+
+            targetProjectileIndex %= 16;
+            if (targetProjectileIndex < 0)
+                targetProjectileIndex = 15;
+
+            GetIndex("Change Projectile Index").overlapText = "Change Projectile Index <color=grey>[</color><color=green>" + (targetProjectileIndex + 1).ToString() + "</color><color=grey>]</color>";
+        }
+
         public static int shootCycle = 1;
         public static void ChangeShootSpeed(bool positive = true)
         {

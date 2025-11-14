@@ -42,7 +42,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
-using static BoingKit.BoingWork;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Console = iiMenu.Classes.Menu.Console;
@@ -5124,7 +5123,8 @@ exit 0";
                 Movement.macroPlaybackRangeIndex.ToString(),
                 joystickMenuPosition.ToString(),
                 Movement.multiplicationAmount.ToString(),
-                Fun.targetFOV.ToString()
+                Fun.targetFOV.ToString(),
+                Projectiles.targetProjectileIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5376,6 +5376,9 @@ exit 0";
 
                 Fun.targetFOV = int.Parse(data[60]) - 5;
                 Fun.ChangeTargetFOV();
+
+                Projectiles.targetProjectileIndex = int.Parse(data[61]) - 1;
+                Projectiles.ChangeProjectileIndex();
             }
             catch { LogManager.Log("Save file out of date"); }
 
