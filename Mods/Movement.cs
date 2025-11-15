@@ -1147,6 +1147,10 @@ namespace iiMenu.Mods
 
         // We present to you: *misery*
             // -- ii & kingofnetflix
+
+        // TODO: Add parallax to cameras to simulate 3D views
+        // TODO: Calculate proper velocity, rotation, and position when going through portals instead of cheating and just giving some basic stuff
+
         public static GameObject portalGun;
         public static GameObject bluePortal;
         public static GameObject orangePortal;
