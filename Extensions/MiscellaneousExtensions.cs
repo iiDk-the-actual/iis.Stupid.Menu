@@ -145,5 +145,17 @@ namespace iiMenu.Extensions
 			    angVelocity
 		    });
 		}
+
+        public static bool TryGetComponentInParent<T>(this Component component, out T result) where T : Component
+        {
+            result = component.GetComponentInParent<T>();
+            return result != null;
+        }
+
+        public static bool TryGetComponentInParent<T>(this GameObject obj, out T result) where T : Component
+        {
+            result = obj.GetComponentInParent<T>();
+            return result != null;
+        }
     }
 }
