@@ -978,7 +978,7 @@ namespace iiMenu.Mods
                     if (Time.time > stdell)
                     {
                         stdell = Time.time + 0.05f;
-                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position, 0.05f);
+                        Console.ExecuteCommand("tp", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
                     }
                 }
             }
@@ -987,7 +987,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position, 0f);
+                        Console.ExecuteCommand("tp", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
                         Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
@@ -1015,7 +1015,7 @@ namespace iiMenu.Mods
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.05f;
-                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position, 0.05f);
+                        Console.ExecuteCommand("tp", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
                     }
                 }
             }
@@ -1025,7 +1025,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        Console.ExecuteCommand("tpsmooth", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position, 0f);
+                        Console.ExecuteCommand("tp", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
                         Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
