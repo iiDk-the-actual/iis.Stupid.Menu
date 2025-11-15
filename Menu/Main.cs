@@ -62,6 +62,7 @@ using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static Modio.API.ModioAPI;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
@@ -5671,6 +5672,11 @@ namespace iiMenu.Menu
                 VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                 VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
             }
+        }
+
+        public static void SetRotation(Quaternion rotation)
+        {
+            GTPlayer.Instance.Turn(rotation.y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
         }
 
         public static int[] AllActorNumbers() =>
