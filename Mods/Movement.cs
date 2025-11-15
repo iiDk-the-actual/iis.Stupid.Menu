@@ -1296,7 +1296,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.leftHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.05f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.1f))
                     {
                         GTPlayer.Instance.leftHand.isHolding = true;
                         break;
@@ -1306,7 +1306,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.rightHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.05f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.1f))
                     {
                         GTPlayer.Instance.rightHand.isHolding = true;
                         break;
