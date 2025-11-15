@@ -44,11 +44,13 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static Oculus.Interaction.Context;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -1327,6 +1329,8 @@ namespace iiMenu.Mods
         {
             Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude * 1.2f;
             TeleportPlayer(portal.transform.position + portal.transform.up);
+            GTPlayer.Instance.transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(portal.transform.up).y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y, 0);
+
             GTPlayer.Instance.turnParent.transform.Rotate(0, (Quaternion.Euler(portal.transform.forward) * Quaternion.Euler(90, 0, 0)).y, 0);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
 
