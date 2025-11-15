@@ -1329,9 +1329,7 @@ namespace iiMenu.Mods
         {
             Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude * 1.2f;
             TeleportPlayer(portal.transform.position + portal.transform.up);
-            GTPlayer.Instance.Turn(Quaternion.LookRotation(portal.transform.up).y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
-
-            GTPlayer.Instance.turnParent.transform.Rotate(0, (Quaternion.Euler(portal.transform.forward) * Quaternion.Euler(90, 0, 0)).y, 0);
+            SetRotation(portal.transform.rotation.eulerAngles.y);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
 
             float timer = 0f;

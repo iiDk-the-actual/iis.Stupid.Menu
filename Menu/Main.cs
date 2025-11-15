@@ -5674,10 +5674,11 @@ namespace iiMenu.Menu
             }
         }
 
-        public static void SetRotation(Quaternion rotation)
-        {
+        public static void SetRotation(Quaternion rotation) =>
             GTPlayer.Instance.Turn(rotation.y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
-        }
+
+        public static void SetRotation(float rotation) =>
+           GTPlayer.Instance.Turn(rotation - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
 
         public static int[] AllActorNumbers() =>
             PhotonNetwork.PlayerList.Select(plr => plr.ActorNumber).ToArray();
