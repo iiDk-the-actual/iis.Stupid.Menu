@@ -1349,14 +1349,16 @@ namespace iiMenu.Mods
             GTPlayer.Instance.leftHand.isHolding = false;
             GTPlayer.Instance.rightHand.isHolding = false;
 
-
             yield break;
         }
 
         public static IEnumerator TeleportObject(GameObject obj, GameObject portal)
         {
+            LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_exit1.ogg", "Audio/Mods/Movement/PortalGun/portal_exit1.ogg").PlayAt(obj.transform.position, buttonClickSound / 20f);
+
             if (obj.TryGetComponent(out Rigidbody rigidbody) || obj.TryGetComponentInParent(out rigidbody))
                 rigidbody.linearVelocity = portal.transform.up * rigidbody.linearVelocity.magnitude * 1.2f;
+            obj.transform.position = portal.transform.position;
             obj.transform.rotation = Quaternion.LookRotation(portal.transform.up);
 
             if (!obj.TryGetComponent<Collider>(out var collider))
@@ -1366,13 +1368,11 @@ namespace iiMenu.Mods
             while (timer < 0.1f)
             {
                 collider.enabled = false;
-                collider.enabled = false;
 
                 timer += Time.deltaTime;
                 yield return null;
             }
 
-            collider.enabled = true;
             collider.enabled = true;
 
             yield break;
