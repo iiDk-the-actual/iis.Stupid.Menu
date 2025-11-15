@@ -32,10 +32,8 @@ namespace iiMenu.Classes.Mods
         public void OnTriggerEnter(Collider other)
         {
             if (other == GTPlayer.Instance.bodyCollider || other == GTPlayer.Instance.headCollider)
-            {
-                LogManager.Log(destination.name);
                 CoroutineManager.instance.StartCoroutine(Movement.TeleportPortal(destination));
-            }
         }
+
     }
 }

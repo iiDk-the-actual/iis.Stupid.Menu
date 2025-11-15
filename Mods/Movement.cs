@@ -1143,6 +1143,8 @@ namespace iiMenu.Mods
             }
         }
 
+        // We present to you: *misery*
+            // -- ii & kingofnetflix
         public static GameObject portalGun;
         public static GameObject bluePortal;
         public static GameObject orangePortal;
@@ -1154,9 +1156,6 @@ namespace iiMenu.Mods
 
         public static float portalDelay;
         public static float flipDelay;
-
-        public static void SetPortalRotation(Transform transform, Vector3 normal) =>
-            transform.rotation = Quaternion.LookRotation(normal) * Quaternion.Euler(90f, 0f, 0f);
 
         public static bool IsOverlapping(Collider collider, Vector3 center, float radius)
         {
@@ -1198,7 +1197,7 @@ namespace iiMenu.Mods
                 {
                     var portalToUse = flipped ? orangePortal : bluePortal;
                     var portalNotToUse = flipped ? bluePortal : orangePortal;
-                    if (portalNotToUse && Vector3.Distance(ray.point, portalNotToUse.transform.position) < 1f)
+                    if (portalNotToUse && (Vector3.Distance(ray.point, portalNotToUse.transform.position) < 1f || ray.point == Vector3.zero))
                     {
                         Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_invalid.ogg", "Audio/Mods/Movement/PortalGun/portal_invalid.ogg"), buttonClickVolume / 10f);
                         portalDelay = Time.time + 0.5f;
@@ -1217,8 +1216,8 @@ namespace iiMenu.Mods
                             bluePortal = LoadObject<GameObject>("BluePortal").transform.Find("Portal").gameObject;
                         portalToUse = bluePortal;
                     }
-                    portalToUse.transform.position = ray.point + ray.normal * 0.01f;
-                    SetPortalRotation(portalToUse.transform, ray.normal);
+                    portalToUse.transform.position = ray.point + ray.normal * 0.075f;
+                    portalToUse.transform.rotation = Quaternion.LookRotation(ray.normal, Vector3.up) * Quaternion.Euler(90, 0, 0);
                     CoroutineManager.instance.StartCoroutine(AnimatePortalScale(portalToUse, 0.3f));
                     portalDelay = Time.time + 0.5f;
                 }
@@ -1315,25 +1314,23 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.bodyCollider.enabled = true;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    float closestDistance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.ClosestPoint(_.transform.position),
-                                                            _.GetComponent<Collider>().ClosestPoint(GorillaTagger.Instance.bodyCollider.transform.position));
-
-                    if (closestDistance <= 0.05f)
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), GTPlayer.Instance.bodyCollider.transform.position, 0.05f))
                     {
-                        GorillaTagger.Instance.bodyCollider.enabled = false;
+                        GTPlayer.Instance.bodyCollider.enabled = false;
                         break;
                     }
                 }
                 
             }
         }
-
+        
         public static IEnumerator TeleportPortal(GameObject portal)
         {
-            // [Photo of white old guy shrugging]
             Vector3 velocity = portal.transform.up * GorillaTagger.Instance.rigidbody.linearVelocity.magnitude * 1.2f;
             TeleportPlayer(portal.transform.position + portal.transform.up);
+            GTPlayer.Instance.turnParent.transform.Rotate(0, (Quaternion.Euler(portal.transform.forward) * Quaternion.Euler(90, 0, 0)).y, 0);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
+
 
             float timer = 0f;
             while (timer < 0.1f)
@@ -1353,6 +1350,7 @@ namespace iiMenu.Mods
 
             GTPlayer.Instance.leftHand.isHolding = false;
             GTPlayer.Instance.rightHand.isHolding = false;
+
 
             yield break;
         }
