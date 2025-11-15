@@ -1260,7 +1260,6 @@ namespace iiMenu.Mods
                         orangeTrigger.destination = bluePortal;
                         
                         playedOpen = true;
-
                     }
                 }
                 if (rightPrimary && (bluePortal || orangePortal))
@@ -1295,7 +1294,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.leftHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.1f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.05f))
                     {
                         GTPlayer.Instance.leftHand.isHolding = true;
                         break;
@@ -1305,12 +1304,26 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.rightHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.1f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.05f))
                     {
                         GTPlayer.Instance.rightHand.isHolding = true;
                         break;
                     } 
                 }
+
+                GorillaTagger.Instance.bodyCollider.enabled = true;
+                foreach (GameObject _ in new[] { bluePortal, orangePortal })
+                {
+                    float closestDistance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.ClosestPoint(_.transform.position),
+                                                            _.GetComponent<Collider>().ClosestPoint(GorillaTagger.Instance.bodyCollider.transform.position));
+
+                    if (closestDistance <= 0.05f)
+                    {
+                        GorillaTagger.Instance.bodyCollider.enabled = false;
+                        break;
+                    }
+                }
+                
             }
         }
 
