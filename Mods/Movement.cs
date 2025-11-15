@@ -1330,7 +1330,6 @@ namespace iiMenu.Mods
             GTPlayer.Instance.turnParent.transform.Rotate(0, (Quaternion.Euler(portal.transform.forward) * Quaternion.Euler(90, 0, 0)).y, 0);
             GorillaTagger.Instance.rigidbody.linearVelocity = velocity;
 
-
             float timer = 0f;
             while (timer < 0.1f)
             {
@@ -1354,22 +1353,52 @@ namespace iiMenu.Mods
             yield break;
         }
 
+        public static IEnumerator TeleportObject(GameObject obj, GameObject portal)
+        {
+            if (obj.TryGetComponent(out Rigidbody rigidbody) || obj.TryGetComponentInParent(out rigidbody))
+                rigidbody.linearVelocity = portal.transform.up * rigidbody.linearVelocity.magnitude * 1.2f;
+            obj.transform.rotation = Quaternion.LookRotation(portal.transform.up);
+
+            if (!obj.TryGetComponent<Collider>(out var collider))
+                yield break;
+
+            float timer = 0f;
+            while (timer < 0.1f)
+            {
+                collider.enabled = false;
+                collider.enabled = false;
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            collider.enabled = true;
+            collider.enabled = true;
+
+            yield break;
+        }
+
         public static IEnumerator AnimatePortalScale(GameObject portal, float duration)
         {
             Vector3 originalScale = portal.transform.localScale;
             portal.transform.localScale = Vector3.zero;
 
             float timer = 0f;
+
             while (timer < duration)
             {
-                portal.transform.localScale = Vector3.Lerp(Vector3.zero, originalScale, timer / duration);
+                float t = timer / duration;
+                float sinT = Mathf.Sin(t * Mathf.PI * 0.5f);
+
+                portal.transform.localScale = Vector3.LerpUnclamped(Vector3.zero, originalScale, sinT);
+
                 timer += Time.deltaTime;
                 yield return null;
             }
 
             portal.transform.localScale = originalScale;
-            yield break;
         }
+
 
         public static void DisablePortalGun()
         {

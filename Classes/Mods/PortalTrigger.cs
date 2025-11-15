@@ -22,18 +22,31 @@
 using GorillaLocomotion;
 using iiMenu.Managers;
 using iiMenu.Mods;
+using System;
 using UnityEngine;
 
 namespace iiMenu.Classes.Mods
 {
     public class PortalTrigger : MonoBehaviour
     {
+        private static readonly Type[] allowedTypes = { typeof(ThrowableBug), typeof(SlingshotProjectile) };
+
+        bool HasAllowedComponent(Collider col)
+        {
+            foreach (var t in allowedTypes)
+                if (col.GetComponent(t) != null)
+                    return true;
+
+            return false;
+        }
+
         public GameObject destination;
         public void OnTriggerEnter(Collider other)
         {
             if (other == GTPlayer.Instance.bodyCollider || other == GTPlayer.Instance.headCollider)
                 CoroutineManager.instance.StartCoroutine(Movement.TeleportPortal(destination));
+            else if (HasAllowedComponent(other))
+                CoroutineManager.instance.StartCoroutine(Movement.TeleportObject(other.gameObject, destination));
         }
-
     }
 }
