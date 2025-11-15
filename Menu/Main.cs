@@ -3040,7 +3040,7 @@ namespace iiMenu.Menu
                             comp.linearVelocity = RandomVector3(5f);
                             comp.angularVelocity = RandomVector3(50f);
 
-                            Destroy(menu, 5f);
+                            Destroy(gameObject, 5f);
                         }
                     } catch { }
                 } else
