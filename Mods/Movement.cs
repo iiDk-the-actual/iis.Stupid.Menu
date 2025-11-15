@@ -1175,6 +1175,7 @@ namespace iiMenu.Mods
             {
                 portalGun = LoadObject<GameObject>("PortalGun");
                 portalGun.transform.SetParent(VRRig.LocalRig.rightHandTransform.parent, false);
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portalgun_powerup.ogg", "Audio/Mods/Movement/PortalGun/portalgun_powerup.ogg"), buttonClickVolume / 10f);
             }
 
             if (portalGun)
