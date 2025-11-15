@@ -5661,6 +5661,18 @@ namespace iiMenu.Menu
             }
         }
 
+        public static void TeleportPlayer(Transform transform, bool matchDestinationRotation = true, bool maintainVelocity = true)
+        {
+            GTPlayer.Instance.TeleportTo(transform, matchDestinationRotation, maintainVelocity);
+            closePosition = Vector3.zero;
+            Movement.lastPosition = Vector3.zero;
+            if (VRKeyboard != null)
+            {
+                VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            }
+        }
+
         public static int[] AllActorNumbers() =>
             PhotonNetwork.PlayerList.Select(plr => plr.ActorNumber).ToArray();
 
