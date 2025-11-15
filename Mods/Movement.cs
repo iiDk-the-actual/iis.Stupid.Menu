@@ -1180,7 +1180,7 @@ namespace iiMenu.Mods
             if (portalGun)
             {
                 Transform RayPoint = portalGun.transform.Find("PortalGun/Ray");
-                Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, NoInvisLayerMask());
+                Physics.Raycast(RayPoint.position, RayPoint.forward, out var ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
 
                 if (crosshair == null)
                 {
@@ -1320,7 +1320,6 @@ namespace iiMenu.Mods
                         break;
                     }
                 }
-                
             }
         }
         
