@@ -685,26 +685,6 @@ namespace iiMenu.Mods
                             overlapText = $"Slow {targetName}",
                             method =() => Overpowered.BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } } ),
                             toolTip = $"Gives {targetName} tag freeze."
-                        },
-
-                        new ButtonInfo {
-                            buttonText = "Lucy Chase Player",
-                            overlapText = $"Lucy Chase {targetName}",
-                            method =() => Overpowered.LucyChase(player),
-                            toolTip = $"Makes lucy chase {targetName}."
-                        },
-                        new ButtonInfo {
-                            buttonText = "Lucy Attack Player",
-                            overlapText = $"Lucy Attack {targetName}",
-                            method =() => Overpowered.LucyAttack(player),
-                            toolTip = $"Makes lucy attack {targetName}."
-                        },
-
-                        new ButtonInfo {
-                            buttonText = "Lurker Attack Player",
-                            overlapText = $"Lurker Attack {targetName}",
-                            method =() => Overpowered.LurkerAttack(player),
-                            toolTip = $"Makes the lurker ghost attack {targetName}."
                         }
                     }
                 );
