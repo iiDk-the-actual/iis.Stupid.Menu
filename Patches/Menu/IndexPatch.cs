@@ -29,7 +29,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Postfix(int __result)
+        public static void Postfix(ref int __result)
         {
             if (enabled)
                 __result = Projectiles.targetProjectileIndex;
