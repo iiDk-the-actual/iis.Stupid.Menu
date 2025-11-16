@@ -1182,8 +1182,8 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > lastTimeDingied)
             {
-                lastTimeDingied = Time.time + 0.12f;
-                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsRoomAnchor/outsidestores_prefab/Bottom Layer/OutsideBuildings/Wardrobe Hut/MonkeBusinessStation").GetComponent<PhotonView>().RPC("BroadcastRedeemQuestPoints", RpcTarget.All, Random.Range(0, 50));
+                lastTimeDingied = Time.time + VRRig.LocalRig.fxSettings.GetDelay(10);
+                GetAllType<MonkeBusinessStation>().FirstOrDefault().photonView.RPC("BroadcastRedeemQuestPoints", RpcTarget.All, 50);
             }
         }
 

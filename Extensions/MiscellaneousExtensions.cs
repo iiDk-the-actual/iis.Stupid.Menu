@@ -32,6 +32,12 @@ namespace iiMenu.Extensions
         public static float GetDelay(this CallLimiter self) =>
             GetCallLimiterDelay(self);
 
+        public static float GetDelay(this FXSystemSettings settings, int index) =>
+            settings.GetCallLimiter(index).GetDelay();
+
+        public static CallLimiter GetCallLimiter(this FXSystemSettings settings, int index) =>
+            settings.callSettings[index].CallLimitSettings;
+
         public static string ToHex(this Color input) =>
             ColorToHex(input);
 
