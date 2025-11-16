@@ -1466,9 +1466,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate Creation Date Self", method = Fun.NarrateCreationDateSelf, isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Grab Player Info", method = Fun.GrabPlayerInfo, isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
-
-                new ButtonInfo { buttonText = "Pumpkin Watcher", enableMethod =() => WatcherEyesPatch.enabled = true, disableMethod =() => WatcherEyesPatch.enabled = false, toolTip = "Make the pumpkin in stump always look at you."},
-                new ButtonInfo { buttonText = "Pumpkin Gazer", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/2025_Halloween2_TreeRoom/SetDressing (1)/HalloweenWatchingEyes").GetComponent<HalloweenWatcherEyes>().durationToBeNormalWhenPlayerLooks = 0.01f, disableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/2025_Halloween2_TreeRoom/SetDressing (1)/HalloweenWatchingEyes").GetComponent<HalloweenWatcherEyes>().durationToBeNormalWhenPlayerLooks = 0.01f, toolTip = "Make the pumpkin in stump instantly look at you when you look away."},
             },
 
             new[] { // Rebind Settings [13]
@@ -2308,6 +2305,9 @@ namespace iiMenu.Menu
 /*
 The mod cemetary
 Every mod listed below has been removed from the menu, for one reason or another
+
+new ButtonInfo { buttonText = "Pumpkin Watcher", enableMethod =() => WatcherEyesPatch.enabled = true, disableMethod =() => WatcherEyesPatch.enabled = false, toolTip = "Make the pumpkin in stump always look at you."},
+new ButtonInfo { buttonText = "Pumpkin Gazer", enableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/2025_Halloween2_TreeRoom/SetDressing (1)/HalloweenWatchingEyes").GetComponent<HalloweenWatcherEyes>().durationToBeNormalWhenPlayerLooks = 0.01f, disableMethod =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/2025_Halloween2_TreeRoom/SetDressing (1)/HalloweenWatchingEyes").GetComponent<HalloweenWatcherEyes>().durationToBeNormalWhenPlayerLooks = 0.01f, toolTip = "Make the pumpkin in stump instantly look at you when you look away."},
 
 new ButtonInfo { buttonText = "Spawn Red Lucy", method = Overpowered.SpawnRedLucy, isTogglable = false, toolTip = "Summons the red lucy in forest." },
 new ButtonInfo { buttonText = "Spawn Blue Lucy", method = Overpowered.SpawnBlueLucy, isTogglable = false, toolTip = "Summons the blue lucy in forest." },
