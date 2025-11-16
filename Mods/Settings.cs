@@ -557,6 +557,13 @@ namespace iiMenu.Mods
                 },
 
                 new ButtonInfo {
+                    buttonText = "Spectate Player",
+                    overlapText = $"Spectate {targetName}",
+                    method =() => SpectatePlayer(playerRig),
+                    isTogglable = false,
+                    toolTip = $"Shows you what {targetName} sees."
+                },
+                new ButtonInfo {
                     buttonText = "Teleport to Player",
                     overlapText = $"Teleport to {targetName}",
                     method =() => Movement.TeleportToPlayer(player),
@@ -793,6 +800,20 @@ namespace iiMenu.Mods
                 );
 
             Buttons.buttons[29] = buttons.ToArray();
+        }
+
+        public static void SpectatePlayer(VRRig rig)
+        {
+            GameObject cameraObject = new GameObject("iiMenu_SpectateCamera");
+            RenderTexture renderTexture = new RenderTexture(512, 512, 16);
+            cameraObject.AddComponent<Camera>().targetTexture = renderTexture;
+            cameraObject.transform.SetParent(rig.headMesh.transform, false);
+            cameraObject.transform.localPosition = new Vector3(0f, 0.25f, 0.25f);
+            promptMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+            {
+                mainTexture = renderTexture
+            };
+            PromptSingle("<https://.mat>", () => Object.Destroy(cameraObject), "Done");
         }
 
         public static void RightHand()

@@ -748,7 +748,7 @@ namespace iiMenu.Mods
                     FreeCamera.nearClipPlane = 0.01f;
                     FreeCamera.cameraType = CameraType.Game;
 
-                    FreeCamObject.transform.position = lockTarget.headMesh.transform.position;
+                    FreeCamObject.transform.position = lockTarget.headMesh.transform.transform.TransformPoint(new Vector3(0f, 0.25f, 0.25f));
                     FreeCamObject.transform.rotation = lockTarget.headMesh.transform.rotation;
                 } else
                 {

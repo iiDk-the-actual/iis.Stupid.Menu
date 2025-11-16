@@ -3273,8 +3273,12 @@ namespace iiMenu.Menu
                             promptImage.material.SetTexture("_MainTex", rt);
                         }
                         break;
+                    case "mat":
+                        {
+                            promptImage.material = promptMaterial;
+                            break;
+                        }
                 }
-                
             }
 
             if (outlineText)
@@ -3706,6 +3710,8 @@ namespace iiMenu.Menu
                     return null;
             }
         }
+
+        public static Material promptMaterial;
 
         public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
