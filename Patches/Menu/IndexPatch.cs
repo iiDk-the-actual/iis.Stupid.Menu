@@ -21,6 +21,7 @@
 
 using HarmonyLib;
 using iiMenu.Mods;
+using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
@@ -29,10 +30,23 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Postfix(ref int __result)
+        public static bool Prefix(SnowballThrowable __instance, ref int __result)
         {
             if (enabled)
+            {
+                if (__instance.localModels.Count == 0)
+                {
+                    __result = -1;
+                    return false;
+                }
+
+                __instance.randModelIndex = Projectiles.targetProjectileIndex % __instance.localModels.Count;
                 __result = Projectiles.targetProjectileIndex;
+
+                return false;
+            }
+
+            return true;
         }
     }
 }
