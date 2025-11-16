@@ -1314,7 +1314,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                foreach (var entity in GetObject("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges.Select(grBadge => grBadge.gameEntity).Where(entity => entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber))
+                foreach (var entity in GhostReactor.instance.employeeBadges.registeredBadges.Select(grBadge => grBadge.gameEntity).Where(entity => entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber))
                 {
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = entity.transform.position;
