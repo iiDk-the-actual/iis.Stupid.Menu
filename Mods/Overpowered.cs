@@ -4715,7 +4715,7 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    CrittersPawn[] critters = CrittersManager.instance.crittersPawns.ToArray();
                     if (critters.Length > 0)
                     {
                         CrittersPawn critter = critters[0];
@@ -4796,7 +4796,7 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        CrittersPawn[] critters = CrittersManager.instance.crittersPawns.ToArray();
                         if (critters.Length > 0)
                         {
                             CrittersPawn critter = critters[0];
@@ -4872,7 +4872,7 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+                    List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).ToList();
 
                     CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                     targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -4881,13 +4881,13 @@ namespace iiMenu.Mods
                 else
                 {
                     CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
-                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).ToList();
+                    List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).ToList();
+                        critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+                        critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).ToList();
 
                     if (critters.Count <= 0)
                         return;
@@ -4928,7 +4928,7 @@ namespace iiMenu.Mods
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+                    List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).ToList();
 
                     CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                     targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -4940,13 +4940,13 @@ namespace iiMenu.Mods
                 else
                 {
                     CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
-                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                    List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                        critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                     if (critters.Count <= 0)
-                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                        critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                     CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 
@@ -4991,7 +4991,7 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.IsMasterClient)
                     {
-                        List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+                        List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).ToList();
 
                         CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
                         targetCritter.transform.position = NewPointer.transform.position;
@@ -5000,13 +5000,13 @@ namespace iiMenu.Mods
                     else
                     {
                         CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
-                        List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                        List<CrittersPawn> critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                         if (critters.Count <= 0)
-                            critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                            critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                         if (critters.Count <= 0)
-                            critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+                            critters = CrittersManager.instance.crittersPawns.Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
                         CrittersPawn critter = critters[Random.Range(0, critters.Count)];
 
