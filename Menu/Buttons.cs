@@ -633,8 +633,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Sticky Hands", method = Movement.StickyHands, disableMethod = Movement.DisableStickyHands, toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method = Movement.ClimbyHands, disableMethod = Movement.DisableClimbyHands, toolTip = "Lets you climb everything like a rope."},
                 new ButtonInfo { buttonText = "Disable Hands", method =() => Movement.SetHandEnabled(false), disableMethod =() => Movement.SetHandEnabled(true), toolTip = "Disables your hand colliders."},
-                new ButtonInfo { buttonText = "Disable Body Collider", method =() => GorillaTagger.Instance.bodyCollider.enabled = false, disableMethod =() => GorillaTagger.Instance.bodyCollider.enabled = false, toolTip = "Disables your body's collider."},
-                new ButtonInfo { buttonText = "Disable Head Collider", method =() => GorillaTagger.Instance.headCollider.enabled = false, disableMethod =() => GorillaTagger.Instance.headCollider.enabled = false, toolTip = "Disables your head's collider."},
+                new ButtonInfo { buttonText = "Disable Body Collider", method =() => GorillaTagger.Instance.bodyCollider.enabled = false, disableMethod =() => GorillaTagger.Instance.bodyCollider.enabled = true, toolTip = "Disables your body's collider."},
+                new ButtonInfo { buttonText = "Disable Head Collider", method =() => GorillaTagger.Instance.headCollider.enabled = false, disableMethod =() => GorillaTagger.Instance.headCollider.enabled = true, toolTip = "Disables your head's collider."},
 
                 new ButtonInfo { buttonText = "Slide Control", enableMethod = Movement.EnableSlideControl, disableMethod = Movement.DisableSlideControl, toolTip = "Lets you control yourself on ice perfectly."},
                 new ButtonInfo { buttonText = "Weak Slide Control", enableMethod = Movement.EnableWeakSlideControl, disableMethod = Movement.DisableSlideControl, toolTip = "Lets you control yourself on ice a little more perfect than before."},
