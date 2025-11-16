@@ -4358,6 +4358,25 @@ namespace iiMenu.Mods
         public static void SetSwimSpeed(float speed = 3f) =>
             GTPlayer.Instance.swimmingParams.swimmingVelocityOutOfWaterDrainRate = speed;
 
+        private static float? waterSurfaceJumpAmount;
+        private static float? waterSurfaceJumpMaxSpeed;
+        public static void WaterRunHelper(bool enable)
+        {
+            if (enable)
+            {
+                waterSurfaceJumpAmount = GTPlayer.Instance.swimmingParams.waterSurfaceJumpAmount;
+                waterSurfaceJumpMaxSpeed = GTPlayer.Instance.swimmingParams.waterSurfaceJumpMaxSpeed;
+
+                GTPlayer.Instance.swimmingParams.waterSurfaceJumpAmount = 1.25f;
+                GTPlayer.Instance.swimmingParams.waterSurfaceJumpMaxSpeed = 4.333f;
+            }
+            else
+            {
+                GTPlayer.Instance.swimmingParams.waterSurfaceJumpAmount = waterSurfaceJumpAmount ?? 0.6f;
+                GTPlayer.Instance.swimmingParams.waterSurfaceJumpMaxSpeed = waterSurfaceJumpMaxSpeed ?? 1f;
+            }
+        }
+
         public static void PiggybackGun()
         {
             if (GetGunInput(false))
