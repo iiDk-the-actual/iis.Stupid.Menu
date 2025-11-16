@@ -184,6 +184,29 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CritterESP()
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            Color critterESPColor = fmt ? backgroundColor.GetCurrentColor() : Color.green;
+            if (tt)
+                critterESPColor.a = 0.5f;
+
+            List<CrittersPawn> actors = CrittersManager.instance.crittersPawns;
+            if (actors.Count <= 0)
+                return;
+
+            for (int i = 0; i < actors.Count; i++)
+            {
+                Transform transform = actors[i].transform;
+                VisualizeAura(transform.position, 0.15f, critterESPColor, i - 192398, critterESPColor.a);
+            }
+        }
+
         public static void EnemyESP()
         {
             if (!PhotonNetwork.InRoom)

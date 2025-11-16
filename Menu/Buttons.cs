@@ -805,6 +805,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spawn Lightning", method = Visuals.SpawnLightning, isTogglable = false, toolTip = "Spawns a manual lightning strike client sided." },
 
                 new ButtonInfo { buttonText = "Core ESP", method = Visuals.CoreESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
+                new ButtonInfo { buttonText = "Critter ESP", method = Visuals.CritterESP, toolTip = "Puts dots on your screen at where all of the critters in the critter map are."},
                 new ButtonInfo { buttonText = "Enemy ESP", method = Visuals.EnemyESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
                 new ButtonInfo { buttonText = "Resource ESP", method = Visuals.ResourceESP, toolTip = "Puts dots on your screen at where all of the resources are in the Super Infection gamemode."},
 
