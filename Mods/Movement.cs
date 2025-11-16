@@ -31,6 +31,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -44,13 +45,11 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
-using static Oculus.Interaction.Context;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -194,7 +193,7 @@ namespace iiMenu.Mods
         public static void SetPlatformPosition(GameObject platform, bool left)
         {
             Transform handTransform = left ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
-            var trueHandTransform = left ? TrueLeftHand() : TrueRightHand();
+            var trueHandTransform = left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
 
             platform.transform.position = trueHandTransform.position;
             platform.transform.rotation = trueHandTransform.rotation;
@@ -207,7 +206,7 @@ namespace iiMenu.Mods
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
                 MultipliedLongArms();
-                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
@@ -216,7 +215,7 @@ namespace iiMenu.Mods
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
                 VerticalLongArms();
-                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
@@ -225,7 +224,7 @@ namespace iiMenu.Mods
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
                 HorizontalLongArms();
-                platform.transform.position = (left ? TrueLeftHand() : TrueRightHand()).position;
+                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
@@ -309,8 +308,8 @@ namespace iiMenu.Mods
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                slipperyPlatform.transform.localPosition = TrueLeftHand().position + TrueLeftHand().right * 0.05f;
-                slipperyPlatform.transform.rotation = TrueLeftHand().rotation;
+                slipperyPlatform.transform.localPosition = ControllerUtilities.GetTrueLeftHand().position + ControllerUtilities.GetTrueLeftHand().right * 0.05f;
+                slipperyPlatform.transform.rotation = ControllerUtilities.GetTrueLeftHand().rotation;
 
                 slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
                 Object.Destroy(slipperyPlatform, 1);
@@ -321,8 +320,8 @@ namespace iiMenu.Mods
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                slipperyPlatform.transform.localPosition = TrueRightHand().position + TrueRightHand().right * -0.05f;
-                slipperyPlatform.transform.rotation = TrueRightHand().rotation;
+                slipperyPlatform.transform.localPosition = ControllerUtilities.GetTrueRightHand().position + ControllerUtilities.GetTrueRightHand().right * -0.05f;
+                slipperyPlatform.transform.rotation = ControllerUtilities.GetTrueRightHand().rotation;
 
                 slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
                 Object.Destroy(slipperyPlatform, 1);
@@ -523,7 +522,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GTPlayer.Instance.transform.position += TrueRightHand().forward * (Time.deltaTime * flySpeed);
+                GTPlayer.Instance.transform.position += ControllerUtilities.GetTrueRightHand().forward * (Time.deltaTime * flySpeed);
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
             }
         }
@@ -1174,6 +1173,19 @@ namespace iiMenu.Mods
             return centerInside || overlaps;
         }
 
+        public static bool IsOverlapping(Collider colliderA, Collider colliderB, float radius)
+        {
+            Vector3 center = colliderB.ClosestPoint(colliderA.transform.position);
+
+            Vector3 closest = colliderA.ClosestPoint(colliderB.transform.position);
+            bool centerInside = closest == center;
+
+            float distSqr = (closest - center).sqrMagnitude;
+            bool overlaps = distSqr <= radius * radius;
+
+            return centerInside || overlaps;
+        }
+
         public static void PortalGun()
         {
             if (portalGun == null)
@@ -1300,7 +1312,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.leftHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueLeftHand().position, 0.1f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), ControllerUtilities.GetTrueLeftHand().position, 0.1f))
                     {
                         GTPlayer.Instance.leftHand.isHolding = true;
                         break;
@@ -1310,7 +1322,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.rightHand.isHolding = false;
                 foreach (GameObject _ in new[] { bluePortal, orangePortal })
                 {
-                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), TrueRightHand().position, 0.1f))
+                    if (IsOverlapping(_.transform.Find("Rim/View").GetComponent<Collider>(), ControllerUtilities.GetTrueRightHand().position, 0.1f))
                     {
                         GTPlayer.Instance.rightHand.isHolding = true;
                         break;
@@ -2253,7 +2265,7 @@ namespace iiMenu.Mods
             {
                 RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
-                if (Physics.Raycast(TrueLeftHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
+                if (Physics.Raycast(ControllerUtilities.GetTrueLeftHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
             }
 
@@ -2261,7 +2273,7 @@ namespace iiMenu.Mods
             {
                 RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
-                if (Physics.Raycast(TrueRightHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
+                if (Physics.Raycast(ControllerUtilities.GetTrueRightHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
             }
         }
@@ -3039,8 +3051,8 @@ namespace iiMenu.Mods
             {
                 VRRig.LocalRig.enabled = false;
 
-                var leftHandTransform = TrueLeftHand();
-                var rightHandTransform = TrueRightHand();
+                var leftHandTransform = ControllerUtilities.GetTrueLeftHand();
+                var rightHandTransform = ControllerUtilities.GetTrueRightHand();
 
                 VRRig.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
                 VRRig.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
@@ -3573,10 +3585,10 @@ namespace iiMenu.Mods
                 stickpart.GetComponent<Renderer>().enabled = false;
             }
             if (GTPlayer.Instance.IsHandTouching(true))
-                stickpart.transform.position = TrueLeftHand().position;
+                stickpart.transform.position = ControllerUtilities.GetTrueLeftHand().position;
 
             if (GTPlayer.Instance.IsHandTouching(false))
-                stickpart.transform.position = TrueRightHand().position;
+                stickpart.transform.position = ControllerUtilities.GetTrueRightHand().position;
 
             if (GTPlayer.Instance.IsHandTouching(true) && GTPlayer.Instance.IsHandTouching(false))
                 stickpart.transform.position = Vector3.zero;

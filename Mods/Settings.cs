@@ -253,7 +253,7 @@ namespace iiMenu.Mods
             TutorialSelector.startColor = BrightenColor(new Color32(255, 128, 0, 128));
             TutorialSelector.endColor = BrightenColor(new Color32(255, 102, 0, 128));
 
-            Vector3 Direction = TrueRightHand().forward;
+            Vector3 Direction = ControllerUtilities.GetTrueRightHand().forward;
             Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + Direction / 4f, Direction, out var Ray, 512f, NoInvisLayerMask());
             if (!XRSettings.isDeviceActive)
             {
@@ -4916,7 +4916,7 @@ exit 0";
         {
             bool leftHand = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
 
-            var targetHand = leftHand ? TrueLeftHand() : TrueRightHand();
+            var targetHand = leftHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
             bool canSelect = NetworkSystem.Instance.InRoom && menu != null && reference != null && Vector3.Distance(menu.transform.position, reference.transform.position) > 0.5f;
 
             if (canSelect)

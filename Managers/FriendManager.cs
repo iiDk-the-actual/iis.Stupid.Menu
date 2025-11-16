@@ -26,6 +26,7 @@ using GorillaNetworking;
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 ﻿using System;
@@ -224,7 +225,7 @@ namespace iiMenu.Managers
                             }
 
                             Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
-                            Vector3 Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
+                            Vector3 Direction = SwapGunHand ? ControllerUtilities.GetTrueLeftHand().forward : ControllerUtilities.GetTrueRightHand().forward;
 
                             Physics.Raycast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), Direction, out var Ray, 512f, NoInvisLayerMask());
                             Vector3 EndPosition = Ray.point == Vector3.zero ? StartPosition + (Direction * 512f) : Ray.point;

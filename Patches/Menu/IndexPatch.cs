@@ -21,7 +21,6 @@
 
 using HarmonyLib;
 using iiMenu.Mods;
-using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {

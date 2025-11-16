@@ -36,6 +36,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Ionic.Zlib;
 using Photon.Pun;
 using Photon.Realtime;
@@ -4598,7 +4599,7 @@ Piece Name: {gunTarget.name}";
 
             RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
             yield return null;
-            RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
+            RequestDropPiece(bullet, ControllerUtilities.GetTrueRightHand().position + ControllerUtilities.GetTrueRightHand().forward * 0.65f + ControllerUtilities.GetTrueRightHand().right * 0.03f + ControllerUtilities.GetTrueRightHand().up * 0.05f, ControllerUtilities.GetTrueRightHand().rotation, ControllerUtilities.GetTrueRightHand().forward * 19.9f, Vector3.zero);
             yield return null;
         }
 

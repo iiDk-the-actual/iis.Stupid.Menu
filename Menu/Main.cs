@@ -62,7 +62,6 @@ using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
-using static Modio.API.ModioAPI;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
@@ -227,9 +226,9 @@ namespace iiMenu.Menu
 
                 if (wristMenu)
                 {
-                    bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - GorillaTagger.Instance.leftHandTransform.forward * 0.1f, TrueRightHand().position) < 0.1f;
+                    bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - GorillaTagger.Instance.leftHandTransform.forward * 0.1f, ControllerUtilities.GetTrueRightHand().position) < 0.1f;
                     if (rightHand)
-                        shouldOpen = Vector3.Distance(TrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - GorillaTagger.Instance.rightHandTransform.forward * 0.1f) < 0.1f;
+                        shouldOpen = Vector3.Distance(ControllerUtilities.GetTrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - GorillaTagger.Instance.rightHandTransform.forward * 0.1f) < 0.1f;
 
                     if (shouldOpen && !lastChecker)
                         wristOpen = !wristOpen;
@@ -1008,11 +1007,11 @@ namespace iiMenu.Menu
                             }
 
                             legacyGhostViewLeft.SetActive(true);
-                            legacyGhostViewLeft.transform.position = TrueLeftHand().position;
+                            legacyGhostViewLeft.transform.position = ControllerUtilities.GetTrueLeftHand().position;
                             legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
 
                             legacyGhostViewRight.SetActive(true);
-                            legacyGhostViewRight.transform.position = TrueRightHand().position;
+                            legacyGhostViewRight.transform.position = ControllerUtilities.GetTrueRightHand().position;
                             legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
                         }
                         else
@@ -3972,9 +3971,11 @@ namespace iiMenu.Menu
                     Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
                     break;
                 case 3:
-                    Up = SwapGunHand ? TrueLeftHand().up : TrueRightHand().up;
-                    Right = SwapGunHand ? TrueLeftHand().right : TrueRightHand().right;
-                    Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
+                    var handData = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+
+                    Up = handData.up;
+                    Right = handData.right;
+                    Direction = handData.forward;
                     break;
                 case 4:
                     Up = GorillaTagger.Instance.headCollider.transform.up;
@@ -4246,7 +4247,7 @@ namespace iiMenu.Menu
         }
 
         public static Vector3 GetGunDirection(Transform transform) =>
-            new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? TrueRightHand().forward : TrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
+            new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? ControllerUtilities.GetTrueRightHand().forward : ControllerUtilities.GetTrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
 
         public static IEnumerator TranscribeText(string text, Action<AudioClip> onComplete)
         {
@@ -4893,20 +4894,14 @@ namespace iiMenu.Menu
         public static Vector3 World2Player(Vector3 world) => 
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
 
-        
-
         // True left and right hand get the exact position and rotation of the middle of the hand
-        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
-        {
-            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.LeftHand.handRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * (GTPlayer.Instance.LeftHand.handOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
-        }
+        [Obsolete("TrueLeftHand is obsolete. Use ControllerUtilities.GetTrueLeftHand instead.")]
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand() =>
+            ControllerUtilities.GetTrueLeftHand();
 
-        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
-        {
-            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.RightHand.handRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * (GTPlayer.Instance.RightHand.handOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
-        }
+        [Obsolete("TrueRightHand is obsolete. Use ControllerUtilities.GetTrueRightHand instead.")]
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand() =>
+            ControllerUtilities.GetTrueRightHand();
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
         {

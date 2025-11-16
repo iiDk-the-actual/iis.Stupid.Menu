@@ -28,6 +28,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -1718,7 +1719,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, TrueRightHand().position + TrueRightHand().forward);
+                Console.ExecuteCommand("tpnv", ReceiverGroup.Others, ControllerUtilities.GetTrueRightHand().position + ControllerUtilities.GetTrueRightHand().forward);
             }
         }
 

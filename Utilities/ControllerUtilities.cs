@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaLocomotion;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,7 +58,6 @@ namespace iiMenu.Utilities
             public float dataCacheTime;
         }
 
-        // Barbecue chicken alert
         public static ControllerType GetControllerType(bool left)
         {
             try
@@ -104,5 +104,17 @@ namespace iiMenu.Utilities
 
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
         public static ControllerType GetRightControllerType() => GetControllerType(false);
+
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueHandPosition(bool left)
+        {
+            Transform controllerTransform = left ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
+            GTPlayer.HandState handState = left ? GTPlayer.Instance.LeftHand : GTPlayer.Instance.RightHand;
+
+            Quaternion rot = controllerTransform.rotation * handState.handRotOffset;
+            return (controllerTransform.position + controllerTransform.rotation * (handState.handOffset * GTPlayer.Instance.scale), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+        }
+
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueLeftHand() => GetTrueHandPosition(true);
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueRightHand() => GetTrueHandPosition(false);
     }
 }

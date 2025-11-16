@@ -40,6 +40,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using iiMenu.Utilities;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Object = UnityEngine.Object;
@@ -2950,8 +2951,8 @@ namespace iiMenu.Mods
 
         public static void NoLimbMode()
         {
-            l.transform.position = TrueLeftHand().position;
-            r.transform.position = TrueRightHand().position;
+            l.transform.position = ControllerUtilities.GetTrueLeftHand().position;
+            r.transform.position = ControllerUtilities.GetTrueRightHand().position;
             VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
             VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 0f);
             UpdateLimbColor();
