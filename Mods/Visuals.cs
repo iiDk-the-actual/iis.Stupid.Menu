@@ -3286,6 +3286,137 @@ namespace iiMenu.Mods
             boneESP.Clear();
         }
 
+        public static void CasualSkeletonESP()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    vrrig.skeleton.renderer.enabled = true;
+                    vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
+                    vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                    if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                }
+            }
+        }
+
+        public static void InfectionSkeletonESP()
+        {
+            bool isInfectedPlayers = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsTagged(vrrig))
+                {
+                    isInfectedPlayers = true;
+                    break;
+                }
+            }
+            if (isInfectedPlayers)
+            {
+                if (!PlayerIsTagged(VRRig.LocalRig))
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        {
+                            vrrig.skeleton.renderer.enabled = true;
+                            vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+                            vrrig.skeleton.renderer.material.color = GetPlayerColor(vrrig);
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                            if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                        }
+                        else
+                        {
+                            vrrig.skeleton.renderer.enabled = false;
+                            vrrig.skeleton.renderer.material.shader = Shader.Find("GorillaTag/UberShader");
+                            if (vrrig.skeleton.renderer.material.name.Contains("gorilla_body"))
+                                vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        {
+                            vrrig.skeleton.renderer.enabled = true;
+                            vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
+                            vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                            if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        vrrig.skeleton.renderer.enabled = true;
+                        vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
+                        if (vrrig.skeleton.renderer.material.name.Contains("gorilla_body"))
+                            vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                    }
+                }
+            }
+        }
+
+        public static void HuntSkeletonESP()
+        {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
+                return;
+
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
+            {
+                VRRig vrrig = GetVRRigFromPlayer(player);
+                if (player == target)
+                {
+                    vrrig.skeleton.renderer.enabled = true;
+                    vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
+                    vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                    if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                }
+                else
+                {
+                    if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
+                    {
+                        vrrig.skeleton.renderer.enabled = true;
+                        vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
+                        vrrig.skeleton.renderer.material.color = Color.red;
+                        if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                    }
+                    else
+                    {
+                        vrrig.skeleton.renderer.enabled = false;
+                        vrrig.skeleton.renderer.material.shader = Shader.Find("GorillaTag/UberShader");
+                        if (vrrig.skeleton.renderer.material.name.Contains("gorilla_body"))
+                            vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                    }
+                }
+            }
+        }
+
+        public static void DisableSkeletonESP()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    vrrig.skeleton.renderer.enabled = false;
+                    vrrig.skeleton.renderer.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (vrrig.skeleton.renderer.material.name.Contains("gorilla_body"))
+                        vrrig.skeleton.renderer.material.color = vrrig.playerColor;
+                }
+            }
+        }
+
         private static readonly Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer>();
         public static void CasualWireframeESP()
         {
