@@ -993,6 +993,25 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TriggerLeafPileGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig.LocalRig.enabled = false;
+
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position + (Vector3.up * (Time.frameCount % 2 == 1 ? 10f : -10f));
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position + (Vector3.up * (Time.frameCount % 2 == 1 ? 10f : 0f));
+                }
+            }
+        }
+
         private static float buttonDelay;
         public static void ActivateAllDoors()
         {
