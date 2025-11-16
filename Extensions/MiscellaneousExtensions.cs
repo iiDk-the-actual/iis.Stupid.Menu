@@ -38,6 +38,9 @@ namespace iiMenu.Extensions
         public static CallLimiter GetCallLimiter(this FXSystemSettings settings, int index) =>
             settings.callSettings[index].CallLimitSettings;
 
+        public static void Serialize(this PhotonView view, Photon.Realtime.RaiseEventOptions options = null, int timeOffset = 0) =>
+            SendSerialize(view, options, timeOffset);
+
         public static string ToHex(this Color input) =>
             ColorToHex(input);
 
