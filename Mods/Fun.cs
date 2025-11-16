@@ -1009,6 +1009,8 @@ namespace iiMenu.Mods
 
                     VRRig.LocalRig.transform.position = NewPointer.transform.position + (Vector3.up * (Time.frameCount % 2 == 1 ? 10f : 0f));
                 }
+                else
+                    VRRig.LocalRig.enabled = false;
             }
         }
 
