@@ -30,8 +30,10 @@ using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using Photon.Pun;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -2152,7 +2154,7 @@ namespace iiMenu.Menu
 
             new[] { // Plugin Settings [33]
                 new ButtonInfo { buttonText = "Exit Plugin Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
-                new ButtonInfo { buttonText = "Reload Plugins", method = Settings.ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." }
+                new ButtonInfo { buttonText = "Reload Plugins", method = PluginManager.ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." }
             },
 
             new[] { // Friends [34]
@@ -2308,6 +2310,75 @@ namespace iiMenu.Menu
             "Chat Messages",
             "Macros"
         };
+
+        public static int GetCategory(string categoryName) =>
+    Buttons.categoryNames.ToList().IndexOf(categoryName);
+
+        public static int AddCategory(string categoryName)
+        {
+            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            buttonInfoList.Add(new ButtonInfo[] { });
+            Buttons.buttons = buttonInfoList.ToArray();
+
+            List<string> categoryList = Buttons.categoryNames.ToList();
+            categoryList.Add(categoryName);
+            Buttons.categoryNames = categoryList.ToArray();
+
+            return Buttons.buttons.Length - 1;
+        }
+
+        public static void RemoveCategory(string categoryName)
+        {
+            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            buttonInfoList.RemoveAt(GetCategory(categoryName));
+            Buttons.buttons = buttonInfoList.ToArray();
+
+            List<string> categoryList = Buttons.categoryNames.ToList();
+            categoryList.Remove(categoryName);
+            Buttons.categoryNames = categoryList.ToArray();
+        }
+
+        public static void AddButton(int category, ButtonInfo button, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+                buttonInfoList.Insert(index, button);
+            else
+                buttonInfoList.Add(button);
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
+
+        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+            {
+                for (int i = 0; i < buttons.Length; i++)
+                    buttonInfoList.Insert(index + i, buttons[i]);
+            }
+            else
+                buttonInfoList.AddRange(buttons);
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
+
+        public static void RemoveButton(int category, string name, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+                buttonInfoList.RemoveAt(index);
+            else
+            {
+                foreach (var button in buttonInfoList.Where(button => button.buttonText == name))
+                {
+                    buttonInfoList.Remove(button);
+                    break;
+                }
+            }
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
     }
 }
 

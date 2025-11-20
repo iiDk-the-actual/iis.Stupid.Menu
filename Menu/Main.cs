@@ -1418,15 +1418,7 @@ namespace iiMenu.Menu
 
                 #region Execute Mods
                 // Plugins
-                foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
-                {
-                    try
-                    {
-                        if (!Settings.disabledPlugins.Contains(Plugin.Key))
-                            PluginUpdate(Plugin.Value);
-                    }
-                    catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e); }
-                }
+                PluginManager.ExecuteUpdate();
 
                 // Menu
                 foreach (ButtonInfo button in Buttons.buttons
@@ -5731,164 +5723,29 @@ namespace iiMenu.Menu
             return null;
         }
 
+        [Obsolete("GetCategory is obsolete. Use Buttons.GetCategory instead.")]
         public static int GetCategory(string categoryName) =>
-            Buttons.categoryNames.ToList().IndexOf(categoryName);
+            Buttons.GetCategory(categoryName);
 
-        public static int AddCategory(string categoryName)
-        {
-            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
-            buttonInfoList.Add(new ButtonInfo[] { });
-            Buttons.buttons = buttonInfoList.ToArray();
+        [Obsolete("AddCategory is obsolete. Use Buttons.AddCategory instead.")]
+        public static int AddCategory(string categoryName) =>
+            Buttons.AddCategory(categoryName);
 
-            List<string> categoryList = Buttons.categoryNames.ToList();
-            categoryList.Add(categoryName);
-            Buttons.categoryNames = categoryList.ToArray();
+        [Obsolete("RemoveCategory is obsolete. Use Buttons.RemoveCategory instead.")]
+        public static void RemoveCategory(string categoryName) =>
+            Buttons.RemoveCategory(categoryName);
 
-            return Buttons.buttons.Length - 1;
-        }
+        [Obsolete("AddButton is obsolete. Use Buttons.AddButton instead.")]
+        public static void AddButton(int category, ButtonInfo button, int index = -1) =>
+            Buttons.AddButton(category, button, index);
 
-        public static void RemoveCategory(string categoryName)
-        {
-            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
-            buttonInfoList.RemoveAt(GetCategory(categoryName));
-            Buttons.buttons = buttonInfoList.ToArray();
+        [Obsolete("AddButtons is obsolete. Use Buttons.AddButtons instead.")]
+        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1) =>
+            Buttons.AddButtons(category, buttons, index);
 
-            List<string> categoryList = Buttons.categoryNames.ToList();
-            categoryList.Remove(categoryName);
-            Buttons.categoryNames = categoryList.ToArray();
-        }
-
-        public static void AddButton(int category, ButtonInfo button, int index = -1)
-        {
-            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index > 0)
-                buttonInfoList.Insert(index, button);
-            else
-                buttonInfoList.Add(button);
-
-            Buttons.buttons[category] = buttonInfoList.ToArray();
-        }
-
-        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
-        {
-            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index > 0)
-            {
-                for (int i = 0; i < buttons.Length; i++)
-                    buttonInfoList.Insert(index + i, buttons[i]);
-            }
-            else
-                buttonInfoList.AddRange(buttons);
-
-            Buttons.buttons[category] = buttonInfoList.ToArray();
-        }
-
-        public static void RemoveButton(int category, string name, int index = -1)
-        {
-            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index > 0)
-                buttonInfoList.RemoveAt(index);
-            else
-            {
-                foreach (var button in buttonInfoList.Where(button => button.buttonText == name))
-                {
-                    buttonInfoList.Remove(button);
-                    break;
-                }
-            }
-
-            Buttons.buttons[category] = buttonInfoList.ToArray();
-        }
-
-        public static readonly Dictionary<string, Assembly> cacheAssembly = new Dictionary<string, Assembly>();
-        public static Assembly GetAssembly(string dllName)
-        {
-            if (cacheAssembly.TryGetValue(dllName, out var assembly))
-                return assembly;
-
-            Assembly Assembly = Assembly.Load(File.ReadAllBytes(dllName.Replace("/", "\\")));
-            cacheAssembly.Add(dllName, Assembly);
-            return Assembly;
-        }
-
-        public static string[] GetPluginInfo(Assembly Assembly)
-        {
-            Type[] Types = Assembly.GetTypes();
-            foreach (Type Type in Types)
-            {
-                FieldInfo Name = Type.GetField("Name", BindingFlags.Public | BindingFlags.Static);
-                FieldInfo Description = Type.GetField("Description", BindingFlags.Public | BindingFlags.Static);
-                if (Name != null && Description != null)
-                    return new[] { (string)Name.GetValue(null), (string)Description.GetValue(null) };
-            }
-
-            return new[] { "null", "null" };
-        }
-
-        public static void EnablePlugin(Assembly Assembly)
-        {
-            Type[] Types = Assembly.GetTypes();
-            foreach (Type Type in Types)
-            {
-                try
-                {
-                    MethodInfo Method = Type.GetMethod("OnEnable", BindingFlags.Public | BindingFlags.Static);
-                    Method?.Invoke(null, null);
-                } catch { }
-            }
-        }
-
-        public static void DisablePlugin(Assembly Assembly)
-        {
-            Type[] Types = Assembly.GetTypes();
-            foreach (Type Type in Types)
-            {
-                try
-                {
-                    MethodInfo Method = Type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.Static);
-                    Method?.Invoke(null, null);
-                } catch { }
-            }
-        }
-
-        public static readonly Dictionary<Assembly, MethodInfo[]> cacheOnGUI = new Dictionary<Assembly, MethodInfo[]>();
-        public static void PluginOnGUI(Assembly Assembly)
-        {
-            if (cacheOnGUI.TryGetValue(Assembly, out var value))
-            {
-                foreach (MethodInfo Method in value)
-                    Method.Invoke(null, null);
-            } else
-            {
-                Type[] Types = Assembly.GetTypes();
-                List<MethodInfo> Methods = Types.Select(Type => Type.GetMethod("OnGUI", BindingFlags.Public | BindingFlags.Static)).Where(Method => Method != null).ToList();
-
-                cacheOnGUI.Add(Assembly, Methods.ToArray());
-
-                foreach (MethodInfo Method in Methods)
-                    Method.Invoke(null, null);
-            }
-        }
-
-        public static readonly Dictionary<Assembly, MethodInfo[]> cacheUpdate = new Dictionary<Assembly, MethodInfo[]>();
-        public static void PluginUpdate(Assembly Assembly)
-        {
-            if (cacheUpdate.TryGetValue(Assembly, out var value))
-            {
-                foreach (MethodInfo Method in value)
-                    Method.Invoke(null, null);
-            }
-            else
-            {
-                Type[] Types = Assembly.GetTypes();
-                List<MethodInfo> Methods = Types.Select(Type => Type.GetMethod("Update", BindingFlags.Public | BindingFlags.Static)).Where(Method => Method != null).ToList();
-
-                cacheUpdate.Add(Assembly, Methods.ToArray());
-
-                foreach (MethodInfo Method in Methods)
-                    Method.Invoke(null, null);
-            }
-        }
+        [Obsolete("RemoveButton is obsolete. Use Buttons.RemoveButton instead.")]
+        public static void RemoveButton(int category, string name, int index = -1) =>
+            Buttons.RemoveButton(category, name, index);
 
         public static void ReloadMenu()
         {
@@ -6507,7 +6364,7 @@ namespace iiMenu.Menu
 
             try
             {
-                Settings.LoadPlugins();
+                PluginManager.LoadPlugins();
             }
             catch (Exception exc) { LogManager.LogError(
                 $"Error with Settings.LoadPlugins() at {exc.StackTrace}: {exc.Message}"); }
@@ -6726,7 +6583,7 @@ jgs \_   _/ |Oo\
         {
             get => Buttons.categoryNames[currentCategoryIndex];
             set =>
-                currentCategoryIndex = GetCategory(value);
+                currentCategoryIndex = Buttons.GetCategory(value);
         }
 
         // Compatiblity

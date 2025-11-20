@@ -305,18 +305,18 @@ namespace iiMenu.Mods
 
         public static void ShowDebug()
         {
-            int category = GetCategory("Temporary Category");
+            int category = Buttons.GetCategory("Temporary Category");
 
             string version = PluginInfo.Version;
             if (PluginInfo.BetaBuild) version = "<color=blue>Beta</color> " + version;
-            AddButton(category, new ButtonInfo { buttonText = "DebugMenuName", overlapText = "<color=grey><b>ii's Stupid Menu </b></color>" + version, label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugColor", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugName", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugId", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugClip", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugFps", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugRoomA", overlapText = "Loading...", label = true });
-            AddButton(category, new ButtonInfo { buttonText = "DebugRoomB", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugMenuName", overlapText = "<color=grey><b>ii's Stupid Menu </b></color>" + version, label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugColor", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugName", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugId", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugClip", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugFps", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugRoomA", overlapText = "Loading...", label = true });
+            Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugRoomB", overlapText = "Loading...", label = true });
 
             Debug();
             currentCategoryName = "Temporary Category";
@@ -344,159 +344,16 @@ namespace iiMenu.Mods
         public static void HideDebug()
         {
             currentCategoryName = "Main";
-            int category = GetCategory("Temporary Category");
+            int category = Buttons.GetCategory("Temporary Category");
 
-            RemoveButton(category, "DebugMenuName");
-            RemoveButton(category, "DebugColor");
-            RemoveButton(category, "DebugName");
-            RemoveButton(category, "DebugId");
-            RemoveButton(category, "DebugClip");
-            RemoveButton(category, "DebugFps");
-            RemoveButton(category, "DebugRoomA");
-            RemoveButton(category, "DebugRoomB");
-        }
-
-        public static readonly Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly>();
-        public static List<string> disabledPlugins = new List<string>();
-        public static void LoadPlugins()
-        {
-            Buttons.buttons[GetCategory("Plugin Settings")] = new[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu." } };
-
-            if (LoadedPlugins.Count > 0)
-            {
-                foreach (KeyValuePair<string, Assembly> Plugin in LoadedPlugins)
-                {
-                    if (!disabledPlugins.Contains(Plugin.Key))
-                        DisablePlugin(Plugin.Value);
-                }
-            }
-
-            cacheAssembly.Clear();
-
-            cacheUpdate.Clear();
-            cacheOnGUI.Clear();
-
-            LoadedPlugins.Clear();
-
-            if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Plugins"))
-                Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Plugins");
-
-            if (!File.Exists($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt"))
-                File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", "");
-            else
-            {
-                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt");
-                if (text.Length > 1)
-                    disabledPlugins = text.Split("\n").ToList();
-            }
-
-            string[] Files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Plugins");
-            foreach (string File in Files)
-            {
-                try
-                {
-                    if (GetFileExtension(File) == "dll")
-                    {
-                        string PluginName = File.Replace($"{PluginInfo.BaseDirectory}/Plugins/", "");
-                        LoadedPlugins.Add(PluginName, GetAssembly(File));
-                    }
-                } catch (Exception e) { LogManager.Log("Error with loading plugin " + File + ": " + e); }
-            }
-
-            foreach (KeyValuePair<string, Assembly> Plugin in LoadedPlugins)
-            {
-                try
-                {
-                    string[] PluginInfo = GetPluginInfo(Plugin.Value);
-                    AddButton(33, new ButtonInfo { buttonText = Plugin.Key, overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + PluginInfo[0], method = () => TogglePlugin(Plugin), isTogglable = false, toolTip = PluginInfo[1] });
-                    if (!disabledPlugins.Contains(Plugin.Key))
-                        EnablePlugin(Plugin.Value);
-                }
-                catch (Exception e) { LogManager.Log("Error with enabling plugin " + Plugin.Key + ": " + e); }
-            }
-
-            AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = OpenPluginsFolder, isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
-            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." });
-            AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = LoadPluginLibrary, isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
-        }
-
-        public static void ReloadPlugins()
-        {
-            SavePreferences();
-            LoadPlugins();
-            LoadPreferences();
-
-            if (isSearching)
-                Search();
-
-            currentCategoryName = "Main";
-        }
-
-        public static void OpenPluginsFolder()
-        {
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Plugins");
-            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Plugins";
-            Process.Start(filePath);
-        }
-
-        public static void LoadPluginLibrary()
-        {
-            currentCategoryName = "Sound Library";
-
-            string library = GetHttp($"{PluginInfo.ServerResourcePath}/Plugins/PluginLibrary.txt");
-            string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
-
-            List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
-            int index = 0;
-
-            foreach (string plugin in plugins)
-            {
-                if (plugin.Length > 2)
-                {
-                    index++;
-                    string[] Data = plugin.Split(";");
-                    pluginbuttons.Add(new ButtonInfo { buttonText = "PluginDownload" + index, overlapText = Data[0], method =() => DownloadPlugin(Data[0], Data[2]), isTogglable = false, toolTip = Data[1] });
-                }
-            }
-            Buttons.buttons[GetCategory("Sound Library")] = pluginbuttons.ToArray();
-        }
-
-        public static void DownloadPlugin(string name, string url)
-        {
-            if (name.Contains(".."))
-                name = name.Replace("..", "");
-
-            string filename = url.Split("/")[^1];
-
-            if (File.Exists($"{PluginInfo.BaseDirectory}/Plugins/" + filename))
-                File.Delete($"{PluginInfo.BaseDirectory}/Plugins/" + filename);
-
-            WebClient stream = new WebClient();
-            stream.DownloadFile(url, $"{PluginInfo.BaseDirectory}/Plugins/" + filename);
-
-            LoadPlugins();
-            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to your plugins.");
-        }
-
-        public static void TogglePlugin(KeyValuePair<string, Assembly> Plugin)
-        {
-            if (disabledPlugins.Contains(Plugin.Key))
-            {
-                disabledPlugins.Remove(Plugin.Key);
-                EnablePlugin(Plugin.Value);
-            } else
-            {
-                disabledPlugins.Add(Plugin.Key);
-                DisablePlugin(Plugin.Value);
-            }
-
-            string disabledPluginsString = "";
-            foreach (string disabledPlugin in disabledPlugins)
-                disabledPluginsString += disabledPlugin + "\n";
-
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", disabledPluginsString);
-
-            GetIndex(Plugin.Key).overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + GetPluginInfo(Plugin.Value)[0];
+            Buttons.RemoveButton(category, "DebugMenuName");
+            Buttons.RemoveButton(category, "DebugColor");
+            Buttons.RemoveButton(category, "DebugName");
+            Buttons.RemoveButton(category, "DebugId");
+            Buttons.RemoveButton(category, "DebugClip");
+            Buttons.RemoveButton(category, "DebugFps");
+            Buttons.RemoveButton(category, "DebugRoomA");
+            Buttons.RemoveButton(category, "DebugRoomB");
         }
 
         public static void PlayersTab()

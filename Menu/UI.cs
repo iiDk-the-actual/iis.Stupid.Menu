@@ -274,15 +274,7 @@ namespace iiMenu.Menu
                 }
                 catch { }
 
-                foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
-                {
-                    try
-                    {
-                        if (!Settings.disabledPlugins.Contains(Plugin.Key))
-                            PluginOnGUI(Plugin.Value);
-                    }
-                    catch (Exception e) { LogManager.Log("Error with OnGUI plugin " + Plugin.Key + ": " + e); }
-                }
+                PluginManager.ExecuteOnGUI();
             }
         }
     }
