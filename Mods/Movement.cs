@@ -1225,13 +1225,13 @@ namespace iiMenu.Mods
                     if (flipped)
                     {
                         if (orangePortal == null)
-                            orangePortal = LoadObject<GameObject>("OrangePortal").transform.Find("Portal").gameObject;
+                            orangePortal = GetPortal(true);
                         portalToUse = orangePortal;
                     }
                     else
                     {
                         if (bluePortal == null)
-                            bluePortal = LoadObject<GameObject>("BluePortal").transform.Find("Portal").gameObject;
+                            bluePortal = GetPortal(false);
                         portalToUse = bluePortal;
                     }
                     portalToUse.transform.position = ray.point + ray.normal * 0.075f;
@@ -1291,6 +1291,9 @@ namespace iiMenu.Mods
 
             if (bluePortal && orangePortal)
             {
+                Vector3 playerOffset = Camera.main.transform.position - orangePortal.transform.position;
+                bluePortal.transform.Find("Rim/Camera").transform.position = bluePortal.transform.position + playerOffset;
+
                 bool goingThrough = false;
                 foreach (GameObject portal in new[] { bluePortal, orangePortal })
                 {
@@ -1339,6 +1342,12 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static GameObject GetPortal(bool orange)
+        {
+            GameObject mainObject = LoadObject<GameObject>(orange ? "OrangePortal" : "BluePortal").transform.Find("Portal").gameObject;
+            return mainObject;
         }
         
         public static IEnumerator TeleportPortal(GameObject portal)
