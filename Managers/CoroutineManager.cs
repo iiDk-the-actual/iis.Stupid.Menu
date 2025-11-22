@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace iiMenu.Managers
 {
-    public class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
+    public class CoroutineManager : MonoBehaviour
     {
         public static CoroutineManager instance;
 
