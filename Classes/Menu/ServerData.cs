@@ -216,28 +216,34 @@ namespace iiMenu.Classes.Menu
                     }
                 }
 
-                // Admin dictionary
-                Administrators.Clear();
-
-                JArray admins = (JArray)data["admins"];
-                foreach (var admin in admins)
+                string minConsoleVersion = (string)data["min-console-version"];
+                if (VersionToNumber(Console.ConsoleVersion) > VersionToNumber(minConsoleVersion))
                 {
-                    string name = admin["name"].ToString();
-                    string userId = admin["user-id"].ToString();
-                    Administrators[userId] = name;
-                }
+                    Console.Log("On extreme outdated version of Console, not loading administrators");
 
-                SuperAdministrators.Clear();
+                    // Admin dictionary
+                    Administrators.Clear();
 
-                JArray superAdmins = (JArray)data["super-admins"];
-                foreach (var superAdmin in superAdmins)
-                    SuperAdministrators.Add(superAdmin.ToString());
+                    JArray admins = (JArray)data["admins"];
+                    foreach (var admin in admins)
+                    {
+                        string name = admin["name"].ToString();
+                        string userId = admin["user-id"].ToString();
+                        Administrators[userId] = name;
+                    }
 
-                // Give admin panel if on list
-                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var administrator))
-                {
-                    GivenAdminMods = true;
-                    SetupAdminPanel(administrator);
+                    SuperAdministrators.Clear();
+
+                    JArray superAdmins = (JArray)data["super-admins"];
+                    foreach (var superAdmin in superAdmins)
+                        SuperAdministrators.Add(superAdmin.ToString());
+
+                    // Give admin panel if on list
+                    if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var administrator))
+                    {
+                        GivenAdminMods = true;
+                        SetupAdminPanel(administrator);
+                    }
                 }
 
                 // Polls
