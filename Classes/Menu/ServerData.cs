@@ -66,7 +66,7 @@ namespace iiMenu.Classes.Menu
 
         private static int LoadAttempts;
 
-        private static bool VersionWarning;
+        private static bool BetaBuildWarning;
         private static bool GivenAdminMods;
         public static bool OutdatedVersion;
 
@@ -190,23 +190,28 @@ namespace iiMenu.Classes.Menu
                 string version = (string)data["menu-version"];
                 bool shownPrompt = false;
 
-                if (!VersionWarning)
+                if (PluginInfo.BetaBuild)
                 {
-                    VersionWarning = true;
-
-                    if (PluginInfo.BetaBuild)
+                    if (!BetaBuildWarning)
                     {
+                        BetaBuildWarning = true;
                         Console.Log("User is on beta build");
                         Console.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> You are using a testing build of the menu. Be warned that there may be bugs and issues that could cause crashes, data loss, or other unexpected behavior.", 10000);
                     }
-                    else if (VersionToNumber(PluginInfo.Version) < VersionToNumber(minimumVersion))
+                }
+                else if (VersionToNumber(PluginInfo.Version) < VersionToNumber(minimumVersion))
+                {
+                    if (!OutdatedVersion)
                     {
                         OutdatedVersion = true;
                         Console.DisableMenu = true;
                         Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a severely outdated version of the menu. For security, it has been disabled. Please update your menu.", 10000);
                         Main.UpdatePrompt(version);
                     }
-                    else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
+                }
+                else if (VersionToNumber(version) > VersionToNumber(PluginInfo.Version))
+                {
+                    if (!OutdatedVersion)
                     {
                         OutdatedVersion = true;
                         Console.Log("Version is outdated");
@@ -217,10 +222,8 @@ namespace iiMenu.Classes.Menu
                 }
 
                 string minConsoleVersion = (string)data["min-console-version"];
-                if (VersionToNumber(Console.ConsoleVersion) > VersionToNumber(minConsoleVersion))
+                if (VersionToNumber(Console.ConsoleVersion) <= VersionToNumber(minConsoleVersion))
                 {
-                    Console.Log("On extreme outdated version of Console, not loading administrators");
-
                     // Admin dictionary
                     Administrators.Clear();
 
@@ -244,7 +247,8 @@ namespace iiMenu.Classes.Menu
                         GivenAdminMods = true;
                         SetupAdminPanel(administrator);
                     }
-                }
+                } else
+                    Console.Log("On extreme outdated version of Console, not loading administrators");
 
                 // Polls
                 CurrentPoll = (string)data["poll"];
