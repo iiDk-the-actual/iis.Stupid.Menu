@@ -34,7 +34,7 @@ using UnityEngine.Networking;
 
 namespace iiMenu.Managers
 {
-    public class AIManager : MonoBehaviour
+    public class AIManager
     {
         public static string SystemPrompt = @"NAME: ii's Voice Assistant
 MENU VERSION: {2}
@@ -275,7 +275,6 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             if (!Main.GetIndex("Chain Voice Commands").enabled)
                 CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
             yield break;
-            
         }
     }
 }
