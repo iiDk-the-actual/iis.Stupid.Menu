@@ -107,7 +107,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.7.0";
+        public const string ConsoleVersion = "2.8.0";
         public static Console instance;
 
         public void Awake()
@@ -169,7 +169,7 @@ namespace iiMenu.Classes.Menu
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]));
+                string fileName = $"{ConsoleResourceLocation}/{SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]))}";
 
                 if (fileName == null)
                     yield break;
@@ -226,7 +226,7 @@ namespace iiMenu.Classes.Menu
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]));
+                string fileName = $"{ConsoleResourceLocation}/{SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]))}";
 
                 if (fileName == null)
                     yield break;
@@ -1527,6 +1527,13 @@ namespace iiMenu.Classes.Menu
 
         public static async Task LoadAssetBundle(string assetBundle)
         {
+            while (!CosmeticsV2Spawner_Dirty.allPartsInstantiated)
+                await Task.Yield();
+
+            assetBundle = assetBundle.Replace("\\", "/");
+            if (assetBundle.Contains("..") || assetBundle.Contains("%2E%2E")) 
+                return;
+
             string fileName;
             if (assetBundle.Contains("/"))
             {
@@ -1535,11 +1542,6 @@ namespace iiMenu.Classes.Menu
             }
             else
                 fileName = $"{ConsoleResourceLocation}/{assetBundle}";
-
-            fileName = SanitizeFileName(fileName);
-
-            if (fileName == null)
-                return;
 
             if (File.Exists(fileName))
                 File.Delete(fileName);
@@ -1560,7 +1562,17 @@ namespace iiMenu.Classes.Menu
                 await Task.Yield();
 
             AssetBundle bundle = bundleCreateRequest.assetBundle;
-            assetBundlePool.Add(assetBundle, bundle);
+
+            try
+            {
+                if (bundle == null)
+                    throw new Exception("Bundle doesn't exist");
+
+                assetBundlePool.Add(assetBundle, bundle);
+            } catch
+            {
+                bundle?.Unload(true);
+            }
         }
 
         public static async Task<GameObject> LoadAsset(string assetBundle, string assetName)
@@ -1605,7 +1617,7 @@ namespace iiMenu.Classes.Menu
 
             if (!consoleAssets.ContainsKey(id))
             {
-                float timeoutTime = Time.time + 5f;
+                float timeoutTime = Time.time + 10f;
                 while (Time.time < timeoutTime && !consoleAssets.ContainsKey(id))
                     yield return null;
             }
@@ -1624,7 +1636,7 @@ namespace iiMenu.Classes.Menu
 
             if (isAudio && asset.pauseAudioUpdates)
             {
-                float timeoutTime = Time.time + 5f;
+                float timeoutTime = Time.time + 10f;
                 while (Time.time < timeoutTime && asset.pauseAudioUpdates)
                     yield return null;
             }
