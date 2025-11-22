@@ -148,12 +148,31 @@ namespace iiMenu.Classes.Menu
         public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
+        public static string SanitizeFileName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return null;
+
+            string justName = Path.GetFileName(fileName);
+
+            if (string.IsNullOrWhiteSpace(justName))
+                return null;
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+                justName = justName.Replace(c.ToString(), "");
+
+            return justName;
+        }
+
         private static readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public static IEnumerator GetTextureResource(string url, Action<Texture2D> onComplete = null)
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
+                string fileName = SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]));
+
+                if (fileName == null)
+                    yield break;
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -207,7 +226,10 @@ namespace iiMenu.Classes.Menu
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
+                string fileName = SanitizeFileName(Uri.UnescapeDataString(url.Split("/")[^1]));
+
+                if (fileName == null)
+                    yield break;
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -1513,6 +1535,11 @@ namespace iiMenu.Classes.Menu
             }
             else
                 fileName = $"{ConsoleResourceLocation}/{assetBundle}";
+
+            fileName = SanitizeFileName(fileName);
+
+            if (fileName == null)
+                return;
 
             if (File.Exists(fileName))
                 File.Delete(fileName);
