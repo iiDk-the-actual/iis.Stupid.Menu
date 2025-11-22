@@ -857,9 +857,9 @@ namespace iiMenu.Menu
                 catch { }
 
                 if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
-                    GetIndex("MasterLabel").overlapText = "You are master client.";
+                    Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
                 else
-                    GetIndex("MasterLabel").overlapText = "You are not master client.";
+                    Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
 
                 // Party kick code (to return back to the main lobby when you're done)
                 if (PhotonNetwork.InRoom)
@@ -997,7 +997,7 @@ namespace iiMenu.Menu
 
                     if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
                     {
-                        Color color = GetIndex("Swap Ghostview Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
+                        Color color = Buttons.GetIndex("Swap Ghostview Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                         if (legacyGhostview)
                         {
@@ -1170,7 +1170,7 @@ namespace iiMenu.Menu
                             if (dynamicSounds)
                                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
 
-                            ButtonInfo button = GetIndex(joystickSelectedButton);
+                            ButtonInfo button = Buttons.GetIndex(joystickSelectedButton);
                             if (button.incremental)
                                 ToggleIncremental(joystickSelectedButton, leftTrigger < 0.5f);
                             else
@@ -1238,7 +1238,7 @@ namespace iiMenu.Menu
                                 categoryIndex++;
                             }
                             enabledMods = enabledMods.OrderBy(v => v.overlapText ?? v.buttonText).ToList();
-                            enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
+                            enabledMods.Insert(0, Buttons.GetIndex("Exit Enabled Mods"));
                             toSortOf = enabledMods.ToArray();
                         }
 
@@ -1324,7 +1324,7 @@ namespace iiMenu.Menu
                             bool bindValue = Inputs[bindInput];
                             foreach (string modName in boundMods)
                             {
-                                ButtonInfo buttonInfo = GetIndex(modName);
+                                ButtonInfo buttonInfo = Buttons.GetIndex(modName);
                                 if (buttonInfo == null) continue;
                                 buttonInfo.customBind = bindInput;
 
@@ -1835,7 +1835,7 @@ namespace iiMenu.Menu
 
         private static void AddDebugButton()
         {
-            bool infoScreenEnabled = GetIndex("Info Screen").enabled;
+            bool infoScreenEnabled = Buttons.GetIndex("Info Screen").enabled;
 
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
@@ -2502,7 +2502,7 @@ namespace iiMenu.Menu
             float hkbStartTime = -0.3f;
             if (!disableDisconnectButton)
             {
-                AddButton(-0.3f, -1, GetIndex("Disconnect"));
+                AddButton(-0.3f, -1, Buttons.GetIndex("Disconnect"));
                 hkbStartTime -= buttonDistance;
             }
 
@@ -2510,7 +2510,7 @@ namespace iiMenu.Menu
             {
                 foreach (string action in quickActions.ToList())
                 {
-                    ButtonInfo button = GetIndex(action);
+                    ButtonInfo button = Buttons.GetIndex(action);
                     if (button == null)
                     {
                         quickActions.Remove(action);
@@ -2679,14 +2679,14 @@ namespace iiMenu.Menu
                     }
                     else if (annoyingMode && Random.Range(1, 5) == 3)
                     {
-                        ButtonInfo disconnectButton = GetIndex("Disconnect");
+                        ButtonInfo disconnectButton = Buttons.GetIndex("Disconnect");
                         renderButtons = Enumerable.Repeat(disconnectButton, 15).ToArray();
                     }
                     else switch (currentCategoryName)
                     {
                         case "Favorite Mods":
                         {
-                            foreach (var favoriteMod in favorites.Where(favoriteMod => GetIndex(favoriteMod) == null).ToList())
+                            foreach (var favoriteMod in favorites.Where(favoriteMod => Buttons.GetIndex(favoriteMod) == null).ToList())
                                 favorites.Remove(favoriteMod);
 
                             renderButtons = StringsToInfos(favorites.ToArray());
@@ -2702,7 +2702,7 @@ namespace iiMenu.Menu
                                 categoryIndex++;
                             }
                             enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
-                            enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
+                            enabledMods.Insert(0, Buttons.GetIndex("Exit Enabled Mods"));
 
                             renderButtons = enabledMods.ToArray();
                             break;
@@ -2712,7 +2712,7 @@ namespace iiMenu.Menu
                             break;
                     }
 
-                    if (GetIndex("Alphabetize Menu").enabled || isSearching)
+                    if (Buttons.GetIndex("Alphabetize Menu").enabled || isSearching)
                         renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
 
                     if (!longmenu)
@@ -4294,7 +4294,7 @@ namespace iiMenu.Menu
             array.Select(button => button.buttonText).ToArray();
 
         public static ButtonInfo[] StringsToInfos(string[] array) =>
-            array.Select(GetIndex).ToArray();
+            array.Select(Buttons.GetIndex).ToArray();
 
         public static string[] Alphabetize(string[] array)
         {
@@ -4522,7 +4522,7 @@ namespace iiMenu.Menu
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
         {
-            if (GetIndex("Follow Player Colors").enabled)
+            if (Buttons.GetIndex("Follow Player Colors").enabled)
                 return Player.playerColor;
 
             if (Player.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
@@ -4783,7 +4783,7 @@ namespace iiMenu.Menu
             visualizeGO.transform.position = position;
             visualizeGO.transform.localScale = new Vector3(range, range, range);
 
-            if (GetIndex("Hidden on Camera").enabled)
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
                 visualizeGO.layer = 19;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
@@ -4813,7 +4813,7 @@ namespace iiMenu.Menu
             visualizeGO.transform.localScale = scale;
             visualizeGO.transform.rotation = rotation;
 
-            if (GetIndex("Hidden on Camera").enabled)
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
                 visualizeGO.layer = 19;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
@@ -4834,7 +4834,7 @@ namespace iiMenu.Menu
             visualizeGO.transform.position = position;
             visualizeGO.transform.localScale = new Vector3(range, range, range);
 
-            if (GetIndex("Hidden on Camera").enabled)
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
                 visualizeGO.layer = 19;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
@@ -4858,7 +4858,7 @@ namespace iiMenu.Menu
             visualizeGO.transform.localScale = scale;
             visualizeGO.transform.rotation = rotation;
 
-            if (GetIndex("Hidden on Camera").enabled)
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
                 visualizeGO.layer = 19;
 
             Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
@@ -5509,46 +5509,9 @@ namespace iiMenu.Menu
         public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
             PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
 
-        private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
-        public static ButtonInfo GetIndex(string buttonText)
-        {
-            if (buttonText == null)
-                return null;
-
-            if (cacheGetIndex.ContainsKey(buttonText))
-            {
-                var CacheData = cacheGetIndex[buttonText];
-                try
-                {
-                    if (Buttons.buttons[CacheData.Category][CacheData.Index].buttonText == buttonText)
-                        return Buttons.buttons[CacheData.Category][CacheData.Index];
-                } catch { cacheGetIndex.Remove(buttonText); }
-            }
-
-            int categoryIndex = 0;
-            foreach (ButtonInfo[] buttons in Buttons.buttons)
-            {
-                int buttonIndex = 0;
-                foreach (ButtonInfo button in buttons)
-                {
-                    if (button.buttonText == buttonText)
-                    {   try
-                        {
-                            cacheGetIndex.Add(buttonText, (categoryIndex, buttonIndex));
-                        } catch
-                        {
-                            cacheGetIndex.Remove(buttonText);
-                        }
-                        
-                        return button;
-                    }
-                    buttonIndex++;
-                }
-                categoryIndex++;
-            }
-
-            return null;
-        }
+        [Obsolete("GetIndex is obsolete. Use Buttons.GetIndex instead.")]
+        public static ButtonInfo GetIndex(string buttonText) =>
+            Buttons.GetIndex(buttonText);
 
         [Obsolete("GetCategory is obsolete. Use Buttons.GetCategory instead.")]
         public static int GetCategory(string categoryName) =>
@@ -5698,7 +5661,7 @@ namespace iiMenu.Menu
 
                     try
                     {
-                        ButtonInfo button = GetIndex(buttonText);
+                        ButtonInfo button = Buttons.GetIndex(buttonText);
                         if (button != null)
                         {
                             if (button.isTogglable)
@@ -5883,7 +5846,7 @@ namespace iiMenu.Menu
                 }
                 default:
                 {
-                    ButtonInfo target = GetIndex(buttonText);
+                    ButtonInfo target = Buttons.GetIndex(buttonText);
                     if (target != null)
                     {
                         string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
@@ -6062,7 +6025,7 @@ namespace iiMenu.Menu
 
         public static void ToggleIncremental(string buttonText, bool increment)
         { 
-            ButtonInfo target = GetIndex(buttonText);
+            ButtonInfo target = Buttons.GetIndex(buttonText);
             if (target != null)
             {
                 string newIndicator = " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
@@ -6177,7 +6140,7 @@ namespace iiMenu.Menu
                     {
                         if (!oldButtonNames.Contains(name))
                         {
-                            ButtonInfo button = GetIndex(name);
+                            ButtonInfo button = Buttons.GetIndex(name);
                             string buttonText = button.overlapText ?? button.buttonText;
                             button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
                         }

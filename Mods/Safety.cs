@@ -25,6 +25,7 @@ using GorillaNetworking;
 using GorillaTagScripts;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
 using iiMenu.Utilities;
@@ -46,16 +47,16 @@ namespace iiMenu.Mods
     {
         public static void GeneralSafety()
         {
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>").enabled) AntiReportDisconnect();
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = true;
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = true;
-            if (!GetIndex("Anti Moderator").enabled) AntiModerator();
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>").enabled) AntiReportDisconnect();
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = true;
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = true;
+            if (!Buttons.GetIndex("Anti Moderator").enabled) AntiModerator();
         }
 
         public static void DisableGeneral()
         {
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = false;
-            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = false;
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = false;
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = false;
         }
 
         public static void NoFinger()
@@ -218,7 +219,7 @@ namespace iiMenu.Mods
                 antiReportRangeIndex = rangeNames.Length - 1;
 
             threshold = distances[antiReportRangeIndex];
-            GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + rangeNames[antiReportRangeIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + rangeNames[antiReportRangeIndex] + "</color><color=grey>]</color>";
         }
 
         public static bool smartAntiReport;
@@ -638,7 +639,7 @@ namespace iiMenu.Mods
             if (fpsSpoofValue < 5)
                 fpsSpoofValue = 140;
 
-            GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue + "</color><color=grey>]</color>";
         }
 
         public static readonly string[] namePrefix = {
@@ -674,7 +675,7 @@ namespace iiMenu.Mods
                 rankIndex = 2;
 
             targetRank = ((RankedProgressionManager.ERankedMatchmakingTier)rankIndex).ToString();
-            GetIndex("Change Ranked Tier").overlapText = "Change Matchmaking Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Ranked Tier").overlapText = "Change Matchmaking Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
         }
 
         public static void ChangeELOValue(bool positive = true)
@@ -689,7 +690,7 @@ namespace iiMenu.Mods
             if (targetElo < 0)
                 targetElo = 4000;
 
-            GetIndex("Change ELO Value").overlapText = "Change ELO Value <color=grey>[</color><color=green>" + targetElo + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change ELO Value").overlapText = "Change ELO Value <color=grey>[</color><color=green>" + targetElo + "</color><color=grey>]</color>";
         }
 
         public static void ChangeBadgeTier(bool positive = true)
@@ -714,7 +715,7 @@ namespace iiMenu.Mods
             if (targetBadge < 0)
                 targetBadge = 7;
 
-            GetIndex("Change Badge Tier").overlapText = "Change Badge Tier <color=grey>[</color><color=green>" + badgeNames[targetBadge] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Badge Tier").overlapText = "Change Badge Tier <color=grey>[</color><color=green>" + badgeNames[targetBadge] + "</color><color=grey>]</color>";
         }
 
         public static void SpoofRank(bool enabled, string tier = null)

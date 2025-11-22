@@ -120,7 +120,7 @@ namespace iiMenu.Mods
 
             headSpinSpeed = speedAmounts[headSpinIndex];
 
-            GetIndex("Change Head Spin Speed").overlapText = "Change Head Spin Speed <color=grey>[</color><color=green>" + speedNames[headSpinIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Head Spin Speed").overlapText = "Change Head Spin Speed <color=grey>[</color><color=green>" + speedNames[headSpinIndex] + "</color><color=grey>]</color>";
         }
 
         private static float headSpinSpeed = 10f;
@@ -800,7 +800,7 @@ namespace iiMenu.Mods
             if (targetFOV < 0)
                 targetFOV = 180;
 
-            GetIndex("Change Target FOV").overlapText = "Change Target FOV <color=grey>[</color><color=green>" + targetFOV + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Target FOV").overlapText = "Change Target FOV <color=grey>[</color><color=green>" + targetFOV + "</color><color=grey>]</color>";
         }
 
         public static void CameraFOV()
@@ -1292,7 +1292,7 @@ namespace iiMenu.Mods
             if (targetQuestScore < 0)
                 targetQuestScore = 99999;
 
-            GetIndex("Change Custom Quest Score").overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>" + targetQuestScore + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Custom Quest Score").overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>" + targetQuestScore + "</color><color=grey>]</color>";
         }
 
         public static void FakeFPS()
@@ -2941,11 +2941,11 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.localScale = Vector3.one * 0.2f;
                     bugSpamObject.layer = 3;
 
-                    if (GetIndex("Bug Colliders").enabled)
+                    if (Buttons.GetIndex("Bug Colliders").enabled)
                     {
                         SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
 
-                        if (GetIndex("Bouncy Bug").enabled)
+                        if (Buttons.GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
                             collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -2960,7 +2960,7 @@ Piece Name: {gunTarget.name}";
                     rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                     rigidbody.angularVelocity = RandomVector3(100f);
 
-                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                    rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                     targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -2983,11 +2983,11 @@ Piece Name: {gunTarget.name}";
                 cameraSpamObject.transform.localScale = Vector3.one * 0.2f;
                 cameraSpamObject.layer = 3;
 
-                if (GetIndex("Bug Colliders").enabled)
+                if (Buttons.GetIndex("Bug Colliders").enabled)
                 {
                     SphereCollider collider = cameraSpamObject.AddComponent<SphereCollider>();
 
-                    if (GetIndex("Bouncy Bug").enabled)
+                    if (Buttons.GetIndex("Bouncy Bug").enabled)
                     {
                         collider.material.bounciness = 1f;
                         collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3002,7 +3002,7 @@ Piece Name: {gunTarget.name}";
                 rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                 rigidbody.angularVelocity = RandomVector3(100f);
 
-                rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                 camera.visible = true;
                 camera.recording = true;
@@ -3062,11 +3062,11 @@ Piece Name: {gunTarget.name}";
                             bugSpamObject.transform.localScale = Vector3.one * 0.2f;
                             bugSpamObject.layer = 3;
 
-                            if (GetIndex("Bug Colliders").enabled)
+                            if (Buttons.GetIndex("Bug Colliders").enabled)
                             {
                                 SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
 
-                                if (GetIndex("Bouncy Bug").enabled)
+                                if (Buttons.GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
                                     collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3081,7 +3081,7 @@ Piece Name: {gunTarget.name}";
                             rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
-                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                            rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                             targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -3096,11 +3096,11 @@ Piece Name: {gunTarget.name}";
                             bugSpamObject.transform.localScale = Vector3.one * 0.2f;
                             bugSpamObject.layer = 3;
 
-                            if (GetIndex("Bug Colliders").enabled)
+                            if (Buttons.GetIndex("Bug Colliders").enabled)
                             {
                                 SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
 
-                                if (GetIndex("Bouncy Bug").enabled)
+                                if (Buttons.GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
                                     collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3115,7 +3115,7 @@ Piece Name: {gunTarget.name}";
                             rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
-                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                            rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                             targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -3134,11 +3134,11 @@ Piece Name: {gunTarget.name}";
                             cameraSpamObject.transform.localScale = Vector3.one * 0.2f;
                             cameraSpamObject.layer = 3;
 
-                            if (GetIndex("Bug Colliders").enabled)
+                            if (Buttons.GetIndex("Bug Colliders").enabled)
                             {
                                 SphereCollider collider = cameraSpamObject.AddComponent<SphereCollider>();
 
-                                if (GetIndex("Bouncy Bug").enabled)
+                                if (Buttons.GetIndex("Bouncy Bug").enabled)
                                 {
                                     collider.material.bounciness = 1f;
                                     collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3153,7 +3153,7 @@ Piece Name: {gunTarget.name}";
                             rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                             rigidbody.angularVelocity = RandomVector3(100f);
 
-                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                            rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                             camera.visible = true;
                             camera.recording = true;
@@ -3424,11 +3424,11 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.localScale = Vector3.one * 0.2f;
                     bugSpamObject.layer = 3;
 
-                    if (GetIndex("Bug Colliders").enabled)
+                    if (Buttons.GetIndex("Bug Colliders").enabled)
                     {
                         SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
 
-                        if (GetIndex("Bouncy Bug").enabled)
+                        if (Buttons.GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
                             collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3443,7 +3443,7 @@ Piece Name: {gunTarget.name}";
                     rigidbody.linearVelocity = tracker.GetAverageVelocity(true, 0);
                     rigidbody.angularVelocity = bug.velocityEstimator.angularVelocity;
 
-                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                    rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                     bug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -3504,11 +3504,11 @@ Piece Name: {gunTarget.name}";
                     bugSpamObject.transform.localScale = Vector3.one * 0.2f;
                     bugSpamObject.layer = 3;
 
-                    if (GetIndex("Bug Colliders").enabled)
+                    if (Buttons.GetIndex("Bug Colliders").enabled)
                     {
                         SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
 
-                        if (GetIndex("Bouncy Bug").enabled)
+                        if (Buttons.GetIndex("Bouncy Bug").enabled)
                         {
                             collider.material.bounciness = 1f;
                             collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
@@ -3523,7 +3523,7 @@ Piece Name: {gunTarget.name}";
                     rigidbody.linearVelocity = tracker.GetAverageVelocity(true, 0);
                     rigidbody.angularVelocity = estimator.angularVelocity;
 
-                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+                    rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
 
                     camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -4062,7 +4062,7 @@ Piece Name: {gunTarget.name}";
             if (NetworkSystem.Instance.SessionIsPrivate)
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
-                GetIndex("Kick Master Client").enabled = false;
+                Buttons.GetIndex("Kick Master Client").enabled = false;
 
                 return;
             }
@@ -4098,7 +4098,7 @@ Piece Name: {gunTarget.name}";
                 }, () =>
                 {
                     Overpowered.CreateKickRoom();
-                    GetIndex("Kick Master Client").enabled = false;
+                    Buttons.GetIndex("Kick Master Client").enabled = false;
                     VRRig.LocalRig.enabled = true;
 
                 }));
@@ -4402,7 +4402,7 @@ Piece Name: {gunTarget.name}";
         public static void AtticAntiReport()
         {
             if (Time.time > startTimeBuilding)
-                GetIndex("Attic Anti Report").enabled = false;
+                Buttons.GetIndex("Attic Anti Report").enabled = false;
 
             foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer == NetworkSystem.Instance.LocalPlayer))
             {
@@ -4669,12 +4669,12 @@ Piece Name: {gunTarget.name}";
                 blockDebounceIndex = 20;
 
             blockDebounce = blockDebounceIndex / 20f;
-            GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce + "</color><color=grey>]</color>";
         }
 
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, object target = null, bool overrideFreeze = false, bool forceGravity = false, Vector3? velocity = null, Vector3? angVelocity = null)
         {
-            if (GetIndex("Random Block Type").enabled)
+            if (Buttons.GetIndex("Random Block Type").enabled)
                 pieceType = GetRandomBlockType();
 
             BuilderTable table = GetBuilderTable();
@@ -4703,7 +4703,7 @@ Piece Name: {gunTarget.name}";
                     else
                         Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
 
-                    if ((!overrideFreeze && !GetIndex("Zero Gravity Blocks").enabled) || forceGravity)
+                    if ((!overrideFreeze && !Buttons.GetIndex("Zero Gravity Blocks").enabled) || forceGravity)
                     {
                         blockDelay = Time.time + 0.02f;
 
@@ -5532,7 +5532,7 @@ Piece Name: {gunTarget.name}";
                 if (piece == null)
                     return;
 
-                RequestGrabPiece(piece, false, GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
+                RequestGrabPiece(piece, false, Buttons.GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), Buttons.GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
                 potentialgrabbedpieces.Add(piece);
 
                 RPCProtection();
@@ -5575,7 +5575,7 @@ Piece Name: {gunTarget.name}";
                 if (piece == null)
                     return;
 
-                RequestGrabPiece(piece, false, GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
+                RequestGrabPiece(piece, false, Buttons.GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), Buttons.GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
                 potentialgrabbedpieces.Add(piece);
 
                 RPCProtection();
@@ -5748,7 +5748,7 @@ Piece Name: {gunTarget.name}";
                 cycleSpeedIndex = 4;
 
             nameCycleDebounce = cycleSpeedIndex / 2f;
-            GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce + "</color><color=grey>]</color>";
         }
 
         public static void NameCycle(string[] names)
@@ -6503,7 +6503,7 @@ Piece Name: {gunTarget.name}";
                         if (consoleTyped != "")
                         {
 
-                            ButtonInfo selButton = GetIndex(consoleTyped);
+                            ButtonInfo selButton = Buttons.GetIndex(consoleTyped);
                             if (selButton == null)
                             {
                                 for (int i = 0; i < Buttons.buttons.Length; i++)

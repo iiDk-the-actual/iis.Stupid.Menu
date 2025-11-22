@@ -157,7 +157,7 @@ namespace iiMenu.Managers
 
             File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", disabledPluginsString);
 
-            GetIndex(plugin.FileName).overlapText = (plugin.Enabled ? "<color=grey>[</color><color=green>ON</color><color=grey>]</color>" : "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>") + " " + plugin.Name;
+            Buttons.GetIndex(plugin.FileName).overlapText = (plugin.Enabled ? "<color=grey>[</color><color=green>ON</color><color=grey>]</color>" : "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>") + " " + plugin.Name;
         }
 
         public static void ExecuteUpdate()

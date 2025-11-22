@@ -81,7 +81,7 @@ namespace iiMenu.Classes.Menu
             if (mod == "Decline Prompt" || mod == "Accept Prompt") // Can be vulnerabized
                 return;
 
-            ButtonInfo Button = Main.GetIndex(mod);
+            ButtonInfo Button = Buttons.GetIndex(mod);
             if (!Button.isTogglable)
                 Button.method.Invoke();
             else

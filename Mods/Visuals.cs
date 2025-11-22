@@ -28,6 +28,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
@@ -168,8 +169,8 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : new Color(0.41f, 0.05f, 0.70f);
             if (tt)
@@ -191,8 +192,8 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             Color critterESPColor = fmt ? backgroundColor.GetCurrentColor() : Color.green;
             if (tt)
@@ -214,8 +215,8 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             Color critterESPColor = fmt ? backgroundColor.GetCurrentColor() : Color.green;
             if (tt)
@@ -237,8 +238,8 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : new Color(0.41f, 0.05f, 0.70f);
             if (tt)
@@ -260,8 +261,8 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             Color coreESPColor = fmt ? backgroundColor.GetCurrentColor() : Color.green;
             if (tt)
@@ -458,9 +459,9 @@ namespace iiMenu.Mods
 
         public static void GamesenseRing()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             List<object[]> toRemove = new List<object[]>();
             for (int i = 0; i < handTaps.Count; i++)
@@ -592,7 +593,7 @@ namespace iiMenu.Mods
                 PerformanceModeStepIndex = 10;
 
             PerformanceModeStep = PerformanceModeStepIndex / 10f;
-            GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep + "</color><color=grey>]</color>";
         }
 
         public static float PerformanceVisualDelay;
@@ -625,7 +626,7 @@ namespace iiMenu.Mods
             if (!labelDictionary.TryGetValue(codeName, out GameObject go))
             {
                 go = new GameObject(codeName);
-                if (GetIndex("Hidden Labels").enabled)
+                if (Buttons.GetIndex("Hidden Labels").enabled)
                     go.layer = 19;
 
                 go.transform.localScale = Vector3.one * 0.25f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
@@ -927,10 +928,10 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 predictions.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -992,9 +993,9 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> hitboxESP = new Dictionary<VRRig, GameObject>();
         public static void HitboxPredictions()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -1059,10 +1060,10 @@ namespace iiMenu.Mods
 
         public static void PaintbrawlTrajectories()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             List<SlingshotProjectile> toRemoveTrajectories = new List<SlingshotProjectile>();
             foreach (KeyValuePair<SlingshotProjectile, LineRenderer> key in trajectoryPool)
@@ -2971,10 +2972,10 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>();
         public static void CasualBoneESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -3067,10 +3068,10 @@ namespace iiMenu.Mods
 
         public static void InfectionBoneESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
@@ -3173,10 +3174,10 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
@@ -3296,8 +3297,8 @@ namespace iiMenu.Mods
                     vrrig.skeleton.renderer.enabled = true;
                     vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.skeleton.renderer.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
-                    if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                    if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                    if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                 }
             }
         }
@@ -3324,8 +3325,8 @@ namespace iiMenu.Mods
                             vrrig.skeleton.renderer.enabled = true;
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.skeleton.renderer.material.color = GetPlayerColor(vrrig);
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
-                            if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                            if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                            if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                         }
                         else
                         {
@@ -3345,8 +3346,8 @@ namespace iiMenu.Mods
                             vrrig.skeleton.renderer.enabled = true;
                             vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.skeleton.renderer.material.color = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
-                            if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                            if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                            if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                         }
                     }
                 }
@@ -3381,8 +3382,8 @@ namespace iiMenu.Mods
                     vrrig.skeleton.renderer.enabled = true;
                     vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.skeleton.renderer.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
-                    if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                    if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
+                    if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                 }
                 else
                 {
@@ -3391,7 +3392,7 @@ namespace iiMenu.Mods
                         vrrig.skeleton.renderer.enabled = true;
                         vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
                         vrrig.skeleton.renderer.material.color = Color.red;
-                        if (GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
+                        if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                     }
                     else
                     {
@@ -3435,9 +3436,9 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 wireframes.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -3503,9 +3504,9 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 wireframes.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
@@ -3577,9 +3578,9 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 wireframes.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
@@ -3761,8 +3762,8 @@ namespace iiMenu.Mods
 
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
-                    if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
+                    if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
+                    if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                 }
             }
         }
@@ -3790,8 +3791,8 @@ namespace iiMenu.Mods
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = GetPlayerColor(vrrig);
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
-                            if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
+                            if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
+                            if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                         else
                         {
@@ -3811,8 +3812,8 @@ namespace iiMenu.Mods
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
-                            if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
+                            if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
+                            if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                     }
                 }
@@ -3849,8 +3850,8 @@ namespace iiMenu.Mods
 
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
-                    if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
+                    if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
+                    if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                 } 
                 else 
                 {
@@ -3858,7 +3859,7 @@ namespace iiMenu.Mods
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         vrrig.mainSkin.material.color = Color.red;
-                        if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
+                        if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                     }
                     else
                     {
@@ -3886,9 +3887,9 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>();
         public static void CasualBoxESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -3937,9 +3938,9 @@ namespace iiMenu.Mods
 
         public static void InfectionBoxESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
@@ -3995,9 +3996,9 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
@@ -4062,10 +4063,10 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>();
         public static void CasualHollowBoxESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -4149,10 +4150,10 @@ namespace iiMenu.Mods
 
         public static void HollowInfectionBoxESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
@@ -4240,10 +4241,10 @@ namespace iiMenu.Mods
 
         public static void HollowHuntBoxESP()
         {
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
@@ -4356,11 +4357,11 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 breadcrumbs.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = Buttons.GetIndex("Short Breadcrumbs").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -4419,11 +4420,11 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 breadcrumbs.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = Buttons.GetIndex("Short Breadcrumbs").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
@@ -4488,11 +4489,11 @@ namespace iiMenu.Mods
             foreach (VRRig rig in toRemove)
                 breadcrumbs.Remove(rig);
 
-            bool fmt = GetIndex("Follow Menu Theme").enabled;
-            bool hoc = GetIndex("Hidden on Camera").enabled;
-            bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
+            bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool tt = Buttons.GetIndex("Transparent Theme").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = Buttons.GetIndex("Short Breadcrumbs").enabled;
 
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
@@ -4642,10 +4643,10 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -4681,10 +4682,10 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -4728,9 +4729,9 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -4788,9 +4789,9 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
@@ -4843,10 +4844,10 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -4883,10 +4884,10 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -4950,10 +4951,10 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -5015,9 +5016,9 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -5075,9 +5076,9 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -5165,10 +5166,10 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
-            // Cache these here so your not finding the values from GetIndex every call (GetIndex is fucking slow)
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            // Cache these here so your not finding the values from Buttons.GetIndex every call (Buttons.GetIndex is fucking slow)
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
 
             Color menuColor = backgroundColor.GetCurrentColor();
 

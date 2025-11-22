@@ -283,7 +283,7 @@ namespace iiMenu.Mods
                         File.Delete(Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt");
                         NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
                         restartIndex = 4;
-                        GetIndex("Safe Restart Game").enabled = false;
+                        Buttons.GetIndex("Safe Restart Game").enabled = false;
                         Settings.SavePreferences();
                     }
                     break;
@@ -1228,7 +1228,7 @@ namespace iiMenu.Mods
                     switch (command)
                     {
                         case "confirmusing":
-                            if (GetIndex("Menu User Name Tags").enabled && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            if (Buttons.GetIndex("Menu User Name Tags").enabled && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 VRRig vrrig = GetVRRigFromPlayer(sender);
                                 if (!nametags.TryGetValue(vrrig, out var nametag))
@@ -1261,7 +1261,7 @@ namespace iiMenu.Mods
                                     textMesh.text = ToTitleCase((string)args[2]);
                                 }
                             }
-                            if (GetIndex("Conduct Menu Users").enabled)
+                            if (Buttons.GetIndex("Conduct Menu Users").enabled)
                             {
                                 if (!onConduct.ContainsKey(sender.UserId))
                                 {
@@ -1272,7 +1272,7 @@ namespace iiMenu.Mods
                                     onConduct.Add(sender.UserId, txt);
                                 }
                             }
-                            if (GetIndex("Admin Find User").enabled)
+                            if (Buttons.GetIndex("Admin Find User").enabled)
                                 isUserFound = true;
                             break;
                     }
@@ -1399,10 +1399,10 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
-            bool transparentTheme = GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
+            bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
+            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = backgroundColor.GetCurrentColor();
 
@@ -1434,7 +1434,7 @@ namespace iiMenu.Mods
         public static readonly Dictionary<string, string> onConduct = new Dictionary<string, string>();
         public static void ConsoleOnConduct()
         {
-            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount) && !GetIndex("Menu User Name Tags").enabled)
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount) && !Buttons.GetIndex("Menu User Name Tags").enabled)
                 Console.ExecuteCommand("isusing", ReceiverGroup.All);
 
             string conductText = "";
@@ -1467,7 +1467,7 @@ namespace iiMenu.Mods
                 if (isUserFound)
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Found menu user!");
-                    GetIndex("Admin Find User").enabled = false;
+                    Buttons.GetIndex("Admin Find User").enabled = false;
                     isUserFound = false;
                     return;
                 }
@@ -1530,7 +1530,7 @@ namespace iiMenu.Mods
             PromptText("What notification would you like to send?", () =>
             {
                 targetNotification = keyboardInput;
-                GetIndex("NotifLabel").overlapText = "Notif: " + keyboardInput;
+                Buttons.GetIndex("NotifLabel").overlapText = "Notif: " + keyboardInput;
             }, null, "Done", "Cancel");
         }
 

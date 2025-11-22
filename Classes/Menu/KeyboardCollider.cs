@@ -38,7 +38,7 @@ namespace iiMenu.Classes.Menu
 		{
 			if ((collider == lKeyCollider || collider == rKeyCollider) && menu != null && Time.time > delay)
 			{
-				if (!GetIndex("Disable Keyboard Delay").enabled)
+				if (!iiMenu.Menu.Buttons.GetIndex("Disable Keyboard Delay").enabled)
 					delay = Time.time + 0.1f;
 
                 if (doButtonsVibrate)

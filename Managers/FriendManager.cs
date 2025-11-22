@@ -902,7 +902,7 @@ namespace iiMenu.Managers
             previousOnlineCount = onlineFriends.Length;
             previousIncomingCount = instance.Friends.incoming.Values.Count;
 
-            GetIndex("Friends").overlapText = onlineFriends.Length > 0 ? $"Friends <color=grey>[</color><color=green>{onlineFriends.Length} Online</color><color=grey>]</color>" : null;
+            Buttons.GetIndex("Friends").overlapText = onlineFriends.Length > 0 ? $"Friends <color=grey>[</color><color=green>{onlineFriends.Length} Online</color><color=grey>]</color>" : null;
 
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
@@ -1408,7 +1408,7 @@ namespace iiMenu.Managers
                                 string theme = (string)obj["data"];
                                 Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => 
                                 {
-                                    ButtonInfo customMenuTheme = GetIndex("Custom Menu Theme");
+                                    ButtonInfo customMenuTheme = Buttons.GetIndex("Custom Menu Theme");
 
                                     if (!customMenuTheme.enabled)
                                         Toggle(customMenuTheme);

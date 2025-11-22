@@ -270,7 +270,7 @@ namespace iiMenu.Classes.Menu
                     string detectedModName = detectedMod.ToString();
                     if (!DetectedModsLabelled.Contains(detectedModName))
                     {
-                        ButtonInfo Button = Main.GetIndex(detectedModName);
+                        ButtonInfo Button = Buttons.GetIndex(detectedModName);
                         if (Button != null)
                         {
                             string overlapText = Button.overlapText ?? Button.buttonText;

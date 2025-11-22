@@ -2311,42 +2311,86 @@ namespace iiMenu.Menu
             "Macros"
         };
 
+        private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
+        public static ButtonInfo GetIndex(string buttonText)
+        {
+            if (buttonText == null)
+                return null;
+
+            if (cacheGetIndex.ContainsKey(buttonText))
+            {
+                var CacheData = cacheGetIndex[buttonText];
+                try
+                {
+                    if (Buttons.buttons[CacheData.Category][CacheData.Index].buttonText == buttonText)
+                        return Buttons.buttons[CacheData.Category][CacheData.Index];
+                }
+                catch { cacheGetIndex.Remove(buttonText); }
+            }
+
+            int categoryIndex = 0;
+            foreach (ButtonInfo[] buttons in Buttons.buttons)
+            {
+                int buttonIndex = 0;
+                foreach (ButtonInfo button in buttons)
+                {
+                    if (button.buttonText == buttonText)
+                    {
+                        try
+                        {
+                            cacheGetIndex.Add(buttonText, (categoryIndex, buttonIndex));
+                        }
+                        catch
+                        {
+                            cacheGetIndex.Remove(buttonText);
+                        }
+
+                        return button;
+                    }
+                    buttonIndex++;
+                }
+                categoryIndex++;
+            }
+
+            return null;
+        }
+
         public static int GetCategory(string categoryName) =>
-    Buttons.categoryNames.ToList().IndexOf(categoryName);
+            categoryNames.ToList().IndexOf(categoryName);
 
         public static int AddCategory(string categoryName)
         {
-            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            List<ButtonInfo[]> buttonInfoList = buttons.ToList();
             buttonInfoList.Add(new ButtonInfo[] { });
-            Buttons.buttons = buttonInfoList.ToArray();
+            buttons = buttonInfoList.ToArray();
 
-            List<string> categoryList = Buttons.categoryNames.ToList();
+            List<string> categoryList = categoryNames.ToList();
             categoryList.Add(categoryName);
-            Buttons.categoryNames = categoryList.ToArray();
+            categoryNames = categoryList.ToArray();
 
-            return Buttons.buttons.Length - 1;
+            return buttons.Length - 1;
         }
 
         public static void RemoveCategory(string categoryName)
         {
-            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            List<ButtonInfo[]> buttonInfoList = buttons.ToList();
             buttonInfoList.RemoveAt(GetCategory(categoryName));
-            Buttons.buttons = buttonInfoList.ToArray();
+            buttons = buttonInfoList.ToArray();
 
-            List<string> categoryList = Buttons.categoryNames.ToList();
+            List<string> categoryList = categoryNames.ToList();
             categoryList.Remove(categoryName);
-            Buttons.categoryNames = categoryList.ToArray();
+            categoryNames = categoryList.ToArray();
         }
 
         public static void AddButton(int category, ButtonInfo button, int index = -1)
         {
-            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            List<ButtonInfo> buttonInfoList = buttons[category].ToList();
             if (index > 0)
                 buttonInfoList.Insert(index, button);
             else
                 buttonInfoList.Add(button);
 
-            Buttons.buttons[category] = buttonInfoList.ToArray();
+            buttons[category] = buttonInfoList.ToArray();
         }
 
         public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
@@ -2365,7 +2409,7 @@ namespace iiMenu.Menu
 
         public static void RemoveButton(int category, string name, int index = -1)
         {
-            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            List<ButtonInfo> buttonInfoList = buttons[category].ToList();
             if (index > 0)
                 buttonInfoList.RemoveAt(index);
             else
@@ -2377,7 +2421,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            Buttons.buttons[category] = buttonInfoList.ToArray();
+            buttons[category] = buttonInfoList.ToArray();
         }
     }
 }

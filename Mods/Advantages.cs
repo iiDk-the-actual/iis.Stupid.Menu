@@ -23,6 +23,7 @@ using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaLocomotion;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -43,7 +44,7 @@ namespace iiMenu.Mods
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
                 NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
-                GetIndex("Tag Self").enabled = false;
+                Buttons.GetIndex("Tag Self").enabled = false;
             }
             else
             {
@@ -51,7 +52,7 @@ namespace iiMenu.Mods
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
                     VRRig.LocalRig.enabled = true;
-                    GetIndex("Tag Self").enabled = false;
+                    Buttons.GetIndex("Tag Self").enabled = false;
                 }
                 else
                 {
@@ -61,7 +62,7 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.enabled = false;
                         if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
-                        if (GetIndex("Obnoxious Tag").enabled)
+                        if (Buttons.GetIndex("Obnoxious Tag").enabled)
                         {
                             Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
                             VRRig.LocalRig.transform.rotation = rotation;
@@ -334,7 +335,7 @@ namespace iiMenu.Mods
                 tagAuraIndex = names.Length - 1;
 
             tagAuraDistance = distances[tagAuraIndex];
-            GetIndex("ctaRange").overlapText = "Change Tag Aura Range <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
+            Buttons.GetIndex("ctaRange").overlapText = "Change Tag Aura Range <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
         }
 
         public static int tagRangeIndex;
@@ -365,7 +366,7 @@ namespace iiMenu.Mods
                 tagRangeIndex = names.Length - 1;
 
             tagReachDistance = distances[tagRangeIndex];
-            GetIndex("ctrRange").overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>" + names[tagRangeIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("ctrRange").overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>" + names[tagRangeIndex] + "</color><color=grey>]</color>";
         }
 
         public static void TagAura()
@@ -428,7 +429,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.tagRadiusOverride = tagReachDistance;
                 GorillaTagger.Instance.tagRadiusOverrideFrame = Time.frameCount + 16;
 
-                if (GetIndex("Visualize Tag Reach").enabled)
+                if (Buttons.GetIndex("Visualize Tag Reach").enabled)
                 {
                     VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
                     VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
@@ -452,7 +453,7 @@ namespace iiMenu.Mods
                     {
                         VRRig.LocalRig.enabled = false;
 
-                        if (!GetIndex("Obnoxious Tag").enabled)
+                        if (!Buttons.GetIndex("Obnoxious Tag").enabled)
                             VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                         else
                         {
@@ -551,7 +552,7 @@ namespace iiMenu.Mods
             {
                 VRRig.LocalRig.enabled = false;
 
-                if (!GetIndex("Obnoxious Tag").enabled)
+                if (!Buttons.GetIndex("Obnoxious Tag").enabled)
                     VRRig.LocalRig.transform.position = targetRig.transform.position - new Vector3(0f, 3f, 0f);
                 else
                 {
@@ -641,7 +642,7 @@ namespace iiMenu.Mods
                 foreach (Player v in PhotonNetwork.PlayerList)
                     AddInfected(v);
                 
-                GetIndex("Tag All").enabled = false;
+                Buttons.GetIndex("Tag All").enabled = false;
                 NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
             }
             else
@@ -649,7 +650,7 @@ namespace iiMenu.Mods
                 if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
-                    GetIndex("Tag All").enabled = false;
+                    Buttons.GetIndex("Tag All").enabled = false;
                 }
                 else
                 {
@@ -668,7 +669,7 @@ namespace iiMenu.Mods
                         {
                             VRRig.LocalRig.enabled = false;
 
-                            if (!GetIndex("Obnoxious Tag").enabled)
+                            if (!Buttons.GetIndex("Obnoxious Tag").enabled)
                                 VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                             else
                             {
@@ -709,7 +710,7 @@ namespace iiMenu.Mods
                     {
                         NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                         VRRig.LocalRig.enabled = true;
-                        GetIndex("Tag All").enabled = false;
+                        Buttons.GetIndex("Tag All").enabled = false;
                     }
                 }
             }
@@ -783,7 +784,7 @@ namespace iiMenu.Mods
                 VRRig vrrig = GetVRRigFromPlayer(target);
                 VRRig.LocalRig.enabled = false;
 
-                if (!GetIndex("Obnoxious Tag").enabled)
+                if (!Buttons.GetIndex("Obnoxious Tag").enabled)
                     VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                 else
                 {
@@ -822,7 +823,7 @@ namespace iiMenu.Mods
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                 VRRig.LocalRig.enabled = true;
-                GetIndex("Tag All").enabled = false;
+                Buttons.GetIndex("Tag All").enabled = false;
                 ReloadMenu();
             }
         }

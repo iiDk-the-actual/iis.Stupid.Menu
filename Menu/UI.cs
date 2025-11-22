@@ -92,7 +92,7 @@ namespace iiMenu.Menu
                 GUI.skin.button.fontStyle = activeFontStyle;
                 GUI.skin.label.fontStyle = activeFontStyle;
 
-                Color guiColor = GetIndex("Swap GUI Colors").enabled ? textColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
+                Color guiColor = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                 GUI.color = guiColor;
                 GUI.backgroundColor = guiColor;

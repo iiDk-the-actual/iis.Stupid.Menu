@@ -28,6 +28,7 @@ using GorillaNetworking;
 using GorillaTagScripts;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -1020,7 +1021,7 @@ namespace iiMenu.Mods
                         break;
                 }
 
-                if ((velocity != Vector3.zero || angVelocity != Vector3.zero || GetIndex("Entity Gravity").enabled) && Time.time > throwDelay)
+                if ((velocity != Vector3.zero || angVelocity != Vector3.zero || Buttons.GetIndex("Entity Gravity").enabled) && Time.time > throwDelay)
                 {
                     throwDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.ThrowEntity].GetDelay();
 
@@ -2476,7 +2477,7 @@ namespace iiMenu.Mods
             if (snowballScale < 0)
                 snowballScale = 5;
 
-            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale + 1) + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale + 1) + "</color><color=grey>]</color>";
         }
 
         public static int snowballMultiplicationFactor = 1;
@@ -2493,7 +2494,7 @@ namespace iiMenu.Mods
             if (snowballMultiplicationFactor < 1)
                 snowballMultiplicationFactor = 5;
 
-            GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor + "</color><color=grey>]</color>";
         }
 
         public static float _snowballSpawnDelay = 0.1f;
@@ -3862,9 +3863,9 @@ namespace iiMenu.Mods
 
             if (rightTrigger > 0.5f && PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers)
             {
-                if (heldTriggerWhilePlayersCorrect || GetIndex("No Freeze Za Warudo").enabled)
+                if (heldTriggerWhilePlayersCorrect || Buttons.GetIndex("No Freeze Za Warudo").enabled)
                 {
-                    if (!GetIndex("No Freeze Za Warudo").enabled)
+                    if (!Buttons.GetIndex("No Freeze Za Warudo").enabled)
                         SerializePatch.OverrideSerialization = () => false;
 
                     if (!heldTriggerWhilePlayersCorrect)
@@ -3888,7 +3889,7 @@ namespace iiMenu.Mods
 
                     Movement.LowGravity();
 
-                    if (Time.time > freezeAllDelay && !GetIndex("No Freeze Za Warudo").enabled)
+                    if (Time.time > freezeAllDelay && !Buttons.GetIndex("No Freeze Za Warudo").enabled)
                     {
                         for (int i = 0; i < 11; i++)
                         {
@@ -4014,7 +4015,7 @@ namespace iiMenu.Mods
             lagAmount = new[] { 40, 113, 425 }[lagIndex];
             lagDelay = new[] { 0.1f, 0.25f, 1f }[lagIndex];
 
-            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
         private static float lagDebounce;

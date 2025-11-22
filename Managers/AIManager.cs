@@ -146,7 +146,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
                 Settings.DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), Main.buttonClickVolume / 10f);
-                if (!Main.GetIndex("Chain Voice Commands").enabled)
+                if (!Buttons.GetIndex("Chain Voice Commands").enabled)
                     CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
                 yield break;
             }
@@ -163,8 +163,8 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             NotificationManager.ClearAllNotifications();
             NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
 
-            bool narrate = Main.GetIndex("Narrate Assistant").enabled;
-            bool globalNarrate = Main.GetIndex("Global Narrate Assistant").enabled;
+            bool narrate = Buttons.GetIndex("Narrate Assistant").enabled;
+            bool globalNarrate = Buttons.GetIndex("Global Narrate Assistant").enabled;
 
             if (narrate)
             {
@@ -183,7 +183,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                 {
                     case "ENABLEMOD":
                         {
-                            ButtonInfo button = Main.GetIndex(argument);
+                            ButtonInfo button = Buttons.GetIndex(argument);
                             button ??= Buttons.buttons
                                 .SelectMany(
                                     (buttonList, i) =>
@@ -208,7 +208,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                         }
                     case "DISABLEMOD":
                         {
-                            ButtonInfo button = Main.GetIndex(argument);
+                            ButtonInfo button = Buttons.GetIndex(argument);
                             button ??= Buttons.buttons
                                 .SelectMany(
                                     (buttonList, i) =>
@@ -234,7 +234,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                         }
                     case "TOGGLEMOD":
                         {
-                            ButtonInfo button = Main.GetIndex(argument);
+                            ButtonInfo button = Buttons.GetIndex(argument);
                             button ??= Buttons.buttons
                                 .SelectMany(
                                     (buttonList, i) =>
@@ -273,7 +273,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                 }
             }
 
-            if (!Main.GetIndex("Chain Voice Commands").enabled)
+            if (!Buttons.GetIndex("Chain Voice Commands").enabled)
                 CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
             yield break;
         }

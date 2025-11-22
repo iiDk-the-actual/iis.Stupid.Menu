@@ -182,7 +182,7 @@ namespace iiMenu.Managers
 
                 if (information.Count > 0)
                 {
-                    Color targetColor = GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
+                    Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                     TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     List<string> statsAlphabetized = information
@@ -237,7 +237,7 @@ namespace iiMenu.Managers
                     int index = 0;
                     foreach (string v in sortedButtons)
                     {
-                        Color targetColor = GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(index * -0.1f) : backgroundColor.GetCurrentColor(index * -0.1f);
+                        Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(index * -0.1f) : backgroundColor.GetCurrentColor(index * -0.1f);
 
                         if (advancedArraylist)
                             enabledModsText += (flipArraylist ?
@@ -250,7 +250,7 @@ namespace iiMenu.Managers
                     }
 
                     ModText.text = enabledModsText;
-                    ModText.color = GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
+                    ModText.color = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                 }
                 else
                     ModText.text = "";
@@ -267,7 +267,7 @@ namespace iiMenu.Managers
                     NotifiText.text = NotifiText.text.ToUpper();
                     StatsText.text = StatsText.text.ToUpper();
                 }
-                HUDObj.layer = GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
+                HUDObj.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             }
             catch (Exception e) { LogManager.Log(e); }
         }
@@ -277,7 +277,7 @@ namespace iiMenu.Managers
             if (clearTime < 0)
                 clearTime = notificationDecayTime;
 
-            if (!disableNotifications || GetIndex("Conduct Notifications").enabled)
+            if (!disableNotifications || Buttons.GetIndex("Conduct Notifications").enabled)
             {
                 try
                 {

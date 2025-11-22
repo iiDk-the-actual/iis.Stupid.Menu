@@ -80,7 +80,7 @@ namespace iiMenu.Mods
             if (platformMode < 0)
                 platformMode = platformNames.Length - 1;
 
-            GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
         }
 
         public static int platformShape;
@@ -106,7 +106,7 @@ namespace iiMenu.Mods
             if (platformShape < 0)
                 platformShape = platformShapes.Length - 1;
 
-            GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
         }
 
         public static PrimitiveType GetPlatformPrimitiveType()
@@ -160,7 +160,7 @@ namespace iiMenu.Mods
                     break;
             }
 
-            if (!GetIndex("Non-Sticky Platforms").enabled)
+            if (!Buttons.GetIndex("Non-Sticky Platforms").enabled)
                 FixStickyColliders(platform);
 
             if (platformRenderer.enabled && platform)
@@ -176,7 +176,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            if (GetIndex("Platform Outlines").enabled)
+            if (Buttons.GetIndex("Platform Outlines").enabled)
             {
                 GameObject gameObject = GameObject.CreatePrimitive(GetPlatformPrimitiveType());
                 Object.Destroy(gameObject.GetComponent<Collider>());
@@ -199,10 +199,10 @@ namespace iiMenu.Mods
             platform.transform.position = trueHandTransform.position;
             platform.transform.rotation = trueHandTransform.rotation;
 
-            if (GetIndex("Stick Long Arms").enabled)
+            if (Buttons.GetIndex("Stick Long Arms").enabled)
                 platform.transform.position += handTransform.forward * (armlength - 0.917f);
 
-            if (GetIndex("Multiplied Long Arms").enabled)
+            if (Buttons.GetIndex("Multiplied Long Arms").enabled)
             {
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
@@ -211,7 +211,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
-            if (GetIndex("Vertical Long Arms").enabled)
+            if (Buttons.GetIndex("Vertical Long Arms").enabled)
             {
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
@@ -220,7 +220,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
-            if (GetIndex("Horizontal Long Arms").enabled)
+            if (Buttons.GetIndex("Horizontal Long Arms").enabled)
             {
                 Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
                 Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
@@ -229,7 +229,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
             }
-            if (GetIndex("Non-Sticky Platforms").enabled)
+            if (Buttons.GetIndex("Non-Sticky Platforms").enabled)
                 platform.transform.position += trueHandTransform.right * ((left ? 1f : -1f) * ((0.025f + platform.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
 
             FriendManager.PlatformSpawned(true, platform.transform.position, platform.transform.rotation, platform.transform.localScale, GetPlatformPrimitiveType());
@@ -271,7 +271,7 @@ namespace iiMenu.Mods
                     }
                 case false when platform != null:
                     {
-                        if (GetIndex("Platform Gravity").enabled)
+                        if (Buttons.GetIndex("Platform Gravity").enabled)
                         {
                             platform.AddComponent(typeof(Rigidbody));
                             Object.Destroy(platform.GetComponent<Collider>());
@@ -349,7 +349,7 @@ namespace iiMenu.Mods
             jspeed = jspeedamounts[speedboostCycle];
             jmulti = jmultiamounts[speedboostCycle];
             
-            GetIndex("Change Speed Boost Amount").overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Speed Boost Amount").overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
         }
 
         public static void PlatformSpam()
@@ -406,7 +406,7 @@ namespace iiMenu.Mods
 
             flySpeed = speedamounts[flySpeedCycle];
 
-            GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
         public static int playspaceAbuseIndex;
@@ -426,7 +426,7 @@ namespace iiMenu.Mods
 
             playspaceAbusePower = speedamounts[playspaceAbuseIndex];
 
-            GetIndex("Change Playspace Abuse Speed").overlapText = "Change Playspace Abuse Speed <color=grey>[</color><color=green>" + speedNames[playspaceAbuseIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Playspace Abuse Speed").overlapText = "Change Playspace Abuse Speed <color=grey>[</color><color=green>" + speedNames[playspaceAbuseIndex] + "</color><color=grey>]</color>";
         }
 
         public static void ChangeArmLength(bool positive = true)
@@ -444,7 +444,7 @@ namespace iiMenu.Mods
                 longarmCycle = lengthAmounts.Length - 1;
 
             armlength = lengthAmounts[longarmCycle];
-            GetIndex("Change Arm Length").overlapText = "Change Arm Length <color=grey>[</color><color=green>" + lengthNames[longarmCycle] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Arm Length").overlapText = "Change Arm Length <color=grey>[</color><color=green>" + lengthNames[longarmCycle] + "</color><color=grey>]</color>";
         }
 
         public static void Fly()
@@ -582,7 +582,7 @@ namespace iiMenu.Mods
         public static Vector3 lastPosition = Vector3.zero;
         public static void WASDFly()
         {
-            bool stationary = !GetIndex("Disable Stationary WASD Fly").enabled;
+            bool stationary = !Buttons.GetIndex("Disable Stationary WASD Fly").enabled;
 
             bool W = UnityInput.Current.GetKey(KeyCode.W);
             bool A = UnityInput.Current.GetKey(KeyCode.A);
@@ -679,7 +679,7 @@ namespace iiMenu.Mods
                 driveInt = speedamounts.Length - 1;
 
             driveSpeed = speedamounts[driveInt];
-            GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
         }
 
         public static Vector2 driveLerpDirection = Vector2.zero;
@@ -698,7 +698,7 @@ namespace iiMenu.Mods
 
         public static void HardDrive()
         {
-            bool elevatedStickyDrive = GetIndex("Elevated Sticky Drive").enabled;
+            bool elevatedStickyDrive = Buttons.GetIndex("Elevated Sticky Drive").enabled;
             if ((Mathf.Abs(leftJoystick.x) > 0.05f || Mathf.Abs(leftJoystick.y) > 0.05f) && closePosition == Vector3.zero)
             {
                 Vector3 direction = GorillaTagger.Instance.bodyCollider.transform.forward * leftJoystick.y
@@ -1091,7 +1091,7 @@ namespace iiMenu.Mods
 
         public static void NetworkedGrappleMods()
         {
-            if (GetIndex("Spider Man").enabled || GetIndex("Grappling Hooks").enabled)
+            if (Buttons.GetIndex("Spider Man").enabled || Buttons.GetIndex("Grappling Hooks").enabled)
             {
                 if (isLeftGrappling || isRightGrappling)
                 {
@@ -1760,7 +1760,7 @@ namespace iiMenu.Mods
                 macroPlaybackRangeIndex = rangeNames.Length - 1;
 
             macroPlaybackRange = rangeAmounts[macroPlaybackRangeIndex];
-            GetIndex("Change Macro Playback Range").overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>" + rangeNames[macroPlaybackRangeIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Macro Playback Range").overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>" + rangeNames[macroPlaybackRangeIndex] + "</color><color=grey>]</color>";
         }
 
         public struct PlayerPosition
@@ -2242,7 +2242,7 @@ namespace iiMenu.Mods
 
             wallWalkStrength = strengthAmounts[wallWalkStrengthIndex];
 
-            GetIndex("Change Wall Walk Strength").overlapText = "Change Wall Walk Strength <color=grey>[</color><color=green>" + strengthNames[wallWalkStrengthIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Wall Walk Strength").overlapText = "Change Wall Walk Strength <color=grey>[</color><color=green>" + strengthNames[wallWalkStrengthIndex] + "</color><color=grey>]</color>";
         }
 
         public static void WallWalk()
@@ -2591,7 +2591,7 @@ namespace iiMenu.Mods
                 selectedCheckpoint = 0;
 
             GameObject go = new GameObject("Lbl");
-            if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
+            if (Buttons.GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
             TextMesh textMesh = go.AddComponent<TextMesh>();
             textMesh.color = GorillaTagger.Instance.rigidbody.linearVelocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
@@ -2740,13 +2740,13 @@ namespace iiMenu.Mods
             float jspt = jspeed;
             float jmpt = jmulti;
 
-            if (GetIndex("Factored Speed Boost").enabled)
+            if (Buttons.GetIndex("Factored Speed Boost").enabled)
             {
                 jspt = jspt / 6.5f * GTPlayer.Instance.maxJumpSpeed;
                 jmpt = jmpt / 1.1f * GTPlayer.Instance.jumpMultiplier;
             }
 
-            if (!GetIndex("Disable Max Speed Modification").enabled)
+            if (!Buttons.GetIndex("Disable Max Speed Modification").enabled)
                 GTPlayer.Instance.maxJumpSpeed = jspt;
 
             GTPlayer.Instance.jumpMultiplier = jmpt;
@@ -2791,7 +2791,7 @@ namespace iiMenu.Mods
                 float jspt = jspeed;
                 float jmpt = jmulti;
 
-                if (GetIndex("Factored Speed Boost").enabled)
+                if (Buttons.GetIndex("Factored Speed Boost").enabled)
                 {
                     jspt = jspt / 6.5f * GTPlayer.Instance.maxJumpSpeed;
                     jmpt = jmpt / 1.1f * GTPlayer.Instance.jumpMultiplier;
@@ -2800,7 +2800,7 @@ namespace iiMenu.Mods
                 jspt = Mathf.Lerp(GTPlayer.Instance.maxJumpSpeed, jspt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
                 jmpt = Mathf.Lerp(GTPlayer.Instance.jumpMultiplier, jmpt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
 
-                if (!GetIndex("Disable Max Speed Modification").enabled)
+                if (!Buttons.GetIndex("Disable Max Speed Modification").enabled)
                     GTPlayer.Instance.maxJumpSpeed = jspt;
 
                 GTPlayer.Instance.jumpMultiplier = jmpt;
@@ -2809,7 +2809,7 @@ namespace iiMenu.Mods
 
         public static void AlwaysMaxVelocity()
         {
-            if (GetIndex("Uncap Max Velocity").enabled)
+            if (Buttons.GetIndex("Uncap Max Velocity").enabled)
                 Toggle("Uncap Max Velocity");
             else
                 GTPlayer.Instance.jumpMultiplier = 99999f;
@@ -2830,8 +2830,8 @@ namespace iiMenu.Mods
 
         public static void Noclip()
         {
-            bool gripNoclip = GetIndex("Grip Noclip").enabled;
-            if (gripNoclip ? rightGrab : rightTrigger > 0.5f || GetIndex("Constant Noclip").enabled)
+            bool gripNoclip = Buttons.GetIndex("Grip Noclip").enabled;
+            if (gripNoclip ? rightGrab : rightTrigger > 0.5f || Buttons.GetIndex("Constant Noclip").enabled)
             {
                 if (!noclip)
                 {
@@ -2854,7 +2854,7 @@ namespace iiMenu.Mods
         public static void Invisible()
         {
             bool hit = rightSecondary;
-            if (GetIndex("Non-Togglable Invisible").enabled)
+            if (Buttons.GetIndex("Non-Togglable Invisible").enabled)
                 invisMonke = hit;
             if (invisMonke)
             {
@@ -2876,7 +2876,7 @@ namespace iiMenu.Mods
         public static void Ghost()
         {
             bool hit = rightPrimary;
-            if (GetIndex("Non-Togglable Ghost").enabled)
+            if (Buttons.GetIndex("Non-Togglable Ghost").enabled)
                 ghostMonke = hit;
             
             VRRig.LocalRig.enabled = !ghostMonke;
@@ -3549,7 +3549,7 @@ namespace iiMenu.Mods
         public static void SizeChanger()
         {
             float increment = 0.05f;
-            if (!GetIndex("Disable Size Changer Buttons").enabled)
+            if (!Buttons.GetIndex("Disable Size Changer Buttons").enabled)
             {
                 if (leftTrigger > 0.5f)
                     increment = 0.2f;
@@ -3866,7 +3866,7 @@ namespace iiMenu.Mods
                 pullPowerInt = powerNames.Length - 1;
 
             pullPower = powers[pullPowerInt];
-            GetIndex("Change Pull Mod Power").overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>" + powerNames[pullPowerInt] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Pull Mod Power").overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>" + powerNames[pullPowerInt] + "</color><color=grey>]</color>";
         }
 
         private static float pullPower = 0.05f;
@@ -4165,7 +4165,7 @@ namespace iiMenu.Mods
                 predInt = predAmnts.Length - 1;
 
             predCount = predAmnts[predInt];
-            GetIndex("Change Prediction Amount").overlapText = "Change Prediction Amount <color=grey>[</color><color=green>" + predAmntNames[predInt] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Prediction Amount").overlapText = "Change Prediction Amount <color=grey>[</color><color=green>" + predAmntNames[predInt] + "</color><color=grey>]</color>";
         }
 
         public static void VelocityLongArms()
@@ -4221,7 +4221,7 @@ namespace iiMenu.Mods
                 timerPowerIndex = 50;
 
             timerPower = timerPowerIndex / 10f;
-            GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + (timerPowerIndex / 10f) + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + (timerPowerIndex / 10f) + "</color><color=grey>]</color>";
         }
 
         private static float timerPower = 1.5f;
@@ -4259,7 +4259,7 @@ namespace iiMenu.Mods
 
         public static void Strafe()
         {
-            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled 
+            Vector3 direction = Buttons.GetIndex("Hand Oriented Strafe").enabled 
                 ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized 
                 : GorillaTagger.Instance.bodyCollider.transform.forward;
 
@@ -4271,7 +4271,7 @@ namespace iiMenu.Mods
 
         public static void DynamicStrafe()
         {
-            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled
+            Vector3 direction = Buttons.GetIndex("Hand Oriented Strafe").enabled
                 ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized
                 : GorillaTagger.Instance.bodyCollider.transform.forward;
 
@@ -5188,7 +5188,7 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    if (!GetIndex("Reverse Intercourse").enabled)
+                    if (!Buttons.GetIndex("Reverse Intercourse").enabled)
                     {
                         VRRig.LocalRig.transform.position = lockTarget.transform.position + lockTarget.transform.forward * -(0.2f + Mathf.Sin(Time.frameCount / 8f) * 0.1f);
                         VRRig.LocalRig.transform.rotation = lockTarget.transform.rotation;
@@ -5261,7 +5261,7 @@ namespace iiMenu.Mods
                 {
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, 64, true, 999999f);
 
-                    if (GetIndex("Splash Intercourse").enabled)
+                    if (Buttons.GetIndex("Splash Intercourse").enabled)
                         Fun.BetaWaterSplash(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, 4f, 100f, true, false);
 
                     RPCProtection();
@@ -5291,7 +5291,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    if (!GetIndex("Reverse Intercourse").enabled)
+                    if (!Buttons.GetIndex("Reverse Intercourse").enabled)
                     {
                         VRRig.LocalRig.transform.position = targetRig.transform.position + targetRig.transform.forward * -(0.2f + Mathf.Sin(Time.frameCount / 8f) * 0.1f);
                         VRRig.LocalRig.transform.rotation = targetRig.transform.rotation;
@@ -5349,7 +5349,7 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    if (!GetIndex("Reverse Intercourse").enabled)
+                    if (!Buttons.GetIndex("Reverse Intercourse").enabled)
                     {
                         VRRig.LocalRig.transform.position = lockTarget.transform.position + lockTarget.transform.forward * (0.2f + Mathf.Sin(Time.frameCount / 8f) * 0.1f) + lockTarget.transform.up * -0.4f;
                         VRRig.LocalRig.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
@@ -5435,7 +5435,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    if (!GetIndex("Reverse Intercourse").enabled)
+                    if (!Buttons.GetIndex("Reverse Intercourse").enabled)
                     {
                         VRRig.LocalRig.transform.position = targetRig.transform.position + targetRig.transform.forward * (0.2f + Mathf.Sin(Time.frameCount / 8f) * 0.1f) + targetRig.transform.up * -0.4f;
                         VRRig.LocalRig.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
@@ -5606,7 +5606,7 @@ namespace iiMenu.Mods
             if (multiplicationAmount < 0)
                 multiplicationAmount = 1280;
 
-            GetIndex("Knockback Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Knockback Multiplication Amount").overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>" + (multiplicationAmount / 10f) + "</color><color=grey>]</color>";
         }
     }
 }

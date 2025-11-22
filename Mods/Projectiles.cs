@@ -23,6 +23,7 @@ using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
@@ -145,7 +146,7 @@ namespace iiMenu.Mods
                 Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
-                if (GetIndex("Random Projectile").enabled)
+                if (Buttons.GetIndex("Random Projectile").enabled)
                     CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
                 else
                 {
@@ -203,7 +204,7 @@ namespace iiMenu.Mods
                             slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                         }
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
+                        if (PhotonNetwork.InRoom && !Buttons.GetIndex("Client Sided Projectiles").enabled)
                         {
                             if (friendSided)
                             {
@@ -252,7 +253,7 @@ namespace iiMenu.Mods
                         if (showSelf)
                             slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
+                        if (PhotonNetwork.InRoom && !Buttons.GetIndex("Client Sided Projectiles").enabled)
                         {
                             int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
@@ -366,7 +367,7 @@ namespace iiMenu.Mods
             if (projmode < 0)
                 projmode = shortProjectileNames.Length - 1;
 
-            GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
 
         public static int targetProjectileIndex;
@@ -381,7 +382,7 @@ namespace iiMenu.Mods
             if (targetProjectileIndex < 0)
                 targetProjectileIndex = 15;
 
-            GetIndex("Change Projectile Index").overlapText = "Change Projectile Index <color=grey>[</color><color=green>" + (targetProjectileIndex + 1).ToString() + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Projectile Index").overlapText = "Change Projectile Index <color=grey>[</color><color=green>" + (targetProjectileIndex + 1).ToString() + "</color><color=grey>]</color>";
         }
 
         public static int shootCycle = 1;
@@ -413,7 +414,7 @@ namespace iiMenu.Mods
                 shootCycle = ShootStrengthTypes.Length - 1;
 
             ShootStrength = ShootStrengthTypes[shootCycle];
-            GetIndex("Change Shoot Speed").overlapText = "Change Shoot Speed <color=grey>[</color><color=green>" + ShootStrengthNames[shootCycle] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Shoot Speed").overlapText = "Change Shoot Speed <color=grey>[</color><color=green>" + ShootStrengthNames[shootCycle] + "</color><color=grey>]</color>";
         }
 
         public static int red = 10;
@@ -431,7 +432,7 @@ namespace iiMenu.Mods
             if (red < 0)
                 red = 10;
 
-            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + red + "</color><color=grey>]</color>";
+            Buttons.GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + red + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseGreen(bool positive = true)
@@ -445,7 +446,7 @@ namespace iiMenu.Mods
             if (green < 0)
                 green = 10;
 
-            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + green + "</color><color=grey>]</color>";
+            Buttons.GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + green + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseBlue(bool positive = true)
@@ -459,7 +460,7 @@ namespace iiMenu.Mods
             if (blue < 0)
                 blue = 10;
 
-            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue + "</color><color=grey>]</color>";
+            Buttons.GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue + "</color><color=grey>]</color>";
         }
 
         public static float projDebounce;
@@ -476,12 +477,12 @@ namespace iiMenu.Mods
             if (projDebounceIndex < 0)
                 projDebounceIndex = 20;
 
-            if (projDebounceIndex < 8 && fromMenu && (!GetIndex("Friend Sided Projectiles").enabled || !GetIndex("Client Sided Projectiles").enabled))
+            if (projDebounceIndex < 8 && fromMenu && (!Buttons.GetIndex("Friend Sided Projectiles").enabled || !Buttons.GetIndex("Client Sided Projectiles").enabled))
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.4 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
             Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
-            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType + "</color><color=grey>]</color>";
         }
 
         public static Color CalculateProjectileColor()
@@ -490,14 +491,14 @@ namespace iiMenu.Mods
             byte g = 255;
             byte b = 255;
 
-            if (GetIndex("Random Color").enabled)
+            if (Buttons.GetIndex("Random Color").enabled)
             {
                 r = (byte)Random.Range(0, 255);
                 g = (byte)Random.Range(0, 255);
                 b = (byte)Random.Range(0, 255);
             }
 
-            if (GetIndex("Rainbow Projectiles").enabled)
+            if (Buttons.GetIndex("Rainbow Projectiles").enabled)
             {
                 float h = Time.frameCount / 180f % 1f;
                 Color rgbcolor = Color.HSVToRGB(h, 1f, 1f);
@@ -506,7 +507,7 @@ namespace iiMenu.Mods
                 b = (byte)(rgbcolor.b * 255);
             }
 
-            if (GetIndex("Hard Rainbow Projectiles").enabled)
+            if (Buttons.GetIndex("Hard Rainbow Projectiles").enabled)
             {
                 float h = Time.frameCount / 180f % 1f;
                 Color rgbcolor = Color.HSVToRGB(h, 1f, 1f);
@@ -515,7 +516,7 @@ namespace iiMenu.Mods
                 b = (byte)(Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f);
             }
 
-            if (GetIndex("Custom Colored Projectiles").enabled)
+            if (Buttons.GetIndex("Custom Colored Projectiles").enabled)
             {
                 r = (byte)(red / 10f * 255);
                 g = (byte)(green / 10f * 255);
@@ -531,7 +532,7 @@ namespace iiMenu.Mods
 
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
-                if (GetIndex("Random Projectile").enabled)
+                if (Buttons.GetIndex("Random Projectile").enabled)
                     projIndex = Random.Range(0, ProjectileObjectNames.Length);
                 
                 string projectilename = ProjectileObjectNames[projIndex];
@@ -539,7 +540,7 @@ namespace iiMenu.Mods
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 charvel = GTPlayer.Instance.RigidbodyVelocity;
 
-                if (GetIndex("Shoot Projectiles").enabled)
+                if (Buttons.GetIndex("Shoot Projectiles").enabled)
                 {
                     charvel = GTPlayer.Instance.RigidbodyVelocity + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                     if (Mouse.current.leftButton.isPressed)
@@ -552,40 +553,40 @@ namespace iiMenu.Mods
                     }
                 }
 
-                if (GetIndex("Random Direction").enabled)
+                if (Buttons.GetIndex("Random Direction").enabled)
                     charvel = RandomVector3(100f);
 
-                if (GetIndex("Above Players").enabled)
+                if (Buttons.GetIndex("Above Players").enabled)
                 {
                     VRRig targetRig = GetCurrentTargetRig();
                     startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 
-                if (GetIndex("Rain Projectiles").enabled)
+                if (Buttons.GetIndex("Rain Projectiles").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-2f, 2f), 2f, Random.Range(-2f, 2f));
                     charvel = Vector3.zero;
                 }
 
-                if (GetIndex("Projectile Aura").enabled)
+                if (Buttons.GetIndex("Projectile Aura").enabled)
                 {
                     float time = Time.frameCount;
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
                 }
 
-                if (GetIndex("True Projectile Aura").enabled)
+                if (Buttons.GetIndex("True Projectile Aura").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                     charvel = RandomVector3(10f);
                 }
 
-                if (GetIndex("Projectile Fountain").enabled)
+                if (Buttons.GetIndex("Projectile Fountain").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
                     charvel = new Vector3(Random.Range(-10, 10), 15, Random.Range(-10, 10));
                 }
 
-                if (GetIndex("Include Hand Velocity").enabled)
+                if (Buttons.GetIndex("Include Hand Velocity").enabled)
                     charvel = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
 
                 BetaFireProjectile(projectilename, startpos, charvel, CalculateProjectileColor());
@@ -603,7 +604,7 @@ namespace iiMenu.Mods
                 {
                     int projIndex = projmode * 2;
                     
-                    if (GetIndex("Random Projectile").enabled)
+                    if (Buttons.GetIndex("Random Projectile").enabled)
                         projIndex = Random.Range(0, ProjectileObjectNames.Length);
                     
                     string projectilename = ProjectileObjectNames[projIndex];
@@ -611,37 +612,37 @@ namespace iiMenu.Mods
                     Vector3 startpos = lockTarget.rightHandTransform.position;
                     Vector3 charvel = Vector3.zero;
 
-                    if (GetIndex("Shoot Projectiles").enabled)
+                    if (Buttons.GetIndex("Shoot Projectiles").enabled)
                         charvel = lockTarget.rightHandTransform.transform.forward * ShootStrength;
 
-                    if (GetIndex("Random Direction").enabled)
+                    if (Buttons.GetIndex("Random Direction").enabled)
                         charvel = new Vector3(Random.Range(-33, 33), Random.Range(-33, 33), Random.Range(-33, 33));
 
-                    if (GetIndex("Above Players").enabled)
+                    if (Buttons.GetIndex("Above Players").enabled)
                     {
                         VRRig targetRig = GetCurrentTargetRig();
                         startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                     }
 
-                    if (GetIndex("Rain Projectiles").enabled)
+                    if (Buttons.GetIndex("Rain Projectiles").enabled)
                     {
                         startpos = lockTarget.headMesh.transform.position + new Vector3(Random.Range(-3f, 3f), 3f, Random.Range(-3f, 3f));
                         charvel = Vector3.zero;
                     }
 
-                    if (GetIndex("Projectile Aura").enabled)
+                    if (Buttons.GetIndex("Projectile Aura").enabled)
                     {
                         float time = Time.frameCount;
                         startpos = lockTarget.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
                     }
 
-                    if (GetIndex("True Projectile Aura").enabled)
+                    if (Buttons.GetIndex("True Projectile Aura").enabled)
                     {
                         startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                         charvel = RandomVector3(10f);
                     }
 
-                    if (GetIndex("Projectile Fountain").enabled)
+                    if (Buttons.GetIndex("Projectile Fountain").enabled)
                     {
                         startpos = lockTarget.headMesh.transform.position + new Vector3(0, 1, 0);
                         charvel = new Vector3(Random.Range(-10, 10), -15, Random.Range(-10, 10));
@@ -675,7 +676,7 @@ namespace iiMenu.Mods
             {
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
 
-                if (GetIndex("Shoot Projectiles").enabled)
+                if (Buttons.GetIndex("Shoot Projectiles").enabled)
                 {
                     Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform), out var Ray, 512f, NoInvisLayerMask());
                     if (Mouse.current.leftButton.isPressed)
@@ -686,27 +687,27 @@ namespace iiMenu.Mods
                     startpos = Ray.point;
                 }
 
-                if (GetIndex("Above Players").enabled)
+                if (Buttons.GetIndex("Above Players").enabled)
                 {
                     VRRig targetRig = GetCurrentTargetRig();
                     startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 
-                if (GetIndex("Rain Projectiles").enabled)
+                if (Buttons.GetIndex("Rain Projectiles").enabled)
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-3f, 3f), 3f, Random.Range(-3f, 3f));
 
-                if (GetIndex("Projectile Aura").enabled)
+                if (Buttons.GetIndex("Projectile Aura").enabled)
                 {
                     float time = Time.frameCount;
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
                 }
 
-                if (GetIndex("True Projectile Aura").enabled)
+                if (Buttons.GetIndex("True Projectile Aura").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                 }
 
-                if (GetIndex("Projectile Fountain").enabled)
+                if (Buttons.GetIndex("Projectile Fountain").enabled)
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
 
                 BetaFireImpact(startpos, CalculateProjectileColor());
@@ -722,7 +723,7 @@ namespace iiMenu.Mods
         public static void GrabProjectile()
         {
             int projIndex = projmode * 2;
-            if (GetIndex("Random Projectile").enabled)
+            if (Buttons.GetIndex("Random Projectile").enabled)
                 projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
 
             if (leftGrab && !lastLeftGrab)

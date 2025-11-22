@@ -265,7 +265,7 @@ namespace iiMenu.Mods
             if (BindMode < 0)
                 BindMode = names.Length - 1;
 
-            GetIndex("Sound Bindings").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Sound Bindings").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
         }
 
         public static void BetaPlayTag(int id, float volume)
@@ -348,7 +348,7 @@ namespace iiMenu.Mods
             if (soundId < 0)
                 soundId = GTPlayer.Instance.materialData.Count - 1;
 
-            GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseSoundID()
@@ -356,7 +356,7 @@ namespace iiMenu.Mods
             soundId++;
             soundId %= GTPlayer.Instance.materialData.Count;
 
-            GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId + "</color><color=grey>]</color>";
         }
 
         public static void CustomSoundSpam() => SoundSpam(soundId);
