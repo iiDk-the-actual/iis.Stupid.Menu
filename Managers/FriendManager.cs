@@ -29,7 +29,7 @@ using iiMenu.Mods;
 using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -45,6 +45,7 @@ using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using JoinType = GorillaNetworking.JoinType;
 

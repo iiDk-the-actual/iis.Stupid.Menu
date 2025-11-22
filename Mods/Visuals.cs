@@ -42,6 +42,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Object = UnityEngine.Object;
 

@@ -44,6 +44,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;

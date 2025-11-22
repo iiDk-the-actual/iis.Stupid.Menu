@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
+using static iiMenu.Utilities.AssetUtilities;
 
 namespace iiMenu.Managers
 {
@@ -144,7 +145,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
                 }   
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> There was an issue generating your response.", 4000);
-                Settings.DictationPlay(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), Main.buttonClickVolume / 10f);
+                Settings.DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), Main.buttonClickVolume / 10f);
                 if (!Main.GetIndex("Chain Voice Commands").enabled)
                     CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
                 yield break;
@@ -156,7 +157,7 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             MatchCollection matches = Regex.Matches(response, @"<([A-Z]+)(?:_""([^""]*)"")?>");
 
             if (Main.dynamicSounds)
-                Settings.DictationPlay(Main.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
+                Settings.DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
 
             string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
             NotificationManager.ClearAllNotifications();

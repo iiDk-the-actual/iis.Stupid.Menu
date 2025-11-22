@@ -22,6 +22,7 @@
 using HarmonyLib;
 using iiMenu.Extensions;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 
 namespace iiMenu.Patches.Menu
 {

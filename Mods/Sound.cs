@@ -34,6 +34,8 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.FileUtilities;
 
 namespace iiMenu.Mods
 {

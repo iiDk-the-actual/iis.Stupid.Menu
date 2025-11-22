@@ -48,7 +48,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -60,6 +59,8 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json;
 using Valve.VR;
+using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Button = iiMenu.Classes.Menu.Button;
@@ -3746,129 +3747,6 @@ namespace iiMenu.Menu
             Prompt($"A new version is available ({versionArchive}). Would you like to update?", Settings.UpdateMenu);
         }
 
-        private static void LoadAssetBundle()
-        {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{PluginInfo.ClientResourcePath}.iimenu");
-            if (stream != null)
-                assetBundle = AssetBundle.LoadFromStream(stream);
-            else
-                LogManager.LogError("Failed to load assetbundle");
-        }
-
-        public static T LoadObject<T>(string assetName) where T : Object
-        {
-            if (assetBundle == null)
-                LoadAssetBundle();
-
-            T gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
-            return gameObject;
-        }
-
-        public static T LoadAsset<T>(string assetName) where T : Object
-        {
-            if (assetBundle == null)
-                LoadAssetBundle();
-
-            T gameObject = assetBundle.LoadAsset(assetName) as T;
-            return gameObject;
-        }
-
-        public static readonly Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip>();
-        public static AudioClip LoadSoundFromFile(string fileName) // Thanks to ShibaGT for help with loading the audio from file
-        {
-            AudioClip sound;
-            if (!audioFilePool.TryGetValue(fileName, out var value))
-            {
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
-                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{fileName}";
-                filePath = filePath.Replace("\\", "/");
-
-                UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip($"file://{filePath}", GetAudioType(GetFileExtension(fileName)));
-                UnityWebRequestAsyncOperation newvar = actualrequest.SendWebRequest();
-                while (!newvar.isDone) { }
-
-                AudioClip actualclip = DownloadHandlerAudioClip.GetContent(actualrequest);
-                sound = Task.FromResult(actualclip).Result;
-
-                audioFilePool.Add(fileName, sound);
-            }
-            else
-                sound = value;
-
-            return sound;
-        }
-
-        public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
-        {
-            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
-            string directory = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(directory))
-                // ReSharper disable once AssignNullToNotNullAttribute
-                Directory.CreateDirectory(directory);
-
-            if (!File.Exists(filePath))
-            {
-                LogManager.Log("Downloading " + fileName);
-                using WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, filePath);
-            }
-
-            return LoadSoundFromFile(fileName);
-        }
-
-        public static readonly Dictionary<string, Texture2D> textureResourceDictionary = new Dictionary<string, Texture2D>();
-        public static Texture2D LoadTextureFromResource(string resourcePath)
-        {
-            if (textureResourceDictionary.TryGetValue(resourcePath, out Texture2D existingTexture))
-                return existingTexture;
-
-            Texture2D texture = new Texture2D(2, 2);
-
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
-            if (stream != null)
-            {
-                byte[] fileData = new byte[stream.Length];
-                // ReSharper disable once MustUseReturnValue
-                stream.Read(fileData, 0, (int)stream.Length);
-                texture.LoadImage(fileData);
-            }
-            else
-                LogManager.LogError("Failed to load texture from resource: " + resourcePath);
-
-            textureResourceDictionary[resourcePath] = texture;
-
-            return texture;
-        }
-
-        public static readonly Dictionary<string, Texture2D> textureUrlDictionary = new Dictionary<string, Texture2D>();
-        public static Texture2D LoadTextureFromURL(string resourcePath, string fileName)
-        {
-            if (textureUrlDictionary.TryGetValue(resourcePath, out Texture2D existingTexture))
-                return existingTexture;
-
-            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
-            string directory = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(directory))
-                // ReSharper disable once AssignNullToNotNullAttribute
-                Directory.CreateDirectory(directory);
-
-            Texture2D texture = new Texture2D(2, 2);
-
-            if (!File.Exists(filePath))
-            {
-                LogManager.Log("Downloading " + fileName);
-                WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, filePath);
-            }
-
-            byte[] bytes = File.ReadAllBytes(filePath);
-            texture.LoadImage(bytes);
-
-            textureUrlDictionary[resourcePath] = texture;
-
-            return texture;
-        }
-
         public static readonly Dictionary<(Color, Color), Texture2D> cacheGradients = new Dictionary<(Color, Color), Texture2D>();
 
         public static Texture2D GetGradientTexture(Color colorA, Color colorB)
@@ -4435,57 +4313,6 @@ namespace iiMenu.Menu
 
             string[] others = array.OrderBy(s => s).ToArray();
             return others.ToArray();
-        }
-
-        public static string GetFileExtension(string fileName) =>
-            fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
-
-        public static string RemoveLastDirectory(string directory) =>
-            directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory[..directory.LastIndexOf('/')];
-
-        public static string RemoveFileExtension(string file)
-        {
-            int index = 0;
-            string output = "";
-            string[] split = file.Split(".");
-            foreach (string lol in split)
-            {
-                index++;
-                if (index != split.Length)
-                {
-                    if (index > 1)
-                        output += ".";
-                    
-                    output += lol;
-                }
-            }
-            return output;
-        }
-
-        public static AudioType GetAudioType(string extension)
-        {
-            return extension.ToLower() switch
-            {
-                "mp3" => AudioType.MPEG,
-                "wav" => AudioType.WAV,
-                "ogg" => AudioType.OGGVORBIS,
-                "aiff" => AudioType.AIFF,
-                _ => AudioType.WAV,
-            };
-        }
-
-        public static string GetFullPath(Transform transform)
-        {
-            string path = "";
-            while (transform.parent != null)
-            {
-                transform = transform.parent;
-                if (path == "")
-                    path = transform.name;
-                else
-                    path = transform.name + "/" + path;
-            }
-            return path;
         }
 
         public static IEnumerator GrowCoroutine()
@@ -6826,7 +6653,6 @@ jgs \_   _/ |Oo\
         public static VideoPlayer promptVideoPlayer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
-        public static AssetBundle assetBundle;
         public static Text fpsCount;
         private static float fpsAvgTime;
         private static float fpsAverageNumber;

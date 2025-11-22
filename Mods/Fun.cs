@@ -58,6 +58,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
