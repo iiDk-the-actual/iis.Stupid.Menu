@@ -1607,7 +1607,7 @@ namespace iiMenu.Classes.Menu
 
             if (!consoleAssets.ContainsKey(id))
             {
-                float timeoutTime = Time.time + 5f;
+                float timeoutTime = Time.time + 10f;
                 while (Time.time < timeoutTime && !consoleAssets.ContainsKey(id))
                     yield return null;
             }
@@ -1626,7 +1626,7 @@ namespace iiMenu.Classes.Menu
 
             if (isAudio && asset.pauseAudioUpdates)
             {
-                float timeoutTime = Time.time + 5f;
+                float timeoutTime = Time.time + 10f;
                 while (Time.time < timeoutTime && asset.pauseAudioUpdates)
                     yield return null;
             }
