@@ -2317,19 +2317,18 @@ namespace iiMenu.Menu
             if (buttonText == null)
                 return null;
 
-            if (cacheGetIndex.ContainsKey(buttonText))
+            if (cacheGetIndex.TryGetValue(buttonText, out var cacheData))
             {
-                var CacheData = cacheGetIndex[buttonText];
                 try
                 {
-                    if (Buttons.buttons[CacheData.Category][CacheData.Index].buttonText == buttonText)
-                        return Buttons.buttons[CacheData.Category][CacheData.Index];
+                    if (buttons[cacheData.Category][cacheData.Index].buttonText == buttonText)
+                        return buttons[cacheData.Category][cacheData.Index];
                 }
                 catch { cacheGetIndex.Remove(buttonText); }
             }
 
             int categoryIndex = 0;
-            foreach (ButtonInfo[] buttons in Buttons.buttons)
+            foreach (ButtonInfo[] buttons in buttons)
             {
                 int buttonIndex = 0;
                 foreach (ButtonInfo button in buttons)
