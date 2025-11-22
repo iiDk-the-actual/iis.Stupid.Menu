@@ -1377,7 +1377,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Firefly", method =() => Fun.SpazObject("Firefly"), toolTip = "Gives the firefly a seizure." },
                 new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazObject("Cave Bat Holdable"), toolTip = "Gives the bat a seizure." },
                 new ButtonInfo { buttonText = "Spaz Camera", method = Fun.SpazCamera, toolTip = "Gives the camera a seizure." },
-                new ButtonInfo { buttonText = "Spaz Balloons", method = Fun.SpazBalloons, toolTip = "Gives the gliders a seizure." },
+                new ButtonInfo { buttonText = "Spaz Balloons", method = Fun.SpazBalloons, toolTip = "Gives the balloons a seizure." },
                 new ButtonInfo { buttonText = "Spaz Gliders", method = Fun.SpazGliders, toolTip = "Gives the gliders a seizure." },
                 new ButtonInfo { buttonText = "Spaz Hoverboard", method = Fun.SpazHoverboard, toolTip = "Gives your hoverboard a seizure while holding it."},
 
@@ -1448,6 +1448,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method = Fun.ChangeAccessories, toolTip = "Use your grips to change what hat you're wearing." },
                 new ButtonInfo { buttonText = "Spaz Accessories", overlapText = "Spaz Cosmetics <color=grey>[</color><color=green>All</color><color=grey>]</color>", method = Fun.SpazAccessories, toolTip = "Spazzes your hats out for everyone when holding <color=green>trigger</color>." },
                 new ButtonInfo { buttonText = "Spaz Cosmetics <color=grey>[</color><color=green>Others</color><color=grey>]</color>", method = Fun.SpazAccessoriesOthers, toolTip = "Spazzes your hats out for everyone except you when holding <color=green>trigger</color>." },
+
+                new ButtonInfo { buttonText = "Spaz Balloon Cosmetics", method = Fun.SpazAccessoriesBalloon, toolTip = "Spazzes your balloons out for everyone when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Cosmetic Spoof", enableMethod = Fun.TryOnAnywhere, disableMethod = Fun.TryOffAnywhere, toolTip = "Lets you try on cosmetics from anywhere. Enable this mod after wearing the cosmetics." },
                 new ButtonInfo { buttonText = "Cosmetic Browser", method = Fun.CosmeticBrowser, isTogglable = false, toolTip = "Browse through every cosmetic that you can try on and add it to your cart." },

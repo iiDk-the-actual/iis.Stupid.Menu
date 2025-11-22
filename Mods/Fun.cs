@@ -6020,6 +6020,35 @@ Piece Name: {gunTarget.name}";
             return tryonarchive.ToArray();
         }
 
+        private static string[] GetTryOnBalloons()
+        {
+            if (tryonarchive == null)
+            {
+                tryonarchive = new List<string>();
+                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
+                {
+                    if (dearlord.canTryOn && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
+                        tryonarchive.Add(dearlord.itemName);
+                }
+            }
+            return tryonarchive.ToArray();
+        }
+
+        private static string[] GetOwnedBalloons()
+        {
+            if (ownedarchive == null)
+            {
+                ownedarchive = new List<string>();
+                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
+                {
+                    if (VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName) && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
+                        ownedarchive.Add(dearlord.itemName);
+                }
+            }
+            return ownedarchive.ToArray();
+        }
+
+
         private static float delay;
         public static void SpazAccessories()
         {
@@ -6034,6 +6063,35 @@ Piece Name: {gunTarget.name}";
                     for (int i = 0; i <= amnt; i++)
                         randomCosmetics.Add(owned[Random.Range(0, owned.Length)]);
                     
+                    if (VRRig.LocalRig.inTryOnRoom)
+                    {
+                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                    }
+                    else
+                    {
+                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                        VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
+                    }
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(randomCosmetics.ToArray()), PackCosmetics(randomCosmetics.ToArray()), false);
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void SpazAccessoriesBalloon()
+        {
+            if (rightTrigger > 0.5f && Time.time > delay)
+            {
+                delay = Time.time + 0.05f;
+                string[] owned = VRRig.LocalRig.inTryOnRoom ? GetTryOnBalloons() : GetOwnedBalloons();
+                int amnt = Math.Clamp(owned.Length, 0, 15);
+                if (amnt > 0)
+                {
+                    List<string> randomCosmetics = new List<string>();
+                    for (int i = 0; i <= amnt; i++)
+                        randomCosmetics.Add(owned[Random.Range(0, owned.Length)]);
+
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
                         CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
