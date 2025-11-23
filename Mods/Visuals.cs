@@ -3752,6 +3752,82 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Shader chams;
+
+        public static void Chams()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal && vrrig.colorInitialized && vrrig.initializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/Chams")
+                {
+                    if (!chams)
+                        chams = LoadAsset<Shader>("Chams");
+
+                    void updateShader(Material target, Material src, Color color, bool isFace = false)
+                    {
+
+                        target.shader = chams;
+
+                        Texture2DArray atlas = src.GetTexture("_BaseMap_Atlas") as Texture2DArray;
+                        float slice = src.GetFloat("_BaseMap_AtlasSlice");
+                        target.SetTexture("_BaseMap_Atlas", atlas);
+                        target.SetFloat("_BaseMap_AtlasSlice", slice);
+
+                        if (src.HasProperty("_BaseMap_ST"))
+                        {
+                            Vector4 st = src.GetVector("_BaseMap_ST");
+                            target.SetVector("_BaseMap_ST", st);
+                        }
+
+                        if (isFace)
+                        {
+                            target.SetFloat("_UseMouthMap", 1.0f);  
+
+                            if (src.HasProperty("_MouthMap"))
+                            {
+                                Texture mouthTex = src.GetTexture("_MouthMap");
+                                if (mouthTex != null)
+                                {
+                                    target.SetTexture("_MouthMap", mouthTex);
+                                }
+                            }
+
+                            if (src.HasProperty("_MouthMap_ST"))
+                            {
+                                Vector4 mouthST = src.GetVector("_MouthMap_ST");
+                                target.SetVector("_MouthMap_ST", mouthST);
+                            }
+                        }
+                        else
+                        {
+                            target.SetFloat("_UseMouthMap", 0f);
+                        }
+
+                        target.SetColor("_Color", color);
+                    }
+
+                    SkinnedMeshRenderer bodyRenderer = vrrig.mainSkin;
+                    Material[] materials = bodyRenderer.materials;
+
+                    for (int i = 0; i < materials.Length; i++)
+                        updateShader(materials[i], i == 0 ? vrrig.materialsToChangeTo[vrrig.setMatIndex] : materials[i], materials[i].color, false);
+
+                    updateShader(vrrig.myMouthFlap.targetFaceRenderer.material, vrrig.myMouthFlap.targetFaceRenderer.material, Color.white, true);
+
+                    if (Buttons.GetIndex("Show Cosmetics").enabled)
+                    {
+                        foreach (GameObject obj in vrrig.cosmetics)
+                        {
+                            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+                            foreach (Renderer renderer in renderers)
+                                updateShader(renderer.material, renderer.material, renderer.material.color, false);
+                        }
+                    }
+                    
+                }
+            }
+        }
+
         public static void CasualChams()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -3829,6 +3905,7 @@ namespace iiMenu.Mods
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
                             vrrig.mainSkin.material.color = vrrig.playerColor;
+                        
                     }
                 }
             }
@@ -3877,9 +3954,18 @@ namespace iiMenu.Mods
             {
                 if (!vrrig.isLocal)
                 {
-                    vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    foreach (Material mat in vrrig.mainSkin.materials)
+                        mat.shader = Shader.Find("GorillaTag/UberShader");
                     if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
                         vrrig.mainSkin.material.color = vrrig.playerColor;
+                    vrrig.myMouthFlap.targetFaceRenderer.material.shader = Shader.Find("GorillaTag/UberShader");
+                    foreach (GameObject obj in vrrig.cosmetics)
+                    {
+                        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+                        foreach (Renderer renderer in renderers)
+                            renderer.material.shader = Shader.Find("GorillaTag/UberShader");
+                    }
+
                 }
             }
         }
