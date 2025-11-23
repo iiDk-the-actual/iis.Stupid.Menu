@@ -1693,7 +1693,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.parent = menu.transform;
                 buttonObject.transform.rotation = Quaternion.identity;
 
-                buttonObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, buttonDistance * 0.8f) : new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
+                buttonObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, ButtonDistance * 0.8f) : new Vector3(0.09f, 1.3f, ButtonDistance * 0.8f);
 
                 if (longmenu && buttonIndex >= pageSize)
                 {
@@ -1888,7 +1888,7 @@ namespace iiMenu.Menu
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
-            textTransform.sizeDelta = new Vector2(method.incremental && incrementalButtons ? .18f : .2f, .03f * (buttonDistance / 0.1f));
+            textTransform.sizeDelta = new Vector2(method.incremental && incrementalButtons ? .18f : .2f, .03f * (ButtonDistance / 0.1f));
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
@@ -2206,7 +2206,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.parent = menu.transform;
                 buttonObject.transform.rotation = Quaternion.identity;
 
-                buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, buttonDistance * 0.8f);
+                buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, ButtonDistance * 0.8f);
                 buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.399f, 0.28f - offset) : new Vector3(0.56f, 0.599f, 0.28f - offset);
 
                 Button button = buttonObject.AddComponent<Button>();
@@ -2258,7 +2258,7 @@ namespace iiMenu.Menu
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
-            textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
+            textTransform.sizeDelta = new Vector2(.2f, .03f * (ButtonDistance / 0.1f));
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
@@ -2635,7 +2635,7 @@ namespace iiMenu.Menu
             if (!disableDisconnectButton)
             {
                 AddButton(-0.3f, -1, Buttons.GetIndex("Disconnect"));
-                hkbStartTime -= buttonDistance;
+                hkbStartTime -= ButtonDistance;
             }
 
             if (quickActions.Count > 0)
@@ -2650,7 +2650,7 @@ namespace iiMenu.Menu
                     }
 
                     AddButton(hkbStartTime, -1, button);
-                    hkbStartTime -= buttonDistance;
+                    hkbStartTime -= ButtonDistance;
                 }
             }
 
@@ -2690,9 +2690,9 @@ namespace iiMenu.Menu
                 searchBoxObject.transform.parent = menu.transform;
                 searchBoxObject.transform.rotation = Quaternion.identity;
 
-                searchBoxObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, buttonDistance * 0.8f) : new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
+                searchBoxObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, ButtonDistance * 0.8f) : new Vector3(0.09f, 1.3f, ButtonDistance * 0.8f);
 
-                searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - buttonOffset * buttonDistance);
+                searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - buttonOffset * ButtonDistance);
 
                 if (shouldOutline)
                     OutlineObj(searchBoxObject, true);
@@ -2734,11 +2734,11 @@ namespace iiMenu.Menu
 
                 RectTransform textTransform = keyboardInputObject.GetComponent<RectTransform>();
                 textTransform.localPosition = Vector3.zero;
-                textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
+                textTransform.sizeDelta = new Vector2(.2f, .03f * (ButtonDistance / 0.1f));
                 if (NoAutoSizeText)
                     textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
-                textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * buttonDistance / 2.6f);
+                textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * ButtonDistance / 2.6f);
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 if (outlineText)
@@ -2854,7 +2854,7 @@ namespace iiMenu.Menu
                             .ToArray();
 
                     for (int i = 0; i < renderButtons.Length; i++)
-                        AddButton((i + buttonIndexOffset + buttonOffset) * buttonDistance, i, renderButtons[i]);
+                        AddButton((i + buttonIndexOffset + buttonOffset) * ButtonDistance, i, renderButtons[i]);
                 }
                 catch
                 {
@@ -3254,11 +3254,11 @@ namespace iiMenu.Menu
                 case 1:
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
-                        new Vector3(0.09f, thinMenu ? 0.9f : 1.3f, buttonDistance * 0.8f),
-                        new Vector3(0.56f, 0f, 0.28f - buttonDistance * (buttonOffset - 2)),
-                        new Vector3(0.56f, 0f, 0.28f - buttonDistance * (buttonOffset - 1)),
-                        new Vector3(0.064f, 0f, 0.109f - buttonDistance * (buttonOffset - 2) / 2.55f),
-                        new Vector3(0.064f, 0f, 0.109f - buttonDistance * (buttonOffset - 1) / 2.55f),
+                        new Vector3(0.09f, thinMenu ? 0.9f : 1.3f, ButtonDistance * 0.8f),
+                        new Vector3(0.56f, 0f, 0.28f - ButtonDistance * (buttonOffset - 2)),
+                        new Vector3(0.56f, 0f, 0.28f - ButtonDistance * (buttonOffset - 1)),
+                        new Vector3(0.064f, 0f, 0.109f - ButtonDistance * (buttonOffset - 2) / 2.55f),
+                        new Vector3(0.064f, 0f, 0.109f - ButtonDistance * (buttonOffset - 1) / 2.55f),
                         Gradient
                     );
                     break;
@@ -3993,9 +3993,9 @@ namespace iiMenu.Menu
                     break;
             }
 
-            if (giveGunTarget != null)
+            if (GiveGunTarget != null)
             {
-                GunTransform = SwapGunHand ? giveGunTarget.leftHandTransform : giveGunTarget.rightHandTransform;
+                GunTransform = SwapGunHand ? GiveGunTarget.leftHandTransform : GiveGunTarget.rightHandTransform;
 
                 StartPosition = GunTransform.position;
                 Direction = GunTransform.up;
@@ -4242,11 +4242,11 @@ namespace iiMenu.Menu
 
         public static bool GetGunInput(bool isShooting)
         {
-            if (giveGunTarget != null)
+            if (GiveGunTarget != null)
             {
                 if (isShooting)
-                    return TriggerlessGuns || (SwapGunHand ? giveGunTarget.leftIndex.calcT > 0.5f : giveGunTarget.rightIndex.calcT > 0.5f);
-                return GriplessGuns || (SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f);
+                    return TriggerlessGuns || (SwapGunHand ? GiveGunTarget.leftIndex.calcT > 0.5f : GiveGunTarget.rightIndex.calcT > 0.5f);
+                return GriplessGuns || (SwapGunHand ? GiveGunTarget.leftMiddle.calcT > 0.5f : GiveGunTarget.rightMiddle.calcT > 0.5f);
             }
 
             if (isShooting)
@@ -6463,7 +6463,7 @@ jgs \_   _/ |Oo\
         public static bool pcKeyboardSounds = true;
 
         private static VRRig _giveGunTarget;
-        public static VRRig giveGunTarget
+        public static VRRig GiveGunTarget
         {
             get
             {
@@ -6495,18 +6495,12 @@ jgs \_   _/ |Oo\
         }
 
         // Compatiblity
-        public static int buttonsType
-        {
-            get => currentCategoryIndex;
-            set => currentCategoryIndex = value;
-        }
-
         public static int buttonClickSound = 8;
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
         public static int buttonOffset = 2;
         public static int menuButtonIndex = 1;
-        public static float buttonDistance
+        public static float ButtonDistance
         {
             get => 0.8f / (pageSize + buttonOffset);
         }

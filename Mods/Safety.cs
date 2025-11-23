@@ -178,7 +178,7 @@ namespace iiMenu.Mods
         }
         public static void AntiLurker()
         {
-            LurkerGhost lurker = Overpowered.lurker;
+            LurkerGhost lurker = Overpowered.Lurker;
             if (lurker.currentState == LurkerGhost.ghostState.possess && lurker.targetPlayer == NetworkSystem.Instance.LocalPlayer)
                 lurker.ChangeState(LurkerGhost.ghostState.patrol);
         }

@@ -430,8 +430,8 @@ namespace iiMenu.Mods
                 new ButtonInfo {
                     buttonText = "Give Player Guns",
                     overlapText = $"Give {targetName} Guns",
-                    method =() => giveGunTarget = playerRig,
-                    disableMethod =() => giveGunTarget = null,
+                    method =() => GiveGunTarget = playerRig,
+                    disableMethod =() => GiveGunTarget = null,
                     toolTip = $"Gives {targetName} every gun on the menu."
                 },
                 new ButtonInfo {

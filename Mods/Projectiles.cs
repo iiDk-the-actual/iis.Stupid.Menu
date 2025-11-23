@@ -481,7 +481,7 @@ namespace iiMenu.Mods
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.4 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
-            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
+            Overpowered.SnowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
             Buttons.GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType + "</color><color=grey>]</color>";
         }
 

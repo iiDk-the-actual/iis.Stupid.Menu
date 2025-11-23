@@ -136,11 +136,11 @@ namespace iiMenu.Extensions
             PlayPositionAudio(clip, position, volume);
 
         public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation, GameEntityManager manager = null) =>
-            (manager ?? Mods.Fun.gameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+            (manager ?? Mods.Fun.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
 
         public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, GameEntityManager manager = null)
         {
-            GameEntityManager gameEntityManager = manager ?? Mods.Fun.gameEntityManager;
+            GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
             if (!gameEntityManager.IsAuthority())
                 gameEntityManager.ThrowEntityLocal(gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetPlayer.Get(PhotonNetwork.LocalPlayer));
 

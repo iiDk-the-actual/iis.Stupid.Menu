@@ -132,7 +132,7 @@ namespace iiMenu.Mods
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
         public static LightningManager _lightningManager;
-        public static LightningManager lightningManager
+        public static LightningManager LightningManager
         {
             get
             {
@@ -145,17 +145,17 @@ namespace iiMenu.Mods
         }
 
         public static void SpawnLightning() =>
-            lightningManager.DoLightningStrike();
+            LightningManager.DoLightningStrike();
 
         public static float GetTimeUntilNextLightningStrike()
         {
-            if (lightningManager.lightningTimestampsRealtime == null ||
-                lightningManager.lightningTimestampsRealtime.Count == 0 ||
-                lightningManager.nextLightningTimestampIndex < 0 ||
-                lightningManager.nextLightningTimestampIndex >= lightningManager.lightningTimestampsRealtime.Count)
+            if (LightningManager.lightningTimestampsRealtime == null ||
+                LightningManager.lightningTimestampsRealtime.Count == 0 ||
+                LightningManager.nextLightningTimestampIndex < 0 ||
+                LightningManager.nextLightningTimestampIndex >= LightningManager.lightningTimestampsRealtime.Count)
                 return -1f; 
 
-            float nextStrikeTime = lightningManager.lightningTimestampsRealtime[lightningManager.nextLightningTimestampIndex];
+            float nextStrikeTime = LightningManager.lightningTimestampsRealtime[LightningManager.nextLightningTimestampIndex];
             float timeUntilStrike = nextStrikeTime - Time.realtimeSinceStartup;
 
             if (timeUntilStrike < 0f)
@@ -176,7 +176,7 @@ namespace iiMenu.Mods
             if (tt)
                 coreESPColor.a = 0.5f;
 
-            List<GameEntity> cores = Fun.gameEntityManager.entities.Where(entity => entity != null && entity.typeId == Overpowered.objectByName["GhostReactorCollectibleCore"]).ToList();
+            List<GameEntity> cores = Fun.GameEntityManager.entities.Where(entity => entity != null && entity.typeId == Overpowered.ObjectByName["GhostReactorCollectibleCore"]).ToList();
             if (cores.Count <= 0)
                 return;
             
@@ -245,7 +245,7 @@ namespace iiMenu.Mods
             if (tt)
                 coreESPColor.a = 0.5f;
 
-            List<GameEntity> enemies = Fun.gameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.ToLower().Contains("enemy")).ToList();
+            List<GameEntity> enemies = Fun.GameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.ToLower().Contains("enemy")).ToList();
             if (enemies.Count <= 0)
                 return;
 
@@ -791,7 +791,7 @@ namespace iiMenu.Mods
                     if (closest < 10f)
                         colorn = Color.red;
 
-                    GetLabel("NearbyTagger", true, $"{closest.ToString("F1")}m", colorn);
+                    GetLabel("NearbyTagger", true, $"{closest:F1}m", colorn);
                 }
             }
         }
@@ -1721,7 +1721,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = pingNameTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPing().ToString()}ms";
+                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPing()}ms";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -3656,7 +3656,7 @@ namespace iiMenu.Mods
             public MeshFilter meshFilter;
             public MeshRenderer meshRenderer;
             public GameObject wireframeObj;
-            public Color color
+            public Color Color
             {
                 get => meshRenderer.material.color;
                 set => meshRenderer.material.color = value;
@@ -3764,7 +3764,7 @@ namespace iiMenu.Mods
                     if (!uberChams)
                         uberChams = LoadAsset<Shader>("UberChams");
 
-                    void updateShader(Material target, Material src, Color color, bool isFace = false)
+                    static void updateShader(Material target, Material src, Color color, bool isFace = false)
                     {
 
                         target.shader = uberChams;
