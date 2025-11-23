@@ -926,7 +926,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hunt Wireframe ESP", method = Visuals.HuntWireframeESP, disableMethod = Visuals.DisableWireframeESP, toolTip = "Puts wireframes over players. Shows your target and who is hunting you."},
                 new ButtonInfo { buttonText = "Automatic Wireframe ESP", method =() => Visuals.AutomaticESP(Visuals.InfectionWireframeESP, Visuals.HuntWireframeESP, Visuals.CasualWireframeESP), disableMethod = Visuals.DisableWireframeESP, toolTip = "Puts wireframes over players. Shows targets for the current gamemode."},
 
-                new ButtonInfo { buttonText = "Chams", method = Visuals.Chams, disableMethod = Visuals.DisableChams, toolTip = "Lets you see players fur through walls. Shows everyone."},
+                new ButtonInfo { buttonText = "Chams", method = Visuals.Chams, disableMethod = Visuals.DisableShaderChams, toolTip = "Lets you see players fur through walls. Shows everyone."},
 
 
                 new ButtonInfo { buttonText = "Casual Chams", method = Visuals.CasualChams, disableMethod = Visuals.DisableChams, toolTip = "Lets you see players fur through walls. Shows everyone."},

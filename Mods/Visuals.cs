@@ -3755,44 +3755,38 @@ namespace iiMenu.Mods
 
         public static Shader uberChams;
 
+        private static Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
+
         public static void Chams()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal && vrrig.colorInitialized && vrrig.initializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/Chams")
+                if (!vrrig.isLocal && vrrig.colorInitialized && vrrig.initializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/UberChams")
                 {
                     if (!uberChams)
                         uberChams = LoadAsset<Shader>("UberChams");
 
                     static void updateShader(Material target, Material src, Color color, bool isFace = false)
                     {
-
                         target.shader = uberChams;
-
                         Texture2DArray atlas = src.GetTexture("_BaseMap_Atlas") as Texture2DArray;
                         float slice = src.GetFloat("_BaseMap_AtlasSlice");
                         target.SetTexture("_BaseMap_Atlas", atlas);
                         target.SetFloat("_BaseMap_AtlasSlice", slice);
-
                         if (src.HasProperty("_BaseMap_ST"))
                         {
                             Vector4 st = src.GetVector("_BaseMap_ST");
                             target.SetVector("_BaseMap_ST", st);
                         }
-
                         if (isFace)
                         {
-                            target.SetFloat("_UseMouthMap", 1.0f);  
-
+                            target.SetFloat("_UseMouthMap", 1.0f);
                             if (src.HasProperty("_MouthMap"))
                             {
                                 Texture mouthTex = src.GetTexture("_MouthMap");
                                 if (mouthTex != null)
-                                {
                                     target.SetTexture("_MouthMap", mouthTex);
-                                }
                             }
-
                             if (src.HasProperty("_MouthMap_ST"))
                             {
                                 Vector4 mouthST = src.GetVector("_MouthMap_ST");
@@ -3803,17 +3797,26 @@ namespace iiMenu.Mods
                         {
                             target.SetFloat("_UseMouthMap", 0f);
                         }
-
                         target.SetColor("_Color", color);
                     }
 
                     SkinnedMeshRenderer bodyRenderer = vrrig.mainSkin;
+                    if (!originalMaterials.ContainsKey(bodyRenderer))
+                    {
+                        Material[] originals = new Material[bodyRenderer.materials.Length];
+                        for (int i = 0; i < bodyRenderer.materials.Length; i++)
+                            originals[i] = new Material(bodyRenderer.materials[i]);
+                        originalMaterials[bodyRenderer] = originals;
+                    }
+
                     Material[] materials = bodyRenderer.materials;
-
                     for (int i = 0; i < materials.Length; i++)
-                        updateShader(materials[i], i == 0 ? vrrig.materialsToChangeTo[vrrig.setMatIndex] : materials[i], materials[i].color, false);
+                        updateShader(materials[i], i == 0 ? vrrig.materialsToChangeTo[vrrig.setMatIndex] : originalMaterials[bodyRenderer][i], materials[i].color, false);
 
-                    updateShader(vrrig.myMouthFlap.targetFaceRenderer.material, vrrig.myMouthFlap.targetFaceRenderer.material, Color.white, true);
+                    Renderer faceRenderer = vrrig.myMouthFlap.targetFaceRenderer;
+                    if (!originalMaterials.ContainsKey(faceRenderer))
+                        originalMaterials[faceRenderer] = new Material[] { new Material(faceRenderer.material) };
+                    updateShader(faceRenderer.material, originalMaterials[faceRenderer][0], Color.white, true);
 
                     if (Buttons.GetIndex("Show Cosmetics").enabled)
                     {
@@ -3821,10 +3824,60 @@ namespace iiMenu.Mods
                         {
                             Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
                             foreach (Renderer renderer in renderers)
-                                updateShader(renderer.material, renderer.material, renderer.material.color, false);
+                            {
+                                if (!originalMaterials.ContainsKey(renderer))
+                                {
+                                    Material[] originals = new Material[renderer.materials.Length];
+                                    for (int i = 0; i < renderer.materials.Length; i++)
+                                        originals[i] = new Material(renderer.materials[i]);
+                                    originalMaterials[renderer] = originals;
+                                }
+                                updateShader(renderer.material, originalMaterials[renderer][0], renderer.material.color, false);
+                            }
                         }
                     }
-                    
+                }
+            }
+        }
+
+        public static void DisableShaderChams()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    SkinnedMeshRenderer bodyRenderer = vrrig.mainSkin;
+                    if (originalMaterials.ContainsKey(bodyRenderer))
+                    {
+                        Material[] restoredMaterials = new Material[originalMaterials[bodyRenderer].Length];
+                        for (int i = 0; i < restoredMaterials.Length; i++)
+                            restoredMaterials[i] = new Material(originalMaterials[bodyRenderer][i]);
+                        bodyRenderer.materials = restoredMaterials;
+                        originalMaterials.Remove(bodyRenderer);
+                    }
+
+                    Renderer faceRenderer = vrrig.myMouthFlap.targetFaceRenderer;
+                    if (originalMaterials.ContainsKey(faceRenderer))
+                    {
+                        faceRenderer.material = new Material(originalMaterials[faceRenderer][0]);
+                        originalMaterials.Remove(faceRenderer);
+                    }
+
+                    foreach (GameObject obj in vrrig.cosmetics)
+                    {
+                        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+                        foreach (Renderer renderer in renderers)
+                        {
+                            if (originalMaterials.ContainsKey(renderer))
+                            {
+                                Material[] restoredMaterials = new Material[originalMaterials[renderer].Length];
+                                for (int i = 0; i < restoredMaterials.Length; i++)
+                                    restoredMaterials[i] = new Material(originalMaterials[renderer][i]);
+                                renderer.materials = restoredMaterials;
+                                originalMaterials.Remove(renderer);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -3959,13 +4012,6 @@ namespace iiMenu.Mods
                         mat.shader = Shader.Find("GorillaTag/UberShader");
                     if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
                         vrrig.mainSkin.material.color = vrrig.playerColor;
-                    vrrig.myMouthFlap.targetFaceRenderer.material.shader = Shader.Find("GorillaTag/UberShader");
-                    foreach (GameObject obj in vrrig.cosmetics)
-                    {
-                        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-                        foreach (Renderer renderer in renderers)
-                            renderer.material.shader = Shader.Find("GorillaTag/UberShader");
-                    }
 
                 }
             }
