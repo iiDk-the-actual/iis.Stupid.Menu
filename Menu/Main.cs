@@ -3722,10 +3722,13 @@ namespace iiMenu.Menu
             }
 
             Material targetMaterial = imageMaterials[index];
+            Image baseImage = Instantiate(image, image.transform.parent, false);
+            if (baseImage.TryGetComponent<ImageColorChanger>(out var imageColorChanger))
+                Destroy(imageColorChanger);
 
             foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
             {
-                Image newImage = Instantiate(image, image.transform.parent, false);
+                Image newImage = Instantiate(baseImage, baseImage.transform.parent, false);
 
                 newImage.rectTransform.localPosition = image.rectTransform.localPosition + offset * 0.001f;
                 
@@ -3734,6 +3737,8 @@ namespace iiMenu.Menu
 
                 newImage.material.renderQueue = image.material.renderQueue - 2;
             }
+
+            Destroy(baseImage);
         }
 
         public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
