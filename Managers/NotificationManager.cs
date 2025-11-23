@@ -39,28 +39,26 @@ namespace iiMenu.Managers
     public class NotificationManager : MonoBehaviour
     {
         public static NotificationManager Instance { get; private set; }
-        public GameObject HUDObj;
-        public GameObject HUDObj2;
 
-        private GameObject MainCamera;
-
-        private readonly Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
+        public GameObject canvas;
+        private GameObject mainCamera;
+        private readonly Material textMaterial = new Material(Shader.Find("GUI/Text Shader"));
 
         public static string PreviousNotifi;
-
         public static readonly Dictionary<string, string> information = new Dictionary<string, string>();
 
         public static Text NotifiText;
         public static Text ModText;
         public static Text StatsText;
 
-        private bool HasInit;
+        private bool hasInitialized;
         public static bool noRichText;
         public static bool soundOnError;
         public static bool noPrefix;
         public static bool narrateNotifications;
 
         public static int NotifiCounter;
+        private static readonly List<Coroutine> clearCoroutines = new List<Coroutine>();
 
         private void Start()
         {
@@ -70,91 +68,77 @@ namespace iiMenu.Managers
 
         private void Init()
         {
-            MainCamera = Camera.main.gameObject;
-            HUDObj = new GameObject();
-            HUDObj2 = new GameObject
-            {
-                name = "NOTIFICATIONLIB_HUD_OBJ"
-            };
-            HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
-            HUDObj.AddComponent<Canvas>();
-            HUDObj.AddComponent<CanvasScaler>();
-            HUDObj.AddComponent<GraphicRaycaster>();
-            HUDObj.GetComponent<Canvas>().enabled = true;
-            HUDObj.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-            HUDObj.GetComponent<Canvas>().worldCamera = MainCamera.GetComponent<Camera>();
-            HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
-            HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
-            HUDObj.transform.parent = HUDObj2.transform;
-            HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
-            Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
-            eulerAngles.y = -270f;
-            HUDObj.transform.localScale = Vector3.one;
-            HUDObj.GetComponent<RectTransform>().rotation = Quaternion.Euler(eulerAngles);
-            NotifiText = new GameObject
-            {
-                transform =
-                {
-                    parent = HUDObj.transform
-                }
-            }.AddComponent<Text>();
-            NotifiText.text = "";
-            NotifiText.fontSize = 30;
-            NotifiText.font = AgencyFB;
-            NotifiText.rectTransform.sizeDelta = new Vector2(450f, 210f);
-            NotifiText.alignment = TextAnchor.LowerLeft;
-            NotifiText.verticalOverflow = VerticalWrapMode.Overflow;
-            NotifiText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            NotifiText.material = AlertText;
+            mainCamera = Camera.main.gameObject;
 
-            ModText = new GameObject
-            {
-                transform =
-                {
-                    parent = HUDObj.transform
-                }
-            }.AddComponent<Text>();
-            ModText.text = "";
-            ModText.fontSize = 20;
-            ModText.font = AgencyFB;
-            ModText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
-            ModText.alignment = TextAnchor.UpperLeft;
-            ModText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            ModText.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
-            ModText.material = AlertText;
+            // Create canvas with parent transform for proper positioning
+            GameObject canvasParent = new GameObject("NOTIFICATIONLIB_HUD_PARENT");
+            canvasParent.transform.position = mainCamera.transform.position;
 
-            StatsText = new GameObject
-            {
-                transform =
-                {
-                    parent = HUDObj.transform
-                }
-            }.AddComponent<Text>();
-            StatsText.text = "";
-            StatsText.fontSize = 30;
-            StatsText.font = AgencyFB;
-            StatsText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
-            StatsText.alignment = TextAnchor.UpperRight;
-            StatsText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, 0.5f);
-            StatsText.material = AlertText;
+            canvas = new GameObject("NOTIFICATIONLIB_HUD_OBJ");
+            canvas.AddComponent<Canvas>();
+            canvas.AddComponent<CanvasScaler>();
+            canvas.AddComponent<GraphicRaycaster>();
+
+            Canvas canvasComponent = canvas.GetComponent<Canvas>();
+            canvasComponent.enabled = true;
+            canvasComponent.renderMode = RenderMode.WorldSpace;
+            canvasComponent.worldCamera = mainCamera.GetComponent<Camera>();
+
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(5f, 5f);
+            canvasRect.position = mainCamera.transform.position;
+
+            canvas.transform.parent = canvasParent.transform;
+            canvasRect.localPosition = new Vector3(0f, 0f, 1.6f);
+            canvasRect.localScale = Vector3.one;
+
+            Vector3 rotation = canvasRect.rotation.eulerAngles;
+            rotation.y = -270f;
+            canvasRect.rotation = Quaternion.Euler(rotation);
+
+            NotifiText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
+                new Vector2(450f, 210f), 30, TextAnchor.LowerLeft);
+
+            ModText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
+                new Vector2(450f, 1000f), 20, TextAnchor.UpperLeft);
+
+            StatsText = CreateText(canvas.transform, new Vector3(-1f, -1f, 0.5f),
+                new Vector2(450f, 1000f), 30, TextAnchor.UpperRight);
+        }
+
+        private Text CreateText(Transform parent, Vector3 localPos, Vector2 size, int fontSize, TextAnchor anchor)
+        {
+            GameObject textObj = new GameObject { transform = { parent = parent } };
+            Text text = textObj.AddComponent<Text>();
+
+            text.text = "";
+            text.fontSize = fontSize;
+            text.font = AgencyFB;
+            text.rectTransform.sizeDelta = size;
+            text.alignment = anchor;
+            text.verticalOverflow = anchor == TextAnchor.LowerLeft ? VerticalWrapMode.Overflow : VerticalWrapMode.Truncate;
+            text.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
+            text.rectTransform.localPosition = localPos;
+            text.material = textMaterial;
+
+            return text;
         }
 
         private void FixedUpdate()
         {
             try
             {
-                if (!HasInit && Camera.main != null)
+                if (!hasInitialized && Camera.main != null)
                 {
                     Init();
-                    HasInit = true;
+                    hasInitialized = true;
                 }
 
-                HUDObj.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
+                canvas.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
 
-                HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-                HUDObj2.transform.rotation = MainCamera.transform.rotation;
+                canvas.transform.position = mainCamera.transform.TransformPoint(0f, 0f, 1.6f);
+                canvas.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(0, 90, 0);
+
                 try
                 {
                     ModText.font = activeFont;
@@ -174,42 +158,47 @@ namespace iiMenu.Managers
                         ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                 }
                 catch { }
+
+                // Update alignment based on flip setting
                 ModText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
 
                 StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
                 StatsText.alignment = flipArraylist ? TextAnchor.UpperLeft : TextAnchor.UpperRight;
 
+                // Update stats display
                 if (information.Count > 0)
                 {
                     Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                     TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
-                    List<string> statsAlphabetized = information
+                    List<string> statsLines = information
                         .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColors[1].GetColor(0))}>{item.Value}</color>")
                         .OrderByDescending(item => StatsText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(item), settings))
                         .ToList();
 
-                    StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
+                    StatsText.text = string.Join("\n", statsLines);
                     StatsText.color = Color.white;
                 }
                 else
                     StatsText.text = "";
 
+                // Update mod list display
                 if (showEnabledModsVR)
                 {
-                    string enabledModsText = "";
-                    List<string> alphabetized = new List<string>();
+                    List<string> enabledMods = new List<string>();
                     int categoryIndex = 0;
-                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+
+                    foreach (ButtonInfo[] buttonList in Buttons.buttons)
                     {
-                        foreach (ButtonInfo v in buttonlist)
+                        foreach (ButtonInfo button in buttonList)
                         {
                             try
                             {
-                                if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
+                                if (button.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
                                 {
-                                    string buttonText = v.overlapText ?? v.buttonText;
+                                    string buttonText = button.overlapText ?? button.buttonText;
+
                                     if (translate)
                                         buttonText = TranslateText(buttonText);
 
@@ -221,7 +210,7 @@ namespace iiMenu.Managers
                                     if (uppercaseMode)
                                         buttonText = buttonText.ToUpper();
 
-                                    alphabetized.Add(buttonText);
+                                    enabledMods.Add(buttonText);
                                 }
                             }
                             catch { }
@@ -230,31 +219,30 @@ namespace iiMenu.Managers
                     }
 
                     TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
-                    string[] sortedButtons = alphabetized
+                    string[] sortedMods = enabledMods
                         .OrderByDescending(s => ModText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(s), settings))
                         .ToArray();
 
-                    int index = 0;
-                    foreach (string v in sortedButtons)
+                    string modListText = "";
+                    for (int i = 0; i < sortedMods.Length; i++)
                     {
-                        Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(index * -0.1f) : backgroundColor.GetCurrentColor(index * -0.1f);
+                        Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(i * -0.1f) : backgroundColor.GetCurrentColor(i * -0.1f);
 
                         if (advancedArraylist)
-                            enabledModsText += (flipArraylist ?
-                                  $"<color=#{ColorToHex(textColors[1].GetColor(0))}>{v}</color><color=#{ColorToHex(targetColor)}> |</color>"
-                                : $"<color=#{ColorToHex(backgroundColor.GetCurrentColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColors[1].GetColor(0))}>{v}</color>") + "\n";
+                            modListText += (flipArraylist ?
+                                  $"<color=#{ColorToHex(textColors[1].GetColor(0))}>{sortedMods[i]}</color><color=#{ColorToHex(targetColor)}> |</color>"
+                                : $"<color=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}>| </color><color=#{ColorToHex(textColors[1].GetColor(0))}>{sortedMods[i]}</color>") + "\n";
                         else
-                            enabledModsText += v + "\n";
-
-                        index++;
+                            modListText += sortedMods[i] + "\n";
                     }
 
-                    ModText.text = enabledModsText;
+                    ModText.text = modListText;
                     ModText.color = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                 }
                 else
                     ModText.text = "";
 
+                // Apply text case transformations
                 if (lowercaseMode)
                 {
                     ModText.text = ModText.text.ToLower();
@@ -267,12 +255,13 @@ namespace iiMenu.Managers
                     NotifiText.text = NotifiText.text.ToUpper();
                     StatsText.text = StatsText.text.ToUpper();
                 }
-                HUDObj.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
+
+                canvas.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             }
             catch (Exception e) { LogManager.Log(e); }
         }
 
-        public static void SendNotification(string NotificationText, int clearTime = -1)
+        public static void SendNotification(string notificationText, int clearTime = -1)
         {
             if (clearTime < 0)
                 clearTime = notificationDecayTime;
@@ -283,27 +272,27 @@ namespace iiMenu.Managers
                 {
                     if (translate)
                     {
-                        if (translateCache.ContainsKey(NotificationText))
-                            NotificationText = TranslateText(NotificationText);
+                        if (translateCache.ContainsKey(notificationText))
+                            notificationText = TranslateText(notificationText);
                         else
                         {
-                            TranslateText(NotificationText, delegate { SendNotification(NotificationText, clearTime); });
+                            TranslateText(notificationText, delegate { SendNotification(notificationText, clearTime); });
                             return;
                         }
                     }
 
-                    if (notificationSoundIndex != 0 && (!soundOnError || NotificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
+                    if (notificationSoundIndex != 0 && (!soundOnError || notificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
                         PlayNotificationSound();
 
                     if (inputTextColor != "green")
-                        NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
+                        notificationText = notificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
 
                     if (hideBrackets)
-                        NotificationText = NotificationText.Replace("[", "").Replace("]", "");
+                        notificationText = notificationText.Replace("[", "").Replace("]", "");
 
-                    NotificationText = NotificationText.TrimEnd('\n', '\r');
+                    notificationText = notificationText.TrimEnd('\n', '\r');
 
-                    if (PreviousNotifi == NotificationText && stackNotifications)
+                    if (PreviousNotifi == notificationText && stackNotifications)
                     {
                         NotifiCounter++;
 
@@ -326,15 +315,15 @@ namespace iiMenu.Managers
                     else
                     {
                         NotifiCounter = 0;
-                        PreviousNotifi = NotificationText;
+                        PreviousNotifi = notificationText;
 
                         if (!string.IsNullOrEmpty(NotifiText.text))
                         {
                             string currentText = NotifiText.text.TrimEnd('\n', '\r');
-                            NotifiText.text = currentText + Environment.NewLine + NotificationText;
+                            NotifiText.text = currentText + Environment.NewLine + notificationText;
                         }
                         else
-                            NotifiText.text = NotificationText;
+                            NotifiText.text = notificationText;
                     }
 
                     CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
@@ -351,13 +340,11 @@ namespace iiMenu.Managers
                     NotifiText.supportRichText = !noRichText;
 
                     if (narrateNotifications)
-                    {
-                        NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(NotificationText) : NotificationText));
-                    }
+                        NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(notificationText) : notificationText));
                 }
                 catch (Exception e)
                 {
-                    LogManager.LogError($"Notification failed, object probably nil due to third person ; {NotificationText} {e.Message}");
+                    LogManager.LogError($"Notification failed, object probably nil due to third person ; {notificationText} {e.Message}");
                 }
             }
         }
@@ -369,8 +356,8 @@ namespace iiMenu.Managers
         {
             NotifiText.text = "";
 
-            foreach (Coroutine clearCoroutine in clearCoroutines)
-                CoroutineManager.instance.StopCoroutine(clearCoroutine);
+            foreach (Coroutine coroutine in clearCoroutines)
+                CoroutineManager.instance.StopCoroutine(coroutine);
 
             clearCoroutines.Clear();
         }
@@ -434,7 +421,5 @@ namespace iiMenu.Managers
             string pattern = @"^<color=grey>\[</color><color=[^>]+>.*?</color><color=grey>\]</color> ";
             return System.Text.RegularExpressions.Regex.Replace(text, pattern, "");
         }
-
-        public static readonly List<Coroutine> clearCoroutines = new List<Coroutine>();
     }
 }

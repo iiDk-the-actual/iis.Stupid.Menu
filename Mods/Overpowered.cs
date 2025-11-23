@@ -30,6 +30,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using Pathfinding;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -787,32 +788,13 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float serializeDelay;
         public static void DirectionOnGrab(Vector3 direction)
         {
             VRRig.LocalRig.enabled = true;
             foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).Where(rig => rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer))
             {
                 VRRig.LocalRig.enabled = false;
-
-                if (Time.time > serializeDelay)
-                {
-                    serializeDelay = Time.time + 0.3f;
-
-                    for (int i = 0; i < 100; i++)
-                    {
-                        VRRig.LocalRig.transform.position += direction.normalized;
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-                    }
-
-                    RPCProtection();
-                }
-
-                if (!(rig.LatestVelocity().y > 6f)) continue;
-                VRRig.LocalRig.transform.position += direction.normalized * 100f;
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-
-                RPCProtection();
+                VRRig.LocalRig.transform.position += direction.normalized * 2000f;
             }
         }
 
@@ -901,30 +883,8 @@ namespace iiMenu.Mods
                 {
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        Vector3 direction = position - rig.transform.position;
-
                         VRRig.LocalRig.enabled = false;
-
-                        if (Time.time > serializeDelay)
-                        {
-                            serializeDelay = Time.time + 0.3f;
-
-                            for (int i = 0; i < 100; i++)
-                            {
-                                VRRig.LocalRig.transform.position += direction.normalized;
-                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-                            }
-
-                            RPCProtection();
-                        }
-
-                        if (rig.LatestVelocity().y > 6f)
-                        {
-                            VRRig.LocalRig.transform.position += direction.normalized * 100f;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(rig).ActorNumber } });
-
-                            RPCProtection();
-                        }
+                        VRRig.LocalRig.transform.position = position;
                     }
                 }
             }
@@ -939,7 +899,7 @@ namespace iiMenu.Mods
                 {
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        Vector3 velocity = (Vector3.up + GorillaTagger.Instance.bodyCollider.transform.forward * 1).normalized * 20f;
+                        Vector3 velocity = (Vector3.up + GorillaTagger.Instance.bodyCollider.transform.forward * 1).normalized * 3f;
                         GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), velocity);
                         rig.ApplyLocalTrajectoryOverride(velocity);
                         VRRig.LocalRig.leftHandLink.BreakLink();

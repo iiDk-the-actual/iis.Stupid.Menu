@@ -31,6 +31,8 @@ namespace iiMenu.Classes.Menu
         public string toolTip = "This button doesn't have a tooltip/tutorial.";
 
         public Action method;
+        public Action postMethod;
+
         public Action enableMethod;
         public Action disableMethod;
 

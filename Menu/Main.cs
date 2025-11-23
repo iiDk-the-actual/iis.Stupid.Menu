@@ -1550,6 +1550,134 @@ namespace iiMenu.Menu
             }
         }
 
+        public static void Postfix()
+        {
+            try
+            {
+                foreach (ButtonInfo button in Buttons.buttons
+                   .SelectMany(list => list)
+                   .Where(button => button.enabled && button.postMethod != null))
+                {
+                    try
+                    {
+                        bool _leftPrimary = leftPrimary;
+                        bool _leftSecondary = leftSecondary;
+                        bool _rightPrimary = rightPrimary;
+                        bool _rightSecondary = rightSecondary;
+                        bool _leftGrab = leftGrab;
+                        bool _rightGrab = rightGrab;
+                        float _leftTrigger = leftTrigger;
+                        float _rightTrigger = rightTrigger;
+                        bool _leftJoystickClick = leftJoystickClick;
+                        bool _rightJoystickClick = rightJoystickClick;
+
+                        if (OverwriteKeybinds && button.customBind != null)
+                        {
+                            leftPrimary = true;
+                            leftSecondary = true;
+                            rightPrimary = true;
+                            rightSecondary = true;
+                            leftGrab = true;
+                            rightGrab = true;
+                            leftTrigger = 1f;
+                            rightTrigger = 1f;
+                            leftJoystickClick = true;
+                            rightJoystickClick = true;
+                        }
+
+                        try
+                        {
+                            if (button.rebindKey != null)
+                            {
+                                float buttonAmount = 0f;
+                                switch (button.rebindKey)
+                                {
+                                    case "A":
+                                        buttonAmount = _rightPrimary ? 1f : 0f;
+                                        break;
+                                    case "B":
+                                        buttonAmount = _rightSecondary ? 1f : 0f;
+                                        break;
+                                    case "X":
+                                        buttonAmount = _leftPrimary ? 1f : 0f;
+                                        break;
+                                    case "Y":
+                                        buttonAmount = _leftSecondary ? 1f : 0f;
+                                        break;
+                                    case "LG":
+                                        buttonAmount = _leftGrab ? 1f : 0f;
+                                        break;
+                                    case "RG":
+                                        buttonAmount = _rightGrab ? 1f : 0f;
+                                        break;
+                                    case "LT":
+                                        buttonAmount = _leftTrigger;
+                                        break;
+                                    case "RT":
+                                        buttonAmount = _rightTrigger;
+                                        break;
+                                    case "LJ":
+                                        buttonAmount = _leftJoystickClick ? 1f : 0f;
+                                        break;
+                                    case "RJ":
+                                        buttonAmount = _rightJoystickClick ? 1f : 0f;
+                                        break;
+                                }
+                                leftPrimary = buttonAmount > 0.5f;
+                                leftSecondary = buttonAmount > 0.5f;
+                                rightPrimary = buttonAmount > 0.5f;
+                                rightSecondary = buttonAmount > 0.5f;
+                                leftGrab = buttonAmount > 0.5f;
+                                rightGrab = buttonAmount > 0.5f;
+                                leftTrigger = buttonAmount;
+                                rightTrigger = buttonAmount;
+                                leftJoystickClick = buttonAmount > 0.5f;
+                                rightJoystickClick = buttonAmount > 0.5f;
+                            }
+                            button.postMethod.Invoke();
+                            if (button.rebindKey != null)
+                            {
+                                leftPrimary = _leftPrimary;
+                                leftSecondary = _leftSecondary;
+                                rightPrimary = _rightPrimary;
+                                rightSecondary = _rightSecondary;
+                                leftGrab = _leftGrab;
+                                rightGrab = _rightGrab;
+                                leftTrigger = _leftTrigger;
+                                rightTrigger = _rightTrigger;
+                                leftJoystickClick = _leftJoystickClick;
+                                rightJoystickClick = _rightJoystickClick;
+                            }
+                        }
+                        catch (Exception exc)
+                        {
+                            LogManager.LogError(
+                                $"Error with mod postMethod {button.buttonText} at {exc.StackTrace}: {exc.Message}");
+                        }
+
+                        if (OverwriteKeybinds && button.customBind != null)
+                        {
+                            leftPrimary = _leftPrimary;
+                            leftSecondary = _leftSecondary;
+                            rightPrimary = _rightPrimary;
+                            rightSecondary = _rightSecondary;
+                            leftGrab = _leftGrab;
+                            rightGrab = _rightGrab;
+                            leftTrigger = _leftTrigger;
+                            rightTrigger = _rightTrigger;
+                            leftJoystickClick = _leftJoystickClick;
+                            rightJoystickClick = _rightJoystickClick;
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError($"Error with postfix at {exc.StackTrace}: {exc.Message}");
+            }
+        }
+
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
         {
             if (!method.label)
@@ -6198,8 +6326,7 @@ namespace iiMenu.Menu
 
             if (NotificationManager.Instance != null)
             {
-                Destroy(NotificationManager.Instance.HUDObj);
-                Destroy(NotificationManager.Instance.HUDObj2);
+                Destroy(NotificationManager.Instance.canvas);
                 Destroy(NotificationManager.ModText);
                 Destroy(NotificationManager.NotifiText);
                 Destroy(NotificationManager.Instance.gameObject);
