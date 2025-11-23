@@ -6326,8 +6326,7 @@ namespace iiMenu.Menu
 
             if (NotificationManager.Instance != null)
             {
-                Destroy(NotificationManager.Instance.HUDObj);
-                Destroy(NotificationManager.Instance.HUDObj2);
+                Destroy(NotificationManager.Instance.canvas);
                 Destroy(NotificationManager.ModText);
                 Destroy(NotificationManager.NotifiText);
                 Destroy(NotificationManager.Instance.gameObject);
