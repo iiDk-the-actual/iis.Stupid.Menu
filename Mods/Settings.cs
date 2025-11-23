@@ -4933,7 +4933,7 @@ exit 0";
                 Movement.flySpeedCycle.ToString(),
                 Movement.longarmCycle.ToString(),
                 Movement.speedboostCycle.ToString(),
-                Projectiles.projmode.ToString(),
+                Projectiles.projMode.ToString(),
                 Movement.timerPowerIndex.ToString(),
                 Projectiles.shootCycle.ToString(),
                 pointerIndex.ToString(),
@@ -5076,7 +5076,7 @@ exit 0";
                 Movement.speedboostCycle = int.Parse(data[4]) - 1;
                 Movement.ChangeSpeedBoostAmount();
 
-                Projectiles.projmode = int.Parse(data[5]) - 1;
+                Projectiles.projMode = int.Parse(data[5]) - 1;
                 Projectiles.ChangeProjectile();
 
                 Movement.timerPowerIndex = int.Parse(data[6]) - 1;

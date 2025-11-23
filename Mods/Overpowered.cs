@@ -2524,7 +2524,14 @@ namespace iiMenu.Mods
 
                     DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableSnowball(isTooFar && !NoTeleportSnowballs));
 
-                    GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
+                    string projectileName = Projectiles.ProjectileObjectNames[Projectiles.projMode * 2];
+                    if (!projectileName.Contains("Growing"))
+                        projectileName = "GrowingSnowballLeftThrowable";
+
+                    if (SnowballHandIndex)
+                        projectileName = projectileName.Replace("Left", "Right");
+
+                    GrowingSnowballThrowable GrowingSnowball = GetProjectile(projectileName) as GrowingSnowballThrowable;
 
                     PhotonNetwork.RaiseEvent(176, new object[]
                     {
@@ -2548,7 +2555,14 @@ namespace iiMenu.Mods
                         Encrypt = true
                     });
 
-                    GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
+                    projectileName = Projectiles.ProjectileObjectNames[Projectiles.projMode * 2];
+                    if (!projectileName.Contains("Growing"))
+                        projectileName = "GrowingSnowballRightThrowable";
+
+                    if (SnowballHandIndex)
+                        projectileName = projectileName.Replace("Right", "Left");
+
+                    GrowingSnowballThrowable nextGrowingSnowball = GetProjectile(projectileName) as GrowingSnowballThrowable;
                     nextGrowingSnowball.SetSnowballActiveLocal(true);
                 }
 

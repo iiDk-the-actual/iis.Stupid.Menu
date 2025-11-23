@@ -370,9 +370,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method = Overpowered.DisableSnowballImpactEffect, toolTip = "Disables the impact effect that people get when hit with snowballs."},
                 new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>5</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(), enableMethod =() => Overpowered.ChangeSnowballScale(), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
                 new ButtonInfo { buttonText = "Change Snowball Multiplication Factor", overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballMultiplicationFactor(), enableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(), disableMethod =() => Overpowered.ChangeSnowballMultiplicationFactor(false), incremental = true, isTogglable = false, toolTip = "Changes the multiplication factor of the snowballs." },
-                new ButtonInfo { buttonText = "No Teleport Snowballs", enableMethod =() => Overpowered.NoTeleportSnowballs = true, disableMethod =() => Overpowered.NoTeleportSnowballs = false, toolTip = "Stops snowball mods from teleporting you." },
-
-
+                new ButtonInfo { buttonText = "No Teleport Snowballs", enableMethod =() => Overpowered.NoTeleportSnowballs = true, disableMethod =() => Overpowered.NoTeleportSnowballs = false, toolTip = "Stops snowball mods from teleporting you." }
             },
 
             new[] { // Room Mods [6]

@@ -321,7 +321,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static int projmode;
+        public static int projMode;
         public static void ChangeProjectile(bool positive = true)
         {
             string[] shortProjectileNames = {
@@ -359,15 +359,15 @@ namespace iiMenu.Mods
             };
 
             if (positive)
-                projmode++;
+                projMode++;
             else
-                projmode--;
+                projMode--;
 
-            projmode %= shortProjectileNames.Length;
-            if (projmode < 0)
-                projmode = shortProjectileNames.Length - 1;
+            projMode %= shortProjectileNames.Length;
+            if (projMode < 0)
+                projMode = shortProjectileNames.Length - 1;
 
-            Buttons.GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projMode] + "</color><color=grey>]</color>";
         }
 
         public static int targetProjectileIndex;
@@ -528,7 +528,7 @@ namespace iiMenu.Mods
 
         public static void ProjectileSpam()
         {
-            int projIndex = projmode * 2;
+            int projIndex = projMode * 2;
 
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
@@ -602,7 +602,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    int projIndex = projmode * 2;
+                    int projIndex = projMode * 2;
                     
                     if (Buttons.GetIndex("Random Projectile").enabled)
                         projIndex = Random.Range(0, ProjectileObjectNames.Length);
@@ -722,7 +722,7 @@ namespace iiMenu.Mods
         private static bool lastRightGrab;
         public static void GrabProjectile()
         {
-            int projIndex = projmode * 2;
+            int projIndex = projMode * 2;
             if (Buttons.GetIndex("Random Projectile").enabled)
                 projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
 
