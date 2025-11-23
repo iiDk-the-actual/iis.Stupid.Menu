@@ -3814,12 +3814,16 @@ namespace iiMenu.Mods
 
                     updateShader(vrrig.myMouthFlap.targetFaceRenderer.material, vrrig.myMouthFlap.targetFaceRenderer.material, Color.white, true);
 
-                    foreach (GameObject obj in vrrig.cosmetics)
+                    if (Buttons.GetIndex("Show Cosmetics").enabled)
                     {
-                        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-                        foreach (Renderer renderer in renderers)
-                            updateShader(renderer.material, renderer.material, renderer.material.color, false);
+                        foreach (GameObject obj in vrrig.cosmetics)
+                        {
+                            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+                            foreach (Renderer renderer in renderers)
+                                updateShader(renderer.material, renderer.material, renderer.material.color, false);
+                        }
                     }
+                    
                 }
             }
         }
