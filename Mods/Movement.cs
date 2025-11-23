@@ -1259,12 +1259,14 @@ namespace iiMenu.Mods
                     {
                         blueView.SetActive(true);
                         bluePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
+                        UpdateCameraRes(bluePortal.transform.Find("Rim/Camera").GetComponent<Camera>());
                     }
                         
                     if (!orangeView.activeSelf)
                     {
                         orangeView.SetActive(true);
                         orangePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
+                        UpdateCameraRes(orangePortal.transform.Find("Rim/Camera").GetComponent<Camera>());
                     }
 
                     if (blueView.activeSelf && orangeView.activeSelf && !playedOpen)
@@ -1424,6 +1426,11 @@ namespace iiMenu.Mods
             portal.transform.localScale = originalScale;
         }
 
+        public static void UpdateCameraRes(Camera cam)
+        {
+            cam.targetTexture.width = cam.targetTexture.width * 5;
+            cam.targetTexture.height = cam.targetTexture.height * 5;
+        }
 
         public static void DisablePortalGun()
         {
