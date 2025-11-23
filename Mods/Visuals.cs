@@ -2623,9 +2623,9 @@ namespace iiMenu.Mods
                 string currentCosmetic = null;
                 foreach (var (codename, name) in cosmetics)
                 {
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains(codename))
+                    if (true)
                     {
-                        currentCosmetic = name;
+                        currentCosmetic = "stick";
                         break;
                     }
                 }
@@ -2634,7 +2634,7 @@ namespace iiMenu.Mods
                 {
                     if (!cosmeticIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                         Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
@@ -2651,6 +2651,7 @@ namespace iiMenu.Mods
                             platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
                             platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
                             platformMat.SetFloat("_ZWrite", 0);
+                            platformMat.SetFloat("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
                             platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                             platformMat.renderQueue = (int)RenderQueue.Transparent;
                         }
@@ -2756,7 +2757,7 @@ namespace iiMenu.Mods
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                         Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -2885,7 +2886,7 @@ namespace iiMenu.Mods
                     {
                         if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
-                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                             Object.Destroy(volIndicator.GetComponent<Collider>());
 
                             if (voiceEspMat == null)
@@ -3752,7 +3753,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static Shader chams;
+        public static Shader uberChams;
 
         public static void Chams()
         {
@@ -3760,13 +3761,13 @@ namespace iiMenu.Mods
             {
                 if (!vrrig.isLocal && vrrig.colorInitialized && vrrig.initializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/Chams")
                 {
-                    if (!chams)
-                        chams = LoadAsset<Shader>("Chams");
+                    if (!uberChams)
+                        uberChams = LoadAsset<Shader>("UberChams");
 
                     void updateShader(Material target, Material src, Color color, bool isFace = false)
                     {
 
-                        target.shader = chams;
+                        target.shader = uberChams;
 
                         Texture2DArray atlas = src.GetTexture("_BaseMap_Atlas") as Texture2DArray;
                         float slice = src.GetFloat("_BaseMap_AtlasSlice");
