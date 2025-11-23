@@ -3847,7 +3847,7 @@ namespace iiMenu.Menu
                     Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
                     break;
                 case 3:
-                    var (_, rotation, up, forward, right) = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+                    var (_, _, up, forward, right) = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
 
                     Up = up;
                     Right = right;
