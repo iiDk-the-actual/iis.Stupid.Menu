@@ -617,7 +617,7 @@ namespace iiMenu.Mods
             Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right.X_Z();
 
             Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
-            velocity *= Movement.flySpeed;
+            velocity *= Movement.FlySpeed;
 
             CameraVelocity = Vector3.Lerp(CameraVelocity, velocity, 0.12875f);
             FreeCamObject.transform.position += CameraVelocity * Time.unscaledDeltaTime;
@@ -1301,12 +1301,12 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = Random.Range(0, 255);
         }
 
-        public static GhostReactorManager ghostReactorManager
+        public static GhostReactorManager GhostReactorManager
         {
             get => GhostReactor.instance.grManager;
         }
 
-        public static GameEntityManager gameEntityManager
+        public static GameEntityManager GameEntityManager
         {
             get => GameEntityManager.GetManagerForZone(GhostReactor.instance.zone);
         }
@@ -1320,7 +1320,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = entity.transform.position;
 
-                    gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                    GameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                 }
             }
             else
@@ -1341,7 +1341,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                ghostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ghostReactorManager.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
+                GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -1467,7 +1467,7 @@ namespace iiMenu.Mods
             GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
 
             if (plr.State == GRPlayer.GRPlayerState.Ghost)
-                ghostReactorManager.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
+                GhostReactorManager.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
 
             plr.hp = plr.maxHp;
         }
@@ -1475,14 +1475,14 @@ namespace iiMenu.Mods
         public static void StartShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-            ghostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart ? true : false);
+            GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
             RPCProtection();
         }
 
         public static void EndShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-            ghostReactorManager.RequestShiftEnd();
+            GhostReactorManager.RequestShiftEnd();
             RPCProtection();
         }
 
@@ -1501,7 +1501,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    Overpowered.CreateItem(lockTarget.GetPlayer(), Overpowered.objectByName["GhostReactorEnergyCostGate"], lockTarget.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
+                    Overpowered.CreateItem(lockTarget.GetPlayer(), Overpowered.ObjectByName["GhostReactorEnergyCostGate"], lockTarget.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
 
                 if (GetGunInput(true))
                 {
@@ -1523,7 +1523,7 @@ namespace iiMenu.Mods
         public static void GhostReactorFreezeAll()
         {
             VRRig randomPlayer = GetRandomVRRig(false);
-            Overpowered.CreateItem(randomPlayer.GetPlayer(), Overpowered.objectByName["GhostReactorEnergyCostGate"], randomPlayer.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
+            Overpowered.CreateItem(randomPlayer.GetPlayer(), Overpowered.ObjectByName["GhostReactorEnergyCostGate"], randomPlayer.headMesh.transform.position + RandomVector3(), RandomQuaternion(), Vector3.zero, Vector3.zero);
         }
 
         public static void SetPlayerState(Player Target, GRPlayer.GRPlayerState State)
@@ -1537,7 +1537,7 @@ namespace iiMenu.Mods
                     || (NetworkSystem.Instance.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
                     )
             {
-                ghostReactorManager.RequestPlayerStateChange(GRPlayer, State);
+                GhostReactorManager.RequestPlayerStateChange(GRPlayer, State);
                 RPCProtection();
                 return;
             }
@@ -1559,13 +1559,13 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = GetVRRigFromPlayer(Target);
 
-            int netId = gameEntityManager.CreateNetId();
+            int netId = GameEntityManager.CreateNetId();
 
-            gameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)gameEntityManager.zone }, new[] { Overpowered.objectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            GameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GameEntityManager.zone }, new[] { Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
 
-            ghostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
+            GhostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 
-            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, ghostReactorManager);
+            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, GhostReactorManager);
 
             RPCProtection();
 
@@ -1573,7 +1573,7 @@ namespace iiMenu.Mods
             yield return null;
             yield return null;
 
-            gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
+            GameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
 
             RPCProtection();
         }
@@ -1653,7 +1653,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                ghostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ghostReactorManager.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
+                GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -1852,8 +1852,7 @@ namespace iiMenu.Mods
 
                         SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
 
-                        if (factory != null)
-                            factory.Dispose();
+                        factory?.Dispose();
 
                         factory = new LoopbackFactory();
 
@@ -1873,8 +1872,7 @@ namespace iiMenu.Mods
                 {
                     gunLocked = false;
 
-                    if (factory != null)
-                        factory.Dispose();
+                    factory?.Dispose();
 
                     SpeakerPatch.enabled = false;
 
@@ -5129,8 +5127,6 @@ Piece Name: {gunTarget.name}";
         public static int pieceId = -1;
         public static IEnumerator CreateGetPiece(int pieceType, Action<BuilderPiece> onComplete)
         {
-            BuilderPiece target = null;
-
             CreatePatch.enabled = true;
             CreatePatch.pieceTypeSearch = pieceType;
 
@@ -5144,12 +5140,11 @@ Piece Name: {gunTarget.name}";
             
             yield return null;
 
-            target = GetBuilderTable().GetPiece(pieceId);
             pieceId = -1;
             CreatePatch.enabled = false;
             CreatePatch.pieceTypeSearch = 0;
 
-            onComplete?.Invoke(target); // so bad
+            onComplete?.Invoke(GetBuilderTable().GetPiece(pieceId)); // so bad
         }
 
         public static IEnumerator CreateShotgun()
