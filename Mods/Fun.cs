@@ -6103,7 +6103,6 @@ Piece Name: {gunTarget.name}";
                         VRRig.LocalRig.cosmeticSet = new CosmeticsController.CosmeticSet(randomCosmetics.ToArray(), CosmeticsController.instance);
                     }
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, PackCosmetics(randomCosmetics.ToArray()), PackCosmetics(randomCosmetics.ToArray()), false);
-                    GetAllType<BalloonHoldable>().ForEach(x => x.OwnerPopBalloon());
                     RPCProtection();
                 }
             }
