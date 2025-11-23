@@ -1017,6 +1017,10 @@ namespace iiMenu.Menu
                         }
                         else
                         {
+                            if (legacyGhostViewLeft.activeSelf)
+                                legacyGhostViewLeft.SetActive(false);
+                            if (legacyGhostViewRight.activeSelf)
+                                legacyGhostViewRight.SetActive(false);
                             GhostRig.gameObject.SetActive(true);
 
                             Color ghm = color;
