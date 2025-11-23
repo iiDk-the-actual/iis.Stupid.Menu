@@ -2708,6 +2708,8 @@ Piece Name: {gunTarget.name}";
             if (!dynamicSounds) return;
             Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
 
+            if (!slingshot) return;
+
             if (slingshot.InDrawingState() && !lastDrawing)
                 LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/AngryBirds/drawing.ogg", "Audio/Mods/Fun/AngryBirds/drawing.ogg").Play(buttonClickVolume / 10f);
 
