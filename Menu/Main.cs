@@ -3677,12 +3677,16 @@ namespace iiMenu.Menu
         public static readonly Material outlineMat = new Material(Shader.Find("Sprites/Default"));
         public static void OutlineCanvasObject(Text text, bool clamp = false)
         {
+            Text baseText = Instantiate(text, text.transform.parent, false);
+            if (baseText.TryGetComponent<TextColorChanger>(out var textColorChanger))
+                Destroy(textColorChanger);
+
             foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
             {
-                Text newText = Instantiate(text, text.transform.parent, false);
+                Text newText = Instantiate(baseText, baseText.transform.parent, false);
                 newText.text = NoColorTags(text.text);
 
-                newText.rectTransform.localPosition = text.rectTransform.localPosition + offset * 0.001f;// + new Vector3(-0.0025f, 0f, 0f);
+                newText.rectTransform.localPosition = text.rectTransform.localPosition + offset * 0.001f;
 
                 newText.material = outlineMat;
                 newText.color = Color.black;
@@ -3691,6 +3695,8 @@ namespace iiMenu.Menu
                 if (clamp)
                     newText.AddComponent<ClampText>().targetText = text;
             }
+
+            Destroy(baseText);
         }
 
         private static readonly List<Material> imageMaterials = new List<Material>();
