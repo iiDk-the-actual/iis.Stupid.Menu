@@ -3847,11 +3847,11 @@ namespace iiMenu.Menu
                     Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
                     break;
                 case 3:
-                    var handData = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+                    var (_, _, up, forward, right) = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
 
-                    Up = handData.up;
-                    Right = handData.right;
-                    Direction = handData.forward;
+                    Up = up;
+                    Right = right;
+                    Direction = forward;
                     break;
                 case 4:
                     Up = GorillaTagger.Instance.headCollider.transform.up;
