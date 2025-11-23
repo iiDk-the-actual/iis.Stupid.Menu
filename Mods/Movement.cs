@@ -199,39 +199,6 @@ namespace iiMenu.Mods
             platform.transform.position = trueHandTransform.position;
             platform.transform.rotation = trueHandTransform.rotation;
 
-            if (Buttons.GetIndex("Stick Long Arms").enabled)
-                platform.transform.position += handTransform.forward * (armlength - 0.917f);
-
-            if (Buttons.GetIndex("Multiplied Long Arms").enabled)
-            {
-                Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
-                Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
-                MultipliedLongArms();
-                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
-                GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
-                GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
-            }
-            if (Buttons.GetIndex("Vertical Long Arms").enabled)
-            {
-                Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
-                Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
-                VerticalLongArms();
-                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
-                GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
-                GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
-            }
-            if (Buttons.GetIndex("Horizontal Long Arms").enabled)
-            {
-                Vector3 legacyPosL = GTPlayer.Instance.GetControllerTransform(true).transform.position;
-                Vector3 legacyPosR = GTPlayer.Instance.GetControllerTransform(false).transform.position;
-                HorizontalLongArms();
-                platform.transform.position = (left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand()).position;
-                GTPlayer.Instance.GetControllerTransform(true).transform.position = legacyPosL;
-                GTPlayer.Instance.GetControllerTransform(false).transform.position = legacyPosR;
-            }
-            if (Buttons.GetIndex("Non-Sticky Platforms").enabled)
-                platform.transform.position += trueHandTransform.right * ((left ? 1f : -1f) * ((0.025f + platform.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
-
             FriendManager.PlatformSpawned(true, platform.transform.position, platform.transform.rotation, platform.transform.localScale, GetPlatformPrimitiveType());
         }
 
