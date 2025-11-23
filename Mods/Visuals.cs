@@ -3758,7 +3758,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal && vrrig.InitializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/Chams")
+                if (!vrrig.isLocal && vrrig.colorInitialized && vrrig.initializedCosmetics && vrrig.mainSkin.material.shader.name != "Custom/Chams")
                 {
                     if (!chams)
                         chams = LoadAsset<Shader>("Chams");
