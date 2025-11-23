@@ -3847,11 +3847,11 @@ namespace iiMenu.Menu
                     Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
                     break;
                 case 3:
-                    var handData = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+                    var (_, _, up, forward, right) = SwapGunHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
 
-                    Up = handData.up;
-                    Right = handData.right;
-                    Direction = handData.forward;
+                    Up = up;
+                    Right = right;
+                    Direction = forward;
                     break;
                 case 4:
                     Up = GorillaTagger.Instance.headCollider.transform.up;
@@ -5095,99 +5095,86 @@ namespace iiMenu.Menu
 
             try
             {
-                if (AntiOculusReport && data.Code == 200) // Credits to Gorilla Dev for the idea, fully coded by myself
+                if (data.Code == 200)
                 {
                     string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
-                    if (rpcName == "RPC_PlayHandTap")
+                    object[] args = (object[])((Hashtable)data.CustomData)[4];
+                    switch (rpcName)
                     {
-                        object[] args = (object[])((Hashtable)data.CustomData)[4];
-                        if ((int)args[0] == 67)
-                        {
-                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-                            if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
-                                Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-                        }
-                    }
-                }
-
-                if (Safety.smartAntiReport && data.Code == 200)
-                {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
-                    if (rpcName == "RPC_PlayHandTap")
-                    {
-                        object[] args = (object[])((Hashtable)data.CustomData)[4];
-                        if ((int)args[0] == 67)
-                        {
-                            Safety.buttonClickTime = Time.frameCount;
-                            Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender).UserId;
-                        }
-                    }
-                }
-
-                if (Fun.keyboardTrackerEnabled && data.Code == 200)
-                {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
-
-                    if (rpcName == "RPC_PlayHandTap")
-                    {
-                        object[] args = (object[])((Hashtable)data.CustomData)[4];
-                        if ((int)args[0] == 66)
-                        {
-                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-
-                            Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
-                            if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
+                        case "RPC_PlayHandTap" when AntiOculusReport:
+                            if ((int)args[0] == 67)
                             {
-                                string handPath = (bool)args[1]
-                                 ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
-                                 : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+                                VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+                                if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
+                                    Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+                            }
+                            break;
+                        case "RPC_PlayHandTap" when Safety.smartAntiReport:
+                            if ((int)args[0] == 67)
+                            {
+                                Safety.buttonClickTime = Time.frameCount;
+                                Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender).UserId;
+                            }
+                            break;
+                        case "RPC_PlayHandTap" when Fun.keyboardTrackerEnabled:
+                            if ((int)args[0] == 66)
+                            {
+                                VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
 
-                                Vector3 position = target.gameObject.transform.Find(handPath).position;
-
-                                GameObject keysParent = keyboardTransform.Find("Buttons/Keys").gameObject;
-                                float minimalDist = float.MaxValue;
-                                string closestKey = "[Null]";
-
-                                foreach (Transform child in keysParent.transform)
+                                Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
+                                if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
                                 {
-                                    float dist = Vector3.Distance(child.position, position);
-                                    if (dist < minimalDist)
+                                    string handPath = (bool)args[1]
+                                     ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                     : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+
+                                    Vector3 position = target.gameObject.transform.Find(handPath).position;
+
+                                    GameObject keysParent = keyboardTransform.Find("Buttons/Keys").gameObject;
+                                    float minimalDist = float.MaxValue;
+                                    string closestKey = "[Null]";
+
+                                    foreach (Transform child in keysParent.transform)
                                     {
-                                        minimalDist = dist;
-                                        closestKey = ToTitleCase(child.name);
+                                        float dist = Vector3.Distance(child.position, position);
+                                        if (dist < minimalDist)
+                                        {
+                                            minimalDist = dist;
+                                            closestKey = ToTitleCase(child.name);
+                                        }
                                     }
-                                }
 
-                                if (closestKey.Length > 1)
-                                    closestKey = "[" + closestKey + "]";
+                                    if (closestKey.Length > 1)
+                                        closestKey = "[" + closestKey + "]";
 
-                                bool isKeyLogged = false;
-                                for (int i = 0; i < Fun.keyLogs.Count; i++)
-                                {
-                                    object[] keyLog = Fun.keyLogs[i];
-                                    if ((VRRig)keyLog[0] == target)
+                                    bool isKeyLogged = false;
+                                    for (int i = 0; i < Fun.keyLogs.Count; i++)
                                     {
-                                        isKeyLogged = true;
+                                        object[] keyLog = Fun.keyLogs[i];
+                                        if ((VRRig)keyLog[0] == target)
+                                        {
+                                            isKeyLogged = true;
 
-                                        string currentText = (string)keyLog[1];
+                                            string currentText = (string)keyLog[1];
 
-                                        if (closestKey.Contains("Delete"))
-                                            Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
-                                        else
-                                            Fun.keyLogs[i][1] = currentText + closestKey;
+                                            if (closestKey.Contains("Delete"))
+                                                Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
+                                            else
+                                                Fun.keyLogs[i][1] = currentText + closestKey;
 
-                                        Fun.keyLogs[i][2] = Time.time + 5f;
-                                        break;
+                                            Fun.keyLogs[i][2] = Time.time + 5f;
+                                            break;
+                                        }
                                     }
-                                }
 
-                                if (!isKeyLogged)
-                                {
-                                    if (!closestKey.Contains("Delete"))
-                                        Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
+                                    if (!isKeyLogged)
+                                    {
+                                        if (!closestKey.Contains("Delete"))
+                                            Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
+                                    }
                                 }
                             }
-                        }
+                            break;
                     }
                 }
             } catch { }
