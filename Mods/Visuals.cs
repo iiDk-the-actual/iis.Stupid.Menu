@@ -2623,9 +2623,9 @@ namespace iiMenu.Mods
                 string currentCosmetic = null;
                 foreach (var (codename, name) in cosmetics)
                 {
-                    if (true)
+                    if (vrrig.concatStringOfCosmeticsAllowed.Contains(codename))
                     {
-                        currentCosmetic = "stick";
+                        currentCosmetic = name;
                         break;
                     }
                 }
