@@ -1292,9 +1292,6 @@ namespace iiMenu.Mods
 
             if (bluePortal && orangePortal)
             {
-                Vector3 playerOffset = Camera.main.transform.position - orangePortal.transform.position;
-                bluePortal.transform.Find("Rim/Camera").transform.position = bluePortal.transform.position + playerOffset;
-
                 bool goingThrough = false;
                 foreach (GameObject portal in new[] { bluePortal, orangePortal })
                 {
