@@ -1224,14 +1224,16 @@ namespace iiMenu.Mods
                     {
                         blueView.SetActive(true);
                         bluePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
-                        UpdateCameraRes(bluePortal.transform.Find("Rim/Camera").GetComponent<Camera>());
+                        if (Buttons.GetIndex("High Quality Portals").enabled)
+                            UpdateCameraRes(bluePortal.transform.Find("Rim/Camera/Eye").GetComponent<Camera>());
                     }
                         
                     if (!orangeView.activeSelf)
                     {
                         orangeView.SetActive(true);
                         orangePortal.transform.Find("Rim/Static").gameObject.SetActive(false);
-                        UpdateCameraRes(orangePortal.transform.Find("Rim/Camera").GetComponent<Camera>());
+                        if (Buttons.GetIndex("High Quality Portals").enabled)
+                            UpdateCameraRes(orangePortal.transform.Find("Rim/Camera/Eye").GetComponent<Camera>());
                     }
 
                     if (blueView.activeSelf && orangeView.activeSelf && !playedOpen)
