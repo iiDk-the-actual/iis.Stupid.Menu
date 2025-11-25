@@ -5956,7 +5956,7 @@ namespace iiMenu.Menu
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
                                         if (fromMenu)
-                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
+                                            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to <color=green>{BindInput}</color>.");
                                     }
                                 }
                                 else
@@ -5975,7 +5975,7 @@ namespace iiMenu.Menu
                                             target.rebindKey = BindInput;
                                             VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                             if (fromMenu)
-                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to " + BindInput + ".");
+                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to {BindInput}.");
                                         }
                                     }
                                     else
@@ -6032,7 +6032,7 @@ namespace iiMenu.Menu
                                     if (target.enabled)
                                     {
                                         if (fromMenu)
-                                            NotificationManager.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                            NotificationManager.SendNotification($"<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> {target.toolTip}");
                                         
                                         if (target.enableMethod != null)
                                             try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
@@ -6041,7 +6041,7 @@ namespace iiMenu.Menu
                                     else
                                     {
                                         if (fromMenu)
-                                            NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
+                                            NotificationManager.SendNotification($"<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> {target.toolTip}");
                                         
                                         if (target.disableMethod != null)
                                             try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
@@ -6104,14 +6104,14 @@ namespace iiMenu.Menu
 
                 if (increment)
                 {
-                    NotificationManager.SendNotification("<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> " + target.toolTip);
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> {target.toolTip}");
                     if (target.enableMethod != null)
                         try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                             $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
                 }
                 else
                 {
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> " + target.toolTip);
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> {target.toolTip}");
                     if (target.disableMethod != null)
                         try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                             $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
