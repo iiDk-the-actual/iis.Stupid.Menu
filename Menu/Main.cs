@@ -21,6 +21,7 @@
 
 using BepInEx;
 using ExitGames.Client.Photon;
+using Fusion;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -1123,10 +1124,10 @@ namespace iiMenu.Menu
                     Vector2 js = leftJoystick;
                     if (Time.time > joystickDelay)
                     {
-                        int lastPage = pageSize;
+                        int lastButton = PageSize;
 
                         if (joystickMenuSearching)
-                            lastPage++;
+                            lastButton++;
 
                         if (js.x > 0.5f)
                         {
@@ -1152,7 +1153,7 @@ namespace iiMenu.Menu
 
                             joystickButtonSelected--;
                             if (joystickButtonSelected < 0)
-                                joystickButtonSelected = lastPage - 1;
+                                joystickButtonSelected = lastButton - 1;
 
                             ReloadMenu();
                             joystickDelay = Time.time + 0.2f;
@@ -1163,7 +1164,7 @@ namespace iiMenu.Menu
                                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/down.ogg"), buttonClickVolume / 10f);
 
                             joystickButtonSelected++;
-                            joystickButtonSelected %= lastPage;
+                            joystickButtonSelected %= lastButton;
 
                             ReloadMenu();
                             joystickDelay = Time.time + 0.2f;
@@ -1197,21 +1198,17 @@ namespace iiMenu.Menu
                     Vector2 js = leftJoystick;
                     if (Time.time > scrollDelay)
                     {
-                        int lastPage = pageSize;
-
-                        if (joystickMenuSearching)
-                            lastPage++;
-
                         if (js.y > 0.5f)
                         {
-                            pageOffset = Mathf.Clamp(pageOffset - 1, 0, Buttons.buttons[currentCategoryIndex].Length - pageSize);
+                            pageOffset = Mathf.Clamp(pageOffset - 1, 0, ItemCount - PageSize);
 
                             shouldReload = true;
                             scrollDelay = Time.time + 0.1f;
                         }
+
                         if (js.y < -0.5f)
                         {
-                            pageOffset = Mathf.Clamp(pageOffset + 1, 0, Buttons.buttons[currentCategoryIndex].Length - pageSize);
+                            pageOffset = Mathf.Clamp(pageOffset + 1, 0, ItemCount - PageSize);
 
                             shouldReload = true;
                             scrollDelay = Time.time + 0.1f;
@@ -1695,7 +1692,7 @@ namespace iiMenu.Menu
 
                 buttonObject.transform.localScale = thinMenu ? new Vector3(0.09f, 0.9f, ButtonDistance * 0.8f) : new Vector3(0.09f, 1.3f, ButtonDistance * 0.8f);
 
-                if (longmenu && buttonIndex >= pageSize)
+                if (longmenu && buttonIndex >= PageSize)
                 {
                     menuBackground.transform.localScale += new Vector3(0f, 0f, 0.1f);
                     menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
@@ -1923,7 +1920,7 @@ namespace iiMenu.Menu
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[isSearching ^ !swapButtonColors ? 0 : 1];
 
-            if (joystickMenuSearching && joystickButtonSelected == pageSize)
+            if (joystickMenuSearching && joystickButtonSelected == PageSize)
             {
                 joystickSelectedButton = "Search";
 
@@ -2849,8 +2846,8 @@ namespace iiMenu.Menu
 
                     if (!longmenu)
                         renderButtons = renderButtons
-                            .Skip(pageNumber * (pageSize - buttonIndexOffset) + pageOffset)
-                            .Take(pageSize - buttonIndexOffset)
+                            .Skip(pageNumber * (PageSize - buttonIndexOffset) + pageOffset)
+                            .Take(PageSize - buttonIndexOffset)
                             .ToArray();
 
                     for (int i = 0; i < renderButtons.Length; i++)
@@ -5889,70 +5886,6 @@ namespace iiMenu.Menu
 
         public static void Toggle(string buttonText, bool fromMenu = false, bool ignoreForce = false)
         {
-            int lastPage = (Buttons.buttons[currentCategoryIndex].Length + pageSize - 1) / pageSize - 1;
-            if (currentCategoryName == "Favorite Mods")
-                lastPage = (favorites.Count + pageSize - 1) / pageSize - 1;
-            
-            if (currentCategoryName == "Enabled Mods")
-            {
-                List<string> enabledMods = new List<string> { "Exit Enabled Mods" };
-                int categoryIndex = 0;
-                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                {
-                    enabledMods.AddRange(from v in buttonlist where v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro")) select v.buttonText);
-                    categoryIndex++;
-                }
-                lastPage = (enabledMods.Count + pageSize - 1) / pageSize - 1;
-            }
-
-            if (isSearching)
-            {
-                List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                if (nonGlobalSearch && currentCategoryName != "Main")
-                {
-                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
-                    {
-                        try
-                        {
-                            string buttonTextt = v.buttonText;
-                            if (v.overlapText != null)
-                                buttonTextt = v.overlapText;
-
-                            if (buttonTextt.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                searchedMods.Add(v);
-                        }
-                        catch { }
-                    }
-                }
-                else
-                {
-                    int categoryIndex = 0;
-                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                    {
-                        foreach (ButtonInfo v in buttonlist)
-                        {
-                            try
-                            {
-                                if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
-                                    continue;
-                                
-                                string buttonTextt = v.buttonText;
-                                if (v.overlapText != null)
-                                    buttonTextt = v.overlapText;
-
-                                if (buttonTextt.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                    searchedMods.Add(v);
-                            }
-                            catch { }
-                        }
-                        categoryIndex++;
-                    }
-                }
-
-                // ReSharper disable once PossibleLossOfFraction
-                lastPage = (int)Mathf.Ceil(searchedMods.ToArray().Length / (pageSize - 1));
-            }
-
             switch (buttonText)
             {
                 case "PreviousPage":
@@ -5962,7 +5895,7 @@ namespace iiMenu.Menu
 
                     pageNumber--;
                     if (pageNumber < 0)
-                        pageNumber = lastPage;
+                        pageNumber = LastPage;
                     break;
                 }
                 case "NextPage":
@@ -5971,7 +5904,7 @@ namespace iiMenu.Menu
                         lastClickedName = "NextPage";
 
                     pageNumber++;
-                    pageNumber %= lastPage + 1;
+                    pageNumber %= LastPage + 1;
                     break;
                 }
                 default:
@@ -6456,11 +6389,97 @@ jgs \_   _/ |Oo\
         public static bool oneHand;
 
         public static int _pageSize = 8;
-        public static int pageSize
+        public static int PageSize
         {
             get => _pageSize - buttonOffset;
             set => _pageSize = value;
         }
+
+        public static int ItemCount
+        {
+            get
+            {
+                int count = Buttons.buttons[currentCategoryIndex].Length;
+
+                if (currentCategoryName == "Favorite Mods")
+                    count = favorites.Count;
+
+                if (currentCategoryName == "Enabled Mods")
+                {
+                    var enabledMods = new List<string> { "Exit Enabled Mods" };
+
+                    for (int i = 0; i < Buttons.buttons.Length; i++)
+                    {
+                        var buttonList = Buttons.buttons[i];
+                        var category = Buttons.categoryNames[i];
+
+                        bool skipSettings = hideSettings && category.Contains("Settings");
+                        bool skipMacros = hideMacros && category.Contains("Macro");
+
+                        if (skipSettings || skipMacros)
+                            continue;
+
+                        foreach (var v in buttonList)
+                        {
+                            if (v.enabled)
+                                enabledMods.Add(v.buttonText);
+                        }
+                    }
+
+                    count = enabledMods.Count - 1;
+                }
+
+                if (isSearching)
+                {
+                    List<ButtonInfo> searchedMods = new List<ButtonInfo>();
+
+                    if (nonGlobalSearch && currentCategoryName != "Main")
+                    {
+                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                        {
+                            try
+                            {
+                                string buttonText = v.overlapText ?? v.buttonText;
+
+                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                    searchedMods.Add(v);
+                            }
+                            catch { }
+                        }
+                    }
+                    else
+                    {
+                        int categoryIndex = 0;
+                        foreach (ButtonInfo[] buttonList in Buttons.buttons)
+                        {
+                            foreach (ButtonInfo v in buttonList)
+                            {
+                                try
+                                {
+                                    if ((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
+                                         Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                        !isAdmin)
+                                        continue;
+
+                                    string displayedText = v.overlapText ?? v.buttonText;
+
+                                    if (displayedText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                        searchedMods.Add(v);
+                                }
+                                catch { }
+                            }
+                            categoryIndex++;
+                        }
+                    }
+
+                    count = searchedMods.Count;
+                }
+
+                return count;
+            }
+        }
+
+        public static int LastPage => (ItemCount + PageSize - 1) / PageSize - 1;
 
         public static int pageOffset;
         public static int pageNumber;
@@ -6505,7 +6524,6 @@ jgs \_   _/ |Oo\
                 currentCategoryIndex = Buttons.GetCategory(value);
         }
 
-        // Compatiblity
         public static int buttonClickSound = 8;
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
@@ -6513,7 +6531,7 @@ jgs \_   _/ |Oo\
         public static int menuButtonIndex = 1;
         public static float ButtonDistance
         {
-            get => 0.8f / (pageSize + buttonOffset);
+            get => 0.8f / (PageSize + buttonOffset);
         }
 
         public static bool doButtonsVibrate = true;
