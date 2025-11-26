@@ -1188,7 +1188,7 @@ namespace iiMenu.Managers
             };
 
             List<string> messages = new List<string>();
-            int messageCount = pageSize - 2;
+            int messageCount = PageSize - 2;
 
             string messageDataPath = $"{PluginInfo.BaseDirectory}/Friends/Messages/{friendTarget}.json";
             if (!File.Exists(messageDataPath))

@@ -90,6 +90,7 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.GetControllerTransform(false).rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
             }
 
+            Movement.SetHandEnabled(!leftPrimary);
         }
 
         public static void FakeReportMenu()

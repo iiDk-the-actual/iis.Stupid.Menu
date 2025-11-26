@@ -2526,7 +2526,7 @@ namespace iiMenu.Mods
 
                     string projectileName = Projectiles.ProjectileObjectNames[Projectiles.projMode * 2];
                     if (!projectileName.Contains("Growing"))
-                        projectileName = "GrowingSnowballLeftThrowable";
+                        projectileName = "GrowingSnowballLeftAnchor";
 
                     if (SnowballHandIndex)
                         projectileName = projectileName.Replace("Left", "Right");
@@ -2557,7 +2557,7 @@ namespace iiMenu.Mods
 
                     projectileName = Projectiles.ProjectileObjectNames[Projectiles.projMode * 2];
                     if (!projectileName.Contains("Growing"))
-                        projectileName = "GrowingSnowballRightThrowable";
+                        projectileName = "GrowingSnowballRightAnchor";
 
                     if (SnowballHandIndex)
                         projectileName = projectileName.Replace("Right", "Left");
