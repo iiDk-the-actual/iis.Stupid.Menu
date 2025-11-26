@@ -42,6 +42,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Technie.PhysicsCreator;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -193,10 +194,13 @@ namespace iiMenu.Mods
 
         public static void SetPlatformPosition(GameObject platform, bool left)
         {
-            var (position, rotation, _, _, _) = left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+            var (position, rotation, _, _, right) = left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
 
             platform.transform.position = position;
             platform.transform.rotation = rotation;
+
+            if (Buttons.GetIndex("Non-Sticky Platforms").enabled)
+                platform.transform.position += right * ((left ? 1f : -1f) * ((0.025f + platform.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
 
             FriendManager.PlatformSpawned(true, platform.transform.position, platform.transform.rotation, platform.transform.localScale, GetPlatformPrimitiveType());
         }
@@ -2029,7 +2033,7 @@ namespace iiMenu.Mods
         }
 
         public static Coroutine activeMacro;
-        public static System.Collections.IEnumerator PlayMacro(Macro macro, int startFromPosition = 0)
+        public static IEnumerator PlayMacro(Macro macro, int startFromPosition = 0)
         {
             List<PlayerPosition> positions = macro.positions;
             PlayerPosition startPosition = PlayerPosition.CurrentPosition();
@@ -2059,7 +2063,10 @@ namespace iiMenu.Mods
                 PlayerPosition currentPosition = positions[currentMacroPosition];
 
                 float t = stepElapsed / macro.macroStepDuration;
-                TeleportPlayer(lastPosition.position.Lerp(currentPosition.position, t));
+                Vector3 position = lastPosition.position.Lerp(currentPosition.position, t);
+                TeleportPlayer(position);
+                VRRig.LocalRig.transform.position = position;
+
                 GorillaTagger.Instance.rigidbody.linearVelocity = lastPosition.velocity.Lerp(currentPosition.velocity, t);
 
                 GorillaTagger.Instance.leftHandTransform.position = lastPosition.leftHand.position.Lerp(currentPosition.leftHand.position, t);
