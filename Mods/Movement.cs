@@ -4025,6 +4025,8 @@ namespace iiMenu.Mods
                 Vector3 leftHandPosition = ControllerInputPoller.DevicePosition(XRNode.LeftHand);
                 Vector3 rightHandPosition = ControllerInputPoller.DevicePosition(XRNode.RightHand);
 
+                bool bothHandsNotMoving = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0).magnitude < 2f && GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0).magnitude < 2f;
+
                 if (headPosition.Distance(leftHandPosition) < 0.2f && headPosition.Distance(rightHandPosition) < 0.2f)
                 {
                     Vector3 position = GorillaTagger.Instance.bodyCollider.transform.position;
@@ -4033,7 +4035,7 @@ namespace iiMenu.Mods
                     if (lastFramePosition == null)
                         TeleportPlayer(position);
 
-                    lastFramePosition = GorillaTagger.Instance.bodyCollider.transform.position;
+                    lastFramePosition = position;
 
                     return;
                 }
