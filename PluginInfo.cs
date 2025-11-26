@@ -27,7 +27,7 @@ namespace iiMenu
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @crimsoncauldron with love <3";
         public const string BuildTimestamp = "2025-11-25T23:50:20Z";
-        public const string Version = "7.8.0";
+        public const string Version = "7.8.1";
 
         public const string BaseDirectory = "iisStupidMenu";
         public const string ClientResourcePath = "iiMenu.Resources.Client";
