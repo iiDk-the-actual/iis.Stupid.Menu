@@ -1326,7 +1326,7 @@ namespace iiMenu.Mods
                 {
                     Transform child = triggers.transform.GetChild(i);
                     if (child.gameObject.activeSelf)
-                        VisualizeCube(child.position, child.rotation, child.localScale, Color.red);
+                        VisualizeCube(child.position, child.rotation, child.lossyScale, Color.red);
                 } catch { }
             }
         }
@@ -1340,7 +1340,7 @@ namespace iiMenu.Mods
                 {
                     Transform child = triggers.transform.GetChild(i);
                     if (child.gameObject.activeSelf)
-                        VisualizeCube(child.position, child.rotation, child.localScale, backgroundColor.GetCurrentColor());
+                        VisualizeCube(child.position, child.rotation, child.lossyScale, backgroundColor.GetCurrentColor());
                 } catch { }
             }
         }
