@@ -5512,41 +5512,41 @@ namespace iiMenu.Menu
         }
 
         public static bool onlySerializeNecessary;
-        public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
+        public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0, float delay = 0f)
         {
             if (!PhotonNetwork.InRoom)
                 return;
 
-            if (viewFilter != null)
+            if (viewFilter == null)
+                viewFilter = Array.Empty<PhotonView>();
+
+            NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
+            List<PhotonView> viewsToSerialize = new List<PhotonView>();
+
+            if (onlySerializeNecessary)
+                photonViewList = new NonAllocDictionary<int, PhotonView> { { 0, GorillaTagger.Instance.myVRRig.GetView } };
+
+            List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
+
+            foreach (PhotonView photonView in photonViewList.Values)
             {
-                NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
-                List<PhotonView> viewsToSerialize = new List<PhotonView>();
-
-                if (onlySerializeNecessary)
-                    photonViewList = new NonAllocDictionary<int, PhotonView> { { 0, GorillaTagger.Instance.myVRRig.GetView } };
-
-                List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
-
-                foreach (PhotonView photonView in photonViewList.Values)
+                if (exclude)
                 {
-                    if (exclude)
-                    {
-                        if (photonView.IsMine && !filteredViewIDs.Contains(photonView.ViewID))
-                            viewsToSerialize.Add(photonView);
-                    }
-                    else
-                    {
-                        if (photonView.IsMine && filteredViewIDs.Contains(photonView.ViewID))
-                            viewsToSerialize.Add(photonView);
-                    }
+                    if (photonView.IsMine && !filteredViewIDs.Contains(photonView.ViewID))
+                        viewsToSerialize.Add(photonView);
                 }
-
-                foreach (PhotonView view in viewsToSerialize)
-                    SendSerialize(view, null, timeOffset);
+                else
+                {
+                    if (photonView.IsMine && filteredViewIDs.Contains(photonView.ViewID))
+                        viewsToSerialize.Add(photonView);
+                }
             }
+
+            foreach (PhotonView view in viewsToSerialize)
+                SendSerialize(view, null, timeOffset, delay);
         }
 
-        public static void SendSerialize(PhotonView pv, RaiseEventOptions options = null, int timeOffset = 0)
+        public static void SendSerialize(PhotonView pv, RaiseEventOptions options = null, int timeOffset = 0, float delay = 0f)
         {
             if (!PhotonNetwork.InRoom)
                 return;
@@ -5591,10 +5591,21 @@ namespace iiMenu.Menu
             objectUpdate[0] = PhotonNetwork.ServerTimestamp + timeOffset;
             objectUpdate[1] = currentLevelPrefix != 0 ? (object)currentLevelPrefix : null;
 
-            PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
-                reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
+            if (delay <= 0f)
+                PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
+                    reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
+            else
+                CoroutineManager.instance.StartCoroutine(SerializationDelay(() =>
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
+                        reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable), delay));
 
             serializeViewBatch.Clear();
+        }
+
+        public static IEnumerator SerializationDelay(Action action, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            action?.Invoke();
         }
 
         public static void TeleportPlayer(Vector3 pos, bool keepVelocity = false) // Prevents your hands from getting stuck on trees
@@ -6954,8 +6965,6 @@ jgs \_   _/ |Oo\
         public static string lastCommand = "";
 
         public static float ShootStrength = 19.44f;
-
-        public static bool lastprimaryhit;
 
         public static int colorChangeType;
         public static bool strobeColor;

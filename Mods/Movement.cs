@@ -4153,6 +4153,32 @@ namespace iiMenu.Mods
             GTPlayer.Instance.GetControllerTransform(false).transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
         }
 
+        public static int fakeLagDelayIndex = 10;
+        private static float fakeLagDelay = 1f;
+
+        public static void ChangeFakeLagStrength(bool positive = true, bool fromMenu = false)
+        {
+            if (positive)
+                fakeLagDelayIndex++;
+            else
+                fakeLagDelayIndex--;
+
+            fakeLagDelayIndex %= 21;
+            if (fakeLagDelayIndex < 0)
+                fakeLagDelayIndex = 20;
+
+            fakeLagDelay = fakeLagDelayIndex / 10f;
+            Buttons.GetIndex("Change Fake Lag Strength").overlapText = "Change Fake Lag Strength <color=grey>[</color><color=green>" + fakeLagDelayIndex + "</color><color=grey>]</color>";
+        }
+
+        public static void FakeLag()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(delay: fakeLagDelay);
+                return false;
+            };
+        }
+
         public static void LagRange()
         {
             bool isTagged = PlayerIsTagged(VRRig.LocalRig);
@@ -5535,40 +5561,31 @@ namespace iiMenu.Mods
             }
         }
 
-        public static bool idiotfixthingy;
         public static void LaggyRig()
         {
             ghostException = true;
             if (Time.time > laggyRigDelay)
             {
                 VRRig.LocalRig.enabled = true;
-                idiotfixthingy = true;
+                VRRig.LocalRig.PostTick();
+                VRRig.LocalRig.enabled = false;
+
                 laggyRigDelay = Time.time + 0.5f;
-            } else
-            {
-                if (idiotfixthingy)
-                    idiotfixthingy = false;
-                else
-                    VRRig.LocalRig.enabled = false;
             }
         }
 
+        public static bool wasRightPrimaryPressed;
         public static void UpdateRig()
         {
             ghostException = true;
-            if (rightPrimary && !lastprimaryhit)
+            if (rightPrimary && !wasRightPrimaryPressed)
             {
                 VRRig.LocalRig.enabled = true;
-                idiotfixthingy = true;
+                VRRig.LocalRig.PostTick();
+                VRRig.LocalRig.enabled = false;
             }
-            else
-            {
-                if (idiotfixthingy)
-                    idiotfixthingy = false;
-                else
-                    VRRig.LocalRig.enabled = false;
-            }
-            lastprimaryhit = rightPrimary;
+
+            wasRightPrimaryPressed = rightPrimary;
         }
 
         public static int multiplicationAmount = 15;

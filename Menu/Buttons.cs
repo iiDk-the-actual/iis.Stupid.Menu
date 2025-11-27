@@ -789,6 +789,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Lag Detector", method = Important.TagLagDetector, toolTip = "Detects when the master client is not currently allowing tag requests."},
                 new ButtonInfo { buttonText = "Steam Detector", method = Important.SteamDetector, toolTip = "Detects when a player in your room is on Steam."},
 
+                new ButtonInfo { buttonText = "Fake Lag", method = Movement.FakeLag, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Forces your ping to be high."},
                 new ButtonInfo { buttonText = "Lag Range", method = Movement.LagRange, toolTip = "Dynamically changes how much your rig updates depending on how close you are to others."},
                 new ButtonInfo { buttonText = "Blink", method = Movement.Blink, disableMethod = Movement.DisableBlink, toolTip = "Stops your client from sending and receiving player update packets."},
 
@@ -1933,10 +1934,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Advantage Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Obnoxious Tag", toolTip = "Makes the tag mods more obnoxious. Instead of hiding in the ground, you teleport around the player like crazy."},
+                new ButtonInfo { buttonText = "Visualize Tag Reach", toolTip = "Visualizes the distance threshold for the tag reach."},
+
                 new ButtonInfo { buttonText = "ctaRange", overlapText = "Change Tag Aura Range <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Advantages.ChangeTagAuraRange(), enableMethod =() => Advantages.ChangeTagAuraRange(), disableMethod =() => Advantages.ChangeTagAuraRange(false), incremental = true, isTogglable = false, toolTip = "Changes the range of the tag aura mods."},
                 new ButtonInfo { buttonText = "ctrRange", overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Advantages.ChangeTagReachDistance(), enableMethod =() => Advantages.ChangeTagReachDistance(), disableMethod =() => Advantages.ChangeTagReachDistance(false), incremental = true, isTogglable = false, toolTip = "Changes the range of the tag reach mods."},
-
-                new ButtonInfo { buttonText = "Visualize Tag Reach", toolTip = "Visualizes the distance threshold for the tag reach."},
+    
+                new ButtonInfo { buttonText = "Change Fake Lag Strength", overlapText = "Change Fake Lag Strength <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Movement.ChangeFakeLagStrength(), enableMethod =() => Movement.ChangeFakeLagStrength(), disableMethod =() => Movement.ChangeFakeLagStrength(false), incremental = true, isTogglable = false, toolTip = "Changes the ping of the \"Fake Lag\" mod." }
             },
 
             new[] { // Visual Settings [22]
