@@ -172,6 +172,7 @@ namespace iiMenu.Mods
                         RigCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
                     }
 
+                    bool wasThrowableRandomized = Throwable.randomizeColor;
                     Throwable.randomizeColor = true;
                     VRRig.LocalRig.SetThrowableProjectileColor(true, color);
 
@@ -289,7 +290,7 @@ namespace iiMenu.Mods
                         }
                     }
 
-                    Throwable.randomizeColor = false;
+                    Throwable.randomizeColor = wasThrowableRandomized;
                 }
                 catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
