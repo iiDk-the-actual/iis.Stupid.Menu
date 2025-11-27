@@ -5476,31 +5476,31 @@ exit 0";
             disableBoardColor = true;
             motd.SetActive(false);
             motdText.SetActive(false);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoommotdHeadingText").SetActive(true);
+
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(true);
             GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(true);
 
-            int boardIndex = 0;
-            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+            var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
+                           .Where(x => x.name.Contains("UnityTempFile"))
+                           .ToList();
+
+            if (StumpLeaderboardIndex >= 0 && StumpLeaderboardIndex < stumpChildren.Count)
             {
-                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile"))
-                {
-                    boardIndex++;
-                    if (boardIndex == StumpLeaderboardIndex)
-                        v.GetComponent<Renderer>().material = StumpMat;
+                var stumpBoard = stumpChildren[StumpLeaderboardIndex];
+                if (stumpBoard != null && StumpMat != null)
+                    stumpBoard.GetComponent<Renderer>().material = StumpMat;
                 }
             }
 
-            boardIndex = 0;
-            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
-            {
-                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile"))
+            var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
+                .Where(x => x.name.Contains("UnityTempFile"))
+                .ToList();
+
+            if (ForestLeaderboardIndex >= 0 && ForestLeaderboardIndex < forestChildren.Count)
                 {
-                    boardIndex++;
-                    if (boardIndex == ForestLeaderboardIndex)
-                        v.GetComponent<Renderer>().material = ForestMat;
-                }
+                var forestBoard = forestChildren[ForestLeaderboardIndex];
+                if (forestBoard != null && ForestMat != null)
+                    forestBoard.GetComponent<Renderer>().material = ForestMat;
             }
 
             foreach (GameObject board in objectBoards.Values)
