@@ -22,6 +22,7 @@
 using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaLocomotion;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
@@ -38,6 +39,8 @@ namespace iiMenu.Mods
 {
     public static class Advantages
     {
+        public static bool instantTag;
+
         public static void TagSelf()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -53,42 +56,73 @@ namespace iiMenu.Mods
                     NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
                     VRRig.LocalRig.enabled = true;
                     Buttons.GetIndex("Tag Self").enabled = false;
+
+                    if (instantTag)
+                        SerializePatch.OverrideSerialization = null;
                 }
                 else
                 {
-                    VRRig rig = GorillaParent.instance.vrrigs.Where(PlayerIsTagged).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
-                    if (PlayerIsTagged(rig))
+                    VRRig rig = GorillaParent.instance.vrrigs
+                        .Where(r => !r.IsLocal() && r.IsTagged())
+                        .OrderBy(r => Vector3.Distance(
+                                        r.transform.position,
+                                        GorillaTagger.Instance.headCollider.transform.position)
+                                    + r.LatestVelocity().magnitude)
+                        .FirstOrDefault();
+
+                    if (instantTag)
                     {
-                        VRRig.LocalRig.enabled = false;
-                        if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-
-                        if (Buttons.GetIndex("Obnoxious Tag").enabled)
+                        SerializePatch.OverrideSerialization = () =>
                         {
-                            Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                            VRRig.LocalRig.transform.rotation = rotation;
+                            if (PlayerIsTagged(VRRig.LocalRig))
+                                return true;
 
-                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
-                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            VRRig.LocalRig.transform.position = rig.rightHandTransform.transform.position;
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber, rig.GetPlayer().ActorNumber } });
 
-                            VRRig.LocalRig.leftIndex.calcT = 0f;
-                            VRRig.LocalRig.leftMiddle.calcT = 0f;
-                            VRRig.LocalRig.leftThumb.calcT = 0f;
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
 
-                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                            return false;
+                        };
+                    } else
+                    {
+                        if (PlayerIsTagged(rig))
+                        {
+                            VRRig.LocalRig.enabled = false;
+                            if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
-                            VRRig.LocalRig.rightIndex.calcT = 0f;
-                            VRRig.LocalRig.rightMiddle.calcT = 0f;
-                            VRRig.LocalRig.rightThumb.calcT = 0f;
+                            if (Buttons.GetIndex("Obnoxious Tag").enabled)
+                            {
+                                Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
+                                VRRig.LocalRig.transform.rotation = rotation;
 
-                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+
+                                VRRig.LocalRig.leftIndex.calcT = 0f;
+                                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                VRRig.LocalRig.leftThumb.calcT = 0f;
+
+                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+                                VRRig.LocalRig.rightIndex.calcT = 0f;
+                                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                VRRig.LocalRig.rightThumb.calcT = 0f;
+
+                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                            }
                         }
                     }
                 }
@@ -442,6 +476,12 @@ namespace iiMenu.Mods
 
         public static void TagGun()
         {
+            if (instantTag)
+            {
+                InstantTagGun();
+                return;
+            }
+
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
@@ -543,7 +583,14 @@ namespace iiMenu.Mods
             if (!PlayerIsTagged(VRRig.LocalRig))
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
-                Toggle("Tag Player");
+                Buttons.GetIndex("Tag Player").enabled = false;
+                return;
+            }
+
+            if (instantTag)
+            {
+                InstantTagPlayer(player);
+                Buttons.GetIndex("Tag Player").enabled = false;
                 return;
             }
 
@@ -588,7 +635,7 @@ namespace iiMenu.Mods
                     ReportTag(targetRig);
             }
             else
-                Toggle("Tag Player");
+                Buttons.GetIndex("Tag Player").enabled = false;
         }
 
         public static void UntagGun()
@@ -647,6 +694,14 @@ namespace iiMenu.Mods
             }
             else
             {
+                if (instantTag)
+                {
+                    InstantTagAll();
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                    Buttons.GetIndex("Tag All").enabled = false;
+                    return;
+                }
+
                 if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
@@ -777,8 +832,8 @@ namespace iiMenu.Mods
 
         public static void HuntTagAll()
         {
-            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
-            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            GorillaHuntManager huntComputer = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = huntComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             if (!GTPlayer.Instance.disableMovement)
             {
                 VRRig vrrig = GetVRRigFromPlayer(target);

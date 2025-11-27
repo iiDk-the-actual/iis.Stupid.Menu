@@ -4374,6 +4374,9 @@ namespace iiMenu.Mods
 
         public static void HollowHuntBoxESP()
         {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
+                return;
+
             bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;

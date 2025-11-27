@@ -456,13 +456,6 @@ namespace iiMenu.Mods
                     toolTip = $"Tags {targetName}."
                 },
                 new ButtonInfo {
-                    buttonText = "Instant Tag Player",
-                    overlapText = $"Instant Tag {targetName}",
-                    method =() => Advantages.InstantTagPlayer(player),
-                    isTogglable = false,
-                    toolTip = $"Tags {targetName} instantly."
-                },
-                new ButtonInfo {
                     buttonText = "Snowball Fling Player",
                     overlapText = $"Snowball Fling {targetName}",
                     method =() => Overpowered.FlingPlayer(player),
