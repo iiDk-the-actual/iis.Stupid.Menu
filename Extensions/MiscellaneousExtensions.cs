@@ -22,6 +22,7 @@
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -165,6 +166,86 @@ namespace iiMenu.Extensions
         {
             result = obj.GetComponentInParent<T>();
             return result != null;
+        }
+
+        public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TKey actualKey)
+        {
+            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+            return TryGetKeyInternal(dictionary, key, out actualKey, null);
+        }
+
+        public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TKey actualKey, IEqualityComparer<TKey> comparer)
+        {
+            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
+            return TryGetKeyInternal(dictionary, key, out actualKey, comparer);
+        }
+
+        public static bool TryGetKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs, TKey key, out TKey actualKey, IEqualityComparer<TKey> comparer = null)
+        {
+            if (pairs == null) throw new ArgumentNullException(nameof(pairs));
+            comparer ??= EqualityComparer<TKey>.Default;
+
+            foreach (var kv in pairs)
+            {
+                if (comparer.Equals(kv.Key, key))
+                {
+                    actualKey = kv.Key;
+                    return true;
+                }
+            }
+
+            actualKey = default!;
+            return false;
+        }
+
+        public static bool TryGetKeyByValue(
+            this Dictionary<string, string> dict,
+            string value,
+            out string key)
+        {
+            foreach (var kv in dict)
+            {
+                if (string.Equals(kv.Value, value, StringComparison.OrdinalIgnoreCase))
+                {
+                    key = kv.Key;
+                    return true;
+                }
+            }
+            key = null!;
+            return false;
+        }
+
+
+        private static bool TryGetKeyInternal<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, out TKey actualKey, IEqualityComparer<TKey> comparer)
+        {
+            comparer ??= TryGetComparerFromDictionary(dictionary) ?? EqualityComparer<TKey>.Default;
+            foreach (var k in dictionary.Keys)
+            {
+                if (comparer.Equals(k, key))
+                {
+                    actualKey = k;
+                    return true;
+                }
+            }
+
+            actualKey = default!;
+            return false;
+        }
+
+        private static IEqualityComparer<TKey> TryGetComparerFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            if (dictionary is Dictionary<TKey, TValue> dict)
+                return dict.Comparer;
+
+            var dictType = dictionary.GetType();
+            var prop = dictType.GetProperty("Comparer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (prop != null && typeof(IEqualityComparer<TKey>).IsAssignableFrom(prop.PropertyType))
+            {
+                IEqualityComparer<TKey> comp = prop.GetValue(dictionary) as IEqualityComparer<TKey>;
+                if (comp != null) return comp;
+            }
+
+            return null;
         }
     }
 }

@@ -966,8 +966,12 @@ namespace iiMenu.Mods
         {
             string[] input = mods.Split(',').Select(s => s.Trim()).ToArray();
             Hashtable props = new Hashtable();
+
             foreach (string mod in input)
-                props[mod] = true;
+            {
+                if (Visuals.modDictionary.TryGetKeyByValue(mod, out string keyName))
+                    props[keyName] = true;
+            }
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
