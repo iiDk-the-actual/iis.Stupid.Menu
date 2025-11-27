@@ -5490,7 +5490,6 @@ exit 0";
                 if (stumpBoard != null && StumpMat != null)
                     stumpBoard.GetComponent<Renderer>().material = StumpMat;
                 }
-            }
 
             var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
                 .Where(x => x.name.Contains("UnityTempFile"))
