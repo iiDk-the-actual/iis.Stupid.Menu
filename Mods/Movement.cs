@@ -5535,40 +5535,31 @@ namespace iiMenu.Mods
             }
         }
 
-        public static bool idiotfixthingy;
         public static void LaggyRig()
         {
             ghostException = true;
             if (Time.time > laggyRigDelay)
             {
                 VRRig.LocalRig.enabled = true;
-                idiotfixthingy = true;
+                VRRig.LocalRig.PostTick();
+                VRRig.LocalRig.enabled = false;
+
                 laggyRigDelay = Time.time + 0.5f;
-            } else
-            {
-                if (idiotfixthingy)
-                    idiotfixthingy = false;
-                else
-                    VRRig.LocalRig.enabled = false;
             }
         }
 
+        public static bool wasRightPrimaryPressed;
         public static void UpdateRig()
         {
             ghostException = true;
-            if (rightPrimary && !lastprimaryhit)
+            if (rightPrimary && !wasRightPrimaryPressed)
             {
                 VRRig.LocalRig.enabled = true;
-                idiotfixthingy = true;
+                VRRig.LocalRig.PostTick();
+                VRRig.LocalRig.enabled = false;
             }
-            else
-            {
-                if (idiotfixthingy)
-                    idiotfixthingy = false;
-                else
-                    VRRig.LocalRig.enabled = false;
-            }
-            lastprimaryhit = rightPrimary;
+
+            wasRightPrimaryPressed = rightPrimary;
         }
 
         public static int multiplicationAmount = 15;
