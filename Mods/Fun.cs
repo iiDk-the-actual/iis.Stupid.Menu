@@ -56,6 +56,7 @@ using System.Reflection;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Windows;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -1879,6 +1880,17 @@ namespace iiMenu.Mods
                     Sound.FixMicrophone();
                 }
             }
+        }
+
+        public static void SaveNarration(string text)
+        {
+            string path = $"{PluginInfo.BaseDirectory}/Sounds/Narrations";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) =>
+            {
+                PromptSingleText("The narration has been saved in your Soundboard!", null, "Ok");
+            }, text, path));
         }
 
         public static DictationRecognizer drec;

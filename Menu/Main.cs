@@ -4265,7 +4265,7 @@ namespace iiMenu.Menu
         public static Vector3 GetGunDirection(Transform transform) =>
             new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? ControllerUtilities.GetTrueRightHand().forward : ControllerUtilities.GetTrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
 
-        public static IEnumerator TranscribeText(string text, Action<AudioClip> onComplete)
+        public static IEnumerator TranscribeText(string text, Action<AudioClip> onComplete, string customFileName = null, string customPath = null)
         {
             if (Time.time < timeMenuStarted + 5f)
             {
@@ -4273,8 +4273,8 @@ namespace iiMenu.Menu
                 yield break;
             }
 
-            string fileName = $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
-            string directoryPath = $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
+            string fileName = !string.IsNullOrEmpty(customPath) ? SanitizeFileName(customFileName) : $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
+            string directoryPath = !string.IsNullOrEmpty(customPath) ? customPath : $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
             string filePath = directoryPath + "/" + fileName;
 
             if (!Directory.Exists(directoryPath))

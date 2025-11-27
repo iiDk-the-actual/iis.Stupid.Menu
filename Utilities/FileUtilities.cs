@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace iiMenu.Utilities
@@ -74,6 +76,31 @@ namespace iiMenu.Utilities
                     path = transform.name + "/" + path;
             }
             return path;
+        }
+
+        public static string SanitizeFileName(string input)
+        {
+            input = input.Trim();
+            char[] illegalChars = Path.GetInvalidFileNameChars();
+            foreach (char c in illegalChars)
+                input = input.Replace(c, '_');
+
+            input = input.Replace("../", "")
+                         .Replace("..\\", "")
+                         .Replace("./", "")
+                         .Replace(".\\", "");
+
+            input = input.Replace(":", "")
+                         .Replace("\\", "")
+                         .Replace("/", "");
+
+            if (input.Length > 64)
+                input = input.Substring(0, 64);
+
+            if (string.IsNullOrWhiteSpace(input))
+                input = "file"; // fallback
+
+            return input;
         }
     }
 }
