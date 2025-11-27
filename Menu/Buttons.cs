@@ -1023,6 +1023,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Trigger Anti Report All", method = Fun.TriggerAntiReportAll, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Triggers everyone in the room's anti report if enabled."},
 
                 new ButtonInfo { buttonText = "Break Mod Checkers", enableMethod = Fun.BreakModCheckers, disableMethod = Safety.BypassModCheckers, toolTip = "Tells players using mod checkers that you have ever mod possible."},
+                new ButtonInfo { buttonText = "Custom Mod Spoofer", enableMethod =()=> PromptSingleText("Please enter what you would like to spoof your mods to. (seperated by commas)", ()=> Fun.CustomModSpoofer(keyboardInput), "Done"), disableMethod = Safety.BypassModCheckers, toolTip = "Make mod checkers see only what you allow."},
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method = Fun.MuteDJSets, disableMethod = Fun.UnmuteDJSets, toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
                 new ButtonInfo { buttonText = "Infinite Dreidel", method =() => DreidelPatch.enabled = true, disableMethod =() => DreidelPatch.enabled = false, toolTip = "Makes the dreidel cosmetic spin forever."},

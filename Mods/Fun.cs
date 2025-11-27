@@ -962,6 +962,16 @@ namespace iiMenu.Mods
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
 
+        public static void CustomModSpoofer(string mods)
+        {
+            string[] input = mods.Split(',').Select(s => s.Trim()).ToArray();
+            Hashtable props = new Hashtable();
+            foreach (string mod in input)
+                props[mod] = true;
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+
         public static void MuteDJSets()
         {
             foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
