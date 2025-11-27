@@ -719,51 +719,50 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool lastLeftGrab;
-        private static bool lastRightGrab;
+        private static readonly Dictionary<bool, bool> previousGripHeld = new Dictionary<bool, bool>();
+        private static void HandleGrabProjectile(bool leftHand)
+        {
+            SnowballMaker snowballMaker = leftHand ? SnowballMaker.leftHandInstance : SnowballMaker.rightHandInstance;
+            bool gripHeld = leftHand ? leftGrab : rightGrab;
+            previousGripHeld.TryGetValue(leftHand, out bool lastGripHeld);
+
+            if (gripHeld && !lastGripHeld)
+            {
+                int projIndex = projMode * 2;
+                if (Buttons.GetIndex("Random Projectile").enabled)
+                    projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
+
+                SnowballThrowable snowballThrowable = GetProjectile(ProjectileObjectNames[projIndex + (leftHand ? 0 : 1)]);
+                if (!snowballThrowable.gameObject.activeSelf)
+                {
+                    snowballThrowable.SetSnowballActiveLocal(true);
+                    snowballThrowable.velocityEstimator = snowballMaker.velocityEstimator;
+
+                    Transform handTransform = snowballMaker.handTransform;
+                    snowballThrowable.transform.position = handTransform.TransformPoint(snowballThrowable.SpawnOffset.pos);
+                    snowballThrowable.transform.rotation = handTransform.rotation * snowballThrowable.SpawnOffset.rot;
+
+                    Color TargetProjectileColor = CalculateProjectileColor();
+                    VRRig.LocalRig.SetThrowableProjectileColor(true, CalculateProjectileColor());
+
+                    bool wasProjectileRandomized = snowballThrowable.randomizeColor;
+                    snowballThrowable.randomizeColor = true;
+                    snowballThrowable.ApplyColor(TargetProjectileColor);
+                    snowballThrowable.randomizeColor = wasProjectileRandomized;
+                }
+            }
+
+            previousGripHeld[leftHand] = gripHeld;
+        }
+
         public static void GrabProjectile()
         {
             int projIndex = projMode * 2;
             if (Buttons.GetIndex("Random Projectile").enabled)
                 projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
 
-            if (leftGrab && !lastLeftGrab)
-            {
-                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex]);
-                if (!Projectile.gameObject.activeSelf)
-                {
-                    Projectile.SetSnowballActiveLocal(true);
-                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>();
-                    Projectile.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                    Projectile.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
-
-                    Color TargetProjectileColor = CalculateProjectileColor();
-                    VRRig.LocalRig.SetThrowableProjectileColor(true, CalculateProjectileColor());
-                    Projectile.randomizeColor = true;
-                    Projectile.ApplyColor(TargetProjectileColor);
-                }
-            }
-
-            if (rightGrab && !lastRightGrab)
-            {
-                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex + 1]);
-
-                if (!Projectile.gameObject.activeSelf)
-                {
-                    Projectile.SetSnowballActiveLocal(true);
-                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>();
-                    Projectile.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    Projectile.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-
-                    Color TargetProjectileColor = CalculateProjectileColor();
-                    VRRig.LocalRig.SetThrowableProjectileColor(false, CalculateProjectileColor());
-                    Projectile.randomizeColor = true;
-                    Projectile.ApplyColor(TargetProjectileColor);
-                }
-            }
-
-            lastLeftGrab = leftGrab;
-            lastRightGrab = rightGrab;
+            HandleGrabProjectile(true);
+            HandleGrabProjectile(false);
         }
 
         public static void Urine()
