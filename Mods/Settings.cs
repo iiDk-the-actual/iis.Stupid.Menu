@@ -4989,7 +4989,8 @@ exit 0";
                 joystickMenuPosition.ToString(),
                 Movement.multiplicationAmount.ToString(),
                 Fun.targetFOV.ToString(),
-                Projectiles.targetProjectileIndex.ToString()
+                Projectiles.targetProjectileIndex.ToString(),
+                Movement.fakeLagDelayIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5244,6 +5245,9 @@ exit 0";
 
                 Projectiles.targetProjectileIndex = int.Parse(data[61]) - 1;
                 Projectiles.ChangeProjectileIndex();
+
+                Movement.fakeLagDelayIndex = int.Parse(data[62]) - 1;
+                Movement.ChangeFakeLagStrength();
             }
             catch { LogManager.Log("Save file out of date"); }
 
@@ -5489,14 +5493,14 @@ exit 0";
                 var stumpBoard = stumpChildren[StumpLeaderboardIndex];
                 if (stumpBoard != null && StumpMat != null)
                     stumpBoard.GetComponent<Renderer>().material = StumpMat;
-                }
+            }
 
             var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
                 .Where(x => x.name.Contains("UnityTempFile"))
                 .ToList();
 
             if (ForestLeaderboardIndex >= 0 && ForestLeaderboardIndex < forestChildren.Count)
-                {
+            {
                 var forestBoard = forestChildren[ForestLeaderboardIndex];
                 if (forestBoard != null && ForestMat != null)
                     forestBoard.GetComponent<Renderer>().material = ForestMat;
