@@ -3769,6 +3769,9 @@ namespace iiMenu.Mods
             foreach (GameObject gameObject in toRemove.SelectMany(removeRig => RigColliders[removeRig]))
                 Object.Destroy(gameObject);
 
+            foreach (VRRig rig in toRemove)
+                RigColliders.Remove(rig);
+
             toRemove.Clear();
 
             foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isLocal))
@@ -3799,7 +3802,6 @@ namespace iiMenu.Mods
                     Vector3 pointA = vrrig.mainSkin.bones[bones[i * 2]].position;
                     Vector3 pointB = vrrig.mainSkin.bones[bones[i * 2 + 1]].position;
 
-                    boneCollider.GetComponent<Renderer>().enabled = false;
                     boneCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
                     boneCollider.transform.LookAt(pointB);
                     boneCollider.transform.localScale = new Vector3(0.2f, 0.2f, Vector3.Distance(pointA, pointB));
