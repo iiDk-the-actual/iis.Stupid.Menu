@@ -776,9 +776,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag All", method = Advantages.TagAll, disableMethod = Movement.EnableRig, toolTip = "Attempts to tag everyone in the the room."},
                 new ButtonInfo { buttonText = "Tag Bot", method = Advantages.TagBot, disableMethod = Movement.EnableRig, toolTip = "Automatically tags yourself and everyone else on a loop, use <color=green>B</color> to turn it off."},
 
-                new ButtonInfo { buttonText = "Instant Tag Gun", method = Advantages.InstantTagGun, toolTip = "Tags whoever your hand desires instantly."},
-                new ButtonInfo { buttonText = "Instant Tag All", method = Advantages.InstantTagAll, isTogglable = false, toolTip = "Attempts to tag everyone in the the room instantly."},
-
                 new ButtonInfo { buttonText = "No Tag on Join", method = Advantages.NoTagOnJoin, disableMethod = Advantages.TagOnJoin, toolTip = "When you join a the room, you won't be tagged when you join."},
                 new ButtonInfo { buttonText = "Untag Self", method = Advantages.UntagSelf, isTogglable = false, toolTip = "Removes you from the list of tagged players."},
 
