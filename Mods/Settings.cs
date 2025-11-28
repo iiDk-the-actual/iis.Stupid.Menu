@@ -508,22 +508,7 @@ namespace iiMenu.Mods
                     overlapText = $"Guardian Crash {targetName}",
                     method =() => Overpowered.CrashPlayer(player),
                     toolTip = $"Crashes {targetName}."
-                },
-
-                new ButtonInfo {
-                    buttonText = "Barrel Kick Player",
-                    overlapText = $"Barrel Kick {targetName}",
-                    enableMethod =() => Fun.CheckOwnedThrowable(618),
-                    method =() => { Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - playerRig.headMesh.transform.position; Fun.SendBarrelProjectile(playerRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - playerRig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } }); },
-                    toolTip = $"Kicks {targetName} using the barrels."
-                },
-                new ButtonInfo {
-                    buttonText = "Barrel Crash Player",
-                    overlapText = $"Barrel Crash {targetName}",
-                    enableMethod =() => Fun.CheckOwnedThrowable(618),
-                    method =() => Fun.SendBarrelProjectile(playerRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } }),
-                    toolTip = $"Crashes {targetName} using the barrels."
-                },
+                }
             };
 
             if (PhotonNetwork.IsMasterClient)
