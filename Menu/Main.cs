@@ -5511,7 +5511,6 @@ namespace iiMenu.Menu
             return safePing;
         }
 
-        public static bool onlySerializeNecessary;
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0, float delay = 0f)
         {
             if (!PhotonNetwork.InRoom)
@@ -5522,9 +5521,6 @@ namespace iiMenu.Menu
 
             NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
             List<PhotonView> viewsToSerialize = new List<PhotonView>();
-
-            if (onlySerializeNecessary)
-                photonViewList = new NonAllocDictionary<int, PhotonView> { { 0, GorillaTagger.Instance.myVRRig.GetView } };
 
             List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
 

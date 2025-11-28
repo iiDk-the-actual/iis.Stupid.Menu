@@ -100,19 +100,11 @@ namespace iiMenu.Mods
 
         public static void OnlySerializeNecessary()
         {
-            if (SerializePatch.OverrideSerialization == null)
+            SerializePatch.OverrideSerialization = () =>
             {
-                SerializePatch.OverrideSerialization = () =>
-                {
-                    if (PhotonNetwork.InRoom)
-                    {
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
-                        return false;
-                    }
-
-                    return true;
-                };
-            }
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                return false;
+            };
         }
 
         public static void DumpSoundData()
