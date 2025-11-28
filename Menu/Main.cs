@@ -6115,19 +6115,55 @@ namespace iiMenu.Menu
                 if (dynamicAnimations)
                     lastClickedName = buttonText + (increment ? "+" : "-");
 
+                bool boost = incrementalBoost && rightGrab;
                 if (increment)
                 {
                     NotificationManager.SendNotification($"<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> {target.toolTip}");
-                    if (target.enableMethod != null)
-                        try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
-                            $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
+
+                    if (boost)
+                        for (int i = 0; i < 5; i++)
+                        {
+                            if (target.enableMethod != null)
+                                try { target.enableMethod.Invoke(); }
+                                catch (Exception exc)
+                                {
+                                    LogManager.LogError(
+                                    $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                }
+                        }
+                    else
+                        if (target.enableMethod != null)
+                            try { target.enableMethod.Invoke(); }
+                            catch (Exception exc)
+                            {
+                                LogManager.LogError(
+                                $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                            }
                 }
                 else
                 {
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> {target.toolTip}");
-                    if (target.disableMethod != null)
-                        try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
-                            $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
+
+                    if (boost)
+                        for (int i = 0; i < 5; i++)
+                        {
+                            if (target.enableMethod != null)
+                                if (target.disableMethod != null)
+                                    try { target.disableMethod.Invoke(); }
+                                    catch (Exception exc)
+                                    {
+                                        LogManager.LogError(
+                                        $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                    }
+                        }
+                    else
+                        if (target.disableMethod != null)
+                            try { target.disableMethod.Invoke(); }
+                            catch (Exception exc)
+                            {
+                                LogManager.LogError(
+                                $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                            }
                 }
             }
             ReloadMenu();
@@ -6604,6 +6640,7 @@ jgs \_   _/ |Oo\
         public static bool hideTextOnCamera;
         public static bool hidePointer;
         public static bool incrementalButtons = true;
+        public static bool incrementalBoost;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
