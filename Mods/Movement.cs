@@ -4176,7 +4176,7 @@ namespace iiMenu.Mods
         public static void FakeLag()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(delay: fakeLagDelay);
+                MassSerialize(true, delay: fakeLagDelay);
                 return false;
             };
         }
@@ -4949,6 +4949,8 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
                     VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+
+                    Sound.SoundSpam(337, true);
                 }
                 if (GetGunInput(true))
                 {

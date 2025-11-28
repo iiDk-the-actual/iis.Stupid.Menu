@@ -292,9 +292,9 @@ namespace iiMenu.Mods
         }
 
         private static float soundSpamDelay;
-        public static void SoundSpam(int soundId)
+        public static void SoundSpam(int soundId, bool constant = false)
         {
-            if (rightGrab)
+            if (rightGrab || constant)
             {
                 if (Time.time > soundSpamDelay)
                     soundSpamDelay = Time.time + 0.1f;
