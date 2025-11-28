@@ -1836,6 +1836,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
 
+                new ButtonInfo { buttonText = "Modded Crash Gun", method = Overpowered.ModdedCrashGun, toolTip = "Crashes whoever your hand desires if you're in a modded gamemode."},
+
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method = Overpowered.AntiReportLag, toolTip = "Lags whoever tries to report you."},
 
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomStatus(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
