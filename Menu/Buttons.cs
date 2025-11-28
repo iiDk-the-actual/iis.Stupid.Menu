@@ -994,7 +994,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reverse Schizophrenic Gun", method = Movement.ReverseSchizoGun, toolTip = "Makes you only appear for whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Boop", method =() => Fun.Boop(), toolTip = "Makes a pop sound when you touch someone's nose."},
-                new ButtonInfo { buttonText = "Slap", method =() => Fun.Boop(248), toolTip = "Makes a bong sound when you hit someone's face."},
+                new ButtonInfo { buttonText = "Gong", method =() => Fun.Boop(248), toolTip = "Makes a gong sound when you hit someone's face."},
+                new ButtonInfo { buttonText = "Slap", method =() => Fun.Boop(338), toolTip = "Makes a slap sound when you hit someone's face."},
 
                 new ButtonInfo { buttonText = "Auto Clicker <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.AutoClicker, toolTip = "Automatically presses  trigger for you when holding <color=green>trigger</color>."},
 
