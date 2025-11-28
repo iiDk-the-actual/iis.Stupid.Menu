@@ -749,7 +749,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Jumpscare All", enableMethod = Movement.JumpscareAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you jumpscare everyone in the room."},
 
                 new ButtonInfo { buttonText = "Annoy Player Gun", method = Movement.AnnoyPlayerGun, toolTip = "Spazzes your body around whoever your hand desires, with sounds."},
-                new ButtonInfo { buttonText = "Annoy All Players", enableMethod = Movement.AnnoyAllPlayers, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Spazzes your body around everyone in the room, with sounds."},
+                new ButtonInfo { buttonText = "Annoy All Players", enableMethod = Movement.AnnoyAllPlayers, method =() => Sound.SoundSpam(337, true), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Spazzes your body around everyone in the room, with sounds."},
 
                 new ButtonInfo { buttonText = "Intercourse Gun", method = Movement.IntercourseGun, toolTip = "Makes you thrust whoever your hand desires, with sounds."},
                 new ButtonInfo { buttonText = "Intercourse All", enableMethod = Movement.IntercourseAll, method = Movement.IntercourseNoises, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, with sounds."},
