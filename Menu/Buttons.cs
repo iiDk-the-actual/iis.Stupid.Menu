@@ -554,7 +554,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Platforms", overlapText = "Platforms <color=grey>[</color><color=green>G</color><color=grey>]</color>", postMethod =() => Movement.Platforms(), toolTip = "Spawns platforms on your hands when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Trigger Platforms", overlapText = "Trigger Platforms <color=grey>[</color><color=green>T</color><color=grey>]</color>", postMethod =() => Movement.Platforms(leftTrigger > 0.5f, rightTrigger > 0.5f), toolTip = "Spawns platforms on your hands when holding <color=green>trigger</color>."},
-                new ButtonInfo { buttonText = "Frozone", overlapText = "Frozone <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.Frozone, toolTip = "Spawns slippery blocks under your hands using <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Frozone", overlapText = "Frozone <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.Frozone, toolTip = "Spawns slippery blocks under your hands using <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Platform Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.PlatformSpam, toolTip = "Spawns legacy platforms rapidly at your hand for those who have networked platforms."},
                 new ButtonInfo { buttonText = "Platform Gun", method = Movement.PlatformGun, toolTip = "Spawns legacy platforms rapidly wherever your hand desires for those who have networked platforms."},
 
