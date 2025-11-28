@@ -4176,7 +4176,7 @@ namespace iiMenu.Mods
         public static void FakeLag()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(delay: fakeLagDelay);
+                MassSerialize(true, delay: fakeLagDelay);
                 return false;
             };
         }
