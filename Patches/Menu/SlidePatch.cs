@@ -29,6 +29,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool everythingSlippery;
         public static bool everythingGrippy;
+        public static bool minimalSlip;
 
         public static void Postfix(GTPlayer __instance, ref float __result)
         {
@@ -37,6 +38,9 @@ namespace iiMenu.Patches.Menu
 
             if (everythingGrippy)
                 __result = 0;
+
+            if (minimalSlip)
+                __result *= 0.75f;
         }
     }
 }
