@@ -311,6 +311,9 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void JmancurlySoundSpam() =>
+            SoundSpam(Random.Range(336, 338));
+
         public static void RandomSoundSpam() =>
             SoundSpam(Random.Range(0, GTPlayer.Instance.materialData.Count));
 
