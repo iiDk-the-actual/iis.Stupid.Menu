@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GameObjectScheduling;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -897,6 +898,18 @@ namespace iiMenu.Mods
             headPos.transform.position = ServerPos;
             leftHandPos.transform.position = ServerLeftHandPos;
             rightHandPos.transform.position = ServerRightHandPos;
+        }
+
+        public static void ShowScheduledObjects()
+        {
+            foreach (GameObjectScheduler scheduledObject in GetAllType<GameObjectScheduler>())
+            {
+                scheduledObject.gameObject.SetActive(true);
+                foreach (GameObject gameObject in scheduledObject.scheduledGameObject)
+                    gameObject.SetActive(true);
+
+                scheduledObject.enabled = false;
+            }
         }
 
         public static void DisableShowServerPosition()

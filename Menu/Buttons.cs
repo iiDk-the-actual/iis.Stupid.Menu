@@ -859,6 +859,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Audio Visualizer", enableMethod = Visuals.CreateAudioVisualizer, method = Visuals.AudioVisualizer, disableMethod = Visuals.DestroyAudioVisualizer, toolTip = "Shows a visualizer of your microphone loudness below your player."},
                 new ButtonInfo { buttonText = "Show Server Position", method = Visuals.ShowServerPosition, disableMethod = Visuals.DisableShowServerPosition, toolTip = "Shows your current syncronized position on the server."},
+                new ButtonInfo { buttonText = "Show Scheduled Objects", enableMethod = Visuals.ShowScheduledObjects, toolTip = "Shows all scheduled and planned objects before their target date."},
 
                 new ButtonInfo { buttonText = "Visualize Network Triggers", method = Visuals.VisualizeNetworkTriggers, toolTip = "Visualizes the network joining and leaving triggers."},
                 new ButtonInfo { buttonText = "Visualize Map Triggers", method = Visuals.VisualizeMapTriggers, toolTip = "Visualizes the map loading and unloading triggers."},
@@ -894,7 +895,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Platform ESP", method = Visuals.PlatformESP, disableMethod = Visuals.DisablePlatformIndicators, toolTip = "Puts indicators above people's heads that show what platform they are playing on, but now they go through walls."},
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod = Visuals.StartNoLimb, method = Visuals.NoLimbMode, disableMethod = Visuals.EndNoLimb, toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
-
+                
                 new ButtonInfo { buttonText = "Casual Tracers", method = Visuals.CasualTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
                 new ButtonInfo { buttonText = "Infection Tracers", method = Visuals.InfectionTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
                 new ButtonInfo { buttonText = "Hunt Tracers", method = Visuals.HuntTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
