@@ -637,6 +637,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Funny Movement", overlapText = "Exponential Movement", method = Movement.FunMove, toolTip = "Multiplies your velocity every frame, making you exponential."},
 
+                new ButtonInfo { buttonText = "Slip Slap", enableMethod = Movement.SlipSlap, disableMethod = Movement.DisableSlipSlap, toolTip = "Allows you to slip slap again."},
                 new ButtonInfo { buttonText = "Slippery Hands", overlapText = "Slippery Surfaces", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
                 new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slippery Surfaces", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
                 new ButtonInfo { buttonText = "Slippery Surface Helper", enableMethod =() => SlidePatch.minimalSlip = true, disableMethod =() => SlidePatch.minimalSlip = false, toolTip = "Helps you stick to slippery walls more, but doesn't remove the slipperiness."},

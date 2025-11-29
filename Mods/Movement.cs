@@ -3568,6 +3568,28 @@ namespace iiMenu.Mods
             GTPlayer.Instance.nativeScale = sizeScale;
         }
 
+        private static readonly Dictionary<GorillaSurfaceOverride, float> velocityArchive = new Dictionary<GorillaSurfaceOverride, float>();
+        public static void SlipSlap()
+        {
+            foreach (var surface in GetAllType<GorillaSurfaceOverride>())
+            {
+                float slidePercent = surface.slidePercentageOverride > 0f ? surface.slidePercentageOverride : GTPlayer.Instance.materialData[surface.overrideIndex].slidePercent;
+                if (slidePercent > 0f)
+                {
+                    velocityArchive[surface] = surface.extraVelMultiplier;
+                    surface.extraVelMultiplier += slidePercent / 3f;
+                }
+            }
+        }
+
+        public static void DisableSlipSlap()
+        {
+            foreach (var vel in velocityArchive)
+                vel.Key.extraVelMultiplier = vel.Value;
+
+            velocityArchive.Clear();
+        }
+
         public static GameObject stickpart;
         public static void StickyHands()
         {
