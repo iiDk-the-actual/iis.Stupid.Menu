@@ -702,8 +702,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Smooth Rig", method =() => PhotonNetwork.SerializationRate = 30, disableMethod =() => PhotonNetwork.SerializationRate = 10, toolTip = "Makes your rig really smooth."},
                 new ButtonInfo { buttonText = "Update Rig <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.UpdateRig, disableMethod = Movement.EnableRig, toolTip = "Freezes your rig in place. Whenever you click <color=green>A</color>, your rig will update."},
 
-                new ButtonInfo { buttonText = "Freeze Rig Limbs <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.FreezeRigLimbs, toolTip = "Makes your hands and head freeze on your rig, but not your body, when holding <color=green>A</color>."},
-                new ButtonInfo { buttonText = "Freeze Rig Body <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.FreezeRigBody, toolTip = "Makes your body freeze on your rig, but not your hands and head, when holding <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Freeze Rig Limbs", method = Movement.FreezeRigLimbs, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your hands and head freeze on your rig, but not your body."},
+                new ButtonInfo { buttonText = "Freeze Rig Body", method = Movement.FreezeRigBody, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
+                new ButtonInfo { buttonText = "Freeze Rig", method = Movement.FreezeRigBody, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
 
                 new ButtonInfo { buttonText = "Paralyze Rig", method = Movement.ParalyzeRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig. Credits to Expansion for the idea."},
                 new ButtonInfo { buttonText = "Chicken Rig", method = Movement.ChickenRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
