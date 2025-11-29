@@ -3579,7 +3579,7 @@ namespace iiMenu.Mods
                 if (slidePercent > 0f)
                 {
                     velocityArchive[surface] = surface.extraVelMultiplier;
-                    surface.extraVelMultiplier += slidePercent / 3f;
+                    surface.extraVelMultiplier += slidePercent;
                 }
             }
         }
