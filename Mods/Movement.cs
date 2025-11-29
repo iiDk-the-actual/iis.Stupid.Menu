@@ -3052,7 +3052,7 @@ namespace iiMenu.Mods
             VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
-        private static Vector3? startPosition;
+        public static Vector3? startPosition;
         public static void FreezeRig()
         {
             if (startPosition == null)
