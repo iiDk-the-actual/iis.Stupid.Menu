@@ -1570,7 +1570,8 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                         Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
-                } catch { }
+                }
+                catch { }
                 if (Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
@@ -1580,7 +1581,35 @@ namespace iiMenu.Mods
             bool isLasering = leftPrimary || rightPrimary;
             if (lastLasering && !isLasering)
                 Console.ExecuteCommand("laser", ReceiverGroup.All, false, false);
-            
+
+            lastLasering = isLasering;
+        }
+        public static void AdminLightningLaser()
+        {
+            bool left = leftPrimary;
+            bool right = rightPrimary;
+            if (left || right)
+            {
+                Vector3 dir = right ? VRRig.LocalRig.rightHandTransform.right : -VRRig.LocalRig.leftHandTransform.right;
+                Vector3 startPos = (right ? VRRig.LocalRig.rightHandTransform.position : VRRig.LocalRig.leftHandTransform.position) + dir * 0.1f;
+                try
+                {
+                    Physics.Raycast(startPos + dir / 3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                        Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                }
+                catch { }
+                if (Time.time > adminEventDelay)
+                {
+                    adminEventDelay = Time.time + 0.1f;
+                    Console.ExecuteCommand("lightning-laser", ReceiverGroup.All, true, right);
+                }
+            }
+            bool isLasering = left || right;
+            if (lastLasering && !isLasering)
+                Console.ExecuteCommand("lightning-laser", ReceiverGroup.All, false, false);
+
             lastLasering = isLasering;
         }
 
