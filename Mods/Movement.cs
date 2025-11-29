@@ -272,31 +272,58 @@ namespace iiMenu.Mods
             ProcessPlatform(false, right ?? rightGrab);
         }
 
+        private static readonly Dictionary<bool, List<GameObject>> frozonicPlatforms = new Dictionary<bool, List<GameObject>>();
+        private static readonly Dictionary<bool, int> platformIndex = new Dictionary<bool, int>();
+        public static void HandleFrozone(bool left)
+        {
+            bool grip = left ? leftGrab : rightGrab;
+
+            frozonicPlatforms.TryGetValue(left, out List<GameObject> frozonicPlatformList);
+            if (frozonicPlatformList == null)
+            {
+                frozonicPlatformList = new List<GameObject>();
+                frozonicPlatforms.Add(left, frozonicPlatformList);
+            }
+
+            platformIndex.TryGetValue(left, out int index);
+
+            if (grip)
+            {
+                GameObject platform = null;
+                if (frozonicPlatformList.Count >= 72)
+                    platform = frozonicPlatformList[index];
+                else
+                {
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
+                    platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
+                    frozonicPlatformList.Add(platform);
+                }
+
+                var (position, rotation, _, _, right) = left ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+
+                platform.transform.position = position + (right * ((left ? 1f : -1f) * ((0.025f + platform.transform.localScale.x / 2f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f))));
+                platform.transform.rotation = rotation;
+
+                index = (index + 1) % 72;
+            }
+
+            platformIndex[left] = index;
+
+            if (!grip && frozonicPlatformList.Count > 0)
+            {
+                int platformIndex = frozonicPlatformList.Count - 1;
+
+                Object.Destroy(frozonicPlatformList[platformIndex]);
+                frozonicPlatformList.RemoveAt(platformIndex);
+            }
+        }
+
         public static void Frozone()
         {
-            if (leftGrab)
-            {
-                GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
-                slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                slipperyPlatform.transform.localPosition = ControllerUtilities.GetTrueLeftHand().position + ControllerUtilities.GetTrueLeftHand().right * 0.05f;
-                slipperyPlatform.transform.rotation = ControllerUtilities.GetTrueLeftHand().rotation;
-
-                slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                Object.Destroy(slipperyPlatform, 1);
-            }
-
-            if (rightGrab)
-            {
-                GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
-                slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                slipperyPlatform.transform.localPosition = ControllerUtilities.GetTrueRightHand().position + ControllerUtilities.GetTrueRightHand().right * -0.05f;
-                slipperyPlatform.transform.rotation = ControllerUtilities.GetTrueRightHand().rotation;
-
-                slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                Object.Destroy(slipperyPlatform, 1);
-            }
+            HandleFrozone(true);
+            HandleFrozone(false);
 
             GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
         }
@@ -2727,26 +2754,8 @@ namespace iiMenu.Mods
             GTPlayer.Instance.jumpMultiplier = jmpt;
         }
 
-        public static float funMoveDelay;
-        public static Vector3 funLastVel;
-        public static void FunMove()
-        {
-            if (Time.time > funMoveDelay)
-            {
-                funMoveDelay = Time.time + 0.2f;
-                GorillaTagger.Instance.rigidbody.linearVelocity = (GorillaTagger.Instance.rigidbody.transform.position - funLastVel) * 6f;
-                funLastVel = GorillaTagger.Instance.rigidbody.transform.position;
-            }
-        }
-        public static void VelocityMultiplier()
-        {
-            if (Time.time > funMoveDelay)
-            {
-                funMoveDelay = Time.time + 0.05f;
-                GorillaTagger.Instance.rigidbody.linearVelocity = (GorillaTagger.Instance.rigidbody.transform.position - funLastVel) * 5.17f;
-                funLastVel = GorillaTagger.Instance.rigidbody.transform.position;
-            }
-        } 
+        public static void FunMove() =>
+            GorillaTagger.Instance.rigidbody.linearVelocity += GorillaTagger.Instance.rigidbody.linearVelocity * Time.deltaTime;
 
         public static void DynamicSpeedBoost()
         {
@@ -3557,6 +3566,28 @@ namespace iiMenu.Mods
             VRRig.LocalRig.transform.localScale = Vector3.one * sizeScale;
             VRRig.LocalRig.NativeScale = sizeScale;
             GTPlayer.Instance.nativeScale = sizeScale;
+        }
+
+        private static readonly Dictionary<GorillaSurfaceOverride, float> velocityArchive = new Dictionary<GorillaSurfaceOverride, float>();
+        public static void SlipSlap()
+        {
+            foreach (var surface in GetAllType<GorillaSurfaceOverride>())
+            {
+                float slidePercent = surface.slidePercentageOverride > 0f ? surface.slidePercentageOverride : GTPlayer.Instance.materialData[surface.overrideIndex].slidePercent;
+                if (slidePercent > 0f)
+                {
+                    velocityArchive[surface] = surface.extraVelMultiplier;
+                    surface.extraVelMultiplier += slidePercent / 3f;
+                }
+            }
+        }
+
+        public static void DisableSlipSlap()
+        {
+            foreach (var vel in velocityArchive)
+                vel.Key.extraVelMultiplier = vel.Value;
+
+            velocityArchive.Clear();
         }
 
         public static GameObject stickpart;

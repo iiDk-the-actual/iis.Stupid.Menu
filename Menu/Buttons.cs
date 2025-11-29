@@ -554,7 +554,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Platforms", overlapText = "Platforms <color=grey>[</color><color=green>G</color><color=grey>]</color>", postMethod =() => Movement.Platforms(), toolTip = "Spawns platforms on your hands when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Trigger Platforms", overlapText = "Trigger Platforms <color=grey>[</color><color=green>T</color><color=grey>]</color>", postMethod =() => Movement.Platforms(leftTrigger > 0.5f, rightTrigger > 0.5f), toolTip = "Spawns platforms on your hands when holding <color=green>trigger</color>."},
-                new ButtonInfo { buttonText = "Frozone", overlapText = "Frozone <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.Frozone, toolTip = "Spawns slippery blocks under your hands using <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Frozone", overlapText = "Frozone <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.Frozone, toolTip = "Spawns slippery blocks under your hands using <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Platform Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.PlatformSpam, toolTip = "Spawns legacy platforms rapidly at your hand for those who have networked platforms."},
                 new ButtonInfo { buttonText = "Platform Gun", method = Movement.PlatformGun, toolTip = "Spawns legacy platforms rapidly wherever your hand desires for those who have networked platforms."},
 
@@ -635,11 +635,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Always Max Velocity", method = Movement.AlwaysMaxVelocity, toolTip = "Always makes you go as fast as the velocity limit."},
                 new ButtonInfo { buttonText = "Disable Velocity Cap", enableMethod = Movement.DisableVelocityCap, disableMethod =() => Movement.playspace.enabled = true, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
 
-                new ButtonInfo { buttonText = "Funny Movement", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method = Movement.FunMove, toolTip = "Ruins your movement."},
-                new ButtonInfo { buttonText = "Velocity Multiplier", enableMethod =() => Movement.funLastVel = GorillaTagger.Instance.rigidbody.transform.position, method = Movement.VelocityMultiplier, toolTip = "Multiplies your velocity frequently."},
+                new ButtonInfo { buttonText = "Funny Movement", overlapText = "Exponential Movement", method = Movement.FunMove, toolTip = "Multiplies your velocity every frame, making you exponential."},
 
-                new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
-                new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slip Hands", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
+                new ButtonInfo { buttonText = "Slip Slap", enableMethod = Movement.SlipSlap, disableMethod = Movement.DisableSlipSlap, toolTip = "Allows you to slip slap again."},
+                new ButtonInfo { buttonText = "Slippery Hands", overlapText = "Slippery Surfaces", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
+                new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slippery Surfaces", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
+                new ButtonInfo { buttonText = "Slippery Surface Helper", enableMethod =() => SlidePatch.minimalSlip = true, disableMethod =() => SlidePatch.minimalSlip = false, toolTip = "Helps you stick to slippery walls more, but doesn't remove the slipperiness."},
                 new ButtonInfo { buttonText = "Sticky Hands", method = Movement.StickyHands, disableMethod = Movement.DisableStickyHands, toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method = Movement.ClimbyHands, disableMethod = Movement.DisableClimbyHands, toolTip = "Lets you climb everything like a rope."},
                 new ButtonInfo { buttonText = "Disable Hands", method =() => Movement.SetHandEnabled(false), disableMethod =() => Movement.SetHandEnabled(true), toolTip = "Disables your hand colliders."},
@@ -673,7 +674,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Water", enableMethod = Movement.DisableWater, disableMethod = Movement.FixWater, toolTip = "Disables the water in the beach map." },
                 new ButtonInfo { buttonText = "Air Swim", method = Movement.AirSwim, disableMethod = Movement.DisableAirSwim, toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.SetSwimSpeed(10f), disableMethod =() => Movement.SetSwimSpeed(), toolTip = "Lets you swim faster in water." },
-                new ButtonInfo { buttonText = "Water Run Helper", enableMethod =() => Movement.WaterRunHelper(true), disableMethod =() => Movement.WaterRunHelper(false), toolTip = "Allows you to water run more easily." },
+                new ButtonInfo { buttonText = "Water Run Helper", overlapText = "Water Run", enableMethod =() => Movement.WaterRunHelper(true), disableMethod =() => Movement.WaterRunHelper(false), toolTip = "Adds back water running to the game." },
                 new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { ForcePatch.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); }, disableMethod =() => { ForcePatch.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Ghost, disableMethod = Movement.EnableRig, toolTip = "Keeps your rig still when holding <color=green>A</color>."},
