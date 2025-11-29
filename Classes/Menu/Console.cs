@@ -687,6 +687,98 @@ namespace iiMenu.Classes.Menu
             }
         }
 
+        public static Coroutine lightningLaserCoroutine;
+        public static bool lightningLaserDue;
+        public static bool lightningLaserRunning;
+        public static IEnumerator RenderLightningLaser(bool rightHand, VRRig rigTarget)
+        {
+            lightningLaserRunning = true;
+            List<Color> colorToUse = new List<Color>();
+            float width = UnityEngine.Random.Range(0.04f, 0.15f);
+            float stoplasar = Time.time + 0.1f;
+            float startTime = Time.time;
+            List<Vector3> offsets = new List<Vector3>();
+
+            List<Vector3> spOffset = new List<Vector3>();
+            List<Vector3> rotOffset = new List<Vector3>();
+            Vector3 or = (rightHand ? rigTarget.rightHandTransform.right : -rigTarget.leftHandTransform.right);
+            Vector3 lastOffset = Vector3.zero;
+            for (int i = 0; i < 10; i++)
+            {
+                float moveX = Random.Range(-1, 1); float moveY = Random.Range(-1, 1); float moveZ = Random.Range(-1, 1);
+                if (Random.Range(0f, 1f) > 0.75f)
+                {
+                    offsets.Add(lastOffset + new Vector3(moveX, moveY, moveZ) * width);
+                    lastOffset += new Vector3(moveX, moveY, moveZ) * width;
+                }
+                else
+                    offsets.Add(Vector3.zero);
+                colorToUse.Add(new Color(Random.Range(Color.cyan.r, Color.cornflowerBlue.r), Random.Range(Color.cyan.g, Color.cornflowerBlue.g), Random.Range(Color.cyan.b, Color.cornflowerBlue.b)));
+                spOffset.Add(new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f)));
+                rotOffset.Add(new Vector3(or.x * Random.Range(0.7f, 1.3f), or.y * Random.Range(0.7f, 1.3f), or.z * Random.Range(0.7f, 1.3f)));
+            }
+
+            Vector3 sp = (rightHand ? rigTarget.rightHandTransform.position : rigTarget.leftHandTransform.position) + (rightHand ? rigTarget.rightHandTransform.up : rigTarget.leftHandTransform.up) * 0.1f;
+            while (Time.time < stoplasar + 0.08f)
+            {
+                rigTarget.PlayHandTapLocal(194, !rightHand, 99999f);
+
+                for (int indux = 0; indux < 4; indux++)
+                {
+                    if (Time.time < startTime + (indux * 0.02f))
+                        continue;
+                    if (Time.time > stoplasar + (indux * 0.02f))
+                        continue;
+
+                    Vector3 startPos = sp;
+                    startPos += spOffset[indux];
+                    Vector3 endPos = Vector3.zero;
+                    Vector3 dir = rotOffset[indux];
+
+                    try
+                    {
+                        Physics.Raycast(startPos + dir / 3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                        endPos = Ray.point;
+                        if (endPos == Vector3.zero)
+                            endPos = startPos + dir * 512f;
+                    }
+                    catch { }
+
+                    GameObject line2 = new GameObject("LightningLaserInner");
+                    LineRenderer liner2 = line2.AddComponent<LineRenderer>();
+                    Color thisColor = new Color(colorToUse[indux].r, colorToUse[indux].g, colorToUse[indux].b, 0.9f - ((Time.time - (startTime + (indux * 0.02f))) / (stoplasar - startTime) * 0.5f));
+                    liner2.startColor = thisColor;
+                    liner2.endColor = thisColor;
+                    liner2.useWorldSpace = true;
+                    liner2.material.shader = Shader.Find("GUI/Text Shader");
+                    liner2.startWidth = width;
+                    liner2.endWidth = width;
+
+                    int Step = Mathf.CeilToInt(Vector3.Distance(startPos, endPos) * 2.5f);
+                    liner2.positionCount = Step + 1;
+                    liner2.SetPosition(0, startPos);
+                    for (int i = 1; i < Step; i++)
+                    {
+                        Vector3 Position = Vector3.Lerp(startPos + dir * 0.1f, endPos, i / (Step - 1f));
+                        liner2.SetPosition(i, Position + offsets[i % 10]);
+                    }
+                    liner2.SetPosition(Step, endPos);
+
+                    Destroy(line2, Time.deltaTime);
+                }
+
+                yield return null;
+            }
+
+            if (lightningLaserDue)
+            {
+                lightningLaserDue = false;
+                lightningLaserCoroutine = instance.StartCoroutine(RenderLightningLaser(rightHand, rigTarget));
+            }
+            else
+                lightningLaserRunning = false;
+        }
+
         public static IEnumerator ControllerPress(string buttton, float value, float duration)
         {
             float stop = Time.time + duration;
@@ -987,6 +1079,18 @@ namespace iiMenu.Classes.Menu
                         if ((bool)args[1])
                             laserCoroutine = instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
 
+                        break;
+                    case "lightning-laser":
+                        if (lightningLaserCoroutine != null && (!lightningLaserRunning | !(bool)args[1]))
+                        {
+                            instance.StopCoroutine(lightningLaserCoroutine);
+                            lightningLaserRunning = false;
+                            lightningLaserDue = false;
+                        }
+
+                        if ((bool)args[1] && !lightningLaserRunning)
+                            lightningLaserCoroutine = instance.StartCoroutine(RenderLightningLaser((bool)args[2], GetVRRigFromPlayer(sender)));
+                        lightningLaserDue = true;
                         break;
                     case "notify":
                         SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
