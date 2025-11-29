@@ -4048,6 +4048,56 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float notifyTime;
+        public static bool IsModded(bool notify)
+        {
+            bool modded = NetworkSystem.Instance.GameModeString.Contains("MODDED_");
+            if (!modded && notify && Time.time > notifyTime)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a modded gamemode. Use Utilla to create one, or join an already existing one.");
+                notifyTime = Time.time + 1;
+            }
+            return modded;
+        }
+
+        public static float del;
+
+        public static void ModdedCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!IsModded(true)) return;
+                    if (Time.time > del)
+                    {
+                        PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                        PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                        del = Time.time + 0.02f;
+                    }
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static void BetaNearbyFollowCommand(GorillaFriendCollider friendCollider, Player player)
         {
             PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);

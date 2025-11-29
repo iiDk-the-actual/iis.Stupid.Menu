@@ -971,6 +971,8 @@ namespace iiMenu.Mods
             {
                 if (Visuals.modDictionary.TryGetKeyByValue(mod, out string keyName))
                     props[keyName] = true;
+                else
+                    props[mod] = true;
             }
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
