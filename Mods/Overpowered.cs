@@ -4255,7 +4255,7 @@ namespace iiMenu.Mods
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
-                { 251, new Hashtable { { 254, !status } } },
+                { 251, new Hashtable { { 254, status } } },
                 { 250, true },
                 { 231, null }
             };
@@ -4267,6 +4267,8 @@ namespace iiMenu.Mods
             );
             GorillaScoreboardTotalUpdater.instance.UpdateActiveScoreboards();
         }
+
+
         public static void DestroyGun()
         {
             if (GetGunInput(false))
