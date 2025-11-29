@@ -1344,6 +1344,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void VisualizeWindBarriers()
+        {
+            foreach (ForceVolume wind in GetAllType<ForceVolume>())
+            {
+                try
+                {
+                    VisualizeCube(wind.transform.position, wind.transform.rotation, wind.transform.lossyScale, Color.blue);
+                }
+                catch { }
+            }
+        }
+
         public static void VisualizeMapTriggers()
         {
             GameObject triggers = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab");
