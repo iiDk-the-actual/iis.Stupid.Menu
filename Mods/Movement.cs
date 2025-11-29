@@ -3022,15 +3022,10 @@ namespace iiMenu.Mods
 
         public static void FreezeRigLimbs()
         {
-            if (rightPrimary)
-            {
-                VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
-                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            }
-            else
-                VRRig.LocalRig.enabled = true;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
         }
 
         public static void FixRigHandRotation()
@@ -3041,25 +3036,32 @@ namespace iiMenu.Mods
 
         public static void FreezeRigBody()
         {
-            if (rightPrimary)
-            {
-                VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
-                var leftHandTransform = ControllerUtilities.GetTrueLeftHand();
-                var rightHandTransform = ControllerUtilities.GetTrueRightHand();
+            var leftHandTransform = ControllerUtilities.GetTrueLeftHand();
+            var rightHandTransform = ControllerUtilities.GetTrueRightHand();
 
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
 
-                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = leftHandTransform.rotation;
-                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = rightHandTransform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = leftHandTransform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = rightHandTransform.rotation;
 
-                FixRigHandRotation();
+            FixRigHandRotation();
 
-                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-            }
-            else
-                VRRig.LocalRig.enabled = true;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+        }
+
+        public static Vector3? startPosition;
+        public static void FreezeRig()
+        {
+            if (startPosition == null)
+                startPosition = VRRig.LocalRig.transform.position;
+
+            VRRig.LocalRig.enabled = true;
+            VRRig.LocalRig.PostTick();
+            VRRig.LocalRig.transform.position = startPosition.Value;
+            VRRig.LocalRig.enabled = false;
         }
 
         public static void ParalyzeRig()
@@ -3577,7 +3579,7 @@ namespace iiMenu.Mods
                 if (slidePercent > 0f)
                 {
                     velocityArchive[surface] = surface.extraVelMultiplier;
-                    surface.extraVelMultiplier += slidePercent / 3f;
+                    surface.extraVelMultiplier += slidePercent;
                 }
             }
         }
@@ -5598,6 +5600,7 @@ namespace iiMenu.Mods
 
         public static void LaggyRig()
         {
+            VRRig.LocalRig.enabled = false;
             ghostException = true;
             if (Time.time > laggyRigDelay)
             {
@@ -5612,6 +5615,7 @@ namespace iiMenu.Mods
         public static bool wasRightPrimaryPressed;
         public static void UpdateRig()
         {
+            VRRig.LocalRig.enabled = false;
             ghostException = true;
             if (rightPrimary && !wasRightPrimaryPressed)
             {
