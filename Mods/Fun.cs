@@ -1675,7 +1675,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // [Insert pikachu gif here]
         public class MicPitchShifter : VoiceComponent
         {
             public float PitchFactor = 1.5f;
@@ -1685,7 +1684,7 @@ namespace iiMenu.Mods
             {
                 if (p.Voice is LocalVoiceAudioFloat floatVoice)
                 {
-                    floatProcessor = new PitchProcessor(PitchFactor, floatVoice.Info.SamplingRate);
+                    floatProcessor = new PitchProcessor(PitchFactor);
                     floatVoice.AddPostProcessor(floatProcessor);
                 }
             }
@@ -1693,91 +1692,34 @@ namespace iiMenu.Mods
             public class PitchProcessor : IProcessor<float>
             {
                 private readonly float pitch;
-                private readonly int sampleRate;
-                private readonly int windowSize;
-                private readonly int hopSize;
-                private float[] window;
-                private float[] inputBuffer;
-                private float[] outputBuffer;
-                private int bufferPos = 0;
-                private float outputPhase = 0f;
 
-                public PitchProcessor(float pitchFactor, int samplingRate)
-                {
+                public PitchProcessor(float pitchFactor) =>
                     pitch = Mathf.Clamp(pitchFactor, 0.5f, 2f);
-                    sampleRate = samplingRate;
-
-                    windowSize = sampleRate / 50;
-                    hopSize = windowSize / 4;
-
-                    window = new float[windowSize];
-                    inputBuffer = new float[windowSize * 4];
-                    outputBuffer = new float[windowSize * 4];
-
-                    for (int i = 0; i < windowSize; i++)
-                        window[i] = 0.5f * (1f - Mathf.Cos(2f * Mathf.PI * i / (windowSize - 1)));
-                }
 
                 public float[] Process(float[] buf)
                 {
                     int inputLength = buf.Length;
                     float[] output = new float[inputLength];
-                    int outputPos = 0;
 
+                    float sampleIndex = 0f;
                     for (int i = 0; i < inputLength; i++)
                     {
-                        inputBuffer[bufferPos] = buf[i];
-                        bufferPos++;
+                        int indexFloor = Mathf.FloorToInt(sampleIndex);
+                        int indexCeil = Mathf.Min(indexFloor + 1, inputLength - 1);
+                        float t = sampleIndex - indexFloor;
 
-                        if (bufferPos >= hopSize)
-                        {
-                            ProcessWindow();
-                            bufferPos = 0;
+                        float interpolated = Mathf.Lerp(buf[indexFloor], buf[indexCeil], t);
+                        output[i] = interpolated;
 
-                            System.Array.Copy(inputBuffer, hopSize, inputBuffer, 0, inputBuffer.Length - hopSize);
-                        }
-
-                        if (outputPos < output.Length)
-                        {
-                            int readPos = (int)outputPhase;
-                            if (readPos < outputBuffer.Length - 1)
-                            {
-                                float t = outputPhase - readPos;
-                                output[outputPos] = Mathf.Lerp(outputBuffer[readPos], outputBuffer[readPos + 1], t);
-                            }
-                            else
-                            {
-                                output[outputPos] = outputBuffer[outputBuffer.Length - 1];
-                            }
-                            outputPos++;
-                            outputPhase += pitch;
-
-                            if (outputPhase >= hopSize)
-                            {
-                                outputPhase -= hopSize;
-                                System.Array.Copy(outputBuffer, hopSize, outputBuffer, 0, outputBuffer.Length - hopSize);
-                            }
-                        }
+                        sampleIndex += pitch;
+                        if (sampleIndex >= inputLength - 1)
+                            break;
                     }
 
                     return output;
                 }
 
-                private void ProcessWindow()
-                {
-                    for (int i = 0; i < windowSize; i++)
-                    {
-                        float windowed = inputBuffer[i] * window[i];
-                        outputBuffer[i] += windowed;
-                    }
-                }
-
-                public void Dispose()
-                {
-                    window = null;
-                    inputBuffer = null;
-                    outputBuffer = null;
-                }
+                public void Dispose() { }
             }
         }
 
