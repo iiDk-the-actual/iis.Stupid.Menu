@@ -117,4 +117,15 @@ namespace iiMenu.Patches.Menu
             return !AntiCrashPatch.enabled;
         }
     }
+
+    [HarmonyPatch(typeof(RoomInfo), "InternalCacheProperties")]
+    public class AntiCrashPatch7
+    {
+        public static bool Prefix(RoomInfo __instance, Hashtable propertiesToCache)
+        {
+            if (__instance.masterClientId == PhotonNetwork.LocalPlayer.ActorNumber && propertiesToCache.Count == 1 && propertiesToCache.ContainsKey(248) && AntiCrashPatch.enabled)
+                return false;
+            return true;
+        }
+    }
 }
