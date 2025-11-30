@@ -3095,6 +3095,18 @@ namespace iiMenu.Menu
             if (dynamicAnimations)
                 CoroutineManager.instance.StartCoroutine(GrowCoroutine());
 
+            if (particleSpawnEffect)
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Particle.transform.position = menu.transform.position;
+                    Particle.transform.localScale = Vector3.one * (0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
+                    Particle.AddComponent<CustomParticle>();
+                    Destroy(Particle.GetComponent<Collider>());
+                }
+            }
+
             if (joystickMenu) return;
             if (reference == null)
                 CreateReference();
@@ -6713,6 +6725,7 @@ jgs \_   _/ |Oo\
         public static bool dynamicGradients;
         public static bool horizontalGradients;
         public static bool scrollingGradients;
+        public static bool particleSpawnEffect;
         public static bool animatedTitle;
         public static bool gradientTitle;
         public static string lastClickedName = "";
