@@ -103,6 +103,7 @@ namespace iiMenu.Mods
             SerializePatch.OverrideSerialization = () =>
             {
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                SendSerialize(GorillaTagger.Instance.myVRRig.reliableView);
                 return false;
             };
         }
