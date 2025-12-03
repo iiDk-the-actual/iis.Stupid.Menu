@@ -4229,8 +4229,9 @@ exit 0";
             { "7 Exclamation", "win7-exc"    },
             { "AOL Alert",     "aol-alert"   },
             { "AOL Message",   "aol-msg"     },
-            { "Thunderbird",   "thunderbird" }
-
+            { "Thunderbird",   "thunderbird" },
+            { "Pixie Dust",    "pixiedust"   },
+            { "Moon Beam",     "moonbeam"    }
         };
 
         public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
