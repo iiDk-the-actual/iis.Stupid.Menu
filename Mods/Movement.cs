@@ -4208,7 +4208,13 @@ namespace iiMenu.Mods
 
         public static void FakeLag()
         {
-            SerializePatch.OverrideSerialization = () => {
+            if (Buttons.GetIndex("Fake Lag Others").enabled)
+                PlayerSerializePatch.delay = fakeLagDelay;
+            else
+                PlayerSerializePatch.delay = null;
+
+            SerializePatch.OverrideSerialization = () =>
+            {
                 MassSerialize(true, delay: fakeLagDelay);
                 return false;
             };

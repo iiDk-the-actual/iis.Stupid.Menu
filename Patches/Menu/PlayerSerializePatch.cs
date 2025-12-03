@@ -20,7 +20,8 @@
  */
 
 using HarmonyLib;
-﻿using System;
+using iiMenu.Managers;
+using System;
 
 namespace iiMenu.Patches.Menu
 {
@@ -30,7 +31,25 @@ namespace iiMenu.Patches.Menu
         public static bool stopSerialization;
         public static bool Prefix() => !stopSerialization;
 
+        public static float? delay;
+
         public static event Action<VRRig> OnPlayerSerialize;
+        public static void Prefix(VRRig __instance, InputStruct data)
+        {
+            if (delay != null)
+            {
+                CoroutineManager.instance.StartCoroutine(
+                    iiMenu.Menu.Main.SerializationDelay(() =>
+                    {
+                        float oldDelay = delay.Value;
+                        delay = null;
+                        __instance.SerializeReadShared(data);
+                        delay = oldDelay;
+                    }, delay.Value)
+                );
+            }
+        }
+
         public static void Postfix(VRRig __instance, InputStruct data) =>
             OnPlayerSerialize?.Invoke(__instance);
     }
