@@ -19,9 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaLocomotion;
+using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Managers;
 using Photon.Pun;
+using PlayFab;
+using PlayFab.ClientModels;
+using PlayFab.CloudScriptModels;
+using System.Collections;
 using UnityEngine;
 
 namespace iiMenu.Patches.Safety
@@ -111,6 +117,16 @@ namespace iiMenu.Patches.Safety
             private static bool Prefix() =>
                 false;
         }
+
+        [HarmonyPatch(typeof(CosmeticsController), "ReauthOrBan")]
+        public class NoQuitOnBan2
+        {
+            private static bool Prefix(PlayFabError error) =>
+                false;
+        }
+
+
+
 
         [HarmonyPatch(typeof(GorillaNot), "ShouldDisconnectFromRoom")]
         public class NoShouldDisconnectFromRoom

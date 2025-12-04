@@ -19,15 +19,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaNetworking;
 using iiMenu.Extensions;
 using iiMenu.Managers;
+using iiMenu.Menu;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static iiMenu.Utilities.RigUtilities;
+using UnityEngine.Animations.Rigging;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.RigUtilities;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace iiMenu.Mods
 {
@@ -97,9 +104,321 @@ namespace iiMenu.Mods
         {
             if (Time.time > crashDelay)
             {
-                PhotonNetwork.SetMasterClient(GetRandomPlayer(false));
+                PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPlayer().GetPlayer());
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                 crashDelay = Time.time + 0.02f;
+            }
+        }
+
+        public static void GhostGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    {
+                        { 0, view.ViewID }
+                    }, new RaiseEventOptions
+                    {
+                        TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                    }, SendOptions.SendUnreliable);
+                    
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void GhostAll()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                PhotonView view = GetPhotonViewFromVRRig(rig);
+
+                int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                {
+                    { 0, view.ViewID }
+                },
+                new RaiseEventOptions
+                {
+                    TargetActors = targets
+                }, SendOptions.SendUnreliable);
+            }
+        }
+
+        public static void GhostAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig rig in nearbyPlayers)
+                {
+                    PhotonView view = GetPhotonViewFromVRRig(rig);
+
+                    int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    {
+                        { 0, view.ViewID }
+                    },
+                    new RaiseEventOptions
+                    {
+                        TargetActors = targets
+                    }, SendOptions.SendUnreliable);
+                    nearbyPlayers.Remove(rig);
+                }
+            }
+        }
+
+        public static void IsolateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!PlayerIsLocal(rig) && rig != lockTarget)
+                        {
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = new int[] { view.Owner.ActorNumber }
+                            }, SendOptions.SendUnreliable);
+                        }
+                        
+                    }
+                   
+
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void IsolateAll()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    PhotonView view = GetPhotonViewFromVRRig(rig);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                {
+                    { 0, view.ViewID }
+                }, new RaiseEventOptions
+                {
+                    TargetActors = new int[] { view.Owner.ActorNumber }
+                }, SendOptions.SendUnreliable);
+                }
+                
+            }
+        }
+
+        public static void IsolateAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig rig in nearbyPlayers)
+                {
+                    if (!PlayerIsLocal(rig))
+                    {
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, view.ViewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { view.Owner.ActorNumber }
+                        }, SendOptions.SendUnreliable);
+                    }
+                    
+                }
+            }
+        }
+
+        public static void LagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+        
+        public static void LagAll()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+        }
+
+        public static void LagAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
+            }
+        }
+
+        public static float muteDelay;
+        public static void MuteGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > muteDelay)
+                    {
+                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                        muteDelay = Time.time + 0.15f;
+                    }
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void MuteAll()
+        {
+            if (Time.time > muteDelay)
+            {
+                PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                muteDelay = Time.time + 0.15f;
+            }
+        }
+
+        public static void MuteAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0 && Time.time > muteDelay)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
+                    muteDelay = Time.time + 0.15f;
+                }
             }
         }
 
@@ -122,7 +441,9 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = true;
             NetworkSystem.Instance.NetDestroy(GameMode.activeNetworkHandler.NetView.gameObject);
 
-            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+            string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
+
+            Hashtable hash = new Hashtable
             {
                 { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.networkZone + GorillaComputer.instance.currentQueue + gamemode.ToString() }
             };

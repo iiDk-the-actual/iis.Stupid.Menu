@@ -38,6 +38,7 @@ using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
+using static iiMenu.Utilities.AssetUtilities;
 using Console = iiMenu.Classes.Menu.Console;
 using Random = UnityEngine.Random;
 
@@ -69,7 +70,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Master Mods", method =() => currentCategoryName = "Master Mods", isTogglable = false, toolTip = "Opens the master mods."},
                 new ButtonInfo { buttonText = "Overpowered Mods", method =() => currentCategoryName = "Overpowered Mods", isTogglable = false, toolTip = "Opens the overpowered mods."},
                 new ButtonInfo { buttonText = "Experimental Mods", method =() => currentCategoryName = "Experimental Mods", isTogglable = false, toolTip = "Opens the experimental mods."},
-                new ButtonInfo { buttonText = "Detected Mods", method =() => Prompt("The following mods are detected. Using them in an insecure setting <b>WILL</b> get you banned. Are you sure you would like to continue?", () => { File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt", "Text file generated with ii's Stupid Menu"); allowDetected = true; }), isTogglable = false, toolTip = "Opens the detected mods."},
+                new ButtonInfo { buttonText = "Detected Mods", method =() => { if (!allowDetected) { Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/win7-exc.ogg", "Audio/Menu/Notifications/win7-exc.ogg"), buttonClickVolume / 10f); Prompt("The following mods are detected. Using them in an insecure setting <b>WILL</b> get you banned. Are you sure you would like to continue?", () => { File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt", "Text file generated with ii's Stupid Menu"); allowDetected = true; currentCategoryName = "Detected Mods"; }); } else currentCategoryName = "Detected Mods"; }, isTogglable = false, toolTip = "Opens the detected mods."},
                 new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."},
             },
 
@@ -92,7 +93,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Visual Settings", method =() => currentCategoryName = "Visual Settings", isTogglable = false, toolTip = "Opens the settings for the visual mods."},
                 new ButtonInfo { buttonText = "Fun Settings", method =() => currentCategoryName = "Fun Settings", isTogglable = false, toolTip = "Opens the settings for the fun mods."},
                 new ButtonInfo { buttonText = "Overpowered Settings", method =() => currentCategoryName = "Overpowered Settings", isTogglable = false, toolTip = "Opens the settings for the overpowered mods."},
-
+                new ButtonInfo { buttonText = "Detected Settings", method =() => currentCategoryName = "Detected Settings", isTogglable = false, toolTip = "Opens the settings for the detected mods."},
 
                 new ButtonInfo { buttonText = "Projectile Settings", method =() => currentCategoryName = "Projectile Settings", isTogglable = false, toolTip = "Opens the settings for the projectiles."}
             },
@@ -1844,7 +1845,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Lag Gun", method = Overpowered.LagGun, toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
-                new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
+                new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method = Overpowered.AntiReportLag, toolTip = "Lags whoever tries to report you."},
 
@@ -2280,24 +2281,49 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Detected Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "ModdedLabel", overlapText = "This is not a modded lobby.", label = true},
+                new ButtonInfo { buttonText = "ModdedLabel", overlapText = "You are not in a modded lobby.", label = true},
 
-                new ButtonInfo { buttonText = "Set Master Client Self", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as the master client by kicking everyone above you on the leaderboard."},
-                new ButtonInfo { buttonText = "Set Master Client Gun", method = Detected.SetMasterClientGun, detected = true, toolTip = "Sets master client to whoever your hand desires."},
+                new ButtonInfo { buttonText = "Detected Set Master Client Self", overlapText = "<color=red>Set Master Client Self</color>", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as master client by kicking everyone above you on the leaderboard."},
+                new ButtonInfo { buttonText = "Detected Set Master Client Gun", overlapText = "<color=red>Set Master Client Gun</color>", method = Detected.SetMasterClientGun, detected = true, toolTip = "Sets whoever your hand desires as master client."},
 
-                new ButtonInfo { buttonText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
-                new ButtonInfo { buttonText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
+                new ButtonInfo { buttonText = "Detected Crash Gun", overlapText = "<color=red>Crash Gun</color>", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Detected Crash All", overlapText = "<color=red>Crash All</color>", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
 
-                new ButtonInfo { buttonText = "Change Gamemode to Random", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."},
-                new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
-                new ButtonInfo { buttonText = "Change Gamemode to Super Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
-                new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
-                new ButtonInfo { buttonText = "Change Gamemode to Hunt", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.HuntDown), isTogglable = false, detected = true, toolTip = "Changes the gamemode to hunt."},
-                new ButtonInfo { buttonText = "Change Gamemode to Paintbrawl", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Paintbrawl), isTogglable = false, detected = true, toolTip = "Changes the gamemode to paintbrawl."},
-                new ButtonInfo { buttonText = "Change Gamemode to Ambush", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ambush), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ambush."},
-                new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
-                new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
-                new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+                new ButtonInfo { buttonText = "Detected Ghost Gun", overlapText = "<color=red>Ghost Gun</color>", method = Detected.GhostGun, detected = true, toolTip = "Makes whoever your hand desires invisible."},
+                new ButtonInfo { buttonText = "Detected Ghost All", overlapText = "<color=red>Ghost All</color>", method = Detected.GhostAll, isTogglable = false, detected = true, toolTip = "Makes everyone invisible."},
+                new ButtonInfo { buttonText = "Detected Ghost Aura", overlapText = "<color=red>Ghost Aura</color>", method = Detected.GhostAura, isTogglable = false, detected = true, toolTip = "Makes players nearby invisible."},
+
+                new ButtonInfo { buttonText = "Detected Isolate Gun", overlapText = "<color=red>Isolate Gun</color>", method = Detected.IsolateGun, detected = true, toolTip = "Makes whoever your hand desires only be able to see you."},
+                new ButtonInfo { buttonText = "Detected Isolate All", overlapText = "<color=red>Isolate All</color>", method = Detected.IsolateAll, isTogglable = false, detected = true, toolTip = "Makes everyone only be able to see you."},
+                new ButtonInfo { buttonText = "Detected Isolate Aura", overlapText = "<color=red>Isolate Aura</color>", method = Detected.IsolateAura, detected = true, toolTip = "Makes players nearby only be able to see you."},
+
+                new ButtonInfo { buttonText = "Detected Lag Gun", overlapText = "<color=red>Lag Gun</color>", method = Detected.LagGun, detected = true, toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Detected Lag All", overlapText = "<color=red>Lag All</color>", method = Detected.LagAll, detected = true, toolTip = "Lags everyone in the room."},
+                new ButtonInfo { buttonText = "Detected Lag Aura", overlapText = "<color=red>Lag Aura</color>", method = Detected.LagAura, detected = true, toolTip = "Lags players nearby."},
+
+                new ButtonInfo { buttonText = "Detected Mute Gun", overlapText = "<color=red>Mute Gun</color>", method = Detected.MuteGun, detected = true, toolTip = "Mutes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Detected Mute All", overlapText = "<color=red>Mute All</color>", method = Detected.MuteAll, detected = true, toolTip = "Mutes everyone in the room."},
+                new ButtonInfo { buttonText = "Detected Mute Aura", overlapText = "<color=red>Mute Aura</color>", method = Detected.MuteAura, detected = true, toolTip = "Mutes everyone in the room."},
+
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Random", overlapText = "<color=red>Change Gamemode to Random</color>", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Casual", overlapText = "<color=red>Change Gamemode to Casual</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Super Infection", overlapText = "<color=red>Change Gamemode to Super Infection</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Infection", overlapText = "<color=red>Change Gamemode to Infection</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Hunt", overlapText = "<color=red>Change Gamemode to Hunt</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.HuntDown), isTogglable = false, detected = true, toolTip = "Changes the gamemode to hunt."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Paintbrawl", overlapText = "<color=red>Change Gamemode to Paintbrawl</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Paintbrawl), isTogglable = false, detected = true, toolTip = "Changes the gamemode to paintbrawl."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Ambush", overlapText = "<color=red>Change Gamemode to Ambush</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ambush), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ambush."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Ghost Tag", overlapText = "<color=red>Change Gamemode to Ghost Tag</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Guardian", overlapText = "<color=red>Change Gamemode to Guardian</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
+                new ButtonInfo { buttonText = "Detected Change Gamemode to Freeze Tag", overlapText = "<color=red>Change Gamemode to Freeze Tag</color>", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+            },
+
+
+            new[] // Detected Settings [44]
+            {
+                new ButtonInfo { buttonText = "Exit Detected Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "Switch to Modded Gamemode", detected = true, toolTip = "Automatically sets the gamemode as modded when changed.", label = true},
+
             }
         };
 
@@ -2345,7 +2371,8 @@ namespace iiMenu.Menu
             "Mod Givers",
             "Chat Messages",
             "Macros",
-            "Detected Mods"
+            "Detected Mods",
+            "Detected Settings",
         };
 
         private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/

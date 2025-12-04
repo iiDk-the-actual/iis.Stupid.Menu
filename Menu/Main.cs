@@ -4643,14 +4643,15 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsTagged(VRRig Player)
         {
+            if (Player == null) return false;
             List<NetPlayer> infectedPlayers = InfectedList();
             NetPlayer targetPlayer = GetPlayerFromVRRig(Player);
 
             return infectedPlayers.Contains(targetPlayer);
         }
 
-        public static bool PlayerIsLocal(VRRig Player) => 
-            Player.isLocal || Player == GhostRig;
+        public static bool PlayerIsLocal(VRRig Player) =>
+            Player != null && (Player.isLocal || Player == GhostRig);
 
         // Credits to zvbex for the 'FIRST LOGIN' concat check
         // Credits to HanSolo1000Falcon/WhoIsThatMonke for improved checks
@@ -6945,6 +6946,8 @@ jgs \_   _/ |Oo\
             "iiDk has a shitty bluetooth keyboard.",
             "You're wasting your time reading this.",
             "rocklobster222 is awsum",
+            "kingofnetflix was here </3",
+            "multifactor was also here - kingofnetflix"
         };
     }
 }

@@ -4034,7 +4034,7 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom) return;
             List<int> nearbyPlayers = new List<int>();
 
-            foreach (var vrrig in GorillaParent.instance.vrrigs)
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
                     nearbyPlayers.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
