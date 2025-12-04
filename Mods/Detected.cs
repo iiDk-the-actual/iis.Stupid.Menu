@@ -33,6 +33,30 @@ namespace iiMenu.Mods
 {
     public static class Detected
     {
+        public static float masterDelay;
+        public static void SetMasterClientGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        if (Time.time > masterDelay)
+                        {
+                            PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                            masterDelay = Time.time + 0.02f;
+                        }
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
         public static float crashDelay;
         public static void CrashGun()
         {

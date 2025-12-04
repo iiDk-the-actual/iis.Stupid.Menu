@@ -2282,7 +2282,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "ModdedLabel", overlapText = "This is not a modded lobby.", label = true},
 
-                new ButtonInfo { buttonText = "Set Master Client", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as the master client by kicking everyone above you on the leaderboard."},
+                new ButtonInfo { buttonText = "Set Master Client Self", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as the master client by kicking everyone above you on the leaderboard."},
+                new ButtonInfo { buttonText = "Set Master Client Gun", method = Detected.SetMasterClientGun, detected = true, toolTip = "Sets master client to whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
