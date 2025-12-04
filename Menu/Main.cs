@@ -6997,7 +6997,6 @@ jgs \_   _/ |Oo\
 
         public static float timeMenuStarted = -1f;
         public static float kgDebounce;
-        public static float stealIdentityDelay;
         public static float beesDelay;
         public static float laggyRigDelay;
         public static float jrDebounce;

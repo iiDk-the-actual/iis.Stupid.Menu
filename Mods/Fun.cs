@@ -5579,6 +5579,7 @@ Piece Name: {gunTarget.name}";
             BecomePlayer(names[Random.Range(0, names.Length)], colors[Random.Range(0, colors.Length)]);
         }
 
+        public static float stealIdentityDelay;
         public static void CopyIdentityGun()
         {
             if (GetGunInput(false))
@@ -5594,6 +5595,26 @@ Piece Name: {gunTarget.name}";
                         ChangeName(GetPlayerFromVRRig(gunTarget).NickName);
                         ChangeColor(gunTarget.playerColor);
                         stealIdentityDelay = Time.time + 0.5f;
+                    }
+                }
+            }
+        }
+
+        private static float stealCosmeticsDelay;
+        public static void CopyCosmeticsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > stealIdentityDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, gunTarget.cosmeticSet.ToPackedIDArray(), gunTarget.tryOnSet.ToPackedIDArray(), false);
+                        stealCosmeticsDelay = Time.time + 0.5f;
                     }
                 }
             }
