@@ -857,10 +857,21 @@ namespace iiMenu.Menu
                 }
                 catch { }
 
-                if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
-                    Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
-                else
-                    Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
+                
+                if (Time.time > roomCheckDelay)
+                {
+                    if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
+                        Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
+                    else
+                        Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
+
+                    if (Overpowered.IsModded(false))
+                        Buttons.GetIndex("ModdedLabel").overlapText = "You are in a modded lobby.\nThese mods should be a bit safer now.";
+                    else
+                        Buttons.GetIndex("ModdedLabel").overlapText = "You are not in a modded lobby.";
+                    roomCheckDelay = Time.time + 1f;
+                }
+                
 
                 // Party kick code (to return back to the main lobby when you're done)
                 if (PhotonNetwork.InRoom)
@@ -7003,6 +7014,7 @@ jgs \_   _/ |Oo\
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;
+        public static float roomCheckDelay;
         public static float autoSaveDelay = Time.time + 60f;
         public static bool BackupPreferences;
         public static int PreferenceBackupCount;
@@ -7086,6 +7098,7 @@ jgs \_   _/ |Oo\
             "iiDk has a shitty bluetooth keyboard.",
             "You're wasting your time reading this.",
             "rocklobster222 is awsum",
+            "kingofnetflix was here </3"
         };
     }
 }

@@ -4051,6 +4051,7 @@ namespace iiMenu.Mods
         private static float notifyTime;
         public static bool IsModded(bool notify)
         {
+            if (!PhotonNetwork.InRoom) return false;
             bool modded = NetworkSystem.Instance.GameModeString.Contains("MODDED_");
             if (!modded && notify && Time.time > notifyTime)
             {

@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
@@ -92,6 +93,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Visual Settings", method =() => currentCategoryName = "Visual Settings", isTogglable = false, toolTip = "Opens the settings for the visual mods."},
                 new ButtonInfo { buttonText = "Fun Settings", method =() => currentCategoryName = "Fun Settings", isTogglable = false, toolTip = "Opens the settings for the fun mods."},
                 new ButtonInfo { buttonText = "Overpowered Settings", method =() => currentCategoryName = "Overpowered Settings", isTogglable = false, toolTip = "Opens the settings for the overpowered mods."},
+
 
                 new ButtonInfo { buttonText = "Projectile Settings", method =() => currentCategoryName = "Projectile Settings", isTogglable = false, toolTip = "Opens the settings for the projectiles."}
             },
@@ -1845,8 +1847,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag All", method = Overpowered.LagAll, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby you."},
 
-                new ButtonInfo { buttonText = "Modded Crash Gun", method = Overpowered.ModdedCrashGun, toolTip = "Crashes whoever your hand desires if you're in a modded gamemode."},
-
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method = Overpowered.AntiReportLag, toolTip = "Lags whoever tries to report you."},
 
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomStatus(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
@@ -2281,9 +2281,22 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Detected Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Example [Delete Me]", detected = true, toolTip = "Remove later. Example for @kingofnetflix."},
-                // TODO: @kingofnetflix add modded crash gun here and rename to "Instant Crash Gun"
-                // TODO: @kingofnetflix add text that appears if the room is modded or not, like the master client label
+                new ButtonInfo { buttonText = "ModdedLabel", overlapText = "This is not a modded lobby.", label = true},
+
+                new ButtonInfo { buttonText = "Set Master Client", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as the master client by kicking everyone above you on the leaderboard."},
+
+                new ButtonInfo { buttonText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
+
+                new ButtonInfo { buttonText = "Change Gamemode to Random", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."}, // thanks multifactor - kingofnetflix
+                new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
+                new ButtonInfo { buttonText = "Change Gamemode to Super Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+                new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
+                new ButtonInfo { buttonText = "Change Gamemode to Hunt", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.HuntDown), isTogglable = false, detected = true, toolTip = "Changes the gamemode to hunt."},
+                new ButtonInfo { buttonText = "Change Gamemode to Paintbrawl", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Paintbrawl), isTogglable = false, detected = true, toolTip = "Changes the gamemode to paintbrawl."},
+                new ButtonInfo { buttonText = "Change Gamemode to Ambush", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ambush), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ambush."},
+                new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
+                new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
+                new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
             }
         };
 
