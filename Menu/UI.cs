@@ -120,7 +120,7 @@ namespace iiMenu.Menu
             else
             {
                 if (!File.Exists(hideGUIPath))
-                    File.WriteAllText(hideGUIPath, "true");
+                    File.WriteAllText(hideGUIPath, "Text file generated with ii's Stupid Menu");
             }
             rectsDirty = true;
         }

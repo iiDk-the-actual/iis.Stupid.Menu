@@ -69,6 +69,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Master Mods", method =() => currentCategoryName = "Master Mods", isTogglable = false, toolTip = "Opens the master mods."},
                 new ButtonInfo { buttonText = "Overpowered Mods", method =() => currentCategoryName = "Overpowered Mods", isTogglable = false, toolTip = "Opens the overpowered mods."},
                 new ButtonInfo { buttonText = "Experimental Mods", method =() => currentCategoryName = "Experimental Mods", isTogglable = false, toolTip = "Opens the experimental mods."},
+                new ButtonInfo { buttonText = "Detected Mods", method =() => Prompt("The following mods are detected. Using them in an insecure setting <b>WILL</b> get you banned. Are you sure you would like to continue?", () => { File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt", "Text file generated with ii's Stupid Menu"); allowDetected = true; }), isTogglable = false, toolTip = "Opens the detected mods."},
                 new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."},
             },
 
@@ -2190,7 +2191,7 @@ namespace iiMenu.Menu
             },
 
             new[] { // Fun Settings [36]
-                new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Change Head Spin Speed", overlapText = "Change Head Spin Speed <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeHeadSpinSpeed(), enableMethod =() => Fun.ChangeHeadSpinSpeed(), disableMethod =() => Fun.ChangeHeadSpinSpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the head spin mods." },
 
@@ -2273,6 +2274,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Record <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.RecordMacro, toolTip = "Record your macros with your <color=green>left trigger</color>." },
                 new ButtonInfo { buttonText = "Reload Macros", method = Movement.LoadMacros, isTogglable = false, toolTip = "Reloads your macros." },
                 new ButtonInfo { buttonText = "Disable Macros", enableMethod =() => Movement.disableMacros = true, disableMethod =() => Movement.disableMacros = false, toolTip = "Disables all macros." }
+            },
+
+            new[] // Detected Mods [43]
+            {
+                new ButtonInfo { buttonText = "Exit Detected Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."}
+
+                // TODO: @kingofnetflix add modded crash gun here and rename to "Instant Crash Gun"
+                // TODO: @kingofnetflix add text that appears if the room is modded or not, like the master client label
             }
         };
 
@@ -2319,7 +2328,8 @@ namespace iiMenu.Menu
             "Custom Maps",
             "Mod Givers",
             "Chat Messages",
-            "Macros"
+            "Macros",
+            "Detected Mods"
         };
 
         private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/

@@ -6196,6 +6196,8 @@ namespace iiMenu.Menu
             else
                 acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
 
+            allowDetected = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt");
+
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
             SceneManager.sceneLoaded += SceneLoaded;
 
@@ -6418,6 +6420,7 @@ jgs \_   _/ |Oo\
 
         public static bool HasLoaded;
         public static bool hasLoadedPreferences;
+        public static bool allowDetected;
         public static bool hasRemovedThisFrame;
         public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
