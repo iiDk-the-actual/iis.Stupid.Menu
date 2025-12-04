@@ -857,31 +857,20 @@ namespace iiMenu.Menu
                 }
                 catch { }
 
-                
-                if (Time.time > roomCheckDelay)
-                {
-                    if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
-                        Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
-                    else
-                        Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
-
-                    if (Overpowered.IsModded(false))
-                        Buttons.GetIndex("ModdedLabel").overlapText = "You are in a modded lobby.\nThese mods should be a bit safer now.";
-                    else
-                        Buttons.GetIndex("ModdedLabel").overlapText = "You are not in a modded lobby.";
-                    roomCheckDelay = Time.time + 1f;
-                }
-                
+                if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
+                    Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
+                else
+                    Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
 
                 // Party kick code (to return back to the main lobby when you're done)
                 if (PhotonNetwork.InRoom)
                 {
-                    if (phaseTwo)
+                    if (partyKickReconnecting)
                     {
                         partyLastCode = null;
-                        phaseTwo = false;
+                        partyKickReconnecting = false;
                         NotificationManager.ClearAllNotifications();
-                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member!</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member.");
                         FriendshipGroupDetection.Instance.LeaveParty();
                     }
                     else
@@ -890,13 +879,13 @@ namespace iiMenu.Menu
                         {
                             LogManager.Log("Attempting rejoin");
                             NetworkSystem.Instance.ReturnToSinglePlayer();
-                            phaseTwo = true;
+                            partyKickReconnecting = true;
                         }
                     }
                 }
                 else
                 {
-                    if (phaseTwo)
+                    if (partyKickReconnecting)
                     {
                         if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
                         {
@@ -947,15 +936,15 @@ namespace iiMenu.Menu
                         Settings.SavePreferences();
                         LogManager.Log("Automatically saved preferences");
 
-                        if (BackupPreferences)
+                        if (backupPreferences)
                         {
-                            if (PreferenceBackupCount >= 5)
+                            if (preferenceBackupCount >= 5)
                             {
                                 File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
-                                PreferenceBackupCount = 0;
+                                preferenceBackupCount = 0;
                             }
 
-                            PreferenceBackupCount++;
+                            preferenceBackupCount++;
                         }
                     }
                 }
@@ -5243,106 +5232,6 @@ namespace iiMenu.Menu
         public static float GetCallLimiterDelay(CallLimiter limiter) =>
             limiter.timeCooldown / limiter.callHistoryLength;
 
-        public static void EventReceived(EventData data)
-        {
-            /*
-            Incase I don't remember, very high chance:
-                PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) to get the player
-                data.Code is the event ID, 200 is for RPCs and 50 is for p2p reports
-                PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())] is for the RPC name if you shall dare receive it
-                (object[])((Hashtable)data.CustomData)[(byte)4] to decrypt the args from RPCs
-                (string)((object[])data.CustomData)[(byte)0] to decrypt the args from events
-
-            Thanks for listening to my ted talk
-            */
-
-            try
-            {
-                if (data.Code == 200)
-                {
-                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
-                    object[] args = (object[])((Hashtable)data.CustomData)[4];
-                    switch (rpcName)
-                    {
-                        case "RPC_PlayHandTap" when AntiOculusReport:
-                            if ((int)args[0] == 67)
-                            {
-                                VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-                                if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
-                                    Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-                            }
-                            break;
-                        case "RPC_PlayHandTap" when Safety.smartAntiReport:
-                            if ((int)args[0] == 67)
-                            {
-                                Safety.buttonClickTime = Time.frameCount;
-                                Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender).UserId;
-                            }
-                            break;
-                        case "RPC_PlayHandTap" when Fun.keyboardTrackerEnabled:
-                            if ((int)args[0] == 66)
-                            {
-                                VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
-
-                                Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
-                                if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
-                                {
-                                    string handPath = (bool)args[1]
-                                     ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
-                                     : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
-
-                                    Vector3 position = target.gameObject.transform.Find(handPath).position;
-
-                                    GameObject keysParent = keyboardTransform.Find("Buttons/Keys").gameObject;
-                                    float minimalDist = float.MaxValue;
-                                    string closestKey = "[Null]";
-
-                                    foreach (Transform child in keysParent.transform)
-                                    {
-                                        float dist = Vector3.Distance(child.position, position);
-                                        if (dist < minimalDist)
-                                        {
-                                            minimalDist = dist;
-                                            closestKey = ToTitleCase(child.name);
-                                        }
-                                    }
-
-                                    if (closestKey.Length > 1)
-                                        closestKey = "[" + closestKey + "]";
-
-                                    bool isKeyLogged = false;
-                                    for (int i = 0; i < Fun.keyLogs.Count; i++)
-                                    {
-                                        object[] keyLog = Fun.keyLogs[i];
-                                        if ((VRRig)keyLog[0] == target)
-                                        {
-                                            isKeyLogged = true;
-
-                                            string currentText = (string)keyLog[1];
-
-                                            if (closestKey.Contains("Delete"))
-                                                Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
-                                            else
-                                                Fun.keyLogs[i][1] = currentText + closestKey;
-
-                                            Fun.keyLogs[i][2] = Time.time + 5f;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!isKeyLogged)
-                                    {
-                                        if (!closestKey.Contains("Delete"))
-                                            Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
-            } catch { }
-        }
-
         public static void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (disableBoardColor) return;
@@ -6214,7 +6103,6 @@ namespace iiMenu.Menu
 
             allowDetected = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt");
 
-            PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
             SceneManager.sceneLoaded += SceneLoaded;
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
@@ -6331,8 +6219,6 @@ namespace iiMenu.Menu
         {
             Settings.Panic();
             Settings.DisableBoardColors();
-
-            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
             NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer -= OnLeaveRoom;
@@ -7004,61 +6890,24 @@ jgs \_   _/ |Oo\
 
         public static string partyLastCode;
         public static float partyTime;
-        public static bool phaseTwo;
+        public static bool partyKickReconnecting;
 
         public static float timeMenuStarted = -1f;
-        public static float kgDebounce;
-        public static float beesDelay;
-        public static float laggyRigDelay;
-        public static float jrDebounce;
-        public static float soundDebounce;
         public static float buttonCooldown;
-        public static float colorChangerDelay;
-        public static float roomCheckDelay;
         public static float autoSaveDelay = Time.time + 60f;
-        public static bool BackupPreferences;
-        public static int PreferenceBackupCount;
+        public static bool backupPreferences;
+        public static int preferenceBackupCount;
 
         public static int notificationDecayTime = 1000;
         public static int notificationSoundIndex;
 
-        public static float oldSlide;
-
-        public static int soundId;
-
         public static string inputText = "";
-        public static string lastCommand = "";
 
         public static float ShootStrength = 19.44f;
 
-        public static int colorChangeType;
-        public static bool strobeColor;
-
-        public static bool AntiOculusReport;
-
         public static bool shift;
-        public static bool lockShift; // Konekokitten KTOH
-
-        public static bool lastHit;
-        public static bool lastHit2;
-        public static bool lastRG;
-
-        public static int tindex = 1;
-
-        public static bool lastHitL;
-        public static bool lastHitR;
-        public static bool lastHitLP;
-        public static bool lastHitRP;
-        public static bool lastHitRS;
-
-        public static bool headspazType;
-
+        public static bool lockShift; 
         public static bool hasFoundAllBoards;
-
-        public static float sizeScale = 1f;
-
-        public static float turnAmnt;
-        public static float TagAuraDelay;
 
         public static bool lowercaseMode;
         public static bool uppercaseMode;
@@ -7098,7 +6947,6 @@ jgs \_   _/ |Oo\
             "iiDk has a shitty bluetooth keyboard.",
             "You're wasting your time reading this.",
             "rocklobster222 is awsum",
-            "kingofnetflix was here </3"
         };
     }
 }

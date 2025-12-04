@@ -275,7 +275,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Joystick Menu Search", enableMethod =() => joystickMenuSearching = true, disableMethod =() => joystickMenuSearching = false, toolTip = "Allows you to move your selected item down to the search button with joystick menu."},
 
                 new ButtonInfo { buttonText = "Menu Presets", method =() => currentCategoryName = "Menu Presets", isTogglable = false, toolTip = "Opens the page of presets."},
-                new ButtonInfo { buttonText = "Backup Preferences", enableMethod =() => BackupPreferences = true, disableMethod =() => BackupPreferences = false, toolTip = "Automatically saves a copy of your preferences every minute."},
+                new ButtonInfo { buttonText = "Backup Preferences", enableMethod =() => backupPreferences = true, disableMethod =() => backupPreferences = false, toolTip = "Automatically saves a copy of your preferences every minute."},
                 new ButtonInfo { buttonText = "Save Preferences", method = Settings.SavePreferences, isTogglable = false, toolTip = "Saves your preferences to a file."},
                 new ButtonInfo { buttonText = "Load Preferences", method = Settings.LoadPreferences, isTogglable = false, toolTip = "Loads your preferences from a file."},
                 new ButtonInfo { buttonText = "Disable Autosave", method =() => autoSaveDelay = Time.time + 1f, toolTip = "Disables the auto save mechanism."},
@@ -530,7 +530,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method = Safety.AntiReportReconnect, toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Join Random</color><color=grey>]</color>", method = Safety.AntiReportJoinRandom, toolTip = "Connects you to a random the room when anyone comes near your report button."},
 
-                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>", enableMethod =() => AntiOculusReport = true, disableMethod =() => AntiOculusReport = false, toolTip = "Disconnects you from the room when you get reported with the Oculus report menu."},
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>", enableMethod = Safety.EnableAntiOculusReport, disableMethod = Safety.DisableAntiOculusReport, toolTip = "Disconnects you from the room when you get reported with the Oculus report menu."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => AntiCheatPatches.SendReportPatch.AntiACReport = true, disableMethod =() => AntiCheatPatches.SendReportPatch.AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Notify</color><color=grey>]</color>", method = Safety.AntiReportNotify, toolTip = "Tells you when people come near your report button, but doesn't do anything."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Overlay</color><color=grey>]</color>", method = Safety.AntiReportOverlay, toolTip = "Shows you an overlay when people come near your report button, but doesn't do anything."},
@@ -686,7 +686,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Rig Gun", method = Movement.RigGun, toolTip = "Moves your rig to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Grab Rig <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.GrabRig, toolTip = "Lets you grab your rig when holding <color=green>grip</color>."},
-
+                
                 new ButtonInfo { buttonText = "Spin Head X", method =() => Fun.SpinHead("x"), disableMethod = Fun.FixHead, toolTip = "Spins your head on the X axis."},
                 new ButtonInfo { buttonText = "Spin Head Y", method =() => Fun.SpinHead("y"), disableMethod = Fun.FixHead, toolTip = "Spins your head on the Y axis."},
                 new ButtonInfo { buttonText = "Spin Head Z", method =() => Fun.SpinHead("z"), disableMethod = Fun.FixHead, toolTip = "Spins your head on the Z axis."},
@@ -1006,7 +1006,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Auto Clicker <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.AutoClicker, toolTip = "Automatically presses  trigger for you when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Keyboard Tracker", method = Fun.KeyboardTracker, disableMethod =() => Fun.keyboardTrackerEnabled = false, toolTip = "Tracks everyone's keyboard inputs in the lobby."},
+                new ButtonInfo { buttonText = "Keyboard Tracker", enableMethod = Fun.EnableKeyboardTracker, method = Fun.KeyboardTracker, disableMethod = Fun.DisableKeyboardTracker, toolTip = "Tracks everyone's keyboard inputs in the lobby."},
 
                 new ButtonInfo { buttonText = "Tag Sounds", enableMethod = Fun.PreloadTagSounds, method =() => TagPatch.enabled = true, disableMethod =() => TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
 
@@ -1552,7 +1552,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Custom Sound ID", method = Sound.IncreaseSoundID, enableMethod = Sound.IncreaseSoundID, disableMethod = Sound.DecreaseSoundID, incremental = true, isTogglable = false, toolTip = "Changes the Sound ID of the Custom Sound Spam." },
                 new ButtonInfo { buttonText = "Custom Sound Spam", overlapText = "Custom Sound Spam <color=grey>[</color><color=green>0</color><color=grey>]</color>", method = Sound.CustomSoundSpam, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
 
-                new ButtonInfo { buttonText = "Override Tap Sound", method =() => { EffectDataPatch.enabled = true; EffectDataPatch.material = soundId; }, disableMethod =() => {  EffectDataPatch.enabled = false;  EffectDataPatch.material = -1; }, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Override Tap Sound", method =() => { EffectDataPatch.enabled = true; EffectDataPatch.material = Sound.soundId; }, disableMethod =() => {  EffectDataPatch.enabled = false;  EffectDataPatch.material = -1; }, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
             },
 
             new[] { // Projectile Spam Mods [15]
@@ -2121,7 +2121,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hide Anti Cheat Report Reasons", enableMethod =() => AntiCheatPatches.SendReportPatch.AntiCheatReasonHide = true, disableMethod =() => AntiCheatPatches.SendReportPatch.AntiCheatReasonHide = false, toolTip = "Hides the reason for Show Anti Cheat Reports."},
 
                 new ButtonInfo { buttonText = "Visualize Anti Report", method = Safety.VisualizeAntiReport, toolTip = "Visualizes the distance threshold for the anti report mods."},
-                new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartAntiReport = true, disableMethod =() => Safety.smartAntiReport = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
+                new ButtonInfo { buttonText = "Smart Anti Report", enableMethod = Safety.EnableSmartAntiReport, disableMethod = Safety.DisableSmartAntiReport, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
             },
 
             new ButtonInfo[] { }, // Temporary Category [29]

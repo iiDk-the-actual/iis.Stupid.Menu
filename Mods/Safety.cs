@@ -45,18 +45,19 @@ namespace iiMenu.Mods
 {
     public static class Safety
     {
+        private static bool antiOculusReportHooked;
         public static void GeneralSafety()
         {
             if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>").enabled) AntiReportDisconnect();
-            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = true;
             if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = true;
             if (!Buttons.GetIndex("Anti Moderator").enabled) AntiModerator();
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled && !antiOculusReportHooked) { antiOculusReportHooked = true; EnableAntiOculusReport(); }
         }
 
         public static void DisableGeneral()
         {
-            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = false;
             if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) AntiCheatPatches.SendReportPatch.AntiACReport = false;
+            if (!Buttons.GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) DisableAntiOculusReport();
         }
 
         public static void NoFinger()
@@ -230,6 +231,36 @@ namespace iiMenu.Mods
         public static bool SmartAntiReport(NetPlayer linePlayer) =>
             smartAntiReport && linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
 
+        public static void EventReceived_SmartAntiReport(EventData data)
+        {
+            try
+            {
+                if (data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
+                    object[] args = (object[])((Hashtable)data.CustomData)[4];
+                    if (rpcName == "RPC_PlayHandTap" && (int)args[0] == 67)
+                    {
+                        buttonClickTime = Time.frameCount;
+                        buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender).UserId;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void EnableSmartAntiReport()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived += EventReceived_SmartAntiReport;
+            smartAntiReport = true;
+        }
+
+        public static void DisableSmartAntiReport()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived_SmartAntiReport;
+            smartAntiReport = false;
+        }
+
         public static void VisualizeAntiReport()
         {
             try
@@ -302,6 +333,31 @@ namespace iiMenu.Mods
                 NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
             });
         }
+
+        public static void EventReceived_AntiOculusReport(EventData data)
+        {
+            try
+            {
+                if (data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
+                    object[] args = (object[])((Hashtable)data.CustomData)[4];
+                    if (rpcName == "RPC_PlayHandTap" && (int)args[0] == 67)
+                    {
+                        VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+                        if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
+                            AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void EnableAntiOculusReport() =>
+            PhotonNetwork.NetworkingClient.EventReceived += EventReceived_AntiOculusReport;
+
+        public static void DisableAntiOculusReport() =>
+            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived_AntiOculusReport;
 
         public static float antiReportNotifyDelay;
         public static void AntiReportNotify()
