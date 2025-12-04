@@ -108,7 +108,7 @@ namespace iiMenu.Mods
             NetworkSystem.Instance.netState = NetworkSystem.Instance.InRoom ? NetSystemState.InGame : NetSystemState.Idle;
 
             partyLastCode = null;
-            phaseTwo = false;
+            partyKickReconnecting = false;
         }
 
         public static void JoinRandom()

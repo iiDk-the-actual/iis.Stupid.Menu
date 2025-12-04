@@ -4411,7 +4411,7 @@ exit 0";
             } else
                 closePosition = Vector3.zero;
         }
-
+        
         public static bool currentmentalstate;
         public static void FreezeRigInMenu()
         {
@@ -4949,7 +4949,7 @@ exit 0";
                 Fun.blockDebounceIndex.ToString(),
                 Fun.nameCycleIndex.ToString(),
                 menuScaleIndex.ToString(),
-                soundId.ToString(),
+                Sound.soundId.ToString(),
                 Fun.targetQuestScore.ToString(),
                 notificationScaleIndex.ToString(),
                 overlayScaleIndex.ToString(),
@@ -5167,7 +5167,7 @@ exit 0";
                 menuScaleIndex = int.Parse(data[41]) - 1;
                 ChangeMenuScale();
 
-                soundId = int.Parse(data[42]) - 1;
+                Sound.soundId = int.Parse(data[42]) - 1;
                 Sound.IncreaseSoundID();
 
                 Fun.targetQuestScore = int.Parse(data[43]) - 1;

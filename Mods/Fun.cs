@@ -62,6 +62,7 @@ using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static OVRColocationSession;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;
@@ -267,7 +268,7 @@ namespace iiMenu.Mods
                 waitForPlayerJoin = false;
                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(Important.RandomRoomName(), JoinType.ForceJoinWithParty);
                 partyTime = Time.time + 0.25f;
-                phaseTwo = false;
+                partyKickReconnecting = false;
                 amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
                 NotificationManager.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Kicking " + amountPartying + " party members, please be patient..");
             }
@@ -283,7 +284,7 @@ namespace iiMenu.Mods
                 waitForPlayerJoin = true;
                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("KKK", JoinType.ForceJoinWithParty);
                 partyTime = Time.time + 0.25f;
-                phaseTwo = false;
+                partyKickReconnecting = false;
                 amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
                 NotificationManager.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Banning " + amountPartying + " party members, please be patient..");
             }
@@ -568,10 +569,82 @@ namespace iiMenu.Mods
         }
 
         public static readonly List<object[]> keyLogs = new List<object[]>();
-        public static bool keyboardTrackerEnabled;
+        
+        public static void EventReceived_KeyboardTracker(EventData data)
+        {
+            try
+            {
+                if (data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[5].ToString())];
+                    object[] args = (object[])((Hashtable)data.CustomData)[4];
+                    if (rpcName == "RPC_PlayHandTap" && (int)args[0] == 66)
+                    {
+                        VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender));
+
+                        Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
+                        if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
+                        {
+                            string handPath = (bool)args[1]
+                                ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+
+                            Vector3 position = target.gameObject.transform.Find(handPath).position;
+
+                            GameObject keysParent = keyboardTransform.Find("Buttons/Keys").gameObject;
+                            float minimalDist = float.MaxValue;
+                            string closestKey = "[Null]";
+
+                            foreach (Transform child in keysParent.transform)
+                            {
+                                float dist = Vector3.Distance(child.position, position);
+                                if (dist < minimalDist)
+                                {
+                                    minimalDist = dist;
+                                    closestKey = ToTitleCase(child.name);
+                                }
+                            }
+
+                            if (closestKey.Length > 1)
+                                closestKey = "[" + closestKey + "]";
+
+                            bool isKeyLogged = false;
+                            for (int i = 0; i < keyLogs.Count; i++)
+                            {
+                                object[] keyLog = keyLogs[i];
+                                if ((VRRig)keyLog[0] == target)
+                                {
+                                    isKeyLogged = true;
+
+                                    string currentText = (string)keyLog[1];
+
+                                    if (closestKey.Contains("Delete"))
+                                        keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
+                                    else
+                                        keyLogs[i][1] = currentText + closestKey;
+
+                                    keyLogs[i][2] = Time.time + 5f;
+                                    break;
+                                }
+                            }
+
+                            if (!isKeyLogged)
+                            {
+                                if (!closestKey.Contains("Delete"))
+                                    keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void EnableKeyboardTracker() =>
+            PhotonNetwork.NetworkingClient.EventReceived += EventReceived_KeyboardTracker;
+
         public static void KeyboardTracker()
         {
-            keyboardTrackerEnabled = true;
             if (keyLogs.Count > 0)
             {
                 foreach (var keylog in keyLogs.Where(keylog => Time.time > (float)keylog[2]).ToList())
@@ -581,6 +654,9 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        public static void DisableKeyboardTracker() =>
+            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived_KeyboardTracker;
 
         public static void PreloadTagSounds()
         {
@@ -5505,6 +5581,11 @@ Piece Name: {gunTarget.name}";
                 File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
         }
 
+        public static float colorChangerDelay;
+
+        public static int colorChangeType;
+        public static bool strobeColor;
+
         public static void FlashColor()
         {
             if (Time.time > colorChangerDelay)
@@ -5622,6 +5703,13 @@ Piece Name: {gunTarget.name}";
 
         public static int accessoryType;
         public static int hat;
+
+        public static bool lastHitL;
+        public static bool lastHitR;
+        public static bool lastHitLP;
+        public static bool lastHitRP;
+        public static bool lastHitRS;
+
         public static void ChangeAccessories()
         {
             if (leftGrab && !lastHitL)

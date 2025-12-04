@@ -268,13 +268,14 @@ namespace iiMenu.Mods
             Buttons.GetIndex("Sound Bindings").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
         }
 
+        public static float sendEffectDelay;
         public static void BetaPlayTag(int id, float volume)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
-                if (Time.time > soundDebounce)
+                if (Time.time > sendEffectDelay)
                 {
                     object[] soundSendData = new object[3] { id, volume, false };
                     object[] sendEventData = new object[3] { PhotonNetwork.ServerTimestamp, (byte)3, soundSendData };
@@ -286,7 +287,7 @@ namespace iiMenu.Mods
                     catch { }
                     RPCProtection();
 
-                    soundDebounce = Time.time + 0.2f;
+                    sendEffectDelay = Time.time + 0.2f;
                 }
             }
         }
@@ -344,7 +345,7 @@ namespace iiMenu.Mods
             SoundSpam(sirenToggle ? 48 : 50);
         }
 
-
+        public static int soundId;
         public static void DecreaseSoundID()
         {
             soundId--;

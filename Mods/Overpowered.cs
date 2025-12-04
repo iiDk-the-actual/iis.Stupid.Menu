@@ -76,6 +76,7 @@ namespace iiMenu.Mods
         public static void GuardianSelf() =>
             SetGuardianTarget(PhotonNetwork.LocalPlayer);
 
+        private static float guardianDelay;
         public static void GuardianGun()
         {
             if (GetGunInput(false))
@@ -83,13 +84,13 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > guardianDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         SetGuardianTarget(GetPlayerFromVRRig(gunTarget));
-                        kgDebounce = Time.time + 0.1f;
+                        guardianDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -126,7 +127,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > guardianDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
@@ -137,7 +138,7 @@ namespace iiMenu.Mods
                                 gorillaGuardianZoneManager.SetGuardian(null);
                         }
                         else NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
-                        kgDebounce = Time.time + 0.1f;
+                        guardianDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -2174,6 +2175,7 @@ namespace iiMenu.Mods
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
         }
 
+        private static float grabDelay;
         public static void GrabGun()
         {
             if (GetGunInput(false))
@@ -2181,7 +2183,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > grabDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
@@ -2194,7 +2196,7 @@ namespace iiMenu.Mods
                         }
                         else
                             NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                        kgDebounce = Time.time + 0.1f;
+                        grabDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -2202,9 +2204,9 @@ namespace iiMenu.Mods
 
         public static void GrabAll()
         {
-            if (rightGrab && Time.time > kgDebounce)
+            if (rightGrab && Time.time > grabDelay)
             {
-                kgDebounce = Time.time + 0.1f;
+                grabDelay = Time.time + 0.1f;
                 GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
@@ -2219,6 +2221,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float releaseDelay;
         public static void ReleaseGun()
         {
             if (GetGunInput(false))
@@ -2226,7 +2229,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > releaseDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
@@ -2239,8 +2242,8 @@ namespace iiMenu.Mods
                         }
                         else
                             NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                        
-                        kgDebounce = Time.time + 0.1f;
+
+                        releaseDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -2248,9 +2251,9 @@ namespace iiMenu.Mods
 
         public static void ReleaseAll()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > releaseDelay)
             {
-                kgDebounce = Time.time + 0.1f;
+                releaseDelay = Time.time + 0.1f;
                 GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
@@ -2265,6 +2268,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float flingDelay;
         public static void FlingGun()
         {
             if (GetGunInput(false))
@@ -2272,14 +2276,14 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > flingDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(gunTarget), new Vector3(0f, 19.9f, 0f) );
                         RPCProtection();
-                        kgDebounce = Time.time + 0.1f;
+                        flingDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -2287,9 +2291,9 @@ namespace iiMenu.Mods
 
         public static void FlingAll()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.1f;
+                flingDelay = Time.time + 0.1f;
 
                 BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(0f, 19.9f, 0f));
                 RPCProtection();
@@ -2305,11 +2309,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), RandomVector3(50f));
                         RPCProtection();
-                        kgDebounce = Time.time + 0.1f;
+                        flingDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -2331,9 +2335,9 @@ namespace iiMenu.Mods
 
         public static void SpazAllPlayers()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.1f;
+                flingDelay = Time.time + 0.1f;
                 BetaSetVelocityTargetGroup(RpcTarget.Others, RandomVector3(50f));
                 RPCProtection();
             }
@@ -3345,11 +3349,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), Vector3.zero);
                         RPCProtection();
-                        kgDebounce = Time.time + 0.1f;
+                        flingDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -3371,9 +3375,9 @@ namespace iiMenu.Mods
 
         public static void PhysicalFreezeAll()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.1f;
+                flingDelay = Time.time + 0.1f;
                 BetaSetVelocityTargetGroup(RpcTarget.Others, Vector3.zero);
                 RPCProtection();
             }
@@ -3381,11 +3385,11 @@ namespace iiMenu.Mods
 
         public static void BringPlayer(NetPlayer player)
         {
-            if (Time.time > kgDebounce)
+            if (Time.time > flingDelay)
             {
                 BetaSetVelocityPlayer(player, (GorillaTagger.Instance.bodyCollider.transform.position - GetVRRigFromPlayer(player).transform.position).normalized * 20f);
                 RPCProtection();
-                kgDebounce = Time.time + 0.1f;
+                flingDelay = Time.time + 0.1f;
             }
         }
 
@@ -3398,11 +3402,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         BetaSetVelocityPlayer(player, Vector3.Normalize(NewPointer.transform.position - GetVRRigFromPlayer(player).transform.position) * 50f);
                         RPCProtection();
-                        kgDebounce = Time.time + 0.2f;
+                        flingDelay = Time.time + 0.2f;
                     }
                 }
             }
@@ -3417,11 +3421,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 20f);
                         RPCProtection();
-                        kgDebounce = Time.time + 0.1f;
+                        flingDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -3443,9 +3447,9 @@ namespace iiMenu.Mods
 
         public static void BringAll()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.2f;
+                flingDelay = Time.time + 0.2f;
                 foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                 {
                     BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 20f);
@@ -3463,11 +3467,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position - GorillaTagger.Instance.bodyCollider.transform.position).normalized * 20f);
                         RPCProtection();
-                        kgDebounce = Time.time + 0.1f;
+                        flingDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -3489,9 +3493,9 @@ namespace iiMenu.Mods
 
         public static void BringAwayAll()
         {
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.2f;
+                flingDelay = Time.time + 0.2f;
                 foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                 {
                     BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (plr.transform.position - GorillaTagger.Instance.bodyCollider.transform.position).normalized * 20f);
@@ -3503,9 +3507,9 @@ namespace iiMenu.Mods
         public static void OrbitAll()
         {
             float scale = 5f;
-            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
             {
-                kgDebounce = Time.time + 0.2f;
+                flingDelay = Time.time + 0.2f;
                 int index = 0;
 
                 VRRig[] rigs = GorillaParent.instance.vrrigs.Where(rig => !rig.isLocal).ToArray();
@@ -3625,13 +3629,13 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                             BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(NewPointer.transform.position - plr.transform.position) * 50f);
                         
                         RPCProtection();
-                        kgDebounce = Time.time + 0.2f;
+                        flingDelay = Time.time + 0.2f;
                     }
                 }
             }
@@ -3646,13 +3650,13 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > flingDelay)
                     {
                         foreach (var plr in GorillaParent.instance.vrrigs.Where(plr => !plr.isLocal))
                             BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(plr.transform.position - NewPointer.transform.position) * 50f);
                         
                         RPCProtection();
-                        kgDebounce = Time.time + 0.2f;
+                        flingDelay = Time.time + 0.2f;
                     }
                 }
             }
@@ -3660,7 +3664,7 @@ namespace iiMenu.Mods
 
         public static void AntiStump()
         {
-            if (Time.time > kgDebounce)
+            if (Time.time > flingDelay)
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
@@ -3670,7 +3674,7 @@ namespace iiMenu.Mods
                         if (Vector3.Distance(stump, rig.transform.position) < 3f)
                         {
                             BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - stump).normalized * 20f);
-                            kgDebounce = Time.time + 0.2f;
+                            flingDelay = Time.time + 0.2f;
                         }
                     }
                 }
@@ -4153,6 +4157,7 @@ namespace iiMenu.Mods
             Important.CreateRoom(specificRoom ?? RandomString(), kickToPublic, JoinType.JoinWithNearby);
         }
 
+        private static float kickDelay;
         public static void StumpKickGun()
         {
             if (GetGunInput(false))
@@ -4160,13 +4165,13 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kickDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
-                        kgDebounce = Time.time + 0.5f;
+                        kickDelay = Time.time + 0.5f;
 
                         if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId))
                         {
@@ -4268,7 +4273,6 @@ namespace iiMenu.Mods
             GorillaScoreboardTotalUpdater.instance.UpdateActiveScoreboards();
         }
 
-
         public static void DestroyGun()
         {
             if (GetGunInput(false))
@@ -4276,13 +4280,13 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > destroyDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         DestroyPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(gunTarget)));
-                        kgDebounce = Time.time + 0.5f;
+                        destroyDelay = Time.time + 0.5f;
                     }
                 }
             }
@@ -4403,6 +4407,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        private static float slowDelay;
         public static void SlowGun()
         {
             if (GetGunInput(false))
@@ -4410,7 +4415,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > slowDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
@@ -4418,7 +4423,7 @@ namespace iiMenu.Mods
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
                         BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } });
                         RPCProtection();
-                        kgDebounce = Time.time + 1f;
+                        slowDelay = Time.time + 1f;
                     }
                 }
             }
@@ -4426,22 +4431,22 @@ namespace iiMenu.Mods
 
         public static void SlowAll()
         {
-            if (Time.time > kgDebounce)
+            if (Time.time > slowDelay)
             {
                 BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
-                kgDebounce = Time.time + 1f;
+                slowDelay = Time.time + 1f;
             }
         }
 
         public static void VibrateSelf()
         {
-            
             NetPlayer owner = PhotonNetwork.LocalPlayer;
             BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new[] { owner.ActorNumber } });
             RPCProtection();
         }
 
+        private static float vibrateDelay;
         public static void VibrateGun()
         {
             if (GetGunInput(false))
@@ -4449,7 +4454,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > vibrateDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
@@ -4457,7 +4462,7 @@ namespace iiMenu.Mods
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
                         BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new[] { owner.ActorNumber } });
                         RPCProtection();
-                        kgDebounce = Time.time + 0.5f;
+                        vibrateDelay = Time.time + 0.5f;
                     }
                 }
             }
@@ -4465,11 +4470,11 @@ namespace iiMenu.Mods
 
         public static void VibrateAll()
         {
-            if (Time.time > kgDebounce)
+            if (Time.time > vibrateDelay)
             {
                 BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
-                kgDebounce = Time.time + 0.5f;
+                vibrateDelay = Time.time + 0.5f;
             }
         }
 

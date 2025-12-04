@@ -2835,6 +2835,11 @@ namespace iiMenu.Mods
 
         public static bool wasDisabledAlready;
         public static bool invisMonke;
+
+        public static bool lastHit;
+        public static bool lastHit2;
+        public static bool lastRG;
+
         public static void Invisible()
         {
             bool hit = rightSecondary;
@@ -3516,6 +3521,7 @@ namespace iiMenu.Mods
         public static void DisableFloatingRig() =>
             VRRig.LocalRig.head.trackingPositionOffset = offsetH;
 
+        public static float beesDelay;
         public static void Bees()
         {
             VRRig.LocalRig.enabled = false;
@@ -3532,6 +3538,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float sizeScale = 1f;
         public static void SizeChanger()
         {
             float increment = 0.05f;
@@ -3670,6 +3677,7 @@ namespace iiMenu.Mods
             GTPlayer.Instance.rightHand.isHolding = !value;
         }
 
+        public static float oldSlide;
         public static void EnableSlideControl()
         {
             oldSlide = GTPlayer.Instance.slideControl;
@@ -5550,6 +5558,8 @@ namespace iiMenu.Mods
         }
 
         public static float headspazDelay;
+        public static bool headspazType;
+
         public static void RandomSpazHead()
         {
             if (headspazType)
@@ -5604,6 +5614,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float laggyRigDelay;
         public static void LaggyRig()
         {
             VRRig.LocalRig.enabled = false;
