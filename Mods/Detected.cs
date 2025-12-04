@@ -126,7 +126,7 @@ namespace iiMenu.Mods
                         Player target = lockTarget.GetPlayer().GetPlayer();
                         PhotonNetwork.SetMasterClient(target);
                         while (PhotonNetwork.MasterClient != target)
-                            await Task.Delay(50);  // fast non-blocking wait
+                            await Task.Delay(50);
 
                         Fun.KickMasterClient();
                     });
@@ -251,9 +251,9 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
                     foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
                         if (!PlayerIsLocal(rig) && rig != lockTarget)
                         {
                             PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
@@ -261,7 +261,7 @@ namespace iiMenu.Mods
                                 { 0, view.ViewID }
                             }, new RaiseEventOptions
                             {
-                                TargetActors = new int[] { view.Owner.ActorNumber }
+                                TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber }
                             }, SendOptions.SendUnreliable);
                         }
                         
@@ -296,12 +296,12 @@ namespace iiMenu.Mods
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                {
-                    { 0, view.ViewID }
-                }, new RaiseEventOptions
-                {
-                    TargetActors = new int[] { view.Owner.ActorNumber }
-                }, SendOptions.SendUnreliable);
+                    {
+                        { 0, view.ViewID }
+                    }, new RaiseEventOptions
+                    {
+                        TargetActors = new int[] { view.Owner.ActorNumber }
+                    }, SendOptions.SendUnreliable);
                 }
                 
             }
