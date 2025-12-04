@@ -41,6 +41,7 @@ namespace iiMenu.Classes.Menu
 
         public bool label;
         public bool incremental;
+        public bool detected;
 
         public string customBind;
         public string rebindKey;

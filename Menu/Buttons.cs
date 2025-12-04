@@ -2278,8 +2278,9 @@ namespace iiMenu.Menu
 
             new[] // Detected Mods [43]
             {
-                new ButtonInfo { buttonText = "Exit Detected Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."}
+                new ButtonInfo { buttonText = "Exit Detected Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
+                new ButtonInfo { buttonText = "Example [Delete Me]", detected = true, toolTip = "Remove later. Example for @kingofnetflix."},
                 // TODO: @kingofnetflix add modded crash gun here and rename to "Instant Crash Gun"
                 // TODO: @kingofnetflix add text that appears if the room is modded or not, like the master client label
             }

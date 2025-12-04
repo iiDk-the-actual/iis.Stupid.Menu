@@ -6045,8 +6045,13 @@ namespace iiMenu.Menu
 
                                 break;
                             }
-                            default:
+                            case true when target.detected && !allowDetected:
                             {
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is detected and requires permission to run.");
+                                break;
+                            }
+                            default:
+                                {
                                 if (target.isTogglable)
                                 {
                                     target.enabled = !target.enabled;
