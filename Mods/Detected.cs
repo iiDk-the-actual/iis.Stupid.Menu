@@ -19,10 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaNetworking;
-using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using Photon.Pun;

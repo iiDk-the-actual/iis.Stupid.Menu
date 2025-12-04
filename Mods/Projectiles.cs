@@ -20,14 +20,13 @@
  */
 
 using ExitGames.Client.Photon;
-using GorillaExtensions;
 using GorillaLocomotion;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

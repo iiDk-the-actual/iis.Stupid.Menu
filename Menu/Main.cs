@@ -21,7 +21,6 @@
 
 using BepInEx;
 using ExitGames.Client.Photon;
-using Fusion;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -67,7 +66,6 @@ using static iiMenu.Utilities.RigUtilities;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;

@@ -30,7 +30,6 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
-using Pathfinding;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
