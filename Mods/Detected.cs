@@ -30,6 +30,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using static iiMenu.Menu.Main;
@@ -107,6 +108,46 @@ namespace iiMenu.Mods
                 PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPlayer().GetPlayer());
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                 crashDelay = Time.time + 0.02f;
+            }
+        }
+
+        private static bool kickRunOnce = false;
+        public static void KickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && !kickRunOnce)
+                {
+                    Task.Run(async () =>
+                    {
+                        Player target = lockTarget.GetPlayer().GetPlayer();
+                        PhotonNetwork.SetMasterClient(target);
+                        while (PhotonNetwork.MasterClient != target)
+                            await Task.Delay(50);  // fast non-blocking wait
+
+                        Fun.KickMasterClient();
+                    });
+                    kickRunOnce = true;                    
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+                kickRunOnce = false;
             }
         }
 
