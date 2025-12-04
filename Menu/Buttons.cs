@@ -2286,7 +2286,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
 
-                new ButtonInfo { buttonText = "Change Gamemode to Random", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."}, // thanks multifactor - kingofnetflix
+                new ButtonInfo { buttonText = "Change Gamemode to Random", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Super Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
                 new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
