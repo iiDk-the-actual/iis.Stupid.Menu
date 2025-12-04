@@ -21,6 +21,7 @@
 
 using HarmonyLib;
 using JetBrains.Annotations;
+using Liv.Lck.Telemetry;
 using PlayFab.EventsModels;
 
 namespace iiMenu.Patches.Safety
@@ -55,6 +56,13 @@ namespace iiMenu.Patches.Safety
         public class TelemetryPatch4
         {
             private static bool Prefix() =>
+                !enabled;
+        }
+
+        [HarmonyPatch(typeof(LckTelemetry), "SendTelemetry")]
+        public class TelemetryPatch5
+        {
+            private static bool Prefix(TelemetryEvent eventData) =>
                 !enabled;
         }
     }
