@@ -279,7 +279,7 @@ namespace iiMenu.Classes.Menu
                         {
                             string overlapText = Button.overlapText ?? Button.buttonText;
 
-                            Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
+                            Button.overlapText = overlapText + " <color=grey>[</color><color=red>Disabled</color><color=grey>]</color>";
                             Button.isTogglable = false;
                             Button.enabled = false;
 
