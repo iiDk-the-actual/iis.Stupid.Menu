@@ -2289,6 +2289,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Crash Gun", overlapText = "<color=red>Crash Gun</color>", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Crash All", overlapText = "<color=red>Crash All</color>", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
 
+                new ButtonInfo { buttonText = "Detected Kick Gun", overlapText = "<color=red>Kick Gun</color>", method = Detected.KickGun, detected = true, toolTip = "Kicks whoever your hand desires by bringing them into a new lobby with you."},
+
                 new ButtonInfo { buttonText = "Detected Ghost Gun", overlapText = "<color=red>Ghost Gun</color>", method = Detected.GhostGun, detected = true, toolTip = "Makes whoever your hand desires invisible."},
                 new ButtonInfo { buttonText = "Detected Ghost All", overlapText = "<color=red>Ghost All</color>", method = Detected.GhostAll, isTogglable = false, detected = true, toolTip = "Makes everyone invisible."},
                 new ButtonInfo { buttonText = "Detected Ghost Aura", overlapText = "<color=red>Ghost Aura</color>", method = Detected.GhostAura, isTogglable = false, detected = true, toolTip = "Makes players nearby invisible."},
