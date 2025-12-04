@@ -2285,6 +2285,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Set Master Client", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as the master client by kicking everyone above you on the leaderboard."},
 
                 new ButtonInfo { buttonText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
 
                 new ButtonInfo { buttonText = "Change Gamemode to Random", method = () => Detected.ChangeGamemode((GorillaGameModes.GameModeType)Enum.GetValues(typeof(GorillaGameModes.GameModeType)).GetValue(UnityEngine.Random.Range(0, Enum.GetValues(typeof(GorillaGameModes.GameModeType)).Length))), isTogglable = false, detected = true, toolTip = "Changes the gamemode to something random."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},

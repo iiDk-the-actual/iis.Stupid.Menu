@@ -26,13 +26,14 @@ using iiMenu.Managers;
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
+using static iiMenu.Utilities.RigUtilities;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
     public static class Detected
     {
-        public static float del;
+        public static float crashDelay;
         public static void CrashGun()
         {
             if (GetGunInput(false))
@@ -42,11 +43,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > del)
+                    if (Time.time > crashDelay)
                     {
                         PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
                         PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                        del = Time.time + 0.02f;
+                        crashDelay = Time.time + 0.02f;
                     }
                     RPCProtection();
                 }
@@ -65,6 +66,16 @@ namespace iiMenu.Mods
             {
                 if (gunLocked)
                     gunLocked = false;
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if (Time.time > crashDelay)
+            {
+                PhotonNetwork.SetMasterClient(GetRandomPlayer(false));
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                crashDelay = Time.time + 0.02f;
             }
         }
 
