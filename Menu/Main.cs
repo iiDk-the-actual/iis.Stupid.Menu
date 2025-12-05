@@ -6106,8 +6106,6 @@ namespace iiMenu.Menu
             else
                 acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
 
-            allowDetected = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_AllowDetectedMods.txt");
-
             SceneManager.sceneLoaded += SceneLoaded;
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
