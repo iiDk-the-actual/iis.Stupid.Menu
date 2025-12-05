@@ -472,6 +472,28 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = false;
         }
 
+        public static void BreakNetworkTriggers()
+        {
+            string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
+            Hashtable hash = new Hashtable
+            {
+                { "gameMode", string.Join("", GorillaComputer.instance.allowedMapsToJoin) + queue + GorillaComputer.instance.currentGameMode.Value }
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
+        }
+
+        public static void KickNetworkTriggers()
+        {
+            if (NetworkSystem.Instance.SessionIsPrivate)
+                Overpowered.SetRoomStatus(false);
+
+            Hashtable hash = new Hashtable
+            {
+                { "gameMode", GorillaComputer.instance.currentGameMode.Value }
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
+        }
+
         public static void ChangeGamemode(GameModeType gamemode)
         {
             if (!PhotonNetwork.IsMasterClient) return;
