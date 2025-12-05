@@ -486,7 +486,7 @@ namespace iiMenu.Mods
 
             Hashtable hash = new Hashtable
             {
-                { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.networkZone + GorillaComputer.instance.currentQueue + gamemode.ToString() }
+                { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.networkZone + queue + gamemode.ToString() }
             };
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
 
