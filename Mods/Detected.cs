@@ -59,7 +59,7 @@ namespace iiMenu.Mods
                             PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
                             masterDelay = Time.time + 0.02f;
                         }
-                        RPCProtection();
+    
                     }
                 }
             }
@@ -81,7 +81,7 @@ namespace iiMenu.Mods
                         PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                         crashDelay = Time.time + 0.02f;
                     }
-                    RPCProtection();
+
                 }
 
                 if (GetGunInput(true))
@@ -169,7 +169,7 @@ namespace iiMenu.Mods
                         TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
                     }, SendOptions.SendUnreliable);
                     
-                    RPCProtection();
+
                 }
 
                 if (GetGunInput(true))
@@ -267,7 +267,7 @@ namespace iiMenu.Mods
                         }
                     }
 
-                    RPCProtection();
+
                 }
 
                 if (GetGunInput(true))
@@ -350,7 +350,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
-                    RPCProtection();
+
                 }
 
                 if (GetGunInput(true))
@@ -411,7 +411,7 @@ namespace iiMenu.Mods
                         PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
                         muteDelay = Time.time + 0.15f;
                     }
-                    RPCProtection();
+
                 }
 
                 if (GetGunInput(true))
@@ -529,7 +529,6 @@ namespace iiMenu.Mods
             GameMode.activeNetworkHandler = null;
 
             GameMode.LoadGameMode(gamemode.ToString());
-            RPCProtection();
         }
     }
 }
