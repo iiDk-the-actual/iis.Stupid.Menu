@@ -1538,6 +1538,199 @@ namespace iiMenu.Mods
                 terminal?.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
         }
 
+        public static void DebugBlasterAimbot()
+        {
+            List<NetPlayer> infected = InfectedList();
+            List<VRRig> rigs = GorillaParent.instance.vrrigs
+                .Where(rig => !rig.isLocal)
+                .Where(rig => !infected.Contains(GetPlayerFromVRRig(rig)))
+                .ToList();
+
+            Transform head = GorillaTagger.Instance.headCollider.transform;
+            VRRig targetRig = rigs
+                .Where(rig => rig != null)
+                .Select(rig => new {
+                    Rig = rig,
+                    ToRig = (rig.transform.position - head.position).normalized,
+                    Distance = Vector3.Distance(head.position, rig.transform.position)
+                })
+                .OrderBy(x => Vector3.Angle(head.forward, x.ToRig)) // only angle matters
+                .ThenBy(x => x.Distance) // tiebreaker if multiple at same angle
+                .Select(x => x.Rig)
+                .FirstOrDefault();
+
+            if (targetRig == null)
+                return;
+
+            VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
+        }
+
+        public static SIGadgetChargeBlaster GetBlaster()
+        {
+            int hash = GadgetByName["MegaChargeBlasterGadget"];
+ 
+            GameEntityManager gameEntityManager = Fun.GameEntityManager;
+            GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
+            if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
+            {
+                GameEntity entity = gameEntityManager.GetGameEntity(gamePlayer.GetGrabbedGameEntityId(GamePlayer.GetHandIndex(true)));
+                if (entity.gameObject.TryGetComponent<SIGadgetChargeBlaster>(out var blaster))
+                    return blaster;
+                else
+                    entity.RequestThrow(true, entity.transform.position, entity.transform.rotation, Vector3.zero, Vector3.zero);
+            }
+
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                if (Time.time < ghostReactorDelay)
+                    return null;
+
+                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
+
+                int netId = gameEntityManager.CreateNetId();
+
+                object[] createData = {
+                    new[] { netId },
+                    new[] { hash },
+                    new[] { BitPackUtils.PackWorldPosForNetwork(GorillaTagger.Instance.leftHandTransform.position) },
+                    new[] { BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.leftHandTransform.rotation) },
+                    new[] { 0L }
+                };
+
+                gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
+                gameEntityManager.photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { netId, true, BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity), NetworkSystem.Instance.LocalPlayer });
+
+                RPCProtection();
+            }
+            else
+            {
+                Vector3 position = GorillaTagger.Instance.leftHandTransform.position;
+
+                float maxDistance = 12f;
+                if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
+                    position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
+
+                List<GameEntity> entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
+                    Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, e.transform.position) > 3f &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0)
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0)
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash &&
+                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                if (entities.Count <= 0) // Desperate measures
+                    entities = gameEntityManager.entities.Where(e =>
+                    e != null &&
+                    e.typeId == hash).ToList();
+
+                if (entities.Count <= 0)
+                    return null;
+
+                GameEntity entity = entities.OrderByDescending(entity => entity.transform.position.Distance(GorillaTagger.Instance.bodyCollider.transform.position)).FirstOrDefault();
+
+                if (Vector3.Distance(entity.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > maxDistance)
+                {
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = entity.transform.position - Vector3.one * 5f;
+
+                    if (CritterCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                    CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                }
+
+                if (Vector3.Distance(entity.transform.position, ServerPos) < maxDistance && Time.time > ghostReactorDelay)
+                {
+                    ghostReactorDelay = Time.time + 0.1f;
+
+                    entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    entity.transform.rotation = RandomQuaternion();
+
+                    entity.RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
+                    RPCProtection();
+                }
+            }
+
+            return null;
+        }
+
+        public static float blasterDelay;
+        public static Coroutine BlasterCoroutine;
+
+        public static void BetaFireBlaster(Vector3 position, Vector3 direction)
+        {
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            if (Time.time < blasterDelay)
+                return;
+
+            SIGadgetChargeBlaster blaster = GetBlaster();
+            if (blaster == null)
+                return;
+
+            blasterDelay = Time.time + SIPlayer.LocalPlayer.clientToClientRPCLimiter.GetDelay();
+
+            if ((position - GorillaTagger.Instance.leftHandTransform.position).magnitude > blaster.blaster.maxLagDistance)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = position - Vector3.one;
+
+                if (BlasterCoroutine != null)
+                    CoroutineManager.instance.StopCoroutine(BlasterCoroutine);
+
+                BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+            }
+
+            blaster.FireProjectile(blaster.chargeLevels[^1].chargeThreshold, blaster.blaster.NextFireId(), position, rotation);
+        }
+
+        public static void BlasterLaserSpam()
+        {
+            if (rightGrab)
+                BetaFireBlaster(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward);
+        }
+
+        public static void BlasterFlingGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireBlaster(lockTarget.transform.position, RandomVector3().normalized);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlasterFlingAll() =>
+            BetaFireBlaster(GetCurrentTargetRig().transform.position, RandomVector3().normalized);
+
         public static Dictionary<string, int> GadgetByName 
         { 
             get => 
