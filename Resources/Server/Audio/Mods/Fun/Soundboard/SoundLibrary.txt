@@ -200,3 +200,10 @@ Funky Town;funky_town.ogg
 Six Seven;Six%20Seven.ogg
 W Speed;W%20Speed.ogg
 I Dunno;i%20dunno.ogg
+Last Christmas;Lastchristmas.ogg
+All I Want For Christmas;Alliwantforchristmas.ogg
+Mi Gatito;Aymigatito.ogg
+FALL FROM THE SKY;Fallfromthesky.ogg
+Dancin;Dancin.ogg
+Muehehe;Muehehe.ogg
+Batman;Batman.ogg
