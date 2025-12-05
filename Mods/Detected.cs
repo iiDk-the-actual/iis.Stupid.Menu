@@ -253,8 +253,9 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
+                        bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
                         PhotonView view = GetPhotonViewFromVRRig(rig);
-                        if (!PlayerIsLocal(rig) && rig != lockTarget)
+                        if (includeLocal && rig != lockTarget)
                         {
                             PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                             {
@@ -264,9 +265,7 @@ namespace iiMenu.Mods
                                 TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber }
                             }, SendOptions.SendUnreliable);
                         }
-                        
                     }
-                   
 
                     RPCProtection();
                 }
@@ -292,7 +291,8 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                if (includeLocal)
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
@@ -300,10 +300,9 @@ namespace iiMenu.Mods
                         { 0, view.ViewID }
                     }, new RaiseEventOptions
                     {
-                        TargetActors = new int[] { view.Owner.ActorNumber }
+                        TargetActors = AllActorNumbersExcept(view.Owner.ActorNumber)
                     }, SendOptions.SendUnreliable);
                 }
-                
             }
         }
 
@@ -324,7 +323,8 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in nearbyPlayers)
                 {
-                    if (!PlayerIsLocal(rig))
+                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                    if (includeLocal)
                     {
                         PhotonView view = GetPhotonViewFromVRRig(rig);
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
