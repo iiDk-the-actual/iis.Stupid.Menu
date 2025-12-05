@@ -1776,7 +1776,10 @@ namespace iiMenu.Menu
                 buttonText.text = method.overlapText;
 
             if (method.detected)
+            {
                 buttonText.text = $"<color=red>{buttonText.text}</color>";
+                method.enabled = false;
+            }
 
             if (adaptiveButtons)
             {
