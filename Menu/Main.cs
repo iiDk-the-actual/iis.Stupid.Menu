@@ -1775,6 +1775,9 @@ namespace iiMenu.Menu
             if (method.overlapText != null)
                 buttonText.text = method.overlapText;
 
+            if (method.detected)
+                buttonText.text = $"<color=red>{buttonText.text}</color>";
+
             if (adaptiveButtons)
             {
                 switch (ControllerUtilities.GetLeftControllerType())
