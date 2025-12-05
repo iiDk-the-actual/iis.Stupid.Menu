@@ -435,7 +435,9 @@ namespace iiMenu.Mods
         {
             if (Time.time > muteDelay)
             {
-                PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+
                 muteDelay = Time.time + 0.15f;
             }
         }
