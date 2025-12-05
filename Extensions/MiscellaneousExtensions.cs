@@ -136,24 +136,30 @@ namespace iiMenu.Extensions
         public static void PlayAt(this AudioClip clip, Vector3 position, float volume = 1f) =>
             PlayPositionAudio(clip, position, volume);
 
-        public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation, GameEntityManager manager = null) =>
-            (manager ?? Mods.Fun.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+        public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation, GameEntityManager manager = null)
+        {
+            GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
+            if (gameEntityManager.IsAuthority())
+                (manager ?? Mods.Fun.GameEntityManager).photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), NetworkSystem.Instance.LocalPlayer });
+            else
+                (manager ?? Mods.Fun.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+        }
 
         public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, GameEntityManager manager = null)
         {
             GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
-            if (!gameEntityManager.IsAuthority())
-                gameEntityManager.ThrowEntityLocal(gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetPlayer.Get(PhotonNetwork.LocalPlayer));
-
-            gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
-		    {
-				gameEntityManager.GetNetIdFromEntityId(gameEntity.id),
-			    isLeftHand,
-				position,
-			    rotation,
-			    velocity,
-			    angVelocity
-		    });
+            if (gameEntityManager.IsAuthority())
+                gameEntityManager.photonView.RPC("ThrowEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetworkSystem.Instance.LocalPlayer, PhotonNetwork.Time });
+            else
+                gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
+                {
+                    gameEntityManager.GetNetIdFromEntityId(gameEntity.id),
+                    isLeftHand,
+                    position,
+                    rotation,
+                    velocity,
+                    angVelocity
+                });
 		}
 
         public static bool TryGetComponentInParent<T>(this Component component, out T result) where T : Component
