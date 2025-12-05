@@ -494,6 +494,16 @@ namespace iiMenu.Mods
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
         }
 
+        private static float spazGamemodeDelay;
+        public static void SpazGamemode()
+        {
+            if (Time.time > spazGamemodeDelay)
+            {
+                ChangeGamemode((GameModeType)Random.Range(0, (int)GameModeType.Count));
+                spazGamemodeDelay = Time.time + 0.1f;
+            }
+        }
+
         public static void ChangeGamemode(GameModeType gamemode)
         {
             if (!PhotonNetwork.IsMasterClient) return;
@@ -517,6 +527,7 @@ namespace iiMenu.Mods
             GameMode.activeNetworkHandler = null;
 
             GameMode.LoadGameMode(gamemode.ToString());
+            RPCProtection();
         }
     }
 }
