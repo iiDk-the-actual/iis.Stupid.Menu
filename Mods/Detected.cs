@@ -56,7 +56,7 @@ namespace iiMenu.Mods
                     {
                         if (Time.time > masterDelay)
                         {
-                            PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                            PhotonNetwork.SetMasterClient(gunTarget.GetPlayer().GetPlayer());
                             masterDelay = Time.time + 0.02f;
                         }
     
@@ -167,7 +167,7 @@ namespace iiMenu.Mods
                     }, new RaiseEventOptions
                     {
                         TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                    }, SendOptions.SendUnreliable);
+                    }, SendOptions.SendReliable);
                     
 
                 }
@@ -204,7 +204,7 @@ namespace iiMenu.Mods
                 new RaiseEventOptions
                 {
                     TargetActors = targets
-                }, SendOptions.SendUnreliable);
+                }, SendOptions.SendReliable);
             }
         }
 
@@ -236,7 +236,7 @@ namespace iiMenu.Mods
                     new RaiseEventOptions
                     {
                         TargetActors = targets
-                    }, SendOptions.SendUnreliable);
+                    }, SendOptions.SendReliable);
                     nearbyPlayers.Remove(rig);
                 }
             }
@@ -263,7 +263,7 @@ namespace iiMenu.Mods
                             }, new RaiseEventOptions
                             {
                                 TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber }
-                            }, SendOptions.SendUnreliable);
+                            }, SendOptions.SendReliable);
                         }
                     }
 
@@ -301,7 +301,7 @@ namespace iiMenu.Mods
                     }, new RaiseEventOptions
                     {
                         TargetActors = AllActorNumbersExcept(view.Owner.ActorNumber)
-                    }, SendOptions.SendUnreliable);
+                    }, SendOptions.SendReliable);
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace iiMenu.Mods
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { view.Owner.ActorNumber }
-                        }, SendOptions.SendUnreliable);
+                        }, SendOptions.SendReliable);
                     }
                     
                 }
