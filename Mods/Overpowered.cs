@@ -1708,6 +1708,8 @@ namespace iiMenu.Mods
 
             blaster.blaster.lastFired = 0f;
             blaster.FireProjectile(blaster.maxChargeDiff, blaster.blaster.NextFireId(), position, rotation);
+
+            RPCProtection();
         }
 
         public static readonly Dictionary<NetPlayer, float> perPlayerDictionary = new Dictionary<NetPlayer, float>();
@@ -1753,6 +1755,8 @@ namespace iiMenu.Mods
                     }
                 }
             });
+
+            RPCProtection();
         }
 
         public static void BlasterLaserSpam()
