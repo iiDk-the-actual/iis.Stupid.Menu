@@ -4887,7 +4887,7 @@ exit 0";
             {
                 foreach (ButtonInfo v in buttonlist)
                 {
-                    if (v.enabled && v.buttonText != "Save Preferences")
+                    if (!v.detected && v.enabled && v.buttonText != "Save Preferences")
                     {
                         if (enabledtext == "")
                             enabledtext += v.buttonText;
