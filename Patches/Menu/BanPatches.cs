@@ -25,6 +25,7 @@ using iiMenu.Managers;
 using PlayFab;
 using PlayFab.CloudScriptModels;
 using PlayFab.Internal;
+using PlayFab.SharedModels;
 using System;
 using System.Collections.Generic;
 
@@ -91,40 +92,69 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(PlayFabCloudScriptAPI), "ExecuteFunction")]
-        public class NoBanCrash
+        [HarmonyPatch(typeof(PlayFabHttp), "MakeApiCall")]
+        public class AntiBanCrash
         {
-            private static bool Prefix(ExecuteFunctionRequest request, Action<ExecuteFunctionResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+            public static bool enabled;
+            private static bool Prefix(string apiEndpoint, PlayFabRequestCommon request, AuthType authType, Delegate resultCallback, Action<PlayFabError> errorCallback, object customData, Dictionary<string, string> extraHeaders, PlayFabAuthenticationContext authenticationContext, PlayFabApiSettings apiSettings, IPlayFabInstanceApi instanceApi, System.Reflection.MethodBase __originalMethod)
             {
+                if (enabled)
+                    return true;
+
+                var genericArgs = __originalMethod.GetGenericArguments();
+                Type resultType = genericArgs[0];
+
                 Action<PlayFabError> overrideError = (error) =>
                 {
-                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension") || error.Error == PlayFabErrorCode.AccountBanned)
+                    if (error?.ErrorMessage != null &&
+                        (
+                            error.ErrorMessage.Contains("ban") ||
+                            error.ErrorMessage.Contains("banned") ||
+                            error.ErrorMessage.Contains("suspended") ||
+                            error.ErrorMessage.Contains("suspension") ||
+                            error.Error == PlayFabErrorCode.AccountBanned
+                        ))
                     {
-                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-CHEAT</color><color=grey>]</color> Your account is currently banned.");
-                        PlayFabError fakeError = new PlayFabError
+                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-CRASH</color><color=grey>]</color> Your account is currently banned.");
+
+                        var fakeError = new PlayFabError
                         {
                             Error = PlayFabErrorCode.UnknownError,
                             ErrorMessage = "An unknown error occurred.",
                             ErrorDetails = new Dictionary<string, List<string>>()
                         };
+
                         errorCallback?.Invoke(fakeError);
                         return;
                     }
+
                     errorCallback?.Invoke(error);
                 };
-                PlayFabAuthenticationContext playFabAuthenticationContext = (request?.AuthenticationContext) ?? PlayFabSettings.staticPlayer;
-                PlayFabApiSettings staticSettings = PlayFabSettings.staticSettings;
-                if (!playFabAuthenticationContext.IsEntityLoggedIn())
-                    throw new PlayFabException(PlayFabExceptionCode.NotLoggedIn, "Must be logged in to call this method");
 
-                string localApiServer = PlayFabSettings.LocalApiServer;
-                if (!string.IsNullOrEmpty(localApiServer))
+                apiSettings ??= PlayFabSettings.staticSettings;
+                string fullUrl = apiSettings.GetFullUrl(apiEndpoint, apiSettings.RequestGetParams);
+
+                var makeCall = typeof(PlayFabHttp)
+                    .GetMethod("_MakeApiCall", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                    .MakeGenericMethod(resultType);
+
+                makeCall.Invoke(null, new object[]
                 {
-                    PlayFabHttp.MakeApiCallWithFullUri(new Uri(new Uri(localApiServer), "/CloudScript/ExecuteFunction".TrimStart('/')).AbsoluteUri, request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
-                    return false;
-                }
-                PlayFabHttp.MakeApiCall("/CloudScript/ExecuteFunction", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
+                    apiEndpoint,
+                    fullUrl,
+                    request,
+                    authType,
+                    resultCallback,
+                    overrideError,
+                    customData,
+                    extraHeaders,
+                    false,
+                    authenticationContext,
+                    apiSettings,
+                    instanceApi
+                });
 
+                // Skip original
                 return false;
             }
         }
