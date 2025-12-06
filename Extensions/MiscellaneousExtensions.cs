@@ -140,7 +140,7 @@ namespace iiMenu.Extensions
         {
             GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
             if (gameEntityManager.IsAuthority())
-                (manager ?? Mods.Fun.GameEntityManager).photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), NetworkSystem.Instance.LocalPlayer });
+                (manager ?? Mods.Fun.GameEntityManager).photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), NetworkSystem.Instance.LocalPlayer.GetPlayer() });
             else
                 (manager ?? Mods.Fun.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
         }
@@ -149,7 +149,7 @@ namespace iiMenu.Extensions
         {
             GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
             if (gameEntityManager.IsAuthority())
-                gameEntityManager.photonView.RPC("ThrowEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetworkSystem.Instance.LocalPlayer, PhotonNetwork.Time });
+                gameEntityManager.photonView.RPC("ThrowEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetworkSystem.Instance.LocalPlayer.GetPlayer(), PhotonNetwork.Time });
             else
                 gameEntityManager.photonView.RPC("RequestThrowEntityRPC", RpcTarget.MasterClient, new object[]
                 {
