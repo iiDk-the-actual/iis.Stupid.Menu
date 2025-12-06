@@ -534,7 +534,7 @@ exit";
                         Type compType = component.GetType();
                         string compName = compType.Name;
 
-                        if (typeof(GorillaPressableButton).IsAssignableFrom(compType) || compName == "GorillaPressableButton" || compName == "GorillaPlayerLineButton" || compName == "CustomKeyboardKey")
+                        if (typeof(GorillaPressableButton).IsAssignableFrom(compType) || typeof(CustomMapsScreenTouchPoint).IsAssignableFrom(compType) || compName == "GorillaPressableButton" || compName == "GorillaPlayerLineButton" || compName == "CustomKeyboardKey" || compName == "CustomMapsScreenTouchPoint")
                             compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
                         else
                             switch (compName)

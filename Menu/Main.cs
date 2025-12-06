@@ -5432,8 +5432,7 @@ namespace iiMenu.Menu
             if (!PhotonNetwork.InRoom)
                 return;
 
-            if (viewFilter == null)
-                viewFilter = Array.Empty<PhotonView>();
+            viewFilter ??= Array.Empty<PhotonView>();
 
             NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
             List<PhotonView> viewsToSerialize = new List<PhotonView>();
