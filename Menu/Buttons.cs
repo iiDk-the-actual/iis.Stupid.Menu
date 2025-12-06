@@ -1289,8 +1289,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blaster Aimbot", enableMethod =() => FirePatch.enabled = true, method = Overpowered.DebugBlasterAimbot, disableMethod =() => FirePatch.enabled = false, toolTip = "Automatically aims the blaster towards players."},
 
                 new ButtonInfo { buttonText = "Blaster Laser Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.BlasterLaserSpam, toolTip = "Spams lasers out of your hand when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Blaster Fling Gun", method = Overpowered.BlasterFlingGun, toolTip = "Uses the blasters to fling whoever your hand desires."},
-                new ButtonInfo { buttonText = "Blaster Fling All", method = Overpowered.BlasterFlingAll, toolTip = "Uses the blasters to fling everyone in the room."},
+                
+                new ButtonInfo { buttonText = "Blaster Fling Gun", method =() => Overpowered.BlasterFlingGun(RandomVector3()), toolTip = "Uses the blasters to fling whoever your hand desires."},
+                new ButtonInfo { buttonText = "Blaster Fling All", method =() => Overpowered.BlasterFlingAll(RandomVector3()), toolTip = "Uses the blasters to fling everyone in the room."},
 
                 new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
 

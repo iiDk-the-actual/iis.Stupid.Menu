@@ -1695,6 +1695,7 @@ namespace iiMenu.Mods
                 BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
             }
 
+            blaster.blaster.lastFired = 0f;
             blaster.FireProjectile(blaster.maxChargeDiff, blaster.blaster.NextFireId(), position, rotation);
         }
 
@@ -1704,7 +1705,7 @@ namespace iiMenu.Mods
                 BetaFireBlaster(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward);
         }
 
-        public static void BlasterFlingGun()
+        public static void BlasterFlingGun(Vector3 direction)
         {
             if (GetGunInput(false))
             {
@@ -1712,7 +1713,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireBlaster(lockTarget.transform.position, RandomVector3().normalized);
+                    BetaFireBlaster(lockTarget.transform.position, direction.normalized);
 
                 if (GetGunInput(true))
                 {
@@ -1731,8 +1732,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BlasterFlingAll() =>
-            BetaFireBlaster(GetCurrentTargetRig().transform.position, RandomVector3().normalized);
+        public static void BlasterFlingAll(Vector3 direction) =>
+            BetaFireBlaster(GetCurrentTargetRig().transform.position, direction.normalized);
 
         public static Dictionary<string, int> GadgetByName 
         { 
