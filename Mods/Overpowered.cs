@@ -1525,11 +1525,22 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float resourceIncrementDelay;
         public static void InfiniteResources()
         {
             var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             for (int i = 0; i < player.CurrentProgression.resourceArray.Length; i++)
                 player.CurrentProgression.resourceArray[i] = int.MaxValue;
+
+            if (Time.time > resourceIncrementDelay)
+            {
+                resourceIncrementDelay = Time.time + 1f;
+                for (int i = 0; i < (int)SIResource.ResourceType.Count; i++)
+                {
+                    var resourceType = (SIResource.ResourceType)i;
+                    ProgressionManager.Instance.IncrementSIResource(resourceType.ToString(), OnFailure: (error) => resourceIncrementDelay = Time.time + 10f);
+                }
+            }
         }
 
         public static void ClaimAllTerminals()
