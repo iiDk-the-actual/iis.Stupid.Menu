@@ -1193,7 +1193,7 @@ namespace iiMenu.Menu
                         shouldReload = true;
                     }
 
-                    Vector2 js = leftJoystick;
+                    Vector2 js = rightHand ? leftJoystick : rightJoystick;
                     if (Time.time > scrollDelay)
                     {
                         if (js.y > 0.5f)
