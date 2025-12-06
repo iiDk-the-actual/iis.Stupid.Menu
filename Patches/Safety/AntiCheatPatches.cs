@@ -114,15 +114,8 @@ namespace iiMenu.Patches.Safety
                 false;
         }
 
-        [HarmonyPatch(typeof(CosmeticsController), "ReauthOrBan")]
-        public class NoQuitOnBan2
-        {
-            private static bool Prefix(PlayFabError error) =>
-                false;
-        }
-
         [HarmonyPatch(typeof(GorillaNot), "ShouldDisconnectFromRoom")]
-        public class NoShouldDisconnectFromRoom
+        public class NoShouldDisconnectFromRoom                                                                         
         {
             private static bool Prefix() =>
                 false;
