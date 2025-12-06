@@ -223,7 +223,7 @@
     <Reference Include="PhotonVoice.PUN">
       <HintPath>$(ProjectDir)References\Managed\PhotonVoice.PUN.dll</HintPath>
     </Reference>
-    <Reference Include="PlayFab">
+    <Reference Include="PlayFab" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\PlayFab.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.OdinInspector.Attributes">

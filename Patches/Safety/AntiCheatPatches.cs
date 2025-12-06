@@ -19,15 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using GorillaLocomotion;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Managers;
 using Photon.Pun;
 using PlayFab;
-using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
-using System.Collections;
+using PlayFab.Internal;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace iiMenu.Patches.Safety
@@ -125,9 +125,6 @@ namespace iiMenu.Patches.Safety
                 false;
         }
 
-
-
-
         [HarmonyPatch(typeof(GorillaNot), "ShouldDisconnectFromRoom")]
         public class NoShouldDisconnectFromRoom
         {
@@ -147,6 +144,44 @@ namespace iiMenu.Patches.Safety
         {
             private static bool Prefix() =>
                 false;
+        }
+
+        [HarmonyPatch(typeof(PlayFabCloudScriptAPI), "ExecuteFunction")]
+        public class NoBanCrash
+        {
+            private static bool Prefix(ExecuteFunctionRequest request, Action<ExecuteFunctionResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+            {
+                Action<PlayFabError> overrideError = (error) =>
+                {
+                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
+                    {
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
+                        PlayFabError fakeError = new PlayFabError
+                        {
+                            Error = PlayFabErrorCode.UnknownError,
+                            ErrorMessage = "An unknown error occurred.",
+                            ErrorDetails = new Dictionary<string, List<string>>()
+                        };
+                        errorCallback?.Invoke(fakeError);
+                        return;
+                    }
+                    errorCallback?.Invoke(error);
+                };
+                PlayFabAuthenticationContext playFabAuthenticationContext = ((request == null) ? null : request.AuthenticationContext) ?? PlayFabSettings.staticPlayer;
+                PlayFabApiSettings staticSettings = PlayFabSettings.staticSettings;
+                if (!playFabAuthenticationContext.IsEntityLoggedIn())
+                    throw new PlayFabException(PlayFabExceptionCode.NotLoggedIn, "Must be logged in to call this method");
+                
+                string localApiServer = PlayFabSettings.LocalApiServer;
+                if (!string.IsNullOrEmpty(localApiServer))
+                {
+                    PlayFabHttp.MakeApiCallWithFullUri(new Uri(new Uri(localApiServer), "/CloudScript/ExecuteFunction".TrimStart('/')).AbsoluteUri, request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
+                    return false;
+                }
+                PlayFabHttp.MakeApiCall("/CloudScript/ExecuteFunction", request, AuthType.EntityToken, resultCallback, errorCallback, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
+
+                return false;
+            }
         }
     }
 }
