@@ -1567,9 +1567,12 @@ namespace iiMenu.Mods
 
         public static SIGadgetChargeBlaster GetBlaster()
         {
+            ControllerInputPoller.instance.leftGrab = true;
+            ControllerInputPoller.instance.leftControllerGripFloat = 1f;
+
             int hash = GadgetByName["MegaChargeBlasterGadget"];
  
-            GameEntityManager gameEntityManager = Fun.GameEntityManager;
+            GameEntityManager gameEntityManager = SuperInfectionManager.activeSuperInfectionManager.gameEntityManager;
             GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
             if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
             {
@@ -1577,7 +1580,7 @@ namespace iiMenu.Mods
                 if (entity.gameObject.TryGetComponent<SIGadgetChargeBlaster>(out var blaster))
                     return blaster;
                 else
-                    entity.RequestThrow(true, entity.transform.position, entity.transform.rotation, Vector3.zero, Vector3.zero);
+                    entity.RequestThrow(true, entity.transform.position, entity.transform.rotation, Vector3.zero, Vector3.zero, gameEntityManager);
             }
 
             if (NetworkSystem.Instance.IsMasterClient)
@@ -1598,7 +1601,7 @@ namespace iiMenu.Mods
                 };
 
                 gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
-                gameEntityManager.photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { netId, true, BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity), NetworkSystem.Instance.LocalPlayer.GetPlayer() });
+                gameEntityManager.GetGameEntity(netId).RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
 
                 RPCProtection();
             }
@@ -1692,7 +1695,7 @@ namespace iiMenu.Mods
                 BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
             }
 
-            blaster.FireProjectile(blaster.chargeLevels[^1].chargeThreshold, blaster.blaster.NextFireId(), position, rotation);
+            blaster.FireProjectile(blaster.maxChargeDiff, blaster.blaster.NextFireId(), position, rotation);
         }
 
         public static void BlasterLaserSpam()
