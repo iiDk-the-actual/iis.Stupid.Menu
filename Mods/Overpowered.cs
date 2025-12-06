@@ -1699,6 +1699,51 @@ namespace iiMenu.Mods
             blaster.FireProjectile(blaster.maxChargeDiff, blaster.blaster.NextFireId(), position, rotation);
         }
 
+        public static readonly Dictionary<NetPlayer, float> perPlayerDictionary = new Dictionary<NetPlayer, float>();
+        public static void BetaFireBlaster(Vector3 position, Vector3 direction, NetPlayer target, bool ignoreDistnace = false)
+        {
+            perPlayerDictionary.TryGetValue(target, out float perPlayerDelay);
+
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            if (Time.time < perPlayerDelay)
+                return;
+
+            SIGadgetChargeBlaster blaster = GetBlaster();
+            if (blaster == null)
+                return;
+
+            perPlayerDictionary[target] = Time.time + SIPlayer.LocalPlayer.clientToClientRPCLimiter.GetDelay();
+
+            if (!ignoreDistnace && (position - GorillaTagger.Instance.leftHandTransform.position).magnitude > blaster.blaster.maxLagDistance)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = position - Vector3.one;
+
+                if (BlasterCoroutine != null)
+                    CoroutineManager.instance.StopCoroutine(BlasterCoroutine);
+
+                BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+            }
+
+            blaster.blaster.lastFired = 0f;
+            SuperInfectionManager.GetSIManagerForZone(blaster.blaster.gameEntity.manager.zone)?.photonView.RPC("SIClientToClientRPC", target.GetPlayer(), new object[]
+            {
+                (int)SuperInfectionManager.ClientToClientRPC.CallEntityRPCData,
+                new object[]
+                {
+                    blaster.blaster.gameEntity.GetNetId(),
+                    0,
+                    new object[]
+                    {
+                        blaster.maxChargeDiff,
+                        blaster.blaster.NextFireId(),
+                        position,
+                        rotation
+                    }
+                }
+            });
+        }
+
         public static void BlasterLaserSpam()
         {
             if (rightGrab)
@@ -1732,8 +1777,36 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BlasterFlingAll(Vector3 direction) =>
-            BetaFireBlaster(GetCurrentTargetRig().transform.position, direction.normalized);
+        public static void BlasterFlingAll(Vector3 direction)
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                        VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                    }
+
+                    RPCProtection();
+
+                    VRRig.LocalRig.transform.position = archivePos;
+
+                    return false;
+                };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, direction, Player, true);
+            }
+        }
 
         public static Dictionary<string, int> GadgetByName 
         { 
