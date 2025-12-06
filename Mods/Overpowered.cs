@@ -1598,7 +1598,7 @@ namespace iiMenu.Mods
                 };
 
                 gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
-                gameEntityManager.photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { netId, true, BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity), NetworkSystem.Instance.LocalPlayer });
+                gameEntityManager.photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { netId, true, BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity), NetworkSystem.Instance.LocalPlayer.GetPlayer() });
 
                 RPCProtection();
             }
