@@ -1778,7 +1778,6 @@ namespace iiMenu.Menu
             if (method.detected)
             {
                 buttonText.text = $"<color=red>{buttonText.text}</color>";
-                method.enabled = false;
             }
 
             if (adaptiveButtons)
