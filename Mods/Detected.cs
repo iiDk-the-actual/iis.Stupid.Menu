@@ -110,7 +110,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool kickRunOnce = false;
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -118,18 +117,22 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (gunLocked && lockTarget != null && !kickRunOnce)
+                if (gunLocked && lockTarget != null)
                 {
-                    Task.Run(async () =>
+                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
+                    if (!Movement.isBlinking)
+                        Movement.Blink();
+                    for (int i = 0; i < 3950; i++)
                     {
-                        Player target = lockTarget.GetPlayer().GetPlayer();
-                        PhotonNetwork.SetMasterClient(target);
-                        while (PhotonNetwork.MasterClient != target)
-                            await Task.Delay(50);
-
-                        Fun.KickMasterClient();
-                    });
-                    kickRunOnce = true;                    
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, view.ViewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { view.Owner.ActorNumber },
+                        }, SendOptions.SendUnreliable);
+                    }
+                        
                 }
 
                 if (GetGunInput(true))
@@ -144,9 +147,10 @@ namespace iiMenu.Mods
             }
             else
             {
+                if (Movement.isBlinking)
+                    Movement.DisableBlink();
                 if (gunLocked)
                     gunLocked = false;
-                kickRunOnce = false;
             }
         }
 

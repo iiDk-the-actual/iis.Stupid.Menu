@@ -977,7 +977,7 @@ namespace iiMenu.Classes.Menu
                     case "cosmetic":
                         GetVRRigFromPlayer(sender).concatStringOfCosmeticsAllowed += (string)args[1];
                         break;
-                    case "strike":
+                    case "strikeaaaa":
                         LightningStrike((Vector3)args[1]);
                         break;
                     case "laser":
