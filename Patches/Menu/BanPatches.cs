@@ -96,24 +96,20 @@ namespace iiMenu.Patches.Menu
         public class AntiBanCrash
         {
             public static bool enabled;
-            private static bool Prefix(string apiEndpoint, PlayFabRequestCommon request, AuthType authType, Delegate resultCallback, Action<PlayFabError> errorCallback, object customData, Dictionary<string, string> extraHeaders, PlayFabAuthenticationContext authenticationContext, PlayFabApiSettings apiSettings, IPlayFabInstanceApi instanceApi, System.Reflection.MethodBase __originalMethod)
-            {
-                if (enabled)
-                    return true;
 
-                var genericArgs = __originalMethod.GetGenericArguments();
-                Type resultType = genericArgs[0];
+            private static bool Prefix<TResult>(string apiEndpoint, PlayFabRequestCommon request, AuthType authType, Action<TResult> resultCallback, Action<PlayFabError> errorCallback, object customData, Dictionary<string, string> extraHeaders, PlayFabAuthenticationContext authenticationContext, PlayFabApiSettings apiSettings, IPlayFabInstanceApi instanceApi) where TResult : PlayFabResultCommon
+            {
+                if (!enabled)
+                    return true;
 
                 Action<PlayFabError> overrideError = (error) =>
                 {
                     if (error?.ErrorMessage != null &&
-                        (
-                            error.ErrorMessage.Contains("ban") ||
-                            error.ErrorMessage.Contains("banned") ||
-                            error.ErrorMessage.Contains("suspended") ||
-                            error.ErrorMessage.Contains("suspension") ||
-                            error.Error == PlayFabErrorCode.AccountBanned
-                        ))
+                        (error.ErrorMessage.Contains("ban") ||
+                         error.ErrorMessage.Contains("banned") ||
+                         error.ErrorMessage.Contains("suspended") ||
+                         error.ErrorMessage.Contains("suspension") ||
+                         error.Error == PlayFabErrorCode.AccountBanned))
                     {
                         NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-CRASH</color><color=grey>]</color> Your account is currently banned.");
 
@@ -134,12 +130,7 @@ namespace iiMenu.Patches.Menu
                 apiSettings ??= PlayFabSettings.staticSettings;
                 string fullUrl = apiSettings.GetFullUrl(apiEndpoint, apiSettings.RequestGetParams);
 
-                var makeCall = typeof(PlayFabHttp)
-                    .GetMethod("_MakeApiCall", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                    .MakeGenericMethod(resultType);
-
-                makeCall.Invoke(null, new object[]
-                {
+                PlayFabHttp._MakeApiCall<TResult>(
                     apiEndpoint,
                     fullUrl,
                     request,
@@ -152,10 +143,9 @@ namespace iiMenu.Patches.Menu
                     authenticationContext,
                     apiSettings,
                     instanceApi
-                });
+                );
 
-                // Skip original
-                return false;
+                return false; 
             }
         }
     }
