@@ -2625,6 +2625,7 @@ namespace iiMenu.Mods
 
         private static readonly Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject>();
         private static readonly Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D>();
+        private static Material cosmeticMat;
         public static void CosmeticESP()
         {
             foreach (var nametag in cosmeticIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
@@ -2662,25 +2663,9 @@ namespace iiMenu.Mods
                         indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                         Object.Destroy(indicator.GetComponent<Collider>());
 
-                        indicator.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
-
-                        if (platformMat == null)
-                        {
-                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
-                            {
-                                color = Color.white
-                            };
-
-                            platformMat.SetFloat("_Surface", 1);
-                            platformMat.SetFloat("_Blend", 0);
-                            platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                            platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                            platformMat.SetFloat("_ZWrite", 0);
-                            platformMat.SetFloat("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
-                            platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                            platformMat.renderQueue = (int)RenderQueue.Transparent;
-                        }
-                        indicator.GetComponent<Renderer>().material = platformMat;
+                        if (cosmeticMat == null)
+                            cosmeticMat = new Material(LoadAsset<Shader>("Chams"));
+                        indicator.GetComponent<Renderer>().material = cosmeticMat;
                         cosmeticIndicators.Add(vrrig, indicator);
                     }
 
