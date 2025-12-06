@@ -98,9 +98,9 @@ namespace iiMenu.Patches.Menu
             {
                 Action<PlayFabError> overrideError = (error) =>
                 {
-                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
+                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension") || error.Error == PlayFabErrorCode.AccountBanned)
                     {
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-CHEAT</color><color=grey>]</color> Your account is currently banned.");
                         PlayFabError fakeError = new PlayFabError
                         {
                             Error = PlayFabErrorCode.UnknownError,
