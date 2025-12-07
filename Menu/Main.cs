@@ -21,6 +21,7 @@
 
 using BepInEx;
 using ExitGames.Client.Photon;
+using ExitGames.Client.Photon.StructWrapping;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -4357,13 +4358,27 @@ namespace iiMenu.Menu
                     case 7:
                     case 8:
                         {
-                            using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=Streamlabs&voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
+                            request.downloadHandler = new DownloadHandlerBuffer();
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
-                                LogManager.LogError("Error downloading TTS: " + request.error);
+                            {
+                                LogManager.LogError("Error getting TTS: " + request.error);
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
+
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
                             else
-                                File.WriteAllBytes(filePath, request.downloadHandler.data);
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
 
                             break;
                         }
