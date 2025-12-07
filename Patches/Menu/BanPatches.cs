@@ -28,7 +28,6 @@ using PlayFab.CloudScriptModels;
 using PlayFab.Internal;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace iiMenu.Patches.Menu
 {

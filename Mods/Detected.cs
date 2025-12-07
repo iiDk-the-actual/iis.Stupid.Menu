@@ -30,7 +30,6 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
