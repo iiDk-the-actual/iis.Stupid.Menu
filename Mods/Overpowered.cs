@@ -5489,5 +5489,203 @@ namespace iiMenu.Mods
                 }
             }
         }
+        // Code might not work as I made this using a old version of your menu (I needed the critterspawn code and stuff) [PS: The Code Is Also A Bit Old]
+        public static void CritterPee()
+        {
+            if (rightGrab)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+
+                    CrittersPawn targetCritter = critters[Random.Range(0, critters.Count)];
+                    targetCritter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    targetCritter.transform.rotation = RandomQuaternion();
+
+                    if (targetCritter.usesRB)
+                        targetCritter.SetImpulseVelocity(Main.GetGunDirection(GorillaTagger.Instance.rightHandTransform) * Main.ShootStrength, RandomVector3(100f));
+                }
+                else
+                {
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersPawn critter = critters[Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(Experimental.RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.05f;
+
+                        critter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                        critter.transform.rotation = RandomQuaternion();
+
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, Main.GetGunDirection(GorillaTagger.Instance.rightHandTransform) * Main.ShootStrength, Vector3.zero);
+                    }
+                }
+            }
+        }
+        public static void EffectPee(CrittersManager.CritterEvent critterEvent)
+        {
+            if (rightGrab)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
+                    {
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(critterEvent, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                    }
+                }
+                else
+                {
+                    CrittersActor.CrittersActorType type = CrittersActor.CrittersActorType.StickyTrap;
+                    Vector3 velocity = Vector3.down * 20f;
+                    switch (critterEvent)
+                    {
+                        case CrittersManager.CritterEvent.StunExplosion:
+                            type = CrittersActor.CrittersActorType.StunBomb;
+                            break;
+                        case CrittersManager.CritterEvent.StickyDeployed:
+                        case CrittersManager.CritterEvent.StickyTriggered:
+                            type = CrittersActor.CrittersActorType.StickyTrap;
+                            break;
+                        case CrittersManager.CritterEvent.NoiseMakerTriggered:
+                            type = CrittersActor.CrittersActorType.NoiseMaker;
+                            break;
+                    }
+
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersActor critter = critters[Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(Experimental.RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.1f;
+
+                        critter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                        critter.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+
+                        if (critter)
+                            critter.SetImpulseVelocity(velocity, Vector3.zero);
+
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
+                    }
+                }
+            }
+        }
+        public static void ObjectPee(CrittersActor.CrittersActorType type)
+        {
+            if (rightGrab)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    CrittersActor Object = CrittersManager.instance.SpawnActor(type);
+                    Object.MoveActor(GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.bodyCollider.transform.rotation);
+
+                    if (Object.usesRB)
+                        Object.SetImpulseVelocity(Main.GetGunDirection(GorillaTagger.Instance.rightHandTransform) * Main.ShootStrength, RandomVector3(100f));
+                }
+                else
+                {
+                    Vector3 velocity = Main.GetGunDirection(GorillaTagger.Instance.rightHandTransform) * Main.ShootStrength;
+                    switch (type)
+                    {
+                        case CrittersActor.CrittersActorType.LoudNoise:
+                            type = CrittersActor.CrittersActorType.NoiseMaker;
+                            velocity = Vector3.down * 50f;
+                            break;
+                        case CrittersActor.CrittersActorType.StickyGoo:
+                            type = CrittersActor.CrittersActorType.StickyTrap;
+                            velocity = Vector3.down * 50f;
+                            break;
+                    }
+
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersActor critter = critters[Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(Experimental.RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.05f;
+
+                        critter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                        critter.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+
+                        if (critter)
+                            critter.SetImpulseVelocity(velocity, Vector3.zero);
+
+                        if (localGrabber != null)
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby",
+                                CrittersManager.instance.guard.currentOwner, critter.actorId, localGrabber.actorId,
+                                Quaternion.identity, Vector3.zero, false);
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero);
+                    }
+                }
+            }
+        }
     }
 }
