@@ -65,28 +65,28 @@ namespace iiMenu.Utilities
 
         public static readonly Dictionary<string, float> waitingForCreationDate = new Dictionary<string, float>();
         public static readonly Dictionary<string, string> creationDateCache = new Dictionary<string, string>();
-        public static string GetCreationDate(string input, Action<string> onTranslated = null)
+        public static string GetCreationDate(string input, Action<string> onTranslated = null, string format = "MMMM dd, yyyy h:mm tt")
         {
             if (creationDateCache.TryGetValue(input, out string date))
                 return date;
             if (!waitingForCreationDate.ContainsKey(input))
             {
                 waitingForCreationDate[input] = Time.time + 10f;
-                GetCreationCoroutine(input, onTranslated);
+                GetCreationCoroutine(input, onTranslated, format);
             }
             else
             {
                 if (Time.time > waitingForCreationDate[input])
                 {
                     waitingForCreationDate[input] = Time.time + 10f;
-                    GetCreationCoroutine(input, onTranslated);
+                    GetCreationCoroutine(input, onTranslated, format);
                 }
             }
 
             return "Loading...";
         }
 
-        public static void GetCreationCoroutine(string userId, Action<string> onTranslated = null)
+        public static void GetCreationCoroutine(string userId, Action<string> onTranslated = null, string format = "MMMM dd, yyyy h:mm tt")
         {
             if (creationDateCache.TryGetValue(userId, out string date))
             {
@@ -96,7 +96,7 @@ namespace iiMenu.Utilities
 
             PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = userId }, delegate (GetAccountInfoResult result) // Who designed this
             {
-                string creationDate = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
+                string creationDate = result.AccountInfo.Created.ToString(format);
                 creationDateCache[userId] = creationDate;
 
                 onTranslated?.Invoke(creationDate);

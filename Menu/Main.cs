@@ -21,7 +21,6 @@
 
 using BepInEx;
 using ExitGames.Client.Photon;
-using ExitGames.Client.Photon.StructWrapping;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
