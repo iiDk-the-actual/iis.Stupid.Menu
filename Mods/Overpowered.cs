@@ -4279,7 +4279,8 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { "Infection", (short)12, null });
+                            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", lockTarget.GetPlayer().GetPlayer(), new object[] { "Infection", (short)12, null });
+
                         lagDebounce = Time.time + lagDelay;
                         RPCProtection();
                     }
