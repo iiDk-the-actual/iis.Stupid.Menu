@@ -352,7 +352,6 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
-
                 }
 
                 if (GetGunInput(true))
@@ -411,7 +410,7 @@ namespace iiMenu.Mods
                     if (Time.time > muteDelay)
                     {
                         PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
-                        muteDelay = Time.time + 0.15f;
+                        muteDelay = Time.time + 0.10f;
                     }
 
                 }
@@ -440,7 +439,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
 
-                muteDelay = Time.time + 0.15f;
+                muteDelay = Time.time + 0.10f;
             }
         }
 
@@ -462,7 +461,7 @@ namespace iiMenu.Mods
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
-                    muteDelay = Time.time + 0.15f;
+                    muteDelay = Time.time + 0.25f;
                 }
             }
         }
@@ -508,6 +507,7 @@ namespace iiMenu.Mods
             }
         }
 
+        // Too lazy to fix this but it has a issue when changing, fix your hash table I guess
         public static void ChangeGamemode(GameModeType gamemode)
         {
             if (!PhotonNetwork.IsMasterClient) return;
