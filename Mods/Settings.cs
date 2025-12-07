@@ -4270,7 +4270,18 @@ exit 0";
                 "Grandma",
                 "Trickster",
                 "Elf",
-                "Ghostface"
+                "Ghostface",
+                "Zombie",
+                "Narrator",
+                "Pirate",
+                "Song",
+                "TikTok Joey",
+                "Gingerbread Man",
+                "Chris",
+                "Thanksgiving",
+                "Santa",
+                "Google US",
+                "Google UK"
             };
 
             if (positive)

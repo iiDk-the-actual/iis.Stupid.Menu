@@ -4347,7 +4347,7 @@ namespace iiMenu.Menu
                             break;
                         }
 
-                    // StreamElements TTS voices
+                    // Streamlabs TTS voices
                     case 1:
                     case 2:
                     case 3:
@@ -4357,6 +4357,9 @@ namespace iiMenu.Menu
                     case 7:
                     case 8:
                         {
+                            if (text.Length > 550)
+                                text = text[..550];
+
                             using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=Streamlabs&voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
                             request.downloadHandler = new DownloadHandlerBuffer();
                             yield return request.SendWebRequest();
@@ -4382,12 +4385,21 @@ namespace iiMenu.Menu
                             break;
                         }
 
-                    // TikTok via "gesserit"
+                    // Tiktok TTS Voices
                     case 9:
                     case 10:
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                         {
                             Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
                             {
@@ -4396,65 +4408,78 @@ namespace iiMenu.Menu
                                 { 11, "en_male_grinch" },
                                 { 12, "en_male_ukneighbor" },
                                 { 13, "en_us_ghostface" },
+                                { 14, "en_female_zombie" },
+                                { 15, "en_male_narration" },
+                                { 16, "en_male_pirate" },
+                                { 17, "en_male_m03_sunshine_soon" },
+                                { 18, "en_us_006" },
+                                { 19, "en_male_david_gingerman" },
+                                { 20, "en_male_chris" },
+                                { 21, "en_male_sing_funny_thanksgiving" },
+                                { 22, "en_male_santa_effect" }
                             };
 
-                            string postData = JsonConvert.SerializeObject(new { text, voice = voiceCodenames[narratorIndex] });
+                            if (text.Length > 300)
+                                text = text[..300];
 
-                            using UnityWebRequest request = new UnityWebRequest("https://gesserit.co/api/tiktok-tts", "POST");
-                            byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                            request.uploadHandler = new UploadHandlerRaw(raw);
-                            request.SetRequestHeader("Content-Type", "application/json");
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=TikTok&voice=" + voiceCodenames[narratorIndex] + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
                             request.downloadHandler = new DownloadHandlerBuffer();
-
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                LogManager.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error getting TTS: " + request.error);
                                 onComplete?.Invoke(null);
                                 yield break;
                             }
 
                             string jsonResponse = request.downloadHandler.text;
-                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResponse);
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
 
-                            if (responseData != null && responseData.ContainsKey("audioUrl"))
-                            {
-                                string audioUrl = responseData["audioUrl"];
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
 
-                                if (audioUrl.StartsWith("data:audio/mp3;base64,"))
-                                {
-                                    string base64Data = audioUrl["data:audio/mp3;base64,".Length..];
-
-                                    try
-                                    {
-                                        byte[] audioBytes = Convert.FromBase64String(base64Data);
-
-                                        if (!filePath.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
-                                            filePath = Path.ChangeExtension(filePath, ".mp3");
-
-                                        File.WriteAllBytes(filePath, audioBytes);
-                                        LogManager.Log("TTS audio saved to: " + filePath);
-                                    }
-                                    catch (FormatException ex)
-                                    {
-                                        LogManager.LogError("Invalid base64 data in audioUrl: " + ex.Message);
-                                        onComplete?.Invoke(null);
-                                    }
-                                }
-                                else
-                                {
-                                    LogManager.LogError("Unexpected audioUrl format: " + audioUrl);
-                                    onComplete?.Invoke(null);
-                                }
-                            }
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
                             else
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
+
+                            break;
+                        }
+
+                    case 23:
+                    case 24:
+                        {
+                            Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
                             {
-                                LogManager.LogError("No audioUrl found in response");
+                                { 23, "en-us" },
+                                { 24, "en-gb" }
+                            };
+
+                            if (text.Length > 300)
+                                text = text[..300];
+
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=Google%20Translate&voice=" + voiceCodenames[narratorIndex] + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
+                            request.downloadHandler = new DownloadHandlerBuffer();
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error getting TTS: " + request.error);
                                 onComplete?.Invoke(null);
                                 yield break;
                             }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
+
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
+                            else
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
 
                             break;
                         }
