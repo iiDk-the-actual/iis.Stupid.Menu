@@ -4086,16 +4086,18 @@ namespace iiMenu.Menu
                 GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
                 GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                GunLine.positionCount = 2;
                 GunLine.useWorldSpace = true;
                 if (smoothLines)
                 {
                     GunLine.numCapVertices = 10;
                     GunLine.numCornerVertices = 5;
                 }
-                GunLine.SetPosition(0, StartPosition);
-                GunLine.SetPosition(1, EndPosition);
-
+                if (gunVariation != 9)
+                {
+                    GunLine.positionCount = 2;
+                    GunLine.SetPosition(0, StartPosition);
+                    GunLine.SetPosition(1, EndPosition);
+                }
                 int Step = GunLineQuality;
                 switch (gunVariation)
                 {
@@ -4256,6 +4258,25 @@ namespace iiMenu.Menu
 
                         GunLine.positionCount = Step;
                         GunLine.SetPositions(points);
+                        break;
+                    case 9: // Rope
+                        GunLine.positionCount = Step;
+
+                        RopePhysics physics = GunLine.gameObject.GetComponent<RopePhysics>();
+                        if (physics == null)
+                        {
+                            for (int i = 0; i < Step; i++)
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                GunLine.SetPosition(i, Position);
+                            }
+
+                            physics = GunLine.gameObject.AddComponent<RopePhysics>();
+                        }
+
+                        physics.segmentLength = Vector3.Distance(StartPosition, EndPosition) / (Step - 1) * (GetGunInput(true) || gunLocked ? 1.1f : 1.2f);
+                        physics.SetStartPosition(StartPosition);
+                        physics.SetEndPosition(EndPosition);
                         break;
                 }
             }

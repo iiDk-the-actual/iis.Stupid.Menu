@@ -4330,7 +4330,8 @@ exit 0";
                 "Spring",
                 "Bouncy",
                 "Audio",
-                "Bezier"
+                "Bezier",
+                "Rope"
             };
 
             if (positive)
