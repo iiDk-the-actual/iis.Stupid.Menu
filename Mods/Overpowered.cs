@@ -4364,6 +4364,33 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LagOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<int> touchedPlayers = new List<int>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(GetPlayerFromVRRig(rig).ActorNumber);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0 && Time.time > lagDebounce)
+            {
+                for (int i = 0; i < lagAmount; i++)
+                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = touchedPlayers.ToArray() }, new object[] { "Infection", (short)12, null });
+                lagDebounce = Time.time + lagDelay;
+                RPCProtection();
+            }
+        }
+
         private static float notifyTime;
         public static bool IsModded(bool notify)
         {
