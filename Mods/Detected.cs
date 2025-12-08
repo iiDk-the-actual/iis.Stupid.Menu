@@ -161,37 +161,25 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (gunLocked && lockTarget != null)
-                {
-                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
-                    if (view != null) {
-                        viewIdArchive[view.Owner] = view.ViewID;
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                        {
-                            { 0, view.ViewID }
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                        }, SendOptions.SendReliable);
-                    }
-                    
-
-                }
-
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
+                        PhotonView view = GetPhotonViewFromVRRig(gunTarget);
+                        if (view != null)
+                        {
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                            }, SendOptions.SendReliable);
+                        }
                     }
                 }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
             }
         }
 
@@ -263,33 +251,22 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (gunLocked && lockTarget != null)
-                {
-                    Player target = lockTarget.GetPlayer().GetPlayer();
-                    int viewID = viewIdArchive[target];
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                    {
-                        { 0, viewID }
-                    }, new RaiseEventOptions
-                    {
-                        TargetActors = new int[] { target.ActorNumber }
-                    }, SendOptions.SendReliable);
-                }
-
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
+                        Player target = gunTarget.GetPlayer().GetPlayer();
+                        int viewID = viewIdArchive[target];
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, viewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { target.ActorNumber }
+                        }, SendOptions.SendReliable);
                     }
                 }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
             }
         }
 
@@ -350,41 +327,28 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (gunLocked && lockTarget != null)
-                {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                    {
-                        bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
-                        PhotonView view = GetPhotonViewFromVRRig(rig);
-                        if (includeLocal && rig != lockTarget)
-                        {
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                            {
-                                { 0, view.ViewID }
-                            }, new RaiseEventOptions
-                            {
-                                TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber }
-                            }, SendOptions.SendReliable);
-                        }
-                    }
-
-
-                }
-
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
+                        foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                        {
+                            bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                            PhotonView view = GetPhotonViewFromVRRig(rig);
+                            if (includeLocal && rig != gunTarget)
+                            {
+                                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                                {
+                                    { 0, view.ViewID }
+                                }, new RaiseEventOptions
+                                {
+                                    TargetActors = new int[] { gunTarget.GetPlayer().ActorNumber }
+                                }, SendOptions.SendReliable);
+                            }
+                        }
                     }
                 }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
             }
         }
 
@@ -449,10 +413,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
-
-                }
 
                 if (GetGunInput(true))
                 {
@@ -512,7 +473,6 @@ namespace iiMenu.Mods
                         PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
                         muteDelay = Time.time + 0.15f;
                     }
-
                 }
 
                 if (GetGunInput(true))
@@ -609,7 +569,11 @@ namespace iiMenu.Mods
 
         public static void ChangeGamemode(GameModeType gamemode)
         {
-            if (!PhotonNetwork.IsMasterClient) return;
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                CoroutineManager.instance.StartCoroutine(ChangeGamemodeMasterDelay(gamemode));
+                return;
+            }
 
             if (disablePatchCoroutine != null)
                 disablePatchCoroutine = CoroutineManager.instance.StartCoroutine(DisablePatch());
@@ -630,6 +594,17 @@ namespace iiMenu.Mods
             GameMode.activeNetworkHandler = null;
 
             GameMode.LoadGameMode(gamemode.ToString());
+        }
+
+        public static IEnumerator ChangeGamemodeMasterDelay(GameModeType gamemode)
+        {
+            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+
+            while (PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient)
+                yield return null;
+
+            if (PhotonNetwork.InRoom)
+                ChangeGamemode(gamemode);
         }
     }
 }
