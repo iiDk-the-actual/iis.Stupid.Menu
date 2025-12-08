@@ -5369,7 +5369,8 @@ exit 0";
                 66,
                 66,
                 66,
-                338
+                338,
+                66
             };
             string[] buttonSoundNames = {
                 "Wood",
@@ -5397,7 +5398,8 @@ exit 0";
                 "Windows",
                 "Destiny",
                 "Untitled",
-                "Slap"
+                "Slap",
+                "Dog"
             };
 
             if (positive)

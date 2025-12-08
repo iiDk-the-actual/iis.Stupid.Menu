@@ -5769,7 +5769,8 @@ namespace iiMenu.Menu
                         { 21, "nintendo" },
                         { 22, "windows" },
                         { 23, "destiny" },
-                        { 24, "untitled" }
+                        { 24, "untitled" },
+                        { 26, "dog" }
                     };
 
                     try
