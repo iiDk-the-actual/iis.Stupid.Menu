@@ -127,7 +127,7 @@ namespace iiMenu.Patches.Menu
                     callRequestContainer.ErrorCallback = overrideError;
                 }
 
-                return false;
+                return true;
             }
         }
 
@@ -164,7 +164,7 @@ namespace iiMenu.Patches.Menu
                     callRequestContainer.ErrorCallback = overrideError;
                 }
 
-                return false;
+                return true;
             }
         }
     }
