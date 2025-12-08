@@ -4270,7 +4270,18 @@ exit 0";
                 "Grandma",
                 "Trickster",
                 "Elf",
-                "Ghostface"
+                "Ghostface",
+                "Zombie",
+                "Narrator",
+                "Pirate",
+                "Song",
+                "TikTok Joey",
+                "Gingerbread Man",
+                "Chris",
+                "Thanksgiving",
+                "Santa",
+                "Google US",
+                "Google UK"
             };
 
             if (positive)
@@ -4330,7 +4341,8 @@ exit 0";
                 "Spring",
                 "Bouncy",
                 "Audio",
-                "Bezier"
+                "Bezier",
+                "Rope"
             };
 
             if (positive)
@@ -5354,6 +5366,10 @@ exit 0";
                 66,
                 66,
                 66,
+                66,
+                66,
+                66,
+                338,
                 66
             };
             string[] buttonSoundNames = {
@@ -5379,7 +5395,11 @@ exit 0";
                 "Mouse",
                 "Valve",
                 "Nintendo",
-                "Windows"
+                "Windows",
+                "Destiny",
+                "Untitled",
+                "Slap",
+                "Dog"
             };
 
             if (positive)

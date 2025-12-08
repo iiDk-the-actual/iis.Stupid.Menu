@@ -1636,7 +1636,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = platformTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = $"{(vrrig.IsSteam() ? "Steam" : "Quest")}";
+                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPlatform()}";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -2399,6 +2399,108 @@ namespace iiMenu.Mods
                 Object.Destroy(nametag.Value);
 
             crashedNameTags.Clear();
+        }
+
+        private static readonly Dictionary<VRRig, GameObject> compactNameTags = new Dictionary<VRRig, GameObject>();
+        public static string GetPrettyPlatform(VRRig vrrig)
+        {
+            string platform = vrrig.GetPlatform();
+
+            switch (platform)
+            {
+                case "PC":
+                    return "<color=cyan>PC</color>";
+                case "Steam":
+                    return "<color=blue>Steam</color>";
+                case "Standalone":
+                    return "<color=green>Standalone</color>";
+                default:
+                    return platform;
+            }
+        }
+
+        public static string GetPrettyPing(VRRig vrrig)
+        {
+            int ping = vrrig.GetPing();
+
+            if (ping < 300)
+                return $"<color=green>{ping}</color>";
+
+            if (ping < 1000)
+                return $"<color=yellow>{ping}</color>";
+
+            return $"<color=red>{ping}</color>";
+        }
+
+        public static string GetPrettyFPS(VRRig vrrig)
+        {
+            int fps = vrrig.fps;
+
+            if (fps < 30)
+                return $"<color=red>{fps}</color>";
+
+            if (fps < 60)
+                return $"<color=yellow>{fps}</color>";
+
+            return $"<color=green>{fps}</color>";
+        }
+
+        public static void CompactTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in compactNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    Object.Destroy(nametag.Value);
+                    compactNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!compactNameTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Turntag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+                            textMesh.color = Color.white;
+                            textMesh.richText = true;
+
+                            compactNameTags.Add(vrrig, go);
+                        }
+
+                        string turnType = vrrig.turnType;
+                        int turnFactor = vrrig.turnFactor;
+
+                        GameObject nameTag = compactNameTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=cyan>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=cyan>Master</color>]" : "")}";
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableCompactTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in compactNameTags)
+                Object.Destroy(nametag.Value);
+
+            compactNameTags.Clear();
         }
 
         public static void FixRigColors()

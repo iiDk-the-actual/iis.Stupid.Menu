@@ -1193,7 +1193,7 @@ namespace iiMenu.Menu
                         shouldReload = true;
                     }
 
-                    Vector2 js = leftJoystick;
+                    Vector2 js = rightHand ? leftJoystick : rightJoystick;
                     if (Time.time > scrollDelay)
                     {
                         if (js.y > 0.5f)
@@ -4086,16 +4086,18 @@ namespace iiMenu.Menu
                 GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
                 GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                GunLine.positionCount = 2;
                 GunLine.useWorldSpace = true;
                 if (smoothLines)
                 {
                     GunLine.numCapVertices = 10;
                     GunLine.numCornerVertices = 5;
                 }
-                GunLine.SetPosition(0, StartPosition);
-                GunLine.SetPosition(1, EndPosition);
-
+                if (gunVariation != 9)
+                {
+                    GunLine.positionCount = 2;
+                    GunLine.SetPosition(0, StartPosition);
+                    GunLine.SetPosition(1, EndPosition);
+                }
                 int Step = GunLineQuality;
                 switch (gunVariation)
                 {
@@ -4257,6 +4259,25 @@ namespace iiMenu.Menu
                         GunLine.positionCount = Step;
                         GunLine.SetPositions(points);
                         break;
+                    case 9: // Rope
+                        GunLine.positionCount = Step;
+
+                        RopePhysics physics = GunLine.gameObject.GetComponent<RopePhysics>();
+                        if (physics == null)
+                        {
+                            for (int i = 0; i < Step; i++)
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                GunLine.SetPosition(i, Position);
+                            }
+
+                            physics = GunLine.gameObject.AddComponent<RopePhysics>();
+                        }
+
+                        physics.segmentLength = Vector3.Distance(StartPosition, EndPosition) / (Step - 1) * (GetGunInput(true) || gunLocked ? 1.1f : 1.2f);
+                        physics.SetStartPosition(StartPosition);
+                        physics.SetEndPosition(EndPosition);
+                        break;
                 }
             }
 
@@ -4326,7 +4347,7 @@ namespace iiMenu.Menu
                             break;
                         }
 
-                    // StreamElements TTS voices
+                    // Streamlabs TTS voices
                     case 1:
                     case 2:
                     case 3:
@@ -4336,23 +4357,49 @@ namespace iiMenu.Menu
                     case 7:
                     case 8:
                         {
-                            using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                            if (text.Length > 550)
+                                text = text[..550];
+
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=Streamlabs&voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
+                            request.downloadHandler = new DownloadHandlerBuffer();
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
-                                LogManager.LogError("Error downloading TTS: " + request.error);
+                            {
+                                LogManager.LogError("Error getting TTS: " + request.error);
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
+
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
                             else
-                                File.WriteAllBytes(filePath, request.downloadHandler.data);
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
 
                             break;
                         }
 
-                    // TikTok via "gesserit"
+                    // Tiktok TTS Voices
                     case 9:
                     case 10:
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                         {
                             Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
                             {
@@ -4361,65 +4408,78 @@ namespace iiMenu.Menu
                                 { 11, "en_male_grinch" },
                                 { 12, "en_male_ukneighbor" },
                                 { 13, "en_us_ghostface" },
+                                { 14, "en_female_zombie" },
+                                { 15, "en_male_narration" },
+                                { 16, "en_male_pirate" },
+                                { 17, "en_male_m03_sunshine_soon" },
+                                { 18, "en_us_006" },
+                                { 19, "en_male_david_gingerman" },
+                                { 20, "en_male_chris" },
+                                { 21, "en_male_sing_funny_thanksgiving" },
+                                { 22, "en_male_santa_effect" }
                             };
 
-                            string postData = JsonConvert.SerializeObject(new { text, voice = voiceCodenames[narratorIndex] });
+                            if (text.Length > 300)
+                                text = text[..300];
 
-                            using UnityWebRequest request = new UnityWebRequest("https://gesserit.co/api/tiktok-tts", "POST");
-                            byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                            request.uploadHandler = new UploadHandlerRaw(raw);
-                            request.SetRequestHeader("Content-Type", "application/json");
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=TikTok&voice=" + voiceCodenames[narratorIndex] + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
                             request.downloadHandler = new DownloadHandlerBuffer();
-
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                LogManager.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error getting TTS: " + request.error);
                                 onComplete?.Invoke(null);
                                 yield break;
                             }
 
                             string jsonResponse = request.downloadHandler.text;
-                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResponse);
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
 
-                            if (responseData != null && responseData.ContainsKey("audioUrl"))
-                            {
-                                string audioUrl = responseData["audioUrl"];
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
 
-                                if (audioUrl.StartsWith("data:audio/mp3;base64,"))
-                                {
-                                    string base64Data = audioUrl["data:audio/mp3;base64,".Length..];
-
-                                    try
-                                    {
-                                        byte[] audioBytes = Convert.FromBase64String(base64Data);
-
-                                        if (!filePath.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
-                                            filePath = Path.ChangeExtension(filePath, ".mp3");
-
-                                        File.WriteAllBytes(filePath, audioBytes);
-                                        LogManager.Log("TTS audio saved to: " + filePath);
-                                    }
-                                    catch (FormatException ex)
-                                    {
-                                        LogManager.LogError("Invalid base64 data in audioUrl: " + ex.Message);
-                                        onComplete?.Invoke(null);
-                                    }
-                                }
-                                else
-                                {
-                                    LogManager.LogError("Unexpected audioUrl format: " + audioUrl);
-                                    onComplete?.Invoke(null);
-                                }
-                            }
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
                             else
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
+
+                            break;
+                        }
+
+                    case 23:
+                    case 24:
+                        {
+                            Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
                             {
-                                LogManager.LogError("No audioUrl found in response");
+                                { 23, "en-us" },
+                                { 24, "en-gb" }
+                            };
+
+                            if (text.Length > 300)
+                                text = text[..300];
+
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=Google%20Translate&voice=" + voiceCodenames[narratorIndex] + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
+                            request.downloadHandler = new DownloadHandlerBuffer();
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error getting TTS: " + request.error);
                                 onComplete?.Invoke(null);
                                 yield break;
                             }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
+
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
+                            else
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
 
                             break;
                         }
@@ -5432,8 +5492,7 @@ namespace iiMenu.Menu
             if (!PhotonNetwork.InRoom)
                 return;
 
-            if (viewFilter == null)
-                viewFilter = Array.Empty<PhotonView>();
+            viewFilter ??= Array.Empty<PhotonView>();
 
             NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
             List<PhotonView> viewsToSerialize = new List<PhotonView>();
@@ -5679,7 +5738,7 @@ namespace iiMenu.Menu
                     return;
                 }
 
-                if (buttonClickIndex <= 3 || buttonClickIndex == 11)
+                if (buttonClickIndex <= 3 || buttonClickIndex == 11 || buttonClickIndex == 25)
                 {
                     VRRig.LocalRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                     if (PhotonNetwork.InRoom && serversidedButtonSounds)
@@ -5708,7 +5767,10 @@ namespace iiMenu.Menu
                         { 19, "mouse" },
                         { 20, "valve" },
                         { 21, "nintendo" },
-                        { 22, "windows" }
+                        { 22, "windows" },
+                        { 23, "destiny" },
+                        { 24, "untitled" },
+                        { 26, "dog" }
                     };
 
                     try

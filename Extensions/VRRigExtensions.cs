@@ -39,6 +39,18 @@ namespace iiMenu.Extensions
         public static bool IsSteam(this VRRig rig) =>
             PlayerIsSteam(rig);
 
+        public static string GetPlatform(this VRRig rig)
+        {
+            string concatStringOfCosmeticsAllowed = rig.concatStringOfCosmeticsAllowed;
+
+            if (concatStringOfCosmeticsAllowed.Contains("S. FIRST LOGIN"))
+                return "Steam";
+            else if (concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") || rig.Creator.GetPlayerRef().CustomProperties.Count >= 2)
+                return "PC";
+
+            return "Standalone";
+        }
+
         public static Color GetColor(this VRRig rig) =>
             GetPlayerColor(rig);
 

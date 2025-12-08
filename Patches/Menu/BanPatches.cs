@@ -28,7 +28,6 @@ using PlayFab.CloudScriptModels;
 using PlayFab.Internal;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace iiMenu.Patches.Menu
 {
@@ -93,79 +92,79 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(PlayFabCloudScriptAPI), "ExecuteFunction")]
+        [HarmonyPatch(typeof(PlayFabUnityHttp), "MakeApiCall")]
         public class AntiBanCrash1
         {
             public static bool enabled;
 
-            private static bool Prefix(ExecuteFunctionRequest request, Action<ExecuteFunctionResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+            private static bool Prefix(object reqContainerObj)
             {
-                if (!enabled)
+                if (!enabled || reqContainerObj == null)
                     return true;
 
-                void overrideError(PlayFabError error)
+                CallRequestContainer callRequestContainer = (CallRequestContainer)reqContainerObj;
+                
+                if (callRequestContainer.ErrorCallback != null)
                 {
-                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
+                    Action<PlayFabError> errorCallback = callRequestContainer.ErrorCallback;
+                    void overrideError(PlayFabError error)
                     {
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
-                        PlayFabError fakeError = new PlayFabError
+                        if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
                         {
-                            Error = PlayFabErrorCode.UnknownError,
-                            ErrorMessage = "An unknown error occurred.",
-                            ErrorDetails = new Dictionary<string, List<string>>()
-                        };
-                        errorCallback?.Invoke(fakeError);
-                        return;
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
+                            PlayFabError fakeError = new PlayFabError
+                            {
+                                Error = PlayFabErrorCode.UnknownError,
+                                ErrorMessage = "An unknown error occurred.",
+                                ErrorDetails = new Dictionary<string, List<string>>()
+                            };
+                            errorCallback?.Invoke(fakeError);
+                            return;
+                        }
+                        errorCallback?.Invoke(error);
                     }
-                    errorCallback?.Invoke(error);
-                }
-                PlayFabAuthenticationContext playFabAuthenticationContext = (request?.AuthenticationContext) ?? PlayFabSettings.staticPlayer;
-                PlayFabApiSettings staticSettings = PlayFabSettings.staticSettings;
-                if (!playFabAuthenticationContext.IsEntityLoggedIn())
-                    throw new PlayFabException(PlayFabExceptionCode.NotLoggedIn, "Must be logged in to call this method");
 
-                string localApiServer = PlayFabSettings.LocalApiServer;
-                if (!string.IsNullOrEmpty(localApiServer))
-                {
-                    PlayFabHttp.MakeApiCallWithFullUri(new Uri(new Uri(localApiServer), "/CloudScript/ExecuteFunction".TrimStart('/')).AbsoluteUri, request, AuthType.EntityToken, resultCallback, overrideError, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
-                    return false;
+                    callRequestContainer.ErrorCallback = overrideError;
                 }
-                PlayFabHttp.MakeApiCall("/CloudScript/ExecuteFunction", request, AuthType.EntityToken, resultCallback, overrideError, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
 
-                return false;
+                return true;
             }
         }
 
-        [HarmonyPatch(typeof(PlayFabClientAPI), "GetSharedGroupData")]
+        [HarmonyPatch(typeof(PlayFabWebRequest), "MakeApiCall")]
         public class AntiBanCrash2
         {
-            private static bool Prefix(PlayFab.ClientModels.GetSharedGroupDataRequest request, Action<GetSharedGroupDataResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+            private static bool Prefix(object reqContainerObj)
             {
-                if (!AntiBanCrash1.enabled)
+                if (!AntiBanCrash1.enabled || reqContainerObj == null)
                     return true;
 
-                PlayFabAuthenticationContext playFabAuthenticationContext = (request?.AuthenticationContext) ?? PlayFabSettings.staticPlayer;
-                PlayFabApiSettings staticSettings = PlayFabSettings.staticSettings;
-                if (!playFabAuthenticationContext.IsClientLoggedIn())
+                CallRequestContainer callRequestContainer = (CallRequestContainer)reqContainerObj;
 
-                PlayFabHttp.MakeApiCall("/Client/GetSharedGroupData", request, AuthType.LoginSession, resultCallback, (error) =>
+                if (callRequestContainer.ErrorCallback != null)
                 {
-                    if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
+                    Action<PlayFabError> errorCallback = callRequestContainer.ErrorCallback;
+                    void overrideError(PlayFabError error)
                     {
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
-                        PlayFabError fakeError = new PlayFabError
+                        if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
                         {
-                            Error = PlayFabErrorCode.UnknownError,
-                            ErrorMessage = "An unknown error occurred.",
-                            ErrorDetails = new Dictionary<string, List<string>>()
-                        };
-                        errorCallback?.Invoke(fakeError);
-                        return;
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
+                            PlayFabError fakeError = new PlayFabError
+                            {
+                                Error = PlayFabErrorCode.UnknownError,
+                                ErrorMessage = "An unknown error occurred.",
+                                ErrorDetails = new Dictionary<string, List<string>>()
+                            };
+                            errorCallback?.Invoke(fakeError);
+                            return;
+                        }
+                        errorCallback?.Invoke(error);
                     }
-                    errorCallback?.Invoke(error);
-                }, customData, extraHeaders, playFabAuthenticationContext, staticSettings, null);
 
-                return false;
+                    callRequestContainer.ErrorCallback = overrideError;
+                }
+
+                return true;
             }
         }
     }

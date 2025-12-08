@@ -1525,11 +1525,22 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float resourceIncrementDelay;
         public static void InfiniteResources()
         {
             var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             for (int i = 0; i < player.CurrentProgression.resourceArray.Length; i++)
                 player.CurrentProgression.resourceArray[i] = int.MaxValue;
+
+            if (Time.time > resourceIncrementDelay)
+            {
+                resourceIncrementDelay = Time.time + 1f;
+                for (int i = 0; i < (int)SIResource.ResourceType.Count; i++)
+                {
+                    var resourceType = (SIResource.ResourceType)i;
+                    ProgressionManager.Instance.IncrementSIResource(resourceType.ToString(), OnFailure: (error) => resourceIncrementDelay = Time.time + 10f);
+                }
+            }
         }
 
         public static void ClaimAllTerminals()
@@ -1695,7 +1706,57 @@ namespace iiMenu.Mods
                 BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
             }
 
+            blaster.blaster.lastFired = 0f;
             blaster.FireProjectile(blaster.maxChargeDiff, blaster.blaster.NextFireId(), position, rotation);
+
+            RPCProtection();
+        }
+
+        public static readonly Dictionary<NetPlayer, float> perPlayerDictionary = new Dictionary<NetPlayer, float>();
+        public static void BetaFireBlaster(Vector3 position, Vector3 direction, NetPlayer target, bool ignoreDistnace = false)
+        {
+            perPlayerDictionary.TryGetValue(target, out float perPlayerDelay);
+
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            if (Time.time < perPlayerDelay)
+                return;
+
+            SIGadgetChargeBlaster blaster = GetBlaster();
+            if (blaster == null)
+                return;
+
+            perPlayerDictionary[target] = Time.time + SIPlayer.LocalPlayer.clientToClientRPCLimiter.GetDelay();
+
+            if (!ignoreDistnace && (position - GorillaTagger.Instance.leftHandTransform.position).magnitude > blaster.blaster.maxLagDistance)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = position - Vector3.one;
+
+                if (BlasterCoroutine != null)
+                    CoroutineManager.instance.StopCoroutine(BlasterCoroutine);
+
+                BlasterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+            }
+
+            blaster.blaster.lastFired = 0f;
+            SuperInfectionManager.GetSIManagerForZone(blaster.blaster.gameEntity.manager.zone)?.photonView.RPC("SIClientToClientRPC", target.GetPlayer(), new object[]
+            {
+                (int)SuperInfectionManager.ClientToClientRPC.CallEntityRPCData,
+                new object[]
+                {
+                    blaster.blaster.gameEntity.GetNetId(),
+                    0,
+                    new object[]
+                    {
+                        blaster.maxChargeDiff,
+                        blaster.blaster.NextFireId(),
+                        position,
+                        rotation
+                    }
+                }
+            });
+
+            RPCProtection();
         }
 
         public static void BlasterLaserSpam()
@@ -1704,7 +1765,7 @@ namespace iiMenu.Mods
                 BetaFireBlaster(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward);
         }
 
-        public static void BlasterFlingGun()
+        public static void BlasterFlingGun(Vector3 direction)
         {
             if (GetGunInput(false))
             {
@@ -1712,7 +1773,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireBlaster(lockTarget.transform.position, RandomVector3().normalized);
+                    BetaFireBlaster(lockTarget.transform.position, direction.normalized);
 
                 if (GetGunInput(true))
                 {
@@ -1731,8 +1792,63 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BlasterFlingAll() =>
-            BetaFireBlaster(GetCurrentTargetRig().transform.position, RandomVector3().normalized);
+        public static void BlasterFlingAll(Vector3 direction)
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                        VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                    }
+
+                    RPCProtection();
+
+                    VRRig.LocalRig.transform.position = archivePos;
+
+                    return false;
+                };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, direction, Player, true);
+            }
+        }
+
+        public static void BlasterControlGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && lockTarget.Distance(GorillaTagger.Instance.bodyCollider.transform.position) > 0.5f)
+                    BetaFireBlaster(lockTarget.transform.position, lockTarget.transform.position - GorillaTagger.Instance.bodyCollider.transform.position);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
 
         public static Dictionary<string, int> GadgetByName 
         { 
@@ -4190,7 +4306,8 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = new int[] { lockTarget.GetPlayer().ActorNumber } }, new object[] { "Infection", (short)12, null });
+                            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", lockTarget.GetPlayer().GetPlayer(), new object[] { "Infection", (short)12, null });
+
                         lagDebounce = Time.time + lagDelay;
                         RPCProtection();
                     }
