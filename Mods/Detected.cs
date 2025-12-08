@@ -117,28 +117,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CrashOnTouch()
-        {
-            if (!PhotonNetwork.InRoom) return;
-
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!PlayerIsLocal(rig))
-                {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
-                        if (Time.time > crashDelay)
-                        {
-                            PhotonNetwork.SetMasterClient(rig.GetPlayer().GetPlayer());
-                            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                            crashDelay = Time.time + 0.02f;
-                        }
-                    }
-                }
-            }
-        }
-
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -278,25 +256,35 @@ namespace iiMenu.Mods
 
         public static void GhostOnTouch()
         {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedRigs = new List<VRRig>();
+
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.transform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
                     {
-                        PhotonView view = GetPhotonViewFromVRRig(rig);
-                        if (view != null)
-                        {
-                            viewIdArchive[view.Owner] = view.ViewID;
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                            {
-                                { 0, view.ViewID }
-                            }, new RaiseEventOptions
-                            {
-                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                            }, SendOptions.SendReliable);
-                        }
+                        touchedRigs.Add(rig);
                     }
+                }
+            }
+
+            foreach (VRRig rig in touchedRigs)
+            {
+                PhotonView view = GetPhotonViewFromVRRig(rig);
+                if (view != null)
+                {
+                    viewIdArchive[view.Owner] = view.ViewID;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    {
+                        { 0, view.ViewID }
+                    }, new RaiseEventOptions
+                    {
+                        TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                    }, SendOptions.SendReliable);
                 }
             }
         }
@@ -379,25 +367,35 @@ namespace iiMenu.Mods
 
         public static void UnghostOnTouch()
         {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedRigs = new List<VRRig>();
+
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.transform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
                     {
-                        Player target = rig.GetPlayer().GetPlayer();
-                        int viewID = viewIdArchive[target];
-
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                        {
-                            { 0, viewID }
-                        },
-                        new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { target.ActorNumber },
-                        }, SendOptions.SendReliable);
+                        touchedRigs.Add(rig);
                     }
                 }
+            }
+
+            foreach (VRRig rig in touchedRigs)
+            {
+                Player target = rig.GetPlayer().GetPlayer();
+                int viewID = viewIdArchive[target];
+
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                {
+                    { 0, viewID }
+                },
+                new RaiseEventOptions
+                {
+                    TargetActors = new int[] { target.ActorNumber },
+                }, SendOptions.SendReliable);
             }
         }
 
@@ -492,6 +490,8 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.InRoom) return;
 
+            List<VRRig> touchedRigs = new List<VRRig>();
+
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
@@ -499,25 +499,31 @@ namespace iiMenu.Mods
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
                     {
-                        foreach (VRRig otherRig in GorillaParent.instance.vrrigs)
+                        touchedRigs.Add(rig);
+                    }
+                }
+            }
+
+            foreach (VRRig touchedRig in touchedRigs)
+            {
+                foreach (VRRig otherRig in GorillaParent.instance.vrrigs)
+                {
+                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(otherRig);
+                    PhotonView view = GetPhotonViewFromVRRig(otherRig);
+                    if (includeLocal && otherRig != touchedRig)
+                    {
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                         {
-                            bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(otherRig);
-                            PhotonView view = GetPhotonViewFromVRRig(otherRig);
-                            if (includeLocal && otherRig != rig)
-                            {
-                                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                                {
-                                    { 0, view.ViewID }
-                                }, new RaiseEventOptions
-                                {
-                                    TargetActors = new int[] { rig.GetPlayer().ActorNumber }
-                                }, SendOptions.SendReliable);
-                            }
-                        }
+                            { 0, view.ViewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { touchedRig.GetPlayer().ActorNumber }
+                        }, SendOptions.SendReliable);
                     }
                 }
             }
         }
+
 
         public static void LagGun()
         {
@@ -582,6 +588,8 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.InRoom) return;
 
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
@@ -589,8 +597,16 @@ namespace iiMenu.Mods
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
                     {
-                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                        touchedPlayers.Add(rig);
                     }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
                 }
             }
         }
@@ -672,6 +688,8 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.InRoom) return;
 
+            List<VRRig> touchedRigs = new List<VRRig>();
+
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
@@ -679,13 +697,18 @@ namespace iiMenu.Mods
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
                     {
-                        if (Time.time > muteDelay)
-                        {
-                            PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                            muteDelay = Time.time + 0.15f;
-                        }
+                        touchedRigs.Add(rig);
                     }
                 }
+            }
+
+            if (touchedRigs.Count > 0 && Time.time > muteDelay)
+            {
+                foreach (VRRig rig in touchedRigs)
+                {
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                }
+                muteDelay = Time.time + 0.15f;
             }
         }
 
