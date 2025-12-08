@@ -5738,7 +5738,7 @@ namespace iiMenu.Menu
                     return;
                 }
 
-                if (buttonClickIndex <= 3 || buttonClickIndex == 11)
+                if (buttonClickIndex <= 3 || buttonClickIndex == 11 || buttonClickIndex == 25)
                 {
                     VRRig.LocalRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                     if (PhotonNetwork.InRoom && serversidedButtonSounds)
@@ -5768,7 +5768,8 @@ namespace iiMenu.Menu
                         { 20, "valve" },
                         { 21, "nintendo" },
                         { 22, "windows" },
-                        { 23, "destiny" }
+                        { 23, "destiny" },
+                        { 24, "untitled" }
                     };
 
                     try
