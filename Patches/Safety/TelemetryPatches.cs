@@ -59,10 +59,10 @@ namespace iiMenu.Patches.Safety
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(LckTelemetry), "SendTelemetry")]
+        [HarmonyPatch(typeof(LckTelemetryClient), "SendTelemetry")]
         public class TelemetryPatch5
         {
-            private static bool Prefix(TelemetryEvent eventData) =>
+            private static bool Prefix(LckTelemetryEvent lckTelemetryEvent) =>
                 !enabled;
         }
     }
