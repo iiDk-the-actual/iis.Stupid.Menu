@@ -117,6 +117,28 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CrashOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        if (Time.time > crashDelay)
+                        {
+                            PhotonNetwork.SetMasterClient(rig.GetPlayer().GetPlayer());
+                            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                            crashDelay = Time.time + 0.02f;
+                        }
+                    }
+                }
+            }
+        }
+
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -194,22 +216,25 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                PhotonView view = GetPhotonViewFromVRRig(rig);
-
-                if (view != null)
+                if (!PlayerIsLocal(rig))
                 {
-                    viewIdArchive[view.Owner] = view.ViewID;
-                    int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+                    PhotonView view = GetPhotonViewFromVRRig(rig);
 
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    if (view != null)
+                    {
+                        viewIdArchive[view.Owner] = view.ViewID;
+                        int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                     {
                         { 0, view.ViewID }
                     },
-                    new RaiseEventOptions
-                    {
-                        TargetActors = targets
-                    }, SendOptions.SendReliable);
-                }
+                        new RaiseEventOptions
+                        {
+                            TargetActors = targets
+                        }, SendOptions.SendReliable);
+                    }
+                } 
             }
         }
 
@@ -246,6 +271,31 @@ namespace iiMenu.Mods
                             TargetActors = targets
                         }, SendOptions.SendReliable);
                         nearbyPlayers.Remove(rig);
+                    }
+                }
+            }
+        }
+
+        public static void GhostOnTouch()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.transform.position) <= 0.35f)
+                    {
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
+                        if (view != null)
+                        {
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                            }, SendOptions.SendReliable);
+                        }
                     }
                 }
             }
@@ -327,6 +377,30 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void UnghostOnTouch()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.transform.position) <= 0.35f)
+                    {
+                        Player target = rig.GetPlayer().GetPlayer();
+                        int viewID = viewIdArchive[target];
+
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, viewID }
+                        },
+                        new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { target.ActorNumber },
+                        }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
         public static void IsolateGun()
         {
             if (GetGunInput(false))
@@ -378,6 +452,8 @@ namespace iiMenu.Mods
             }
         }
 
+
+
         public static void IsolateAura()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -412,6 +488,37 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void IsolateOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        foreach (VRRig otherRig in GorillaParent.instance.vrrigs)
+                        {
+                            bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(otherRig);
+                            PhotonView view = GetPhotonViewFromVRRig(otherRig);
+                            if (includeLocal && otherRig != rig)
+                            {
+                                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                                {
+                                    { 0, view.ViewID }
+                                }, new RaiseEventOptions
+                                {
+                                    TargetActors = new int[] { rig.GetPlayer().ActorNumber }
+                                }, SendOptions.SendReliable);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -442,7 +549,13 @@ namespace iiMenu.Mods
         public static void LagAll()
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                }
+            }
+                
         }
 
         public static void LagAura()
@@ -462,6 +575,23 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
+            }
+        }
+
+        public static void LagOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                    }
+                }
             }
         }
 
@@ -504,7 +634,12 @@ namespace iiMenu.Mods
             if (Time.time > muteDelay)
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                {
+                    if (!PlayerIsLocal(rig))
+                    {
+                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                    }
+                }                    
 
                 muteDelay = Time.time + 0.15f;
             }
@@ -529,6 +664,27 @@ namespace iiMenu.Mods
                 {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
                     muteDelay = Time.time + 0.15f;
+                }
+            }
+        }
+
+        public static void MuteOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsLocal(rig))
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        if (Time.time > muteDelay)
+                        {
+                            PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                            muteDelay = Time.time + 0.15f;
+                        }
+                    }
                 }
             }
         }
