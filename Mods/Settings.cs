@@ -5366,6 +5366,7 @@ exit 0";
                 66,
                 66,
                 66,
+                66,
                 66
             };
             string[] buttonSoundNames = {
@@ -5391,7 +5392,8 @@ exit 0";
                 "Mouse",
                 "Valve",
                 "Nintendo",
-                "Windows"
+                "Windows",
+                "Destiny"
             };
 
             if (positive)
