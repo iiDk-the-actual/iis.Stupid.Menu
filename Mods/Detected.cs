@@ -64,6 +64,13 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AutoSetMasterClient()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            if (!PhotonNetwork.IsMasterClient)
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+        }
+
         public static float crashDelay;
         public static void CrashGun()
         {
