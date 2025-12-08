@@ -368,7 +368,7 @@ exit";
         private static bool acceptedTOS;
         public static void AcceptTOS()
         {
-            GameObject RoomObject = GetObject("Miscellaneous Scripts").transform.Find("PrivateUIRoom_HandRays").gameObject;
+            GameObject RoomObject = GetObject("Miscellaneous Scripts/PrivateUIRoom_HandRays");
             if (RoomObject == null)
                 return;
 
@@ -382,7 +382,6 @@ exit";
                 PrivateUIRoom.overlayForcedActive = false;
                 PrivateUIRoom.StopOverlay();
 
-                RoomObject.SetActive(false);
                 if (!TOSPatch.enabled)
                 {
                     GorillaTagger.Instance.tapHapticStrength = 0.5f;
@@ -392,6 +391,9 @@ exit";
 
                 acceptedTOS = true;
             }
+
+            if (RoomObject.activeSelf)
+                RoomObject.SetActive(false);
         }
         
         public static IEnumerator RedeemShinyRocks()
