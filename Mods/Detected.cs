@@ -41,6 +41,7 @@ namespace iiMenu.Mods
     public static class Detected
     {
         public static float masterDelay;
+        public static Dictionary<Player, int> viewIdArchive = new Dictionary<Player, int>();
         public static void SetMasterClientGun()
         {
             if (GetGunInput(false))
@@ -164,13 +165,16 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     PhotonView view = GetPhotonViewFromVRRig(lockTarget);
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                    {
-                        { 0, view.ViewID }
-                    }, new RaiseEventOptions
-                    {
-                        TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                    }, SendOptions.SendReliable);
+                    if (view != null) {
+                        viewIdArchive[view.Owner] = view.ViewID;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, view.ViewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                        }, SendOptions.SendReliable);
+                    }
                     
 
                 }
@@ -198,16 +202,20 @@ namespace iiMenu.Mods
             {
                 PhotonView view = GetPhotonViewFromVRRig(rig);
 
-                int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+                if (view != null)
+                {
+                    viewIdArchive[view.Owner] = view.ViewID;
+                    int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                {
-                    { 0, view.ViewID }
-                },
-                new RaiseEventOptions
-                {
-                    TargetActors = targets
-                }, SendOptions.SendReliable);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    {
+                        { 0, view.ViewID }
+                    },
+                    new RaiseEventOptions
+                    {
+                        TargetActors = targets
+                    }, SendOptions.SendReliable);
+                }
             }
         }
 
@@ -230,17 +238,108 @@ namespace iiMenu.Mods
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
 
-                    int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+                    if (view != null)
+                    {
+                        viewIdArchive[view.Owner] = view.ViewID;
+                        int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        {
+                            { 0, view.ViewID }
+                        },
+                        new RaiseEventOptions
+                        {
+                            TargetActors = targets
+                        }, SendOptions.SendReliable);
+                        nearbyPlayers.Remove(rig);
+                    }
+                }
+            }
+        }
+
+        public static void UnghostGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Player target = lockTarget.GetPlayer().GetPlayer();
+                    int viewID = viewIdArchive[target];
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    {
+                        { 0, viewID }
+                    }, new RaiseEventOptions
+                    {
+                        TargetActors = new int[] { target.ActorNumber }
+                    }, SendOptions.SendReliable);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void UnghostAll()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                Player target = rig.GetPlayer().GetPlayer();
+                int viewID = viewIdArchive[target];
+
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                {
+                    { 0, viewID }
+                },
+                new RaiseEventOptions
+                {
+                    TargetActors = new int[] { target.ActorNumber },
+                }, SendOptions.SendReliable);
+            }
+        }
+
+        public static void UnghostAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig rig in nearbyPlayers)
+                {
+                    Player target = rig.GetPlayer().GetPlayer();
+                    int viewID = viewIdArchive[target];
 
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                     {
-                        { 0, view.ViewID }
+                        { 0, viewID }
                     },
                     new RaiseEventOptions
                     {
-                        TargetActors = targets
+                        TargetActors = new int[] { target.ActorNumber },
                     }, SendOptions.SendReliable);
-                    nearbyPlayers.Remove(rig);
                 }
             }
         }
