@@ -1297,6 +1297,18 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blaster Float Gun", method =() => Overpowered.BlasterFlingGun(Vector3.up), toolTip = "Uses the blasters to fling whoever your hand desires vertically."},
                 new ButtonInfo { buttonText = "Blaster Float All", method =() => Overpowered.BlasterFlingAll(Vector3.up), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room vertically."},
 
+                new ButtonInfo { buttonText = "Blaster Fling Towards Gun", method = Overpowered.BlasterFlingTowardsGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
+                new ButtonInfo { buttonText = "Blaster Fling Towards All", method = Overpowered.BlasterFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room towards you."},
+
+                new ButtonInfo { buttonText = "Blaster Fling Away Gun", method = Overpowered.BlasterFlingAwayGun, toolTip = "Uses the blasters to fling whoever your hand desires away from you."},
+                new ButtonInfo { buttonText = "Blaster Fling Away All", method = Overpowered.BlasterFlingAwayAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room away from you."},
+
+                new ButtonInfo { buttonText = "Blaster Kick Gun", method = Overpowered.BlasterKickGun, toolTip = "Kicks whoever your hand desires using the blasters." },
+                new ButtonInfo { buttonText = "Blaster Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room when holding <color=green>trigger</color> using the blasters." },
+
+                new ButtonInfo { buttonText = "Blaster Crash Gun", method = Overpowered.BlasterCrashGun, toolTip = "Crashes whoever your hand desires using the blasters." },
+                new ButtonInfo { buttonText = "Blaster Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color> using the blasters." },
+
                 new ButtonInfo { buttonText = "Blaster Control Gun", method = Overpowered.BlasterControlGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
 
                 new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
