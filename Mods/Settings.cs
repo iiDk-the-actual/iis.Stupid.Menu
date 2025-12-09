@@ -4231,7 +4231,8 @@ exit 0";
             { "AOL Message",   "aol-msg"     },
             { "Thunderbird",   "thunderbird" },
             { "Pixie Dust",    "pixiedust"   },
-            { "Moon Beam",     "moonbeam"    }
+            { "Moon Beam",     "moonbeam"    },
+            { "Dog",           "dog"         }
         };
 
         public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
