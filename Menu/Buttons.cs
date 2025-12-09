@@ -1285,6 +1285,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Complete All Quests", method = Overpowered.CompleteAllQuests, isTogglable = false, toolTip = "Completes every quest in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "No Blaster Cooldown", method =() => CooldownPatch.enabled = true, disableMethod =() => CooldownPatch.enabled = false, toolTip = "Removes the cooldown on the blaster."},
                 new ButtonInfo { buttonText = "Blaster Aimbot", enableMethod =() => FirePatch.enabled = true, method = Overpowered.DebugBlasterAimbot, disableMethod =() => FirePatch.enabled = false, toolTip = "Automatically aims the blaster towards players."},

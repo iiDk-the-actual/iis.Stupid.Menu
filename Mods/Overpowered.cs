@@ -1544,6 +1544,13 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CompleteAllQuests()
+        {
+            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+            for (int i = 0; i < player.CurrentProgression.currentQuestIds.Length; i++)
+                SIProgression.Instance.AttemptRedeemCompletedQuest(player.CurrentProgression.currentQuestIds[i]);
+        }
+
         public static void ClaimAllTerminals()
         {
             foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
