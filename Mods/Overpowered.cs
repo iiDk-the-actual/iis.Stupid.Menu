@@ -1547,8 +1547,8 @@ namespace iiMenu.Mods
         public static void CompleteAllQuests()
         {
             var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
-            for (int i = 0; i < player.CurrentProgression.currentQuestIds.Length; i++)
-                SIProgression.Instance.AttemptRedeemCompletedQuest(player.CurrentProgression.currentQuestIds[i]);
+            for (int i = 0; i < SIProgression.Instance.activeQuestIds.Length; i++)
+                SIProgression.Instance.AttemptRedeemCompletedQuest(i);
         }
 
         public static void ClaimAllTerminals()
