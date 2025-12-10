@@ -37,6 +37,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -1543,6 +1544,13 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CompleteAllQuests()
+        {
+            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+            for (int i = 0; i < SIProgression.Instance.activeQuestIds.Length; i++)
+                SIProgression.Instance.AttemptRedeemCompletedQuest(i);
+        }
+
         public static void ClaimAllTerminals()
         {
             foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
@@ -1823,6 +1831,238 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BlasterFlingTowardsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireBlaster(lockTarget.transform.position, GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlasterFlingTowardsAll()
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position - targetRig.transform.position, Player, true);
+            }
+        }
+
+        public static void BlasterFlingAwayGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireBlaster(lockTarget.transform.position, lockTarget.transform.position - GorillaTagger.Instance.bodyCollider.transform.position);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlasterFlingAwayAll()
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, targetRig.transform.position - GorillaTagger.Instance.bodyCollider.transform.position, Player, true);
+            }
+        }
+
+        public static void BlasterKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireBlaster(lockTarget.transform.position, lockTarget.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - lockTarget.transform.position).normalized : lockTarget.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlasterKickAll()
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, targetRig.transform.position.z < -28.5f ? (new Vector3(-47.82025f, 6.460508f, -29.04836f) - targetRig.transform.position).normalized : targetRig.transform.position.z < -23f ? new Vector3(-50f, 0f, 50f) : Vector3.left, Player, true);
+            }
+        }
+
+        public static void BlasterCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireBlaster(lockTarget.transform.position, lockTarget.transform.position.y > 55f ? Vector3.right : Vector3.up);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlasterCrashAll()
+        {
+            if (GetBlaster() == null)
+                SerializePatch.OverrideSerialization = null;
+            else SerializePatch.OverrideSerialization ??= () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                VRRig targetRig = GetVRRigFromPlayer(Player);
+                BetaFireBlaster(targetRig.transform.position, targetRig.transform.position.y > 55f ? Vector3.right : Vector3.up, Player, true);
+            }
+        }
+
         public static void BlasterControlGun()
         {
             if (GetGunInput(false))
@@ -1831,7 +2071,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null && lockTarget.Distance(GorillaTagger.Instance.bodyCollider.transform.position) > 0.5f)
-                    BetaFireBlaster(lockTarget.transform.position, lockTarget.transform.position - GorillaTagger.Instance.bodyCollider.transform.position);
+                    BetaFireBlaster(lockTarget.transform.position, GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position);
 
                 if (GetGunInput(true))
                 {

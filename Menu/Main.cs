@@ -3755,6 +3755,12 @@ namespace iiMenu.Menu
 
         public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
         {
+            if (toRound.transform.parent != menu.transform)
+            {
+                RoundObjNonMenu(toRound, Bevel);
+                return;
+            }
+
             Renderer ToRoundRenderer = toRound.GetComponent<Renderer>();
             GameObject BaseA = GameObject.CreatePrimitive(PrimitiveType.Cube);
             BaseA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
@@ -3833,6 +3839,68 @@ namespace iiMenu.Menu
 
             ColorChanger colorChanger = ToRoundRenderer.GetComponent<ColorChanger>();
             if (colorChanger)
+                colorChanger.overrideTransparency = false;
+        }
+
+        public static void RoundObjNonMenu(GameObject toRound, float bevel = 0.02f)
+        {
+            static GameObject CreatePrimitive(PrimitiveType type, Transform parent, bool rendererEnabled)
+            {
+                GameObject obj = GameObject.CreatePrimitive(type);
+                obj.GetComponent<Renderer>().enabled = rendererEnabled;
+
+                Collider collider = obj.GetComponent<Collider>();
+                if (collider != null)
+                    Destroy(collider);
+
+                obj.transform.SetParent(parent, false);
+                return obj;
+            }
+
+            Renderer renderer = toRound.GetComponent<Renderer>();
+            if (renderer == null) return;
+
+            Transform parent = toRound.transform;
+            Vector3 scale = parent.localScale;
+            bool rendererEnabled = renderer.enabled;
+
+            GameObject baseA = CreatePrimitive(PrimitiveType.Cube, parent, rendererEnabled);
+            baseA.transform.localPosition = Vector3.zero;
+            baseA.transform.localRotation = Quaternion.identity;
+            baseA.transform.localScale = new Vector3(scale.x, scale.y - bevel * 2f, scale.z);
+
+            GameObject baseB = CreatePrimitive(PrimitiveType.Cube, parent, rendererEnabled);
+            baseB.transform.localPosition = Vector3.zero;
+            baseB.transform.localRotation = Quaternion.identity;
+            baseB.transform.localScale = new Vector3(scale.x, scale.y, scale.z - bevel * 2f);
+
+            GameObject[] corners = new GameObject[4];
+            Vector3[] cornerOffsets = {
+                new Vector3(0f, scale.y / 2f - bevel, scale.z / 2f - bevel),
+                new Vector3(0f, -scale.y / 2f + bevel, scale.z / 2f - bevel),
+                new Vector3(0f, scale.y / 2f - bevel, -scale.z / 2f + bevel),
+                new Vector3(0f, -scale.y / 2f + bevel, -scale.z / 2f + bevel)
+            };
+
+            for (int i = 0; i < 4; i++)
+            {
+                corners[i] = CreatePrimitive(PrimitiveType.Cylinder, parent, rendererEnabled);
+                corners[i].transform.localPosition = cornerOffsets[i];
+                corners[i].transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                corners[i].transform.localScale = new Vector3(bevel * 2f, scale.x / 2f, bevel * 2f);
+            }
+
+            GameObject[] allObjects = { baseA, baseB, corners[0], corners[1], corners[2], corners[3] };
+            foreach (GameObject obj in allObjects)
+            {
+                ClampColor clampColor = obj.AddComponent<ClampColor>();
+                clampColor.targetRenderer = renderer;
+            }
+
+            renderer.enabled = false;
+
+            ColorChanger colorChanger = renderer.GetComponent<ColorChanger>();
+            if (colorChanger != null)
                 colorChanger.overrideTransparency = false;
         }
 

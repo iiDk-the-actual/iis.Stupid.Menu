@@ -124,7 +124,7 @@
     <Reference Include="KID">
       <HintPath>$(ProjectDir)References\Managed\KID.dll</HintPath>
     </Reference>
-    <Reference Include="LIV.LCK">
+    <Reference Include="LIV.LCK" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\LIV.LCK.dll</HintPath>
     </Reference>
     <Reference Include="LIV.LCK_GorillaTag">
