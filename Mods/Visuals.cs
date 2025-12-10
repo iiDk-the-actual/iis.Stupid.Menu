@@ -2470,11 +2470,11 @@ namespace iiMenu.Mods
                         if (!compactNameTags.ContainsKey(vrrig))
                         {
                             GameObject textContainer = new GameObject("iimenu_vrctag_text");
-                            GameObject infoText = new GameObject("infotag");
-                            infoText.transform.parent = textContainer.transform;
-                            infoText.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
-                            infoText.transform.localScale = Vector3.one;
-                            TextMesh infoMesh = infoText.AddComponent<TextMesh>();
+                            GameObject infoTag = new GameObject("infotag");
+                            infoTag.transform.parent = textContainer.transform;
+                            infoTag.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
+                            infoTag.transform.localScale = Vector3.one;
+                            TextMesh infoMesh = infoTag.AddComponent<TextMesh>();
                             infoMesh.fontSize = 24;
                             infoMesh.characterSize = 0.1f;
                             infoMesh.anchor = TextAnchor.MiddleCenter;
@@ -2482,11 +2482,11 @@ namespace iiMenu.Mods
                             infoMesh.color = Color.white;
                             infoMesh.richText = true;
 
-                            GameObject nameTextObj = new GameObject("nametag");
-                            nameTextObj.transform.parent = textContainer.transform;
-                            nameTextObj.transform.localPosition = Vector3.zero;
-                            nameTextObj.transform.localScale = Vector3.one;
-                            TextMesh nameMesh = nameTextObj.AddComponent<TextMesh>();
+                            GameObject nameTag = new GameObject("nametag");
+                            nameTag.transform.parent = textContainer.transform;
+                            nameTag.transform.localPosition = Vector3.zero;
+                            nameTag.transform.localScale = Vector3.one;
+                            TextMesh nameMesh = nameTag.AddComponent<TextMesh>();
                             nameMesh.fontSize = 32;
                             nameMesh.characterSize = 0.1f;
                             nameMesh.anchor = TextAnchor.MiddleCenter;
@@ -2520,10 +2520,10 @@ namespace iiMenu.Mods
                         GameObject textCont = compactNameTags[vrrig];
                         GameObject bgCont = compactTagBackgrounds[vrrig];
 
-                        Transform infoTextTr = textCont.transform.Find("InfoText");
-                        Transform nameTextTr = textCont.transform.Find("NameText");
-                        Transform infoBgTr = bgCont.transform.Find("InfoBackground");
-                        Transform nameBgTr = bgCont.transform.Find("NameBackground");
+                        Transform infoTextTr = textCont.transform.Find("infotag");
+                        Transform nameTextTr = textCont.transform.Find("nametag");
+                        Transform infoBgTr = bgCont.transform.Find("infobg");
+                        Transform nameBgTr = bgCont.transform.Find("namebg");
 
                         string tagText = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=cyan>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=cyan>Master</color>]" : "")}";
 
