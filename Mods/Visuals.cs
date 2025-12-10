@@ -2401,7 +2401,10 @@ namespace iiMenu.Mods
             crashedNameTags.Clear();
         }
 
+
         private static readonly Dictionary<VRRig, GameObject> compactNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> compactTagBackgrounds = new Dictionary<VRRig, GameObject>();
+
         public static string GetPrettyPlatform(VRRig vrrig)
         {
             string platform = vrrig.GetPlatform();
@@ -2452,7 +2455,9 @@ namespace iiMenu.Mods
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
                     Object.Destroy(nametag.Value);
+                    Object.Destroy(compactTagBackgrounds[nametag.Key]);
                     compactNameTags.Remove(nametag.Key);
+                    compactTagBackgrounds.Remove(nametag.Key);
                 }
             }
 
@@ -2464,31 +2469,102 @@ namespace iiMenu.Mods
                     {
                         if (!compactNameTags.ContainsKey(vrrig))
                         {
-                            GameObject go = new GameObject("iiMenu_Turntag");
-                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                            TextMesh textMesh = go.AddComponent<TextMesh>();
-                            textMesh.fontSize = 48;
-                            textMesh.characterSize = 0.1f;
-                            textMesh.anchor = TextAnchor.MiddleCenter;
-                            textMesh.alignment = TextAlignment.Center;
-                            textMesh.color = Color.white;
-                            textMesh.richText = true;
+                            GameObject textContainer = new GameObject("iimenu_vrctag_text");
+                            GameObject infoText = new GameObject("infotag");
+                            infoText.transform.parent = textContainer.transform;
+                            infoText.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
+                            infoText.transform.localScale = Vector3.one;
+                            TextMesh infoMesh = infoText.AddComponent<TextMesh>();
+                            infoMesh.fontSize = 24;
+                            infoMesh.characterSize = 0.1f;
+                            infoMesh.anchor = TextAnchor.MiddleCenter;
+                            infoMesh.alignment = TextAlignment.Center;
+                            infoMesh.color = Color.white;
+                            infoMesh.richText = true;
 
-                            compactNameTags.Add(vrrig, go);
+                            GameObject nameTextObj = new GameObject("nametag");
+                            nameTextObj.transform.parent = textContainer.transform;
+                            nameTextObj.transform.localPosition = Vector3.zero;
+                            nameTextObj.transform.localScale = Vector3.one;
+                            TextMesh nameMesh = nameTextObj.AddComponent<TextMesh>();
+                            nameMesh.fontSize = 32;
+                            nameMesh.characterSize = 0.1f;
+                            nameMesh.anchor = TextAnchor.MiddleCenter;
+                            nameMesh.alignment = TextAlignment.Center;
+                            nameMesh.richText = true;
+
+                            GameObject bgContainer = new GameObject("iimenu_vrctag_background");
+                            GameObject infoBg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            infoBg.name = "infobg";
+                            infoBg.transform.parent = bgContainer.transform;
+                            infoBg.transform.localPosition = new Vector3(0f, 0.5f, 0f);  // change the y to make the info tag farther or closer to the nametag 
+                            infoBg.transform.localScale = Vector3.one;
+                            infoBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                            Object.Destroy(infoBg.GetComponent<Collider>());
+                            infoBg.GetComponent<Renderer>().material.shader = LoadAsset<Shader>("Chams");
+                            infoBg.GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
+
+                            GameObject nameBg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            nameBg.name = "namebg";
+                            nameBg.transform.parent = bgContainer.transform;
+                            nameBg.transform.localPosition = Vector3.zero;
+                            nameBg.transform.localScale = Vector3.one;
+                            nameBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                            Object.Destroy(nameBg.GetComponent<Collider>());
+                            nameBg.GetComponent<Renderer>().material.shader = LoadAsset<Shader>("Chams");
+
+                            compactNameTags.Add(vrrig, textContainer);
+                            compactTagBackgrounds.Add(vrrig, bgContainer);
                         }
 
-                        string turnType = vrrig.turnType;
-                        int turnFactor = vrrig.turnFactor;
+                        GameObject textCont = compactNameTags[vrrig];
+                        GameObject bgCont = compactTagBackgrounds[vrrig];
 
-                        GameObject nameTag = compactNameTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=cyan>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=cyan>Master</color>]" : "")}";
-                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+                        Transform infoTextTr = textCont.transform.Find("InfoText");
+                        Transform nameTextTr = textCont.transform.Find("NameText");
+                        Transform infoBgTr = bgCont.transform.Find("InfoBackground");
+                        Transform nameBgTr = bgCont.transform.Find("NameBackground");
 
-                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+                        string tagText = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=cyan>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=cyan>Master</color>]" : "")}";
 
-                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
-                        nameTag.transform.LookAt(Camera.main.transform.position);
-                        nameTag.transform.Rotate(0f, 180f, 0f);
+                        infoTextTr.GetComponent<TextMesh>().text = tagText;
+                        infoTextTr.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        TextMesh tm = infoTextTr.GetComponent<TextMesh>();
+                        string plainText = System.Text.RegularExpressions.Regex.Replace(tagText, "<.*?>", string.Empty);
+                        float textWidth = plainText.Length * tm.characterSize * tm.fontSize * 0.0065f;
+                        float bgHeight = textWidth + 0.15f;
+
+                        // nametag part inherits the player color
+                        string playerName = CleanPlayerName(vrrig.GetPlayer().NickName);
+                        nameTextTr.GetComponent<TextMesh>().text = playerName;
+                        nameTextTr.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+                        nameTextTr.GetComponent<TextMesh>().color = vrrig.playerColor;
+
+                        TextMesh nameTm = nameTextTr.GetComponent<TextMesh>();
+                        float nameTextWidth = playerName.Length * nameTm.characterSize * nameTm.fontSize * 0.009f;
+                        float nameBgHeight = nameTextWidth + 0.2f;
+
+                        Color nameBgColor = vrrig.playerColor;
+                        nameBgColor.a = 0.5f;
+                        nameBgTr.GetComponent<Renderer>().material.color = nameBgColor;
+
+                        float finalScale = 0.15f * vrrig.scaleFactor;
+                        textCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
+                        bgCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
+
+                        infoBgTr.localScale = new Vector3(0.04f / finalScale, (bgHeight * 0.5f) / finalScale, 0.04f / finalScale);
+                        nameBgTr.localScale = new Vector3(0.08f / finalScale, (nameBgHeight * 0.5f) / finalScale, 0.08f / finalScale);
+
+                        Vector3 tagPosition = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+
+                        textCont.transform.position = tagPosition;
+                        textCont.transform.LookAt(Camera.main.transform.position);
+                        textCont.transform.Rotate(0f, 180f, 0f);
+
+                        bgCont.transform.position = tagPosition - textCont.transform.forward * 0.01f;
+                        bgCont.transform.LookAt(Camera.main.transform.position);
+                        bgCont.transform.Rotate(0f, 180f, 0f);
                     }
                 }
                 catch { }
@@ -2500,8 +2576,13 @@ namespace iiMenu.Mods
             foreach (KeyValuePair<VRRig, GameObject> nametag in compactNameTags)
                 Object.Destroy(nametag.Value);
 
+            foreach (KeyValuePair<VRRig, GameObject> background in compactTagBackgrounds)
+                Object.Destroy(background.Value);
+
             compactNameTags.Clear();
+            compactTagBackgrounds.Clear();
         }
+
 
         public static void FixRigColors()
         {
