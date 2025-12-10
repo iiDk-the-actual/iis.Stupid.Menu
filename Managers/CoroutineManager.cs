@@ -19,24 +19,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-﻿using System.Collections;
-using UnityEngine;
-
-namespace iiMenu.Managers
+﻿namespace iiMenu.Managers
 {
+    using UnityEngine;
+    using System.Collections;
+
     public class CoroutineManager : MonoBehaviour
     {
-        public static CoroutineManager instance;
+        public static CoroutineManager instance { get; private set; }
 
-        private void Awake() =>
+        private void Awake()
+        {
+            if (instance != null && instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
 
         [System.Obsolete("RunCoroutine is obsolete. Use StartCoroutine directly on MonoBehaviour instances instead.")]
-        public static Coroutine RunCoroutine(IEnumerator enumerator) =>
-            instance.StartCoroutine(enumerator);
+        public static Coroutine RunCoroutine(IEnumerator enumerator)
+        {
+            if (instance == null)
+                return null;
+
+            return instance.StartCoroutine(enumerator);
+        }
 
         [System.Obsolete("EndCoroutine is obsolete. Use StopCoroutine directly on MonoBehaviour instances instead.")]
-        public static void EndCoroutine(Coroutine enumerator) =>
-            instance.StopCoroutine(enumerator);
+        public static void EndCoroutine(Coroutine coroutine)
+        {
+            if (instance == null)
+                return;
+
+            if (coroutine != null)
+                instance.StopCoroutine(coroutine);
+        }
     }
 }
