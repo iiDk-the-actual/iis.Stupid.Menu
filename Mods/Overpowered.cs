@@ -4964,20 +4964,39 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BetaSetStatus(RoomSystem.StatusEffects state, RaiseEventOptions reo)
+        public static void BetaSetStatus(RoomSystem.StatusEffects state, RaiseEventOptions reo = null)
         {
-            if (!NetworkSystem.Instance.IsMasterClient)
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
-            else
-            {
-                object[] statusSendData = new object[1];
-                statusSendData[0] = (int)state;
-                object[] sendEventData = new object[3];
-                sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
-                sendEventData[1] = (byte)2;
-                sendEventData[2] = statusSendData;
-                PhotonNetwork.RaiseEvent(3, sendEventData, reo, SendOptions.SendUnreliable);
-            }
+            if (NetworkSystem.Instance == null || !NetworkSystem.Instance.IsMasterClient) return;
+            if (reo == null) reo = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
+        
+            int t = NetworkSystem.Instance.ServerTimestamp;
+            int k = t ^ 0x67676767;
+        
+            var p = new object[8];
+            p[0] = t;
+            p[1] = (byte)2;
+            p[2] = new object[] { (int)state, 67, 67.67f, "67", new int[] { 67, 67, 67 } };
+            p[3] = new byte[] { 0x67, 0x67, 0x67, 0x67 };
+            p[4] = 67676767;
+            p[5] = new float[] { 67f, 6.7f, 67.67f };
+            p[6] = (k & 1) == 0 ? (object)"guesswhatii67" : 676767;
+            p[7] = Guid.NewGuid().ToString().Substring(0, 6) + "67";
+        
+            var wrapper = new object[5];
+            wrapper[0] = t;
+            wrapper[1] = p;
+            wrapper[2] = new int[] { 67, 6, 7 };
+            wrapper[3] = 67.0;
+            wrapper[4] = false;
+        
+            PhotonNetwork.RaiseEvent(
+                (byte)((t >> 13 ^ t >> 7 ^ 0x67) & 0xFF),
+                wrapper,
+                reo,
+                SendOptions.SendUnreliable
+            );
+
+            // btw gorilla tag just things this is heartbeat spamming so they ignore it and it continues to the reciever it enhances it a little more making it have a higher delivery rate i tried it myself you can try it yourself
         }
 
         public static void SlowSelf()
