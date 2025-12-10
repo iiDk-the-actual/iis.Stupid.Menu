@@ -2583,7 +2583,6 @@ namespace iiMenu.Mods
             compactTagBackgrounds.Clear();
         }
 
-
         public static void FixRigColors()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -2594,7 +2593,7 @@ namespace iiMenu.Mods
         }
 
         public static string _leavesName;
-        public static string leavesName
+        public static string LeavesName
         {
             get 
             {
@@ -2622,7 +2621,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < Forest.transform.childCount; i++)
                 {
                     GameObject v = Forest.transform.GetChild(i).gameObject;
-                    if (v.name.Contains(leavesName))
+                    if (v.name.Contains(LeavesName))
                     {
                         v.SetActive(false);
                         leaves.Add(v);
@@ -2636,7 +2635,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < RankedForest.transform.childCount; i++)
                 {
                     GameObject v = RankedForest.transform.GetChild(i).gameObject;
-                    if (v.name.Contains(leavesName))
+                    if (v.name.Contains(LeavesName))
                     {
                         v.SetActive(false);
                         leaves.Add(v);
@@ -2661,7 +2660,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < Forest.transform.childCount; i++)
                 {
                     GameObject v = Forest.transform.GetChild(i).gameObject;
-                    if (v.name.Contains(leavesName))
+                    if (v.name.Contains(LeavesName))
                     {
                         v.layer = 21; 
                         leaves.Add(v);
@@ -2675,7 +2674,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < RankedForest.transform.childCount; i++)
                 {
                     GameObject v = RankedForest.transform.GetChild(i).gameObject;
-                    if (v.name.Contains(leavesName))
+                    if (v.name.Contains(LeavesName))
                     {
                         v.layer = 21;
                         leaves.Add(v);
