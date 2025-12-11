@@ -2504,6 +2504,7 @@ namespace iiMenu.Mods
                             infoBg.GetComponent<Renderer>().material.shader = LoadAsset<Shader>("Chams");
                             infoBg.GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
 
+                            // TODO: fix rounding for this object vvv
                             GameObject nameBg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                             nameBg.name = "namebg";
                             nameBg.transform.parent = bgContainer.transform;
