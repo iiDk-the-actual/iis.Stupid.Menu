@@ -2551,69 +2551,70 @@ namespace iiMenu.Menu
             if (outlineText)
                 OutlineCanvasObject(title, true);
 
-            Text buildLabel = new GameObject
+            if (!backgroundColor.transparent)
             {
-                transform =
+                Text buildLabel = new GameObject
+                {
+                    transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
-            buildLabel.font = activeFont;
-            buildLabel.text = $"Build {PluginInfo.Version}";
-            if (themeType == 30)
-                buildLabel.text = "";
+                }.AddComponent<Text>();
+                buildLabel.font = activeFont;
+                buildLabel.text = $"Build {PluginInfo.Version}";
 
-            if (translate)
-                buildLabel.text = TranslateText(buildLabel.text, output => ReloadMenu());
+                if (translate)
+                    buildLabel.text = TranslateText(buildLabel.text, output => ReloadMenu());
 
-            if (lowercaseMode)
-                buildLabel.text = buildLabel.text.ToLower();
+                if (lowercaseMode)
+                    buildLabel.text = buildLabel.text.ToLower();
 
-            if (uppercaseMode)
-                buildLabel.text = buildLabel.text.ToUpper();
+                if (uppercaseMode)
+                    buildLabel.text = buildLabel.text.ToUpper();
 
-            buildLabel.fontSize = 1;
-            buildLabel.AddComponent<TextColorChanger>().colors = textColors[0];
-            buildLabel.supportRichText = true;
-            buildLabel.fontStyle = activeFontStyle;
-            buildLabel.alignment = TextAnchor.MiddleRight;
-            buildLabel.resizeTextForBestFit = true;
-            buildLabel.resizeTextMinSize = 0;
-            component = buildLabel.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(0.28f, 0.02f);
-            component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
-            component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+                buildLabel.fontSize = 1;
+                buildLabel.AddComponent<TextColorChanger>().colors = textColors[0];
+                buildLabel.supportRichText = true;
+                buildLabel.fontStyle = activeFontStyle;
+                buildLabel.alignment = TextAnchor.MiddleRight;
+                buildLabel.resizeTextForBestFit = true;
+                buildLabel.resizeTextMinSize = 0;
+                component = buildLabel.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(0.28f, 0.02f);
+                component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
+                component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(buildLabel);
+                if (outlineText)
+                    OutlineCanvasObject(buildLabel);
 
-            Image watermarkImage = new GameObject
-            {
-                transform =
+                Image watermarkImage = new GameObject
+                {
+                    transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Image>();
+                }.AddComponent<Image>();
 
-            if (watermarkMat == null)
-                watermarkMat = new Material(watermarkImage.material);
+                if (watermarkMat == null)
+                    watermarkMat = new Material(watermarkImage.material);
 
-            watermarkImage.material = watermarkMat;
+                watermarkImage.material = watermarkMat;
 
-            RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
-            imageTransform.localPosition = Vector3.zero;
-            imageTransform.sizeDelta = new Vector2(.2f, .2f);
+                RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
+                imageTransform.localPosition = Vector3.zero;
+                imageTransform.sizeDelta = new Vector2(.2f, .2f);
 
-            imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
-            imageTransform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+                imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
+                imageTransform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
-            watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
 
-            if (customWatermark == null)
-                watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
-            else
-                watermarkImage.material.color = Color.white;
+                if (customWatermark == null)
+                    watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
+                else
+                    watermarkImage.material.color = Color.white;
+            }
 
             Text fps = new GameObject
             {
