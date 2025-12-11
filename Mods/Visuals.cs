@@ -2498,7 +2498,7 @@ namespace iiMenu.Mods
                             Object.Destroy(infoBg.GetComponent<Collider>());
                             LineRenderer rendererInfo = infoBg.AddComponent<LineRenderer>();
                             rendererInfo.material.shader = LoadAsset<Shader>("Chams");
-                            rendererInfo.material.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
+                            rendererInfo.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererInfo.numCapVertices = 10;
                             rendererInfo.numCornerVertices = 5;
                             rendererInfo.useWorldSpace = false;
@@ -2514,7 +2514,7 @@ namespace iiMenu.Mods
                             Object.Destroy(nameBg.GetComponent<Collider>());
                             LineRenderer rendererName = nameBg.AddComponent<LineRenderer>();
                             rendererName.material.shader = LoadAsset<Shader>("Chams");
-                            rendererName.material.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
+                            rendererName.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererName.numCapVertices = 10;
                             rendererName.numCornerVertices = 5;
                             rendererName.useWorldSpace = false;
@@ -2555,7 +2555,7 @@ namespace iiMenu.Mods
                         float nameBgHeight = nameTextWidth + 0.2f;
 
                         Color nameBgColor = DarkenColor(vrrig.playerColor);
-                        nameBgColor.a = 0.5f;
+                        nameBgColor.a = 0.6f;
                         nameBgTr.GetComponent<LineRenderer>().material.color = nameBgColor;
 
                         float finalScale = 0.25f * vrrig.scaleFactor;
