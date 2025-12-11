@@ -654,6 +654,9 @@ namespace iiMenu.Menu
                         fpsCount.text = fpsCount.text.ToUpper();
                 }
 
+                if (watermarkImage != null)
+                    watermarkImage.GetComponent<RectTransform>().localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
+
                 if (animatedTitle && title != null)
                 {
                     string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
@@ -2556,9 +2559,9 @@ namespace iiMenu.Menu
                 Text buildLabel = new GameObject
                 {
                     transform =
-                {
-                    parent = canvasObj.transform
-                }
+                    {
+                        parent = canvasObj.transform
+                    }
                 }.AddComponent<Text>();
                 buildLabel.font = activeFont;
                 buildLabel.text = $"Build {PluginInfo.Version}";
@@ -2588,27 +2591,30 @@ namespace iiMenu.Menu
                 if (outlineText)
                     OutlineCanvasObject(buildLabel);
 
-                Image watermarkImage = new GameObject
+                watermarkImage = new GameObject
                 {
                     transform =
-                {
-                    parent = canvasObj.transform
-                }
+                    {
+                        parent = canvasObj.transform
+                    }
                 }.AddComponent<Image>();
 
                 if (watermarkMat == null)
                     watermarkMat = new Material(watermarkImage.material);
 
                 watermarkImage.material = watermarkMat;
+                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
 
                 RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
                 imageTransform.localPosition = Vector3.zero;
-                imageTransform.sizeDelta = new Vector2(.2f, .2f);
+                imageTransform.sizeDelta = new Vector2(.15f, .15f);
 
                 imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
-                imageTransform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
-                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+                if (outlineText)
+                    OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
+
+                imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
                 if (customWatermark == null)
                     watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
@@ -3738,7 +3744,7 @@ namespace iiMenu.Menu
         }
 
         private static readonly List<Material> imageMaterials = new List<Material>();
-        public static void OutlineCanvasObject(Image image, int index, bool parent = false)
+        public static void OutlineCanvasObject(Image image, int index, bool parent = false, bool reloadMainTexture = false, float outlinePower = 0.001f)
         {
             while (imageMaterials.Count <= index)
                 imageMaterials.Add(null);
@@ -3754,21 +3760,27 @@ namespace iiMenu.Menu
                 material.EnableKeyword("_ALPHABLEND_ON");
                 material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
 
-                material.mainTexture = image.material.mainTexture;
+                if (!reloadMainTexture)
+                    material.mainTexture = image.material.mainTexture;
 
                 imageMaterials[index] = material;
             }
 
             Material targetMaterial = imageMaterials[index];
+            if (reloadMainTexture)
+                targetMaterial.mainTexture = image.material.mainTexture;
+
             Image baseImage = Instantiate(image, image.transform.parent, false);
             if (baseImage.TryGetComponent<ImageColorChanger>(out var imageColorChanger))
                 Destroy(imageColorChanger);
 
-            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
+            foreach (Vector3 offset in 
+                parent ? new[] { new Vector3(1f, 1f, 0f), new Vector3(-1f, 1f, 0f), new Vector3(1f, -1f, 0f), new Vector3(-1f, -1f, 0f) }
+                : new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
             {
                 Image newImage = Instantiate(baseImage, baseImage.transform.parent, false);
 
-                newImage.rectTransform.localPosition = image.rectTransform.localPosition + offset * 0.001f;
+                newImage.rectTransform.localPosition = image.rectTransform.localPosition + offset * outlinePower;
                 
                 newImage.material = targetMaterial;
                 newImage.color = Color.black;
@@ -6773,6 +6785,7 @@ jgs \_   _/ |Oo\
         public static bool checkMode;
         public static bool lastChecker;
         public static bool highQualityText;
+        public static bool rockWatermark = true;
         public static string CosmeticsOwned;
 
         public static Vector3 MidPosition;
@@ -6929,6 +6942,7 @@ jgs \_   _/ |Oo\
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
         public static Text fpsCount;
+        public static Image watermarkImage;
         private static float fpsAvgTime;
         private static float fpsAverageNumber;
         public static bool fpsCountTimed;

@@ -191,7 +191,7 @@ namespace iiMenu.Menu
                 }
 
                 Matrix4x4 matrix = GUI.matrix;
-                GUIUtility.RotateAroundPivot(Mathf.Sin(Time.time * 2f) * 10f, iconRect.center);
+                GUIUtility.RotateAroundPivot(rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f, iconRect.center);
 
                 if (customWatermark)
                 {
