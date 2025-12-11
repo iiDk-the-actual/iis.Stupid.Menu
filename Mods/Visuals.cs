@@ -2409,17 +2409,13 @@ namespace iiMenu.Mods
         {
             string platform = vrrig.GetPlatform();
 
-            switch (platform)
+            return platform switch
             {
-                case "PC":
-                    return "<color=cyan>PC</color>";
-                case "Steam":
-                    return "<color=blue>Steam</color>";
-                case "Standalone":
-                    return "<color=green>Standalone</color>";
-                default:
-                    return platform;
-            }
+                "PC" => "<color=cyan>PC</color>",
+                "Steam" => "<color=blue>Steam</color>",
+                "Standalone" => "<color=green>Standalone</color>",
+                _ => platform,
+            };
         }
 
         public static string GetPrettyPing(VRRig vrrig)
@@ -3965,7 +3961,7 @@ namespace iiMenu.Mods
 
         public static Shader uberChams;
 
-        private static Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
+        private static readonly Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
 
         public static void Chams()
         {
