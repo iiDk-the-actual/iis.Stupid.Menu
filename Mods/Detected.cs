@@ -30,7 +30,9 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -719,6 +721,42 @@ namespace iiMenu.Mods
                 yield return null;
             
             Patches.Menu.GameModePatch.enabled = false;
+        }
+
+        public static string name = "GOLDENTROPHY";
+
+        public static void PromptNameChange()
+        {
+            Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
+        }
+            
+        public static void ChangeNameGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        Player player = gunTarget.GetPlayer().GetPlayer();
+                        player.NickName = name;
+                        player.SetPlayerNameProperty();
+                    }
+                }
+            }
+        }
+
+        public static void ChangeNameAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerListOthers)
+            {
+                player.NickName = name;
+                player.SetPlayerNameProperty();
+            }
         }
 
         public static void BreakNetworkTriggers()
