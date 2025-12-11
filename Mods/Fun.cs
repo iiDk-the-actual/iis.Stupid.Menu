@@ -4577,6 +4577,8 @@ Piece Name: {gunTarget.name}";
                     if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
                         position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * 2.5f;
 
+                    pieceId = piece.pieceId;
+
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, velocity ?? Vector3.zero, angVelocity ?? Vector3.zero);
                 }
@@ -5177,47 +5179,48 @@ Piece Name: {gunTarget.name}";
             yield return null;
         }
 
-        private static bool lastgripcrap;
-        private static bool lasttrigcrap;
+        private static bool previousGripDown;
+        private static bool previousTriggerDown;
         public static void Shotgun()
         {
             if (isFiring)
                 ControllerInputPoller.instance.leftControllerGripFloat = 1f;
 
-            if (rightGrab && !lastgripcrap)
+            if (rightGrab && !previousGripDown)
                 CoroutineManager.instance.StartCoroutine(CreateShotgun());
 
-            if (rightGrab && rightTrigger > 0.5f && !lasttrigcrap)
+            if (rightGrab && rightTrigger > 0.5f && !previousTriggerDown)
                 CoroutineManager.instance.StartCoroutine(FireShotgun());
 
-            lastgripcrap = rightGrab;
-            lasttrigcrap = rightTrigger > 0.5f;
+            previousGripDown = rightGrab;
+            previousTriggerDown = rightTrigger > 0.5f;
         }
 
         public static IEnumerator CreateMassiveBlock()
         {
             VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 2;
-            yield return new WaitForSeconds(0.55f);
+            yield return new WaitForSeconds(0.6f);
 
             BuilderPiece stupid = null;
 
             yield return CreateGetPiece(pieceIdSet, piece => stupid = piece);
             while (stupid == null)
                 yield return null;
-            
+
+            RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
+
             yield return new WaitForSeconds(0.2f);
 
             VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
             yield return null;
-            RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
         }
 
         public static void MassiveBlock()
         {
-            if (rightGrab && !lastgripcrap)
+            if (rightGrab && !previousGripDown)
                 CoroutineManager.instance.StartCoroutine(CreateMassiveBlock());
 
-            lastgripcrap = rightGrab;
+            previousGripDown = rightGrab;
         }
 
         public static void AtticSizeToggle()
