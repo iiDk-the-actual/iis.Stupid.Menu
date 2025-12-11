@@ -5360,6 +5360,9 @@ namespace iiMenu.Menu
             return Color.HSVToRGB(h, s, v);
         }
 
+        public static Color DarkenColor(Color color, float intensity = 0.5f) =>
+            new Color(color.r * intensity, color.g * intensity, color.b * intensity, color.a);
+
         // To get the optimal delay from call limiter
         public static float GetCallLimiterDelay(CallLimiter limiter) =>
             limiter.timeCooldown / limiter.callHistoryLength;
