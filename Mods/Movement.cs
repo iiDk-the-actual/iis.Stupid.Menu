@@ -4055,8 +4055,8 @@ namespace iiMenu.Mods
 
         public static void StickLongArms()
         {
-            GTPlayer.Instance.GetControllerTransform(true).transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
-            GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
+            GTPlayer.Instance.GetControllerTransform(true).transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * ((armlength - 0.917f) * GTPlayer.Instance.scale);
+            GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * ((armlength - 0.917f) * GTPlayer.Instance.scale);
         }
 
         public static bool passWorldScaleCheck;
