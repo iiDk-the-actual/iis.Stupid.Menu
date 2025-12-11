@@ -440,7 +440,7 @@ namespace iiMenu.Mods
         private static Texture2D tapTxt;
         private static Texture2D warningTxt;
 
-        private static readonly List<object[]> handTaps = new List<object[]>();
+        private static readonly Dictionary<VRRig, object[]> handTaps = new Dictionary<VRRig, object[]>();
         public static void OnHandTapGamesenseRing(VRRig rig, Vector3 position)
         {
             if (rig.isLocal)
@@ -449,13 +449,13 @@ namespace iiMenu.Mods
             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 20f)
                 return;
 
-            handTaps.Add(new object[]
+            handTaps[rig] = new object[]
             {
                 rig,
                 position,
                 Time.time,
                 null
-            });
+            };
         }
 
         public static void GamesenseRing()
@@ -464,10 +464,12 @@ namespace iiMenu.Mods
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
 
-            List<object[]> toRemove = new List<object[]>();
+            List<VRRig> toRemove = new List<VRRig>();
+            List<object[]> handTapValues = handTaps.Values.ToList();
+
             for (int i = 0; i < handTaps.Count; i++)
             {
-                object[] handTapData = handTaps[i];
+                object[] handTapData = handTapValues[i];
                 VRRig rig = (VRRig)handTapData[0];
                 Vector3 position = (Vector3)handTapData[1];
 
@@ -476,7 +478,7 @@ namespace iiMenu.Mods
 
                 if (Time.time > timestamp + 1f)
                 {
-                    toRemove.Add(handTapData);
+                    toRemove.Add(rig);
                     continue;
                 }
 
@@ -514,12 +516,11 @@ namespace iiMenu.Mods
                     if (tt)
                         targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, 0.5f);
 
-
                     gameObject.GetComponent<Renderer>().material = tapMat;
                     gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? PlayerIsTagged(rig) ? tapTxt : warningTxt : PlayerIsTagged(rig) ? warningTxt : tapTxt;
                     gameObject.GetComponent<Renderer>().material.color = targetColor;
 
-                    handTaps[i][3] = gameObject;
+                    handTaps[rig][3] = gameObject;
                 }
 
                 Renderer renderer = gameObject.GetComponent<Renderer>();
@@ -555,11 +556,12 @@ namespace iiMenu.Mods
                 gameObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.01f);
             }
 
-            foreach (object[] removal in toRemove)
+            foreach (VRRig removal in toRemove)
             {
+                if ((GameObject)handTaps[removal][3] != null)
+                    Object.Destroy((GameObject)handTaps[removal][3]);
+
                 handTaps.Remove(removal);
-                if ((GameObject)removal[3] != null)
-                    Object.Destroy((GameObject)removal[3]);
             }
         }
 
@@ -567,12 +569,10 @@ namespace iiMenu.Mods
         {
             HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
 
-            foreach (object[] handTapData in handTaps)
+            foreach (VRRig removal in handTaps.Keys.ToList())
             {
-                GameObject gameObject = (GameObject)handTapData[3] ?? null;
-
-                if (gameObject != null)
-                    Object.Destroy(gameObject);
+                if ((GameObject)handTaps[removal][3] != null)
+                    Object.Destroy((GameObject)handTaps[removal][3]);
             }
 
             handTaps.Clear();
