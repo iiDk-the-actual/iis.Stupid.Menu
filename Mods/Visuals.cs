@@ -2471,7 +2471,7 @@ namespace iiMenu.Mods
                             infoTag.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
                             infoTag.transform.localScale = Vector3.one;
                             TextMesh infoMesh = infoTag.AddComponent<TextMesh>();
-                            infoMesh.fontSize = 36;
+                            infoMesh.fontSize = 24;
                             infoMesh.characterSize = 0.1f;
                             infoMesh.anchor = TextAnchor.MiddleCenter;
                             infoMesh.alignment = TextAlignment.Center;
@@ -2483,7 +2483,7 @@ namespace iiMenu.Mods
                             nameTag.transform.localPosition = Vector3.zero;
                             nameTag.transform.localScale = Vector3.one;
                             TextMesh nameMesh = nameTag.AddComponent<TextMesh>();
-                            nameMesh.fontSize = 48;
+                            nameMesh.fontSize = 32;
                             nameMesh.characterSize = 0.1f;
                             nameMesh.anchor = TextAnchor.MiddleCenter;
                             nameMesh.alignment = TextAlignment.Center;
@@ -2503,8 +2503,8 @@ namespace iiMenu.Mods
                             rendererInfo.numCornerVertices = 5;
                             rendererInfo.useWorldSpace = false;
                             rendererInfo.positionCount = 2;
-                            rendererInfo.startWidth = 0.08f;
-                            rendererInfo.endWidth = 0.08f;
+                            rendererInfo.startWidth = 0.05f;
+                            rendererInfo.endWidth = 0.05f;
 
                             GameObject nameBg = new GameObject("namebg");
                             nameBg.transform.parent = bgContainer.transform;
@@ -2519,8 +2519,8 @@ namespace iiMenu.Mods
                             rendererName.numCornerVertices = 5;
                             rendererName.useWorldSpace = false;
                             rendererName.positionCount = 2;
-                            rendererName.startWidth = 0.15f;
-                            rendererName.endWidth = 0.15f;
+                            rendererName.startWidth = 0.1f;
+                            rendererName.endWidth = 0.1f;
 
                             compactNameTags.Add(vrrig, textContainer);
                             compactTagBackgrounds.Add(vrrig, bgContainer);
@@ -2558,7 +2558,7 @@ namespace iiMenu.Mods
                         nameBgColor.a = 0.6f;
                         nameBgTr.GetComponent<LineRenderer>().material.color = nameBgColor;
 
-                        float finalScale = 0.25f * vrrig.scaleFactor;
+                        float finalScale = 0.15f * vrrig.scaleFactor;
                         textCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
                         bgCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
 
