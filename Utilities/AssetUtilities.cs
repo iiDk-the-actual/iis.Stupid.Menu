@@ -140,8 +140,6 @@ namespace iiMenu.Utilities
                 // ReSharper disable once AssignNullToNotNullAttribute
                 Directory.CreateDirectory(directory);
 
-            Texture2D texture = new Texture2D(2, 2);
-
             if (!File.Exists(filePath))
             {
                 LogManager.Log("Downloading " + fileName);
@@ -149,10 +147,30 @@ namespace iiMenu.Utilities
                 stream.DownloadFile(resourcePath, filePath);
             }
 
+            Texture2D texture = LoadTextureFromFile(fileName);
+
+            textureUrlDictionary[resourcePath] = texture;
+
+            return texture;
+        }
+
+        public static readonly Dictionary<string, Texture2D> textureFileDirectory = new Dictionary<string, Texture2D>();
+        public static Texture2D LoadTextureFromFile(string fileName)
+        {
+            if (textureFileDirectory.TryGetValue(fileName, out Texture2D existingTexture))
+                return existingTexture;
+
+            string filePath = $"{PluginInfo.BaseDirectory}/{fileName}";
+            string directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            Texture2D texture = new Texture2D(2, 2);
+
             byte[] bytes = File.ReadAllBytes(filePath);
             texture.LoadImage(bytes);
 
-            textureUrlDictionary[resourcePath] = texture;
+            textureFileDirectory[fileName] = texture;
 
             return texture;
         }
