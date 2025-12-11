@@ -51,15 +51,12 @@ namespace iiMenu.Menu
 
         public static Texture2D icon;
 
-        // Cached values to avoid recalculation
         private readonly string hideGUIPath = $"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt";
         private Color cachedGuiColor;
-        private bool guiColorDirty = true;
         private string cachedRoomText;
         private float roomTextUpdateTimer;
         private const float RoomTextUpdateInterval = 0.5f;
 
-        // Cached GUI positions
         private Rect boxRect, inputRect, rRect, gRect, bRect;
         private Rect nameButtonRect, colorButtonRect, joinButtonRect, queueButtonRect;
         private Rect iconRect, versionLabelRect;
@@ -140,12 +137,9 @@ namespace iiMenu.Menu
 
         private void UpdateGuiColor()
         {
-            if (!guiColorDirty) return;
-
             cachedGuiColor = Buttons.GetIndex("Swap GUI Colors").enabled
                 ? textColors[1].GetCurrentColor()
                 : backgroundColor.GetCurrentColor();
-            guiColorDirty = false;
         }
 
         private void DrawRoomText()
