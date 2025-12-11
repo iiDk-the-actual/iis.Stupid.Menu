@@ -2958,23 +2958,21 @@ namespace iiMenu.Mods
         private static float timeSinceCallInvalidated;
         public static void DisableSnowballImpactEffect()
         {
-            if (PhotonNetwork.InRoom && Time.time < snowballDelay + 0.1f && Time.time > timeSinceCallInvalidated)
+            if (PhotonNetwork.InRoom && Time.time < snowballDelay + 0.15f && Time.time > timeSinceCallInvalidated)
             {
-                timeSinceCallInvalidated = Time.time + 1f;
-                
-                for (int i = 0; i < 11; i++)
-                {
-                    object[] playerEffectData = new object[6];
-                    playerEffectData[0] = -1;
-                    playerEffectData[1] = -1;
+                timeSinceCallInvalidated = Time.time + RoomSystem.callbackInstance.roomSettings.PlayerEffectLimiter.timeCooldown;
 
-                    object[] sendEventData = new object[3];
-                    sendEventData[0] = NetworkSystem.Instance.ServerTimestamp - (11 - i);
-                    sendEventData[1] = (byte)6;
-                    sendEventData[2] = playerEffectData;
+                object[] playerEffectData = new object[6];
+                playerEffectData[0] = -1;
+                playerEffectData[1] = -1;
 
-                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
-                }
+                object[] sendEventData = new object[3];
+                sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
+                sendEventData[1] = (byte)6;
+                sendEventData[2] = playerEffectData;
+
+                PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+
                 RPCProtection();
             }
         }
