@@ -1600,88 +1600,89 @@ namespace iiMenu.Mods
                     return blaster;
                 else
                     entity.RequestThrow(true, entity.transform.position, entity.transform.rotation, Vector3.zero, Vector3.zero, gameEntityManager);
-            }
-
-            if (NetworkSystem.Instance.IsMasterClient)
+            } else
             {
-                if (Time.time < ghostReactorDelay)
-                    return null;
-
-                ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
-
-                int netId = gameEntityManager.CreateNetId();
-
-                object[] createData = {
-                    new[] { netId },
-                    new[] { hash },
-                    new[] { BitPackUtils.PackWorldPosForNetwork(GorillaTagger.Instance.leftHandTransform.position) },
-                    new[] { BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.leftHandTransform.rotation) },
-                    new[] { 0L }
-                };
-
-                gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
-                gameEntityManager.GetGameEntity(netId).RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
-
-                RPCProtection();
-            }
-            else
-            {
-                Vector3 position = GorillaTagger.Instance.leftHandTransform.position;
-
-                float maxDistance = 12f;
-                if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
-                    position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
-
-                List<GameEntity> entities = gameEntityManager.entities.Where(e =>
-                    e != null &&
-                    e.typeId == hash &&
-                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
-                    Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, e.transform.position) > 3f &&
-                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
-
-                if (entities.Count <= 0)
-                    entities = gameEntityManager.entities.Where(e =>
-                    e != null &&
-                    e.typeId == hash &&
-                    Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
-                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
-
-                if (entities.Count <= 0)
-                    entities = gameEntityManager.entities.Where(e =>
-                    e != null &&
-                    e.typeId == hash &&
-                    gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
-
-                if (entities.Count <= 0) // Desperate measures
-                    entities = gameEntityManager.entities.Where(e =>
-                    e != null &&
-                    e.typeId == hash).ToList();
-
-                if (entities.Count <= 0)
-                    return null;
-
-                GameEntity entity = entities.OrderByDescending(entity => entity.transform.position.Distance(GorillaTagger.Instance.bodyCollider.transform.position)).FirstOrDefault();
-
-                if (Vector3.Distance(entity.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > maxDistance)
+                if (NetworkSystem.Instance.IsMasterClient)
                 {
-                    VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = entity.transform.position - Vector3.one * 5f;
+                    if (Time.time < ghostReactorDelay)
+                        return null;
 
-                    if (CritterCoroutine != null)
-                        CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+                    ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
 
-                    CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
-                }
+                    int netId = gameEntityManager.CreateNetId();
 
-                if (Vector3.Distance(entity.transform.position, ServerPos) < maxDistance && Time.time > ghostReactorDelay)
-                {
-                    ghostReactorDelay = Time.time + 0.1f;
+                    object[] createData = {
+                        new[] { netId },
+                        new[] { hash },
+                        new[] { BitPackUtils.PackWorldPosForNetwork(GorillaTagger.Instance.leftHandTransform.position) },
+                        new[] { BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.leftHandTransform.rotation) },
+                        new[] { 0L }
+                    };
 
-                    entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    entity.transform.rotation = RandomQuaternion();
+                    gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
+                    gameEntityManager.GetGameEntity(netId).RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
 
-                    entity.RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
                     RPCProtection();
+                }
+                else
+                {
+                    Vector3 position = GorillaTagger.Instance.leftHandTransform.position;
+
+                    float maxDistance = 12f;
+                    if (Vector3.Distance(ServerLeftHandPos, position) > maxDistance)
+                        position = ServerLeftHandPos + (position - ServerLeftHandPos).normalized * maxDistance;
+
+                    List<GameEntity> entities = gameEntityManager.entities.Where(e =>
+                        e != null &&
+                        e.typeId == hash &&
+                        Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
+                        Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, e.transform.position) > 3f &&
+                        gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                    if (entities.Count <= 0)
+                        entities = gameEntityManager.entities.Where(e =>
+                        e != null &&
+                        e.typeId == hash &&
+                        Vector3.Distance(ServerLeftHandPos, e.transform.position) < maxDistance &&
+                        gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                    if (entities.Count <= 0)
+                        entities = gameEntityManager.entities.Where(e =>
+                        e != null &&
+                        e.typeId == hash &&
+                        gameEntityManager.ValidateGrab(e, PhotonNetwork.LocalPlayer.actorNumber, true)).ToList();
+
+                    if (entities.Count <= 0) // Desperate measures
+                        entities = gameEntityManager.entities.Where(e =>
+                        e != null &&
+                        e.typeId == hash).ToList();
+
+                    if (entities.Count <= 0)
+                        return null;
+
+                    GameEntity entity = entities.OrderByDescending(entity => entity.transform.position.Distance(GorillaTagger.Instance.bodyCollider.transform.position)).FirstOrDefault();
+
+                    if (Vector3.Distance(entity.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > maxDistance)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = entity.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(entity.transform.position, ServerPos) < maxDistance && Time.time > ghostReactorDelay)
+                    {
+                        ghostReactorDelay = Time.time + 0.1f;
+
+                        entity.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        entity.transform.rotation = RandomQuaternion();
+
+                        entity.RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
+                        RPCProtection();
+                    }
                 }
             }
 
