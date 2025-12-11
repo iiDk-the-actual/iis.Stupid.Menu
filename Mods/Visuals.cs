@@ -2540,13 +2540,13 @@ namespace iiMenu.Mods
                         string playerName = CleanPlayerName(vrrig.GetPlayer().NickName);
                         nameTextTr.GetComponent<TextMesh>().text = playerName;
                         nameTextTr.GetComponent<TextMesh>().fontStyle = activeFontStyle;
-                        nameTextTr.GetComponent<TextMesh>().color = DarkenColor(vrrig.playerColor);
+                        nameTextTr.GetComponent<TextMesh>().color = vrrig.playerColor;
 
                         TextMesh nameTm = nameTextTr.GetComponent<TextMesh>();
                         float nameTextWidth = playerName.Length * nameTm.characterSize * nameTm.fontSize * 0.009f;
                         float nameBgHeight = nameTextWidth + 0.2f;
 
-                        Color nameBgColor = vrrig.playerColor;
+                        Color nameBgColor = DarkenColor(vrrig.playerColor);
                         nameBgColor.a = 0.5f;
                         nameBgTr.GetComponent<Renderer>().material.color = nameBgColor;
 
