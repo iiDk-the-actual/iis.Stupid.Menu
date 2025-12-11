@@ -5489,13 +5489,6 @@ exit 0";
                 } catch { }
             }
 
-            disableBoardColor = true;
-            motd.SetActive(false);
-            motdText.SetActive(false);
-
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(true);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(true);
-
             var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
                            .Where(x => x.name.Contains("UnityTempFile"))
                            .ToList();
@@ -5522,6 +5515,16 @@ exit 0";
                 Object.Destroy(board);
 
             objectBoards.Clear();
+        }
+
+        public static void ConstantDisableBoardColors()
+        {
+            disableBoardColor = true;
+            motd.SetActive(false);
+            motdText.SetActive(false);
+
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(true);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(true);
         }
 
         public static void EnableBoardColors()
