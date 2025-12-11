@@ -3970,21 +3970,28 @@ exit 0";
 
         public static void CustomMenuBackground()
         {
-            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt"))
-                File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt", "");
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/CustomBackground.png"))
+                LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/CustomBackground.png", "CustomBackground.png"); // Do not move outside of its path
 
-            if (File.Exists($"{PluginInfo.BaseDirectory}/MenuBG.png"))
-                File.Delete($"{PluginInfo.BaseDirectory}/MenuBG.png");
-            
+            textureFileDirectory.Remove("CustomBackground.png");
+
             doCustomMenuBackground = true;
-            customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
-            ReloadMenu();
+            customMenuBackgroundImage = LoadTextureFromFile("CustomBackground.png");
         }
 
         public static void FixMenuBackground()
         {
             customMenuBackgroundImage = null;
             doCustomMenuBackground = false;
+        }
+
+        public static void CustomWatermark()
+        {
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/CustomWatermark.png"))
+                LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/CustomWatermark.png", "CustomWatermark.png"); // Do not move outside of its path
+
+            textureFileDirectory.Remove("CustomWatermark.png");
+            customWatermark = LoadTextureFromFile("CustomWatermark.png");
         }
 
         public static void ChangePageType(bool positive = true)

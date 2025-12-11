@@ -198,7 +198,16 @@ namespace iiMenu.Menu
 
                 Matrix4x4 matrix = GUI.matrix;
                 GUIUtility.RotateAroundPivot(Mathf.Sin(Time.time * 2f) * 10f, iconRect.center);
-                GUI.DrawTexture(iconRect, icon);
+
+                if (customWatermark)
+                {
+                    Color color = GUI.color;
+                    GUI.color = Color.white;
+                    GUI.DrawTexture(iconRect, customWatermark);
+                    GUI.color = color;
+                } else 
+                    GUI.DrawTexture(iconRect, customWatermark ?? icon);
+
                 GUI.matrix = matrix;
 
                 GUIStyle style = new GUIStyle(GUI.skin.label)

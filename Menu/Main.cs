@@ -2583,12 +2583,38 @@ namespace iiMenu.Menu
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
             component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
-
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
             if (outlineText)
                 OutlineCanvasObject(buildLabel);
-            
+
+            Image watermarkImage = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Image>();
+
+            if (watermarkMat == null)
+                watermarkMat = new Material(watermarkImage.material);
+
+            watermarkImage.material = watermarkMat;
+
+            RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.2f, .2f);
+
+            imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
+            imageTransform.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
+
+            watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+
+            if (customWatermark == null)
+                watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
+            else
+                watermarkImage.material.color = Color.white;
+
             Text fps = new GameObject
             {
                 transform =
@@ -2619,14 +2645,10 @@ namespace iiMenu.Menu
             fps.horizontalOverflow = HorizontalWrapMode.Overflow;
             fps.resizeTextForBestFit = true;
             fps.resizeTextMinSize = 0;
-            RectTransform component2 = fps.GetComponent<RectTransform>();
-            component2.localPosition = Vector3.zero;
-            component2.sizeDelta = new Vector2(0.28f, 0.02f);
-            component2.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
-
-            if (NoAutoSizeText)
-                component2.sizeDelta = new Vector2(9f, 0.015f);
-            component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            RectTransform fpsTransform = fps.GetComponent<RectTransform>();
+            fpsTransform.sizeDelta = NoAutoSizeText ? new Vector2(9f, 0.015f) : new Vector2(0.28f, 0.02f);
+            fpsTransform.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
+            fpsTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
                 OutlineCanvasObject(fps, true);
@@ -2887,7 +2909,7 @@ namespace iiMenu.Menu
                         };
 
                         if (cann == null)
-                            cann = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/cannabis.png", "cannabis.png");
+                            cann = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/cannabis.png", "Images/Themes/cannabis.png");
 
                         cannmat.mainTexture = cann;
 
@@ -3687,7 +3709,7 @@ namespace iiMenu.Menu
         }
 
         public static readonly Material outlineMat = new Material(Shader.Find("Sprites/Default"));
-        public static void OutlineCanvasObject(Text text, bool clamp = false)
+        public static void OutlineCanvasObject(Text text, bool clamp = false, bool parent = false)
         {
             Text baseText = Instantiate(text, text.transform.parent, false);
             if (baseText.TryGetComponent<TextColorChanger>(out var textColorChanger))
@@ -3706,13 +3728,16 @@ namespace iiMenu.Menu
 
                 if (clamp)
                     newText.AddComponent<ClampText>().targetText = text;
+
+                if (parent)
+                    newText.transform.SetParent(text.transform, true);
             }
 
             Destroy(baseText);
         }
 
         private static readonly List<Material> imageMaterials = new List<Material>();
-        public static void OutlineCanvasObject(Image image, int index)
+        public static void OutlineCanvasObject(Image image, int index, bool parent = false)
         {
             while (imageMaterials.Count <= index)
                 imageMaterials.Add(null);
@@ -3748,6 +3773,9 @@ namespace iiMenu.Menu
                 newImage.color = Color.black;
 
                 newImage.material.renderQueue = image.material.renderQueue - 2;
+
+                if (parent)
+                    newImage.transform.SetParent(image.transform, true);
             }
 
             Destroy(baseImage);
@@ -6778,7 +6806,7 @@ jgs \_   _/ |Oo\
         public static bool NoAutoSizeText;
 
         public static bool doCustomName;
-        public static string customMenuName = "your text here";
+        public static string customMenuName = "Your Text Here";
         public static bool doCustomMenuBackground;
         public static bool disableBoardColor;
         public static bool disableBoardTextColor;
@@ -6917,6 +6945,7 @@ jgs \_   _/ |Oo\
         public static Material searchMat;
         public static Material updateMat;
         public static Material promptMat;
+        public static Material watermarkMat;
         public static Material returnMat;
         public static Material debugMat;
         public static Material donateMat;
@@ -6978,6 +7007,7 @@ jgs \_   _/ |Oo\
         public static Texture2D updateIcon;
         public static Texture2D fixTexture;
         public static Texture2D customMenuBackgroundImage;
+        public static Texture2D customWatermark;
 
         public static readonly List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
