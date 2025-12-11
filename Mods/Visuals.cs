@@ -2494,7 +2494,7 @@ namespace iiMenu.Mods
                             nameMesh.richText = true;
 
                             GameObject bgContainer = new GameObject("iimenu_vrctag_background");
-                            GameObject infoBg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            GameObject infoBg = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             infoBg.name = "infobg";
                             infoBg.transform.parent = bgContainer.transform;
                             infoBg.transform.localPosition = new Vector3(0f, 0.5f, 0f);  // change the y to make the info tag farther or closer to the nametag 
@@ -2505,7 +2505,7 @@ namespace iiMenu.Mods
                             infoBg.GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
 
                             // TODO: fix rounding for this object vvv
-                            GameObject nameBg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                            GameObject nameBg = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             nameBg.name = "namebg";
                             nameBg.transform.parent = bgContainer.transform;
                             nameBg.transform.localPosition = Vector3.zero;
@@ -2533,7 +2533,7 @@ namespace iiMenu.Mods
 
                         TextMesh tm = infoTextTr.GetComponent<TextMesh>();
                         string plainText = System.Text.RegularExpressions.Regex.Replace(tagText, "<.*?>", string.Empty);
-                        float textWidth = plainText.Length * tm.characterSize * tm.fontSize * 0.0065f;
+                        float textWidth = plainText.Length * tm.characterSize * tm.fontSize * 0.0125f;
                         float bgHeight = textWidth + 0.15f;
 
                         // nametag part inherits the player color
@@ -2543,7 +2543,7 @@ namespace iiMenu.Mods
                         nameTextTr.GetComponent<TextMesh>().color = vrrig.playerColor;
 
                         TextMesh nameTm = nameTextTr.GetComponent<TextMesh>();
-                        float nameTextWidth = playerName.Length * nameTm.characterSize * nameTm.fontSize * 0.009f;
+                        float nameTextWidth = playerName.Length * nameTm.characterSize * nameTm.fontSize * 0.0175f;
                         float nameBgHeight = nameTextWidth + 0.2f;
 
                         Color nameBgColor = DarkenColor(vrrig.playerColor);
@@ -2554,8 +2554,8 @@ namespace iiMenu.Mods
                         textCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
                         bgCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
 
-                        infoBgTr.localScale = new Vector3(0.04f / finalScale, (bgHeight * 0.5f) / finalScale, 0.04f / finalScale);
-                        nameBgTr.localScale = new Vector3(0.08f / finalScale, (nameBgHeight * 0.5f) / finalScale, 0.08f / finalScale);
+                        infoBgTr.localScale = new Vector3(0.04f / finalScale, (bgHeight * 0.5f) / finalScale, 0f);
+                        nameBgTr.localScale = new Vector3(0.08f / finalScale, (nameBgHeight * 0.5f) / finalScale, 0f);
 
                         Vector3 tagPosition = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
 

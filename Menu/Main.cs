@@ -3755,7 +3755,7 @@ namespace iiMenu.Menu
 
         public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
         {
-            if (toRound.transform.parent != menu.transform)
+            if (toRound.transform.parent != menu?.transform)
             {
                 RoundObjNonMenu(toRound, Bevel);
                 return;
