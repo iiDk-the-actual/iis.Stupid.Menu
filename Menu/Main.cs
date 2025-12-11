@@ -4551,6 +4551,49 @@ namespace iiMenu.Menu
 
                             break;
                         }
+
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                        {
+                            Dictionary<int, string> voiceCodenames = new Dictionary<int, string>
+                            {
+                                { 25, "Dog" },
+                                { 26, "Jerkface" },
+                                { 27, "Robot" },
+                                { 28, "Vlad" },
+                                { 29, "Obama" }
+                            };
+
+                            if (text.Length > 300)
+                                text = text[..300];
+
+                            using UnityWebRequest request = new UnityWebRequest("https://lazypy.ro/tts/request_tts.php?service=VoiceForge&voice=" + voiceCodenames[narratorIndex] + "&text=" + UnityWebRequest.EscapeURL(text), "POST");
+                            request.downloadHandler = new DownloadHandlerBuffer();
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error getting TTS: " + request.error);
+                                onComplete?.Invoke(null);
+                                yield break;
+                            }
+
+                            string jsonResponse = request.downloadHandler.text;
+                            var responseData = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResponse);
+
+                            using UnityWebRequest dataRequest = UnityWebRequest.Get(responseData["audio_url"].ToString().Replace("\\", ""));
+                            yield return dataRequest.SendWebRequest();
+
+                            if (dataRequest.result != UnityWebRequest.Result.Success)
+                                LogManager.LogError("Error downloading TTS: " + responseData["audio_url"]);
+                            else
+                                File.WriteAllBytes(filePath, dataRequest.downloadHandler.data);
+
+                            break;
+                        }
                 }
             }
 

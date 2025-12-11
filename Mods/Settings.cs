@@ -4282,7 +4282,12 @@ exit 0";
                 "Thanksgiving",
                 "Santa",
                 "Google US",
-                "Google UK"
+                "Google UK",
+                "Dog",
+                "Jerkface",
+                "Robot",
+                "Vlad",
+                "Obama"
             };
 
             if (positive)
