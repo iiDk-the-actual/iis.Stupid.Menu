@@ -2075,6 +2075,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TabletGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
+                    camera.visible = true;
+                    camera.recording = true;
+
+                    camera.m_CameraVisuals.SetVisualsActive(true);
+                    camera.m_CameraVisuals.SetRecordingState(true);
+
+                    camera.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                }
+            }
+        }
+
         public static void GliderGun()
         {
             if (GetGunInput(false))
@@ -3663,6 +3684,22 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void GrabTablet()
+        {
+            if (rightGrab)
+            {
+                LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
+                camera.visible = true;
+                camera.recording = true;
+
+                camera.m_CameraVisuals.SetVisualsActive(true);
+                camera.m_CameraVisuals.SetRecordingState(true);
+
+                camera.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                camera.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+            }
+        }
+
         public static void GrabGliders()
         {
             if (rightGrab)
@@ -3708,6 +3745,16 @@ Piece Name: {gunTarget.name}";
         public static void DestroyCamera()
         {
             LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedCococam").GetComponent<LckSocialCamera>();
+            camera.visible = false;
+            camera.recording = false;
+
+            camera.m_CameraVisuals.SetVisualsActive(false);
+            camera.m_CameraVisuals.SetRecordingState(false);
+        }
+
+        public static void DestroyTablet()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
             camera.visible = false;
             camera.recording = false;
 
@@ -4742,6 +4789,18 @@ Piece Name: {gunTarget.name}";
             camera.transform.rotation = RandomQuaternion();
         }
 
+        public static void SpazTablet()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
+
+            camera.transform.rotation = RandomQuaternion();
+        }
+
         public static void SpazGliders()
         {
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
@@ -4778,6 +4837,18 @@ Piece Name: {gunTarget.name}";
             camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(240f + (float)Time.frameCount / 30), 1, MathF.Sin(240f + (float)Time.frameCount / 30));
         }
 
+        public static void OrbitTablet()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(60f + (float)Time.frameCount / 30), 1, MathF.Sin(240f + (float)Time.frameCount / 30));
+        }
+
         public static void ObjectAura(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
@@ -4791,6 +4862,19 @@ Piece Name: {gunTarget.name}";
         public static void CameraAura()
         {
             LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedCococam").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+            camera.transform.rotation = RandomQuaternion();
+        }
+
+        public static void TabletAura()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
             camera.visible = true;
             camera.recording = true;
 
@@ -4900,6 +4984,22 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
 
             LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedCococam").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.m_CameraVisuals.SetVisualsActive(true);
+            camera.m_CameraVisuals.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+            camera.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+        }
+
+        public static void BecomeTablet()
+        {
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
             camera.visible = true;
             camera.recording = true;
 
