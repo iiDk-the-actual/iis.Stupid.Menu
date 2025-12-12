@@ -762,10 +762,6 @@ namespace iiMenu.Mods
 
         public static void GrabProjectile()
         {
-            int projIndex = projMode * 2;
-            if (Buttons.GetIndex("Random Projectile").enabled)
-                projIndex = Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
-
             HandleGrabProjectile(true);
             HandleGrabProjectile(false);
         }
