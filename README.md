@@ -59,7 +59,7 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 **🧱 From Source Code (for developers!)**
 
 1. Download the source code **[here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)**
-2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
+2. Edit `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot
 3. Build the project with `Ctrl + Shift + B`<Br>
 ✅ The DLL will automatically go into your Gorilla Tag plugins folder
 
