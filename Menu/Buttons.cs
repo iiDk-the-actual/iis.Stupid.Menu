@@ -1290,6 +1290,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
                 new ButtonInfo { buttonText = "Complete All Quests", method = Overpowered.CompleteAllQuests, isTogglable = false, toolTip = "Completes every quest in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Unlock All Gadgets", method = Overpowered.UnlockAllGadgets, toolTip = "Unlocks every gadget in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "No Blaster Cooldown", method =() => CooldownPatch.enabled = true, disableMethod =() => CooldownPatch.enabled = false, toolTip = "Removes the cooldown on the blaster."},
                 new ButtonInfo { buttonText = "Blaster Aimbot", enableMethod =() => FirePatch.enabled = true, method = Overpowered.DebugBlasterAimbot, disableMethod =() => FirePatch.enabled = false, toolTip = "Automatically aims the blaster towards players."},
@@ -1315,8 +1317,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blaster Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color> using the blasters." },
 
                 new ButtonInfo { buttonText = "Blaster Control Gun", method = Overpowered.BlasterControlGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
-
-                new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Stilt Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["StiltGadget FixedScaledLong"]), toolTip = "Spawns stilts out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Thruster Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["WristJetGadgetPropellor"]), toolTip = "Spawns thrusters out of your hand when holding <color=green>grip</color>."},
