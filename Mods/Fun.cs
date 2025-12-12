@@ -3159,7 +3159,7 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug("Floating Bug Holdable");
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
-            string projectileName = Projectiles.ProjectileObjectNames[Random.Range(1, Projectiles.ProjectileObjectNames.Length / 2) * 2];
+            string projectileName = Projectiles.ProjectileObjectNames[Projectiles.projMode * 2];
             
             if (rightGrab && Time.time > everythingSpamDelay)
             {
