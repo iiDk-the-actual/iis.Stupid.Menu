@@ -1102,7 +1102,7 @@ namespace iiMenu.Mods
                 sendData ??= Enumerable.Repeat(0L, hashes.Length).ToArray();
 
                 object[] createData = {
-                    netIds,
+                    netIds.ToArray(),
                     hashes,
                     positions.Select(position => BitPackUtils.PackWorldPosForNetwork(position)).ToArray(),
                     rotations.Select(rotation => BitPackUtils.PackQuaternionForNetwork(rotation)).ToArray(),
