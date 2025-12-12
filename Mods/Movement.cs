@@ -2426,7 +2426,7 @@ namespace iiMenu.Mods
         {
             if (zone == "VSTUMP")
             {
-                VirtualStumpTeleporter tele = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<VirtualStumpTeleporter>();
+                VirtualStumpTeleporter tele = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/VirtualStump_HeadsetTeleporter/TeleporterTrigger").GetComponent<VirtualStumpTeleporter>();
 
                 tele.gameObject.transform.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true); // wtf
                 tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true); 

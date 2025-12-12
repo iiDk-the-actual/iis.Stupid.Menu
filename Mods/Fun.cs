@@ -1308,7 +1308,7 @@ namespace iiMenu.Mods
                 spamDelay = Time.time + 0.1f;
                 returnOrTeleport = !returnOrTeleport;
 
-                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, returnOrTeleport, (short)Random.Range(0, 7));
+                GetObject("City_Pretty/CosmeticsScoreboardAnchor/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, returnOrTeleport, (short)Random.Range(0, 7));
                 RPCProtection();
             }
         }
