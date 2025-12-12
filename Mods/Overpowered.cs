@@ -1548,7 +1548,10 @@ namespace iiMenu.Mods
         {
             var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             for (int i = 0; i < SIProgression.Instance.activeQuestIds.Length; i++)
-                SIProgression.Instance.AttemptRedeemCompletedQuest(i);
+            {
+                RotatingQuest quest = SIProgression.Instance.questSourceList.GetQuestById(SIProgression.Instance.activeQuestIds[i]);
+                quest.SetProgress(quest.requiredOccurenceCount);
+            }
         }
 
         public static void ClaimAllTerminals()
