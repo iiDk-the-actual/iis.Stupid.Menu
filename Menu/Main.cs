@@ -292,9 +292,6 @@ namespace iiMenu.Menu
 
                         objectBoards.Clear();
 
-                        CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
-                        CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
-
                         var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
                            .Where(x => x.name.Contains("UnityTempFile"))
                            .ToList();
@@ -1051,39 +1048,6 @@ namespace iiMenu.Menu
 
                 if (Settings.TutorialObject != null)
                     Settings.UpdateTutorial();
-
-                try
-                {
-                    if (PhotonNetwork.InRoom)
-                    {
-                        foreach (string id in muteIDs)
-                        {
-                            if (mutedIDs.Contains(id)) continue;
-                            string randomName = "gorilla";
-                            for (var i = 0; i < 4; i++)
-                                randomName += Random.Range(0, 9).ToString();
-
-                            object[] content = {
-                                id,
-                                true,
-                                randomName,
-                                NetworkSystem.Instance.LocalPlayer.NickName,
-                                true,
-                                NetworkSystem.Instance.RoomStringStripped()
-                            };
-
-                            PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
-                            {
-                                TargetActors = new[] { -1 },
-                                Receivers = ReceiverGroup.All,
-                                Flags = new WebFlags(1)
-                            }, SendOptions.SendReliable);
-
-                            mutedIDs.Add(id);
-                        }
-                    }
-                }
-                catch { }
 
                 ServerPos = ServerPos == Vector3.zero ? ServerSyncPos : Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
                 ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
@@ -2591,35 +2555,38 @@ namespace iiMenu.Menu
                 if (outlineText)
                     OutlineCanvasObject(buildLabel);
 
-                watermarkImage = new GameObject
+                if (!disableWatermark)
                 {
-                    transform =
+                    watermarkImage = new GameObject
+                    {
+                        transform =
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Image>();
+                    }.AddComponent<Image>();
 
-                if (watermarkMat == null)
-                    watermarkMat = new Material(watermarkImage.material);
+                    if (watermarkMat == null)
+                        watermarkMat = new Material(watermarkImage.material);
 
-                watermarkImage.material = watermarkMat;
-                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+                    watermarkImage.material = watermarkMat;
+                    watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
 
-                RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
-                imageTransform.localPosition = Vector3.zero;
-                imageTransform.sizeDelta = new Vector2(.15f, .15f);
+                    RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
+                    imageTransform.localPosition = Vector3.zero;
+                    imageTransform.sizeDelta = new Vector2(.15f, .15f);
 
-                imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
+                    imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
 
-                if (outlineText)
-                    OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
+                    if (outlineText)
+                        OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
 
-                imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
+                    imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
-                if (customWatermark == null)
-                    watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
-                else
-                    watermarkImage.material.color = Color.white;
+                    if (customWatermark == null)
+                        watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
+                    else
+                        watermarkImage.material.color = Color.white;
+                }
             }
 
             Text fps = new GameObject
@@ -5537,27 +5504,40 @@ namespace iiMenu.Menu
                 new Vector3(-22.1964f, -24.5091f, 0.57f),
                 new Vector3(270.1856f, 0.1f, 0f),
                 new Vector3(21.6f, 1.2f, 20.8f)
+            ),
+            ["City"] = new BoardInformation(
+                "City_Pretty/CosmeticsScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -34.9f, 0.57f),
+                new Vector3(270f, 0f, 0f),
+                new Vector3(21.6f, 2.4f, 22f)
             )
         };
 
         public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
         {
-            if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+            try
             {
-                Destroy(existingBoard);
-                objectBoards.Remove(scene);
+                if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+                {
+                    Destroy(existingBoard);
+                    objectBoards.Remove(scene);
+                }
+
+                GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                board.transform.parent = GetObject(gameObject).transform;
+                board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
+                board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
+                board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
+
+                Destroy(board.GetComponent<Collider>());
+                board.GetComponent<Renderer>().material = OrangeUI;
+
+                objectBoards.Add(scene, board);
+            } catch (Exception e)
+            {
+                LogManager.LogError($"Failed to create object board for scene {scene}: {e}");
+                return;
             }
-
-            GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            board.transform.parent = GetObject(gameObject).transform;
-            board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
-            board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
-            board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
-
-            Destroy(board.GetComponent<Collider>());
-            board.GetComponent<Renderer>().material = OrangeUI;
-
-            objectBoards.Add(scene, board);
         }
 
         public static bool inRoomStatus;
@@ -6786,6 +6766,7 @@ jgs \_   _/ |Oo\
         public static bool lastChecker;
         public static bool highQualityText;
         public static bool rockWatermark = true;
+        public static bool disableWatermark;
         public static string CosmeticsOwned;
 
         public static Vector3 MidPosition;
@@ -7032,15 +7013,12 @@ jgs \_   _/ |Oo\
         public static GameObject computerMonitor;
 
         public static readonly int StumpLeaderboardIndex = 4;
-        public static readonly int ForestLeaderboardIndex = 8;
+        public static readonly int ForestLeaderboardIndex = 10;
         
         public static Material[] ogScreenMats = { };
 
         public static bool translate;
         public static string language;
-
-        public static List<string> muteIDs = new List<string>();
-        public static readonly List<string> mutedIDs = new List<string>();
 
         public static string serverLink = "https://discord.gg/iidk";
 

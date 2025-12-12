@@ -1102,7 +1102,7 @@ namespace iiMenu.Mods
                 sendData ??= Enumerable.Repeat(0L, hashes.Length).ToArray();
 
                 object[] createData = {
-                    netIds,
+                    netIds.ToArray(),
                     hashes,
                     positions.Select(position => BitPackUtils.PackWorldPosForNetwork(position)).ToArray(),
                     rotations.Select(rotation => BitPackUtils.PackQuaternionForNetwork(rotation)).ToArray(),
@@ -1548,13 +1548,25 @@ namespace iiMenu.Mods
         {
             var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             for (int i = 0; i < SIProgression.Instance.activeQuestIds.Length; i++)
-                SIProgression.Instance.AttemptRedeemCompletedQuest(i);
+            {
+                RotatingQuest quest = SIProgression.Instance.questSourceList.GetQuestById(SIProgression.Instance.activeQuestIds[i]);
+                quest.SetProgress(quest.requiredOccurenceCount);
+            }
         }
 
         public static void ClaimAllTerminals()
         {
             foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
                 terminal?.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+        }
+
+        public static void UnlockAllGadgets()
+        {
+            foreach (var page in SIProgression.Instance.unlockedTechTreeData)
+            {
+                for (int i = 0; i < page.Length; i++)
+                    page[i] = true;
+            }
         }
 
         public static void DebugBlasterAimbot()
@@ -1584,6 +1596,9 @@ namespace iiMenu.Mods
             VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
         }
 
+        public static int? spawnedNetId;
+        public static int spawnedFrame;
+
         public static SIGadgetChargeBlaster GetBlaster()
         {
             ControllerInputPoller.instance.leftGrab = true;
@@ -1604,6 +1619,14 @@ namespace iiMenu.Mods
             {
                 if (NetworkSystem.Instance.IsMasterClient)
                 {
+                    if (spawnedNetId != null && spawnedFrame > Time.frameCount - 10)
+                    {
+                        GameEntity entity = gameEntityManager.GetGameEntity(spawnedNetId.Value);
+                        entity.RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
+                        if (entity.gameObject.TryGetComponent<SIGadgetChargeBlaster>(out var blaster))
+                            return blaster;
+                    }
+
                     if (Time.time < ghostReactorDelay)
                         return null;
 
@@ -1620,7 +1643,8 @@ namespace iiMenu.Mods
                     };
 
                     gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);
-                    gameEntityManager.GetGameEntity(netId).RequestGrab(true, Vector3.zero, Quaternion.identity, gameEntityManager);
+                    spawnedNetId = netId;
+                    spawnedFrame = Time.frameCount;
 
                     RPCProtection();
                 }
@@ -1694,12 +1718,12 @@ namespace iiMenu.Mods
 
         public static void BetaFireBlaster(Vector3 position, Vector3 direction)
         {
-            Quaternion rotation = Quaternion.LookRotation(direction);
-            if (Time.time < blasterDelay)
-                return;
-
             SIGadgetChargeBlaster blaster = GetBlaster();
             if (blaster == null)
+                return;
+
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            if (Time.time < blasterDelay)
                 return;
 
             blasterDelay = Time.time + SIPlayer.LocalPlayer.clientToClientRPCLimiter.GetDelay();

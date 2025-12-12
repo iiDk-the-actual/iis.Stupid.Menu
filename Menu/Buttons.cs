@@ -182,7 +182,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Custom Menu Theme", method = Settings.ChangeCustomMenuTheme, isTogglable = false, toolTip = "Changes the theme of custom the menu."},
                 new ButtonInfo { buttonText = "Custom Menu Background", enableMethod = Settings.CustomMenuBackground, disableMethod = Settings.FixMenuBackground, toolTip = $"Changes the background of the menu to a custom image. You can change the photo inside of your Gorilla Tag File ({PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt)."},
                 new ButtonInfo { buttonText = "Custom Watermark", enableMethod = Settings.CustomWatermark, disableMethod =() => customWatermark = null, toolTip = $"Changes the watermark on the UI and the back of the menu to a custom image. You can change the photo inside of your Gorilla Tag File ({PluginInfo.BaseDirectory}/iiMenu_CustomWatermark.txt)."},
-                new ButtonInfo { buttonText = "Disable Watermark", enableMethod = Settings.DisableWatermark, disableMethod = Settings.EnableWatermark, toolTip = $"Disables the watermark on the UI and the back of the menu."},
+                new ButtonInfo { buttonText = "Disable Watermark", enableMethod =() => disableWatermark = true, disableMethod =() => disableWatermark = false, toolTip = "Disables the watermark on the UI and the back of the menu."},
                 new ButtonInfo { buttonText = "Change Page Type", method =() => Settings.ChangePageType(), enableMethod =() => Settings.ChangePageType(), disableMethod =() => Settings.ChangePageType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of page buttons."},
                 new ButtonInfo { buttonText = "Change Arrow Type", method =() => Settings.ChangeArrowType(), enableMethod =() => Settings.ChangeArrowType(), disableMethod =() => Settings.ChangeArrowType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of arrows on the page buttons."},
                 new ButtonInfo { buttonText = "Change Font Type", method =() => Settings.ChangeFontType(), enableMethod =() => Settings.ChangeFontType(), disableMethod =() => Settings.ChangeFontType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of font."},
@@ -1291,6 +1291,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
                 new ButtonInfo { buttonText = "Complete All Quests", method = Overpowered.CompleteAllQuests, isTogglable = false, toolTip = "Completes every quest in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Unlock All Gadgets", method = Overpowered.UnlockAllGadgets, toolTip = "Unlocks every gadget in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "No Blaster Cooldown", method =() => CooldownPatch.enabled = true, disableMethod =() => CooldownPatch.enabled = false, toolTip = "Removes the cooldown on the blaster."},
                 new ButtonInfo { buttonText = "Blaster Aimbot", enableMethod =() => FirePatch.enabled = true, method = Overpowered.DebugBlasterAimbot, disableMethod =() => FirePatch.enabled = false, toolTip = "Automatically aims the blaster towards players."},
@@ -1316,8 +1318,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blaster Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color> using the blasters." },
 
                 new ButtonInfo { buttonText = "Blaster Control Gun", method = Overpowered.BlasterControlGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
-
-                new ButtonInfo { buttonText = "Claim All Terminals", method = Overpowered.ClaimAllTerminals, isTogglable = false, toolTip = "Claims every terminal in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Stilt Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["StiltGadget FixedScaledLong"]), toolTip = "Spawns stilts out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Thruster Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["WristJetGadgetPropellor"]), toolTip = "Spawns thrusters out of your hand when holding <color=green>grip</color>."},
@@ -1417,6 +1417,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab Firefly <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Firefly"), toolTip = "Forces the firefly into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Cave Bat Holdable"), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Camera <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabCamera, toolTip = "Forces the camera into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Tablet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabTablet, toolTip = "Forces the tablet into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabBalloons, toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabGliders, toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
 
@@ -1424,6 +1425,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Firefly Gun", method =() => Fun.ObjectToPointGun("Firefly"), toolTip = "Moves the firefly to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.ObjectToPointGun("Cave Bat Holdable"), toolTip = "Moves the bat to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Camera Gun", method = Fun.CameraGun, toolTip = "Moves the camera to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Tablet Gun", method = Fun.TabletGun, toolTip = "Moves the tablet to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Balloon Gun", method = Fun.BalloonGun, toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Glider Gun", method = Fun.GliderGun, toolTip = "Moves the gliders to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Hoverboard Gun", method = Fun.HoverboardGun, toolTip = "Spawns hoverboards at wherever your hand desires."},
@@ -1432,6 +1434,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Firefly", method =() => Fun.SpazObject("Firefly"), toolTip = "Gives the firefly a seizure." },
                 new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazObject("Cave Bat Holdable"), toolTip = "Gives the bat a seizure." },
                 new ButtonInfo { buttonText = "Spaz Camera", method = Fun.SpazCamera, toolTip = "Gives the camera a seizure." },
+                new ButtonInfo { buttonText = "Spaz Tablet", method = Fun.SpazTablet, toolTip = "Gives the tablet a seizure." },
                 new ButtonInfo { buttonText = "Spaz Balloons", method = Fun.SpazBalloons, toolTip = "Gives the balloons a seizure." },
                 new ButtonInfo { buttonText = "Spaz Gliders", method = Fun.SpazGliders, toolTip = "Gives the gliders a seizure." },
                 new ButtonInfo { buttonText = "Spaz Hoverboard", method = Fun.SpazHoverboard, toolTip = "Gives your hoverboard a seizure while holding it."},
@@ -1440,6 +1443,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Orbit Firefly", method =() => Fun.OrbitObject("Firefly", 120f), toolTip = "Orbits the firefly around you." },
                 new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.OrbitObject("Cave Bat Holdable", 240f), toolTip = "Orbits the bat around you." },
                 new ButtonInfo { buttonText = "Orbit Camera", method = Fun.OrbitCamera, toolTip = "Orbits the camera around you." },
+                new ButtonInfo { buttonText = "Orbit Tablet", method = Fun.OrbitTablet, toolTip = "Orbits the tablet around you." },
                 new ButtonInfo { buttonText = "Orbit Balloons", method = Fun.OrbitBalloons, toolTip = "Orbits the balloons around you." },
                 new ButtonInfo { buttonText = "Orbit Gliders", method = Fun.OrbitGliders, toolTip = "Orbits the gliders around you." },
                 new ButtonInfo { buttonText = "Orbit Hoverboards", method = Fun.OrbitHoverboards, toolTip = "Orbits the hoverboards around you."},
@@ -1448,6 +1452,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Firefly Aura", method =() => Fun.ObjectAura("Firefly"), toolTip = "Teleports the firefly around you in random positions." },
                 new ButtonInfo { buttonText = "Bat Aura", method =() => Fun.ObjectAura("Cave Bat Holdable"), toolTip = "Teleports the bat around you in random positions." },
                 new ButtonInfo { buttonText = "Camera Aura", method = Fun.CameraAura, toolTip = "Teleports the camera around you in random positions." },
+                new ButtonInfo { buttonText = "Tablet Aura", method = Fun.TabletAura, toolTip = "Teleports the tablet around you in random positions." },
                 new ButtonInfo { buttonText = "Balloon Aura", method = Fun.BalloonAura, toolTip = "Teleports the balloons around you in random positions." },
                 new ButtonInfo { buttonText = "Glider Aura", method = Fun.GliderAura, toolTip = "Teleports the camera around you in random positions." },
                 new ButtonInfo { buttonText = "Hoverboard Aura", method = Fun.HoverboardAura, toolTip = "Teleports the hoverboards around you in random positions."},
@@ -1460,6 +1465,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the firefly." },
                 new ButtonInfo { buttonText = "Become Bat", method =() => Fun.BecomeObject("Cave Bat Holdable"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the bat." },
                 new ButtonInfo { buttonText = "Become Camera", method = Fun.BecomeCamera, disableMethod = Movement.EnableRig, toolTip = "Turns you into the camera." },
+                new ButtonInfo { buttonText = "Become Tablet", method = Fun.BecomeTablet, disableMethod = Movement.EnableRig, toolTip = "Turns you into the tablet." },
                 new ButtonInfo { buttonText = "Become Balloon", method = Fun.BecomeBalloon, disableMethod = Movement.EnableRig, toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
                 new ButtonInfo { buttonText = "Become Hoverboard", method = Fun.BecomeHoverboard, disableMethod = Movement.EnableRig, toolTip = "Turns you into a hoverboard when holding <color=green>trigger</color>." },
 
@@ -1467,6 +1473,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Destroy Firefly", method =() => Fun.DestroyObject("Firefly"), toolTip = "Sends the bug to hell." },
                 new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyObject("Cave Bat Holdable"), toolTip = "Sends the bat to hell." },
                 new ButtonInfo { buttonText = "Destroy Camera", method = Fun.DestroyCamera, toolTip = "Sends the camera to hell." },
+                new ButtonInfo { buttonText = "Destroy Tablet", method = Fun.DestroyTablet, toolTip = "Sends the tablet to hell." },
                 new ButtonInfo { buttonText = "Destroy Balloons", method = Fun.DestroyBalloons, isTogglable = false, toolTip = "Sends every single balloon cosmetic to hell." },
                 new ButtonInfo { buttonText = "Destroy Gliders", method = Fun.DestroyGliders, isTogglable = false, toolTip = "Sends every single glider to hell." },
 

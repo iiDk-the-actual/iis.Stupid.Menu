@@ -43,6 +43,8 @@ namespace iiMenu.Mods
     {
         // This file needs to be rewritten
         public static readonly string[] ProjectileObjectNames = {
+            "SnowballLeftAnchor",
+            "SnowballRightAnchor",
             "GrowingSnowballLeftAnchor",
             "GrowingSnowballRightAnchor",
             "WaterBalloonLeftAnchor",
@@ -104,7 +106,9 @@ namespace iiMenu.Mods
             "CrackedPlate_Lump_Projectile_Anchor_LEFT",
             "CrackedPlate_Lump_Projectile_Anchor_RIGHT",
             "PortableBonfire_Sticks_Anchor_LeftHand",
-            "PortableBonfire_Sticks_Anchor_RightHand"
+            "PortableBonfire_Sticks_Anchor_RightHand",
+            "Walnut_Anchor_Left",
+            "Walnut_Anchor_Right"
         };
 
         public static Coroutine RigCoroutine;
@@ -326,6 +330,7 @@ namespace iiMenu.Mods
         {
             string[] shortProjectileNames = {
                 "Snowball",
+                "Growing Snowball",
                 "Water Balloon",
                 "Lava Rock",
                 "Present",
@@ -355,7 +360,8 @@ namespace iiMenu.Mods
                 "Football",
                 "Popcorn Ball",
                 "Plate",
-                "Sticks"
+                "Stick",
+                "Walnut"
             };
 
             if (positive)
