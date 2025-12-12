@@ -2591,35 +2591,38 @@ namespace iiMenu.Menu
                 if (outlineText)
                     OutlineCanvasObject(buildLabel);
 
-                watermarkImage = new GameObject
+                if (!disableWatermark)
                 {
-                    transform =
+                    watermarkImage = new GameObject
+                    {
+                        transform =
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Image>();
+                    }.AddComponent<Image>();
 
-                if (watermarkMat == null)
-                    watermarkMat = new Material(watermarkImage.material);
+                    if (watermarkMat == null)
+                        watermarkMat = new Material(watermarkImage.material);
 
-                watermarkImage.material = watermarkMat;
-                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+                    watermarkImage.material = watermarkMat;
+                    watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
 
-                RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
-                imageTransform.localPosition = Vector3.zero;
-                imageTransform.sizeDelta = new Vector2(.15f, .15f);
+                    RectTransform imageTransform = watermarkImage.GetComponent<RectTransform>();
+                    imageTransform.localPosition = Vector3.zero;
+                    imageTransform.sizeDelta = new Vector2(.15f, .15f);
 
-                imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
+                    imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
 
-                if (outlineText)
-                    OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
+                    if (outlineText)
+                        OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
 
-                imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
+                    imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
-                if (customWatermark == null)
-                    watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
-                else
-                    watermarkImage.material.color = Color.white;
+                    if (customWatermark == null)
+                        watermarkImage.AddComponent<ImageColorChanger>().colors = textColors[0];
+                    else
+                        watermarkImage.material.color = Color.white;
+                }
             }
 
             Text fps = new GameObject
@@ -6786,6 +6789,7 @@ jgs \_   _/ |Oo\
         public static bool lastChecker;
         public static bool highQualityText;
         public static bool rockWatermark = true;
+        public static bool disableWatermark;
         public static string CosmeticsOwned;
 
         public static Vector3 MidPosition;

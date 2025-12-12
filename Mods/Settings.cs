@@ -3985,14 +3985,6 @@ exit 0";
             customMenuBackgroundImage = null;
             doCustomMenuBackground = false;
         }
-
-        public static void DisableWatermark()
-        {
-            if (watermarkImage)
-                watermarkImage = null;
-            if (customWatermark)
-                customWatermark = null;
-        }
         
         public static void EnableWatermark()
         {
