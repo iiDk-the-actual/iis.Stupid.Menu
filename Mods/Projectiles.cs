@@ -357,7 +357,7 @@ namespace iiMenu.Mods
                 "Football",
                 "Popcorn Ball",
                 "Plate",
-                "Sticks",
+                "Stick",
                 "Walnut"
             };
 
