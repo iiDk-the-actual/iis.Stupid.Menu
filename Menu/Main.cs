@@ -5515,22 +5515,29 @@ namespace iiMenu.Menu
 
         public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
         {
-            if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+            try
             {
-                Destroy(existingBoard);
-                objectBoards.Remove(scene);
+                if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+                {
+                    Destroy(existingBoard);
+                    objectBoards.Remove(scene);
+                }
+
+                GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                board.transform.parent = GetObject(gameObject).transform;
+                board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
+                board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
+                board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
+
+                Destroy(board.GetComponent<Collider>());
+                board.GetComponent<Renderer>().material = OrangeUI;
+
+                objectBoards.Add(scene, board);
+            } catch (Exception e)
+            {
+                LogManager.LogError($"Failed to create object board for scene {scene}: {e}");
+                return;
             }
-
-            GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            board.transform.parent = GetObject(gameObject).transform;
-            board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
-            board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
-            board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
-
-            Destroy(board.GetComponent<Collider>());
-            board.GetComponent<Renderer>().material = OrangeUI;
-
-            objectBoards.Add(scene, board);
         }
 
         public static bool inRoomStatus;
