@@ -104,7 +104,9 @@ namespace iiMenu.Mods
             "CrackedPlate_Lump_Projectile_Anchor_LEFT",
             "CrackedPlate_Lump_Projectile_Anchor_RIGHT",
             "PortableBonfire_Sticks_Anchor_LeftHand",
-            "PortableBonfire_Sticks_Anchor_RightHand"
+            "PortableBonfire_Sticks_Anchor_RightHand",
+            "Walnut_Anchor_Left",
+            "Walnut_Anchor_Right"
         };
 
         public static Coroutine RigCoroutine;
@@ -355,7 +357,8 @@ namespace iiMenu.Mods
                 "Football",
                 "Popcorn Ball",
                 "Plate",
-                "Sticks"
+                "Sticks",
+                "Walnut"
             };
 
             if (positive)
