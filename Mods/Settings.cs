@@ -38,6 +38,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
@@ -3983,6 +3984,43 @@ exit 0";
         {
             customMenuBackgroundImage = null;
             doCustomMenuBackground = false;
+        }
+
+        public static void DisableWatermark()
+        {
+            if (watermarkImage)
+                watermarkImage = null;
+            if (customWatermark)
+                customWatermark = null;
+        }
+        
+        public static void EnableWatermark()
+        {
+            bool enabled = Buttons.GetIndex("Custom Watermark").enabled;
+            if (enabled)
+            {
+                if (!File.Exists($"{PluginInfo.BaseDirectory}/CustomWatermark.png"))
+                    LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/CustomWatermark.png", "CustomWatermark.png"); // Do not move outside of its path
+
+                textureFileDirectory.Remove("CustomWatermark.png");
+                customWatermark = LoadTextureFromFile("CustomWatermark.png");
+            }
+            else
+            {
+                watermarkImage = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Image>();
+
+                if (watermarkMat == null)
+                    watermarkMat = new Material(watermarkImage.material);
+
+                watermarkImage.material = watermarkMat;
+                watermarkImage.material.SetTexture("_MainTex", customWatermark ?? LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png"));
+            }
         }
 
         public static void CustomWatermark()
