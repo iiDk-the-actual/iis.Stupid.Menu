@@ -639,6 +639,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, method = Movement.Timer, disableMethod =() => { TimerPatch.enabled = false; Time.timeScale = 1f; }, toolTip = "Speeds up or slows down the time of your game."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method = Movement.SpeedBoost, toolTip = "Changes your speed to whatever you set it to."},
+                new ButtonInfo { buttonText = "Grip Speed Boost", method =() => { if (rightGrab) { Movement.SpeedBoost(); } }, toolTip = "Changes your speed to whatever you set it to, if you're holding right grip."},
                 new ButtonInfo { buttonText = "Dynamic Speed Boost", method = Movement.DynamicSpeedBoost, toolTip = "Dynamically changes your speed to whatever you set it to when tagged players get closer to you."},
                 new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Removes the velocity limit of walking."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method = Movement.AlwaysMaxVelocity, toolTip = "Always makes you go as fast as the velocity limit."},
