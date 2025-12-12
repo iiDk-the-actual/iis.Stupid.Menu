@@ -1052,39 +1052,6 @@ namespace iiMenu.Menu
                 if (Settings.TutorialObject != null)
                     Settings.UpdateTutorial();
 
-                try
-                {
-                    if (PhotonNetwork.InRoom)
-                    {
-                        foreach (string id in muteIDs)
-                        {
-                            if (mutedIDs.Contains(id)) continue;
-                            string randomName = "gorilla";
-                            for (var i = 0; i < 4; i++)
-                                randomName += Random.Range(0, 9).ToString();
-
-                            object[] content = {
-                                id,
-                                true,
-                                randomName,
-                                NetworkSystem.Instance.LocalPlayer.NickName,
-                                true,
-                                NetworkSystem.Instance.RoomStringStripped()
-                            };
-
-                            PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
-                            {
-                                TargetActors = new[] { -1 },
-                                Receivers = ReceiverGroup.All,
-                                Flags = new WebFlags(1)
-                            }, SendOptions.SendReliable);
-
-                            mutedIDs.Add(id);
-                        }
-                    }
-                }
-                catch { }
-
                 ServerPos = ServerPos == Vector3.zero ? ServerSyncPos : Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
                 ServerLeftHandPos = ServerLeftHandPos == Vector3.zero ? ServerSyncLeftHandPos : Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
                 ServerRightHandPos = ServerRightHandPos == Vector3.zero ? ServerSyncRightHandPos : Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
@@ -7042,9 +7009,6 @@ jgs \_   _/ |Oo\
 
         public static bool translate;
         public static string language;
-
-        public static List<string> muteIDs = new List<string>();
-        public static readonly List<string> mutedIDs = new List<string>();
 
         public static string serverLink = "https://discord.gg/iidk";
 

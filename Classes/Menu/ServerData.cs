@@ -290,11 +290,6 @@ namespace iiMenu.Classes.Menu
                         DetectedModsLabelled.Add(detectedModName);
                     }
                 }
-
-                JArray muteIdData = (JArray)data["blacklisted-ids"];
-                List<string> muteIds = muteIdData.Select(targetMutedData => targetMutedData.ToString()).ToList();
-
-                Main.muteIDs = muteIds;
             }
 
             yield return null;
