@@ -43,6 +43,8 @@ namespace iiMenu.Mods
     {
         // This file needs to be rewritten
         public static readonly string[] ProjectileObjectNames = {
+            "SnowballLeftAnchor",
+            "SnowballRightAnchor",
             "GrowingSnowballLeftAnchor",
             "GrowingSnowballRightAnchor",
             "WaterBalloonLeftAnchor",
@@ -328,6 +330,7 @@ namespace iiMenu.Mods
         {
             string[] shortProjectileNames = {
                 "Snowball",
+                "Growing Snowball",
                 "Water Balloon",
                 "Lava Rock",
                 "Present",
