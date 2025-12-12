@@ -4630,6 +4630,314 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BarrelFlingGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        private static float barrelAllDelay;
+        public static void BarrelFlingAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
+            {
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
+            }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
+        }
+
+        public static void BarrelPunchMod()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
+                {
+                    Vector3 targetDirection = rig.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position;
+                    SendBarrelProjectile(rig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+                }
+            }
+        }
+
+        public static void BarrelCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BarrelCrashAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
+            {
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
+            }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
+        }
+
+        public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
+        {
+            options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
+
+            int index = 621;
+            DistancePatch.enabled = true;
+
+            if (Fun.DisableThrowableCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(Fun.DisableThrowableCoroutine);
+
+            Fun.DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(Fun.DisableThrowable(index));
+            TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+            if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
+            }
+
+            if (!transferrableObject.gameObject.activeSelf)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+                transferrableObject.gameObject.SetActive(true);
+            }
+
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+
+            if (transferrableObject.gameObject.activeSelf && Time.time > throwableProjectileTimeout)
+            {
+                if (!disableCooldown)
+                    throwableProjectileTimeout = Time.time + 0.3f;
+
+                Vector3 archivePosition = VRRig.LocalRig.transform.position;
+
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -50);
+
+                VRRig.LocalRig.transform.position = pos;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+                vel = vel.ClampMagnitudeSafe(50f);
+
+                DeployableObject barrel = transferrableObject.GetComponent<DeployableObject>();
+
+                object[] data = {
+                    barrel._deploySignal._signalID,
+                    PhotonNetwork.ServerTimestamp,
+                    BitPackUtils.PackWorldPosForNetwork(pos),
+                    BitPackUtils.PackQuaternionForNetwork(rot),
+                    BitPackUtils.PackWorldPosForNetwork(vel * 100f)
+                };
+
+                PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
+
+                VRRig.LocalRig.transform.position = archivePosition;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+                RPCProtection();
+            }
+        }
+
+        public static void BarrelKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - lockTarget.headMesh.transform.position;
+                    SendBarrelProjectile(lockTarget.transform.position + (lockTarget.headMesh.transform.position - new Vector3(-71.33718f, 101.4977f, -93.09029f)).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        private static float throwableProjectileTimeout;
+        public static void BarrelKickAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsLocal(TargetRig)) continue;
+
+                Vector3 targetDirection = new Vector3(-71.33718f, 101.4977f, -93.09029f) - TargetRig.headMesh.transform.position;
+                SendBarrelProjectile(TargetRig.transform.position + (TargetRig.headMesh.transform.position - new Vector3(-71.33718f, 101.4977f, -93.09029f)).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
+            }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
+        }
+
+        public static void BarrelFlingTowardsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position + (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized * 0.1f, (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BarrelFlingTowardsAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            if (Time.time > throwableProjectileTimeout)
+            {
+                throwableProjectileTimeout = Time.time + 0.31f;
+                foreach (var TargetRig in GorillaParent.instance.vrrigs.Where(TargetRig => !PlayerIsLocal(TargetRig)))
+                    SendBarrelProjectile(TargetRig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - TargetRig.headMesh.transform.position).normalized * 0.1f, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
+            }
+        }
+
+        public static void CityKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position + (lockTarget.transform.position - new Vector3(-71.14215f, 13.73829f, -95.17883f)).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void CityKickAll()
+        {
+            SerializePatch.OverrideSerialization = () => false;
+
+            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsLocal(TargetRig)) continue;
+
+                SendBarrelProjectile(TargetRig.transform.position + (TargetRig.transform.position - new Vector3(-71.14215f, 13.73829f, -95.17883f)).normalized * 0.1f, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { GetPlayerFromVRRig(TargetRig).ActorNumber } });
+
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
+            }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
+        }
+
         private static float notifyTime;
         public static bool IsModded(bool notify)
         {
