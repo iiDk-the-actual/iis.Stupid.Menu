@@ -292,9 +292,6 @@ namespace iiMenu.Menu
 
                         objectBoards.Clear();
 
-                        CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
-                        CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
-
                         var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
                            .Where(x => x.name.Contains("UnityTempFile"))
                            .ToList();
@@ -5507,6 +5504,12 @@ namespace iiMenu.Menu
                 new Vector3(-22.1964f, -24.5091f, 0.57f),
                 new Vector3(270.1856f, 0.1f, 0f),
                 new Vector3(21.6f, 1.2f, 20.8f)
+            ),
+            ["City"] = new BoardInformation(
+                "City_Pretty/CosmeticsScoreboardAnchor/GorillaScoreBoard",
+                new Vector3(-22.1964f, -34.9f, 0.57f),
+                new Vector3(270f, 0f, 0f),
+                new Vector3(21.6f, 2.4f, 22f)
             )
         };
 
