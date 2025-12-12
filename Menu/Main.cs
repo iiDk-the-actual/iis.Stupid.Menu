@@ -2560,9 +2560,9 @@ namespace iiMenu.Menu
                     watermarkImage = new GameObject
                     {
                         transform =
-                    {
-                        parent = canvasObj.transform
-                    }
+                        {
+                            parent = canvasObj.transform
+                        }
                     }.AddComponent<Image>();
 
                     if (watermarkMat == null)
@@ -2589,43 +2589,45 @@ namespace iiMenu.Menu
                 }
             }
 
-            Text fps = new GameObject
+            if (!disableFpsCounter)
             {
-                transform =
+                Text fps = new GameObject
                 {
-                    parent = canvasObj.transform
-                }
-            }.AddComponent<Text>();
-            fps.font = activeFont;
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                fps.font = activeFont;
 
-            string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
-            if (hidetitle && !noPageNumber) textToSet += "      ";
-            if (disableFpsCounter) textToSet = "";
-            if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
+                string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
+                if (hidetitle && !noPageNumber) textToSet += "      ";
+                if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
 
-            fps.text = textToSet;
-            if (lowercaseMode)
-                fps.text = fps.text.ToLower();
+                fps.text = textToSet;
+                if (lowercaseMode)
+                    fps.text = fps.text.ToLower();
 
-            if (uppercaseMode)
-                fps.text = fps.text.ToUpper();
+                if (uppercaseMode)
+                    fps.text = fps.text.ToUpper();
 
-            fps.AddComponent<TextColorChanger>().colors = textColors[0];
-            fpsCount = fps;
-            fps.fontSize = 1;
-            fps.supportRichText = true;
-            fps.fontStyle = activeFontStyle;
-            fps.alignment = TextAnchor.MiddleCenter;
-            fps.horizontalOverflow = HorizontalWrapMode.Overflow;
-            fps.resizeTextForBestFit = true;
-            fps.resizeTextMinSize = 0;
-            RectTransform fpsTransform = fps.GetComponent<RectTransform>();
-            fpsTransform.sizeDelta = NoAutoSizeText ? new Vector2(9f, 0.015f) : new Vector2(0.28f, 0.02f);
-            fpsTransform.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
-            fpsTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                fps.AddComponent<TextColorChanger>().colors = textColors[0];
+                fpsCount = fps;
+                fps.fontSize = 1;
+                fps.supportRichText = true;
+                fps.fontStyle = activeFontStyle;
+                fps.alignment = TextAnchor.MiddleCenter;
+                fps.horizontalOverflow = HorizontalWrapMode.Overflow;
+                fps.resizeTextForBestFit = true;
+                fps.resizeTextMinSize = 0;
+                RectTransform fpsTransform = fps.GetComponent<RectTransform>();
+                fpsTransform.sizeDelta = NoAutoSizeText ? new Vector2(9f, 0.015f) : new Vector2(0.28f, 0.02f);
+                fpsTransform.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
+                fpsTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(fps, true);
+                if (outlineText)
+                    OutlineCanvasObject(fps, true);
+            }
 
             float hkbStartTime = -0.3f;
             if (!disableDisconnectButton)
