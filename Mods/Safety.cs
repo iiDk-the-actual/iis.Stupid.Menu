@@ -548,6 +548,32 @@ namespace iiMenu.Mods
                 player.SetCustomProperties(toRemove);
         }
 
+        private static Vector3 smoothedLeftHandPosition;
+        private static Vector3 smoothedRightHandPosition;
+        public static void AntiPredictions()
+        {
+            SerializePatch.OverrideSerialization = () =>
+            {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 leftHandPosition = VRRig.LocalRig.leftHand.rigTarget.localPosition;
+                Vector3 rightHandPosition = VRRig.LocalRig.rightHand.rigTarget.localPosition;
+
+                smoothedLeftHandPosition = Vector3.Lerp(smoothedLeftHandPosition, leftHandPosition, 0.75f);
+                smoothedRightHandPosition = Vector3.Lerp(smoothedRightHandPosition, rightHandPosition, 0.75f);
+
+                VRRig.LocalRig.leftHand.rigTarget.localPosition = smoothedLeftHandPosition;
+                VRRig.LocalRig.rightHand.rigTarget.localPosition = smoothedRightHandPosition;
+
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                VRRig.LocalRig.leftHand.rigTarget.localPosition = leftHandPosition;
+                VRRig.LocalRig.rightHand.rigTarget.localPosition = rightHandPosition;
+
+                return false;
+            };
+        }
+
         public static void ChangeIdentity()
         {
             string randomName = "gorilla";

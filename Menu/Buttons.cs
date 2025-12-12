@@ -528,6 +528,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bypass Automod", method = Safety.BypassAutomod, toolTip = "Attempts to bypass automod muting yourself and others."},
                 new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatch.enabled = true, method = Safety.BypassModCheckers, disableMethod =() => PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have ever mod possible."},
                 new ButtonInfo { buttonText = "Bypass Cosmetic Check", method =() => RequestPatch.bypassCosmeticCheck = true, disableMethod =() => RequestPatch.bypassCosmeticCheck = false, toolTip = "Turns off the networking for any cosmetic mods, stopping people from seeing if you're using one."},
+                new ButtonInfo { buttonText = "Anti Predictions", enableMethod = Safety.AntiPredictions, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Prevents people from checking if your predictions are too high."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method = Safety.AntiReportDisconnect, toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method = Safety.AntiReportReconnect, toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
