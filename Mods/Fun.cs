@@ -3173,10 +3173,10 @@ Piece Name: {gunTarget.name}";
                 Overpowered.DisableCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.DisableSnowball(false));
                 GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
 
-                everythingSpamDelay = Time.time + 0.0714f;
+                everythingSpamDelay = Time.time + 0.0625f;
 
                 objectIndex++;
-                objectIndex %= 7; 
+                objectIndex %= 8; 
 
                 switch (objectIndex)
                 {
@@ -3293,13 +3293,57 @@ Piece Name: {gunTarget.name}";
                             break;
                         }
                     case 3:
+                        {
+                            if (!PhotonNetwork.InRoom)
+                                break;
+
+                            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedTablet").GetComponent<LckSocialCamera>();
+
+                            GameObject cameraSpamObject = new GameObject("iiMenu_CameraSpamObject");
+                            cameraSpamObject.transform.localScale = Vector3.one * 0.2f;
+                            cameraSpamObject.layer = 3;
+
+                            if (Buttons.GetIndex("Bug Colliders").enabled)
+                            {
+                                SphereCollider collider = cameraSpamObject.AddComponent<SphereCollider>();
+
+                                if (Buttons.GetIndex("Bouncy Bug").enabled)
+                                {
+                                    collider.material.bounciness = 1f;
+                                    collider.material.bounceCombine = PhysicsMaterialCombine.Maximum;
+                                    collider.material.dynamicFriction = 0f;
+                                }
+                            }
+
+                            cameraSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
+                            cameraSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                            Rigidbody rigidbody = cameraSpamObject.AddComponent<Rigidbody>();
+                            rigidbody.linearVelocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.angularVelocity = RandomVector3(100f);
+
+                            rigidbody.useGravity = !Buttons.GetIndex("Zero Gravity Bugs").enabled;
+
+                            camera.visible = true;
+                            camera.recording = true;
+
+                            camera.m_CameraVisuals.SetVisualsActive(true);
+                            camera.m_CameraVisuals.SetRecordingState(true);
+
+                            camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = cameraSpamObject.transform;
+
+                            cameraSpamObject.AddComponent<DestroyOnRest>();
+                            Object.Destroy(cameraSpamObject, 30f);
+                            break;
+                        }
                     case 4:
+                    case 5:
                         BetaDropBoard(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
                         break;
-                    case 5:
+                    case 6:
                         Projectiles.BetaFireProjectile(projectileName, GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomColor());
                         break;
-                    case 6:
+                    case 7:
                         Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, 0);
                         break;
                 }
