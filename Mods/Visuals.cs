@@ -2563,10 +2563,14 @@ namespace iiMenu.Mods
                         bgCont.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
 
                         LineRenderer infoRenderer = infoBgTr.GetComponent<LineRenderer>();
+                        infoRenderer.startWidth = 0.05f * vrrig.scaleFactor;
+                        infoRenderer.endWidth = 0.05f * vrrig.scaleFactor;
                         infoRenderer.SetPosition(0, new Vector3(0f, -bgHeight, 0f));
                         infoRenderer.SetPosition(1, new Vector3(0f, bgHeight, 0f));
 
                         LineRenderer nameRenderer = nameBgTr.GetComponent<LineRenderer>();
+                        nameRenderer.startWidth = 0.1f * vrrig.scaleFactor;
+                        nameRenderer.endWidth = 0.1f * vrrig.scaleFactor;
                         nameRenderer.SetPosition(0, new Vector3(0f, -nameBgHeight, 0f));
                         nameRenderer.SetPosition(1, new Vector3(0f, nameBgHeight, 0f));
 
