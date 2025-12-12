@@ -26,8 +26,8 @@ namespace iiMenu
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @crimsoncauldron with love <3";
-        public const string BuildTimestamp = "2025-12-12T23:03:12Z";
-        public const string Version = "7.8.1";
+        public const string BuildTimestamp = "2025-12-12T23:13:47Z";
+        public const string Version = "7.9.0";
 
         public const string BaseDirectory = "iisStupidMenu";
         public const string ClientResourcePath = "iiMenu.Resources.Client";
