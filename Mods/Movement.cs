@@ -4071,7 +4071,7 @@ namespace iiMenu.Mods
 
                 bool bothHandsNotMoving = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0).magnitude < 2f && GTPlayer.Instance.LeftHand.velocityTracker.GetAverageVelocity(true, 0).magnitude < 2f;
 
-                if (headPosition.Distance(leftHandPosition) < 0.2f && headPosition.Distance(rightHandPosition) < 0.2f)
+                if (headPosition.Distance(leftHandPosition) < 0.2f && headPosition.Distance(rightHandPosition) < 0.2f && bothHandsNotMoving)
                 {
                     Vector3 position = GorillaTagger.Instance.bodyCollider.transform.position;
                     DisableSteamLongArms();
