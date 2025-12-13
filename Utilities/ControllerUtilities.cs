@@ -44,7 +44,7 @@ namespace iiMenu.Utilities
             { false, new ControllerInfo { type = ControllerType.Unknown, dataCacheTime = -1f } }
         };
 
-        private static Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
+        private static readonly Dictionary<string, ControllerType> controllerNames = new Dictionary<string, ControllerType>
         {
             { "quest2", ControllerType.Quest2 },
             { "quest3", ControllerType.Quest3 },
