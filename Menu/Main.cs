@@ -5769,15 +5769,15 @@ namespace iiMenu.Menu
 
         [Obsolete("AddButton is obsolete. Use Buttons.AddButton instead.")]
         public static void AddButton(int category, ButtonInfo button, int index = -1) =>
-            Buttons.AddButton(category, button, index);
+            Buttons.AddButton(category, button, index > 0 ? (int?)index : null);
 
         [Obsolete("AddButtons is obsolete. Use Buttons.AddButtons instead.")]
         public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1) =>
-            Buttons.AddButtons(category, buttons, index);
+            Buttons.AddButtons(category, buttons, index > 0 ? (int?)index : null);
 
         [Obsolete("RemoveButton is obsolete. Use Buttons.RemoveButton instead.")]
         public static void RemoveButton(int category, string name, int index = -1) =>
-            Buttons.RemoveButton(category, name, index);
+            Buttons.RemoveButton(category, name, index > 0 ? (int?)index : null);
 
         public static void ReloadMenu()
         {

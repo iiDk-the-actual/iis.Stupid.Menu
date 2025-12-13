@@ -2450,6 +2450,12 @@ namespace iiMenu.Menu
         };
 
         private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
+
+        /// <summary>
+        /// Returns the ButtonInfo for the given button text.
+        /// </summary>
+        /// <param name="buttonText">Button Name</param>
+        /// <returns>Button</returns>
         public static ButtonInfo GetIndex(string buttonText)
         {
             if (buttonText == null)
@@ -2492,9 +2498,22 @@ namespace iiMenu.Menu
             return null;
         }
 
+        /// <summary>
+        /// Returns the category index for the given category name.
+        /// </summary>
+        /// <param name="categoryName">Category Name</param>
+        /// <returns>Category Index</returns>
         public static int GetCategory(string categoryName) =>
             categoryNames.ToList().IndexOf(categoryName);
 
+        /// <summary>
+        /// Adds a category to the button list.
+        /// </summary>
+        /// <remarks>
+        /// A button will not be automatically added to the main category. It must be manually created with <see cref="AddButton(int, ButtonInfo, int)"/>
+        /// </remarks>
+        /// <param name="categoryName">Category Name</param>
+        /// <returns>Category Index</returns>
         public static int AddCategory(string categoryName)
         {
             List<ButtonInfo[]> buttonInfoList = buttons.ToList();
@@ -2508,6 +2527,13 @@ namespace iiMenu.Menu
             return buttons.Length - 1;
         }
 
+        /// <summary>
+        /// Removes a category from the button list.
+        /// </summary>
+        /// <remarks>
+        /// Any buttons leading to the category will not be removed from the main category. They must be manually removed with <see cref="RemoveButton(int, string, int)"/>
+        /// </remarks>
+        /// <param name="categoryName">Category Name</param>
         public static void RemoveCategory(string categoryName)
         {
             List<ButtonInfo[]> buttonInfoList = buttons.ToList();
@@ -2519,24 +2545,36 @@ namespace iiMenu.Menu
             categoryNames = categoryList.ToArray();
         }
 
-        public static void AddButton(int category, ButtonInfo button, int index = -1)
+        /// <summary>
+        /// Adds a button to the specified category.
+        /// </summary>
+        /// <param name="category">Category</param>
+        /// <param name="button">Button</param>
+        /// <param name="index">Index Position</param>
+        public static void AddButton(int category, ButtonInfo button, int? index = null)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index > 0)
-                buttonInfoList.Insert(index, button);
+            if (index != null)
+                buttonInfoList.Insert(index.Value, button);
             else
                 buttonInfoList.Add(button);
 
             buttons[category] = buttonInfoList.ToArray();
         }
 
-        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
+        /// <summary>
+        /// Adds multiple buttons to the specified category.
+        /// </summary>
+        /// <param name="category">Category</param>
+        /// <param name="buttons">Buttons</param>
+        /// <param name="index">Index Position</param>
+        public static void AddButtons(int category, ButtonInfo[] buttons, int? index = null)
         {
             List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index > 0)
+            if (index != null)
             {
                 for (int i = 0; i < buttons.Length; i++)
-                    buttonInfoList.Insert(index + i, buttons[i]);
+                    buttonInfoList.Insert(index.Value + i, buttons[i]);
             }
             else
                 buttonInfoList.AddRange(buttons);
@@ -2544,11 +2582,17 @@ namespace iiMenu.Menu
             Buttons.buttons[category] = buttonInfoList.ToArray();
         }
 
-        public static void RemoveButton(int category, string name, int index = -1)
+        /// <summary>
+        /// Removes a button from the specified category.
+        /// </summary>
+        /// <param name="category">Category</param>
+        /// <param name="name">Button Name</param>
+        /// <param name="index">Index Position</param>
+        public static void RemoveButton(int category, string name, int? index = null)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index > 0)
-                buttonInfoList.RemoveAt(index);
+            if (index != null)
+                buttonInfoList.RemoveAt(index.Value);
             else
             {
                 foreach (var button in buttonInfoList.Where(button => button.buttonText == name))
