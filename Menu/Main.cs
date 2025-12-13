@@ -1877,9 +1877,6 @@ namespace iiMenu.Menu
             buttonObject.transform.rotation = Quaternion.identity;
 
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-            // Fat menu theorem
-            // To get the fat position of a button:
-            // original x * (0.7 / 0.45) or 1.555555556
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, -0.450f, -0.58f) : new Vector3(0.56f, -0.7f, -0.58f);
 
             buttonObject.AddComponent<Button>().relatedText = "Search";
@@ -2104,9 +2101,6 @@ namespace iiMenu.Menu
             buttonObject.transform.rotation = Quaternion.identity;
 
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-            // Fat menu theorem
-            // To get the fat position of a button:
-            // original x * (0.7 / 0.45) or 1.555555556
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, -0.450f, -0.58f) : new Vector3(0.56f, -0.7f, -0.58f);
 
             if (offcenteredPosition)
