@@ -2860,7 +2860,7 @@ namespace iiMenu.Mods
                 {
                     if (!cosmeticIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         Object.Destroy(indicator.GetComponent<Collider>());
 
                         if (cosmeticMat == null)
