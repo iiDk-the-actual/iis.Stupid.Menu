@@ -5737,7 +5737,7 @@ namespace iiMenu.Menu
         }
 
         public static void SetRotation(Quaternion rotation) =>
-            GTPlayer.Instance.Turn(rotation.y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
+            SetRotation(rotation.y);
 
         public static void SetRotation(float rotation) =>
            GTPlayer.Instance.Turn(rotation - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
