@@ -2997,8 +2997,18 @@ namespace iiMenu.Mods
 
         private static Material platformMat;
         private static Material platformEspMat;
-        private static Texture2D steamtxt;
-        private static Texture2D oculustxt;
+
+        private static Texture2D GetPlatformTexture(VRRig rig)
+        {
+            return rig.GetPlatform() switch
+            {
+                "Steam" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png"),
+                "Standalone" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png"),
+                "PC" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/pc.png", "Images/Mods/Visuals/pc.png"),
+                _ => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/unknown.png", "Images/Mods/Visuals/unknown.png"),
+            };
+        }
+
         private static readonly Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
 
         public static void PlatformIndicators()
@@ -3037,13 +3047,7 @@ namespace iiMenu.Mods
                         platformIndicators.Add(vrrig, indicator);
                     }
 
-                    if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
-
-                    if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
-
-                    indicator.GetComponent<Renderer>().material.mainTexture = PlayerIsSteam(vrrig) ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
@@ -3082,13 +3086,7 @@ namespace iiMenu.Mods
                         platformIndicators.Add(vrrig, indicator);
                     }
 
-                    if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
-
-                    if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
-
-                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.IsSteam() ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
