@@ -371,8 +371,10 @@ namespace iiMenu.Mods
                     Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
 
                     _infoSpriteAsset.spriteSheet = spriteSheet;
-                    _infoSpriteAsset.material = new Material(Shader.Find("TextMeshPro/Sprite"));
-                    _infoSpriteAsset.material.mainTexture = spriteSheet;
+                    _infoSpriteAsset.material = new Material(Shader.Find("TextMeshPro/Sprite"))
+                    {
+                        mainTexture = spriteSheet
+                    };
 
                     _infoSpriteAsset.spriteInfoList = new List<TMP_Sprite>();
                     Traverse.Create(_infoSpriteAsset).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
@@ -407,7 +409,7 @@ namespace iiMenu.Mods
                     _infoSpriteAsset.spriteCharacterTable.Clear();
                     for (int i = 0; i < spriteDataList.Count; i++)
                     {
-                        var (name, index) = spriteDataList[i];
+                        var (name, _) = spriteDataList[i];
 
                         var character = new TMP_SpriteCharacter(0xFFFE, _infoSpriteAsset.spriteGlyphTable[i])
                         {
