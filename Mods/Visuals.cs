@@ -2542,6 +2542,7 @@ namespace iiMenu.Mods
 
         public static void CompactTags()
         {
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             foreach (KeyValuePair<VRRig, GameObject> nametag in compactNameTags)
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
@@ -2562,6 +2563,9 @@ namespace iiMenu.Mods
                         if (!compactNameTags.ContainsKey(vrrig))
                         {
                             GameObject textContainer = new GameObject("iimenu_vrctag_text");
+                            if (hoc)
+                                textContainer.layer = 19;
+
                             GameObject infoTag = new GameObject("infotag");
                             infoTag.transform.parent = textContainer.transform;
                             infoTag.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
@@ -2586,6 +2590,9 @@ namespace iiMenu.Mods
                             nameMesh.richText = true;
 
                             GameObject bgContainer = new GameObject("iimenu_vrctag_background");
+                            if (hoc)
+                                bgContainer.layer = 19;
+
                             GameObject infoBg = new GameObject("infobg");
                             infoBg.transform.parent = bgContainer.transform;
                             infoBg.transform.localPosition = new Vector3(0f, 0.5f, 0f);  // change the y to make the info tag farther or closer to the nametag 
