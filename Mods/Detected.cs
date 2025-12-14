@@ -30,9 +30,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -268,9 +266,7 @@ namespace iiMenu.Mods
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
                         touchedRigs.Add(rig);
-                    }
                 }
             }
 
@@ -287,6 +283,69 @@ namespace iiMenu.Mods
                     {
                         TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
                     }, SendOptions.SendReliable);
+                }
+            }
+        }
+
+        public static void LeaderboardGhost()
+        {
+            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
+            {
+                if (scoreboard.buttonText.text.Contains("REPORT"))
+                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("REPORT", "GHOST");
+            }
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                {
+                    if (line.reportInProgress)
+                    {
+                        PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
+                        if (view != null)
+                        {
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                            }, SendOptions.SendReliable);
+                        }
+                        line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                    }
+                }
+            }
+        }
+
+        public static void DisableLeaderboardGhost()
+        {
+            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
+            {
+                if (scoreboard.buttonText.text.Contains("GHOST"))
+                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
+            }
+        }
+
+        public static void LeaderboardMute()
+        {
+            if (Time.time > muteDelay)
+            {
+                muteDelay = Time.time + 0.15f;
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                    {
+                        if (line.mute == 1)
+                        {
+                            PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
+                            if (view != null)
+                                PhotonNetwork.Destroy(view);
+
+                            line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                        }
+                    }
                 }
             }
         }
