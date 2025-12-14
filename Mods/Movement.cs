@@ -4279,8 +4279,11 @@ namespace iiMenu.Mods
         }
 
         private static float timerPower = 1.5f;
-        public static void Timer() =>
+        public static void Timer()
+        {
+            GTPlayer.Instance.debugMovement = true;
             Time.timeScale = timerPower;
+        }
 
         public static void FlickJump()
         {
