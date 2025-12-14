@@ -607,9 +607,7 @@ namespace iiMenu.Mods
             if (touchedPlayers.Count > 0)
             {
                 foreach (VRRig rig in touchedPlayers)
-                {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                }
             }
         }
 
@@ -654,9 +652,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!PlayerIsLocal(rig))
-                    {
                         PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                    }
                 }                    
 
                 muteDelay = Time.time + 0.15f;
@@ -698,18 +694,15 @@ namespace iiMenu.Mods
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
                         touchedRigs.Add(rig);
-                    }
                 }
             }
 
             if (touchedRigs.Count > 0 && Time.time > muteDelay)
             {
                 foreach (VRRig rig in touchedRigs)
-                {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                }
+
                 muteDelay = Time.time + 0.15f;
             }
         }
