@@ -2552,11 +2552,11 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="button">Button</param>
         /// <param name="index">Index Position</param>
-        public static void AddButton(int category, ButtonInfo button, int? index = null)
+        public static void AddButton(int category, ButtonInfo button, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index != null)
-                buttonInfoList.Insert(index.Value, button);
+            if (index > 0)
+                buttonInfoList.Insert(index, button);
             else
                 buttonInfoList.Add(button);
 
@@ -2569,13 +2569,13 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="buttons">Buttons</param>
         /// <param name="index">Index Position</param>
-        public static void AddButtons(int category, ButtonInfo[] buttons, int? index = null)
+        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index != null)
+            if (index > 0)
             {
                 for (int i = 0; i < buttons.Length; i++)
-                    buttonInfoList.Insert(index.Value + i, buttons[i]);
+                    buttonInfoList.Insert(index + i, buttons[i]);
             }
             else
                 buttonInfoList.AddRange(buttons);
@@ -2589,11 +2589,11 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="name">Button Name</param>
         /// <param name="index">Index Position</param>
-        public static void RemoveButton(int category, string name, int? index = null)
+        public static void RemoveButton(int category, string name, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index != null)
-                buttonInfoList.RemoveAt(index.Value);
+            if (index > 0)
+                buttonInfoList.RemoveAt(index);
             else
             {
                 foreach (var button in buttonInfoList.Where(button => button.buttonText == name))
