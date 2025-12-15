@@ -194,9 +194,9 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                try
                 {
-                    try
+                    if (!PlayerIsLocal(rig))
                     {
                         PhotonView view = GetPhotonViewFromVRRig(rig);
 
@@ -214,8 +214,9 @@ namespace iiMenu.Mods
                                 TargetActors = targets
                             }, SendOptions.SendReliable);
                         }
-                    } catch { }
-                } 
+                    }
+                }
+                catch { }
             }
         }
 
