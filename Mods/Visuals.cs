@@ -307,7 +307,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < childCount; i++)
                 {
                     GameObject v = mainCamera.transform.GetChild(i).gameObject;
-                    if (v.name == "PropHaunt_Blindfold_ForCameras_Prefab(Clone)")
+                    if (v.name == "PropHunt_Blindfold_ForCameras_Prefab(Clone)")
                         Object.Destroy(v);
                 }
             }
