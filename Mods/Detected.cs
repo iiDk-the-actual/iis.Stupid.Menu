@@ -126,19 +126,10 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    PhotonView view = GetPhotonViewFromVRRig(lockTarget);
                     if (!Movement.isBlinking)
                         Movement.Blink();
                     for (int i = 0; i < 3950; i++)
-                    {
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                        {
-                            { 0, view.ViewID }
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { view.Owner.ActorNumber },
-                        }, SendOptions.SendUnreliable);
-                    }
+                        PhotonNetwork.DestroyPlayerObjects(lockTarget.GetPlayer().GetPlayer());
                         
                 }
 
