@@ -127,10 +127,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     if (!Movement.isBlinking)
-                        Movement.Blink();
-                    for (int i = 0; i < 3950; i++)
-                        PhotonNetwork.DestroyPlayerObjects(lockTarget.GetPlayer().GetPlayer());
-                        
+                        Movement.Blink(); 
                 }
 
                 if (GetGunInput(true))
@@ -138,6 +135,12 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
+                        if (lockTarget == null)
+                        {
+                            for (int i = 0; i < 3950; i++)
+                                PhotonNetwork.DestroyPlayerObjects(lockTarget.GetPlayer().GetPlayer());
+                        }
+
                         gunLocked = true;
                         lockTarget = gunTarget;
                     }
