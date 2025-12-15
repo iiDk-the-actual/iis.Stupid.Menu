@@ -381,9 +381,9 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 Player target = rig.GetPlayer().GetPlayer();
-                int viewID = viewIdArchive[target];
-
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                if (viewIdArchive.TryGetValue(target, out int viewID))
+                {
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                 {
                     { 0, viewID }
                 },
@@ -391,6 +391,7 @@ namespace iiMenu.Mods
                 {
                     TargetActors = new int[] { target.ActorNumber },
                 }, SendOptions.SendReliable);
+                }
             }
         }
 
