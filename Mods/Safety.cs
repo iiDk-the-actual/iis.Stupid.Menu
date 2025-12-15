@@ -446,7 +446,51 @@ namespace iiMenu.Mods
                 }
                 catch { }
                 NetworkSystem.Instance.ReturnToSinglePlayer();
-                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> {vrrig.GetName()} is a moderator, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> {vrrig.GetName()} is a moderator, you have been disconnected. Their player ID and room code have been saved to a file.");
+            }
+        }
+
+        public static void AntiContentCreator()
+        {
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && Visuals.specialCosmetics.Keys.Any(x => vrrig.concatStringOfCosmeticsAllowed.Contains(x))))
+            {
+                try
+                {
+
+                    VRRig plr = vrrig;
+                    NetPlayer player = GetPlayerFromVRRig(plr);
+                    if (player != null)
+                    {
+                        string text = "Room: " + PhotonNetwork.CurrentRoom.Name;
+                        float r = 0f;
+                        float g = 0f;
+                        float b = 0f;
+                        try
+                        {
+
+                            r = plr.playerColor.r * 255;
+                            g = plr.playerColor.r * 255;
+                            b = plr.playerColor.r * 255;
+                        }
+                        catch { LogManager.Log("Failed to log colors, rig most likely nonexistent"); }
+
+                        try
+                        {
+                            text += "\n====================================\n";
+                            text += string.Concat("Player Name: \"", player.NickName, "\", Player ID: \"", player.UserId, "\", Player Color: (R: ", r.ToString(), ", G: ", g.ToString(), ", B: ", b.ToString(), ")");
+                        }
+                        catch { LogManager.Log("Failed to log player"); }
+
+                        text += "\n====================================\n";
+                        text += "Text file generated with ii's Stupid Menu";
+                        string fileName = $"{PluginInfo.BaseDirectory}/" + player.NickName + " - Anti Content Creator.txt";
+
+                        File.WriteAllText(fileName, text);
+                    }
+                }
+                catch { }
+                NetworkSystem.Instance.ReturnToSinglePlayer();
+                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>ANTI-CONTENT CREATOR</color><color=grey>]</color> {vrrig.GetName()} is a content creator, you have been disconnected. Their player ID and room code have been saved to a file.");
             }
         }
 
