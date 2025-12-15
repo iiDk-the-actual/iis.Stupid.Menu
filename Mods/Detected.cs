@@ -878,7 +878,7 @@ namespace iiMenu.Mods
             PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
 
             float timeUntil = Time.time + 1f;
-            while (PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient || Time.time > timeUntil)
+            while (PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient || Time.time < timeUntil)
                 yield return null;
 
             if (PhotonNetwork.InRoom)
