@@ -25,6 +25,7 @@ using GorillaNetworking;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -125,10 +126,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (!Movement.isBlinking)
-                        Movement.Blink(); 
-                }
+                    SerializePatch.OverrideSerialization ??= () => false;
 
                 if (GetGunInput(true))
                 {
@@ -148,8 +146,8 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (Movement.isBlinking)
-                    Movement.DisableBlink();
+                if (SerializePatch.OverrideSerialization != null)
+                    SerializePatch.OverrideSerialization = null;
                 if (gunLocked)
                     gunLocked = false;
             }
