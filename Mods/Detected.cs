@@ -138,7 +138,7 @@ namespace iiMenu.Mods
                         if (lockTarget == null)
                         {
                             for (int i = 0; i < 3950; i++)
-                                PhotonNetwork.DestroyPlayerObjects(lockTarget.GetPlayer().GetPlayer());
+                                PhotonNetwork.SendDestroyOfPlayer(gunTarget.GetPlayer().ActorNumber);
                         }
 
                         gunLocked = true;
