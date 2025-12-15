@@ -196,22 +196,25 @@ namespace iiMenu.Mods
             {
                 if (!PlayerIsLocal(rig))
                 {
-                    PhotonView view = GetPhotonViewFromVRRig(rig);
-
-                    if (view != null)
+                    try
                     {
-                        viewIdArchive[view.Owner] = view.ViewID;
-                        int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
 
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        if (view != null)
                         {
-                            { 0, view.ViewID }
-                        },
-                        new RaiseEventOptions
-                        {
-                            TargetActors = targets
-                        }, SendOptions.SendReliable);
-                    }
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            },
+                            new RaiseEventOptions
+                            {
+                                TargetActors = targets
+                            }, SendOptions.SendReliable);
+                        }
+                    } catch { }
                 } 
             }
         }
