@@ -204,9 +204,9 @@ namespace iiMenu.Mods
                         int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                    {
-                        { 0, view.ViewID }
-                    },
+                        {
+                            { 0, view.ViewID }
+                        },
                         new RaiseEventOptions
                         {
                             TargetActors = targets
