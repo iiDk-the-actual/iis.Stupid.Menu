@@ -636,7 +636,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.LongJump, toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod = Movement.CreateVelocityTrackers, method = Movement.VelocityLongArms, disableMethod = Movement.DestroyVelocityTrackers, toolTip = "Moves your arms farther depending on how fast you move them."},
 
-                new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, method = Movement.Timer, disableMethod =() => { TimerPatch.enabled = false; Time.timeScale = 1f; }, toolTip = "Speeds up or slows down the time of your game."},
+                new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, method = Movement.Timer, disableMethod =() => { TimerPatch.enabled = false; Time.timeScale = 1f; GorillaLocomotion.GTPlayer.Instance.debugMovement = false;  }, toolTip = "Speeds up or slows down the time of your game."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method = Movement.SpeedBoost, toolTip = "Changes your speed to whatever you set it to."},
                 new ButtonInfo { buttonText = "Grip Speed Boost", method =() => { if (rightGrab) { Movement.SpeedBoost(); } }, toolTip = "Changes your speed to whatever you set it to, if you're holding right grip."},
@@ -860,6 +860,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotificationManager.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod = Visuals.WatchOn, method = Visuals.WatchStep, disableMethod = Visuals.WatchOff, toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
+                new ButtonInfo { buttonText = "Leaderboard Info", enableMethod =() => UpdatePatch.enabled = true, method = Visuals.LeaderboardInfo, disableMethod =() => UpdatePatch.enabled = false, toolTip = "Shows info next to players' names on the leaderboard."},
 
                 new ButtonInfo { buttonText = "FPS Boost", enableMethod =() => QualitySettings.globalTextureMipmapLimit = int.MaxValue, disableMethod =() => QualitySettings.globalTextureMipmapLimit = 1, toolTip = "Makes everything low quality in an attempt to boost your FPS."},
                 new ButtonInfo { buttonText = "Freeze In Background", enableMethod =() => Application.runInBackground = false, disableMethod =() => Application.runInBackground = true, toolTip = "Freezes the game when the application is not focused."},
@@ -2354,6 +2355,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Ghost Aura", overlapText = "Ghost Aura", method = Detected.GhostAura, isTogglable = false, detected = true, toolTip = "Makes players nearby invisible."},
                 new ButtonInfo { buttonText = "Detected Ghost On Touch", overlapText = "Ghost On Touch", method = Detected.GhostOnTouch, detected = true, toolTip = "Ghost players that you touch."},
 
+                new ButtonInfo { buttonText = "Leaderboard Ghost", method = Detected.LeaderboardGhost, disableMethod = Detected.DisableLeaderboardGhost, detected = true, toolTip = "Ghosts players when you report them on the leaderboard."},
+                new ButtonInfo { buttonText = "Leaderboard Mute", method = Detected.LeaderboardMute, detected = true, toolTip = "Mutes players when you mute them on the leaderboard."},
+
                 new ButtonInfo { buttonText = "Detected Unghost Gun", overlapText = "Unghost Gun", method = Detected.UnghostGun, detected = true, toolTip = "Makes whoever your hand desires visible again."},
                 new ButtonInfo { buttonText = "Detected Unghost All", overlapText = "Unghost All", method = Detected.UnghostAll, isTogglable = false, detected = true, toolTip = "Makes everyone visible again."},
                 new ButtonInfo { buttonText = "Detected Unghost Aura", overlapText = "Unghost Aura", method = Detected.UnghostAura, isTogglable = false, detected = true, toolTip = "Makes players nearby visible again."},
@@ -2396,8 +2400,8 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Detected Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Switch to Modded Gamemode", detected = true, toolTip = "Automatically sets the gamemode as modded when changed.", label = true},
-                new ButtonInfo { buttonText = "Isolate Others", detected = true, toolTip = "Allows you to still be seen when isolating players.", label = true}
+                new ButtonInfo { buttonText = "Switch to Modded Gamemode", detected = true, toolTip = "Automatically sets the gamemode as modded when changed."},
+                new ButtonInfo { buttonText = "Isolate Others", detected = true, toolTip = "Allows you to still be seen when isolating players."}
             }
         };
 
@@ -2551,11 +2555,11 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="button">Button</param>
         /// <param name="index">Index Position</param>
-        public static void AddButton(int category, ButtonInfo button, int? index = null)
+        public static void AddButton(int category, ButtonInfo button, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index != null)
-                buttonInfoList.Insert(index.Value, button);
+            if (index > 0)
+                buttonInfoList.Insert(index, button);
             else
                 buttonInfoList.Add(button);
 
@@ -2568,13 +2572,13 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="buttons">Buttons</param>
         /// <param name="index">Index Position</param>
-        public static void AddButtons(int category, ButtonInfo[] buttons, int? index = null)
+        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
-            if (index != null)
+            if (index > 0)
             {
                 for (int i = 0; i < buttons.Length; i++)
-                    buttonInfoList.Insert(index.Value + i, buttons[i]);
+                    buttonInfoList.Insert(index + i, buttons[i]);
             }
             else
                 buttonInfoList.AddRange(buttons);
@@ -2588,11 +2592,11 @@ namespace iiMenu.Menu
         /// <param name="category">Category</param>
         /// <param name="name">Button Name</param>
         /// <param name="index">Index Position</param>
-        public static void RemoveButton(int category, string name, int? index = null)
+        public static void RemoveButton(int category, string name, int index = -1)
         {
             List<ButtonInfo> buttonInfoList = buttons[category].ToList();
-            if (index != null)
-                buttonInfoList.RemoveAt(index.Value);
+            if (index > 0)
+                buttonInfoList.RemoveAt(index);
             else
             {
                 foreach (var button in buttonInfoList.Where(button => button.buttonText == name))

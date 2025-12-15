@@ -23,7 +23,6 @@ using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Managers;
 using PlayFab;
-using PlayFab.ClientModels;
 using PlayFab.CloudScriptModels;
 using PlayFab.Internal;
 using System;

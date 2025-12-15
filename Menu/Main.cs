@@ -5737,7 +5737,7 @@ namespace iiMenu.Menu
         }
 
         public static void SetRotation(Quaternion rotation) =>
-            GTPlayer.Instance.Turn(rotation.y - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
+            SetRotation(rotation.y);
 
         public static void SetRotation(float rotation) =>
            GTPlayer.Instance.Turn(rotation - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
@@ -5769,15 +5769,15 @@ namespace iiMenu.Menu
 
         [Obsolete("AddButton is obsolete. Use Buttons.AddButton instead.")]
         public static void AddButton(int category, ButtonInfo button, int index = -1) =>
-            Buttons.AddButton(category, button, index > 0 ? (int?)index : null);
+            Buttons.AddButton(category, button, index);
 
         [Obsolete("AddButtons is obsolete. Use Buttons.AddButtons instead.")]
         public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1) =>
-            Buttons.AddButtons(category, buttons, index > 0 ? (int?)index : null);
+            Buttons.AddButtons(category, buttons, index);
 
         [Obsolete("RemoveButton is obsolete. Use Buttons.RemoveButton instead.")]
         public static void RemoveButton(int category, string name, int index = -1) =>
-            Buttons.RemoveButton(category, name, index > 0 ? (int?)index : null);
+            Buttons.RemoveButton(category, name, index);
 
         public static void ReloadMenu()
         {

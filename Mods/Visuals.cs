@@ -25,6 +25,7 @@ using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
+using HarmonyLib;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
 using iiMenu.Extensions;
@@ -42,6 +43,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.TextCore;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -305,7 +307,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < childCount; i++)
                 {
                     GameObject v = mainCamera.transform.GetChild(i).gameObject;
-                    if (v.name == "PropHaunt_Blindfold_ForCameras_Prefab(Clone)")
+                    if (v.name == "PropHunt_Blindfold_ForCameras_Prefab(Clone)")
                         Object.Destroy(v);
                 }
             }
@@ -336,6 +338,100 @@ namespace iiMenu.Mods
                 regwatchShell.transform.localRotation = Quaternion.Euler(0f, 140f, 0f);
                 regwatchShell.transform.parent.localPosition += new Vector3(0.025f, 0f, 0f);
                 regwatchShell.transform.localPosition += new Vector3(0.025f, 0f, -0.035f);
+            }
+        }
+
+        private static TMP_SpriteAsset _infoSpriteAsset;
+        public static TMP_SpriteAsset InfoSprites
+        {
+            get
+            {
+                if (_infoSpriteAsset == null)
+                {
+                    _infoSpriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
+                    _infoSpriteAsset.name = "iiMenu_InfoSprites";
+
+                    var textureList = new List<Texture2D>();
+                    var spriteDataList = new List<(string name, int index)>();
+
+                    void AddSprite(string name, Texture2D tex)
+                    {
+                        spriteDataList.Add((name, textureList.Count));
+                        textureList.Add(tex);
+                    }
+
+                    AddSprite("Steam", LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png"));
+                    AddSprite("Standalone", LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png"));
+                    AddSprite("PC", LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/pc.png", "Images/Mods/Visuals/pc.png"));
+                    for (int i = 1; i <= 5; i++)
+                        AddSprite($"Ping{i}", LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/ping{i}.png", $"Images/Mods/Visuals/ping{i}.png"));
+
+                    int maxSize = 512;
+                    Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
+                    Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
+
+                    _infoSpriteAsset.spriteSheet = spriteSheet;
+                    _infoSpriteAsset.material = new Material(Shader.Find("TextMeshPro/Sprite"))
+                    {
+                        mainTexture = spriteSheet
+                    };
+
+                    _infoSpriteAsset.spriteInfoList = new List<TMP_Sprite>();
+                    Traverse.Create(_infoSpriteAsset).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
+
+                    _infoSpriteAsset.spriteGlyphTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var rect = rects[i];
+
+                        var glyph = new TMP_SpriteGlyph
+                        {
+                            index = (uint)i,
+                            metrics = new GlyphMetrics(
+                                width: rect.width * spriteSheet.width,
+                                height: rect.height * spriteSheet.height,
+                                bearingX: -(rect.width * spriteSheet.width) / 2f,
+                                bearingY: rect.height * spriteSheet.height * 0.8f,
+                                advance: rect.width * spriteSheet.width
+                            ),
+                            glyphRect = new GlyphRect(
+                                x: (int)(rect.x * spriteSheet.width),
+                                y: (int)(rect.y * spriteSheet.height),
+                                width: (int)(rect.width * spriteSheet.width),
+                                height: (int)(rect.height * spriteSheet.height)
+                            ),
+                            scale = 1f,
+                            atlasIndex = 0
+                        };
+                        _infoSpriteAsset.spriteGlyphTable.Add(glyph);
+                    }
+
+                    _infoSpriteAsset.spriteCharacterTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var (name, _) = spriteDataList[i];
+
+                        var character = new TMP_SpriteCharacter(0xFFFE, _infoSpriteAsset.spriteGlyphTable[i])
+                        {
+                            name = name,
+                            scale = 1f,
+                            glyphIndex = (uint)i
+                        };
+                        _infoSpriteAsset.spriteCharacterTable.Add(character);
+                    }
+
+                    _infoSpriteAsset.UpdateLookupTables();
+                }
+                return _infoSpriteAsset;
+            }
+        }
+
+        public static void LeaderboardInfo()
+        {
+            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
+            {
+                scoreboard.boardText.richText = true;
+                scoreboard.boardText.spriteAsset ??= InfoSprites;
             }
         }
 
@@ -2446,6 +2542,7 @@ namespace iiMenu.Mods
 
         public static void CompactTags()
         {
+            bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             foreach (KeyValuePair<VRRig, GameObject> nametag in compactNameTags)
             {
                 if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
@@ -2466,6 +2563,9 @@ namespace iiMenu.Mods
                         if (!compactNameTags.ContainsKey(vrrig))
                         {
                             GameObject textContainer = new GameObject("iimenu_vrctag_text");
+                            if (hoc)
+                                textContainer.layer = 19;
+
                             GameObject infoTag = new GameObject("infotag");
                             infoTag.transform.parent = textContainer.transform;
                             infoTag.transform.localPosition = new Vector3(0f, 0.5f, 0f); // change the y to make the info tag farther or closer to the nametag 
@@ -2490,6 +2590,9 @@ namespace iiMenu.Mods
                             nameMesh.richText = true;
 
                             GameObject bgContainer = new GameObject("iimenu_vrctag_background");
+                            if (hoc)
+                                bgContainer.layer = 19;
+
                             GameObject infoBg = new GameObject("infobg");
                             infoBg.transform.parent = bgContainer.transform;
                             infoBg.transform.localPosition = new Vector3(0f, 0.5f, 0f);  // change the y to make the info tag farther or closer to the nametag 
@@ -2894,8 +2997,18 @@ namespace iiMenu.Mods
 
         private static Material platformMat;
         private static Material platformEspMat;
-        private static Texture2D steamtxt;
-        private static Texture2D oculustxt;
+
+        private static Texture2D GetPlatformTexture(VRRig rig)
+        {
+            return rig.GetPlatform() switch
+            {
+                "Steam" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png"),
+                "Standalone" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png"),
+                "PC" => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/pc.png", "Images/Mods/Visuals/pc.png"),
+                _ => LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/unknown.png", "Images/Mods/Visuals/unknown.png"),
+            };
+        }
+
         private static readonly Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
 
         public static void PlatformIndicators()
@@ -2934,13 +3047,7 @@ namespace iiMenu.Mods
                         platformIndicators.Add(vrrig, indicator);
                     }
 
-                    if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
-
-                    if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
-
-                    indicator.GetComponent<Renderer>().material.mainTexture = PlayerIsSteam(vrrig) ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
@@ -2979,13 +3086,7 @@ namespace iiMenu.Mods
                         platformIndicators.Add(vrrig, indicator);
                     }
 
-                    if (steamtxt == null)
-                        steamtxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/oculus.png", "Images/Mods/Visuals/oculus.png");
-
-                    if (oculustxt == null)
-                        oculustxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/steam.png", "Images/Mods/Visuals/steam.png");
-
-                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.IsSteam() ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;

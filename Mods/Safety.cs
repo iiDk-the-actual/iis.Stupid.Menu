@@ -263,12 +263,8 @@ namespace iiMenu.Mods
 
         public static void VisualizeAntiReport()
         {
-            try
-            {
-                foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where line.linePlayer == NetworkSystem.Instance.LocalPlayer select line.reportButton.gameObject.transform)
-                    VisualizeAura(report.position, threshold, Color.red);
-            }
-            catch { } // Not connected
+            foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where line.linePlayer == NetworkSystem.Instance.LocalPlayer select line.reportButton.gameObject.transform)
+                VisualizeAura(report.position, threshold, Color.red);
         }
 
 		public static VRRig reportRig;

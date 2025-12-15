@@ -30,9 +30,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -187,25 +185,29 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                try
                 {
-                    PhotonView view = GetPhotonViewFromVRRig(rig);
-
-                    if (view != null)
+                    if (!PlayerIsLocal(rig))
                     {
-                        viewIdArchive[view.Owner] = view.ViewID;
-                        int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
 
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                    {
-                        { 0, view.ViewID }
-                    },
-                        new RaiseEventOptions
+                        if (view != null)
                         {
-                            TargetActors = targets
-                        }, SendOptions.SendReliable);
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
+
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            },
+                            new RaiseEventOptions
+                            {
+                                TargetActors = targets
+                            }, SendOptions.SendReliable);
+                        }
                     }
-                } 
+                }
+                catch { }
             }
         }
 
@@ -259,9 +261,7 @@ namespace iiMenu.Mods
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
                         touchedRigs.Add(rig);
-                    }
                 }
             }
 
@@ -278,6 +278,69 @@ namespace iiMenu.Mods
                     {
                         TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
                     }, SendOptions.SendReliable);
+                }
+            }
+        }
+
+        public static void LeaderboardGhost()
+        {
+            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
+            {
+                if (scoreboard.buttonText.text.Contains("REPORT"))
+                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("REPORT", "GHOST");
+            }
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                {
+                    if (line.reportInProgress)
+                    {
+                        PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
+                        if (view != null)
+                        {
+                            viewIdArchive[view.Owner] = view.ViewID;
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            {
+                                { 0, view.ViewID }
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                            }, SendOptions.SendReliable);
+                        }
+                        line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                    }
+                }
+            }
+        }
+
+        public static void DisableLeaderboardGhost()
+        {
+            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
+            {
+                if (scoreboard.buttonText.text.Contains("GHOST"))
+                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
+            }
+        }
+
+        public static void LeaderboardMute()
+        {
+            if (Time.time > muteDelay)
+            {
+                muteDelay = Time.time + 0.15f;
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                    {
+                        if (line.mute == 1)
+                        {
+                            PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
+                            if (view != null)
+                                PhotonNetwork.Destroy(view);
+
+                            line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                        }
+                    }
                 }
             }
         }
@@ -313,9 +376,9 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 Player target = rig.GetPlayer().GetPlayer();
-                int viewID = viewIdArchive[target];
-
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                if (viewIdArchive.TryGetValue(target, out int viewID))
+                {
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
                 {
                     { 0, viewID }
                 },
@@ -323,6 +386,7 @@ namespace iiMenu.Mods
                 {
                     TargetActors = new int[] { target.ActorNumber },
                 }, SendOptions.SendReliable);
+                }
             }
         }
 
@@ -598,9 +662,7 @@ namespace iiMenu.Mods
             if (touchedPlayers.Count > 0)
             {
                 foreach (VRRig rig in touchedPlayers)
-                {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                }
             }
         }
 
@@ -645,9 +707,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!PlayerIsLocal(rig))
-                    {
                         PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                    }
                 }                    
 
                 muteDelay = Time.time + 0.15f;
@@ -689,18 +749,15 @@ namespace iiMenu.Mods
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
                         touchedRigs.Add(rig);
-                    }
                 }
             }
 
             if (touchedRigs.Count > 0 && Time.time > muteDelay)
             {
                 foreach (VRRig rig in touchedRigs)
-                {
                     PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                }
+
                 muteDelay = Time.time + 0.15f;
             }
         }
@@ -815,7 +872,8 @@ namespace iiMenu.Mods
         {
             PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
 
-            while (PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient)
+            float timeUntil = Time.time + 1f;
+            while (!(PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) || Time.time < timeUntil)
                 yield return null;
 
             if (PhotonNetwork.InRoom)
