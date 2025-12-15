@@ -341,7 +341,7 @@ namespace iiMenu.Mods
                 {
                     if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
                     {
-                        if (line.mute == 1)
+                        if (line.muteButton.isOn)
                         {
                             PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
                             if (view != null)
