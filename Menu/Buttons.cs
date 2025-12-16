@@ -473,7 +473,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "15 FPS", method =() => Important.CapFPS(15), toolTip = "Caps your FPS at 15 frames per second."},
                 new ButtonInfo { buttonText = "Unlock FPS", method = Important.UncapFPS, disableMethod =() => Application.targetFrameRate = 144, toolTip = "Unlocks your FPS."},
 
-                new ButtonInfo { buttonText = "PC Button Click", method = Important.PCButtonClick, toolTip = "Lets you click in-game buttons with your mouse."},
+                new ButtonInfo { buttonText = "PC Button Click", method = Important.PCButtonClick, disableMethod = Important.DisablePCButtonClick, toolTip = "Lets you click in-game buttons with your mouse."},
                 new ButtonInfo { buttonText = "PC Controller Emulation", method = Important.PCControllerEmulation, toolTip = "Allows you to press buttons on your in-game controllers using your keyboard."},
                 new ButtonInfo { buttonText = "Unlock Competitive Queue", method =() => GorillaComputer.instance.CompQueueUnlockButtonPress(), isTogglable = false, toolTip = "Permanently unlocks the competitive queue."},
                 new ButtonInfo { buttonText = "Change Queue to Default", overlapText = "Change Queue <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => GorillaComputer.instance.currentQueue = "DEFAULT", isTogglable = false, toolTip = "Changes your queue to default."},
@@ -2394,6 +2394,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
                 new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
                 new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+
+                new ButtonInfo { buttonText = "Unlock Driver", method =() => Detected.DriverStatus(false), isTogglable = false, detected = true, toolTip = "Unlocks the driver in virtual stump."},
+                new ButtonInfo { buttonText = "Become Driver", method =() => Detected.DriverStatus(true), isTogglable = false, detected = true, toolTip = "Lets you be the driver in virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Detected.VirtualStumpKickGun, isTogglable = false, detected = true, toolTip = "Lets you be the driver in virtual stump."},
+
+
+
+
+
+
             },
 
 

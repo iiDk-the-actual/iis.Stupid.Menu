@@ -22,6 +22,7 @@
 using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaNetworking;
+using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -766,7 +767,8 @@ namespace iiMenu.Mods
         {
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
         }
-            
+
+
         public static void ChangeNameGun()
         {
             if (GetGunInput(false))
@@ -774,16 +776,30 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > muteDelay)
+                    {
+                        Hashtable hashtable = new Hashtable();
+                        hashtable[byte.MaxValue] = name;
+                        PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
+                    }
+                }
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        Player player = gunTarget.GetPlayer().GetPlayer();
-                        player.NickName = name;
-                        player.SetPlayerNameProperty();
+                        gunLocked = true;
+                        lockTarget = gunTarget;
                     }
                 }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -791,8 +807,9 @@ namespace iiMenu.Mods
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
             {
-                player.NickName = name;
-                player.SetPlayerNameProperty();
+                Hashtable hashtable = new Hashtable();
+                hashtable[byte.MaxValue] = name;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
         }
 
@@ -867,6 +884,70 @@ namespace iiMenu.Mods
 
             if (PhotonNetwork.InRoom)
                 ChangeGamemode(gamemode);
+        }
+
+        public static void DriverStatus(bool locked)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, locked, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        public static void BecomeDriver()
+        {
+            if (PhotonNetwork.IsMasterClient)
+                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, PhotonNetwork.LocalPlayer.ActorNumber);
+            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+        }
+
+        private static long? id;
+        private static float setMapDelay;
+        public static void VirtualStumpKickGun()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                id = null;
+                return;
+            }
+
+            if (id == null && Time.time > setMapDelay)
+            {
+                setMapDelay = Time.time + 1f;
+
+                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
+                    BecomeDriver();
+                    return;
+                }
+
+                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    id = Random.Range(1, 999999);
+
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPlayer().GetPlayer(), new object[]
+                    {
+                        CustomMapsTerminal.CurrentScreen,
+                        id,
+                        CustomMapsTerminal.GetDriverID()
+                    });
+
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                } else
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
+            }
+
+            if (GetGunInput(false) && id != null)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                        CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPlayer().GetPlayer(), id.Value);
+                }
+            }
         }
     }
 }

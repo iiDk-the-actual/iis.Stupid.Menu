@@ -544,6 +544,15 @@ exit";
             }
         }
 
+        public static void DisablePCButtonClick()
+        {
+            if (oldLocalPosition != null)
+            {
+                GorillaTagger.Instance.rightHandTriggerCollider.transform.position = oldLocalPosition.Value;
+                oldLocalPosition = null;
+            }
+        }
+
         public static void PCControllerEmulation()
         {
             ControllerInputPoller.instance.rightControllerPrimaryButton |= UnityInput.Current.GetKey(KeyCode.E);
