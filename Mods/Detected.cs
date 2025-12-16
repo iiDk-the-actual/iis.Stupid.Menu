@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -44,7 +45,7 @@ namespace iiMenu.Mods
     public static class Detected
     {
         public static float masterDelay;
-        public static Dictionary<Player, int> viewIdArchive = new Dictionary<Player, int>();
+        public static Dictionary<VRRig, int> viewIdArchive = new Dictionary<VRRig, int>();
         public static void SetMasterClientGun()
         {
             if (GetGunInput(false))
@@ -77,11 +78,13 @@ namespace iiMenu.Mods
 
         public static void Destroy(VRRig rig, Hashtable hashtable = null, RaiseEventOptions raiseEventOptions = null, int viewID = -1)
         {
-            PhotonView view = GetPhotonViewFromVRRig(rig);
             if (hashtable == null)
+            {
+                PhotonView view = GetPhotonViewFromVRRig(rig);
                 hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
+            }
             if (raiseEventOptions == null)
-                raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { view.OwnerActorNr } };
+                raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
             PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
         }
         public static void CrashGun()
@@ -170,7 +173,7 @@ namespace iiMenu.Mods
                         PhotonView view = GetPhotonViewFromVRRig(gunTarget);
                         if (view != null)
                         {
-                            viewIdArchive[view.Owner] = view.ViewID;
+                            viewIdArchive[gunTarget] = view.ViewID;
                             Destroy(gunTarget, new Hashtable
                             {
                                 { 0, view.ViewID }
@@ -196,7 +199,7 @@ namespace iiMenu.Mods
 
                         if (view != null)
                         {
-                            viewIdArchive[view.Owner] = view.ViewID;
+                            viewIdArchive[rig] = view.ViewID;
                             int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
                             Destroy(rig, new Hashtable
@@ -235,7 +238,7 @@ namespace iiMenu.Mods
 
                     if (view != null)
                     {
-                        viewIdArchive[view.Owner] = view.ViewID;
+                        viewIdArchive[rig] = view.ViewID;
                         int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
                         Destroy(rig, new Hashtable
@@ -273,7 +276,7 @@ namespace iiMenu.Mods
                 PhotonView view = GetPhotonViewFromVRRig(rig);
                 if (view != null)
                 {
-                    viewIdArchive[view.Owner] = view.ViewID;
+                    viewIdArchive[rig] = view.ViewID;
                     Destroy(rig, new Hashtable
                     {
                         { 0, view.ViewID }
@@ -285,6 +288,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<GorillaPlayerScoreboardLine, VRRig> linerig = new Dictionary<GorillaPlayerScoreboardLine, VRRig>();
         public static void LeaderboardGhost()
         {
             foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
@@ -302,7 +306,8 @@ namespace iiMenu.Mods
                         PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
                         if (view != null)
                         {
-                            viewIdArchive[view.Owner] = view.ViewID;
+                            viewIdArchive[line.linePlayer.VRRig()] = view.ViewID;
+                            linerig.Add(line, line.linePlayer.VRRig());
                             Destroy(line.linePlayer.VRRig(), new Hashtable
                             {
                                 { 0, view.ViewID }
@@ -312,6 +317,8 @@ namespace iiMenu.Mods
                             });
                         }
                         line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                        line.reportButton.isOn = true;
+                        line.reportButton.UpdateColor();
                     }
                 }
             }
@@ -323,6 +330,13 @@ namespace iiMenu.Mods
             {
                 if (scoreboard.buttonText.text.Contains("GHOST"))
                     scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
+                
+            }
+            foreach(GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                line.reportButton.isOn = false;
+                line.reportButton.UpdateColor();
             }
         }
 
@@ -354,14 +368,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         Player target = gunTarget.GetPlayer().GetPlayer();
-                        int viewID = viewIdArchive[target];
+                        int viewID = viewIdArchive[gunTarget];
                         Destroy(gunTarget, new Hashtable
                         {
                             { 0, viewID }
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { target.ActorNumber }
-                        }, viewID);
+                        });
                     }
                 }
             }
@@ -372,7 +386,7 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 Player target = rig.GetPlayer().GetPlayer();
-                if (viewIdArchive.TryGetValue(target, out int viewID))
+                if (viewIdArchive.TryGetValue(rig, out int viewID))
                 {
                     Destroy(rig, new Hashtable
                     {
@@ -381,7 +395,7 @@ namespace iiMenu.Mods
                     new RaiseEventOptions
                     {
                         TargetActors = new int[] { target.ActorNumber },
-                    }, viewID);
+                    });
                 }
             }
         }
@@ -404,7 +418,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in nearbyPlayers)
                 {
                     Player target = rig.GetPlayer().GetPlayer();
-                    int viewID = viewIdArchive[target];
+                    int viewID = viewIdArchive[rig];
 
                     Destroy(rig, new Hashtable
                     {
@@ -413,7 +427,7 @@ namespace iiMenu.Mods
                     new RaiseEventOptions
                     {
                         TargetActors = new int[] { target.ActorNumber },
-                    }, viewID);
+                    });
                 }
             }
         }
@@ -439,7 +453,7 @@ namespace iiMenu.Mods
             foreach (VRRig rig in touchedRigs)
             {
                 Player target = rig.GetPlayer().GetPlayer();
-                int viewID = viewIdArchive[target];
+                int viewID = viewIdArchive[rig];
 
                 Destroy(rig, new Hashtable
                 {
@@ -448,7 +462,7 @@ namespace iiMenu.Mods
                 new RaiseEventOptions
                 {
                     TargetActors = new int[] { target.ActorNumber },
-                }, viewID);
+                });
             }
         }
 
