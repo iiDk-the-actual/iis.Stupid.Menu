@@ -26,6 +26,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -329,19 +330,14 @@ namespace iiMenu.Mods
             if (Time.time > muteDelay)
             {
                 muteDelay = Time.time + 0.15f;
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && rig.muted))
                 {
-                    if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                    try
                     {
-                        if (line.muteButton.isOn)
-                        {
-                            PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
-                            if (view != null)
-                                PhotonNetwork.Destroy(view);
-
-                            line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
-                        }
-                    }
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
+                        if (view != null)
+                            PhotonNetwork.Destroy(view);
+                    } catch { }
                 }
             }
         }
