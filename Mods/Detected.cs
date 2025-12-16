@@ -98,7 +98,6 @@ namespace iiMenu.Mods
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, raiseEventOptions, SendOptions.SendReliable);
                     break;
                 case GameObject go:
-
                     break;
             }
            
@@ -336,10 +335,10 @@ namespace iiMenu.Mods
                             });
                         }
                     }
-                    if (line.reportButton.isOn &&  line.reportInProgress)
+                    if (line.reportButton.isOn && line.reportInProgress)
                     {
                         line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
-                        line.reportButton.isOn = true;
+                        line.reportButton.isOn = false;
                         line.reportButton.UpdateColor();
                         int ViewID = viewIdArchive[line.linePlayer.VRRig()];
                         Destroy(line.linePlayer.VRRig(), null, null, ViewID);
