@@ -60,7 +60,7 @@ namespace iiMenu.Mods
                     {
                         if (Time.time > masterDelay)
                         {
-                            PhotonNetwork.SetMasterClient(gunTarget.GetPlayer().GetPlayer());
+                            PhotonNetwork.SetMasterClient(gunTarget.GetPhotonPlayer());
                             masterDelay = Time.time + 0.02f;
                         }
     
@@ -112,7 +112,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                    PhotonNetwork.SetMasterClient(lockTarget.GetPhotonPlayer());
                     PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                 }
 
@@ -135,7 +135,7 @@ namespace iiMenu.Mods
 
         public static void CrashAll()
         {
-            PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPlayer().GetPlayer());
+            PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPhotonPlayer());
             PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
@@ -383,7 +383,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        Player target = gunTarget.GetPlayer().GetPlayer();
+                        Player target = gunTarget.GetPhotonPlayer();
                         int viewID = viewIdArchive[gunTarget];
                         Destroy(gunTarget, new Hashtable
                         {
@@ -959,7 +959,7 @@ namespace iiMenu.Mods
                 {
                     id = Random.Range(1, 999999);
 
-                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPlayer().GetPlayer(), new object[]
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
                     {
                         CustomMapsTerminal.CurrentScreen,
                         id,
@@ -980,7 +980,7 @@ namespace iiMenu.Mods
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                        CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPlayer().GetPlayer(), id.Value);
+                        CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPhotonPlayer(), id.Value);
                 }
             }
         }

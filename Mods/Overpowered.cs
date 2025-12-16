@@ -4571,7 +4571,7 @@ namespace iiMenu.Mods
                     if (Time.time > lagDebounce)
                     {
                         for (int i = 0; i < lagAmount; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", lockTarget.GetPlayer().GetPlayer(), new object[] { "Infection", (short)12, null });
+                            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", lockTarget.GetPhotonPlayer(), new object[] { "Infection", (short)12, null });
 
                         lagDebounce = Time.time + lagDelay;
                         RPCProtection();
@@ -4991,7 +4991,7 @@ namespace iiMenu.Mods
                     if (!IsModded(true)) return;
                     if (Time.time > del)
                     {
-                        PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                        PhotonNetwork.SetMasterClient(lockTarget.GetPhotonPlayer());
                         PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                         del = Time.time + 0.02f;
                     }
