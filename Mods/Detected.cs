@@ -75,6 +75,15 @@ namespace iiMenu.Mods
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
+        public static void Destroy(VRRig rig, Hashtable hashtable = null, RaiseEventOptions raiseEventOptions = null, int viewID = -1)
+        {
+            PhotonView view = GetPhotonViewFromVRRig(rig);
+            if (hashtable == null)
+                hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
+            if (raiseEventOptions == null)
+                raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { view.OwnerActorNr } };
+            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
+        }
         public static void CrashGun()
         {
             if (GetGunInput(false))
@@ -129,7 +138,7 @@ namespace iiMenu.Mods
                         if (lockTarget == null)
                         {
                             for (int i = 0; i < 3950; i++)
-                                PhotonNetwork.SendDestroyOfPlayer(gunTarget.GetPlayer().ActorNumber);
+                                Destroy(gunTarget);
                         }
 
                         gunLocked = true;
@@ -162,13 +171,13 @@ namespace iiMenu.Mods
                         if (view != null)
                         {
                             viewIdArchive[view.Owner] = view.ViewID;
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            Destroy(gunTarget, new Hashtable
                             {
                                 { 0, view.ViewID }
                             }, new RaiseEventOptions
                             {
                                 TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                            }, SendOptions.SendReliable);
+                            });
                         }
                     }
                 }
@@ -190,14 +199,14 @@ namespace iiMenu.Mods
                             viewIdArchive[view.Owner] = view.ViewID;
                             int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            Destroy(rig, new Hashtable
                             {
                                 { 0, view.ViewID }
                             },
                             new RaiseEventOptions
                             {
                                 TargetActors = targets
-                            }, SendOptions.SendReliable);
+                            });
                         }
                     }
                 }
@@ -229,14 +238,14 @@ namespace iiMenu.Mods
                         viewIdArchive[view.Owner] = view.ViewID;
                         int[] targets = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray();
 
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        Destroy(rig, new Hashtable
                         {
                             { 0, view.ViewID }
                         },
                         new RaiseEventOptions
                         {
                             TargetActors = targets
-                        }, SendOptions.SendReliable);
+                        });
                         nearbyPlayers.Remove(rig);
                     }
                 }
@@ -265,13 +274,13 @@ namespace iiMenu.Mods
                 if (view != null)
                 {
                     viewIdArchive[view.Owner] = view.ViewID;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    Destroy(rig, new Hashtable
                     {
                         { 0, view.ViewID }
                     }, new RaiseEventOptions
                     {
                         TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                    }, SendOptions.SendReliable);
+                    });
                 }
             }
         }
@@ -294,13 +303,13 @@ namespace iiMenu.Mods
                         if (view != null)
                         {
                             viewIdArchive[view.Owner] = view.ViewID;
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                            Destroy(line.linePlayer.VRRig(), new Hashtable
                             {
                                 { 0, view.ViewID }
                             }, new RaiseEventOptions
                             {
                                 TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                            }, SendOptions.SendReliable);
+                            });
                         }
                         line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
                     }
@@ -326,9 +335,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        PhotonView view = GetPhotonViewFromVRRig(rig);
-                        if (view != null)
-                            PhotonNetwork.Destroy(view);
+                        Destroy(rig);
                     } catch { }
                 }
             }
@@ -348,13 +355,13 @@ namespace iiMenu.Mods
                     {
                         Player target = gunTarget.GetPlayer().GetPlayer();
                         int viewID = viewIdArchive[target];
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        Destroy(gunTarget, new Hashtable
                         {
                             { 0, viewID }
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { target.ActorNumber }
-                        }, SendOptions.SendReliable);
+                        }, viewID);
                     }
                 }
             }
@@ -367,14 +374,14 @@ namespace iiMenu.Mods
                 Player target = rig.GetPlayer().GetPlayer();
                 if (viewIdArchive.TryGetValue(target, out int viewID))
                 {
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    Destroy(rig, new Hashtable
                     {
                         { 0, viewID }
                     },
                     new RaiseEventOptions
                     {
                         TargetActors = new int[] { target.ActorNumber },
-                    }, SendOptions.SendReliable);
+                    }, viewID);
                 }
             }
         }
@@ -399,14 +406,14 @@ namespace iiMenu.Mods
                     Player target = rig.GetPlayer().GetPlayer();
                     int viewID = viewIdArchive[target];
 
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    Destroy(rig, new Hashtable
                     {
                         { 0, viewID }
                     },
                     new RaiseEventOptions
                     {
                         TargetActors = new int[] { target.ActorNumber },
-                    }, SendOptions.SendReliable);
+                    }, viewID);
                 }
             }
         }
@@ -434,14 +441,14 @@ namespace iiMenu.Mods
                 Player target = rig.GetPlayer().GetPlayer();
                 int viewID = viewIdArchive[target];
 
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                Destroy(rig, new Hashtable
                 {
                     { 0, viewID }
                 },
                 new RaiseEventOptions
                 {
                     TargetActors = new int[] { target.ActorNumber },
-                }, SendOptions.SendReliable);
+                }, viewID);
             }
         }
 
@@ -463,13 +470,13 @@ namespace iiMenu.Mods
                             PhotonView view = GetPhotonViewFromVRRig(rig);
                             if (includeLocal && rig != gunTarget)
                             {
-                                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                                Destroy(rig, new Hashtable
                                 {
                                     { 0, view.ViewID }
                                 }, new RaiseEventOptions
                                 {
                                     TargetActors = new int[] { gunTarget.GetPlayer().ActorNumber }
-                                }, SendOptions.SendReliable);
+                                });
                             }
                         }
                     }
@@ -485,13 +492,13 @@ namespace iiMenu.Mods
                 if (includeLocal)
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                    Destroy(rig, new Hashtable
                     {
                         { 0, view.ViewID }
                     }, new RaiseEventOptions
                     {
                         TargetActors = AllActorNumbersExcept(view.Owner.ActorNumber)
-                    }, SendOptions.SendReliable);
+                    });
                 }
             }
         }
@@ -519,13 +526,13 @@ namespace iiMenu.Mods
                     if (includeLocal)
                     {
                         PhotonView view = GetPhotonViewFromVRRig(rig);
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        Destroy(rig, new Hashtable
                         {
                             { 0, view.ViewID }
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { view.Owner.ActorNumber }
-                        }, SendOptions.SendReliable);
+                        });
                     }
                     
                 }
@@ -558,13 +565,13 @@ namespace iiMenu.Mods
                     PhotonView view = GetPhotonViewFromVRRig(otherRig);
                     if (includeLocal && otherRig != touchedRig)
                     {
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
+                        Destroy(otherRig, new Hashtable
                         {
                             { 0, view.ViewID }
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { touchedRig.GetPlayer().ActorNumber }
-                        }, SendOptions.SendReliable);
+                        });
                     }
                 }
             }
@@ -579,7 +586,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    PhotonNetwork.SendDestroyOfPlayer(lockTarget.GetPlayer().ActorNumber);
+                    Destroy(lockTarget);
 
                 if (GetGunInput(true))
                 {
@@ -603,9 +610,7 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
-                {
-                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
-                }
+                    Destroy(rig);
             }
                 
         }
@@ -626,7 +631,7 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0)
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
-                    PhotonNetwork.SendDestroyOfPlayer(nearbyPlayer.GetPlayer().ActorNumber);
+                    Destroy(nearbyPlayer);
 
             }
         }
@@ -652,7 +657,7 @@ namespace iiMenu.Mods
             if (touchedPlayers.Count > 0)
             {
                 foreach (VRRig rig in touchedPlayers)
-                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
+                    Destroy(rig);
             }
         }
 
@@ -668,7 +673,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > muteDelay)
                     {
-                        PhotonNetwork.SendDestroyOfPlayer(lockTarget.GetPlayer().ActorNumber);
+                        Destroy(lockTarget);
                         muteDelay = Time.time + 0.15f;
                     }
                 }
@@ -697,7 +702,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!PlayerIsLocal(rig))
-                        PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
+                        Destroy(rig);
                 }
 
                 muteDelay = Time.time + 0.15f;
@@ -721,7 +726,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
-                    PhotonNetwork.SendDestroyOfPlayer(nearbyPlayer.GetPlayer().ActorNumber);
+                    Destroy(nearbyPlayer);
                     muteDelay = Time.time + 0.15f;
                 }
             }
@@ -746,7 +751,7 @@ namespace iiMenu.Mods
             if (touchedRigs.Count > 0 && Time.time > muteDelay)
             {
                 foreach (VRRig rig in touchedRigs)
-                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
+                    Destroy(rig);
 
                 muteDelay = Time.time + 0.15f;
             }
