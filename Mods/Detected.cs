@@ -917,6 +917,7 @@ namespace iiMenu.Mods
 
         private static long? id;
         private static float setMapDelay;
+        private static Vector3? rigPosArchive;
         public static void VirtualStumpKickGun()
         {
             if (!PhotonNetwork.InRoom)
@@ -936,8 +937,20 @@ namespace iiMenu.Mods
                     return;
                 }
 
+                if (!CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    if (rigPosArchive == null)
+                        rigPosArchive = VRRig.LocalRig.transform.position;
+                    VRRig.LocalRig.transform.position = CustomMapManager.instance.virtualStumpPlayerDetector.thisBox.bounds.center;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.All });
+                }
+
+
                 if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
                 {
+                    if (rigPosArchive.HasValue)
+                        VRRig.LocalRig.transform.position = rigPosArchive.Value;
+                    rigPosArchive = null;
                     id = Random.Range(1, 999999);
 
                     CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
