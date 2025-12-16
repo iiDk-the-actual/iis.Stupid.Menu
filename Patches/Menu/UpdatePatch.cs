@@ -49,7 +49,7 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled)
             {
-                string targetName = __instance.playerNameVisible + " ERR";
+                string targetName = Main.CleanPlayerName(__instance.linePlayer.NickName) + " ERR";
                 try
                 {
                     VRRig rig = __instance.linePlayer.VRRig();
