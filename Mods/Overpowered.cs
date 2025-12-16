@@ -387,6 +387,9 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
+                if (GorillaGameManager.instance.GameType() != GameModeType.Guardian)
+                    return;
+
                 if (NetworkSystem.Instance.IsMasterClient)
                 {
                     if (!VRRig.LocalRig.enabled)
