@@ -76,16 +76,32 @@ namespace iiMenu.Mods
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
-        public static void Destroy(VRRig rig, Hashtable hashtable = null, RaiseEventOptions raiseEventOptions = null, int viewID = -1)
+        public static void Destroy(object target, Hashtable hashtable = null, RaiseEventOptions raiseEventOptions = null, int viewID = -1)
         {
-            if (hashtable == null)
+            switch (target)
             {
-                PhotonView view = GetPhotonViewFromVRRig(rig);
-                hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
+                case VRRig rig:
+                    if (hashtable == null)
+                    {
+                        PhotonView view = GetPhotonViewFromVRRig(rig);
+                        hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
+                    }
+                    if (raiseEventOptions == null)
+                        raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
+                    break;
+                case Player player:
+                    if (hashtable == null)
+                        hashtable = new Hashtable { { 0, player.ActorNumber } };
+                    if (raiseEventOptions == null)
+                        raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } };
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, raiseEventOptions, SendOptions.SendReliable);
+                    break;
+                case GameObject go:
+
+                    break;
             }
-            if (raiseEventOptions == null)
-                raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
-            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
+           
         }
         public static void CrashGun()
         {
@@ -385,7 +401,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                Player target = rig.GetPlayer().GetPlayer();
+                Player target = rig.GetPhotonPlayer();
                 if (viewIdArchive.TryGetValue(rig, out int viewID))
                 {
                     Destroy(rig, new Hashtable
@@ -417,7 +433,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in nearbyPlayers)
                 {
-                    Player target = rig.GetPlayer().GetPlayer();
+                    Player target = rig.GetPhotonPlayer();
                     int viewID = viewIdArchive[rig];
 
                     Destroy(rig, new Hashtable
@@ -452,7 +468,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in touchedRigs)
             {
-                Player target = rig.GetPlayer().GetPlayer();
+                Player target = rig.GetPhotonPlayer();
                 int viewID = viewIdArchive[rig];
 
                 Destroy(rig, new Hashtable
@@ -600,7 +616,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    Destroy(lockTarget);
+                    Destroy(lockTarget.GetPhotonPlayer());
 
                 if (GetGunInput(true))
                 {
@@ -624,7 +640,7 @@ namespace iiMenu.Mods
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
                 if (!PlayerIsLocal(rig))
-                    Destroy(rig);
+                    Destroy(rig.GetPhotonPlayer());
             }
                 
         }
@@ -645,7 +661,7 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0)
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
-                    Destroy(nearbyPlayer);
+                    Destroy(nearbyPlayer.GetPhotonPlayer());
 
             }
         }
@@ -671,7 +687,7 @@ namespace iiMenu.Mods
             if (touchedPlayers.Count > 0)
             {
                 foreach (VRRig rig in touchedPlayers)
-                    Destroy(rig);
+                    Destroy(rig.GetPhotonPlayer());
             }
         }
 
@@ -687,7 +703,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > muteDelay)
                     {
-                        Destroy(lockTarget);
+                        Destroy(lockTarget.GetPhotonPlayer());
                         muteDelay = Time.time + 0.15f;
                     }
                 }
@@ -716,7 +732,7 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!PlayerIsLocal(rig))
-                        Destroy(rig);
+                        Destroy(rig.GetPhotonPlayer());
                 }
 
                 muteDelay = Time.time + 0.15f;
@@ -740,7 +756,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
-                    Destroy(nearbyPlayer);
+                    Destroy(nearbyPlayer.GetPhotonPlayer());
                     muteDelay = Time.time + 0.15f;
                 }
             }
@@ -765,7 +781,7 @@ namespace iiMenu.Mods
             if (touchedRigs.Count > 0 && Time.time > muteDelay)
             {
                 foreach (VRRig rig in touchedRigs)
-                    Destroy(rig);
+                    Destroy(rig.GetPhotonPlayer());
 
                 muteDelay = Time.time + 0.15f;
             }
