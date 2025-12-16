@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -72,7 +73,6 @@ namespace iiMenu.Mods
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
-        public static float crashDelay;
         public static void CrashGun()
         {
             if (GetGunInput(false))
@@ -82,13 +82,8 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > crashDelay)
-                    {
-                        PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
-                        PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                        crashDelay = Time.time + 0.02f;
-                    }
-
+                    PhotonNetwork.SetMasterClient(lockTarget.GetPlayer().GetPlayer());
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
                 }
 
                 if (GetGunInput(true))
@@ -110,12 +105,8 @@ namespace iiMenu.Mods
 
         public static void CrashAll()
         {
-            if (Time.time > crashDelay)
-            {
-                PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPlayer().GetPlayer());
-                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                crashDelay = Time.time + 0.02f;
-            }
+            PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPlayer().GetPlayer());
+            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
         public static void KickGun()
@@ -380,13 +371,13 @@ namespace iiMenu.Mods
                 if (viewIdArchive.TryGetValue(target, out int viewID))
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, new Hashtable
-                {
-                    { 0, viewID }
-                },
-                new RaiseEventOptions
-                {
-                    TargetActors = new int[] { target.ActorNumber },
-                }, SendOptions.SendReliable);
+                    {
+                        { 0, viewID }
+                    },
+                    new RaiseEventOptions
+                    {
+                        TargetActors = new int[] { target.ActorNumber },
+                    }, SendOptions.SendReliable);
                 }
             }
         }
@@ -591,7 +582,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                    PhotonNetwork.SendDestroyOfPlayer(lockTarget.GetPlayer().ActorNumber);
 
                 if (GetGunInput(true))
                 {
@@ -616,7 +607,7 @@ namespace iiMenu.Mods
             {
                 if (!PlayerIsLocal(rig))
                 {
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
                 }
             }
                 
@@ -638,7 +629,8 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0)
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
+                    PhotonNetwork.SendDestroyOfPlayer(nearbyPlayer.GetPlayer().ActorNumber);
+
             }
         }
 
@@ -663,7 +655,7 @@ namespace iiMenu.Mods
             if (touchedPlayers.Count > 0)
             {
                 foreach (VRRig rig in touchedPlayers)
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
             }
         }
 
@@ -679,7 +671,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > muteDelay)
                     {
-                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(lockTarget));
+                        PhotonNetwork.SendDestroyOfPlayer(lockTarget.GetPlayer().ActorNumber);
                         muteDelay = Time.time + 0.15f;
                     }
                 }
@@ -708,8 +700,8 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!PlayerIsLocal(rig))
-                        PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
-                }                    
+                        PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
+                }
 
                 muteDelay = Time.time + 0.15f;
             }
@@ -732,7 +724,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(nearbyPlayer));
+                    PhotonNetwork.SendDestroyOfPlayer(nearbyPlayer.GetPlayer().ActorNumber);
                     muteDelay = Time.time + 0.15f;
                 }
             }
@@ -757,7 +749,7 @@ namespace iiMenu.Mods
             if (touchedRigs.Count > 0 && Time.time > muteDelay)
             {
                 foreach (VRRig rig in touchedRigs)
-                    PhotonNetwork.Destroy(GetPhotonViewFromVRRig(rig));
+                    PhotonNetwork.SendDestroyOfPlayer(rig.GetPlayer().ActorNumber);
 
                 muteDelay = Time.time + 0.15f;
             }
