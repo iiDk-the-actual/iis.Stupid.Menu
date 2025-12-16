@@ -88,6 +88,9 @@ namespace iiMenu.Extensions
         public static NetPlayer GetPlayer(this VRRig rig) =>
             RigUtilities.GetPlayerFromVRRig(rig);
 
+        public static Photon.Realtime.Player GetPhotonPlayer(this VRRig rig) =>
+            RigUtilities.NetPlayerToPlayer(RigUtilities.GetPlayerFromVRRig(rig));
+
         public static Slingshot GetSlingshot(this VRRig rig) =>
             rig.projectileWeapon as Slingshot;
 
