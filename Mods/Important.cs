@@ -522,6 +522,8 @@ exit";
         }
 
         private static float keyboardDelay;
+
+        private static Vector3? oldLocalPosition;
         public static void PCButtonClick()
         {
             if (Mouse.current.leftButton.isPressed)
@@ -529,24 +531,15 @@ exit";
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
 
-                if (Time.time > keyboardDelay)
+                oldLocalPosition ??= GorillaTagger.Instance.rightHandTriggerCollider.transform.localPosition;
+                GorillaTagger.Instance.rightHandTriggerCollider.transform.position = Ray.point;
+            }
+            else
+            {
+                if (oldLocalPosition != null)
                 {
-                    foreach (Component component in Ray.collider.GetComponents<Component>())
-                    {
-                        Type compType = component.GetType();
-                        string compName = compType.Name;
-
-                        if (typeof(GorillaPressableButton).IsAssignableFrom(compType) || typeof(CustomMapsScreenTouchPoint).IsAssignableFrom(compType) || compName == "GorillaPressableButton" || compName == "GorillaPlayerLineButton" || compName == "CustomKeyboardKey" || compName == "CustomMapsScreenTouchPoint")
-                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                        else
-                            switch (compName)
-                            {
-                                case "GorillaKeyboardButton":
-                                    keyboardDelay = Time.time + 0.1f;
-                                    GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
-                                    break;
-                            }
-                    }
+                    GorillaTagger.Instance.rightHandTriggerCollider.transform.position = oldLocalPosition.Value;
+                    oldLocalPosition = null;
                 }
             }
         }
