@@ -319,6 +319,9 @@ namespace iiMenu.Mods
                 {
                     if (line.reportInProgress)
                     {
+                        line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                        line.reportButton.isOn = true;
+                        line.reportButton.UpdateColor();
                         PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
                         if (view != null)
                         {
@@ -332,9 +335,14 @@ namespace iiMenu.Mods
                                 TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
                             });
                         }
+                    }
+                    if (line.reportButton.isOn &&  line.reportInProgress)
+                    {
                         line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
                         line.reportButton.isOn = true;
                         line.reportButton.UpdateColor();
+                        int ViewID = viewIdArchive[line.linePlayer.VRRig()];
+                        Destroy(line.linePlayer.VRRig(), null, null, ViewID);
                     }
                 }
             }
@@ -385,13 +393,7 @@ namespace iiMenu.Mods
                     {
                         Player target = gunTarget.GetPhotonPlayer();
                         int viewID = viewIdArchive[gunTarget];
-                        Destroy(gunTarget, new Hashtable
-                        {
-                            { 0, viewID }
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { target.ActorNumber }
-                        });
+                        Destroy(gunTarget, null, null, viewID);
                     }
                 }
             }
@@ -404,14 +406,7 @@ namespace iiMenu.Mods
                 Player target = rig.GetPhotonPlayer();
                 if (viewIdArchive.TryGetValue(rig, out int viewID))
                 {
-                    Destroy(rig, new Hashtable
-                    {
-                        { 0, viewID }
-                    },
-                    new RaiseEventOptions
-                    {
-                        TargetActors = new int[] { target.ActorNumber },
-                    });
+                    Destroy(rig, null, null, viewID);
                 }
             }
         }
@@ -436,14 +431,7 @@ namespace iiMenu.Mods
                     Player target = rig.GetPhotonPlayer();
                     int viewID = viewIdArchive[rig];
 
-                    Destroy(rig, new Hashtable
-                    {
-                        { 0, viewID }
-                    },
-                    new RaiseEventOptions
-                    {
-                        TargetActors = new int[] { target.ActorNumber },
-                    });
+                    Destroy(rig, null, null, viewID);
                 }
             }
         }
@@ -471,14 +459,7 @@ namespace iiMenu.Mods
                 Player target = rig.GetPhotonPlayer();
                 int viewID = viewIdArchive[rig];
 
-                Destroy(rig, new Hashtable
-                {
-                    { 0, viewID }
-                },
-                new RaiseEventOptions
-                {
-                    TargetActors = new int[] { target.ActorNumber },
-                });
+                Destroy(rig, null, null,viewID);
             }
         }
 
