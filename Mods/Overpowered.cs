@@ -3053,12 +3053,16 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = true;
             DistancePatch.enabled = false;
 
-            GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
-            GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(false);
+            GetProjectile($"{Projectiles.SnowballName}LeftAnchor").SetSnowballActiveLocal(false);
+            GetProjectile($"{Projectiles.SnowballName}SnowballRightAnchor").SetSnowballActiveLocal(false);
         }
 
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
+
+        /// <remarks>
+        /// As of depot 21167324, growing snowballs no longer properly work in the game. They have been switched to mashed potatoes.
+        /// </remarks>
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null)
         {
             try
@@ -3104,7 +3108,7 @@ namespace iiMenu.Mods
 
                     DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableSnowball(isTooFar && !NoTeleportSnowballs));
 
-                    GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
+                    GrowingSnowballThrowable GrowingSnowball = GetProjectile($"{Projectiles.SnowballName}{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
 
                     PhotonNetwork.RaiseEvent(176, new object[]
                     {
@@ -3128,7 +3132,7 @@ namespace iiMenu.Mods
                         Encrypt = true
                     });
 
-                    GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
+                    GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"{Projectiles.SnowballName}{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
                     nextGrowingSnowball.SetSnowballActiveLocal(true);
                 }
 
@@ -3411,8 +3415,8 @@ namespace iiMenu.Mods
             Sound.PlayAudio(KameStart);
             yield return new WaitForSeconds(0.5f);
 
-            GrowingSnowballThrowable leftSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
-            GrowingSnowballThrowable rightSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable leftSnowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable rightSnowball = GetProjectile($"{Projectiles.SnowballName}RightAnchor") as GrowingSnowballThrowable;
             GrowingSnowballThrowable[] snowballs = { leftSnowball, rightSnowball };
 
             foreach (GrowingSnowballThrowable snowball in snowballs)

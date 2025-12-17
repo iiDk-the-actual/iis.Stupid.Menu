@@ -41,7 +41,6 @@ namespace iiMenu.Mods
 {
     public static class Projectiles
     {
-        // This file needs to be rewritten
         public static readonly string[] ProjectileObjectNames = {
             "SnowballLeftAnchor",
             "SnowballRightAnchor",
@@ -110,6 +109,11 @@ namespace iiMenu.Mods
             "Walnut_Anchor_Left",
             "Walnut_Anchor_Right"
         };
+
+        /// <remarks>
+        /// Should be used as {SnowballName}{Left/Right}Anchor
+        /// </remarks>
+        public const string SnowballName = "GrowingStuffing";
 
         public static Coroutine RigCoroutine;
         public static IEnumerator EnableRig()
@@ -194,7 +198,7 @@ namespace iiMenu.Mods
                         }
                     }
 
-                    if (projectileName.Contains("GrowingSnowball"))
+                    if (projectileName.Contains(SnowballName))
                     {
                         int scale = Overpowered.snowballScale;
                         GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;

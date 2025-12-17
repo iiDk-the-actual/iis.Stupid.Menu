@@ -550,7 +550,7 @@ namespace iiMenu.Managers
                                 float scale = (float)args[6];
                                 int index = (int)args[7];
 
-                                GrowingSnowballThrowable snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+                                GrowingSnowballThrowable snowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
 
                                 SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
                                 projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b, 1f));

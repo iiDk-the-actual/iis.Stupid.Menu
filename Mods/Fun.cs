@@ -2310,7 +2310,7 @@ Piece Name: {gunTarget.name}";
         {
             if (leftGrab)
             {
-                GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+                GrowingSnowballThrowable Snowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
                 Snowball.randomizeColor = true;
                 Snowball.SetSnowballActiveLocal(true);
                 Snowball.SetSizeLevelAuthority(Random.Range(1, 6));
@@ -2318,7 +2318,7 @@ Piece Name: {gunTarget.name}";
 
             if (rightGrab)
             {
-                GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+                GrowingSnowballThrowable Snowball = GetProjectile($"{Projectiles.SnowballName}RightAnchor") as GrowingSnowballThrowable;
                 Snowball.randomizeColor = true;
                 Snowball.SetSnowballActiveLocal(true);
                 Snowball.SetSizeLevelAuthority(Random.Range(1, 6));
@@ -2457,7 +2457,7 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
             VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-            GrowingSnowballThrowable LeftHandSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable LeftHandSnowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
             if (!LeftHandSnowball.gameObject.activeSelf)
             {
                 LeftHandSnowball.SetSnowballActiveLocal(true);
@@ -2467,7 +2467,7 @@ Piece Name: {gunTarget.name}";
                 LeftHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
             }
 
-            GrowingSnowballThrowable RightHandSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable RightHandSnowball = GetProjectile($"{Projectiles.SnowballName}RightAnchor") as GrowingSnowballThrowable;
             if (!RightHandSnowball.gameObject.activeSelf)
             {
                 RightHandSnowball.SetSnowballActiveLocal(true);
@@ -2512,7 +2512,7 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
             VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-            GrowingSnowballThrowable LeftHandSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable LeftHandSnowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
             if (!LeftHandSnowball.gameObject.activeSelf)
             {
                 LeftHandSnowball.SetSnowballActiveLocal(true);
@@ -2522,7 +2522,7 @@ Piece Name: {gunTarget.name}";
                 LeftHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
             }
 
-            GrowingSnowballThrowable RightHandSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            GrowingSnowballThrowable RightHandSnowball = GetProjectile($"{Projectiles.SnowballName}RightAnchor") as GrowingSnowballThrowable;
             if (!RightHandSnowball.gameObject.activeSelf)
             {
                 RightHandSnowball.SetSnowballActiveLocal(true);
@@ -2537,8 +2537,8 @@ Piece Name: {gunTarget.name}";
         {
             VRRig.LocalRig.enabled = true;
 
-            GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
-            GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(false);
+            GetProjectile($"{Projectiles.SnowballName}LeftAnchor").SetSnowballActiveLocal(false);
+            GetProjectile($"{Projectiles.SnowballName}lRightAnchor").SetSnowballActiveLocal(false);
         }
 
         public static void FastHoverboard()
@@ -3171,7 +3171,7 @@ Piece Name: {gunTarget.name}";
                     CoroutineManager.instance.StopCoroutine(Overpowered.DisableCoroutine);
 
                 Overpowered.DisableCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.DisableSnowball(false));
-                GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
+                GetProjectile($"{Projectiles.SnowballName}RightAnchor").SetSnowballActiveLocal(true);
 
                 everythingSpamDelay = Time.time + 0.0625f;
 
