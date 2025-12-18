@@ -39,8 +39,8 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
-using Console = iiMenu.Classes.Menu.Console;
 using static iiMenu.Utilities.RigUtilities;
+using Console = iiMenu.Classes.Menu.Console;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Menu

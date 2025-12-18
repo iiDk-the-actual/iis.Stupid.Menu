@@ -813,6 +813,18 @@ namespace iiMenu.Mods
             return 0.1f + frames.Count * 0.1f;
         }
 
+        /// <summary>
+        /// Displays a label with the specified text and color at the position of the player's left or right hand. If a
+        /// label with the given code name does not exist, a new label is created.
+        /// </summary>
+        /// <remarks>If the label already exists, its properties are updated; otherwise, a new label is
+        /// created and added. The label is positioned and oriented to face the main camera, and its scale may be
+        /// adjusted based on the player's scale. The label is always set active when this method is called.</remarks>
+        /// <param name="codeName">The unique identifier for the label. If a label with this code name does not exist, a new label is created.</param>
+        /// <param name="leftHand">Indicates whether the label should be positioned at the left hand (<see langword="true"/>) or right hand
+        /// (<see langword="false"/>) of the player.</param>
+        /// <param name="text">The text content to display on the label.</param>
+        /// <param name="color">The color to apply to the label's text.</param>
         public static void GetLabel(string codeName, bool leftHand, string text, Color color)
         {
             if (!labelDictionary.TryGetValue(codeName, out GameObject go))
@@ -884,6 +896,16 @@ namespace iiMenu.Mods
             );
         }
 
+        private static string FormatTimer(int seconds)
+        {
+            int minutes = seconds / 60;
+            int remainingSeconds = seconds % 60;
+
+            string timeString = $"{minutes:D2}:{remainingSeconds:D2}";
+
+            return timeString;
+        }
+
         private static float startTime;
         private static float endTime;
         private static bool lastWasTagged;
@@ -911,7 +933,7 @@ namespace iiMenu.Mods
                     (
                         "Time",
                         false,
-                        FormatUnix(Mathf.FloorToInt(playerIsTagged ? endTime : Time.time - startTime)),
+                        FormatTimer(Mathf.FloorToInt(playerIsTagged ? endTime : Time.time - startTime)),
                         playerIsTagged ? Color.green : Color.white
                     );
                 }

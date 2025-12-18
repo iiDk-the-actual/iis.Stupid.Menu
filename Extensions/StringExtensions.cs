@@ -30,7 +30,7 @@ namespace iiMenu.Extensions
             NoRichtextTags(input);
 
         public static string ISO8601(this string _) =>
-            Menu.Main.ISO8601();
+            CurrentTimestamp();
 
         public static string Hash(this string input) =>
             GetSHA256(input);

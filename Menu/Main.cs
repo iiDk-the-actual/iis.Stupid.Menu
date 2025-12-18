@@ -61,7 +61,6 @@ using Valve.VR;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Utilities.RigUtilities;
 using Button = iiMenu.Classes.Menu.Button;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
@@ -814,7 +813,7 @@ namespace iiMenu.Menu
                         {
                             if (preferenceBackupCount >= 5)
                             {
-                                File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
+                                File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{CurrentTimestamp().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
                                 preferenceBackupCount = 0;
                             }
 
@@ -5211,16 +5210,11 @@ namespace iiMenu.Menu
             }
         }
 
-        public static string FormatUnix(int seconds)
-        {
-            int minutes = seconds / 60;
-            int remainingSeconds = seconds % 60;
-
-            string timeString = $"{minutes:D2}:{remainingSeconds:D2}";
-
-            return timeString;
-        }
-
+        /// <summary>
+        /// Hashes the input string using SHA256 and returns the hexadecimal representation.
+        /// </summary>
+        /// <param name="input">Input string to be hashed.</param>
+        /// <returns>Output hashed string.</returns>
         public static string GetSHA256(string input)
         {
             using SHA256 sha256 = SHA256.Create();
@@ -5233,7 +5227,11 @@ namespace iiMenu.Menu
             return stringBuilder.ToString();
         }
 
-        public static string ISO8601()
+        /// <summary>
+        /// Returns the current UTC timestamp formatted as an ISO 8601 string.
+        /// </summary>
+        /// <returns>A string representing the current UTC date and time in ISO 8601 format.</returns>
+        public static string CurrentTimestamp()
         {
             DateTime utcNow = DateTime.UtcNow;
             return utcNow.ToString("o");
@@ -5420,7 +5418,6 @@ namespace iiMenu.Menu
         }
 
         public static bool inRoomStatus;
-
         public static void OnJoinRoom()
         {
             if (inRoomStatus)
@@ -5491,15 +5488,7 @@ namespace iiMenu.Menu
         public static readonly Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
 
         public static void OnPlayerSerialize(VRRig rig) =>
-            playerPing[rig] = GetTruePing(rig);
-
-        public static int GetTruePing(VRRig rig)
-        {
-            double ping = Math.Abs((rig.velocityHistoryList[0].time - PhotonNetwork.Time) * 1000);
-            int safePing = (int)Math.Clamp(Math.Round(ping), 0, int.MaxValue);
-
-            return safePing;
-        }
+            playerPing[rig] = rig.GetTruePing();
 
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0, float delay = 0f)
         {

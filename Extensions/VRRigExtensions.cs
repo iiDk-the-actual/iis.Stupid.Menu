@@ -23,6 +23,7 @@ using GorillaGameModes;
 using iiMenu.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -110,8 +111,13 @@ namespace iiMenu.Extensions
                 return PhotonNetwork.GetPing();
         }
 
-        public static int GetTruePing(this VRRig rig) =>
-            Main.GetTruePing(rig);
+        public static int GetTruePing(this VRRig rig)
+        {
+            double ping = Math.Abs((rig.velocityHistoryList[0].time - PhotonNetwork.Time) * 1000);
+            int safePing = (int)Math.Clamp(Math.Round(ping), 0, int.MaxValue);
+
+            return safePing;
+        }
 
         public static string GetName(this VRRig rig) =>
             RigUtilities.GetPlayerFromVRRig(rig)?.NickName ?? "null";
