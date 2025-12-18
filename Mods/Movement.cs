@@ -540,7 +540,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -2758,11 +2758,11 @@ namespace iiMenu.Mods
 
         public static void DynamicSpeedBoost()
         {
-            bool isTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool isTagged = VRRig.LocalRig.IsTagged();
 
             VRRig closestRig = GorillaParent.instance.vrrigs
                 .Where(rig => rig != null && !rig.isLocal && 
-                                  (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
+                                  (isTagged ? !rig.IsTagged() : rig.IsTagged()))
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
 
@@ -3453,7 +3453,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (!hasAdded)
                         {
@@ -4229,11 +4229,11 @@ namespace iiMenu.Mods
 
         public static void LagRange()
         {
-            bool isTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool isTagged = VRRig.LocalRig.IsTagged();
 
             VRRig closestRig = GorillaParent.instance.vrrigs
                 .Where(rig => rig != null && !rig.isLocal &&
-                                  (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
+                                  (isTagged ? !rig.IsTagged() : rig.IsTagged()))
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
 
@@ -4459,7 +4459,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4507,7 +4507,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4656,7 +4656,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4779,7 +4779,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4892,7 +4892,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5007,7 +5007,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5098,7 +5098,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5158,7 +5158,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !gunLocked)
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5202,7 +5202,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !gunLocked)
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5295,7 +5295,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5457,7 +5457,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;

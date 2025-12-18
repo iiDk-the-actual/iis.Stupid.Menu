@@ -20,8 +20,10 @@
  */
 
 using GorillaGameModes;
+using iiMenu.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -31,13 +33,19 @@ namespace iiMenu.Extensions
     public static class VRRigExtensions
     {
         public static bool IsLocal(this VRRig rig) =>
-            PlayerIsLocal(rig);
+            rig != null && (rig.isLocal || rig == GhostRig);
 
-        public static bool IsTagged(this VRRig rig) =>
-            PlayerIsTagged(rig);
+        public static bool IsTagged(this VRRig rig)
+        {
+            if (rig == null) return false;
+            List<NetPlayer> infectedPlayers = InfectedList();
+            NetPlayer targetPlayer = rig.GetPlayer();
+
+            return infectedPlayers.Contains(targetPlayer);
+        }
 
         public static bool IsSteam(this VRRig rig) =>
-            PlayerIsSteam(rig);
+            rig.GetPlatform() != "Standalone";
 
         public static string GetPlatform(this VRRig rig)
         {
@@ -51,8 +59,30 @@ namespace iiMenu.Extensions
             return "Standalone";
         }
 
-        public static Color GetColor(this VRRig rig) =>
-            GetPlayerColor(rig);
+        public static Color GetColor(this VRRig rig)
+        {
+            if (Buttons.GetIndex("Follow Player Colors").enabled)
+                return rig.playerColor;
+
+            if (rig.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
+                return Color.green;
+
+            switch (rig.setMatIndex)
+            {
+                case 1:
+                    return Color.red;
+                case 2:
+                case 11:
+                    return new Color32(255, 128, 0, 255);
+                case 3:
+                case 7:
+                    return Color.blue;
+                case 12:
+                    return Color.green;
+                default:
+                    return rig.playerColor;
+            }
+        }
 
         public static bool Active(this VRRig rig) =>
             rig != null && GorillaParent.instance.vrrigs.Contains(rig);
@@ -80,7 +110,7 @@ namespace iiMenu.Extensions
         }
 
         public static int GetTruePing(this VRRig rig) =>
-            Menu.Main.GetTruePing(rig);
+            Main.GetTruePing(rig);
 
         public static string GetName(this VRRig rig) =>
             RigUtilities.GetPlayerFromVRRig(rig)?.NickName ?? "null";

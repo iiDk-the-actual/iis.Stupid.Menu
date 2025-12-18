@@ -29,6 +29,7 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.CustomMaps.Manager;
+using static iiMenu.Extensions.VRRigExtensions;
 using static iiMenu.Utilities.RigUtilities;
 
 namespace iiMenu.Mods.CustomMaps.Maps
@@ -165,7 +166,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;

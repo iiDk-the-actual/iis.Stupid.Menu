@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Extensions;
 using iiMenu.Menu;
 ﻿using System;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace iiMenu.Classes.Menu
                 return RandomColor();
 
             if (copyRigColor)
-                return Main.GetPlayerColor(VRRig.LocalRig);
+                return VRRig.LocalRig.GetColor();
 
             if (transparent)
             {
@@ -112,7 +113,7 @@ namespace iiMenu.Classes.Menu
                 return RandomColor();
 
             if (copyRigColor)
-                return Main.GetPlayerColor(VRRig.LocalRig);
+                return VRRig.LocalRig.GetColor();
 
             if (transparent)
             {

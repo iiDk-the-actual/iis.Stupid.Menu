@@ -589,7 +589,7 @@ namespace iiMenu.Mods
                         tapMat.renderQueue = (int)RenderQueue.Transparent;
                     }
 
-                    Color targetColor = GetPlayerColor(rig);
+                    Color targetColor = rig.GetColor();
 
                     if (hoc)
                         gameObject.layer = 19;
@@ -600,7 +600,7 @@ namespace iiMenu.Mods
                         targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, 0.5f);
 
                     gameObject.GetComponent<Renderer>().material = tapMat;
-                    gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? PlayerIsTagged(rig) ? tapTxt : warningTxt : PlayerIsTagged(rig) ? warningTxt : tapTxt;
+                    gameObject.GetComponent<Renderer>().material.mainTexture = VRRig.LocalRig.IsTagged() ? rig.IsTagged() ? tapTxt : warningTxt : rig.IsTagged() ? warningTxt : tapTxt;
                     gameObject.GetComponent<Renderer>().material.color = targetColor;
 
                     handTaps[rig][3] = gameObject;
@@ -790,7 +790,7 @@ namespace iiMenu.Mods
 
                 if (isThereTagged)
                 {
-                    bool playerIsTagged = PlayerIsTagged(VRRig.LocalRig);
+                    bool playerIsTagged = VRRig.LocalRig.IsTagged();
                     if (playerIsTagged && !lastWasTagged)
                         endTime = Time.time - startTime;
 
@@ -831,7 +831,7 @@ namespace iiMenu.Mods
             float closest = float.MaxValue;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(vrrig) != PlayerIsTagged(VRRig.LocalRig))
+                if (vrrig.IsTagged() != VRRig.LocalRig.IsTagged())
                 {
                     float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                     if (dist < closest)
@@ -849,12 +849,12 @@ namespace iiMenu.Mods
             if (DoPerformanceCheck())
                 return;
 
-            if (!PlayerIsTagged(VRRig.LocalRig))
+            if (!VRRig.LocalRig.IsTagged())
             {
                 float closest = float.MaxValue;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (PlayerIsTagged(vrrig) != PlayerIsTagged(VRRig.LocalRig))
+                    if (vrrig.IsTagged() != VRRig.LocalRig.IsTagged())
                     {
                         float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                         if (dist < closest)
@@ -897,7 +897,7 @@ namespace iiMenu.Mods
                         "LastLabel",
                         true,
                         left + " left",
-                        left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white
+                        left <= 1 && !VRRig.LocalRig.IsTagged() ? Color.green : Color.white
                     );
                 }
             }
@@ -1054,7 +1054,7 @@ namespace iiMenu.Mods
                 if (hoc) 
                     Line.gameObject.layer = 19;
 
-                Color color = GetPlayerColor(rig);
+                Color color = rig.GetColor();
 
                 if (fmt) 
                     color = backgroundColor.GetCurrentColor();
@@ -1330,7 +1330,7 @@ namespace iiMenu.Mods
             if (hoc)
                 localTrajectoryLine.gameObject.layer = 19;
 
-            Color localColor = GetPlayerColor(VRRig.LocalRig);
+            Color localColor = VRRig.LocalRig.GetColor();
 
             if (fmt)
                 localColor = backgroundColor.GetCurrentColor();
@@ -1504,7 +1504,7 @@ namespace iiMenu.Mods
 
                     GameObject nameTag = nametags[vrrig];
                     nameTag.GetComponent<TextMesh>().text = CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName);
-                    nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                    nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                     nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1557,7 +1557,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = velnametags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.LatestVelocity().magnitude:F1}m/s";
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1611,7 +1611,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = FPSnametags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.fps} FPS";
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1666,7 +1666,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = idNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).UserId;
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1720,7 +1720,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = platformTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPlatform()}";
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1775,7 +1775,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = creationDateTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId);
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1830,7 +1830,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = pingNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.GetPing()}ms";
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1888,7 +1888,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = turnNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor;
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -1942,7 +1942,7 @@ namespace iiMenu.Mods
 
                         
                         GameObject nameTag = taggedNameTags[vrrig];
-                        if (PlayerIsTagged(vrrig))
+                        if (vrrig.IsTagged())
                         {
                             int taggedById = vrrig.taggedById;
                             NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById);
@@ -1952,7 +1952,7 @@ namespace iiMenu.Mods
                         } else
                             nameTag.GetComponent<TextMesh>().text = "";
                             
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -2129,7 +2129,7 @@ namespace iiMenu.Mods
                         GameObject nameTag = modNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = specialMods;
 
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -2212,7 +2212,7 @@ namespace iiMenu.Mods
                         GameObject nameTag = cosmeticNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = cosmetics;
 
-                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -2371,7 +2371,7 @@ namespace iiMenu.Mods
 
                         if (verifiedNameTags.TryGetValue(vrrig, out GameObject nameTag))
                         {
-                            nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                            nameTag.GetComponent<TextMesh>().color = vrrig.GetColor();
                             nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
@@ -3035,7 +3035,7 @@ namespace iiMenu.Mods
                     }
 
                     indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
-                    indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                    indicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
                     indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
@@ -3074,7 +3074,7 @@ namespace iiMenu.Mods
                     }
 
                     indicator.GetComponent<Renderer>().material.mainTexture = GetPlatformTexture(vrrig);
-                    indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                    indicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
                     indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
@@ -3144,7 +3144,7 @@ namespace iiMenu.Mods
                             voiceIndicators.Add(vrrig, volIndicator);
                         }
 
-                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                        volIndicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
                         volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
@@ -3199,7 +3199,7 @@ namespace iiMenu.Mods
                             voiceIndicators.Add(vrrig, volIndicator);
                         }
 
-                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                        volIndicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
                         volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * ((ServerData.Administrators.ContainsKey(GetPlayerFromVRRig(vrrig).UserId) ? 1.3f : 0.8f) * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
@@ -3229,7 +3229,7 @@ namespace iiMenu.Mods
 
         private static void UpdateLimbColor()
         {
-            Color limbcolor = GetPlayerColor(VRRig.LocalRig);
+            Color limbcolor = VRRig.LocalRig.GetColor();
 
             l.GetComponent<Renderer>().material.color = limbcolor;
             r.GetComponent<Renderer>().material.color = limbcolor;
@@ -3371,7 +3371,7 @@ namespace iiMenu.Mods
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
             bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = VRRig.LocalRig.IsTagged();
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -3423,8 +3423,8 @@ namespace iiMenu.Mods
 
                     LineRenderer liner = Lines[0];
 
-                    bool playerTagged = PlayerIsTagged(vrrig);
-                    Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
+                    bool playerTagged = vrrig.IsTagged();
+                    Color thecolor = selfTagged ? vrrig.playerColor : vrrig.GetColor();
 
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
@@ -3532,7 +3532,7 @@ namespace iiMenu.Mods
 
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
+                    Color thecolor = owner == target ? vrrig.GetColor() : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
@@ -3607,7 +3607,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(vrrig))
+                if (vrrig.IsTagged())
                 {
                     isInfectedPlayers = true;
                     break;
@@ -3615,15 +3615,15 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!VRRig.LocalRig.IsTagged())
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (vrrig.IsTagged() && !vrrig.isLocal)
                         {
                             vrrig.skeleton.renderer.enabled = true;
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-                            vrrig.skeleton.renderer.material.color = GetPlayerColor(vrrig);
+                            vrrig.skeleton.renderer.material.color = vrrig.GetColor();
                             if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.skeleton.renderer.material.color = backgroundColor.GetCurrentColor(); }
                             if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.skeleton.renderer.material.color = new Color(vrrig.skeleton.renderer.material.color.r, vrrig.skeleton.renderer.material.color.g, vrrig.skeleton.renderer.material.color.b, 0.5f); }
                         }
@@ -3640,7 +3640,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (!vrrig.IsTagged() && !vrrig.isLocal)
                         {
                             vrrig.skeleton.renderer.enabled = true;
                             vrrig.skeleton.renderer.material.shader = Shader.Find("GUI/Text Shader");
@@ -3753,7 +3753,7 @@ namespace iiMenu.Mods
                 if (hoc)
                     wireframe.wireframeObj.layer = 19;
 
-                Color color = GetPlayerColor(rig);
+                Color color = rig.GetColor();
 
                 if (fmt)
                     color = backgroundColor.GetCurrentColor();
@@ -3806,7 +3806,7 @@ namespace iiMenu.Mods
             bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = VRRig.LocalRig.IsTagged();
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -3819,8 +3819,8 @@ namespace iiMenu.Mods
                     wireframes.Add(rig, wireframe);
                 }
 
-                bool playerTagged = PlayerIsTagged(rig);
-                Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
+                bool playerTagged = rig.IsTagged();
+                Color thecolor = selfTagged ? rig.playerColor : rig.GetColor();
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();
@@ -3898,7 +3898,7 @@ namespace iiMenu.Mods
                 NetPlayer owner = GetPlayerFromVRRig(rig);
                 NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                Color thecolor = owner == target ? GetPlayerColor(rig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
+                Color thecolor = owner == target ? rig.GetColor() : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();
@@ -4201,7 +4201,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(vrrig))
+                if (vrrig.IsTagged())
                 {
                     isInfectedPlayers = true;
                     break;
@@ -4209,16 +4209,16 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!VRRig.LocalRig.IsTagged())
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (vrrig.IsTagged() && !vrrig.isLocal)
                         {
                             FixRigMaterialESPColors(vrrig);
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-                            vrrig.mainSkin.material.color = GetPlayerColor(vrrig);
+                            vrrig.mainSkin.material.color = vrrig.GetColor();
                             if (Buttons.GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
                             if (Buttons.GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
@@ -4234,7 +4234,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (!vrrig.IsTagged() && !vrrig.isLocal)
                         {
                             FixRigMaterialESPColors(vrrig);
 
@@ -4372,7 +4372,7 @@ namespace iiMenu.Mods
             bool fmt = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = VRRig.LocalRig.IsTagged();
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -4403,7 +4403,7 @@ namespace iiMenu.Mods
                         boxESP.Add(vrrig, box);
                     }
 
-                    Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
+                    Color thecolor = selfTagged ? vrrig.playerColor : vrrig.GetColor();
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -4413,7 +4413,7 @@ namespace iiMenu.Mods
 
                     box.GetComponent<Renderer>().material.color = thecolor;
 
-                    bool playerTagged = PlayerIsTagged(vrrig);
+                    bool playerTagged = vrrig.IsTagged();
                     box.SetActive((selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0);
 
                     box.transform.position = vrrig.transform.position;
@@ -4465,7 +4465,7 @@ namespace iiMenu.Mods
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
+                    Color thecolor = owner == target ? vrrig.GetColor() : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -4585,7 +4585,7 @@ namespace iiMenu.Mods
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
             bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = VRRig.LocalRig.IsTagged();
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -4651,7 +4651,7 @@ namespace iiMenu.Mods
                         hollowBoxESP.Add(vrrig, box);
                     }
 
-                    Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
+                    Color thecolor = selfTagged ? vrrig.playerColor : vrrig.GetColor();
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -4661,7 +4661,7 @@ namespace iiMenu.Mods
 
                     box.GetComponent<Renderer>().material.color = thecolor;
 
-                    bool playerTagged = PlayerIsTagged(vrrig);
+                    bool playerTagged = vrrig.IsTagged();
                     box.SetActive((selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0);
 
                     box.transform.position = vrrig.transform.position;
@@ -4749,7 +4749,7 @@ namespace iiMenu.Mods
                     NetPlayer owner = GetPlayerFromVRRig(vrrig);
                     NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
+                    Color thecolor = owner == target ? vrrig.GetColor() : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
                     if (fmt)
                         thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
@@ -4826,7 +4826,7 @@ namespace iiMenu.Mods
                 if (hoc)
                     trail.gameObject.layer = 19;
 
-                Color color = GetPlayerColor(rig);
+                Color color = rig.GetColor();
 
                 if (fmt)
                     color = backgroundColor.GetCurrentColor();
@@ -4859,7 +4859,7 @@ namespace iiMenu.Mods
             bool tt = Buttons.GetIndex("Transparent Theme").enabled;
             bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
             bool shortBreadcrumbs = Buttons.GetIndex("Short Breadcrumbs").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = VRRig.LocalRig.IsTagged();
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -4887,8 +4887,8 @@ namespace iiMenu.Mods
                 trail.startWidth = thinTracers ? 0.0075f : 0.025f;
                 trail.endWidth = thinTracers ? 0.0075f : 0.025f;
 
-                bool playerTagged = PlayerIsTagged(rig);
-                Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
+                bool playerTagged = rig.IsTagged();
+                Color thecolor = selfTagged ? rig.playerColor : rig.GetColor();
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();
@@ -4961,7 +4961,7 @@ namespace iiMenu.Mods
                 NetPlayer owner = GetPlayerFromVRRig(rig);
                 NetPlayer theirTarget = hunt.GetTargetOf(owner);
 
-                Color thecolor = owner == target ? GetPlayerColor(rig) : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
+                Color thecolor = owner == target ? rig.GetColor() : theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear;
 
                 if (fmt)
                     thecolor = backgroundColor.GetCurrentColor();
@@ -5167,7 +5167,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
             float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = VRRig.LocalRig.IsTagged();
             bool NoInfected = InfectedList().Count == 0;
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
@@ -5181,15 +5181,15 @@ namespace iiMenu.Mods
                 {
                     if (LocalTagged)
                     {
-                        if (PlayerIsTagged(playerRig))
+                        if (playerRig.IsTagged())
                             continue;
                     }
                     else
                     {
-                        if (!PlayerIsTagged(playerRig))
+                        if (!playerRig.IsTagged())
                             continue;
 
-                        lineColor = GetPlayerColor(playerRig);
+                        lineColor = playerRig.GetColor();
                     }
                 }
 
@@ -5323,7 +5323,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
             bool thinTracers = Buttons.GetIndex("Thin Tracers").enabled;
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = VRRig.LocalRig.IsTagged();
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = backgroundColor.GetCurrentColor();
@@ -5339,15 +5339,15 @@ namespace iiMenu.Mods
                 {
                     if (LocalTagged)
                     {
-                        if (PlayerIsTagged(playerRig))
+                        if (playerRig.IsTagged())
                             continue;
                     }
                     else
                     {
-                        if (!PlayerIsTagged(playerRig))
+                        if (!playerRig.IsTagged())
                             continue;
 
-                        lineColor = GetPlayerColor(playerRig);
+                        lineColor = playerRig.GetColor();
                     }
                 }
 
@@ -5514,7 +5514,7 @@ namespace iiMenu.Mods
             bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = VRRig.LocalRig.IsTagged();
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = backgroundColor.GetCurrentColor();
@@ -5531,15 +5531,15 @@ namespace iiMenu.Mods
                 {
                     if (LocalTagged)
                     {
-                        if (PlayerIsTagged(playerRig))
+                        if (playerRig.IsTagged())
                             continue;
                     }
                     else
                     {
-                        if (!PlayerIsTagged(playerRig))
+                        if (!playerRig.IsTagged())
                             continue;
 
-                        backgroundColor = GetPlayerColor(playerRig);
+                        backgroundColor = playerRig.GetColor();
                     }
                 }
 

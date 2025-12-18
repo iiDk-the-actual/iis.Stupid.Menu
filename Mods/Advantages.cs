@@ -74,7 +74,7 @@ namespace iiMenu.Mods
                     {
                         SerializePatch.OverrideSerialization = () =>
                         {
-                            if (PlayerIsTagged(VRRig.LocalRig))
+                            if (VRRig.LocalRig.IsTagged())
                                 return true;
 
                             MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
@@ -90,7 +90,7 @@ namespace iiMenu.Mods
                         };
                     } else
                     {
-                        if (PlayerIsTagged(rig))
+                        if (rig.IsTagged())
                         {
                             VRRig.LocalRig.enabled = false;
                             if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
@@ -152,7 +152,7 @@ namespace iiMenu.Mods
                         ReportTagPatch.invinciblePlayers.Add(NetworkSystem.Instance.LocalPlayer);
                 } else
                 {
-                    if (PlayerIsTagged(VRRig.LocalRig))
+                    if (VRRig.LocalRig.IsTagged())
                         UntagSelf();
                 }
             }
@@ -218,7 +218,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
@@ -265,7 +265,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
@@ -302,7 +302,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
@@ -405,7 +405,7 @@ namespace iiMenu.Mods
 
         public static void TagAura()
         {
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance))
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => VRRig.LocalRig.IsTagged() && !vrrig.IsTagged() && !GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance))
                 ReportTag(vrrig);
         }
 
@@ -417,7 +417,7 @@ namespace iiMenu.Mods
 
         public static void TagAuraPlayer(VRRig giving)
         {
-            foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs let distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position) where PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig) select vrrig)
+            foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs let distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position) where giving.IsTagged() && !vrrig.IsTagged() && !GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !VRRig.LocalRig.IsLocal() && VRRig.LocalRig.IsTagged() select vrrig)
                 TagPlayer(GetPlayerFromVRRig(vrrig));
         }
 
@@ -434,7 +434,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -456,7 +456,7 @@ namespace iiMenu.Mods
 
         public static void TagReach()
         {
-            if (PlayerIsTagged(VRRig.LocalRig))
+            if (VRRig.LocalRig.IsTagged())
             {
                 GorillaTagger.Instance.maxTagDistance = float.MaxValue;
 
@@ -489,7 +489,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (!PlayerIsTagged(lockTarget))
+                    if (!lockTarget.IsTagged())
                     {
                         VRRig.LocalRig.enabled = false;
 
@@ -537,13 +537,13 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                             AddInfected(GetPlayerFromVRRig(gunTarget));
                         else
                         {
-                            if (PlayerIsTagged(VRRig.LocalRig))
+                            if (VRRig.LocalRig.IsTagged())
                             {
                                 gunLocked = true;
                                 lockTarget = gunTarget;
@@ -580,7 +580,7 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (!PlayerIsTagged(VRRig.LocalRig))
+            if (!VRRig.LocalRig.IsTagged())
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                 Buttons.GetIndex("Tag Player").enabled = false;
@@ -595,7 +595,7 @@ namespace iiMenu.Mods
             }
 
             VRRig targetRig = GetVRRigFromPlayer(player);
-            if (!PlayerIsTagged(targetRig))
+            if (!targetRig.IsTagged())
             {
                 VRRig.LocalRig.enabled = false;
 
@@ -648,7 +648,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal() && gunTarget.IsTagged())
                     {
                         if (PhotonNetwork.IsMasterClient)
                             RemoveInfected(GetPlayerFromVRRig(gunTarget));
@@ -702,7 +702,7 @@ namespace iiMenu.Mods
                     return;
                 }
 
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!VRRig.LocalRig.IsTagged())
                 {
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                     Buttons.GetIndex("Tag All").enabled = false;
@@ -712,7 +712,7 @@ namespace iiMenu.Mods
                     bool isInfectedPlayers = false;
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig))
+                        if (!vrrig.IsTagged())
                         {
                             isInfectedPlayers = true;
                             break;
@@ -720,7 +720,7 @@ namespace iiMenu.Mods
                     }
                     if (isInfectedPlayers)
                     {
-                        foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !PlayerIsTagged(vrrig)))
+                        foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.IsTagged()))
                         {
                             VRRig.LocalRig.enabled = false;
 
@@ -773,7 +773,7 @@ namespace iiMenu.Mods
 
         public static void InstantTagPlayer(NetPlayer Target)
         {
-            if (!PlayerIsTagged(VRRig.LocalRig) || PlayerIsTagged(GetVRRigFromPlayer(Target)))
+            if (!VRRig.LocalRig.IsTagged() || Target.VRRig().IsTagged())
                 return;
 
             Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
@@ -798,7 +798,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > tagGunDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         tagGunDelay = Time.time + 0.2f;
                         InstantTagPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(gunTarget)));
@@ -809,7 +809,7 @@ namespace iiMenu.Mods
 
         public static void InstantTagAll()
         {
-            if (!PlayerIsTagged(VRRig.LocalRig))
+            if (!VRRig.LocalRig.IsTagged())
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                 return;
@@ -817,7 +817,7 @@ namespace iiMenu.Mods
 
             Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
 
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !PlayerIsTagged(vrrig)))
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.IsTagged()))
             {
                 VRRig.LocalRig.transform.position = vrrig.transform.position;
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { PhotonNetwork.MasterClient.ActorNumber } });
@@ -887,7 +887,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!VRRig.LocalRig.IsTagged())
                 {
                     if (InfectedList().Count > 0)
                         TagSelf();
@@ -921,7 +921,7 @@ namespace iiMenu.Mods
         {
             SerializePatch.OverrideSerialization = () =>
             {
-                if (PlayerIsTagged(VRRig.LocalRig))
+                if (VRRig.LocalRig.IsTagged())
                     return true;
 
                 MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
@@ -1020,7 +1020,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
@@ -1064,7 +1064,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)
@@ -1139,7 +1139,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)

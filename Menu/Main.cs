@@ -4910,60 +4910,24 @@ namespace iiMenu.Menu
             return tgo;
         }
 
-        public static bool PlayerIsTagged(VRRig Player)
-        {
-            if (Player == null) return false;
-            List<NetPlayer> infectedPlayers = InfectedList();
-            NetPlayer targetPlayer = GetPlayerFromVRRig(Player);
-
-            return infectedPlayers.Contains(targetPlayer);
-        }
-
-        public static bool PlayerIsLocal(VRRig Player) =>
-            Player != null && (Player.isLocal || Player == GhostRig);
-
-        // Credits to zvbex for the 'FIRST LOGIN' concat check
-        // Credits to HanSolo1000Falcon/WhoIsThatMonke for improved checks
-
-        public static bool PlayerIsSteam(VRRig Player)
-        {
-            string concat = Player.concatStringOfCosmeticsAllowed;
-            int customPropsCount = NetPlayerToPlayer(GetPlayerFromVRRig(Player)).CustomProperties.Count;
-
-            if (concat.Contains("S. FIRST LOGIN")) return true;
-            if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
-
-            return false;
-        }
-
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == NetworkSystem.Instance.LocalPlayer || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 
-        // Credits to The-Graze/WhoIsTalking for the color detection
-        public static Color GetPlayerColor(VRRig Player)
-        {
-            if (Buttons.GetIndex("Follow Player Colors").enabled)
-                return Player.playerColor;
+        [Obsolete("PlayerIsTagged is obsolete. Use VRRigExtensions.IsTagged instead.")]
+        public static bool PlayerIsTagged(VRRig Player) =>
+            Player.IsTagged();
 
-            if (Player.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
-                return Color.green;
+        [Obsolete("PlayerIsLocal is obsolete. Use VRRigExtensions.IsLocal instead.")]
+        public static bool PlayerIsLocal(VRRig Player) =>
+            Player.IsLocal();
 
-            switch (Player.setMatIndex)
-            {
-                case 1:
-                    return Color.red;
-                case 2:
-                case 11:
-                    return new Color32(255, 128, 0, 255);
-                case 3:
-                case 7:
-                    return Color.blue;
-                case 12:
-                    return Color.green;
-                default:
-                    return Player.playerColor;
-            }
-        }
+        [Obsolete("PlayerIsSteam is obsolete. Use VRRigExtensions.IsSteam instead.")]
+        public static bool PlayerIsSteam(VRRig Player) =>
+            Player.IsSteam();
+
+        [Obsolete("GetPlayerColor is obsolete. Use VRRigExtensions.GetColor instead.")]
+        public static Color GetPlayerColor(VRRig Player) =>
+            Player.GetColor();
 
         public static List<NetPlayer> InfectedList()
         {

@@ -227,7 +227,7 @@ namespace iiMenu.Mods
 
         public static void SilentHandTapsOnTag()
         {
-            if (PlayerIsTagged(VRRig.LocalRig))
+            if (VRRig.LocalRig.IsTagged())
                 SilentHandTaps();
             else
                 FixHandTaps();
@@ -435,7 +435,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -834,7 +834,7 @@ namespace iiMenu.Mods
                     if (GetGunInput(true))
                     {
                         VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                        if (gunTarget && !PlayerIsLocal(gunTarget))
+                        if (gunTarget && !gunTarget.IsLocal())
                         {
                             gunLocked = true;
                             lockTarget = gunTarget;
@@ -901,7 +901,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer == GetPlayerFromVRRig(gunTarget)))
                         {
@@ -935,7 +935,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
 
@@ -986,7 +986,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -1445,7 +1445,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache = currency;
@@ -1483,7 +1483,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache += currency;
@@ -1521,7 +1521,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (PhotonNetwork.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).shiftCreditCache = 0;
@@ -1589,7 +1589,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -1681,7 +1681,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                         SetPlayerState(gunTarget, (GRPlayer.GRPlayerState)state);
                 }
             }
@@ -1708,7 +1708,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > killDelay)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > killDelay)
                     {
                         killDelay = Time.time + 0.1f;
                         GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber);
@@ -1924,7 +1924,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > copyVoiceGunDelay)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > copyVoiceGunDelay)
                     {
                         copyVoiceGunDelay = Time.time + 0.5f;
 
@@ -2630,7 +2630,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3408,7 +3408,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3452,7 +3452,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3975,7 +3975,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > elevatorKickDelay)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > elevatorKickDelay)
                     {
                         elevatorKickDelay = Time.time + 0.5f;
 
@@ -4105,7 +4105,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4138,7 +4138,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4199,7 +4199,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4374,7 +4374,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4429,7 +4429,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -5810,7 +5810,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         ChangeName(GetPlayerFromVRRig(gunTarget).NickName);
                         ChangeColor(gunTarget.playerColor);
@@ -5831,7 +5831,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, gunTarget.cosmeticSet.ToPackedIDArray(), gunTarget.tryOnSet.ToPackedIDArray(), false);
                         stealCosmeticsDelay = Time.time + 0.5f;
@@ -6273,19 +6273,19 @@ Piece Name: {gunTarget.name}";
         private static bool lasttagged;
         public static void DisableCosmeticsOnTag()
         {
-            if (!lasttagged && PlayerIsTagged(VRRig.LocalRig))
+            if (!lasttagged && VRRig.LocalRig.IsTagged())
             {
                 string[] cosmetics = new[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" };
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, PackCosmetics(cosmetics), PackCosmetics(cosmetics), false);
                 RPCProtection();
             }
-            if (lasttagged && !PlayerIsTagged(VRRig.LocalRig))
+            if (lasttagged && !VRRig.LocalRig.IsTagged())
             {
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
                 RPCProtection();
             }
-            lasttagged = PlayerIsTagged(VRRig.LocalRig);
+            lasttagged = VRRig.LocalRig.IsTagged();
         }
 
         public static bool hasGivenCosmetics;
@@ -6323,7 +6323,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         idgundelay = Time.time + 0.5f;
                         string id = GetPlayerFromVRRig(gunTarget).UserId;
@@ -6351,7 +6351,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         idgundelay = Time.time + 0.5f;
                         SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(gunTarget).UserId));
@@ -6392,7 +6392,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
 
@@ -6427,7 +6427,7 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
 

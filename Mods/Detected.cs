@@ -56,7 +56,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (Time.time > masterDelay)
                         {
@@ -118,7 +118,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -151,7 +151,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         if (lockTarget == null)
                         {
@@ -183,7 +183,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         PhotonView view = GetPhotonViewFromVRRig(gunTarget);
                         if (view != null)
@@ -208,7 +208,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!PlayerIsLocal(rig))
+                    if (!rig.IsLocal())
                     {
                         PhotonView view = GetPhotonViewFromVRRig(rig);
 
@@ -239,7 +239,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
                     nearbyPlayers.Add(vrrig);
                 else if (nearbyPlayers.Contains(vrrig))
                     nearbyPlayers.Remove(vrrig);
@@ -278,7 +278,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
@@ -388,7 +388,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         Player target = gunTarget.GetPhotonPlayer();
                         int viewID = viewIdArchive[gunTarget];
@@ -417,7 +417,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
                     nearbyPlayers.Add(vrrig);
                 else if (nearbyPlayers.Contains(vrrig))
                     nearbyPlayers.Remove(vrrig);
@@ -443,7 +443,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
@@ -472,11 +472,11 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         foreach (VRRig rig in GorillaParent.instance.vrrigs)
                         {
-                            bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                            bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !rig.IsLocal();
                             PhotonView view = GetPhotonViewFromVRRig(rig);
                             if (includeLocal && rig != gunTarget)
                             {
@@ -498,7 +498,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !rig.IsLocal();
                 if (includeLocal)
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
@@ -522,7 +522,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
                     nearbyPlayers.Add(vrrig);
                 else if (nearbyPlayers.Contains(vrrig))
                     nearbyPlayers.Remove(vrrig);
@@ -532,7 +532,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in nearbyPlayers)
                 {
-                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(rig);
+                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !rig.IsLocal();
                     if (includeLocal)
                     {
                         PhotonView view = GetPhotonViewFromVRRig(rig);
@@ -557,7 +557,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
@@ -571,7 +571,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig otherRig in GorillaParent.instance.vrrigs)
                 {
-                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !PlayerIsLocal(otherRig);
+                    bool includeLocal = !Buttons.GetIndex("Isolate Others").enabled || !otherRig.IsLocal();
                     PhotonView view = GetPhotonViewFromVRRig(otherRig);
                     if (includeLocal && otherRig != touchedRig)
                     {
@@ -601,7 +601,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -619,7 +619,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                     Destroy(rig.GetPhotonPlayer());
             }
                 
@@ -632,7 +632,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
                     nearbyPlayers.Add(vrrig);
                 else if (nearbyPlayers.Contains(vrrig))
                     nearbyPlayers.Remove(vrrig);
@@ -654,7 +654,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
@@ -691,7 +691,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -711,7 +711,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
-                    if (!PlayerIsLocal(rig))
+                    if (!rig.IsLocal())
                         Destroy(rig.GetPhotonPlayer());
                 }
 
@@ -726,7 +726,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
                     nearbyPlayers.Add(vrrig);
                 else if (nearbyPlayers.Contains(vrrig))
                     nearbyPlayers.Remove(vrrig);
@@ -750,7 +750,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsLocal(rig))
+                if (!rig.IsLocal())
                 {
                     if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
                         Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
@@ -804,7 +804,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -959,7 +959,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    if (gunTarget && !gunTarget.IsLocal())
                         CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPhotonPlayer(), id.Value);
                 }
             }
