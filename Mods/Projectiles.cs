@@ -598,7 +598,7 @@ namespace iiMenu.Mods
 
                 if (Buttons.GetIndex("Above Players").enabled)
                 {
-                    VRRig targetRig = GetCurrentTargetRig();
+                    VRRig targetRig = GetTargetPlayer();
                     startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 
@@ -660,7 +660,7 @@ namespace iiMenu.Mods
 
                     if (Buttons.GetIndex("Above Players").enabled)
                     {
-                        VRRig targetRig = GetCurrentTargetRig();
+                        VRRig targetRig = GetTargetPlayer();
                         startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                     }
 
@@ -729,7 +729,7 @@ namespace iiMenu.Mods
 
                 if (Buttons.GetIndex("Above Players").enabled)
                 {
-                    VRRig targetRig = GetCurrentTargetRig();
+                    VRRig targetRig = GetTargetPlayer();
                     startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 

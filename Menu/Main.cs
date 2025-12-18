@@ -3178,7 +3178,11 @@ namespace iiMenu.Menu
         public static event Action OnMenuOpened;
         public static void OpenMenu()
         {
-            OnMenuOpened?.Invoke();
+            try
+            {
+                OnMenuOpened?.Invoke();
+            } catch { }
+            
             if (dynamicSounds)
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/open.ogg", "Audio/Menu/open.ogg"), buttonClickVolume / 10f);
 
@@ -3207,7 +3211,11 @@ namespace iiMenu.Menu
         public static event Action OnMenuClosed;
         public static void CloseMenu()
         {
-            OnMenuClosed?.Invoke();
+            try
+            {
+                OnMenuClosed?.Invoke();
+            } catch { }
+            
             GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
             if (dynamicSounds)
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
@@ -4992,19 +5000,6 @@ namespace iiMenu.Menu
             Type type = typeof(T);
 
             typePool.Remove(type);
-        }
-
-        private static VRRig rigTarget;
-        private static float rigTargetChange;
-        public static VRRig GetCurrentTargetRig(float targetChangeDelay = 1f)
-        {
-            if (Time.time > rigTargetChange || !GorillaParent.instance.vrrigs.Contains(rigTarget))
-            {
-                rigTargetChange = Time.time + targetChangeDelay;
-                rigTarget = GetRandomVRRig(false);
-            }
-
-            return rigTarget;
         }
 
         private static readonly Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();

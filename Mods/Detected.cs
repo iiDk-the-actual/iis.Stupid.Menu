@@ -128,7 +128,7 @@ namespace iiMenu.Mods
 
         public static void CrashAll()
         {
-            PhotonNetwork.SetMasterClient(GetCurrentTargetRig().GetPhotonPlayer());
+            PhotonNetwork.SetMasterClient(GetTargetPlayer().GetPhotonPlayer());
             PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 

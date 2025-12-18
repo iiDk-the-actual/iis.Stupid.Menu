@@ -3593,7 +3593,7 @@ namespace iiMenu.Mods
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f)
-                FlingPlayer(GetCurrentTargetRig(0.5f));
+                FlingPlayer(GetTargetPlayer(0.5f));
         }
 
         public static void SnowballFlingVerticalGun()
@@ -3634,7 +3634,7 @@ namespace iiMenu.Mods
             {
                 snowballDelay = Time.time + SnowballSpawnDelay;
 
-                Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
+                Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetTargetPlayer(0.5f)));
                 BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, plr);
             }
         }
@@ -3649,7 +3649,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     snowballDelay = Time.time + SnowballSpawnDelay;
-                    Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
+                    Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetTargetPlayer(0.5f)));
                     Vector3 targetDirection = (NewPointer.transform.position - GetVRRigFromPlayer(plr).headMesh.transform.position).normalized;
                     BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z) / 1.7f, new Vector3(0f, -500f, 0f), 2, plr);
                 }

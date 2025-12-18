@@ -40,6 +40,7 @@ using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using Console = iiMenu.Classes.Menu.Console;
+using static iiMenu.Utilities.RigUtilities;
 using Random = UnityEngine.Random;
 
 namespace iiMenu.Menu
@@ -1352,13 +1353,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fire Gun", enableMethod =() => Fun.CheckOwnedThrowable(175), method =() => Fun.BubblerGun(175, Quaternion.Euler(180f, 0f, 0f)), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "White Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(629), method = Fun.WhiteColorGun, toolTip = "Sprays whoever your hand desires with the sunblock spray cosmetic."},
-                new ButtonInfo { buttonText = "White Color All", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Sprays everyone in the room with the sunblock spray cosmetic."},
+                new ButtonInfo { buttonText = "White Color All", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorTarget(GetTargetPlayer()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Sprays everyone in the room with the sunblock spray cosmetic."},
 
                 new ButtonInfo { buttonText = "Black Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(600), method = Fun.BlackColorGun, toolTip = "Uses the smoke bomb to make whoever your hand desires black."},
-                new ButtonInfo { buttonText = "Black Color All", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.BlackColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
+                new ButtonInfo { buttonText = "Black Color All", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.BlackColorTarget(GetTargetPlayer()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
 
                 new ButtonInfo { buttonText = "Chicken Gun", enableMethod =() => Fun.CheckOwnedThrowable(651), method = Fun.ChickenGun, toolTip = "Uses the smoke bomb to make whoever your hand desires black."},
-                new ButtonInfo { buttonText = "Chicken All", enableMethod =() => Fun.CheckOwnedThrowable(651), method =() => Fun.ChickenTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
+                new ButtonInfo { buttonText = "Chicken All", enableMethod =() => Fun.CheckOwnedThrowable(651), method =() => Fun.ChickenTarget(GetTargetPlayer()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
 
                 new ButtonInfo { buttonText = "Whoopee Cushion Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileSpam(626), toolTip = "Spawns whoopee cushions on your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Whoopee Cushion Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileMinigun(626), toolTip = "Shoots whoopee cushions out of your hand when holding <color=green>grip</color>."},

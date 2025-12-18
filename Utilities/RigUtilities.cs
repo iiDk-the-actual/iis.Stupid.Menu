@@ -51,6 +51,19 @@ namespace iiMenu.Utilities
             PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length)] :
             PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length)];
 
+        private static VRRig rigTarget;
+        private static float rigTargetChange;
+        public static VRRig GetTargetPlayer(float targetChangeDelay = 1f)
+        {
+            if (Time.time > rigTargetChange || !rigTarget.Active())
+            {
+                rigTargetChange = Time.time + targetChangeDelay;
+                rigTarget = GetRandomVRRig(false);
+            }
+
+            return rigTarget;
+        }
+
         public static VRRig GetRandomVRRig(bool includeSelf) =>
             GetVRRigFromPlayer(GetRandomPlayer(includeSelf));
 
