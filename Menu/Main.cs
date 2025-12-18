@@ -473,130 +473,7 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region PC Search Keyboard
-                if (inTextInput && isKeyboardPc)
-                {
-                    List<KeyCode> keysPressed = new List<KeyCode>();
-                    foreach (KeyCode keyCode in detectedKeyCodes)
-                    {
-                        if (UnityInput.Current.GetKey(keyCode))
-                        {
-                            if (keyPressedTimes.TryGetValue(keyCode, out (float, float) delay))
-                            {
-                                float newDelay = Mathf.Max(delay.Item2 * 0.75f, 0.05f);
-
-                                if (Time.time > delay.Item1)
-                                    keyPressedTimes[keyCode] = (Time.time + newDelay, newDelay);
-                                else
-                                    continue;
-                            }
-                            else
-                                keyPressedTimes[keyCode] = (Time.time + 0.5f, 0.5f);
-
-                            keysPressed.Add(keyCode);
-
-                            if (lastPressedKeys.Contains(keyCode)) continue;
-                            if (UnityInput.Current.GetKey(KeyCode.LeftControl))
-                            {
-                                switch (keyCode)
-                                {
-                                    case KeyCode.A:
-                                        keyboardInput = "";
-                                        break;
-                                    case KeyCode.C:
-                                        GUIUtility.systemCopyBuffer = keyboardInput;
-                                        break;
-                                    case KeyCode.V:
-                                        keyboardInput += GUIUtility.systemCopyBuffer;
-                                        break;
-                                    case KeyCode.Backspace:
-                                        keyboardInput = keyboardInput[..^1];
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                switch (keyCode)
-                                {
-                                    case KeyCode.Backspace:
-                                        if (keyboardInput.Length > 0)
-                                            keyboardInput = keyboardInput[..^1];
-                                        break;
-                                    case KeyCode.Escape:
-                                        Toggle(isSearching ? "Search" : "Decline Prompt");
-
-                                        break;
-                                    case KeyCode.Return:
-                                        if (isSearching)
-                                        {
-                                            List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                                            if (nonGlobalSearch && currentCategoryName != "Main")
-                                            {
-                                                foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
-                                                {
-                                                    try
-                                                    {
-                                                        string buttonText = v.overlapText ?? v.buttonText;
-
-                                                        if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                                            searchedMods.Add(v);
-                                                    }
-                                                    catch { }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                int categoryIndex = 0;
-                                                foreach (ButtonInfo[] buttonInfos in Buttons.buttons)
-                                                {
-                                                    foreach (ButtonInfo v in buttonInfos)
-                                                    {
-                                                        try
-                                                        {
-                                                            if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
-                                                                continue;
-
-                                                            string buttonText = v.overlapText ?? v.buttonText;
-
-                                                            if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                                                searchedMods.Add(v);
-                                                        }
-                                                        catch { }
-                                                    }
-                                                    categoryIndex++;
-                                                }
-                                            }
-
-                                            ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                            ButtonInfo button = buttons[0];
-
-                                            if (button.incremental)
-                                                ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
-                                            else
-                                                Toggle(buttons[0].buttonText, true);
-                                        }
-                                        else if (CurrentPrompt != null && CurrentPrompt.IsText)
-                                            Toggle("Accept Prompt");
-
-                                        break;
-                                    default:
-                                        keyboardInput +=
-                                            UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
-                                                keyCode.ShiftedKey().ToUpper() : keyCode.Key().ToLower();
-                                        break;
-                                }
-                            }
-                            
-                            if (pcKeyboardSounds)
-                                VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
-                            pageNumber = 0;
-                            ReloadMenu();
-                        }
-                        else
-                            keyPressedTimes.Remove(keyCode);
-                    }
-
-                    lastPressedKeys = keysPressed;
-                }
+                
                 #endregion
 
                 #region Get Camera
@@ -1641,6 +1518,228 @@ namespace iiMenu.Menu
             }
 
             postActions.Clear();
+        }
+
+        public static List<KeyCode> lastPressedKeys = new List<KeyCode>();
+        public static readonly Dictionary<KeyCode, (float, float)> keyPressedTimes = new Dictionary<KeyCode, (float, float)>();
+        public static readonly KeyCode[] detectedKeyCodes = {
+            KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E,
+            KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.I, KeyCode.J,
+            KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O,
+            KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
+            KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y,
+            KeyCode.Z,
+
+            KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3,
+            KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7,
+            KeyCode.Alpha8, KeyCode.Alpha9,
+
+            KeyCode.Comma, KeyCode.Period, KeyCode.Slash, KeyCode.Backslash,
+            KeyCode.Minus, KeyCode.Equals,KeyCode.Semicolon, KeyCode.Quote,
+            KeyCode.LeftBracket, KeyCode.RightBracket,
+
+            KeyCode.Space, KeyCode.Backspace, KeyCode.Return, KeyCode.Escape
+        };
+
+        private static void UpdateKeyboard()
+        {
+            if (VRKeyboard != null)
+            {
+                if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale && !leftSecondary)
+                {
+                    VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                }
+            }
+
+            if (inTextInput && isKeyboardPc)
+            {
+                List<KeyCode> keysPressed = new List<KeyCode>();
+                foreach (KeyCode keyCode in detectedKeyCodes)
+                {
+                    if (UnityInput.Current.GetKey(keyCode))
+                    {
+                        if (keyPressedTimes.TryGetValue(keyCode, out (float, float) delay))
+                        {
+                            float newDelay = Mathf.Max(delay.Item2 * 0.75f, 0.05f);
+
+                            if (Time.time > delay.Item1)
+                                keyPressedTimes[keyCode] = (Time.time + newDelay, newDelay);
+                            else
+                                continue;
+                        }
+                        else
+                            keyPressedTimes[keyCode] = (Time.time + 0.5f, 0.5f);
+
+                        keysPressed.Add(keyCode);
+
+                        if (lastPressedKeys.Contains(keyCode)) continue;
+                        if (UnityInput.Current.GetKey(KeyCode.LeftControl))
+                        {
+                            switch (keyCode)
+                            {
+                                case KeyCode.A:
+                                    keyboardInput = "";
+                                    break;
+                                case KeyCode.C:
+                                    GUIUtility.systemCopyBuffer = keyboardInput;
+                                    break;
+                                case KeyCode.V:
+                                    keyboardInput += GUIUtility.systemCopyBuffer;
+                                    break;
+                                case KeyCode.Backspace:
+                                    keyboardInput = keyboardInput[..^1];
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (keyCode)
+                            {
+                                case KeyCode.Backspace:
+                                    if (keyboardInput.Length > 0)
+                                        keyboardInput = keyboardInput[..^1];
+                                    break;
+                                case KeyCode.Escape:
+                                    Toggle(isSearching ? "Search" : "Decline Prompt");
+
+                                    break;
+                                case KeyCode.Return:
+                                    if (isSearching)
+                                    {
+                                        List<ButtonInfo> searchedMods = new List<ButtonInfo>();
+                                        if (nonGlobalSearch && currentCategoryName != "Main")
+                                        {
+                                            foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                            {
+                                                try
+                                                {
+                                                    string buttonText = v.overlapText ?? v.buttonText;
+
+                                                    if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                        searchedMods.Add(v);
+                                                }
+                                                catch { }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            int categoryIndex = 0;
+                                            foreach (ButtonInfo[] buttonInfos in Buttons.buttons)
+                                            {
+                                                foreach (ButtonInfo v in buttonInfos)
+                                                {
+                                                    try
+                                                    {
+                                                        if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
+                                                            continue;
+
+                                                        string buttonText = v.overlapText ?? v.buttonText;
+
+                                                        if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                            searchedMods.Add(v);
+                                                    }
+                                                    catch { }
+                                                }
+                                                categoryIndex++;
+                                            }
+                                        }
+
+                                        ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                        ButtonInfo button = buttons[0];
+
+                                        if (button.incremental)
+                                            ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
+                                        else
+                                            Toggle(buttons[0].buttonText, true);
+                                    }
+                                    else if (CurrentPrompt != null && CurrentPrompt.IsText)
+                                        Toggle("Accept Prompt");
+
+                                    break;
+                                default:
+                                    keyboardInput +=
+                                        UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
+                                            keyCode.ShiftedKey().ToUpper() : keyCode.Key().ToLower();
+                                    break;
+                            }
+                        }
+
+                        if (pcKeyboardSounds)
+                            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                        pageNumber = 0;
+                        ReloadMenu();
+                    }
+                    else
+                        keyPressedTimes.Remove(keyCode);
+                }
+
+                lastPressedKeys = keysPressed;
+            }
+        }
+
+        public static void PressKeyboardKey(string key)
+        {
+            switch (key)
+            {
+                case "Space":
+                    keyboardInput += " ";
+                    break;
+                case "Backspace":
+                    if (keyboardInput.Length > 0)
+                        keyboardInput = keyboardInput[..^1];
+                    break;
+                case "Shift":
+                    shift = !shift;
+                    break;
+                case "CapsLock":
+                    lockShift = !lockShift;
+                    break;
+
+                case "Clear":
+                    keyboardInput = "";
+                    break;
+                case "Copy":
+                    GUIUtility.systemCopyBuffer = keyboardInput;
+                    break;
+                case "Paste":
+                    keyboardInput += GUIUtility.systemCopyBuffer;
+                    break;
+
+                default:
+                    Dictionary<string, string> shiftMap = new Dictionary<string, string>
+                    {
+                        { "1", "!" }, { "2", "@" }, { "3", "#" }, { "4", "$" }, { "5", "%" },
+                        { "6", "^" }, { "7", "&" }, { "8", "*" }, { "9", "(" }, { "0", ")" },
+                        { "-", "_" }, { "=", "+" }, { "[", "{" }, { "]", "}" }, { "\\", "|" },
+                        { ";", ":" }, { "'", "\"" }, { ",", "<" }, { ".", ">" }, { "/", "?" },
+                        { "`", "~" }
+                    };
+
+                    bool isShifted = lockShift ^ shift;
+                    string keyStr = key.ToLower();
+
+                    if (isShifted)
+                    {
+                        if (shiftMap.ContainsKey(keyStr))
+                            keyboardInput += shiftMap[keyStr];
+                        else
+                            keyboardInput += keyStr.ToUpper();
+                    }
+                    else
+                        keyboardInput += keyStr.ToLower();
+
+                    shift = false;
+                    break;
+
+            }
+
+            KeyboardKey.keyLookupDictionary["CapsLock"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[lockShift ? 1 : 0];
+            KeyboardKey.keyLookupDictionary["Shift"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[shift ? 1 : 0];
+
+            pageNumber = 0;
+
+            ReloadMenu();
         }
 
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
@@ -2969,11 +3068,6 @@ namespace iiMenu.Menu
             }
             if (inTextInput && !isKeyboardPc)
             {
-                if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale && !leftSecondary)
-                {
-                    VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
-                    VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                }
                 menu.transform.position = menuSpawnPosition.transform.position;
                 menu.transform.rotation = menuSpawnPosition.transform.rotation;
                 Vector3 rotModify = menu.transform.rotation.eulerAngles;
@@ -5715,70 +5809,6 @@ namespace iiMenu.Menu
             rightHand = archiveRightHand;
         }
 
-        public static void PressKeyboardKey(string key)
-        {
-            switch (key)
-            {
-                case "Space":
-                    keyboardInput += " ";
-                    break;
-                case "Backspace":
-                    if (keyboardInput.Length > 0)
-                        keyboardInput = keyboardInput[..^1];
-                    break;
-                case "Shift":
-                    shift = !shift;
-                    break;
-                case "CapsLock":
-                    lockShift = !lockShift;
-                    break;
-
-                case "Clear":
-                    keyboardInput = "";
-                    break;
-                case "Copy":
-                    GUIUtility.systemCopyBuffer = keyboardInput;
-                    break;
-                case "Paste":
-                    keyboardInput += GUIUtility.systemCopyBuffer;
-                    break;
-
-                default:
-                    Dictionary<string, string> shiftMap = new Dictionary<string, string>
-                    {
-                        { "1", "!" }, { "2", "@" }, { "3", "#" }, { "4", "$" }, { "5", "%" },
-                        { "6", "^" }, { "7", "&" }, { "8", "*" }, { "9", "(" }, { "0", ")" },
-                        { "-", "_" }, { "=", "+" }, { "[", "{" }, { "]", "}" }, { "\\", "|" },
-                        { ";", ":" }, { "'", "\"" }, { ",", "<" }, { ".", ">" }, { "/", "?" },
-                        { "`", "~" }
-                    };
-
-                    bool isShifted = lockShift ^ shift;
-                    string keyStr = key.ToLower();
-
-                    if (isShifted)
-                    {
-                        if (shiftMap.ContainsKey(keyStr))
-                            keyboardInput += shiftMap[keyStr];
-                        else
-                            keyboardInput += keyStr.ToUpper();
-                    }
-                    else
-                        keyboardInput += keyStr.ToLower();
-
-                    shift = false;
-                    break;
-
-            }
-
-            KeyboardKey.keyLookupDictionary["CapsLock"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[lockShift ? 1 : 0];
-            KeyboardKey.keyLookupDictionary["Shift"].gameObject.GetOrAddComponent<ColorChanger>().colors = buttonColors[shift ? 1 : 0];
-
-            pageNumber = 0;
-
-            ReloadMenu();
-        }
-
         private static int? noInvisLayerMask;
         public static int NoInvisLayerMask()
         {
@@ -6669,27 +6699,6 @@ jgs \_   _/ |Oo\
         public static Vector2 rightJoystick = Vector2.zero;
         public static bool leftJoystickClick;
         public static bool rightJoystickClick;
-
-        public static List<KeyCode> lastPressedKeys = new List<KeyCode>();
-        public static readonly Dictionary<KeyCode, (float, float)> keyPressedTimes = new Dictionary<KeyCode, (float, float)>();
-        public static readonly KeyCode[] detectedKeyCodes = {
-            KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E,
-            KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.I, KeyCode.J,
-            KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O,
-            KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
-            KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y,
-            KeyCode.Z,
-
-            KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3,
-            KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7,
-            KeyCode.Alpha8, KeyCode.Alpha9, 
-            
-            KeyCode.Comma, KeyCode.Period, KeyCode.Slash, KeyCode.Backslash,
-            KeyCode.Minus, KeyCode.Equals,KeyCode.Semicolon, KeyCode.Quote,
-            KeyCode.LeftBracket, KeyCode.RightBracket,
-            
-            KeyCode.Space, KeyCode.Backspace, KeyCode.Return, KeyCode.Escape 
-        };
 
         public static bool ToggleBindings = true;
         public static bool OverwriteKeybinds;
