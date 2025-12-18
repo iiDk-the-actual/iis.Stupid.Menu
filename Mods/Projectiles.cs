@@ -113,7 +113,7 @@ namespace iiMenu.Mods
         /// <remarks>
         /// Should be used as {SnowballName}{Left/Right}Anchor
         /// </remarks>
-        public const string SnowballName = "GrowingStuffing";
+        public static string SnowballName = "GrowingMashedPotato";
 
         public static Coroutine RigCoroutine;
         public static IEnumerator EnableRig()
@@ -378,6 +378,35 @@ namespace iiMenu.Mods
                 projMode = shortProjectileNames.Length - 1;
 
             Buttons.GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projMode] + "</color><color=grey>]</color>";
+        }
+
+        public static int snowballIndex = 1;
+        public static void ChangeGrowingProjectile(bool positive = true)
+        {
+            string[] shortProjectileNames = {
+                "Growing Snowball",
+                "Mashed Potatoes",
+                "Stuffing"
+            };
+
+            string[] longProjectileNames =
+            {
+                "GrowingSnowball",
+                "GrowingMashedPotato",
+                "GrowingStuffing"
+            };
+
+            if (positive)
+                snowballIndex++;
+            else
+                snowballIndex--;
+
+            snowballIndex %= shortProjectileNames.Length;
+            if (snowballIndex < 0)
+                snowballIndex = shortProjectileNames.Length - 1;
+
+            Buttons.GetIndex("Change Growing Projectile").overlapText = "Change Growing Projectile <color=grey>[</color><color=green>" + shortProjectileNames[snowballIndex] + "</color><color=grey>]</color>";
+            SnowballName = longProjectileNames[snowballIndex];
         }
 
         public static int targetProjectileIndex;

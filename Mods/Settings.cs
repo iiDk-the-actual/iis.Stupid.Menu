@@ -5024,7 +5024,8 @@ exit 0";
                 Movement.multiplicationAmount.ToString(),
                 Fun.targetFOV.ToString(),
                 Projectiles.targetProjectileIndex.ToString(),
-                Movement.fakeLagDelayIndex.ToString()
+                Movement.fakeLagDelayIndex.ToString(),
+                Projectiles.snowballIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5282,6 +5283,9 @@ exit 0";
 
                 Movement.fakeLagDelayIndex = int.Parse(data[62]) - 1;
                 Movement.ChangeFakeLagStrength();
+
+                Projectiles.snowballIndex = int.Parse(data[63]) - 1;
+                Projectiles.ChangeGrowingProjectile();
             }
             catch { LogManager.Log("Save file out of date"); }
 

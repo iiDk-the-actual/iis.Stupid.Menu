@@ -521,8 +521,6 @@ exit";
             Application.targetFrameRate = int.MaxValue;
         }
 
-        private static float keyboardDelay;
-
         private static Vector3? oldLocalPosition;
         public static void PCButtonClick()
         {
