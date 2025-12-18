@@ -5184,7 +5184,7 @@ namespace iiMenu.Menu
 
             if (!File.Exists(filePath))
             {
-                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\", \"lang\": \"" + language + "\"}";
+                string postData = JsonConvert.SerializeObject(new { text, lang = language });
 
                 using UnityWebRequest request = new UnityWebRequest("https://iidk.online/translate", "POST");
                 byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
@@ -5401,7 +5401,9 @@ namespace iiMenu.Menu
             {
                 if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
                 {
-                    Destroy(existingBoard);
+                    if (existingBoard != null)
+                        Destroy(existingBoard);
+
                     objectBoards.Remove(scene);
                 }
 
@@ -5627,15 +5629,6 @@ namespace iiMenu.Menu
 
         public static void SetRotation(float rotation) =>
            GTPlayer.Instance.Turn(rotation - GTPlayer.Instance.mainCamera.transform.eulerAngles.y);
-
-        public static int[] AllActorNumbers() =>
-            PhotonNetwork.PlayerList.Select(plr => plr.ActorNumber).ToArray();
-
-        public static int[] AllActorNumbersExcept(int actorNumber) =>
-            AllActorNumbersExcept(new[] { actorNumber });
-
-        public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
-            PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
 
         [Obsolete("GetIndex is obsolete. Use Buttons.GetIndex instead.")]
         public static ButtonInfo GetIndex(string buttonText) =>

@@ -399,7 +399,7 @@ namespace iiMenu.Mods
                     Destroy(rig, null, null, viewID);
             }
         }
-
+        
         public static void UnghostAura()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -493,7 +493,7 @@ namespace iiMenu.Mods
                         { 0, view.ViewID }
                     }, new RaiseEventOptions
                     {
-                        TargetActors = AllActorNumbersExcept(view.Owner.ActorNumber)
+                        TargetActors = PhotonNetwork.PlayerList.Where(plr => plr.ActorNumber != view.Owner.ActorNumber).Select(plr => plr.ActorNumber).ToArray()
                     });
                 }
             }
