@@ -5794,6 +5794,20 @@ namespace iiMenu.Menu
             return noInvisLayerMask ?? GTPlayer.Instance.locomotionEnabledLayers;
         }
 
+        /// <summary>
+        /// Toggles the state or performs the associated action for the specified button, such as navigating pages,
+        /// toggling mods, or updating quick actions and favorites.
+        /// </summary>
+        /// <remarks>This method supports a variety of button actions, including page navigation
+        /// ("PreviousPage", "NextPage"), toggling mod states, managing quick actions and favorites, and handling custom
+        /// bindings. Some actions may trigger notifications or require specific permissions, especially when invoked
+        /// from the menu. If the specified button text does not correspond to a known button, an error is
+        /// logged.</remarks>
+        /// <param name="buttonText">The text identifier of the button to toggle or activate. This determines which action or toggle operation is
+        /// performed.</param>
+        /// <param name="fromMenu">true to indicate the toggle was initiated from the menu interface; otherwise, false. Affects notification
+        /// display and certain toggle behaviors.</param>
+        /// <param name="ignoreForce">true to bypass force-related checks and restrictions during the toggle operation; otherwise, false.</param>
         public static void Toggle(string buttonText, bool fromMenu = false, bool ignoreForce = false)
         {
             switch (buttonText)
@@ -5998,9 +6012,26 @@ namespace iiMenu.Menu
             ReloadMenu();
         }
 
+        /// <summary>
+        /// Toggles the state of the specified button using the provided button information.
+        /// </summary>
+        /// <param name="buttonInfo">An object containing information about the button to toggle. Cannot be null.</param>
+        /// <param name="fromMenu">Indicates whether the toggle action was initiated from a menu. Set to <see langword="true"/> if triggered
+        /// from a menu; otherwise, <see langword="false"/>.</param>
+        /// <param name="ignoreForce">Indicates whether to ignore any force constraints when toggling the button. Set to <see langword="true"/> to
+        /// ignore force constraints; otherwise, <see langword="false"/>.</param>
         public static void Toggle(ButtonInfo buttonInfo, bool fromMenu = false, bool ignoreForce = false) =>
             Toggle(buttonInfo.buttonText, fromMenu, ignoreForce);
 
+        /// <summary>
+        /// Toggles the incremental or decremental state of a button and updates its associated UI and behavior
+        /// accordingly.
+        /// </summary>
+        /// <remarks>This method updates the button's visual indicator and triggers the corresponding
+        /// enable or disable method for the button. If certain boost conditions are met, the action may be performed
+        /// multiple times. A notification is displayed to inform the user of the action taken.</remarks>
+        /// <param name="buttonText">The text label of the button to be toggled. This is used to identify the target button.</param>
+        /// <param name="increment">true to apply the incremental action; false to apply the decremental action.</param>
         public static void ToggleIncremental(string buttonText, bool increment)
         { 
             ButtonInfo target = Buttons.GetIndex(buttonText);
@@ -6079,6 +6110,12 @@ namespace iiMenu.Menu
 
         public static void OnLaunch()
         {
+            if (CoroutineManager.instance == null)
+                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
+
+            if (NotificationManager.Instance == null)
+                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
+
             timeMenuStarted = Time.time;
             IsSteam = PlayFabAuthenticator.instance.platform;
 
@@ -6163,7 +6200,6 @@ namespace iiMenu.Menu
                 File.WriteAllText(allButtonsPath, string.Join("\n", newButtonNames));
             }
             catch { }
-
 
             try
             {

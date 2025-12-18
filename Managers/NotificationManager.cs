@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using GorillaLocomotion;
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
 using iiMenu.Mods;
@@ -70,11 +71,10 @@ namespace iiMenu.Managers
         {
             mainCamera = Camera.main.gameObject;
 
-            // Create canvas with parent transform for proper positioning
-            GameObject canvasParent = new GameObject("NOTIFICATIONLIB_HUD_PARENT");
+            GameObject canvasParent = new GameObject("iiMenu_NotificationParent");
             canvasParent.transform.position = mainCamera.transform.position;
 
-            canvas = new GameObject("NOTIFICATIONLIB_HUD_OBJ");
+            canvas = new GameObject("Canvas");
             canvas.AddComponent<Canvas>();
             canvas.AddComponent<CanvasScaler>();
             canvas.AddComponent<GraphicRaycaster>();
@@ -138,6 +138,7 @@ namespace iiMenu.Managers
 
                 canvas.transform.position = mainCamera.transform.TransformPoint(0f, 0f, 1.6f);
                 canvas.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(0, 90, 0);
+                canvas.transform.localScale = Vector3.one * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
                 try
                 {
@@ -159,14 +160,12 @@ namespace iiMenu.Managers
                 }
                 catch { }
 
-                // Update alignment based on flip setting
                 ModText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
 
                 StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
                 StatsText.alignment = flipArraylist ? TextAnchor.UpperLeft : TextAnchor.UpperRight;
 
-                // Update stats display
                 if (information.Count > 0)
                 {
                     Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
@@ -183,7 +182,6 @@ namespace iiMenu.Managers
                 else
                     StatsText.text = "";
 
-                // Update mod list display
                 if (showEnabledModsVR)
                 {
                     List<string> enabledMods = new List<string>();
@@ -261,6 +259,19 @@ namespace iiMenu.Managers
             catch (Exception e) { LogManager.Log(e); }
         }
 
+        /// <summary>
+        /// Displays a notification message to the user, with optional customization for display duration and
+        /// formatting.
+        /// </summary>
+        /// <remarks>If the notification text matches the previous notification and notification stacking
+        /// is enabled, the notification count is incremented instead of displaying a new message. The method applies
+        /// various formatting and translation options based on current settings, and may play a notification sound or
+        /// narrate the message if those features are enabled. Rich text support and text casing are also configurable.
+        /// This method is thread-unsafe and should be called from the main UI thread.</remarks>
+        /// <param name="notificationText">The text of the notification to display. May include rich text formatting tags. If translation is enabled,
+        /// the text will be translated before display.</param>
+        /// <param name="clearTime">The time, in milliseconds, before the notification is cleared. Specify -1 to use the default notification
+        /// decay time.</param>
         public static void SendNotification(string notificationText, int clearTime = -1)
         {
             if (clearTime < 0)
@@ -352,6 +363,12 @@ namespace iiMenu.Managers
         public static void PlayNotificationSound() =>
             Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg", $"Audio/Menu/Notifications/{Settings.notificationSounds.Values.ToArray()[notificationSoundIndex]}.ogg"), buttonClickVolume / 10f);
 
+        /// <summary>
+        /// Clears all active notifications and stops any ongoing notification clearing operations.
+        /// </summary>
+        /// <remarks>Call this method to immediately remove all notification text and halt any scheduled
+        /// notification clearing. This method is typically used to reset the notification system or when notifications
+        /// are no longer relevant.</remarks>
         public static void ClearAllNotifications()
         {
             NotifiText.text = "";
@@ -362,6 +379,11 @@ namespace iiMenu.Managers
             clearCoroutines.Clear();
         }
 
+        /// <summary>
+        /// Removes a specified number of past notification entries from the notification text.
+        /// </summary>
+        /// <param name="amount">The number of past notification lines to remove. Must be zero or greater. If the value is greater than or
+        /// equal to the total number of notification lines, all notifications are cleared.</param>
         public static void ClearPastNotifications(int amount)
         {
             if (string.IsNullOrEmpty(NotifiText.text))
@@ -398,13 +420,13 @@ namespace iiMenu.Managers
             yield return Wrapper();
         }
 
-        public static IEnumerator ClearHolder(float time = 1f)
+        private static IEnumerator ClearHolder(float time = 1f)
         {
             yield return new WaitForSeconds(time);
             ClearPastNotifications(1);
         }
 
-        public static void CancelClear(Coroutine coroutine)
+        private static void CancelClear(Coroutine coroutine)
         {
             if (clearCoroutines.Contains(coroutine))
             {
@@ -413,7 +435,7 @@ namespace iiMenu.Managers
             }
         }
 
-        public static string RemovePrefix(string text)
+        private static string RemovePrefix(string text)
         {
             if (string.IsNullOrEmpty(text))
                 return text;
