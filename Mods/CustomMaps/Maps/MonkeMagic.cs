@@ -26,9 +26,9 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 using UnityEngine;
+using static iiMenu.Extensions.VRRigExtensions;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
-using static iiMenu.Extensions.VRRigExtensions;
 
 namespace iiMenu.Mods.CustomMaps.Maps
 {

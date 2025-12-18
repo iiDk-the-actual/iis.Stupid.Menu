@@ -22,7 +22,6 @@
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
-using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
@@ -1165,7 +1164,7 @@ namespace iiMenu.Menu
                     {
                         if (js.y > 0.5f)
                         {
-                            pageOffset = Mathf.Clamp(pageOffset - 1, 0, ItemCount - PageSize);
+                            pageOffset = Mathf.Clamp(pageOffset - 1, 0, DisplayedItemCount - PageSize);
 
                             shouldReload = true;
                             scrollDelay = Time.time + 0.1f;
@@ -1173,7 +1172,7 @@ namespace iiMenu.Menu
 
                         if (js.y < -0.5f)
                         {
-                            pageOffset = Mathf.Clamp(pageOffset + 1, 0, ItemCount - PageSize);
+                            pageOffset = Mathf.Clamp(pageOffset + 1, 0, DisplayedItemCount - PageSize);
 
                             shouldReload = true;
                             scrollDelay = Time.time + 0.1f;
@@ -1337,7 +1336,7 @@ namespace iiMenu.Menu
                     }
 
                     List<(long, float)> toRemoveAura = new List<(long, float)>();
-                    foreach (KeyValuePair<(long, float), GameObject> key in auraPool)
+                    foreach (KeyValuePair<(long, float), GameObject> key in Visuals.auraPool)
                     {
                         if (!key.Value.activeSelf)
                         {
@@ -1349,10 +1348,10 @@ namespace iiMenu.Menu
                     }
 
                     foreach ((long, float) item in toRemoveAura)
-                        auraPool.Remove(item);
+                        Visuals.auraPool.Remove(item);
 
                     List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)>();
-                    foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in cubePool)
+                    foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in Visuals.cubePool)
                     {
                         if (!key.Value.activeSelf)
                         {
@@ -1364,7 +1363,7 @@ namespace iiMenu.Menu
                     }
 
                     foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
-                        cubePool.Remove(item);
+                        Visuals.cubePool.Remove(item);
 
                     List<string> toRemoveLabel = new List<string>();
                     foreach (KeyValuePair<string, GameObject> label in Visuals.labelDictionary)
@@ -1468,6 +1467,8 @@ namespace iiMenu.Menu
                                 leftJoystickClick = buttonAmount > 0.5f;
                                 rightJoystickClick = buttonAmount > 0.5f;
                             }
+                            if (button.postMethod != null)
+                                postActions.Add(button.buttonText);
                             button.method.Invoke();
                             if (button.rebindKey != null)
                             {
@@ -1512,16 +1513,16 @@ namespace iiMenu.Menu
             }
         }
 
+        private static readonly List<string> postActions = new List<string>();
         public static void Postfix()
         {
             try
             {
-                foreach (ButtonInfo button in Buttons.buttons
-                   .SelectMany(list => list)
-                   .Where(button => button.enabled && button.postMethod != null))
+                foreach (string buttonName in postActions)
                 {
                     try
                     {
+                        ButtonInfo button = Buttons.GetIndex(buttonName);
                         bool _leftPrimary = leftPrimary;
                         bool _leftSecondary = leftSecondary;
                         bool _rightPrimary = rightPrimary;
@@ -1638,6 +1639,8 @@ namespace iiMenu.Menu
             {
                 LogManager.LogError($"Error with postfix at {exc.StackTrace}: {exc.Message}");
             }
+
+            postActions.Clear();
         }
 
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
@@ -4424,6 +4427,19 @@ namespace iiMenu.Menu
             return (Ray, GunPointer);
         }
 
+        private static VRRig _giveGunTarget;
+        public static VRRig GiveGunTarget
+        {
+            get
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(_giveGunTarget))
+                    _giveGunTarget = null;
+
+                return _giveGunTarget;
+            }
+            set => _giveGunTarget = value;
+        }
+
         /// <summary>
         /// Returns the gun input state.
         /// </summary>
@@ -4929,176 +4945,6 @@ namespace iiMenu.Menu
         public static Color GetPlayerColor(VRRig Player) =>
             Player.GetColor();
 
-        public static List<NetPlayer> InfectedList()
-        {
-            List<NetPlayer> infected = new List<NetPlayer>();
-
-            if (!PhotonNetwork.InRoom)
-                return infected;
-
-            switch (GorillaGameManager.instance.GameType())
-            {
-                case GameModeType.Infection:
-                case GameModeType.InfectionCompetitive:
-                case GameModeType.SuperInfect:
-                case GameModeType.FreezeTag:
-                case GameModeType.PropHunt:
-                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    if (tagManager.isCurrentlyTag)
-                        infected.Add(tagManager.currentIt);
-                    else
-                        infected.AddRange(tagManager.currentInfected);
-                    break;
-                case GameModeType.Ghost:
-                case GameModeType.Ambush:
-                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
-                    if (ghostManager.isCurrentlyTag)
-                        infected.Add(ghostManager.currentIt);
-                    else
-                        infected.AddRange(ghostManager.currentInfected);
-                    break;
-                case GameModeType.Paintbrawl:
-                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-
-                    infected.AddRange(paintbrawlManager.playerLives.Where(element => element.Value <= 0).Select(element => element.Key).ToArray().Select(deadPlayer => PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(deadPlayer)).Select(dummy => (NetPlayer)dummy));
-
-                    if (!infected.Contains(NetworkSystem.Instance.LocalPlayer))
-                        infected.Add(NetworkSystem.Instance.LocalPlayer);
-
-                    break;
-            }
-
-            return infected;
-        }
-
-        public static void AddInfected(NetPlayer plr)
-        {
-            switch (GorillaGameManager.instance.GameType())
-            {
-                case GameModeType.Infection:
-                case GameModeType.InfectionCompetitive:
-                case GameModeType.SuperInfect:
-                case GameModeType.FreezeTag:
-                case GameModeType.PropHunt:
-                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    if (tagManager.isCurrentlyTag)
-                        tagManager.ChangeCurrentIt(plr);
-                    else if (!tagManager.currentInfected.Contains(plr))
-                        tagManager.AddInfectedPlayer(plr);
-                    break;
-                case GameModeType.Ghost:
-                case GameModeType.Ambush:
-                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
-                    if (ghostManager.isCurrentlyTag)
-                        ghostManager.ChangeCurrentIt(plr);
-                    else if (!ghostManager.currentInfected.Contains(plr))
-                        ghostManager.AddInfectedPlayer(plr);
-                    break;
-                case GameModeType.Paintbrawl:
-                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                    paintbrawlManager.playerLives[plr.ActorNumber] = 0;
-
-                    break;
-            }
-        }
-
-        public static void RemoveInfected(NetPlayer plr)
-        {
-            switch (GorillaGameManager.instance.GameType())
-            {
-                case GameModeType.Infection:
-                case GameModeType.InfectionCompetitive:
-                case GameModeType.SuperInfect:
-                case GameModeType.FreezeTag:
-                case GameModeType.PropHunt:
-                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    switch (tagManager.isCurrentlyTag)
-                    {
-                        case true when tagManager.currentIt == plr:
-                            tagManager.currentIt = null;
-                            break;
-                        case false when tagManager.currentInfected.Contains(plr):
-                            tagManager.currentInfected.Remove(plr);
-                            break;
-                    }
-                    break;
-                case GameModeType.Ghost:
-                case GameModeType.Ambush:
-                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
-                    switch (ghostManager.isCurrentlyTag)
-                    {
-                        case true when ghostManager.currentIt == plr:
-                            ghostManager.currentIt = null;
-                            break;
-                        case false when ghostManager.currentInfected.Contains(plr):
-                            ghostManager.currentInfected.Remove(plr);
-                            break;
-                    }
-                    break;
-                case GameModeType.Paintbrawl:
-                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                    paintbrawlManager.playerLives[plr.ActorNumber] = 3;
-
-                    break;
-            }
-        }
-
-        public static void AddRock(NetPlayer plr)
-        {
-            switch (GorillaGameManager.instance.GameType())
-            {
-                case GameModeType.Infection:
-                case GameModeType.InfectionCompetitive:
-                case GameModeType.SuperInfect:
-                case GameModeType.FreezeTag:
-                case GameModeType.PropHunt:
-                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    tagManager.ChangeCurrentIt(plr);
-
-                    break;
-                case GameModeType.Ghost:
-                case GameModeType.Ambush:
-                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
-                    ghostManager.ChangeCurrentIt(plr);
-
-                    break;
-                case GameModeType.Paintbrawl:
-                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                    paintbrawlManager.playerLives[plr.ActorNumber] = 0;
-
-                    break;
-            }
-        }
-
-        public static void RemoveRock(NetPlayer plr)
-        {
-            switch (GorillaGameManager.instance.GameType())
-            {
-                case GameModeType.Infection:
-                case GameModeType.InfectionCompetitive:
-                case GameModeType.SuperInfect:
-                case GameModeType.FreezeTag:
-                case GameModeType.PropHunt:
-                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    if (tagManager.currentIt == plr)
-                        tagManager.ChangeCurrentIt(null);
-
-                    break;
-                case GameModeType.Ghost:
-                case GameModeType.Ambush:
-                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
-                    if (ghostManager.currentIt == plr)
-                        ghostManager.ChangeCurrentIt(null);
-
-                    break;
-                case GameModeType.Paintbrawl:
-                    GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                    paintbrawlManager.playerLives[plr.ActorNumber] = 3;
-
-                    break;
-            }
-        }
-
         // SteamVR bug causes teleporting of the player to the center of your playspace
         public static Vector3 World2Player(Vector3 world) => 
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
@@ -5146,113 +4992,6 @@ namespace iiMenu.Menu
                 WorldScale(side, new Vector3(size, size, 0.01f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
                 side.GetComponent<Renderer>().enabled = false;
             }
-        }
-
-        public static readonly Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject>();
-        public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null, float alpha = 0.25f)
-        {
-            long index = indexId ?? BitPackUtils.PackWorldPosForNetwork(position);
-            var key = (index, range);
-
-            if (!auraPool.TryGetValue(key, out GameObject visualizeGO))
-            {
-                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                Destroy(visualizeGO.GetComponent<Collider>());
-
-                auraPool.Add(key, visualizeGO);
-            }
-
-            visualizeGO.SetActive(true);
-
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = new Vector3(range, range, range);
-
-            if (Buttons.GetIndex("Hidden on Camera").enabled)
-                visualizeGO.layer = 19;
-
-            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
-
-            Color clr = color;
-            clr.a = alpha;
-            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
-            auraRenderer.material.color = clr;
-        }
-
-        public static readonly Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject>();
-        public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
-        {
-            var key = (position, rotation, scale);
-
-            if (!cubePool.TryGetValue(key, out GameObject visualizeGO))
-            {
-                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                Destroy(visualizeGO.GetComponent<Collider>());
-
-                cubePool.Add(key, visualizeGO);
-            }
-
-            visualizeGO.SetActive(true);
-
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = scale;
-            visualizeGO.transform.rotation = rotation;
-
-            if (Buttons.GetIndex("Hidden on Camera").enabled)
-                visualizeGO.layer = 19;
-
-            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
-
-            Color clr = color;
-            clr.a = alpha;
-            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
-            auraRenderer.material.color = clr;
-        }
-
-        public static GameObject VisualizeAuraObject(Vector3 position, float range, Color color, float alpha = 0.25f)
-        {
-            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Destroy(visualizeGO.GetComponent<Collider>());
-
-            visualizeGO.SetActive(true);
-
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = new Vector3(range, range, range);
-
-            if (Buttons.GetIndex("Hidden on Camera").enabled)
-                visualizeGO.layer = 19;
-
-            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
-
-            Color clr = color;
-            clr.a = alpha;
-            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
-            auraRenderer.material.color = clr;
-
-            return visualizeGO;
-        }
-
-        public static GameObject VisualizeCubeObject(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
-        {
-            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(visualizeGO.GetComponent<Collider>());
-
-            visualizeGO.SetActive(true);
-
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = scale;
-            visualizeGO.transform.rotation = rotation;
-
-            if (Buttons.GetIndex("Hidden on Camera").enabled)
-                visualizeGO.layer = 19;
-
-            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
-
-            Color clr = color;
-            clr.a = alpha;
-            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
-            auraRenderer.material.color = clr;
-
-            return visualizeGO;
         }
 
         public static GameObject audioMgr;
@@ -6605,7 +6344,7 @@ jgs \_   _/ |Oo\
             set => _pageSize = value;
         }
 
-        public static int ItemCount
+        public static int DisplayedItemCount
         {
             get
             {
@@ -6689,31 +6428,12 @@ jgs \_   _/ |Oo\
             }
         }
 
-        public static int LastPage => (ItemCount + PageSize - 1) / PageSize - 1;
-
-        public static int pageOffset;
-        public static int pageNumber;
-        public static bool pageScrolling;
-        public static bool noPageNumber;
-        public static bool disablePageButtons;
-        public static bool swapButtonColors;
-        public static int pageButtonType = 1;
-        public static float pageButtonChangeDelay;
-
-        public static bool pcKeyboardSounds = true;
-
-        private static VRRig _giveGunTarget;
-        public static VRRig GiveGunTarget
+        public static float ButtonDistance
         {
-            get
-            {
-                if (!GorillaParent.instance.vrrigs.Contains(_giveGunTarget))
-                    _giveGunTarget = null;
-
-                return _giveGunTarget;
-            }
-            set => _giveGunTarget = value;
+            get => 0.8f / (PageSize + buttonOffset);
         }
+
+        public static int LastPage => (DisplayedItemCount + PageSize - 1) / PageSize - 1;
 
         public static int _currentCategoryIndex;
         public static int currentCategoryIndex
@@ -6734,15 +6454,22 @@ jgs \_   _/ |Oo\
                 currentCategoryIndex = Buttons.GetCategory(value);
         }
 
+        public static int pageOffset;
+        public static int pageNumber;
+        public static bool pageScrolling;
+        public static bool noPageNumber;
+        public static bool disablePageButtons;
+        public static bool swapButtonColors;
+        public static int pageButtonType = 1;
+        public static float pageButtonChangeDelay;
+
+        public static bool pcKeyboardSounds = true;
+
         public static int buttonClickSound = 8;
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
         public static int buttonOffset = 2;
         public static int menuButtonIndex = 1;
-        public static float ButtonDistance
-        {
-            get => 0.8f / (PageSize + buttonOffset);
-        }
 
         public static bool doButtonsVibrate = true;
         public static bool serversidedButtonSounds;

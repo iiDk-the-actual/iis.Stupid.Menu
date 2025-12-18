@@ -27,15 +27,12 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
-using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -86,18 +83,15 @@ namespace iiMenu.Mods
                         PhotonView view = GetPhotonViewFromVRRig(rig);
                         hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
                     }
-                    if (raiseEventOptions == null)
-                        raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
+                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
                     break;
                 case Player player:
-                    if (hashtable == null)
-                        hashtable = new Hashtable { { 0, player.ActorNumber } };
-                    if (raiseEventOptions == null)
-                        raiseEventOptions = new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } };
+                    hashtable ??= new Hashtable { { 0, player.ActorNumber } };
+                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } };
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, raiseEventOptions, SendOptions.SendReliable);
                     break;
-                case GameObject go:
+                case GameObject _:
                     break;
             }
            
@@ -303,7 +297,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<GorillaPlayerScoreboardLine, VRRig> linerig = new Dictionary<GorillaPlayerScoreboardLine, VRRig>();
+        private static readonly Dictionary<GorillaPlayerScoreboardLine, VRRig> linerig = new Dictionary<GorillaPlayerScoreboardLine, VRRig>();
         public static void LeaderboardGhost()
         {
             foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
@@ -390,7 +384,6 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !gunTarget.IsLocal())
                     {
-                        Player target = gunTarget.GetPhotonPlayer();
                         int viewID = viewIdArchive[gunTarget];
                         Destroy(gunTarget, null, null, viewID);
                     }
@@ -402,11 +395,8 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                Player target = rig.GetPhotonPlayer();
                 if (viewIdArchive.TryGetValue(rig, out int viewID))
-                {
                     Destroy(rig, null, null, viewID);
-                }
             }
         }
 
@@ -427,9 +417,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in nearbyPlayers)
                 {
-                    Player target = rig.GetPhotonPlayer();
                     int viewID = viewIdArchive[rig];
-
                     Destroy(rig, null, null, viewID);
                 }
             }
@@ -455,9 +443,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in touchedRigs)
             {
-                Player target = rig.GetPhotonPlayer();
                 int viewID = viewIdArchive[rig];
-
                 Destroy(rig, null, null,viewID);
             }
         }
@@ -795,8 +781,10 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > muteDelay)
                     {
-                        Hashtable hashtable = new Hashtable();
-                        hashtable[byte.MaxValue] = name;
+                        Hashtable hashtable = new Hashtable
+                        {
+                            [byte.MaxValue] = name
+                        };
                         PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
                     }
                 }
@@ -822,8 +810,10 @@ namespace iiMenu.Mods
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
             {
-                Hashtable hashtable = new Hashtable();
-                hashtable[byte.MaxValue] = name;
+                Hashtable hashtable = new Hashtable
+                {
+                    [byte.MaxValue] = name
+                };
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
         }

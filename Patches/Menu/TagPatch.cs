@@ -21,12 +21,14 @@
 
 using GorillaGameModes;
 using HarmonyLib;
+using iiMenu.Extensions;
 using iiMenu.Menu;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.GameModeUtilities;
 
 namespace iiMenu.Patches.Menu
 {
@@ -38,6 +40,9 @@ namespace iiMenu.Patches.Menu
         public static bool enabled;
         public static float tagDelay;
         public static int tagCount;
+
+        private static void PlaySound(string name) =>
+            LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/TagSounds/{name}.wav", $"{name}.wav").Play(Main.buttonClickVolume / 10f);
 
         public static void Postfix(NetPlayer player)
         {
@@ -55,31 +60,30 @@ namespace iiMenu.Patches.Menu
                     tagCount = Math.Min(tagCount + 1, 7);
                     tagDelay = Time.time + 10f;
 
-                    string killsounds = $"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/TagSounds";
                     switch (tagCount)
                     {
                         case 1:
-                            if (Main.InfectedList().Count <= 1)
-                                Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/firstblood.wav", "firstblood.wav"), Main.buttonClickVolume / 10f);
-                            
+                            if (InfectedList().Count <= 1)
+                                PlaySound("firstblood");
+
                             break;
                         case 2:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/doublekill.wav", "doublekill.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("doublekill");
                             break;
                         case 3:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/triplekill.wav", "triplekill.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("triplekill");
                             break;
                         case 4:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/killingspree.wav", "killingspree.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("killingspree");
                             break;
                         case 5:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/wickedsick.wav", "wickedsick.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("wickedsick");
                             break;
                         case 6:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/monsterkill.wav", "monsterkill.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("monsterkill");
                             break;
                         case 7:
-                            Main.Play2DAudio(LoadSoundFromURL($"{killsounds}/rampage.wav", "rampage.wav"), Main.buttonClickVolume / 10f);
+                            PlaySound("rampage");
                             break;
                     }
                 }

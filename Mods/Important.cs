@@ -22,7 +22,6 @@
 using BepInEx;
 using GorillaNetworking;
 using GorillaTagScripts;
-using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Managers.DiscordRPC;

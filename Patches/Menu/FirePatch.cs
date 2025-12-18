@@ -21,10 +21,10 @@
 
 using HarmonyLib;
 using iiMenu.Extensions;
-using iiMenu.Menu;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static iiMenu.Utilities.GameModeUtilities;
 
 namespace iiMenu.Patches.Menu
 {
@@ -37,7 +37,7 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled && __instance.blaster.LocalEquippedOrActivated)
             {
-                List<NetPlayer> infected = Main.InfectedList();
+                List<NetPlayer> infected = InfectedList();
                 List<VRRig> rigs = GorillaParent.instance.vrrigs
                     .Where(rig => !rig.isLocal)
                     .Where(rig => !infected.Contains(rig.GetPlayer()))

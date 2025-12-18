@@ -39,10 +39,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static iiMenu.Extensions.VRRigExtensions;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
-using static iiMenu.Extensions.VRRigExtensions;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
@@ -1550,7 +1551,6 @@ namespace iiMenu.Mods
 
         public static void CompleteAllQuests()
         {
-            var player = SIPlayer.Get(NetworkSystem.Instance.LocalPlayer.ActorNumber);
             for (int i = 0; i < SIProgression.Instance.activeQuestIds.Length; i++)
             {
                 RotatingQuest quest = SIProgression.Instance.questSourceList.GetQuestById(SIProgression.Instance.activeQuestIds[i]);
@@ -1597,7 +1597,7 @@ namespace iiMenu.Mods
             if (targetRig == null)
                 return;
 
-            VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
+            Visuals.VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
         }
 
         public static int? spawnedNetId;

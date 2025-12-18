@@ -264,7 +264,7 @@ namespace iiMenu.Mods
         public static void VisualizeAntiReport()
         {
             foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where line.linePlayer == NetworkSystem.Instance.LocalPlayer select line.reportButton.gameObject.transform)
-                VisualizeAura(report.position, threshold, Color.red);
+                Visuals.VisualizeAura(report.position, threshold, Color.red);
         }
 
 		public static VRRig reportRig;

@@ -59,6 +59,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -2272,8 +2273,8 @@ Piece Name: {gunTarget.name}";
         {
             ThrowableBug bugObject = GetBugObject(objectName);
 
-            bugObject.maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            bugObject.maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
+            bugObject.maxDistanceFromOriginBeforeRespawn = respawnDistance;
+            bugObject.maxDistanceFromTargetPlayerBeforeRespawn = respawnDistance;
         }
 
         public static void PermanentOwnership(string objectName)
@@ -2812,7 +2813,7 @@ Piece Name: {gunTarget.name}";
             if (targetRig == null)
                 return;
 
-            VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
+            Visuals.VisualizeAura(targetRig.headMesh.transform.position, 0.1f, Color.green, -91752);
         }
 
         private static bool lastDrawing;
@@ -3576,8 +3577,7 @@ Piece Name: {gunTarget.name}";
                     Object.Destroy(bug.GetComponent<ClampPosition>());
 
                 bool inAir = bug.currentState == TransferrableObject.PositionState.None || bug.currentState == TransferrableObject.PositionState.Dropped;
-                bool lastInAir = true;
-                lastInAirValues.TryGetValue(objectName, out lastInAir);
+                lastInAirValues.TryGetValue(objectName, out bool lastInAir);
 
                 if (inAir && !lastInAir)
                 {
@@ -3852,8 +3852,7 @@ Piece Name: {gunTarget.name}";
             string tableData = File.ReadAllText(fileName);
             BuilderTable table = ManagerRegistry.BuilderTable;
 
-            if (table.tableData == null)
-                table.tableData = new BuilderTableData();
+            table.tableData ??= new BuilderTableData();
 
             table.SetIsDirty(false);
             table.tableData.numEdits++;
@@ -6532,7 +6531,7 @@ Piece Name: {gunTarget.name}";
                 switch (key.Key)
                 {
                     case ConsoleKey.Backspace:
-                        consoleTyped = consoleTyped.Length != 0 ? consoleTyped.Substring(0, consoleTyped.Length - 1) : consoleTyped;
+                        consoleTyped = consoleTyped.Length != 0 ? consoleTyped[..^1] : consoleTyped;
                         break;
                     case ConsoleKey.Enter:
                         if (consoleTyped != "")

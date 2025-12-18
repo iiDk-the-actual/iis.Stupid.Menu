@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 
@@ -465,8 +466,8 @@ namespace iiMenu.Mods
 
                 if (Buttons.GetIndex("Visualize Tag Reach").enabled)
                 {
-                    VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
-                    VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
+                    Visuals.VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
+                    Visuals.VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
                 }
             }
         }

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RigUtilities;
 
 namespace iiMenu.Patches.Menu
@@ -91,10 +92,10 @@ namespace iiMenu.Patches.Menu
             float minSpeed = Mathf.Sqrt(g * (y + Mathf.Sqrt(x * x + y * y)));
             float launchSpeed = minSpeed * 2.5f;
 
-            return CalcVelocity(origin, displacement, launchSpeed);
+            return CalcVelocity(displacement, launchSpeed);
         }
 
-        private static Vector3 CalcVelocity(Vector3 origin, Vector3 displacement, float speed)
+        private static Vector3 CalcVelocity(Vector3 displacement, float speed)
         {
             Vector3 displacementXZ = new Vector3(displacement.x, 0, displacement.z);
             float x = displacementXZ.magnitude;

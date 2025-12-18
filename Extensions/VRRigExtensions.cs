@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.GameModeUtilities;
 
 namespace iiMenu.Extensions
 {

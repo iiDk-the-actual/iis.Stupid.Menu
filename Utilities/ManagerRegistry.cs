@@ -20,9 +20,6 @@
  */
 
 using GorillaTagScripts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace iiMenu.Utilities
 {

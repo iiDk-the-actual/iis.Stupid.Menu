@@ -288,7 +288,7 @@ namespace iiMenu.Mods
 
             if (grip)
             {
-                GameObject platform = null;
+                GameObject platform;
                 if (frozonicPlatformList.Count >= 72)
                     platform = frozonicPlatformList[index];
                 else
@@ -2145,10 +2145,10 @@ namespace iiMenu.Mods
 
         public static void VisualizePlayerPosition(PlayerPosition position, Color color, float alpha = 0.15f)
         {
-            VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color, alpha);
-            VisualizeCube(position.position + position.velocity.normalized * 0.125f, Quaternion.LookRotation(position.velocity), new Vector3(0.15f, 0.15f, 0.05f), color, alpha);
-            VisualizeAura(position.leftHand.position, 0.15f, color, null, alpha);
-            VisualizeAura(position.rightHand.position, 0.15f, color, null, alpha);
+            Visuals.VisualizeCube(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color, alpha);
+            Visuals.VisualizeCube(position.position + position.velocity.normalized * 0.125f, Quaternion.LookRotation(position.velocity), new Vector3(0.15f, 0.15f, 0.05f), color, alpha);
+            Visuals.VisualizeAura(position.leftHand.position, 0.15f, color, null, alpha);
+            Visuals.VisualizeAura(position.rightHand.position, 0.15f, color, null, alpha);
         }
 
         // Unity decided to vomit on my day and not let me run my VisualizeCube or VisualizeAura methods properly, so here's my bad workaround.
@@ -2157,7 +2157,7 @@ namespace iiMenu.Mods
         {
             if (!positions.TryGetValue(color, out var data))
             {
-                data = (VisualizeCubeObject(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color), VisualizeAuraObject(position.leftHand.position, 0.15f, color), VisualizeAuraObject(position.rightHand.position, 0.15f, color));
+                data = (Visuals.VisualizeCubeObject(position.position, Quaternion.LookRotation(position.velocity), new Vector3(0.1f, 0.1f, 0.25f), color), Visuals.VisualizeAuraObject(position.leftHand.position, 0.15f, color), Visuals.VisualizeAuraObject(position.rightHand.position, 0.15f, color));
                 positions[color] = data;
             }
 
@@ -2209,7 +2209,7 @@ namespace iiMenu.Mods
             bool doMacro = !directionBased || (GorillaTagger.Instance.rigidbody.linearVelocity.magnitude > 2f && Vector3.Angle(startPosition.velocity.normalized, GorillaTagger.Instance.rigidbody.linearVelocity.normalized) < 70f);
 
             VisualizePlayerPosition(startPosition, doMacro ? buttonColors[1].GetCurrentColor() : Color.white, doMacro ? 0.15f : 0.05f);
-            if (doMacro) VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
+            if (doMacro) Visuals.VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
 
             if (!doMacro)
                 return;
@@ -3042,14 +3042,14 @@ namespace iiMenu.Mods
         {
             VRRig.LocalRig.enabled = false;
 
-            var leftHandTransform = ControllerUtilities.GetTrueLeftHand();
-            var rightHandTransform = ControllerUtilities.GetTrueRightHand();
+            var (leftPosition, leftRotation, _, _, _) = ControllerUtilities.GetTrueLeftHand();
+            var (rightPosition, rightRotation, _, _, _) = ControllerUtilities.GetTrueRightHand();
 
-            VRRig.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
-            VRRig.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = leftPosition;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rightPosition;
 
-            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = leftHandTransform.rotation;
-            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = rightHandTransform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = leftRotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = rightRotation;
 
             FixRigHandRotation();
 
@@ -4198,7 +4198,7 @@ namespace iiMenu.Mods
         public static int fakeLagDelayIndex = 10;
         private static float fakeLagDelay = 1f;
 
-        public static void ChangeFakeLagStrength(bool positive = true, bool fromMenu = false)
+        public static void ChangeFakeLagStrength(bool positive = true)
         {
             if (positive)
                 fakeLagDelayIndex++;

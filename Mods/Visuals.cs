@@ -47,6 +47,7 @@ using UnityEngine.TextCore;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
+using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Object = UnityEngine.Object;
 
@@ -54,6 +55,113 @@ namespace iiMenu.Mods
 {
     public class Visuals
     {
+        public static readonly Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject>();
+        public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null, float alpha = 0.25f)
+        {
+            long index = indexId ?? BitPackUtils.PackWorldPosForNetwork(position);
+            var key = (index, range);
+
+            if (!auraPool.TryGetValue(key, out GameObject visualizeGO))
+            {
+                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.Destroy(visualizeGO.GetComponent<Collider>());
+
+                auraPool.Add(key, visualizeGO);
+            }
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = new Vector3(range, range, range);
+
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+        }
+
+        public static readonly Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject>();
+        public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
+        {
+            var key = (position, rotation, scale);
+
+            if (!cubePool.TryGetValue(key, out GameObject visualizeGO))
+            {
+                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Object.Destroy(visualizeGO.GetComponent<Collider>());
+
+                cubePool.Add(key, visualizeGO);
+            }
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = scale;
+            visualizeGO.transform.rotation = rotation;
+
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+        }
+
+        public static GameObject VisualizeAuraObject(Vector3 position, float range, Color color, float alpha = 0.25f)
+        {
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Object.Destroy(visualizeGO.GetComponent<Collider>());
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = new Vector3(range, range, range);
+
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+
+            return visualizeGO;
+        }
+
+        public static GameObject VisualizeCubeObject(Vector3 position, Quaternion rotation, Vector3 scale, Color color, float alpha = 0.25f)
+        {
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Object.Destroy(visualizeGO.GetComponent<Collider>());
+
+            visualizeGO.SetActive(true);
+
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = scale;
+            visualizeGO.transform.rotation = rotation;
+
+            if (Buttons.GetIndex("Hidden on Camera").enabled)
+                visualizeGO.layer = 19;
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
+            Color clr = color;
+            clr.a = alpha;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
+
+            return visualizeGO;
+        }
+
         public static void ConductDebug()
         {
             string text = "";
