@@ -1392,15 +1392,7 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = Random.Range(0, 255);
         }
 
-        public static GhostReactorManager GhostReactorManager
-        {
-            get => GhostReactor.instance.grManager;
-        }
-
-        public static GameEntityManager GameEntityManager
-        {
-            get => GameEntityManager.GetManagerForZone(GhostReactor.instance.zone);
-        }
+        
 
         public static void GrabIDCard()
         {
@@ -1411,7 +1403,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = entity.transform.position;
 
-                    GameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                    ManagerRegistry.GhostReactor.GameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                 }
             }
             else
@@ -1432,7 +1424,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
+                ManagerRegistry.GhostReactor.GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ManagerRegistry.GhostReactor.GhostReactorManager.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -1558,7 +1550,7 @@ namespace iiMenu.Mods
             GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
 
             if (plr.State == GRPlayer.GRPlayerState.Ghost)
-                GhostReactorManager.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
+                ManagerRegistry.GhostReactor.GhostReactorManager.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
 
             plr.hp = plr.maxHp;
         }
@@ -1566,14 +1558,14 @@ namespace iiMenu.Mods
         public static void StartShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-            GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
+            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
             RPCProtection();
         }
 
         public static void EndShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-            GhostReactorManager.RequestShiftEnd();
+            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftEnd();
             RPCProtection();
         }
 
@@ -1628,7 +1620,7 @@ namespace iiMenu.Mods
                     || (NetworkSystem.Instance.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
                     )
             {
-                GhostReactorManager.RequestPlayerStateChange(GRPlayer, State);
+                ManagerRegistry.GhostReactor.GhostReactorManager.RequestPlayerStateChange(GRPlayer, State);
                 RPCProtection();
                 return;
             }
@@ -1650,13 +1642,13 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = GetVRRigFromPlayer(Target);
 
-            int netId = GameEntityManager.CreateNetId();
+            int netId = ManagerRegistry.GhostReactor.GameEntityManager.CreateNetId();
 
-            GameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)GameEntityManager.zone }, new[] { Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            ManagerRegistry.GhostReactor.GameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)ManagerRegistry.GhostReactor.GameEntityManager.zone }, new[] { Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
 
-            GhostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
+            ManagerRegistry.GhostReactor.GhostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 
-            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, GhostReactorManager);
+            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, ManagerRegistry.GhostReactor.GhostReactorManager);
 
             RPCProtection();
 
@@ -1664,7 +1656,7 @@ namespace iiMenu.Mods
             yield return null;
             yield return null;
 
-            GameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
+            ManagerRegistry.GhostReactor.GameEntityManager.photonView.RPC("DestroyItemRPC", Target, new[] { netId });
 
             RPCProtection();
         }
@@ -1744,7 +1736,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > purchaseDelay)
             {
-                GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, GhostReactorManager.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
+                ManagerRegistry.GhostReactor.GhostReactorManager.ToolPurchaseStationRequest(Random.Range(0, ManagerRegistry.GhostReactor.GhostReactorManager.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)Random.Range(0, 2));
                 purchaseDelay = Time.time + 0.1f;
             }
         }
@@ -2222,11 +2214,11 @@ Piece Name: {gunTarget.name}";
         {
             if (blocks == null)
             {
-                if (GetBuilderTable() == null)
+                if (ManagerRegistry.BuilderTable == null)
                     return new Dictionary<int, string>();
 
                 blocks = new Dictionary<int, string>();
-                foreach (var piece in GetBuilderTable().builderPool.piecePools.SelectMany(list => list))
+                foreach (var piece in ManagerRegistry.BuilderTable.builderPool.piecePools.SelectMany(list => list))
                 {
                     try
                     {
@@ -3842,7 +3834,7 @@ Piece Name: {gunTarget.name}";
         {
             string fileName = $"{PluginInfo.BaseDirectory}/BuilderTableData.json";
 
-            File.WriteAllText(fileName, GetBuilderTable().WriteTableToJson());
+            File.WriteAllText(fileName, ManagerRegistry.BuilderTable.WriteTableToJson());
 
             string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
@@ -3858,7 +3850,7 @@ Piece Name: {gunTarget.name}";
                 return;
 
             string tableData = File.ReadAllText(fileName);
-            BuilderTable table = GetBuilderTable();
+            BuilderTable table = ManagerRegistry.BuilderTable;
 
             if (table.tableData == null)
                 table.tableData = new BuilderTableData();
@@ -4576,7 +4568,7 @@ Piece Name: {gunTarget.name}";
             if (Buttons.GetIndex("Random Block Type").enabled)
                 pieceType = GetRandomBlockType();
 
-            BuilderTable table = GetBuilderTable();
+            BuilderTable table = ManagerRegistry.BuilderTable;
             BuilderTableNetworking Networking = table.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
@@ -4680,7 +4672,7 @@ Piece Name: {gunTarget.name}";
 
         public static void RequestGrabPiece(BuilderPiece piece, bool isLefHand, Vector3 localPosition, Quaternion localRotation)
         {
-            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            BuilderTableNetworking Networking = ManagerRegistry.BuilderTable.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, Networking.CreateLocalCommandId(), piece.pieceId, isLefHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), PhotonNetwork.LocalPlayer);
@@ -4694,7 +4686,7 @@ Piece Name: {gunTarget.name}";
             if (attachPiece.isBuiltIntoTable)
                 return;
 
-            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            BuilderTableNetworking Networking = ManagerRegistry.BuilderTable.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, Networking.CreateLocalCommandId(), piece.pieceId, attachPiece != null ? attachPiece.pieceId : -1, BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ), parentPiece != null ? parentPiece.pieceId : -1, attachIndex, parentAttachIndex, PhotonNetwork.LocalPlayer, PhotonNetwork.ServerTimestamp);
@@ -4708,7 +4700,7 @@ Piece Name: {gunTarget.name}";
 
         public static void RequestDropPiece(BuilderPiece piece, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
         {
-            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            BuilderTableNetworking Networking = ManagerRegistry.BuilderTable.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, Networking.CreateLocalCommandId(), piece.pieceId, position, rotation, velocity, angVelocity, PhotonNetwork.LocalPlayer);
@@ -4722,7 +4714,7 @@ Piece Name: {gunTarget.name}";
             if (piece.isBuiltIntoTable)
                 return;
 
-            BuilderTable table = GetBuilderTable();
+            BuilderTable table = ManagerRegistry.BuilderTable;
             BuilderTableNetworking Networking = table.builderNetworking;
 
             if (NetworkSystem.Instance.IsMasterClient)
@@ -5098,7 +5090,7 @@ Piece Name: {gunTarget.name}";
             CreatePatch.enabled = false;
             CreatePatch.pieceTypeSearch = 0;
 
-            onComplete?.Invoke(GetBuilderTable().GetPiece(pieceId)); // so bad
+            onComplete?.Invoke(ManagerRegistry.BuilderTable.GetPiece(pieceId)); // so bad
         }
 
         public static IEnumerator CreateShotgun()

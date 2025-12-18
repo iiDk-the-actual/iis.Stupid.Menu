@@ -134,31 +134,18 @@ namespace iiMenu.Mods
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
-        public static LightningManager _lightningManager;
-        public static LightningManager LightningManager
-        {
-            get
-            {
-                if (_lightningManager == null)
-                    _lightningManager = GetObject("Environment Objects/05Maze_PersistentObjects/2025_Halloween1_PersistentObjects/LightningManager").GetComponent<LightningManager>();
-
-                return _lightningManager;
-            }
-            set => _lightningManager = value;
-        }
-
         public static void SpawnLightning() =>
-            LightningManager.DoLightningStrike();
+            ManagerRegistry.LightningManager.DoLightningStrike();
 
         public static float GetTimeUntilNextLightningStrike()
         {
-            if (LightningManager.lightningTimestampsRealtime == null ||
-                LightningManager.lightningTimestampsRealtime.Count == 0 ||
-                LightningManager.nextLightningTimestampIndex < 0 ||
-                LightningManager.nextLightningTimestampIndex >= LightningManager.lightningTimestampsRealtime.Count)
+            if (ManagerRegistry.LightningManager.lightningTimestampsRealtime == null ||
+                ManagerRegistry.LightningManager.lightningTimestampsRealtime.Count == 0 ||
+                ManagerRegistry.LightningManager.nextLightningTimestampIndex < 0 ||
+                ManagerRegistry.LightningManager.nextLightningTimestampIndex >= ManagerRegistry.LightningManager.lightningTimestampsRealtime.Count)
                 return -1f; 
 
-            float nextStrikeTime = LightningManager.lightningTimestampsRealtime[LightningManager.nextLightningTimestampIndex];
+            float nextStrikeTime = ManagerRegistry.LightningManager.lightningTimestampsRealtime[ManagerRegistry.LightningManager.nextLightningTimestampIndex];
             float timeUntilStrike = nextStrikeTime - Time.realtimeSinceStartup;
 
             if (timeUntilStrike < 0f)
@@ -179,7 +166,7 @@ namespace iiMenu.Mods
             if (tt)
                 coreESPColor.a = 0.5f;
 
-            List<GameEntity> cores = Fun.GameEntityManager.entities.Where(entity => entity != null && entity.typeId == Overpowered.ObjectByName["GhostReactorCollectibleCore"]).ToList();
+            List<GameEntity> cores = ManagerRegistry.GhostReactor.GameEntityManager.entities.Where(entity => entity != null && entity.typeId == Overpowered.ObjectByName["GhostReactorCollectibleCore"]).ToList();
             if (cores.Count <= 0)
                 return;
             
@@ -248,7 +235,7 @@ namespace iiMenu.Mods
             if (tt)
                 coreESPColor.a = 0.5f;
 
-            List<GameEntity> enemies = Fun.GameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.ToLower().Contains("enemy")).ToList();
+            List<GameEntity> enemies = ManagerRegistry.GhostReactor.GameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.ToLower().Contains("enemy")).ToList();
             if (enemies.Count <= 0)
                 return;
 
@@ -271,7 +258,7 @@ namespace iiMenu.Mods
             if (tt)
                 coreESPColor.a = 0.5f;
 
-            List<GameEntity> resources = SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.Contains("Resource")).ToList();
+            List<GameEntity> resources = ManagerRegistry.SuperInfection.GameEntityManager.entities.Where(entity => entity != null && entity.gameObject.name.Contains("Resource")).ToList();
             if (resources.Count <= 0)
                 return;
 

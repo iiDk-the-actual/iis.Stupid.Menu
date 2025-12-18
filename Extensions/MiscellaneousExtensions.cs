@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -138,16 +139,16 @@ namespace iiMenu.Extensions
 
         public static void RequestGrab(this GameEntity gameEntity, bool isLeftHand, Vector3 localPosition, Quaternion localRotation, GameEntityManager manager = null)
         {
-            GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
+            GameEntityManager gameEntityManager = manager ?? ManagerRegistry.GhostReactor.GameEntityManager;
             if (gameEntityManager.IsAuthority())
-                (manager ?? Mods.Fun.GameEntityManager).photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), NetworkSystem.Instance.LocalPlayer.GetPlayer() });
+                (manager ?? ManagerRegistry.GhostReactor.GameEntityManager).photonView.RPC("GrabEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation), NetworkSystem.Instance.LocalPlayer.GetPlayer() });
             else
-                (manager ?? Mods.Fun.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
+                (manager ?? ManagerRegistry.GhostReactor.GameEntityManager).RequestGrabEntity(gameEntity.id, isLeftHand, localPosition, localRotation);
         }
 
         public static void RequestThrow(this GameEntity gameEntity, bool isLeftHand, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, GameEntityManager manager = null)
         {
-            GameEntityManager gameEntityManager = manager ?? Mods.Fun.GameEntityManager;
+            GameEntityManager gameEntityManager = manager ?? ManagerRegistry.GhostReactor.GameEntityManager;
             if (gameEntityManager.IsAuthority())
                 gameEntityManager.photonView.RPC("ThrowEntityRPC", RpcTarget.All, new object[] { gameEntity.id, isLeftHand, position, rotation, velocity, angVelocity, NetworkSystem.Instance.LocalPlayer.GetPlayer(), PhotonNetwork.Time });
             else

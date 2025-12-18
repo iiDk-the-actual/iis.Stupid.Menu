@@ -3933,6 +3933,20 @@ namespace iiMenu.Menu
 
         public static Material promptMaterial;
 
+        /// <summary>
+        /// Prompts the user with a message. They can choose to accept or deny it.
+        /// </summary>
+        /// <remarks>
+        /// Prompts stack. If multiple prompts are added before the user responds to the first one, they will be shown in order.
+        /// </remarks>
+        /// <remarks>
+        /// You may add images or videos to the prompt by encasing them in &lt;&gt; brackets. For example, "&lt;https://example.com/image.png&gt;" or "&lt;https://example.com/video.mp4&gt;"
+        /// </remarks>
+        /// <param name="Message">Title</param>
+        /// <param name="Accept">Accept Action</param>
+        /// <param name="Decline">Decline Action</param>
+        /// <param name="AcceptButton">Accept Text</param>
+        /// <param name="DeclineButton">Decline Text</param>
         public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = false });
@@ -3941,6 +3955,18 @@ namespace iiMenu.Menu
                 ReloadMenu();
         }
 
+        /// <summary>
+        /// Prompts the user with a message. They can choose to accept it.
+        /// </summary>
+        /// <remarks>
+        /// Prompts stack. If multiple prompts are added before the user responds to the first one, they will be shown in order.
+        /// </remarks>
+        /// <remarks>
+        /// You may add images or videos to the prompt by encasing them in &lt;&gt; brackets. For example, "&lt;https://example.com/image.png&gt;" or "&lt;https://example.com/video.mp4&gt;"
+        /// </remarks>
+        /// <param name="Message">Title</param>
+        /// <param name="Accept">Accept Action</param>
+        /// <param name="AcceptButton">Accept Text</param>
         public static void PromptSingle(string Message, Action Accept = null, string AcceptButton = "Yes")
         {
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = false });
@@ -3949,6 +3975,20 @@ namespace iiMenu.Menu
                 ReloadMenu();
         }
 
+        /// <summary>
+        /// Prompts the user with a message. This allows for keyboard input from the user. They may choose to accept or deny the prompt. To use the user's input, use the "keyboardInput" variable.
+        /// </summary>
+        /// <remarks>
+        /// Prompts stack. If multiple prompts are added before the user responds to the first one, they will be shown in order.
+        /// </remarks>
+        /// <remarks>
+        /// You may add images or videos to the prompt by encasing them in &lt;&gt; brackets. For example, "&lt;https://example.com/image.png&gt;" or "&lt;https://example.com/video.mp4&gt;"
+        /// </remarks>
+        /// <param name="Message">Title</param>
+        /// <param name="Accept">Accept Action</param>
+        /// <param name="Decline">Decline Action</param>
+        /// <param name="AcceptButton">Accept Text</param>
+        /// <param name="DeclineButton">Decline Text</param>
         public static void PromptText(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = true });
@@ -3957,6 +3997,18 @@ namespace iiMenu.Menu
                 ReloadMenu();
         }
 
+        /// <summary>
+        /// Prompts the user with a message. This allows for keyboard input from the user. They may choose to accept the prompt. To use the user's input, use the "keyboardInput" variable.
+        /// </summary>
+        /// <remarks>
+        /// Prompts stack. If multiple prompts are added before the user responds to the first one, they will be shown in order.
+        /// </remarks>
+        /// <remarks>
+        /// You may add images or videos to the prompt by encasing them in &lt;&gt; brackets. For example, "&lt;https://example.com/image.png&gt;" or "&lt;https://example.com/video.mp4&gt;"
+        /// </remarks>
+        /// <param name="Message">Title</param>
+        /// <param name="Accept">Accept Action</param>
+        /// <param name="AcceptButton">Accept Text</param>
         public static void PromptSingleText(string Message, Action Accept = null, string AcceptButton = "Yes")
         {
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = true });
@@ -4012,8 +4064,14 @@ namespace iiMenu.Menu
             return txt2d;
         }
 
+        /// <summary>
+        /// Flushes/sends any queued RPCs to the server to prevent disconnection from RPC limits.
+        /// </summary>
         public static void RPCProtection()
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             try
             {
                 if (hasRemovedThisFrame) return;
@@ -4031,6 +4089,11 @@ namespace iiMenu.Menu
             } catch { LogManager.Log("RPC protection failed, are you in a lobby?"); }
         }
 
+        /// <summary>
+        /// Returns the given URL's raw output as a string.
+        /// </summary>
+        /// <param name="url">URL</param>
+        /// <returns>Website Data</returns>
         public static string GetHttp(string url)
         {
             WebRequest request = WebRequest.Create(url);
@@ -4051,6 +4114,11 @@ namespace iiMenu.Menu
         private static GameObject GunPointer;
         private static LineRenderer GunLine;
 
+        /// <summary>
+        /// Renders a gun pointer and line from the player's target gun position.
+        /// </summary>
+        /// <param name="overrideLayerMask">Layer Mask</param>
+        /// <returns>Raycast and Pointer object</returns>
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int? overrideLayerMask = null)
         {
             GunSpawned = true;
@@ -4356,6 +4424,11 @@ namespace iiMenu.Menu
             return (Ray, GunPointer);
         }
 
+        /// <summary>
+        /// Returns the gun input state.
+        /// </summary>
+        /// <param name="isShooting">Trigger</param>
+        /// <returns>Holding Button</returns>
         public static bool GetGunInput(bool isShooting)
         {
             if (GiveGunTarget != null)
@@ -4749,6 +4822,15 @@ namespace iiMenu.Menu
         public static readonly Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]>();
         private static readonly Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float>();
 
+        /// <summary>
+        /// Gets all objects of type <typeparamref name="T"/> in the scene using
+        /// <see cref="UnityEngine.Object.FindObjectsByType{T}
+        /// (UnityEngine.FindObjectsInactive, UnityEngine.FindObjectsSortMode)"/>
+        /// with caching to reduce performance overhead.
+        /// </summary>
+        /// <typeparam name="T">The Unity object type to find</typeparam>
+        /// <param name="decayTime">How long the cached results remain valid</param>
+        /// <returns>An array of all instances of <typeparamref name="T"/></returns>
         public static T[] GetAllType<T>(float decayTime = 5f) where T : Object
         {
             Type type = typeof(T);
@@ -4769,6 +4851,14 @@ namespace iiMenu.Menu
 
         private static float randomIndex;
         private static float randomDecayTime;
+
+        /// <summary>
+        /// Returns a random instance of <typeparamref name="T"/> from the scene,
+        /// using the cached results from <see cref="GetAllType{T}(float)"/>.
+        /// </summary>
+        /// <typeparam name="T">The Unity object type to retrieve</typeparam>
+        /// <param name="decayTime">How long the random selection remains unchanged</param>
+        /// <returns>A random instance of <typeparamref name="T"/></returns>
         public static T GetRandomType<T>(float decayTime = 0f) where T : Object
         {
             T[] allOfType = GetAllType<T>();
@@ -4782,6 +4872,11 @@ namespace iiMenu.Menu
             return allOfType[(int)(randomIndex * allOfType.Length)];
         }
 
+        /// <summary>
+        /// Clears the cached results created by <see cref="GetAllType{T}(float)"/>
+        /// for the specified type.
+        /// </summary>
+        /// <typeparam name="T">The Unity object type to clear from the cache</typeparam>
         public static void ClearType<T>() where T : Object
         {
             Type type = typeof(T);
@@ -4800,12 +4895,6 @@ namespace iiMenu.Menu
             }
 
             return rigTarget;
-        }
-
-        public static BuilderTable GetBuilderTable()
-        {
-            BuilderTable.TryGetBuilderTableForZone(VRRig.LocalRig.zoneEntity.currentZone, out BuilderTable table);
-            return table;
         }
 
         private static readonly Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();

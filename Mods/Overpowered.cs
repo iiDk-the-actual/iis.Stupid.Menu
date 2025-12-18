@@ -30,6 +30,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -610,7 +611,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     int[] objectIds = GadgetByName.Select(x => x.Value).ToArray();
-                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
                 }
 
                 if (GetGunInput(true))
@@ -633,7 +634,7 @@ namespace iiMenu.Mods
         public static void SuperInfectionCrashAll()
         {
             int[] objectIds = GadgetByName.Select(x => x.Value).ToArray();
-            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
         }
 
         public static void SuperInfectionBreakAudioGun()
@@ -644,7 +645,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    CreateItem(lockTarget.GetPlayer(), Overpowered.GadgetByName["WristJetGadgetPropellor"], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                    CreateItem(lockTarget.GetPlayer(), Overpowered.GadgetByName["WristJetGadgetPropellor"], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
 
                 if (GetGunInput(true))
                 {
@@ -664,7 +665,7 @@ namespace iiMenu.Mods
         }
 
         public static void SuperInfectionBreakAudioAll() =>
-            CreateItem(RpcTarget.Others, Overpowered.GadgetByName["WristJetGadgetPropellor"], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.Others, Overpowered.GadgetByName["WristJetGadgetPropellor"], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
 
         private static float reportDelay;
         public static void DelayBanGun()
@@ -953,7 +954,7 @@ namespace iiMenu.Mods
         public static float throwDelay;
         public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long sendData = 0L, GameEntityManager manager = null)
         {
-            GameEntityManager gameEntityManager = manager ?? Fun.GameEntityManager;
+            GameEntityManager gameEntityManager = manager ?? ManagerRegistry.GhostReactor.GameEntityManager;
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 if (Time.time < ghostReactorDelay)
@@ -1086,7 +1087,7 @@ namespace iiMenu.Mods
 
         public static void CreateItems(object target, int[] hashes, Vector3[] positions, Quaternion[] rotations, long[] sendData = null, GameEntityManager manager = null)
         {
-            GameEntityManager gameEntityManager = manager ?? Fun.GameEntityManager;
+            GameEntityManager gameEntityManager = manager ?? ManagerRegistry.GhostReactor.GameEntityManager;
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 if (Time.time < ghostReactorDelay)
@@ -1127,7 +1128,7 @@ namespace iiMenu.Mods
                 CreateItem(target, hashes[0], positions[0], rotations[0], Vector3.zero, Vector3.zero, sendData.Length > 0 ? sendData[1] : 0L, manager);
         }
 
-        public static Dictionary<string, int> ObjectByName { get => Fun.GameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
+        public static Dictionary<string, int> ObjectByName { get => ManagerRegistry.GhostReactor.GameEntityManager.itemPrefabFactory.ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); }
 
         public static void SpamObjectGrip(int objectId)
         {
@@ -1473,7 +1474,7 @@ namespace iiMenu.Mods
                             }
                         }
 
-                        CreateItems(RpcTarget.All, Enumerable.Repeat(GadgetByName["SIGadgetDashYoyo"], position.Count).ToArray(), position.ToArray(), Enumerable.Repeat(Quaternion.identity, position.Count).ToArray(), null, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                        CreateItems(RpcTarget.All, Enumerable.Repeat(GadgetByName["SIGadgetDashYoyo"], position.Count).ToArray(), position.ToArray(), Enumerable.Repeat(Quaternion.identity, position.Count).ToArray(), null, ManagerRegistry.SuperInfection.GameEntityManager);
                         characterIndex++;
                     }
                 }
@@ -1497,7 +1498,7 @@ namespace iiMenu.Mods
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
-                        foreach (GameEntity entity in Fun.GameEntityManager.entities)
+                        foreach (GameEntity entity in ManagerRegistry.GhostReactor.GameEntityManager.entities)
                         {
                             if (entity != null)
                             {
@@ -1515,7 +1516,7 @@ namespace iiMenu.Mods
                             destroyDelay = Time.time + 0.02f;
                             if (NetworkSystem.Instance.IsMasterClient)
                             {
-                                Fun.GameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                                ManagerRegistry.GhostReactor.GameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
                                 RPCProtection();
                             } else
                             {
@@ -1558,7 +1559,7 @@ namespace iiMenu.Mods
 
         public static void ClaimAllTerminals()
         {
-            foreach (var terminal in SuperInfectionManager.activeSuperInfectionManager.zoneSuperInfection.siTerminals)
+            foreach (var terminal in ManagerRegistry.SuperInfection.ZoneSuperInfection.siTerminals)
                 terminal?.PlayerHandScanned(NetworkSystem.Instance.LocalPlayer.ActorNumber);
         }
 
@@ -1608,7 +1609,7 @@ namespace iiMenu.Mods
 
             int hash = GadgetByName["MegaChargeBlasterGadget"];
  
-            GameEntityManager gameEntityManager = SuperInfectionManager.activeSuperInfectionManager.gameEntityManager;
+            GameEntityManager gameEntityManager = ManagerRegistry.SuperInfection.GameEntityManager;
             GamePlayer gamePlayer = GamePlayer.GetGamePlayer(PhotonNetwork.LocalPlayer);
             if (gamePlayer.IsHoldingEntity(gameEntityManager, true))
             {
@@ -2120,14 +2121,14 @@ namespace iiMenu.Mods
         public static Dictionary<string, int> GadgetByName 
         { 
             get => 
-                SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.itemPrefabFactory
+                ManagerRegistry.SuperInfection.GameEntityManager.itemPrefabFactory
                 .ToDictionary(prefab => prefab.Value.name, prefab => prefab.Key); 
         }
 
         public static void SpamGadgetGrip(int objectId)
         {
             if (rightGrab)
-                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
         }
 
         public static void SpamGadgetGun(int objectId)
@@ -2138,7 +2139,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
             }
         }
 
@@ -2157,19 +2158,19 @@ namespace iiMenu.Mods
         public static void RainGadgets()
         {
             int[] objectIds = GadgetByName.Select(element => element.Value).ToArray();
-            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + new Vector3(Random.Range(-3f, 3f), 4f, Random.Range(-3f, 3f)), Quaternion.identity, Vector3.down, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + new Vector3(Random.Range(-3f, 3f), 4f, Random.Range(-3f, 3f)), Quaternion.identity, Vector3.down, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
         }
 
         public static void GadgetAura()
         {
             int[] objectIds = GadgetByName.Select(element => element.Value).ToArray();
-            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + RandomVector3().normalized * 2f, Quaternion.identity, Vector3.down, Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + RandomVector3().normalized * 2f, Quaternion.identity, Vector3.down, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
         }
 
         public static void GadgetFountain()
         {
             int[] objectIds = GadgetByName.Select(element => element.Value).ToArray();
-            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero, 0L, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+            CreateItem(RpcTarget.All, objectIds[Random.Range(0, objectIds.Length)], VRRig.LocalRig.transform.position + Vector3.up * 3f, Quaternion.identity, RandomVector3(15f), Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
         }
 
         public static void ResourceSpamGrip()
@@ -2198,7 +2199,7 @@ namespace iiMenu.Mods
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
-                        foreach (GameEntity entity in SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.entities)
+                        foreach (GameEntity entity in ManagerRegistry.SuperInfection.GameEntityManager.entities)
                         {
                             if (entity != null)
                             {
@@ -2216,13 +2217,13 @@ namespace iiMenu.Mods
                             destroyDelay = Time.time + 0.02f;
                             if (NetworkSystem.Instance.IsMasterClient)
                             {
-                                SuperInfectionManager.activeSuperInfectionManager.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
+                                ManagerRegistry.SuperInfection.GameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new[] { gameEntity.GetNetId() });
                                 RPCProtection();
                             }
                             else
                             {
-                                gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
-                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Quaternion.identity, Vector3.zero, Vector3.zero, SuperInfectionManager.activeSuperInfectionManager.gameEntityManager);
+                                gameEntity.RequestGrab(true, Vector3.zero, Quaternion.identity, ManagerRegistry.SuperInfection.GameEntityManager);
+                                gameEntity.RequestThrow(true, GorillaTagger.Instance.bodyCollider.transform.position - (Vector3.up * 14f), Quaternion.identity, Vector3.zero, Vector3.zero, ManagerRegistry.SuperInfection.GameEntityManager);
                             }
                         }
                     }
