@@ -1526,7 +1526,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Purchase Current Cosmetics", method = Fun.AutoPurchasePaidCosmetics, toolTip = "Automatically purchases all cosmetics on your outfit until you own everything. This does use shiny rocks." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method = Fun.DisableCosmeticsOnTag, toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
 
-                new ButtonInfo { buttonText = "Unlock All Cosmetics", method = Fun.UnlockAllCosmetics, toolTip = "Unlocks every cosmetic in the game. This mod is client sided." },
+                new ButtonInfo { buttonText = "Unlock All Cosmetics", method = Fun.UnlockAllCosmetics, toolTip = "Unlocks every cosmetic in the game. This mod is client-sided." },
                 new ButtonInfo { buttonText = "Unlimited Shiny Rocks", enableMethod =() => PurchasePatch.enabled = true, method =() => CosmeticsController.instance.currencyBalance = int.MaxValue, disableMethod =() => PurchasePatch.enabled = false, toolTip = "Gives you 2 billion shiny rocks. This mod is client sided." },
 
                 new ButtonInfo { buttonText = "Sticky Holdables", method = Fun.StickyHoldables, toolTip = "Makes your holdables sticky." },
@@ -1537,11 +1537,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Narrate ID Self", method = Fun.NarrateSelfID, isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
                 new ButtonInfo { buttonText = "Narrate ID Gun", method = Fun.NarrateIDGun, toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
-                new ButtonInfo { buttonText = "Narrate ID All", method = Fun.NarrateIDAll, isTogglable = false, toolTip = "Gets the player IDs of everyone and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate ID All", method = Fun.NarrateIDAll, isTogglable = false, toolTip = "Gets the player IDs of everyone and speaks them through your microphone." },
 
-                new ButtonInfo { buttonText = "Narrate Fake Doxx Self", method = Fun.NarrateFakeDoxxSelf, isTogglable = false, toolTip = "Gets random numbers that looks like an ip address and speaks it through your microphone."},
-                new ButtonInfo { buttonText = "Narrate Fake Doxx Gun", method = Fun.NarrateFakeDoxxGun, toolTip = "Gets random numbers that looks like an ip address and speaks it through your microphone when gun is shot at someone." }, // READ_ME.delete_me.txt: maybe add more to tooltip about ghost all being good and pointing at someone, but idk.  btw standing still using ghost monkey and shooting someone that touches you would be so funny. only problem with the fake doxx mods is that if you use it on yourself, at someone, or to all a second time than its obvious your faking. as long as you use each one once per lobby (gun is once per person) than it will look real. technically doxx mods are somewhat possible or atleast leaking real names or phone numbers. but I made a fake doxx all becausse if it was real than it would be illegal lol. playfab or photon mehods btw lol
-                new ButtonInfo { buttonText = "Narrate Fake Doxx All", method = Fun.NarrateFakeDoxxAll, isTogglable = false, toolTip = "Gets random numbers that looks like an ip address for everyone and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate Fake IP Self", method = Fun.NarrateFakeDoxxSelf, isTogglable = false, toolTip = "Gets random numbers that look like an IP address and speaks it through your microphone."},
+                new ButtonInfo { buttonText = "Narrate Fake IP Gun", method = Fun.NarrateFakeDoxxGun, toolTip = "Gets random numbers that look like an IP address and speaks it through your microphone towards whoever your hand desires." }, 
+                new ButtonInfo { buttonText = "Narrate Fake IP All", method = Fun.NarrateFakeDoxxAll, isTogglable = false, toolTip = "Gets random numbers that look like an IP address for everyone and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Get Creation Date Self", method = Fun.CopyCreationDateSelf, isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method = Fun.CopyCreationDateGun, toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
