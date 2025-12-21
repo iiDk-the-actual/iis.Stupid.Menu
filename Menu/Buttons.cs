@@ -1291,7 +1291,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
-                // DELETE ME: Not adding but make a ss size mod for the items (this is possible with master, but if you dont know how to make this than you can do a non-master version using the size glitch, wether it changes your size, teleports you to train (christmas update) or something else it will still work)
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
