@@ -6373,6 +6373,40 @@ Piece Name: {gunTarget.name}";
         public static void NarrateSelfID() =>
             SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId));
 
+// DELETE ME: Untested so it might not work but I've used basically this same code for saving to a text file (not narrating but I assume it will basically work the same)
+        public static void NarrateFakeDoxxGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > idgundelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        idgundelay = Time.time + 0.5f;
+                        SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
+                    }
+                }
+            }
+        }
+
+        public static void NarrateFakeDoxxAll()
+        {
+            string ids = "";
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                    ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}") + ". ";
+            }
+            SpeakText(ids);
+        }
+
+        public static void NarrateFakeDoxxSelf() =>
+            SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
+
         private static float cgdgd;
         public static void CopyCreationDateSelf()
         {
