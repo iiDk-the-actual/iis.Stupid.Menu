@@ -61,14 +61,13 @@ namespace iiMenu.Managers
                 return Array.Empty<KeyValuePair<NetPlayer, PatreonMembership>>();
 
             return NetworkSystem.Instance.PlayerListOthers
-                //.Where(player => instance.PatreonMembers.ContainsKey(player.UserId))
-                .Select(player => new KeyValuePair<NetPlayer, PatreonMembership>(player, new PatreonMembership("King of netflix", "https://cdn.discordapp.com/avatars/252548095244500994/81c88d8fb798de6db290e7511b801188.png?size=2048")))
+                .Where(player => instance.PatreonMembers.ContainsKey(player.UserId))
+                .Select(player => new KeyValuePair<NetPlayer, PatreonMembership>(player, instance.PatreonMembers[player.UserId]))
                 .ToArray();
         }
 
         public static bool IsPlayerPatreonMember(NetPlayer player) =>
-            true;
-            //instance.PatreonMembers.ContainsKey(player.UserId);
+            instance.PatreonMembers.ContainsKey(player.UserId);
 
         public static Color GetTierColor(string color)
         {
