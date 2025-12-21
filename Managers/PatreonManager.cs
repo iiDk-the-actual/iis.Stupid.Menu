@@ -102,7 +102,6 @@ namespace iiMenu.Managers
                     VRRig playerRig = GetVRRigFromPlayer(member.Key);
                     if (playerRig != null)
                     {
-                        LogManager.Log(playerRig.GetName() + " <<<< FAT");
                         if (!iconPool.TryGetValue(playerRig, out GameObject playerIndicator))
                         {
                             playerIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
