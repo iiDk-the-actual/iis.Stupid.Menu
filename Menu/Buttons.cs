@@ -1291,6 +1291,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
+                // DELETE ME: Not adding but make a ss size mod for the items (this is possible with master, but if you dont know how to make this than you can do a non-master version using the size glitch, wether it changes your size, teleports you to train (christmas update) or something else it will still work)
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
                 new ButtonInfo { buttonText = "Infinite Platforms", method =() => PlatformPatch.enabled = true, disableMethod =() => PlatformPatch.enabled = false, toolTip = "Gives the platform spawner gadgets in Super Infection infinite platforms."},
                 new ButtonInfo { buttonText = "Infinite Resources", method = Overpowered.InfiniteResources, toolTip = "Gives you infinite resources in the Super Infection gamemode."},
@@ -1538,6 +1539,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Narrate ID Self", method = Fun.NarrateSelfID, isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
                 new ButtonInfo { buttonText = "Narrate ID Gun", method = Fun.NarrateIDGun, toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
                 new ButtonInfo { buttonText = "Narrate ID All", method = Fun.NarrateIDAll, isTogglable = false, toolTip = "Gets the player IDs of everyone and speaks it through your microphone." },
+
+                new ButtonInfo { buttonText = "Narrate Fake Doxx Self", method = Fun.NarrateFakeDoxxSelf, isTogglable = false, toolTip = "Gets random numbers that looks like an ip address and speaks it through your microphone."},
+                new ButtonInfo { buttonText = "Narrate Fake Doxx Gun", method = Fun.NarrateFakeDoxxGun, toolTip = "Gets random numbers that looks like an ip address and speaks it through your microphone when gun is shot at someone." }, // READ_ME.delete_me.txt: maybe add more to tooltip about ghost all being good and pointing at someone, but idk.  btw standing still using ghost monkey and shooting someone that touches you would be so funny. only problem with the fake doxx mods is that if you use it on yourself, at someone, or to all a second time than its obvious your faking. as long as you use each one once per lobby (gun is once per person) than it will look real. technically doxx mods are somewhat possible or atleast leaking real names or phone numbers. but I made a fake doxx all becausse if it was real than it would be illegal lol. playfab or photon mehods btw lol
+                new ButtonInfo { buttonText = "Narrate Fake Doxx All", method = Fun.NarrateFakeDoxxAll, isTogglable = false, toolTip = "Gets random numbers that looks like an ip address for everyone and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Get Creation Date Self", method = Fun.CopyCreationDateSelf, isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method = Fun.CopyCreationDateGun, toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
