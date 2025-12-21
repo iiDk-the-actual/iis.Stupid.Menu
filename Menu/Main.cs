@@ -1632,7 +1632,10 @@ namespace iiMenu.Menu
                                                 {
                                                     try
                                                     {
-                                                        if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
+                                                        if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
+                                                             Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                                            !isAdmin)
+                                                            || (v.detected && !allowDetected))
                                                             continue;
 
                                                         string buttonText = v.overlapText ?? v.buttonText;
@@ -2885,7 +2888,10 @@ namespace iiMenu.Menu
                                 {
                                     try
                                     {
-                                        if ((Buttons.categoryNames[categoryIndex].Contains("Admin") || Buttons.categoryNames[categoryIndex] == "Mod Givers") && !isAdmin)
+                                        if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
+                                            Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                            !isAdmin)
+                                            || (v.detected && !allowDetected))
                                             continue;
 
                                         string buttonText = v.buttonText;
@@ -6449,9 +6455,10 @@ jgs \_   _/ |Oo\
                             {
                                 try
                                 {
-                                    if ((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
-                                         Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                    if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
+                                        Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
                                         !isAdmin)
+                                        || (v.detected && !allowDetected))
                                         continue;
 
                                     string displayedText = v.overlapText ?? v.buttonText;
