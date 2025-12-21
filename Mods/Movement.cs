@@ -3887,17 +3887,29 @@ namespace iiMenu.Mods
         }
 
         private static float pullPower = 0.05f;
-        private static bool lasttouchleft;
-        private static bool lasttouchright;
+        private static Dictionary<bool, bool> previousTouchingGround = new Dictionary<bool, bool>();
+        public static void ProcessPullHand(bool left)
+        {
+            if ((left ? !leftGrab : !rightGrab))
+                return;
+
+            bool touchingGround = GTPlayer.Instance.IsHandTouching(left);
+            previousTouchingGround.TryGetValue(left, out bool wasTouchingGround);
+            
+            if (!touchingGround && wasTouchingGround)
+            {
+                Vector3 normal = GTPlayer.Instance.lastHitInfoHand.normal;
+                Vector3 direction = GorillaTagger.Instance.rigidbody.linearVelocity.X_Z();
+                GTPlayer.Instance.transform.position += (direction - normal * Vector3.Dot(direction, normal)).normalized * (direction.magnitude / GTPlayer.Instance.maxJumpSpeed * pullPower) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            }
+
+            previousTouchingGround[left] = touchingGround;
+        }
+
         public static void PullMod()
         {
-            if (((!GTPlayer.Instance.IsHandTouching(true) && lasttouchleft) || (!GTPlayer.Instance.IsHandTouching(false) && lasttouchright)) && rightGrab)
-            {
-                Vector3 vel = GorillaTagger.Instance.rigidbody.linearVelocity;
-                GTPlayer.Instance.transform.position += new Vector3(vel.x * pullPower, 0f, vel.z * pullPower);
-            }
-            lasttouchleft = GTPlayer.Instance.IsHandTouching(true);
-            lasttouchright = GTPlayer.Instance.IsHandTouching(false);
+            ProcessPullHand(false);
+            ProcessPullHand(true);
         }
 
         public static GameObject leftThrow;
