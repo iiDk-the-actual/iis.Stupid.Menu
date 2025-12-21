@@ -529,15 +529,17 @@ exit";
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
 
                 oldLocalPosition ??= GorillaTagger.Instance.rightHandTriggerCollider.transform.localPosition;
+                GorillaTagger.Instance.rightHandTriggerCollider.GetComponent<TransformFollow>().enabled = false;
                 GorillaTagger.Instance.rightHandTriggerCollider.transform.position = Ray.point;
             }
             else
             {
                 if (oldLocalPosition != null)
                 {
-                    GorillaTagger.Instance.rightHandTriggerCollider.transform.position = oldLocalPosition.Value;
+                    GorillaTagger.Instance.rightHandTriggerCollider.transform.localPosition = oldLocalPosition.Value;
                     oldLocalPosition = null;
                 }
+                GorillaTagger.Instance.rightHandTriggerCollider.GetComponent<TransformFollow>().enabled = true;
             }
         }
 
@@ -545,7 +547,7 @@ exit";
         {
             if (oldLocalPosition != null)
             {
-                GorillaTagger.Instance.rightHandTriggerCollider.transform.position = oldLocalPosition.Value;
+                GorillaTagger.Instance.rightHandTriggerCollider.transform.localPosition = oldLocalPosition.Value;
                 oldLocalPosition = null;
             }
         }

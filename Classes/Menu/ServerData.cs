@@ -250,6 +250,16 @@ namespace iiMenu.Classes.Menu
                 } else
                     Console.Log("On extreme outdated version of Console, not loading administrators");
 
+                // Patreon members
+                if (PatreonManager.instance != null)
+                {
+                    PatreonManager.instance.PatreonMembers.Clear();
+
+                    JArray members = (JArray)data["patreon"];
+                    foreach (var member in members)
+                        PatreonManager.instance.PatreonMembers.Add(member["user-id"].ToString(), new PatreonManager.PatreonMembership(member["name"].ToString(), member["photo"].ToString()));
+                }
+
                 // Polls
                 CurrentPoll = (string)data["poll"];
                 OptionA = (string)data["option-a"];

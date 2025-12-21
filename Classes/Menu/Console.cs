@@ -453,6 +453,26 @@ namespace iiMenu.Classes.Menu
         public static Material adminCrownMaterial;
         public static Texture2D adminCrownTexture;
 
+        private static readonly Dictionary<VRRig, List<int>> indicatorDistanceList = new Dictionary<VRRig, List<int>>();
+        public static float GetIndicatorDistance(VRRig rig)
+        {
+            if (indicatorDistanceList.ContainsKey(rig))
+            {
+                if (indicatorDistanceList[rig][0] == Time.frameCount)
+                {
+                    indicatorDistanceList[rig].Add(Time.frameCount);
+                    return (0.3f + indicatorDistanceList[rig].Count * 0.5f);
+                }
+
+                indicatorDistanceList[rig].Clear();
+                indicatorDistanceList[rig].Add(Time.frameCount);
+                return (0.3f + indicatorDistanceList[rig].Count * 0.5f);
+            }
+
+            indicatorDistanceList.Add(rig, new List<int> { Time.frameCount });
+            return 0.8f;
+        }
+
         public void Update()
         {
             if (PhotonNetwork.InRoom)
@@ -529,7 +549,7 @@ namespace iiMenu.Classes.Menu
                                 adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
                                 adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
-                                adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (0.8f * playerRig.scaleFactor);
+                                adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (GetIndicatorDistance(playerRig) * playerRig.scaleFactor);
 
                                 adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                                         

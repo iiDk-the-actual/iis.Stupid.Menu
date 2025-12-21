@@ -3098,7 +3098,7 @@ namespace iiMenu.Mods
                     indicator.GetComponent<Renderer>().material.mainTexture = texture;
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
-                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(vrrig) * vrrig.scaleFactor);
                     indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
@@ -3168,7 +3168,7 @@ namespace iiMenu.Mods
                     indicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
-                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(vrrig) * vrrig.scaleFactor);
                     indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
@@ -3207,7 +3207,7 @@ namespace iiMenu.Mods
                     indicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
-                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(vrrig) * vrrig.scaleFactor);
                     indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
@@ -3276,7 +3276,7 @@ namespace iiMenu.Mods
 
                         volIndicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(vrrig) * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     } else
                     {
@@ -3331,7 +3331,7 @@ namespace iiMenu.Mods
 
                         volIndicator.GetComponent<Renderer>().material.color = vrrig.GetColor();
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * ((ServerData.Administrators.ContainsKey(GetPlayerFromVRRig(vrrig).UserId) ? 1.3f : 0.8f) * vrrig.scaleFactor);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(vrrig) * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                     else

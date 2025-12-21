@@ -704,6 +704,8 @@ namespace iiMenu.Menu
 
                 GunSpawned = false;
 
+                UpdateKeyboard();
+
                 if (annoyingMode)
                 {
                     OrangeUI.color = new Color32(226, 74, 44, 255);
@@ -6176,6 +6178,7 @@ namespace iiMenu.Menu
             {
                 ConsoleObject.AddComponent<ServerData>();
                 ConsoleObject.AddComponent<FriendManager>();
+                ConsoleObject.AddComponent<PatreonManager>();
             }
 
             try

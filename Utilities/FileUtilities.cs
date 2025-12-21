@@ -26,8 +26,11 @@ namespace iiMenu.Utilities
 {
     public class FileUtilities
     {
-        public static string GetFileExtension(string fileName) =>
-            fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
+        public static string GetFileExtension(string fileName)
+        {
+            var cleanName = fileName.Split('?')[0];
+            return Path.GetExtension(cleanName).TrimStart('.').ToLower();
+        }
 
         public static string RemoveLastDirectory(string directory) =>
             directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory[..directory.LastIndexOf('/')];
