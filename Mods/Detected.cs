@@ -821,7 +821,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BanGun1Hour()
+        public static void BanGun()
         {
             if (GetGunInput(false))
             {
@@ -857,7 +857,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BanAll1Hour()
+        public static void BanAll()
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
             {
