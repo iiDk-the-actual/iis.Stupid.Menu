@@ -4287,7 +4287,7 @@ exit 0";
 
             if (fromMenu)
             {
-                audioMgr.GetComponent<AudioSource>().Stop();
+                audioManager.GetComponent<AudioSource>().Stop();
                 NotificationManager.PlayNotificationSound();
             }
         }

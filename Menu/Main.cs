@@ -4997,16 +4997,16 @@ namespace iiMenu.Menu
             }
         }
 
-        public static GameObject audioMgr;
+        public static GameObject audioManager;
         public static void Play2DAudio(AudioClip sound, float volume = 1f)
         {
-            if (audioMgr == null)
+            if (audioManager == null)
             {
-                audioMgr = new GameObject("2DAudioMgr");
-                AudioSource temp = audioMgr.AddComponent<AudioSource>();
+                audioManager = new GameObject("2DAudioMgr");
+                AudioSource temp = audioManager.AddComponent<AudioSource>();
                 temp.spatialBlend = 0f;
             }
-            AudioSource ausrc = audioMgr.GetComponent<AudioSource>();
+            AudioSource ausrc = audioManager.GetComponent<AudioSource>();
             ausrc.volume = volume;
             ausrc.PlayOneShot(sound);
         }
