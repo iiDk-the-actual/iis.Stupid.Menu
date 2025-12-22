@@ -558,7 +558,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Spoof", method = Safety.NameSpoof, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", method = Safety.ColorSpoof, toolTip = "Makes your color appear different to every player."},
 
-                new ButtonInfo { buttonText = "Unload Menu", method = UnloadMenu, isTogglable = false, toolTip = "Unloads the menu from your game."}
+                new ButtonInfo { buttonText = "Unload Menu", method = () => Prompt("Are you sure you want unload the menu?", UnloadMenu), isTogglable = false, toolTip = "Unloads the menu from your game."}
             },
 
             new[] { // Movement Mods [9]
