@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <Target Name="UpdateGameReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(GameAssemblyPath)')">
+  <PropertyGroup>
+    <IsMainProject Condition="'$(MSBuildProjectName)' == 'iiMenu'">true</IsMainProject>
+  </PropertyGroup>
+
+  <!-- Update Game References -->
+  <Target Name="UpdateGameReferences" BeforeTargets="BeforeBuild" Condition="'$(IsMainProject)' == 'true' AND Exists('$(GameAssemblyPath)')">
     <ItemGroup>
       <GameAssemblyFiles Include="$(GameAssemblyPath)\**\*" />
     </ItemGroup>
@@ -10,7 +15,8 @@
       SkipUnchangedFiles="true" />
   </Target>
 
-  <Target Name="UpdateBepInExReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(BepInExAssemblyPath)')">
+  <!-- Update BepInEx References -->
+  <Target Name="UpdateBepInExReferences" BeforeTargets="BeforeBuild" Condition="'$(IsMainProject)' == 'true' AND Exists('$(BepInExAssemblyPath)')">
     <ItemGroup>
       <BepInExAssemblyFiles Include="$(BepInExAssemblyPath)\**\*" />
     </ItemGroup>
@@ -20,7 +26,8 @@
       SkipUnchangedFiles="true" />
   </Target>
 
-  <Target Name="UpdateBuildTimestamp" BeforeTargets="BeforeBuild">
+  <!-- Update Build Timestamp -->
+  <Target Name="UpdateBuildTimestamp" BeforeTargets="BeforeBuild" Condition="'$(IsMainProject)' == 'true'">
     <PropertyGroup>
       <OriginalFileContent>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\PluginInfo.cs'))</OriginalFileContent>
       <Pattern>public const string BuildTimestamp = ".*?";</Pattern>
@@ -36,7 +43,13 @@
         WriteOnlyWhenDifferent="true"/>
   </Target>
 
-  <Target Name="CopyToPlugins" AfterTargets="Build">
+  <!-- Run BuildChecks -->
+  <Target Name="RunBuildChecks" BeforeTargets="BeforeBuild" Condition="'$(IsMainProject)' == 'true'">
+    <Exec Command="dotnet run --project BuildChecks/BuildChecks.csproj &quot;$([System.String]::Copy($(ProjectDir)).TrimEnd('\'))&quot;" />
+  </Target>
+
+  <!-- Copy to Plugins -->
+  <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(IsMainProject)' == 'true'">
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(TargetFileName)" />
     <Message Text="Copied to Plugins" Importance="high"/>
   </Target>

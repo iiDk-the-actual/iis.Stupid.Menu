@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/MultiplySelfKnockbackPatch.cs
+ * ii's Stupid Menu  Patches/Menu/MultiplyKnockbackPatch.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software

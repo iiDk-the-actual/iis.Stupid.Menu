@@ -84,6 +84,9 @@ namespace iiMenu.Menu
     [HarmonyPatch(typeof(GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour // Do not get rid of this. I don't know why, the entire class kills itself.
     {
+        /// <summary>
+        /// Runs on first frame of <see cref="GTPlayer.LateUpdate"/> after menu is launched
+        /// </summary>
         public static void OnLaunch()
         {
             if (CoroutineManager.instance == null)

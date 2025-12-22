@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Mods/CustomMaps/Maps/SceneMap.cs
+ * ii's Stupid Menu  Mods/CustomMaps/SceneMap.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software

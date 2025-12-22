@@ -1,5 +1,5 @@
 ﻿/*
- * ii's Stupid Menu  Classes/Menu/PortalTrigger.cs
+ * ii's Stupid Menu  Classes/Mods/PortalTrigger.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
