@@ -3887,7 +3887,7 @@ namespace iiMenu.Mods
         }
 
         private static float pullPower = 0.05f;
-        private static Dictionary<bool, bool> previousTouchingGround = new Dictionary<bool, bool>();
+        private static readonly Dictionary<bool, bool> previousTouchingGround = new Dictionary<bool, bool>();
         public static void ProcessPullHand(bool left)
         {
             if ((left ? !leftGrab : !rightGrab))
