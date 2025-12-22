@@ -58,6 +58,19 @@ namespace iiMenu.Utilities
             public float dataCacheTime;
         }
 
+        /// <summary>
+        /// Determines the type of VR controller currently in use for the specified hand.
+        /// The result is derived from the XR device name and cached briefly to avoid
+        /// repeated string comparisons.
+        /// </summary>
+        /// <param name="left">
+        /// If true, queries the left controller; otherwise queries the right controller.
+        /// </param>
+        /// <returns>
+        /// The detected <see cref="ControllerType"/> for the specified hand,
+        /// or <see cref="ControllerType.Unknown"/> if XR is inactive, the controller
+        /// is unavailable, or detection fails.
+        /// </returns>
         public static ControllerType GetControllerType(bool left)
         {
             try
@@ -102,9 +115,41 @@ namespace iiMenu.Utilities
             }
         }
 
+        /// <summary>
+        /// Determines the type of VR controller currently in use for the left hand.
+        /// </summary>
+        /// <returns>
+        /// The detected left-hand <see cref="ControllerType"/>,
+        /// or <see cref="ControllerType.Unknown"/> if detection fails.
+        /// </returns>
         public static ControllerType GetLeftControllerType() => GetControllerType(true);
+
+        /// <summary>
+        /// Determines the type of VR controller currently in use for the right hand.
+        /// </summary>
+        /// <returns>
+        /// The detected right-hand <see cref="ControllerType"/>,
+        /// or <see cref="ControllerType.Unknown"/> if detection fails.
+        /// </returns>
         public static ControllerType GetRightControllerType() => GetControllerType(false);
 
+        /// <summary>
+        /// Calculates the true world-space pose of a player's hand by combining the
+        /// controller transform with the hand-specific positional and rotational offsets.
+        /// </summary>
+        /// <param name="left">
+        /// If true, uses the left hand/controller; otherwise uses the right hand/controller.
+        /// </param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description><c>position</c> – The final world-space position of the hand.</description></item>
+        /// <item><description><c>rotation</c> – The final world-space rotation of the hand.</description></item>
+        /// <item><description><c>up</c> – The hand’s up direction in world space.</description></item>
+        /// <item><description><c>forward</c> – The hand’s forward direction in world space.</description></item>
+        /// <item><description><c>right</c> – The hand’s right direction in world space.</description></item>
+        /// </list>
+        /// </returns>
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueHandPosition(bool left)
         {
             Transform controllerTransform = left ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
@@ -114,7 +159,27 @@ namespace iiMenu.Utilities
             return (controllerTransform.position + controllerTransform.rotation * (handState.handOffset * GTPlayer.Instance.scale), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
-        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueLeftHand() => GetTrueHandPosition(true);
-        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueRightHand() => GetTrueHandPosition(false);
+        /// <summary>
+        /// Gets the true world-space pose of the player's left hand,
+        /// including position, rotation, and orientation vectors.
+        /// </summary>
+        /// <returns>
+        /// A tuple containing the left hand’s world-space position, rotation,
+        /// and its up, forward, and right direction vectors.
+        /// </returns>
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
+            GetTrueLeftHand() => GetTrueHandPosition(true);
+
+        /// <summary>
+        /// Gets the true world-space pose of the player's right hand,
+        /// including position, rotation, and orientation vectors.
+        /// </summary>
+        /// <returns>
+        /// A tuple containing the right hand’s world-space position, rotation,
+        /// and its up, forward, and right direction vectors.
+        /// </returns>
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
+            GetTrueRightHand() => GetTrueHandPosition(false);
+
     }
 }
