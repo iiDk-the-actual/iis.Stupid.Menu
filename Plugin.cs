@@ -108,6 +108,7 @@ namespace iiMenu
             Loader.AddComponent<UI>();
             Loader.AddComponent<NotificationManager>();
             Loader.AddComponent<CoroutineManager>();
+            Loader.AddComponent<CustomBoardManager>();
 
             DontDestroyOnLoad(Loader);
         }

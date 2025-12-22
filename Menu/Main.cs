@@ -87,6 +87,145 @@ namespace iiMenu.Menu
     [HarmonyPatch(typeof(GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour // Do not get rid of this. I don't know why, the entire class kills itself.
     {
+        public static void OnLaunch()
+        {
+            if (CoroutineManager.instance == null)
+                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
+
+            if (NotificationManager.Instance == null)
+                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
+
+            timeMenuStarted = Time.time;
+            IsSteam = PlayFabAuthenticator.instance.platform;
+
+            if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
+                AgencyFB = LoadAsset<Font>("Agency");
+
+            if (Plugin.FirstLaunch)
+                Prompt("It seems like this is your first time using the menu. Would you like to watch a quick tutorial to get to know how to use it?", Settings.ShowTutorial);
+            else
+                acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
+
+            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
+            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
+
+            NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
+            NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
+
+            SerializePatch.OnSerialize += OnSerialize;
+            PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
+
+            CrystalMaterial = GetObject("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk")?.GetComponent<Renderer>()?.material;
+            TryOnRoom = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom");
+
+            fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
+
+            string ConsoleGUID = "goldentrophy_Console"; // Do not change this, it's used to get other instances of Console
+            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
+
+            if (ConsoleObject == null)
+                ConsoleObject = new GameObject(ConsoleGUID);
+            else
+            {
+                if (ConsoleObject.GetComponents<Component>()
+                    .Select(c => c.GetType().GetField("ConsoleVersion",
+                        BindingFlags.Public |
+                        BindingFlags.Static))
+                    .Select(f => f.GetValue(null))
+                    .FirstOrDefault() is string consoleVersion)
+                {
+                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(Console.ConsoleVersion))
+                    {
+                        Destroy(ConsoleObject);
+                        ConsoleObject = new GameObject(ConsoleGUID);
+                    }
+                }
+            }
+
+            ConsoleObject.AddComponent<Console>();
+
+            if (ServerData.ServerDataEnabled)
+            {
+                ConsoleObject.AddComponent<ServerData>();
+                ConsoleObject.AddComponent<FriendManager>();
+                ConsoleObject.AddComponent<PatreonManager>();
+            }
+
+            try
+            {
+                string allButtonsPath = $"{PluginInfo.BaseDirectory}/AllButtons.txt";
+
+                string[] newButtonNames = Buttons.buttons
+                        .SelectMany(list => list)
+                        .Select(button => button.buttonText)
+                        .ToArray();
+
+                if (File.Exists(allButtonsPath))
+                {
+                    string[] oldButtonNames = File.ReadAllText(allButtonsPath).Split("\n");
+
+                    foreach (string name in newButtonNames)
+                    {
+                        if (!oldButtonNames.Contains(name))
+                        {
+                            ButtonInfo button = Buttons.GetIndex(name);
+                            string buttonText = button.overlapText ?? button.buttonText;
+                            button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
+                        }
+                    }
+                }
+
+                File.WriteAllText(allButtonsPath, string.Join("\n", newButtonNames));
+            }
+            catch { }
+
+            try
+            {
+                PluginManager.LoadPlugins();
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError(
+                $"Error with Settings.LoadPlugins() at {exc.StackTrace}: {exc.Message}");
+            }
+
+            try
+            {
+                Sound.LoadSoundboard(false);
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError(
+                $"Error with Sound.LoadSoundboard() at {exc.StackTrace}: {exc.Message}");
+            }
+
+            try
+            {
+                Movement.LoadMacros();
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError(
+                $"Error with Movement.LoadMacros() at {exc.StackTrace}: {exc.Message}");
+            }
+
+            loadPreferencesTime = Time.time;
+            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
+            {
+                try
+                {
+                    Settings.LoadPreferences();
+                }
+                catch
+                {
+                    CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
+                }
+            }
+
+            if (PatchHandler.PatchErrors > 0)
+                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
+        }
+
         public static void Prefix()
         {
             #region Controls
@@ -5717,135 +5856,6 @@ namespace iiMenu.Menu
         {
             yield return new WaitForSeconds(1);
             Settings.LoadPreferences();
-        }
-
-        public static void OnLaunch()
-        {
-            if (CoroutineManager.instance == null)
-                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
-
-            if (NotificationManager.Instance == null)
-                LogManager.LogError("CoroutineManager instance is null on menu launch. Features may not function properly.");
-
-            timeMenuStarted = Time.time;
-            IsSteam = PlayFabAuthenticator.instance.platform;
-
-            if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
-                AgencyFB = LoadAsset<Font>("Agency");
-
-            if (Plugin.FirstLaunch)
-                Prompt("It seems like this is your first time using the menu. Would you like to watch a quick tutorial to get to know how to use it?", Settings.ShowTutorial);
-            else
-                acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
-
-            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
-            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
-
-            NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
-            NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
-
-            SerializePatch.OnSerialize += OnSerialize;
-            PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
-
-            CrystalMaterial = GetObject("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk")?.GetComponent<Renderer>()?.material;
-            TryOnRoom = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom");
-
-            fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
-
-            string ConsoleGUID = "goldentrophy_Console"; // Do not change this, it's used to get other instances of Console
-            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
-
-            if (ConsoleObject == null)
-                ConsoleObject = new GameObject(ConsoleGUID);
-            else
-            {
-                if (ConsoleObject.GetComponents<Component>()
-                    .Select(c => c.GetType().GetField("ConsoleVersion",
-                        BindingFlags.Public |
-                        BindingFlags.Static))
-                    .Select(f => f.GetValue(null))
-                    .FirstOrDefault() is string consoleVersion)
-                {
-                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(Console.ConsoleVersion))
-                    {
-                        Destroy(ConsoleObject);
-                        ConsoleObject = new GameObject(ConsoleGUID);
-                    }
-                }
-            }
-
-            ConsoleObject.AddComponent<Console>();
-
-            if (ServerData.ServerDataEnabled)
-            {
-                ConsoleObject.AddComponent<ServerData>();
-                ConsoleObject.AddComponent<FriendManager>();
-                ConsoleObject.AddComponent<PatreonManager>();
-            }
-
-            try
-            {
-                string allButtonsPath = $"{PluginInfo.BaseDirectory}/AllButtons.txt";
-
-                string[] newButtonNames = Buttons.buttons
-                        .SelectMany(list => list)
-                        .Select(button => button.buttonText)
-                        .ToArray();
-
-                if (File.Exists(allButtonsPath))
-                {
-                    string[] oldButtonNames = File.ReadAllText(allButtonsPath).Split("\n");
-
-                    foreach (string name in newButtonNames)
-                    {
-                        if (!oldButtonNames.Contains(name))
-                        {
-                            ButtonInfo button = Buttons.GetIndex(name);
-                            string buttonText = button.overlapText ?? button.buttonText;
-                            button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
-                        }
-                    }
-                }
-
-                File.WriteAllText(allButtonsPath, string.Join("\n", newButtonNames));
-            }
-            catch { }
-
-            try
-            {
-                PluginManager.LoadPlugins();
-            }
-            catch (Exception exc) { LogManager.LogError(
-                $"Error with Settings.LoadPlugins() at {exc.StackTrace}: {exc.Message}"); }
-
-            try
-            {
-                Sound.LoadSoundboard(false);
-            }
-            catch (Exception exc) { LogManager.LogError(
-                $"Error with Sound.LoadSoundboard() at {exc.StackTrace}: {exc.Message}"); }
-
-            try
-            {
-                Movement.LoadMacros();
-            }
-            catch (Exception exc) { LogManager.LogError(
-                $"Error with Movement.LoadMacros() at {exc.StackTrace}: {exc.Message}"); }
-
-            loadPreferencesTime = Time.time;
-            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
-            {
-                try
-                {
-                    Settings.LoadPreferences();
-                } catch
-                {
-                    CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
-                }
-            }
-
-            if (PatchHandler.PatchErrors > 0)
-                NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
         }
 
         public static void UnloadMenu()
