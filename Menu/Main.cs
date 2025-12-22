@@ -441,9 +441,7 @@ namespace iiMenu.Menu
 
                     fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
 
-                    motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
-
-                    motdTextB.text = FollowMenuSettings(motdTextB.text);
+                    motdTextB.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
                 } catch { }
 
                 try
@@ -528,9 +526,7 @@ namespace iiMenu.Menu
                         });
 
                 if (keyboardInputObject != null)
-                {
                     keyboardInputObject.text = FollowMenuSettings(keyboardInput, false) + (Time.frameCount / 45 % 2 == 0 ? "|" : " ");
-                }
                 #endregion
 
                 #region Menu Features
@@ -1726,9 +1722,6 @@ namespace iiMenu.Menu
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
 
-                if (themeType == 63 && buttonIndex >= 0)
-                    buttonObject.GetComponent<Renderer>().enabled = false;
-
                 buttonObject.GetComponent<BoxCollider>().isTrigger = true;
                 buttonObject.transform.parent = menu.transform;
                 buttonObject.transform.rotation = Quaternion.identity;
@@ -1778,8 +1771,6 @@ namespace iiMenu.Menu
                 }
 
                 bool shouldSwap = swapButtonColors && buttonIndex < 0;
-                if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
-                    OutlineMenuObject(buttonObject, shouldSwap ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
                 {
@@ -1790,7 +1781,7 @@ namespace iiMenu.Menu
                     {
                         joystickSelectedButton = method.buttonText;
 
-                        if (themeType != 30)
+                        if (!colorChanger.colors.transparent)
                         {
                             ExtGradient gradient = colorChanger.colors.Clone();
                             gradient.SetColor(0, Color.red);
@@ -1802,8 +1793,7 @@ namespace iiMenu.Menu
                 else
                     CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
-                if (shouldRound)
-                    RoundMenuObject(buttonObject);
+                FollowMenuSettings(buttonObject, shouldSwap ? method.enabled : !method.enabled);
             }
 
             Text buttonText = new GameObject
@@ -1933,8 +1923,7 @@ namespace iiMenu.Menu
             textTransform.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(buttonText);
+            FollowMenuSettings(buttonText);
         }
 
         private static void AddSearchButton()
@@ -1952,9 +1941,6 @@ namespace iiMenu.Menu
 
             buttonObject.AddComponent<Button>().relatedText = "Search";
 
-            if (shouldOutline)
-                OutlineMenuObject(buttonObject, isSearching ^ !swapButtonColors);
-
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[isSearching ^ !swapButtonColors ? 0 : 1];
 
@@ -1968,8 +1954,7 @@ namespace iiMenu.Menu
                 colorChanger.colors = gradient;
             }
 
-            if (shouldRound)
-                RoundMenuObject(buttonObject);
+            FollowMenuSettings(buttonObject, isSearching ^ !swapButtonColors);
 
             Image searchImage = new GameObject
             {
@@ -1996,8 +1981,7 @@ namespace iiMenu.Menu
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(searchImage);
+            FollowMenuSettings(searchImage);
         }
 
         private static void AddDebugButton()
@@ -2017,16 +2001,12 @@ namespace iiMenu.Menu
 
             buttonObject.AddComponent<Button>().relatedText = "Info Screen";
 
-            if (shouldOutline)
-                OutlineMenuObject(buttonObject, infoScreenEnabled ^ swapButtonColors);
-
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[infoScreenEnabled ^ swapButtonColors ? 0 : 1];
 
-            if (shouldRound)
-                RoundMenuObject(buttonObject);
+            FollowMenuSettings(buttonObject, infoScreenEnabled ^ swapButtonColors);
 
-            Image searchImage = new GameObject
+            Image debugImage = new GameObject
             {
                 transform =
                 {
@@ -2037,13 +2017,13 @@ namespace iiMenu.Menu
                 debugIcon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.debug.png");
 
             if (debugMat == null)
-                debugMat = new Material(searchImage.material);
+                debugMat = new Material(debugImage.material);
 
-            searchImage.material = debugMat;
-            searchImage.material.SetTexture("_MainTex", debugIcon);
-            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
+            debugImage.material = debugMat;
+            debugImage.material.SetTexture("_MainTex", debugIcon);
+            debugImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
-            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            RectTransform imageTransform = debugImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
@@ -2051,8 +2031,7 @@ namespace iiMenu.Menu
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(searchImage);
+            FollowMenuSettings(debugImage);
         }
 
         private static void AddDonateButton()
@@ -2070,16 +2049,12 @@ namespace iiMenu.Menu
 
             buttonObject.AddComponent<Button>().relatedText = "Donate Button";
 
-            if (shouldOutline)
-                OutlineMenuObject(buttonObject, !swapButtonColors);
-
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
 
-            if (shouldRound)
-                RoundMenuObject(buttonObject);
+            FollowMenuSettings(buttonObject, !swapButtonColors);
 
-            Image searchImage = new GameObject
+            Image donateImage = new GameObject
             {
                 transform =
                 {
@@ -2090,13 +2065,13 @@ namespace iiMenu.Menu
                 donateIcon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.donate.png");
 
             if (donateMat == null)
-                donateMat = new Material(searchImage.material);
+                donateMat = new Material(donateImage.material);
 
-            searchImage.material = donateMat;
-            searchImage.material.SetTexture("_MainTex", donateIcon);
-            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
+            donateImage.material = donateMat;
+            donateImage.material.SetTexture("_MainTex", donateIcon);
+            donateImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
-            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            RectTransform imageTransform = donateImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
@@ -2104,8 +2079,7 @@ namespace iiMenu.Menu
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(searchImage);
+            FollowMenuSettings(donateImage);
         }
 
         private static void AddUpdateButton()
@@ -2123,16 +2097,12 @@ namespace iiMenu.Menu
 
             buttonObject.AddComponent<Button>().relatedText = "Update Button";
 
-            if (shouldOutline)
-                OutlineMenuObject(buttonObject, !swapButtonColors);
-
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
 
-            if (shouldRound)
-                RoundMenuObject(buttonObject);
+            FollowMenuSettings(buttonObject, !swapButtonColors);
 
-            Image searchImage = new GameObject
+            Image updateImage = new GameObject
             {
                 transform =
                 {
@@ -2143,13 +2113,13 @@ namespace iiMenu.Menu
                 updateIcon = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.update.png");
 
             if (updateMat == null)
-                updateMat = new Material(searchImage.material);
+                updateMat = new Material(updateImage.material);
 
-            searchImage.material = updateMat;
-            searchImage.material.SetTexture("_MainTex", updateIcon);
-            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
+            updateImage.material = updateMat;
+            updateImage.material.SetTexture("_MainTex", updateIcon);
+            updateImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
-            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            RectTransform imageTransform = updateImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
             imageTransform.sizeDelta = new Vector2(.03f, .03f);
 
@@ -2157,8 +2127,7 @@ namespace iiMenu.Menu
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(searchImage);
+            FollowMenuSettings(updateImage);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -2179,9 +2148,6 @@ namespace iiMenu.Menu
 
             buttonObject.AddComponent<Button>().relatedText = "Global Return";
 
-            if (shouldOutline)
-                OutlineMenuObject(buttonObject, !swapButtonColors);
-
             if (lastClickedName != "Global Return")
             {
                 ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
@@ -2190,8 +2156,7 @@ namespace iiMenu.Menu
             else
                 CoroutineManager.instance.StartCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
 
-            if (shouldRound)
-                RoundMenuObject(buttonObject);
+            FollowMenuSettings(buttonObject, !swapButtonColors);
 
             Image returnImage = new GameObject
             {
@@ -2222,8 +2187,7 @@ namespace iiMenu.Menu
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(returnImage);
+            FollowMenuSettings(returnImage);
         }
 
         private static void RenderIncrementalButton(bool increment, float offset, int buttonIndex, ButtonInfo method)
@@ -2249,9 +2213,6 @@ namespace iiMenu.Menu
                 if (increment)
                     buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
 
-                if (shouldOutline)
-                    OutlineMenuObject(buttonObject, true);
-
                 if (lastClickedName != method.buttonText + (increment ? "+" : "-"))
                 {
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
@@ -2260,8 +2221,7 @@ namespace iiMenu.Menu
                 else
                     CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
-                if (shouldRound)
-                    RoundMenuObject(buttonObject);
+                FollowMenuSettings(buttonObject, true);
             }
 
             RenderIncrementalText(increment, offset);
@@ -2297,8 +2257,7 @@ namespace iiMenu.Menu
             textTransform.localPosition = thinMenu ? new Vector3(.064f, increment ? -0.12f : 0.12f, .111f - offset / 2.6f) : new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(buttonText);
+            FollowMenuSettings(buttonText);
         }
 
         public static void CreateReference()
@@ -2403,9 +2362,6 @@ namespace iiMenu.Menu
                     colorChanger.colors = buttonColors[1];
                 }
 
-                if (shouldOutline)
-                    OutlineMenuObject(menuBackground, false);
-
                 if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63)
                 {
                     Renderer menuBackgroundRenderer = menuBackground.GetComponent<Renderer>();
@@ -2482,8 +2438,7 @@ namespace iiMenu.Menu
                     }
                 }
 
-                if (shouldRound)
-                    RoundMenuObject(menuBackground);
+                FollowMenuSettings(menuBackground, false);
             }
 
             canvasObj = new GameObject();
@@ -2573,8 +2528,7 @@ namespace iiMenu.Menu
                 component.localPosition = new Vector3(0.06f, 0f, 0.165f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(title);
+                FollowMenuSettings(title);
             }
 
             if (!backgroundColor.transparent)
@@ -2605,8 +2559,7 @@ namespace iiMenu.Menu
                 component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
                 component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(buildLabel);
+                FollowMenuSettings(buildLabel);
 
                 if (!disableWatermark)
                 {
@@ -2630,8 +2583,7 @@ namespace iiMenu.Menu
 
                     imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
 
-                    if (outlineText)
-                        OutlineCanvasObject(watermarkImage);
+                    FollowMenuSettings(watermarkImage);
 
                     imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
@@ -2673,8 +2625,7 @@ namespace iiMenu.Menu
                 fpsTransform.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
                 fpsTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(fps);
+                FollowMenuSettings(fps);
             }
 
             float hkbStartTime = -0.3f;
@@ -2740,14 +2691,10 @@ namespace iiMenu.Menu
 
                 searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - buttonOffset * ButtonDistance);
 
-                if (shouldOutline)
-                    OutlineMenuObject(searchBoxObject, true);
-
                 ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
                 colorChanger.colors = buttonColors[0];
 
-                if (shouldRound)
-                    RoundMenuObject(searchBoxObject);
+                FollowMenuSettings(searchBoxObject, true);
 
                 keyboardInputObject = new GameObject
                 {
@@ -2782,8 +2729,7 @@ namespace iiMenu.Menu
                 textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * ButtonDistance / 2.6f);
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(keyboardInputObject);
+                FollowMenuSettings(keyboardInputObject);
             }
 
             if (promptVideoPlayer != null)
@@ -3422,6 +3368,8 @@ namespace iiMenu.Menu
                 imageTransform.localPosition = new Vector3(0.06f, 0f, promptText.text.IsNullOrEmpty() ? 0f : -0.03f);
                 imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+                FollowMenuSettings(promptImage);
+
                 switch (fileExtension)
                 {
                     case "png":
@@ -3458,8 +3406,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            if (outlineText)
-                OutlineCanvasObject(promptText);
+            FollowMenuSettings(promptText);
 
             joystickButtonSelected %= 2;
 
@@ -3518,14 +3465,8 @@ namespace iiMenu.Menu
                 textRect.localPosition = new Vector3(0.064f, CurrentPrompt.DeclineText != null ? 0.075f : 0f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(text);
-
-                if (shouldOutline)
-                    OutlineMenuObject(button, true);
-
-                if (shouldRound)
-                    RoundMenuObject(button);
+                FollowMenuSettings(text);
+                FollowMenuSettings(button, true);
             }
 
             if (CurrentPrompt.DeclineText != null)
@@ -3584,33 +3525,15 @@ namespace iiMenu.Menu
                 textRect.localPosition = new Vector3(0.064f, -0.075f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(text);
-
-                if (shouldOutline)
-                    OutlineMenuObject(button, true);
-
-                if (shouldRound)
-                    RoundMenuObject(button);
+                FollowMenuSettings(text);
+                FollowMenuSettings(button, true);
             }
         }
 
         private static void CreatePageButtonPair(string prevButtonName, string nextButtonName, Vector3 buttonScale, Vector3 prevButtonPos, Vector3 nextButtonPos, Vector3 prevTextPos, Vector3 nextTextPos, ExtGradient color, Vector2? textSize = null)
         {
-            GameObject prevButton = AdvancedAddButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, color, textSize, 0);
-            GameObject nextButton = AdvancedAddButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, color, textSize, 1);
-
-            if (shouldOutline)
-            {
-                OutlineMenuObject(prevButton, !swapButtonColors);
-                OutlineMenuObject(nextButton, !swapButtonColors);
-            }
-
-            if (shouldRound)
-            {
-                RoundMenuObject(prevButton);
-                RoundMenuObject(nextButton);
-            }
+            AdvancedAddButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, color, textSize, 0);
+            AdvancedAddButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, color, textSize, 1);
         }
 
         public static string ExtractPromptImage(string input)
@@ -3670,8 +3593,8 @@ namespace iiMenu.Menu
             textRect.localPosition = textPosition;
             textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            if (outlineText)
-                OutlineCanvasObject(text);
+            FollowMenuSettings(text);
+            FollowMenuSettings(button);
 
             return button;
         }
@@ -4502,7 +4425,7 @@ namespace iiMenu.Menu
                         {
                             string postData = JsonConvert.SerializeObject(new { text });
 
-                            using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                            using UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/tts", "POST");
                             byte[] raw = Encoding.UTF8.GetBytes(postData);
 
                             request.uploadHandler = new UploadHandlerRaw(raw);
@@ -4948,11 +4871,6 @@ namespace iiMenu.Menu
         public static Color GetPlayerColor(VRRig Player) =>
             Player.GetColor();
 
-        // SteamVR bug causes teleporting of the player to the center of your playspace
-        public static Vector3 World2Player(Vector3 world) => 
-            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
-
-        // True left and right hand get the exact position and rotation of the middle of the hand
         [Obsolete("TrueLeftHand is obsolete. Use ControllerUtilities.GetTrueLeftHand instead.")]
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand() =>
             ControllerUtilities.GetTrueLeftHand();
@@ -4961,6 +4879,31 @@ namespace iiMenu.Menu
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand() =>
             ControllerUtilities.GetTrueRightHand();
 
+        /// <summary>
+        /// Converts a position from world coordinates to the player's local coordinate space.
+        /// </summary>
+        /// <remarks>This method is useful for determining the position of an object or point in relation
+        /// to the player's current location and orientation within the game world.</remarks>
+        /// <param name="world">The position in world coordinates to convert.</param>
+        /// <returns>A <see cref="Vector3"/> representing the input position relative to the player's local coordinate system.</returns>
+        public static Vector3 World2Player(Vector3 world) =>
+            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+
+        /// <summary>
+        /// Sets the world-scale of a GameObject to a specified value, 
+        /// taking into account the scale of its parent.
+        /// </summary>
+        /// <param name="obj">The GameObject whose scale will be adjusted.</param>
+        /// <param name="targetWorldScale">
+        /// The desired scale of the GameObject in world space.
+        /// Each component (x, y, z) represents the target size along that axis.
+        /// </param>
+        /// <remarks>
+        /// This method adjusts the localScale of the GameObject so that its
+        /// effective world scale matches the targetWorldScale, regardless of
+        /// the parent's scale. It uses the parent's lossyScale to calculate
+        /// the required localScale.
+        /// </remarks>
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
         {
             Vector3 parentScale = obj.transform.parent.lossyScale;
@@ -5120,11 +5063,22 @@ namespace iiMenu.Menu
             if (translation != null)
             {
                 translateCache.Add(text, translation);
-
                 onTranslated?.Invoke(translation);
             }
         }
 
+        /// <summary>
+        /// Applies configured menu text transformations to the specified input string, including optional translation
+        /// and case adjustments.
+        /// </summary>
+        /// <remarks>The transformations applied depend on the current values of the menu settings, such
+        /// as translation, lowercase, and uppercase modes. If both lowercase and uppercase modes are enabled, the
+        /// uppercase transformation takes precedence.</remarks>
+        /// <param name="input">The input string to be processed and transformed according to the current menu settings.</param>
+        /// <param name="translateText">true to translate the input string before applying case transformations; otherwise, false. The default is
+        /// true.</param>
+        /// <returns>A string containing the transformed input, with translation and case modifications applied as specified by
+        /// the current settings.</returns>
         public static string FollowMenuSettings(string input, bool translateText = true)
         {
             if (translateText && translate)
@@ -5137,6 +5091,33 @@ namespace iiMenu.Menu
                 input = input.ToUpper();
 
             return input;
+        }
+
+        /// <summary>
+        /// Applies menu appearance settings to the specified game object, such as outlining and rounding, based on
+        /// current configuration.
+        /// </summary>
+        /// <param name="gameObject">The game object to which the menu appearance settings will be applied.</param>
+        /// <param name="shouldBeEnabled">A value indicating whether outlining should be enabled for the game object. The default is <see
+        /// langword="true"/>.</param>
+        public static void FollowMenuSettings(GameObject gameObject, bool shouldBeEnabled = true)
+        {
+            if (shouldOutline)
+                OutlineMenuObject(gameObject, shouldBeEnabled);
+
+            if (shouldRound)
+                RoundMenuObject(gameObject);
+        }
+
+        /// <summary>
+        /// Applies menu appearance settings to the specified canvas object, such as outlining, based on
+        /// current configuration.
+        /// </summary>
+        /// <param name="canvasObject">The canvas object to which the menu appearance settings will be applied.</param>
+        public static void FollowMenuSettings(MaskableGraphic canvasObject)
+        {
+            if (outlineText)
+                OutlineCanvasObject(canvasObject);
         }
 
         /// <summary>
@@ -5217,10 +5198,6 @@ namespace iiMenu.Menu
 
         public static Color DarkenColor(Color color, float intensity = 0.5f) =>
             new Color(color.r * intensity, color.g * intensity, color.b * intensity, color.a);
-
-        // To get the optimal delay from call limiter
-        public static float GetCallLimiterDelay(CallLimiter limiter) =>
-            limiter.timeCooldown / limiter.callHistoryLength;
 
         public static void SceneLoaded(Scene scene, LoadSceneMode mode)
         {

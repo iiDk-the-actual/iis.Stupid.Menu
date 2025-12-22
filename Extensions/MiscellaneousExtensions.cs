@@ -31,8 +31,8 @@ namespace iiMenu.Extensions
 {
     public static class MiscellaneousExtensions
     {
-        public static float GetDelay(this CallLimiter self) =>
-            GetCallLimiterDelay(self);
+        public static float GetDelay(this CallLimiter limiter) =>
+            limiter.timeCooldown / limiter.callHistoryLength;
 
         public static float GetDelay(this FXSystemSettings settings, int index) =>
             settings.GetCallLimiter(index).GetDelay();
