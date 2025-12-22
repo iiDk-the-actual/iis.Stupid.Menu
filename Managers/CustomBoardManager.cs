@@ -1,18 +1,12 @@
 ﻿using GorillaNetworking;
 using iiMenu.Extensions;
-using iiMenu.Menu;
-using Modio.Mods;
-using NanoSockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using WebSocketSharp;
 using static iiMenu.Menu.Main;
-using Object = UnityEngine.Object;
 
 namespace iiMenu.Managers
 {

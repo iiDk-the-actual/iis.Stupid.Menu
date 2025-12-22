@@ -21,7 +21,6 @@
 
 using GorillaExtensions;
 using GorillaLocomotion;
-using GorillaNetworking;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
