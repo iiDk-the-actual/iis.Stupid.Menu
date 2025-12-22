@@ -762,8 +762,11 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = false;
         }
 
+        public static float nameDelay;
+        public static float banDelay;
         public static string name = "GOLDENTROPHY";
-
+        public static string banName = "KKK";
+        
         public static void PromptNameChange()
         {
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
@@ -779,7 +782,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > muteDelay)
+                    if (Time.time > nameDelay)
                     {
                         Hashtable hashtable = new Hashtable
                         {
@@ -813,6 +816,54 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable
                 {
                     [byte.MaxValue] = name
+                };
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
+            }
+        }
+
+        public static void BanGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > banDelay)
+                    {
+                        Hashtable hashtable = new Hashtable
+                        {
+                            [byte.MaxValue] = banName
+                        };
+                        PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
+                    }
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BanAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerListOthers)
+            {
+                Hashtable hashtable = new Hashtable
+                {
+                    [byte.MaxValue] = banName
                 };
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
