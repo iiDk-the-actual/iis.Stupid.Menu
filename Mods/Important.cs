@@ -458,7 +458,7 @@ exit";
             physicalQuitBox.transform.position = quitBox.transform.position;
             physicalQuitBox.transform.rotation = quitBox.transform.rotation;
             physicalQuitBox.transform.localScale = quitBox.transform.localScale;
-            physicalQuitBox.GetComponent<Renderer>().material = OrangeUI;
+            physicalQuitBox.GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
 
             quitBox.SetActive(false);
         }

@@ -426,7 +426,7 @@ namespace iiMenu.Mods
             regwatchText = thething.Find("Text").gameObject;
             regwatchShell = regwatchobject.transform.Find("HuntWatch_ScreenLocal").gameObject;
 
-            regwatchShell.GetComponent<Renderer>().material = OrangeUI;
+            regwatchShell.GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
 
             if (rightHand)
             {
@@ -575,7 +575,7 @@ namespace iiMenu.Mods
         }
 
         public static void CustomSkyboxColor() =>
-            GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = OrangeUI;
+            GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
 
         public static void UnCustomSkyboxColor()
         {

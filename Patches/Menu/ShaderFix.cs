@@ -31,7 +31,7 @@ namespace iiMenu.Patches.Menu
     {
         private static void Postfix(GameObject __result)
         {
-            if (crystallizemenu && CrystalMaterial != null)
+            if (crystallizeMenu && CrystalMaterial != null)
                 __result.GetComponent<Renderer>().material = CrystalMaterial;
             else if (transparentMenu)
             {

@@ -871,7 +871,7 @@ exit 0";
             watchEnabledIndicator = watchCanvas.Find("Left Hand").gameObject;
             watchShell = watchobject.transform.Find("HuntWatch_ScreenLocal").gameObject;
 
-            watchShell.GetComponent<Renderer>().material = OrangeUI;
+            watchShell.GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
 
             if (rightHand)
             {
@@ -5488,105 +5488,6 @@ exit 0";
                 VRRig.LocalRig.rightHandPlayer.Stop();
                 PlayButtonSound();
             }
-        }
-
-        public static Material screenRed;
-        public static Material screenBlack;
-        public static void DisableBoardColors()
-        {
-            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
-            {
-                try
-                {
-                    JoinTriggerUI ui = joinTrigger.ui;
-                    JoinTriggerUITemplate temp = ui.template;
-
-                    if (screenRed == null)
-                    {
-                        screenRed = new Material(Shader.Find("GorillaTag/UberShader"))
-                        {
-                            color = new Color32(226, 73, 41, 255)
-                        };
-                    }
-
-                    if (screenBlack == null)
-                    {
-                        screenBlack = new Material(Shader.Find("GorillaTag/UberShader"))
-                        {
-                            color = new Color32(39, 34, 28, 255)
-                        };
-                    }
-
-                    temp.ScreenBG_AbandonPartyAndSoloJoin = screenRed;
-                    temp.ScreenBG_AlreadyInRoom = screenBlack;
-                    temp.ScreenBG_Error = screenRed;
-                } catch { }
-            }
-
-            var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
-                           .Where(x => x.name.Contains("UnityTempFile"))
-                           .ToList();
-
-            if (StumpLeaderboardIndex >= 0 && StumpLeaderboardIndex < stumpChildren.Count)
-            {
-                var stumpBoard = stumpChildren[StumpLeaderboardIndex];
-                if (stumpBoard != null && StumpMat != null)
-                    stumpBoard.GetComponent<Renderer>().material = StumpMat;
-            }
-
-            var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
-                .Where(x => x.name.Contains("UnityTempFile"))
-                .ToList();
-
-            if (ForestLeaderboardIndex >= 0 && ForestLeaderboardIndex < forestChildren.Count)
-            {
-                var forestBoard = forestChildren[ForestLeaderboardIndex];
-                if (forestBoard != null && ForestMat != null)
-                    forestBoard.GetComponent<Renderer>().material = ForestMat;
-            }
-
-            foreach (GameObject board in objectBoards.Values)
-                Object.Destroy(board);
-
-            objectBoards.Clear();
-        }
-
-        public static void ConstantDisableBoardColors()
-        {
-            disableBoardColor = true;
-            motd.SetActive(false);
-            motdText.SetActive(false);
-
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(true);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(true);
-        }
-
-        public static void EnableBoardColors()
-        {
-            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
-            {
-                try
-                {
-                    JoinTriggerUI ui = joinTrigger.ui;
-                    JoinTriggerUITemplate temp = ui.template;
-
-                    temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
-                    temp.ScreenBG_AlreadyInRoom = OrangeUI;
-                    temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
-                    temp.ScreenBG_Error = OrangeUI;
-                    temp.ScreenBG_InPrivateRoom = OrangeUI;
-                    temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
-                    temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
-                    temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
-                }
-                catch { }
-            }
-            hasFoundAllBoards = false;
-            disableBoardColor = false;
-            motd.SetActive(true);
-            motdText.SetActive(true);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(false);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(false);
         }
     }
 }

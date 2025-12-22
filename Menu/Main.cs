@@ -281,181 +281,6 @@ namespace iiMenu.Menu
                     RecenterMenu();
                 #endregion
 
-                #region Custom Boards
-                if (!hasFoundAllBoards)
-                {
-                    try
-                    {
-                        foreach (GameObject board in objectBoards.Values)
-                            Destroy(board);
-
-                        objectBoards.Clear();
-
-                        var stumpChildren = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.Children()
-                           .Where(x => x.name.Contains("UnityTempFile"))
-                           .ToList();
-
-                        if (StumpLeaderboardIndex >= 0 && StumpLeaderboardIndex < stumpChildren.Count)
-                        {
-                            var stumpBoard = stumpChildren[StumpLeaderboardIndex];
-                            if (stumpBoard != null)
-                            {
-                                if (StumpMat == null)
-                                    StumpMat = stumpBoard.GetComponent<Renderer>().material;
-
-                                stumpBoard.GetComponent<Renderer>().material = OrangeUI;
-                            }
-                        }
-
-                        var forestChildren = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.Children()
-                            .Where(x => x.name.Contains("UnityTempFile"))
-                            .ToList(); 
-
-                        if (ForestLeaderboardIndex >= 0 && ForestLeaderboardIndex < forestChildren.Count)
-                        {
-                            var forestBoard = forestChildren[ForestLeaderboardIndex];
-                            if (forestBoard != null)
-                            {
-                                if (ForestMat == null)
-                                    ForestMat = forestBoard.GetComponent<Renderer>().material;
-
-                                forestBoard.GetComponent<Renderer>().material = OrangeUI;
-                            }
-                        }
-
-                        foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
-                        {
-                            try
-                            {
-                                JoinTriggerUI ui = joinTrigger.ui;
-                                JoinTriggerUITemplate temp = ui.template;
-
-                                temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
-                                temp.ScreenBG_AlreadyInRoom = OrangeUI;
-                                temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
-                                temp.ScreenBG_Error = OrangeUI;
-                                temp.ScreenBG_InPrivateRoom = OrangeUI;
-                                temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
-                                temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
-                                temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
-
-                                TextMeshPro text = ui.screenText;
-                                if (!udTMP.Contains(text))
-                                    udTMP.Add(text);
-                            }
-                            catch { }
-                        }
-                        PhotonNetworkController.Instance.UpdateTriggerScreens();
-
-                        string[] objectsWithTMPro = {
-                            "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
-                            "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
-                            "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
-                            "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
-                        };
-                        foreach (string objectName in objectsWithTMPro)
-                        {
-                            GameObject obj = GetObject(objectName);
-                            if (obj != null)
-                            {
-                                TextMeshPro text = obj.GetComponent<TextMeshPro>();
-                                if (!udTMP.Contains(text))
-                                    udTMP.Add(text);
-                            }
-                            else
-                                LogManager.Log("Could not find " + objectName);
-                        }
-
-                        Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
-                        for (int i = 0; i < forestTransform.transform.childCount; i++)
-                        {
-                            GameObject v = forestTransform.GetChild(i).gameObject;
-                            if ((!v.name.Contains("Board Text") && !v.name.Contains("Scoreboard_OfflineText")) ||
-                                !v.activeSelf) continue;
-                            TextMeshPro text = v.GetComponent<TextMeshPro>();
-                            if (!udTMP.Contains(text))
-                                udTMP.Add(text);
-                        }
-
-                        hasFoundAllBoards = true;
-                    }
-                    catch (Exception exc)
-                    {
-                        LogManager.LogError($"Error with board colors at {exc.StackTrace}: {exc.Message}");
-                        hasFoundAllBoards = false;
-                    }
-                }
-
-                if (computerMonitor == null)
-                    computerMonitor = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
-
-                if (computerMonitor != null)
-                    computerMonitor.GetComponent<Renderer>().material = OrangeUI;
-
-                try
-                {
-                    if (!disableBoardColor)
-                        OrangeUI.color = backgroundColor.GetCurrentColor();
-                    else
-                        OrangeUI.color = new Color32(0, 59, 4, 255);
-
-                    if (motd == null)
-                    {
-                        GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
-                        motd = Instantiate(motdObject, motdObject.transform.parent);
-                        motdObject.SetActive(false);
-                    }
-
-                    TextMeshPro motdTc = motd.GetComponent<TextMeshPro>();
-                    if (!udTMP.Contains(motdTc))
-                        udTMP.Add(motdTc);
-
-                    motdTc.richText = true;
-                    motdTc.fontSize = 70;
-                    motdTc.text = "Thanks for using ii's Stupid Menu!";
-
-                    if (doCustomName)
-                        motdTc.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
-
-                    motdTc.text = FollowMenuSettings(motdTc.text);
-
-                    motdTc.color = textColors[0].GetCurrentColor();
-                    motdTc.overflowMode = TextOverflowModes.Overflow;
-
-                    if (motdText == null)
-                    {
-                        GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
-                        motdText = Instantiate(motdObject, motdObject.transform.parent);
-                        motdObject.SetActive(false);
-
-                        motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
-                    }
-
-                    TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
-                    if (!udTMP.Contains(motdTextB))
-                        udTMP.Add(motdTextB);
-
-                    motdTextB.richText = true;
-                    motdTextB.fontSize = 100;
-                    motdTextB.color = textColors[0].GetCurrentColor();
-
-                    fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
-
-                    motdTextB.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
-                } catch { }
-
-                try
-                {
-                    Color targetColor = textColors[0].GetCurrentColor();
-
-                    if (disableBoardColor || disableBoardTextColor)
-                        targetColor = Color.white;
-
-                    foreach (TextMeshPro txt in udTMP)
-                        txt.color = targetColor;
-                } catch { }
-                #endregion
-
                 #region PC Search Keyboard
                 
                 #endregion
@@ -680,7 +505,7 @@ namespace iiMenu.Menu
 
                 if (annoyingMode)
                 {
-                    OrangeUI.color = new Color32(226, 74, 44, 255);
+                    CustomBoardManager.BoardMaterial.color = new Color32(226, 74, 44, 255);
                     int randy = Random.Range(1, 400);
                     if (randy == 21)
                     {
@@ -1037,7 +862,7 @@ namespace iiMenu.Menu
                 {
                     if (watchMenu)
                     {
-                        watchShell.GetComponent<Renderer>().material = OrangeUI;
+                        watchShell.GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
                         ButtonInfo[] toSortOf = Buttons.buttons[currentCategoryIndex];
 
                         if (currentCategoryName == "Favorite Mods")
@@ -5199,130 +5024,6 @@ namespace iiMenu.Menu
         public static Color DarkenColor(Color color, float intensity = 0.5f) =>
             new Color(color.r * intensity, color.g * intensity, color.b * intensity, color.a);
 
-        public static void SceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            if (disableBoardColor) return;
-
-            if (!BoardInformations.TryGetValue(scene.name, out var config)) return;
-
-            CreateObjectBoard(scene.name, config.GameObjectPath, config.Position, config.Rotation, config.Scale);
-        }
-
-        private readonly struct BoardInformation
-        {
-            public readonly string GameObjectPath;
-            public readonly Vector3 Position;
-            public readonly Vector3 Rotation;
-            public readonly Vector3 Scale;
-
-            public BoardInformation(string path, Vector3 pos, Vector3 rot, Vector3 scale)
-            {
-                GameObjectPath = path;
-                Position = pos;
-                Rotation = rot;
-                Scale = scale;
-            }
-        }
-
-        private static readonly Dictionary<string, BoardInformation> BoardInformations = new Dictionary<string, BoardInformation>
-        {
-            ["Canyon2"] = new BoardInformation(
-                "Canyon/CanyonScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-24.5019f, -28.7746f, 0.1f),
-                new Vector3(270f, 0f, 0f),
-                new Vector3(21.5946f, 1f, 22.1782f)
-            ),
-            ["Skyjungle"] = new BoardInformation(
-                "skyjungle/UI/Scoreboard/GorillaScoreBoard",
-                new Vector3(-21.2764f, -32.1928f, 0f),
-                new Vector3(270.2987f, 0.2f, 359.9f),
-                new Vector3(21.6f, 0.1f, 20.4909f)
-            ),
-            ["Mountain"] = new BoardInformation(
-                "Mountain/MountainScoreboardAnchor/GorillaScoreBoard",
-                Vector3.zero,
-                Vector3.zero,
-                Vector3.one
-            ),
-            ["Metropolis"] = new BoardInformation(
-                "MetroMain/ComputerArea/Scoreboard/GorillaScoreBoard",
-                new Vector3(-25.1f, -31f, 0.1502f),
-                new Vector3(270.1958f, 0.2086f, 0f),
-                new Vector3(21f, 102.9727f, 21.4f)
-            ),
-            ["Bayou"] = new BoardInformation(
-                "BayouMain/ComputerArea/GorillaScoreBoardPhysical",
-                new Vector3(-28.3419f, -26.851f, 0.3f),
-                new Vector3(270f, 0f, 0f),
-                new Vector3(21.3636f, 38f, 21f)
-            ),
-            ["Beach"] = new BoardInformation(
-                "BeachScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-22.1964f, -33.7126f, 0.1f),
-                new Vector3(270.056f, 0f, 0f),
-                new Vector3(21.2f, 2f, 21.6f)
-            ),
-            ["Cave"] = new BoardInformation(
-                "Cave_Main_Prefab/CrystalCaveScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-22.1964f, -33.7126f, 0.1f),
-                new Vector3(270.056f, 0f, 0f),
-                new Vector3(21.2f, 2f, 21.6f)
-            ),
-            ["Rotating"] = new BoardInformation(
-                "RotatingPermanentEntrance/UI (1)/RotatingScoreboard/RotatingScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-22.1964f, -33.7126f, 0.1f),
-                new Vector3(270.056f, 0f, 0f),
-                new Vector3(21.2f, 2f, 21.6f)
-            ),
-            ["MonkeBlocks"] = new BoardInformation(
-                "Environment Objects/MonkeBlocksRoomPersistent/AtticScoreBoard/AtticScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-22.1964f, -24.5091f, 0.57f),
-                new Vector3(270.1856f, 0.1f, 0f),
-                new Vector3(21.6f, 1.2f, 20.8f)
-            ),
-            ["Basement"] = new BoardInformation(
-                "Basement/BasementScoreboardAnchor/GorillaScoreBoard/",
-                new Vector3(-22.1964f, -24.5091f, 0.57f),
-                new Vector3(270.1856f, 0.1f, 0f),
-                new Vector3(21.6f, 1.2f, 20.8f)
-            ),
-            ["City"] = new BoardInformation(
-                "City_Pretty/CosmeticsScoreboardAnchor/GorillaScoreBoard",
-                new Vector3(-22.1964f, -34.9f, 0.57f),
-                new Vector3(270f, 0f, 0f),
-                new Vector3(21.6f, 2.4f, 22f)
-            )
-        };
-
-        public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
-        {
-            try
-            {
-                if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
-                {
-                    if (existingBoard != null)
-                        Destroy(existingBoard);
-
-                    objectBoards.Remove(scene);
-                }
-
-                GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                board.transform.parent = GetObject(gameObject).transform;
-                board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
-                board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
-                board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
-
-                Destroy(board.GetComponent<Collider>());
-                board.GetComponent<Renderer>().material = OrangeUI;
-
-                objectBoards.Add(scene, board);
-            } catch (Exception e)
-            {
-                LogManager.LogError($"Failed to create object board for scene {scene}: {e}");
-                return;
-            }
-        }
-
         public static bool inRoomStatus;
         public static void OnJoinRoom()
         {
@@ -6040,8 +5741,6 @@ namespace iiMenu.Menu
             else
                 acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
 
-            SceneManager.sceneLoaded += SceneLoaded;
-
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
 
@@ -6053,6 +5752,8 @@ namespace iiMenu.Menu
 
             CrystalMaterial = GetObject("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk")?.GetComponent<Renderer>()?.material;
             TryOnRoom = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom");
+
+            fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
 
             string ConsoleGUID = "goldentrophy_Console"; // Do not change this, it's used to get other instances of Console
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
@@ -6153,7 +5854,7 @@ namespace iiMenu.Menu
         public static void UnloadMenu()
         {
             Settings.Panic();
-            Settings.DisableBoardColors();
+            CustomBoardManager.CustomBoardsEnabled = false;
 
             NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer -= OnLeaveRoom;
@@ -6175,19 +5876,19 @@ namespace iiMenu.Menu
             if (VRKeyboard != null)
             {
                 Destroy(VRKeyboard);
-                motd = null;
+                VRKeyboard = null;
             }
 
-            if (motd != null)
+            if (CustomBoardManager.instance.motdTitle != null)
             {
-                Destroy(motd);
-                motd = null;
+                Destroy(CustomBoardManager.instance.motdTitle);
+                CustomBoardManager.instance.motdTitle = null;
             }
 
-            if (motdText != null)
+            if (CustomBoardManager.instance.motdText != null)
             {
-                Destroy(motdText);
-                motdText = null;
+                Destroy(CustomBoardManager.instance.motdText);
+                CustomBoardManager.instance.motdText = null;
             }
 
             if (menuBackground != null)
@@ -6272,7 +5973,7 @@ jgs \_   _/ |Oo\
         public static bool flipMenu;
         public static bool shinyMenu;
         public static bool transparentMenu;
-        public static bool crystallizemenu;
+        public static bool crystallizeMenu;
         public static bool zeroGravityMenu;
         public static bool menuCollisions;
         public static bool dropOnRemove = true;
@@ -6528,8 +6229,6 @@ jgs \_   _/ |Oo\
         public static bool doCustomName;
         public static string customMenuName = "Your Text Here";
         public static bool doCustomMenuBackground;
-        public static bool disableBoardColor;
-        public static bool disableBoardTextColor;
         public static bool menuTrail;
         public static bool adaptiveButtons = true;
         public static int pcbg;
@@ -6687,12 +6386,6 @@ jgs \_   _/ |Oo\
         public static GameObject regwatchobject;
         public static GameObject regwatchText;
         public static GameObject regwatchShell;
-
-        public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
-        public static Material ForestMat;
-        public static Material StumpMat;
-        public static GameObject motd;
-        public static GameObject motdText;
         public static Material glass;
 
         public static Material cannmat;
@@ -6710,14 +6403,6 @@ jgs \_   _/ |Oo\
         public static Texture2D customWatermark;
 
         public static readonly List<string> favorites = new List<string> { "Exit Favorite Mods" };
-
-        public static readonly Dictionary<string, GameObject> objectBoards = new Dictionary<string, GameObject>();
-        public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger>();
-        public static readonly List<TextMeshPro> udTMP = new List<TextMeshPro>();
-        public static GameObject computerMonitor;
-
-        public static readonly int StumpLeaderboardIndex = 4;
-        public static readonly int ForestLeaderboardIndex = 6;
         
         public static Material[] ogScreenMats = { };
 
@@ -6812,7 +6497,6 @@ jgs \_   _/ |Oo\
 
         public static bool shift;
         public static bool lockShift; 
-        public static bool hasFoundAllBoards;
 
         public static bool lowercaseMode;
         public static bool uppercaseMode;
