@@ -5095,7 +5095,7 @@ namespace iiMenu.Menu
             {
                 string postData = JsonConvert.SerializeObject(new { text, lang = language });
 
-                using UnityWebRequest request = new UnityWebRequest("https://iidk.online/translate", "POST");
+                using UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/translate", "POST");
                 byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 request.downloadHandler = new DownloadHandlerBuffer();
