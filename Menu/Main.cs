@@ -417,14 +417,7 @@ namespace iiMenu.Menu
                     if (doCustomName)
                         motdTc.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
 
-                    if (translate)
-                        motdTc.text = TranslateText(motdTc.text);
-
-                    if (lowercaseMode)
-                        motdTc.text = motdTc.text.ToLower();
-
-                    if (uppercaseMode)
-                        motdTc.text = motdTc.text.ToUpper();
+                    motdTc.text = FollowMenuSettings(motdTc.text);
 
                     motdTc.color = textColors[0].GetCurrentColor();
                     motdTc.overflowMode = TextOverflowModes.Overflow;
@@ -450,14 +443,7 @@ namespace iiMenu.Menu
 
                     motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
 
-                    if (translate)
-                        motdTextB.text = TranslateText(motdTextB.text);
-
-                    if (lowercaseMode)
-                        motdTextB.text = motdTextB.text.ToLower();
-
-                    if (uppercaseMode)
-                        motdTextB.text = motdTextB.text.ToUpper();
+                    motdTextB.text = FollowMenuSettings(motdTextB.text);
                 } catch { }
 
                 try
@@ -519,12 +505,7 @@ namespace iiMenu.Menu
                     if (disableFpsCounter) textToSet = "";
                     if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
 
-                    fpsCount.text = textToSet;
-                    if (lowercaseMode)
-                        fpsCount.text = fpsCount.text.ToLower();
-
-                    if (uppercaseMode)
-                        fpsCount.text = fpsCount.text.ToUpper();
+                    fpsCount.text = FollowMenuSettings(textToSet, false);
                 }
 
                 if (watermarkImage != null)
@@ -548,13 +529,7 @@ namespace iiMenu.Menu
 
                 if (keyboardInputObject != null)
                 {
-                    keyboardInputObject.text = keyboardInput + (Time.frameCount / 45 % 2 == 0 ? "|" : " ");
-
-                    if (lowercaseMode)
-                        keyboardInputObject.text = keyboardInputObject.text.ToLower();
-
-                    if (uppercaseMode)
-                        keyboardInputObject.text = keyboardInputObject.text.ToUpper();
+                    keyboardInputObject.text = FollowMenuSettings(keyboardInput, false) + (Time.frameCount / 45 % 2 == 0 ? "|" : " ");
                 }
                 #endregion
 
@@ -1095,11 +1070,7 @@ namespace iiMenu.Menu
                         watchTextText.text += $"\n<color=grey>[{watchMenuIndex + 1}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
                         watchTextText.color = textColors[0].GetCurrentColor();
 
-                        if (lowercaseMode)
-                            watchTextText.text = watchTextText.text.ToLower();
-
-                        if (uppercaseMode)
-                            watchTextText.text = watchTextText.text.ToUpper();
+                        watchTextText.text = FollowMenuSettings(watchTextText.text, false);
 
                         if (watchIndicatorMat == null)
                             watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
@@ -1924,9 +1895,6 @@ namespace iiMenu.Menu
                 }
             }
             
-            if (translate)
-                buttonText.text = TranslateText(buttonText.text, output => ReloadMenu());
-            
             if (method.customBind != null)
             {
                 if (buttonText.text.Contains("</color><color=grey>]</color>"))
@@ -1938,11 +1906,7 @@ namespace iiMenu.Menu
             if (inputTextColor != "green")
                 buttonText.text = buttonText.text.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
-            if (lowercaseMode)
-                buttonText.text = buttonText.text.ToLower();
-
-            if (uppercaseMode)
-                buttonText.text = buttonText.text.ToUpper();
+            buttonText.text = FollowMenuSettings(buttonText.text);
 
             if (favorites.Contains(method.buttonText))
                 buttonText.text += " ✦";
@@ -2535,22 +2499,24 @@ namespace iiMenu.Menu
 
             canvasObj.AddComponent<GraphicRaycaster>();
 
-            title = new GameObject
+            if (!hidetitle)
             {
-                transform =
+                title = new GameObject
                 {
-                    parent = canvasObj.transform
-                }
-            }.AddComponent<Text>();
-            title.font = activeFont;
-            title.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                title.font = activeFont;
+                title.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
 
-            if (doCustomName)
-                title.text = customMenuName;
+                if (doCustomName)
+                    title.text = customMenuName;
 
-            if (annoyingMode)
-            {
-                string[] randomMenuNames = {
+                if (annoyingMode)
+                {
+                    string[] randomMenuNames = {
                     "ModderX",
                     "ShibaGT Gold",
                     "Kman Menu",
@@ -2565,59 +2531,51 @@ namespace iiMenu.Menu
                     "Unttile menu"
                 };
 
-                if (Random.Range(1, 5) == 2)
-                    title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length)] + " v" + Random.Range(8, 159);
-            }
-            if (translate)
-                title.text = TranslateText(title.text, output => ReloadMenu());
+                    if (Random.Range(1, 5) == 2)
+                        title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length)] + " v" + Random.Range(8, 159);
+                }
 
-            if (lowercaseMode)
-                title.text = title.text.ToLower();
+                title.text = FollowMenuSettings(title.text, !doCustomName);
 
-            if (uppercaseMode)
-                title.text = title.text.ToUpper();
+                if (!noPageNumber)
+                    title.text += $" <color=grey>[</color><color=white>{(pageScrolling ? pageOffset : pageNumber) + 1}</color><color=grey>]</color>";
 
-            if (!noPageNumber)
-                title.text += $" <color=grey>[</color><color=white>{(pageScrolling ? pageOffset : pageNumber) + 1}</color><color=grey>]</color>";
-            
-            if (hidetitle)
-                title.text = "";
-
-            if (gradientTitle)
-                title.text = RichtextGradient(NoRichtextTags(title.text),
-                    new[]
-                    {
+                if (gradientTitle)
+                    title.text = RichtextGradient(NoRichtextTags(title.text),
+                        new[]
+                        {
                         new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
                         new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
                         new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
-                    });
+                        });
 
-            if (animatedTitle)
-            {
-                string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
-                int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
-                title.text = length > 0 ? targetString[..length] : "";
+                if (animatedTitle)
+                {
+                    string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
+                    int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
+                    title.text = length > 0 ? targetString[..length] : "";
+                }
+
+                title.fontSize = 1;
+                title.AddComponent<TextColorChanger>().colors = textColors[0];
+
+                title.supportRichText = true;
+                title.fontStyle = activeFontStyle;
+                title.alignment = TextAnchor.MiddleCenter;
+                title.resizeTextForBestFit = true;
+                title.resizeTextMinSize = 0;
+                RectTransform component = title.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(0.28f, 0.05f);
+                if (NoAutoSizeText)
+                    component.sizeDelta = new Vector2(0.28f, 0.015f);
+
+                component.localPosition = new Vector3(0.06f, 0f, 0.165f);
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(title);
             }
-
-            title.fontSize = 1;
-            title.AddComponent<TextColorChanger>().colors = textColors[0];
-
-            title.supportRichText = true;
-            title.fontStyle = activeFontStyle;
-            title.alignment = TextAnchor.MiddleCenter;
-            title.resizeTextForBestFit = true;
-            title.resizeTextMinSize = 0;
-            RectTransform component = title.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(0.28f, 0.05f);
-            if (NoAutoSizeText)
-                component.sizeDelta = new Vector2(0.28f, 0.015f);
-
-            component.localPosition = new Vector3(0.06f, 0f, 0.165f);
-            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
-            if (outlineText)
-                OutlineCanvasObject(title);
 
             if (!backgroundColor.transparent)
             {
@@ -2631,14 +2589,7 @@ namespace iiMenu.Menu
                 buildLabel.font = activeFont;
                 buildLabel.text = $"Build {PluginInfo.Version}";
 
-                if (translate)
-                    buildLabel.text = TranslateText(buildLabel.text, output => ReloadMenu());
-
-                if (lowercaseMode)
-                    buildLabel.text = buildLabel.text.ToLower();
-
-                if (uppercaseMode)
-                    buildLabel.text = buildLabel.text.ToUpper();
+                buildLabel.text = FollowMenuSettings(buildLabel.text);
 
                 buildLabel.fontSize = 1;
                 buildLabel.AddComponent<TextColorChanger>().colors = textColors[0];
@@ -2647,7 +2598,8 @@ namespace iiMenu.Menu
                 buildLabel.alignment = TextAnchor.MiddleRight;
                 buildLabel.resizeTextForBestFit = true;
                 buildLabel.resizeTextMinSize = 0;
-                component = buildLabel.GetComponent<RectTransform>();
+
+                RectTransform component = buildLabel.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.28f, 0.02f);
                 component.position = thinMenu ? new Vector3(0.04f, 0.0f, -0.17f) : new Vector3(0.04f, 0.07f, -0.17f);
@@ -2705,12 +2657,7 @@ namespace iiMenu.Menu
                 if (hidetitle && !noPageNumber) textToSet += "      ";
                 if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1);
 
-                fps.text = textToSet;
-                if (lowercaseMode)
-                    fps.text = fps.text.ToLower();
-
-                if (uppercaseMode)
-                    fps.text = fps.text.ToUpper();
+                fps.text = FollowMenuSettings(textToSet, false);
 
                 fps.AddComponent<TextColorChanger>().colors = textColors[0];
                 fpsCount = fps;
@@ -2811,12 +2758,7 @@ namespace iiMenu.Menu
                 }.AddComponent<Text>();
 
                 keyboardInputObject.font = activeFont;
-                keyboardInputObject.text = keyboardInput + ((Time.time % 1f) > 0.5f ? "|" : "");
-                if (lowercaseMode)
-                    keyboardInputObject.text = keyboardInputObject.text.ToLower();
-
-                if (uppercaseMode)
-                    keyboardInputObject.text = keyboardInputObject.text.ToUpper();
+                keyboardInputObject.text = FollowMenuSettings(keyboardInput) + ((Time.time % 1f) > 0.5f ? "|" : "");
 
                 keyboardInputObject.supportRichText = true;
                 keyboardInputObject.fontSize = 1;
@@ -3435,14 +3377,7 @@ namespace iiMenu.Menu
             if (promptImageUrl != null)
                 promptText.text = promptText.text.Replace($"<{promptImageUrl}>", "");
 
-            if (translate)
-                promptText.text = TranslateText(promptText.text, output => ReloadMenu());
-
-            if (lowercaseMode)
-                promptText.text = promptText.text.ToLower();
-
-            if (uppercaseMode)
-                promptText.text = promptText.text.ToUpper();
+            promptText.text = FollowMenuSettings(promptText.text);
 
             promptText.fontSize = 1;
             promptText.lineSpacing = 0.8f;
@@ -3563,22 +3498,13 @@ namespace iiMenu.Menu
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = CurrentPrompt.AcceptText;
+                text.text = FollowMenuSettings(CurrentPrompt.AcceptText);
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
                 text.resizeTextMinSize = 0;
 
                 text.AddComponent<TextColorChanger>().colors = textColors[1];
-
-                if (translate)
-                    text.text = TranslateText(text.text, output => ReloadMenu());
-
-                if (lowercaseMode)
-                    text.text = text.text.ToLower();
-
-                if (uppercaseMode)
-                    text.text = text.text.ToUpper();
 
                 RectTransform textRect = text.GetComponent<RectTransform>();
                 textRect.sizeDelta = new Vector2(0.2f, 0.03f);
@@ -3638,7 +3564,7 @@ namespace iiMenu.Menu
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = CurrentPrompt.DeclineText;
+                text.text = FollowMenuSettings(CurrentPrompt.DeclineText);
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
@@ -3657,15 +3583,6 @@ namespace iiMenu.Menu
 
                 textRect.localPosition = new Vector3(0.064f, -0.075f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
-                if (translate)
-                    text.text = TranslateText(text.text, output => ReloadMenu());
-
-                if (lowercaseMode)
-                    text.text = text.text.ToLower();
-
-                if (uppercaseMode)
-                    text.text = text.text.ToUpper();
 
                 if (outlineText)
                     OutlineCanvasObject(text);
@@ -5206,6 +5123,20 @@ namespace iiMenu.Menu
 
                 onTranslated?.Invoke(translation);
             }
+        }
+
+        public static string FollowMenuSettings(string input, bool translateText = true)
+        {
+            if (translateText && translate)
+                input = TranslateText(input);
+
+            if (lowercaseMode)
+                input = input.ToLower();
+
+            if (uppercaseMode)
+                input = input.ToUpper();
+
+            return input;
         }
 
         /// <summary>
