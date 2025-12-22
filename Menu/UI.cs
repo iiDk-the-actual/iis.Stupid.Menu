@@ -36,6 +36,7 @@ namespace iiMenu.Menu
 {
     public class UI : MonoBehaviour
     {
+        // TODO: Convert this class to the assetbundle during TMPro migration
         public static UI Instance;
 
         private string inputText = "goldentrophy";
