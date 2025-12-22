@@ -1831,7 +1831,7 @@ namespace iiMenu.Menu
                     CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
-                    RoundObj(buttonObject);
+                    RoundMenuObject(buttonObject);
             }
 
             Text buttonText = new GameObject
@@ -2004,7 +2004,7 @@ namespace iiMenu.Menu
             }
 
             if (shouldRound)
-                RoundObj(buttonObject);
+                RoundMenuObject(buttonObject);
 
             Image searchImage = new GameObject
             {
@@ -2032,7 +2032,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(searchImage, 0);
+                OutlineCanvasObject(searchImage);
         }
 
         private static void AddDebugButton()
@@ -2059,7 +2059,7 @@ namespace iiMenu.Menu
             colorChanger.colors = buttonColors[infoScreenEnabled ^ swapButtonColors ? 0 : 1];
 
             if (shouldRound)
-                RoundObj(buttonObject);
+                RoundMenuObject(buttonObject);
 
             Image searchImage = new GameObject
             {
@@ -2087,7 +2087,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(searchImage, 2);
+                OutlineCanvasObject(searchImage);
         }
 
         private static void AddDonateButton()
@@ -2112,7 +2112,7 @@ namespace iiMenu.Menu
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
 
             if (shouldRound)
-                RoundObj(buttonObject);
+                RoundMenuObject(buttonObject);
 
             Image searchImage = new GameObject
             {
@@ -2140,7 +2140,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(searchImage, 3);
+                OutlineCanvasObject(searchImage);
         }
 
         private static void AddUpdateButton()
@@ -2165,7 +2165,7 @@ namespace iiMenu.Menu
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
 
             if (shouldRound)
-                RoundObj(buttonObject);
+                RoundMenuObject(buttonObject);
 
             Image searchImage = new GameObject
             {
@@ -2193,7 +2193,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(searchImage, 4);
+                OutlineCanvasObject(searchImage);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -2226,7 +2226,7 @@ namespace iiMenu.Menu
                 CoroutineManager.instance.StartCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
 
             if (shouldRound)
-                RoundObj(buttonObject);
+                RoundMenuObject(buttonObject);
 
             Image returnImage = new GameObject
             {
@@ -2258,7 +2258,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(returnImage, 1);
+                OutlineCanvasObject(returnImage);
         }
 
         private static void RenderIncrementalButton(bool increment, float offset, int buttonIndex, ButtonInfo method)
@@ -2296,7 +2296,7 @@ namespace iiMenu.Menu
                     CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
-                    RoundObj(buttonObject);
+                    RoundMenuObject(buttonObject);
             }
 
             RenderIncrementalText(increment, offset);
@@ -2518,7 +2518,7 @@ namespace iiMenu.Menu
                 }
 
                 if (shouldRound)
-                    RoundObj(menuBackground);
+                    RoundMenuObject(menuBackground);
             }
 
             canvasObj = new GameObject();
@@ -2616,7 +2616,7 @@ namespace iiMenu.Menu
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(title, true);
+                OutlineCanvasObject(title);
 
             if (!backgroundColor.transparent)
             {
@@ -2678,7 +2678,7 @@ namespace iiMenu.Menu
                     imageTransform.localPosition = new Vector3(0.04f, 0f, 0f);
 
                     if (outlineText)
-                        OutlineCanvasObject(watermarkImage, 5, true, true, 0.0025f);
+                        OutlineCanvasObject(watermarkImage);
 
                     imageTransform.localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
@@ -2726,7 +2726,7 @@ namespace iiMenu.Menu
                 fpsTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 if (outlineText)
-                    OutlineCanvasObject(fps, true);
+                    OutlineCanvasObject(fps);
             }
 
             float hkbStartTime = -0.3f;
@@ -2799,7 +2799,7 @@ namespace iiMenu.Menu
                 colorChanger.colors = buttonColors[0];
 
                 if (shouldRound)
-                    RoundObj(searchBoxObject);
+                    RoundMenuObject(searchBoxObject);
 
                 keyboardInputObject = new GameObject
                 {
@@ -2840,7 +2840,7 @@ namespace iiMenu.Menu
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 if (outlineText)
-                    OutlineCanvasObject(keyboardInputObject, true);
+                    OutlineCanvasObject(keyboardInputObject);
             }
 
             if (promptVideoPlayer != null)
@@ -3598,7 +3598,7 @@ namespace iiMenu.Menu
                     OutlineObj(button, true);
 
                 if (shouldRound)
-                    RoundObj(button);
+                    RoundMenuObject(button);
             }
 
             if (CurrentPrompt.DeclineText != null)
@@ -3673,7 +3673,7 @@ namespace iiMenu.Menu
                     OutlineObj(button, true);
 
                 if (shouldRound)
-                    RoundObj(button);
+                    RoundMenuObject(button);
             }
         }
 
@@ -3690,12 +3690,12 @@ namespace iiMenu.Menu
 
             if (shouldRound)
             {
-                RoundObj(prevButton);
-                RoundObj(nextButton);
+                RoundMenuObject(prevButton);
+                RoundMenuObject(nextButton);
             }
         }
 
-        public static string ExtractPromptImage(string input)
+        private static string ExtractPromptImage(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return null;
@@ -3772,7 +3772,7 @@ namespace iiMenu.Menu
             colorChanger.colors = buttonColors[shouldBeEnabled ? 1 : 0];
 
             if (shouldRound)
-                RoundObj(gameObject, 0.024f);
+                RoundMenuObject(gameObject, 0.024f);
         }
 
         public static void OutlineObjNonMenu(GameObject toOut, bool shouldBeEnabled)
@@ -3790,90 +3790,40 @@ namespace iiMenu.Menu
             colorChanger.colors = buttonColors[shouldBeEnabled ? 1 : 0];
         }
 
-        public static readonly Material outlineMat = new Material(Shader.Find("Sprites/Default"));
-        public static void OutlineCanvasObject(Text text, bool clamp = false, bool parent = false)
+        /// <summary>
+        /// Adds a black outline effect to the specified UI canvas object.
+        /// </summary>
+        /// <remarks>This method adds a Unity UI Outline component to the target object's GameObject,
+        /// configuring it with a thin black outline. If the object already has an Outline component, an additional one
+        /// will be added, which may result in multiple outlines. The outline uses the graphic's alpha
+        /// channel.</remarks>
+        /// <param name="canvasObject">The UI element to which the outline effect will be applied. Must not be null.</param>
+        public static void OutlineCanvasObject(MaskableGraphic canvasObject)
         {
-            Text baseText = Instantiate(text, text.transform.parent, false);
-            if (baseText.TryGetComponent<TextColorChanger>(out var textColorChanger))
-                Destroy(textColorChanger);
-
-            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
-            {
-                Text newText = Instantiate(baseText, baseText.transform.parent, false);
-                newText.text = NoColorTags(text.text);
-
-                newText.rectTransform.localPosition = text.rectTransform.localPosition + offset * 0.001f;
-
-                newText.material = outlineMat;
-                newText.color = Color.black;
-                newText.material.renderQueue = text.material.renderQueue - 2;
-
-                if (clamp)
-                    newText.AddComponent<ClampText>().targetText = text;
-
-                if (parent)
-                    newText.transform.SetParent(text.transform, true);
-            }
-
-            Destroy(baseText);
+            // Creds: libyyyreal for optimization tech
+            Outline outline = canvasObject.gameObject.AddComponent<Outline>();
+            outline.effectColor = Color.black;
+            outline.effectDistance = new Vector2(0.001f, 0.001f);
+            outline.useGraphicAlpha = true;
         }
 
-        private static readonly List<Material> imageMaterials = new List<Material>();
-        public static void OutlineCanvasObject(Image image, int index, bool parent = false, bool reloadMainTexture = false, float outlinePower = 0.001f)
-        {
-            while (imageMaterials.Count <= index)
-                imageMaterials.Add(null);
-
-            if (imageMaterials[index] == null)
-            {
-                Material material = new Material(Shader.Find("Sprites/Default"));
-
-                material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
-                material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.DisableKeyword("_ALPHATEST_ON");
-                material.EnableKeyword("_ALPHABLEND_ON");
-                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-
-                if (!reloadMainTexture)
-                    material.mainTexture = image.material.mainTexture;
-
-                imageMaterials[index] = material;
-            }
-
-            Material targetMaterial = imageMaterials[index];
-            if (reloadMainTexture)
-                targetMaterial.mainTexture = image.material.mainTexture;
-
-            Image baseImage = Instantiate(image, image.transform.parent, false);
-            if (baseImage.TryGetComponent<ImageColorChanger>(out var imageColorChanger))
-                Destroy(imageColorChanger);
-
-            foreach (Vector3 offset in 
-                parent ? new[] { new Vector3(1f, 1f, 0f), new Vector3(-1f, 1f, 0f), new Vector3(1f, -1f, 0f), new Vector3(-1f, -1f, 0f) }
-                : new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
-            {
-                Image newImage = Instantiate(baseImage, baseImage.transform.parent, false);
-
-                newImage.rectTransform.localPosition = image.rectTransform.localPosition + offset * outlinePower;
-                
-                newImage.material = targetMaterial;
-                newImage.color = Color.black;
-
-                newImage.material.renderQueue = image.material.renderQueue - 2;
-
-                if (parent)
-                    newImage.transform.SetParent(image.transform, true);
-            }
-
-            Destroy(baseImage);
-        }
-
-        public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
+        /// <summary>
+        /// Replaces a menu object's appearance with a rounded version by constructing beveled edges and rounded corners
+        /// around the specified GameObject.
+        /// </summary>
+        /// <remarks>If the specified GameObject is not a direct child of the menu, only a basic rounding
+        /// operation is performed. When applied to a menu child, the method disables the original renderer and
+        /// constructs new primitives to visually represent a rounded, beveled menu item. The method also ensures that
+        /// color and transparency settings are preserved by copying relevant components.</remarks>
+        /// <param name="toRound">The GameObject to be visually rounded. Must be a child of the menu GameObject to receive the full rounded
+        /// treatment; otherwise, a standard rounding is applied.</param>
+        /// <param name="Bevel">The width of the bevel applied to the edges and corners, in Unity units. Must be a positive value. The
+        /// default is 0.02.</param>
+        public static void RoundMenuObject(GameObject toRound, float Bevel = 0.02f)
         {
             if (toRound.transform.parent != menu?.transform)
             {
-                RoundObjNonMenu(toRound, Bevel);
+                RoundObject(toRound, Bevel);
                 return;
             }
 
@@ -3958,7 +3908,18 @@ namespace iiMenu.Menu
                 colorChanger.overrideTransparency = false;
         }
 
-        public static void RoundObjNonMenu(GameObject toRound, float bevel = 0.02f)
+        /// <summary>
+        /// Replaces the specified GameObject with a visually rounded version by constructing a composite of primitive
+        /// shapes with beveled edges.
+        /// </summary>
+        /// <remarks>This method disables the original object's Renderer and creates new child primitives
+        /// to approximate a rounded appearance. The original object's ColorChanger component, if present, will have its
+        /// overrideTransparency property set to false. The method does not modify the original object's collider or
+        /// mesh, and is intended for visual effects only.</remarks>
+        /// <param name="toRound">The GameObject to be visually rounded. Must have a Renderer component attached.</param>
+        /// <param name="bevel">The width, in world units, of the bevel applied to the object's edges. Must be non-negative. The default
+        /// value is 0.02.</param>
+        public static void RoundObject(GameObject toRound, float bevel = 0.02f)
         {
             static GameObject CreatePrimitive(PrimitiveType type, Transform parent, bool rendererEnabled)
             {
