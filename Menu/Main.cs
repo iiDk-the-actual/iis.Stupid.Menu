@@ -51,6 +51,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -1807,7 +1808,7 @@ namespace iiMenu.Menu
 
                 bool shouldSwap = swapButtonColors && buttonIndex < 0;
                 if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
-                    OutlineObj(buttonObject, shouldSwap ? method.enabled : !method.enabled);
+                    OutlineMenuObject(buttonObject, shouldSwap ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
                 {
@@ -1988,7 +1989,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Button>().relatedText = "Search";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, isSearching ^ !swapButtonColors);
+                OutlineMenuObject(buttonObject, isSearching ^ !swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[isSearching ^ !swapButtonColors ? 0 : 1];
@@ -2053,7 +2054,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Button>().relatedText = "Info Screen";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, infoScreenEnabled ^ swapButtonColors);
+                OutlineMenuObject(buttonObject, infoScreenEnabled ^ swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[infoScreenEnabled ^ swapButtonColors ? 0 : 1];
@@ -2106,7 +2107,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Button>().relatedText = "Donate Button";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, !swapButtonColors);
+                OutlineMenuObject(buttonObject, !swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
@@ -2159,7 +2160,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Button>().relatedText = "Update Button";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, !swapButtonColors);
+                OutlineMenuObject(buttonObject, !swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
@@ -2215,7 +2216,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Button>().relatedText = "Global Return";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, !swapButtonColors);
+                OutlineMenuObject(buttonObject, !swapButtonColors);
 
             if (lastClickedName != "Global Return")
             {
@@ -2285,7 +2286,7 @@ namespace iiMenu.Menu
                     buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
 
                 if (shouldOutline)
-                    OutlineObj(buttonObject, true);
+                    OutlineMenuObject(buttonObject, true);
 
                 if (lastClickedName != method.buttonText + (increment ? "+" : "-"))
                 {
@@ -2439,7 +2440,7 @@ namespace iiMenu.Menu
                 }
 
                 if (shouldOutline)
-                    OutlineObj(menuBackground, false);
+                    OutlineMenuObject(menuBackground, false);
 
                 if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63)
                 {
@@ -2793,7 +2794,7 @@ namespace iiMenu.Menu
                 searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - buttonOffset * ButtonDistance);
 
                 if (shouldOutline)
-                    OutlineObj(searchBoxObject, true);
+                    OutlineMenuObject(searchBoxObject, true);
 
                 ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
                 colorChanger.colors = buttonColors[0];
@@ -3595,7 +3596,7 @@ namespace iiMenu.Menu
                     OutlineCanvasObject(text);
 
                 if (shouldOutline)
-                    OutlineObj(button, true);
+                    OutlineMenuObject(button, true);
 
                 if (shouldRound)
                     RoundMenuObject(button);
@@ -3670,7 +3671,7 @@ namespace iiMenu.Menu
                     OutlineCanvasObject(text);
 
                 if (shouldOutline)
-                    OutlineObj(button, true);
+                    OutlineMenuObject(button, true);
 
                 if (shouldRound)
                     RoundMenuObject(button);
@@ -3684,8 +3685,8 @@ namespace iiMenu.Menu
 
             if (shouldOutline)
             {
-                OutlineObj(prevButton, !swapButtonColors);
-                OutlineObj(nextButton, !swapButtonColors);
+                OutlineMenuObject(prevButton, !swapButtonColors);
+                OutlineMenuObject(nextButton, !swapButtonColors);
             }
 
             if (shouldRound)
@@ -3695,7 +3696,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static string ExtractPromptImage(string input)
+        public static string ExtractPromptImage(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return null;
@@ -3758,8 +3759,26 @@ namespace iiMenu.Menu
             return button;
         }
 
-        public static void OutlineObj(GameObject toOut, bool shouldBeEnabled)
+        /// <summary>
+        /// Applies or removes an outline effect to the specified menu object, adjusting its appearance based on the
+        /// provided state.
+        /// </summary>
+        /// <remarks>If the specified object is not a direct child of the menu, the outline effect is
+        /// applied using a general method. For menu child objects, a new primitive is created and styled to visually
+        /// represent the outline. The appearance of the outline may vary depending on the value of shouldBeEnabled and
+        /// the configuration of the menu. This method does not modify the original object's geometry or
+        /// components.</remarks>
+        /// <param name="toOut">The GameObject to which the outline effect will be applied or removed. Must not be null.</param>
+        /// <param name="shouldBeEnabled">A value indicating whether the outline effect should be enabled (<see langword="true"/>) or removed (<see
+        /// langword="false"/>).</param>
+        public static void OutlineMenuObject(GameObject toOut, bool shouldBeEnabled)
         {
+            if (toOut.transform.parent != menu?.transform)
+            {
+                OutlineObject(toOut, shouldBeEnabled);
+                return;
+            }
+
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
             Destroy(gameObject.GetComponent<BoxCollider>());
@@ -3775,7 +3794,17 @@ namespace iiMenu.Menu
                 RoundMenuObject(gameObject, 0.024f);
         }
 
-        public static void OutlineObjNonMenu(GameObject toOut, bool shouldBeEnabled)
+        /// <summary>
+        /// Creates an outline effect around the specified GameObject to visually indicate its enabled or disabled
+        /// state.
+        /// </summary>
+        /// <remarks>The outline is created as a separate GameObject, matching the position, rotation, and
+        /// scale of the target object. The outline color reflects the enabled or disabled state as determined by the
+        /// application's color settings. This method does not modify the original GameObject.</remarks>
+        /// <param name="toOut">The GameObject to outline. Cannot be null.</param>
+        /// <param name="shouldBeEnabled">A value indicating whether the outline should represent the enabled (<see langword="true"/>) or disabled
+        /// (<see langword="false"/>) state.</param>
+        public static void OutlineObject(GameObject toOut, bool shouldBeEnabled)
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
 

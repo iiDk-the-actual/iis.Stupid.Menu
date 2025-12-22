@@ -103,7 +103,7 @@ namespace iiMenu.Mods
                     }
 
                     if (shouldOutline)
-                        OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
+                        OutlineObject(VRKeyboard.transform.Find("Background").gameObject, true);
 
                     var keys = new[] { "Numbers", "Letters", "Special", "Seperate" }
                         .Select(name => VRKeyboard.transform.Find(name))
@@ -117,7 +117,7 @@ namespace iiMenu.Mods
                         v.layer = 2;
 
                         if (shouldOutline)
-                            OutlineObjNonMenu(v, true);
+                            OutlineObject(v, true);
                     }
                 }
             }
