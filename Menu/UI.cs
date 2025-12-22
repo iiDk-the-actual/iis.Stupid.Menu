@@ -157,11 +157,11 @@ namespace iiMenu.Menu
 
         private string GetRoomText()
         {
-            string roomText = translate ? TranslateText("Not connected to room") : "Not connected to room";
+            string roomText = translate ? TranslationManager.TranslateText("Not connected to room") : "Not connected to room";
             try
             {
                 if (PhotonNetwork.InRoom)
-                    roomText = (translate ? TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
+                    roomText = (translate ? TranslationManager.TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
             }
             catch { }
             return roomText;
@@ -171,7 +171,7 @@ namespace iiMenu.Menu
         {
             if (!Plugin.FirstLaunch || hidBefore) return;
 
-            string hideText = translate ? TranslateText("Press Backslash to hide this UI") : "Press Backslash to hide this UI";
+            string hideText = translate ? TranslationManager.TranslateText("Press Backslash to hide this UI") : "Press Backslash to hide this UI";
             GUI.Label(new Rect((Screen.width / 2f) - (GUI.skin.label.CalcSize(new GUIContent(hideText)).x / 2f),
                 Screen.height - 35, Screen.width, 40), hideText);
         }
@@ -210,7 +210,7 @@ namespace iiMenu.Menu
                     alignment = TextAnchor.LowerRight
                 };
                 GUI.Label(versionLabelRect,
-                    (translate ? TranslateText("Build") : "Build") + " " + PluginInfo.Version + "\n" +
+                    (translate ? TranslationManager.TranslateText("Build") : "Build") + " " + PluginInfo.Version + "\n" +
                     serverLink.Replace("https://", ""), style);
             }
             catch { }
@@ -228,10 +228,10 @@ namespace iiMenu.Menu
             g = GUI.TextField(gRect, g);
             b = GUI.TextField(bRect, b);
 
-            if (GUI.Button(nameButtonRect, translate ? TranslateText("Name") : "Name"))
+            if (GUI.Button(nameButtonRect, translate ? TranslationManager.TranslateText("Name") : "Name"))
                 ChangeName(inputText.Replace("\\n", "\n"));
 
-            if (GUI.Button(colorButtonRect, translate ? TranslateText("Color") : "Color"))
+            if (GUI.Button(colorButtonRect, translate ? TranslationManager.TranslateText("Color") : "Color"))
             {
                 Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
                 ChangeColor(color);
@@ -240,7 +240,7 @@ namespace iiMenu.Menu
             bool Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
             string targetText = Create ? "Create" : "Join";
 
-            if (GUI.Button(joinButtonRect, translate ? TranslateText(targetText) : targetText))
+            if (GUI.Button(joinButtonRect, translate ? TranslationManager.TranslateText(targetText) : targetText))
             {
                 if (Create)
                     Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
@@ -324,7 +324,7 @@ namespace iiMenu.Menu
             string buttonText = button.overlapText ?? button.buttonText;
 
             if (translate)
-                buttonText = TranslateText(buttonText);
+                buttonText = TranslationManager.TranslateText(buttonText);
 
             if (inputTextColor != "green")
                 buttonText = buttonText.Replace(" <color=grey>[</color><color=green>",

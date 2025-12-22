@@ -197,17 +197,10 @@ namespace iiMenu.Managers
                                 {
                                     string buttonText = button.overlapText ?? button.buttonText;
 
-                                    if (translate)
-                                        buttonText = TranslateText(buttonText);
-
                                     if (inputTextColor != "green")
                                         buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
-                                    if (lowercaseMode)
-                                        buttonText = buttonText.ToLower();
-                                    if (uppercaseMode)
-                                        buttonText = buttonText.ToUpper();
-
+                                    buttonText = FollowMenuSettings(buttonText);
                                     enabledMods.Add(buttonText);
                                 }
                             }
@@ -283,11 +276,11 @@ namespace iiMenu.Managers
                 {
                     if (translate)
                     {
-                        if (translateCache.ContainsKey(notificationText))
-                            notificationText = TranslateText(notificationText);
+                        if (TranslationManager.translateCache.ContainsKey(notificationText))
+                            notificationText = TranslationManager.TranslateText(notificationText);
                         else
                         {
-                            TranslateText(notificationText, delegate { SendNotification(notificationText, clearTime); });
+                            TranslationManager.TranslateText(notificationText, delegate { SendNotification(notificationText, clearTime); });
                             return;
                         }
                     }
@@ -407,11 +400,9 @@ namespace iiMenu.Managers
 
         private static IEnumerator TrackCoroutine(IEnumerator routine)
         {
-            Coroutine self = null;
-
             IEnumerator Wrapper()
             {
-                self = CoroutineManager.instance.StartCoroutine(routine);
+                Coroutine self = CoroutineManager.instance.StartCoroutine(routine);
                 clearCoroutines.Add(self);
                 yield return self;
                 clearCoroutines.Remove(self);

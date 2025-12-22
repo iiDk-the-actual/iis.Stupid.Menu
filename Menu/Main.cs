@@ -108,6 +108,7 @@ namespace iiMenu.Menu
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
+            NetworkSystem.Instance.OnMasterClientSwitchedEvent += OnMasterClientSwitch;
 
             NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
@@ -451,9 +452,8 @@ namespace iiMenu.Menu
                     fpsAverageNumber /= 100f;
                 }
                 else
-                {
                     fpsAverageNumber = 1f / Time.unscaledDeltaTime;
-                }
+                
                 if (Time.time > fpsAvgTime || !fpsCountTimed)
                 {
                     lastDeltaTime = Mathf.Ceil(fpsAverageNumber);
@@ -653,25 +653,6 @@ namespace iiMenu.Menu
                         NotificationManager.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
                     }
                 }
-
-                // Master client notification
-                try
-                {
-                    if (PhotonNetwork.InRoom)
-                    {
-                        if (!disableMasterClientNotifications)
-                            if (PhotonNetwork.IsMasterClient && !lastMasterClient)
-                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
-
-                        lastMasterClient = PhotonNetwork.IsMasterClient;
-                    }
-                }
-                catch { }
-
-                if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
-                    Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
-                else
-                    Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
 
                 // Party kick code (to return back to the main lobby when you're done)
                 if (PhotonNetwork.InRoom)
@@ -3633,7 +3614,7 @@ namespace iiMenu.Menu
             // Creds: libyyyreal for optimization tech
             Outline outline = canvasObject.gameObject.AddComponent<Outline>();
             outline.effectColor = Color.black;
-            outline.effectDistance = new Vector2(0.001f, 0.001f);
+            outline.effectDistance = new Vector2(0.0015f, 0.0015f);
             outline.useGraphicAlpha = true;
         }
 
@@ -3826,7 +3807,8 @@ namespace iiMenu.Menu
         public static List<PromptData> prompts = new List<PromptData>();
         public static PromptData CurrentPrompt
         {
-            get {
+            get 
+            {
                 if (prompts.Count > 0)
                     return prompts[0];
                 else
@@ -4801,6 +4783,22 @@ namespace iiMenu.Menu
         }
 
         private static readonly Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();
+
+        /// <summary>
+        /// Retrieves a GameObject by name, using a cache to avoid repeated scene searches.
+        /// </summary>
+        /// <param name="find">
+        /// The name of the GameObject to locate in the scene.
+        /// </param>
+        /// <returns>
+        /// The found GameObject if it exists; otherwise, null.
+        /// </returns>
+        /// <remarks>
+        /// The method first checks an internal object pool for a cached reference.
+        /// If not found, it falls back to <see cref="GameObject.Find"> and caches the result
+        /// for future lookups. This reduces the performance cost of repeated
+        /// <see cref="GameObject.Find"/> calls.
+        /// </remarks>
         public static GameObject GetObject(string find)
         {
             if (objectPool.TryGetValue(find, out GameObject go))
@@ -4955,79 +4953,6 @@ namespace iiMenu.Menu
         public static string ToTitleCase(string text) =>
             CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
 
-        public static readonly Dictionary<string, float> waitingForTranslate = new Dictionary<string, float>();
-        public static readonly Dictionary<string, string> translateCache = new Dictionary<string, string>();
-        public static string TranslateText(string input, Action<string> onTranslated = null)
-        {
-            if (translateCache.TryGetValue(input, out var text))
-                return text;
-            if (!waitingForTranslate.ContainsKey(input))
-            {
-                waitingForTranslate.Add(input, Time.time + 10f);
-                CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
-            } else
-            {
-                if (!(Time.time > waitingForTranslate[input])) return "Loading...";
-                waitingForTranslate.Remove(input);
-
-                waitingForTranslate.Add(input, Time.time + 10f);
-                CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
-            }
-
-            return "Loading...";
-        }
-
-        public static IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
-        {
-            if (translateCache.TryGetValue(text, out var value))
-            {
-                onTranslated?.Invoke(value);
-
-                yield break;
-            }
-
-            string fileName = GetSHA256(text) + ".txt";
-            string directoryPath = $"{PluginInfo.BaseDirectory}/TranslationData{language.ToUpper()}";
-
-            if (!Directory.Exists(directoryPath))
-                Directory.CreateDirectory(directoryPath);
-
-            string filePath = Path.Combine(directoryPath, fileName);
-            string translation = null;
-
-            if (!File.Exists(filePath))
-            {
-                string postData = JsonConvert.SerializeObject(new { text, lang = language });
-
-                using UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/translate", "POST");
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
-
-                yield return request.SendWebRequest();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    string json = request.downloadHandler.text;
-                    Match match = Regex.Match(json, "\"translation\"\\s*:\\s*\"(.*?)\"");
-                    if (match.Success)
-                    {
-                        translation = match.Groups[1].Value;
-                        File.WriteAllText(filePath, translation);
-                    }
-                }
-            }
-            else
-                translation = File.ReadAllText(filePath);
-
-            if (translation != null)
-            {
-                translateCache.Add(text, translation);
-                onTranslated?.Invoke(translation);
-            }
-        }
-
         /// <summary>
         /// Applies configured menu text transformations to the specified input string, including optional translation
         /// and case adjustments.
@@ -5043,7 +4968,7 @@ namespace iiMenu.Menu
         public static string FollowMenuSettings(string input, bool translateText = true)
         {
             if (translateText && translate)
-                input = TranslateText(input);
+                input = TranslationManager.TranslateText(input);
 
             if (lowercaseMode)
                 input = input.ToLower();
@@ -5161,6 +5086,8 @@ namespace iiMenu.Menu
             new Color(color.r * intensity, color.g * intensity, color.b * intensity, color.a);
 
         public static bool inRoomStatus;
+        public static string lastRoom;
+
         public static void OnJoinRoom()
         {
             if (inRoomStatus)
@@ -5170,7 +5097,7 @@ namespace iiMenu.Menu
             lastRoom = PhotonNetwork.CurrentRoom.Name;
 
             if (!disableRoomNotifications)
-                NotificationManager.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: {lastRoom}");
 
             RPCProtection();
         }
@@ -5186,9 +5113,23 @@ namespace iiMenu.Menu
                 NotificationManager.ClearAllNotifications();
 
             if (!disableRoomNotifications)
-                NotificationManager.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                NotificationManager.SendNotification($"<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: {lastRoom}");
+
             RPCProtection();
-            lastMasterClient = false;
+        }
+
+        public static void OnMasterClientSwitch(NetPlayer masterClient)
+        {
+            if (disableMasterClientNotifications)
+                return;
+
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                Buttons.GetIndex("MasterLabel").overlapText = "You are master client.";
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
+            }
+            else
+                Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
         }
 
         public static string CleanPlayerName(string input, int length = 12)
@@ -6410,17 +6351,9 @@ jgs \_   _/ |Oo\
         public static Texture2D customWatermark;
 
         public static readonly List<string> favorites = new List<string> { "Exit Favorite Mods" };
-        
-        public static Material[] ogScreenMats = { };
-
         public static bool translate;
-        public static string language;
 
         public static string serverLink = "https://discord.gg/iidk";
-
-        public static readonly int[] bones = {
-            4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
-        };
 
         public static int arrowType;
         public static readonly string[][] arrowTypes = {
@@ -6482,9 +6415,6 @@ jgs \_   _/ |Oo\
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
         public static int pointerIndex;
 
-        public static bool lastMasterClient;
-        public static string lastRoom = "";
-
         public static string partyLastCode;
         public static float partyTime;
         public static bool partyKickReconnecting;
@@ -6498,12 +6428,10 @@ jgs \_   _/ |Oo\
         public static int notificationDecayTime = 1000;
         public static int notificationSoundIndex;
 
-        public static string inputText = "";
-
         public static float ShootStrength = 19.44f;
 
         public static bool shift;
-        public static bool lockShift; 
+        public static bool lockShift; // KonekoKitten KTOH
 
         public static bool lowercaseMode;
         public static bool uppercaseMode;

@@ -3839,8 +3839,8 @@ namespace iiMenu.Mods
                 {
                     GameObject boneCollider = colliders[i + 1];
 
-                    Vector3 pointA = vrrig.mainSkin.bones[bones[i * 2]].position;
-                    Vector3 pointB = vrrig.mainSkin.bones[bones[i * 2 + 1]].position;
+                    Vector3 pointA = vrrig.mainSkin.bones[Visuals.bones[i * 2]].position;
+                    Vector3 pointB = vrrig.mainSkin.bones[Visuals.bones[i * 2 + 1]].position;
 
                     boneCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
                     boneCollider.transform.LookAt(pointB);

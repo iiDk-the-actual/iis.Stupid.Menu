@@ -26,13 +26,13 @@ namespace iiMenu
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @crimsoncauldron with love <3";
-        public const string BuildTimestamp = "2025-12-22T22:21:32Z";
+        public const string BuildTimestamp = "2025-12-22T23:56:11Z";
         public const string Version = "7.9.0";
 
         public const string BaseDirectory = "iisStupidMenu";
         public const string ClientResourcePath = "iiMenu.Resources.Client";
         public const string ServerResourcePath = "https://raw.githubusercontent.com/iiDk-the-actual/iis.Stupid.Menu/master/Resources/Server";
-        public const string ServerAPI = "https://iidk.online";
+        public const string ServerAPI = "https://iidk.online"; // See https://github.com/iiDk-the-actual/iidk.online for more information
         
         public const string Logo = @"••╹   ┏┓     • ┓  ┳┳┓      
 ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏

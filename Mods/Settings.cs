@@ -924,8 +924,8 @@ exit 0";
             if (langInd < 0)
                 langInd = languageNames.Length - 1;
 
-            translateCache.Clear();
-            language = codenames[langInd];
+            TranslationManager.translateCache.Clear();
+            TranslationManager.language = codenames[langInd];
 
             Buttons.GetIndex("Change Menu Language").overlapText = "Change Menu Language <color=grey>[</color><color=green>" + languageNames[langInd] + "</color><color=grey>]</color>";
 
@@ -3158,510 +3158,562 @@ exit 0";
         private static int modifyWhatId;
         public static void CMTRed(bool increase = true)
         {
-            int r = 0;
             switch (modifyWhatId)
             {
                 case 0:
-                    r = (int)Math.Round(backgroundColor.GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(backgroundColor.GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(0, new Color(r / 10f, backgroundColor.GetColor(0).g, backgroundColor.GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(0, new Color(r / 10f, backgroundColor.GetColor(0).g, backgroundColor.GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 1:
-                    r = (int)Math.Round(backgroundColor.GetColor(1).r * 10f);
+                    {
+                        int r = (int)Math.Round(backgroundColor.GetColor(1).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(1, new Color(r / 10f, backgroundColor.GetColor(1).g, backgroundColor.GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(1, new Color(r / 10f, backgroundColor.GetColor(1).g, backgroundColor.GetColor(1).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 2:
-                    r = (int)Math.Round(buttonColors[0].GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(buttonColors[0].GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(0, new Color(r / 10f, buttonColors[0].GetColor(0).g, buttonColors[0].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(0, new Color(r / 10f, buttonColors[0].GetColor(0).g, buttonColors[0].GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 3:
-                    r = (int)Math.Round(buttonColors[0].GetColor(1).r * 10f);
+                    {
+                        int r = (int)Math.Round(buttonColors[0].GetColor(1).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(1, new Color(r / 10f, buttonColors[0].GetColor(1).g, buttonColors[0].GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(1, new Color(r / 10f, buttonColors[0].GetColor(1).g, buttonColors[0].GetColor(1).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 4:
-                    r = (int)Math.Round(buttonColors[1].GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(buttonColors[1].GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(0, new Color(r / 10f, buttonColors[1].GetColor(0).g, buttonColors[1].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(0, new Color(r / 10f, buttonColors[1].GetColor(0).g, buttonColors[1].GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 5:
-                    r = (int)Math.Round(buttonColors[1].GetColor(1).r * 10f);
+                    {
+                        int r = (int)Math.Round(buttonColors[1].GetColor(1).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(1, new Color(r / 10f, buttonColors[1].GetColor(1).g, buttonColors[1].GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(1, new Color(r / 10f, buttonColors[1].GetColor(1).g, buttonColors[1].GetColor(1).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 6:
-                    r = (int)Math.Round(textColors[0].GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(textColors[0].GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[0].SetColors(new Color(r / 10f, textColors[0].GetColor(0).g, textColors[0].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[0].SetColors(new Color(r / 10f, textColors[0].GetColor(0).g, textColors[0].GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 7:
-                    r = (int)Math.Round(textColors[1].GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(textColors[1].GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    textColors[1].SetColors(new Color(r / 10f, textColors[1].GetColor(0).g, textColors[1].GetColor(0).b));
+                        textColors[1].SetColors(new Color(r / 10f, textColors[1].GetColor(0).g, textColors[1].GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 8:
-                    r = (int)Math.Round(textColors[2].GetColor(0).r * 10f);
+                    {
+                        int r = (int)Math.Round(textColors[2].GetColor(0).r * 10f);
 
-                    if (increase)
-                        r++;
-                    else
-                        r--;
+                        if (increase)
+                            r++;
+                        else
+                            r--;
 
-                    r %= 11;
-                    if (r < 0)
-                        r = 10;
+                        r %= 11;
+                        if (r < 0)
+                            r = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[2].SetColors(new Color(r / 10f, textColors[2].GetColor(0).g, textColors[2].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[2].SetColors(new Color(r / 10f, textColors[2].GetColor(0).g, textColors[2].GetColor(0).b));
 
-                    Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
             }
             WriteCustomTheme();
         }
+
         public static void CMTGreen(bool increase = true)
         {
-            int g = 0;
             switch (modifyWhatId)
             {
                 case 0:
-                    g = (int)Math.Round(backgroundColor.GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(backgroundColor.GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, g / 10f, backgroundColor.GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, g / 10f, backgroundColor.GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 1:
-                    g = (int)Math.Round(backgroundColor.GetColor(1).g * 10f);
+                    {
+                        int g = (int)Math.Round(backgroundColor.GetColor(1).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, g / 10f, backgroundColor.GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, g / 10f, backgroundColor.GetColor(1).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 2:
-                    g = (int)Math.Round(buttonColors[0].GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(buttonColors[0].GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, g / 10f, buttonColors[0].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, g / 10f, buttonColors[0].GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 3:
-                    g = (int)Math.Round(buttonColors[0].GetColor(1).g * 10f);
+                    {
+                        int g = (int)Math.Round(buttonColors[0].GetColor(1).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, g / 10f, buttonColors[0].GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, g / 10f, buttonColors[0].GetColor(1).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 4:
-                    g = (int)Math.Round(buttonColors[1].GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(buttonColors[1].GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, g / 10f, buttonColors[1].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, g / 10f, buttonColors[1].GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 5:
-                    g = (int)Math.Round(buttonColors[1].GetColor(1).g * 10f);
+                    {
+                        int g = (int)Math.Round(buttonColors[1].GetColor(1).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, g / 10f, buttonColors[1].GetColor(1).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, g / 10f, buttonColors[1].GetColor(1).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 6:
-                    g = (int)Math.Round(textColors[0].GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(textColors[0].GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, g / 10f, textColors[0].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, g / 10f, textColors[0].GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 7:
-                    g = (int)Math.Round(textColors[1].GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(textColors[1].GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, g / 10f, textColors[1].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, g / 10f, textColors[1].GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 8:
-                    g = (int)Math.Round(textColors[2].GetColor(0).g * 10f);
+                    {
+                        int g = (int)Math.Round(textColors[2].GetColor(0).g * 10f);
 
-                    if (increase)
-                        g++;
-                    else
-                        g--;
+                        if (increase)
+                            g++;
+                        else
+                            g--;
 
-                    g %= 11;
-                    if (g < 0)
-                        g = 10;
+                        g %= 11;
+                        if (g < 0)
+                            g = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, g / 10f, textColors[2].GetColor(0).b));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, g / 10f, textColors[2].GetColor(0).b));
 
-                    Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
             }
             WriteCustomTheme();
         }
         public static void CMTBlue(bool increase = true)
         {
-            int b = 0;
             switch (modifyWhatId)
             {
                 case 0:
-                    b = (int)Math.Round(backgroundColor.GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(backgroundColor.GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, backgroundColor.GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, backgroundColor.GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 1:
-                    b = (int)Math.Round(backgroundColor.GetColor(1).b * 10f);
+                    {
+                        int b = (int)Math.Round(backgroundColor.GetColor(1).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, backgroundColor.GetColor(1).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, backgroundColor.GetColor(1).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 2:
-                    b = (int)Math.Round(buttonColors[0].GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(buttonColors[0].GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, buttonColors[0].GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, buttonColors[0].GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 3:
-                    b = (int)Math.Round(buttonColors[0].GetColor(1).b * 10f);
+                    {
+                        int b = (int)Math.Round(buttonColors[0].GetColor(1).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, buttonColors[0].GetColor(1).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, buttonColors[0].GetColor(1).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 4:
-                    b = (int)Math.Round(buttonColors[1].GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(buttonColors[1].GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, buttonColors[1].GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, buttonColors[1].GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 5:
-                    b = (int)Math.Round(buttonColors[1].GetColor(1).b * 10f);
+                    {
+                        int b = (int)Math.Round(buttonColors[1].GetColor(1).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, buttonColors[1].GetColor(1).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, buttonColors[1].GetColor(1).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
+                        break;
+                    }
                 case 6:
-                    b = (int)Math.Round(textColors[0].GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(textColors[0].GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, textColors[0].GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, textColors[0].GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 7:
-                    b = (int)Math.Round(textColors[1].GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(textColors[1].GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, textColors[1].GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, textColors[1].GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
                 case 8:
-                    b = (int)Math.Round(textColors[2].GetColor(0).b * 10f);
+                    {
+                        int b = (int)Math.Round(textColors[2].GetColor(0).b * 10f);
 
-                    if (increase)
-                        b++;
-                    else
-                        b--;
+                        if (increase)
+                            b++;
+                        else
+                            b--;
 
-                    b %= 11;
-                    if (b < 0)
-                        b = 10;
+                        b %= 11;
+                        if (b < 0)
+                            b = 10;
 
-                    if (Buttons.GetIndex("Custom Menu Theme").enabled)
-                        textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, textColors[2].GetColor(0).g, b / 10f));
+                        if (Buttons.GetIndex("Custom Menu Theme").enabled)
+                            textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, textColors[2].GetColor(0).g, b / 10f));
 
-                    Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
-                    Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
-                    break;
+                        Buttons.GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b + "</color><color=grey>]</color>";
+                        Buttons.GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
+                        break;
+                    }
             }
             WriteCustomTheme();
         }
