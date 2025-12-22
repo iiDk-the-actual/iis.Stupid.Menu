@@ -1704,10 +1704,7 @@ namespace iiMenu.Menu
             if (method.rebindKey != null)
             {
                 if (buttonText.text.Contains("</color><color=grey>]</color>"))
-                {
-                    string button = buttonText.text.Split("<color=grey>[</color><color=green>")[1].Split("</color><color=grey>]</color>")[0];
                     buttonText.text = buttonText.text.Split("<color=grey>[</color><color=green>")[0] + "<color=grey>[</color><color=green>" + method.rebindKey + "</color><color=grey>]</color>";
-                }
             }
             
             if (method.customBind != null)
