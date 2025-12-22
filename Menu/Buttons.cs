@@ -2385,8 +2385,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Change Name Gun", overlapText = "Change Name Gun", enableMethod = Detected.PromptNameChange, method = Detected.ChangeNameGun, detected = true, toolTip = "Changes the name of whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Change Name All", overlapText = "Change Name All", enableMethod = Detected.PromptNameChange, method = Detected.ChangeNameAll, detected = true, toolTip = "Changes the name of everyone in the room."},
 
-                new ButtonInfo { buttonText = "Detected Ban Gun", overlapText = "Ban Gun [1 Hour]", method = Detected.BanGun1Hour, detected = true, toolTip = "Changes the name of whoever your hand desires to a banned word."}, // ReadMe: [1 Hour] is optional, you can remove it.
-                new ButtonInfo { buttonText = "Detected Ban All", overlapText = "Ban All [1 Hour]", method = Detected.BanAll1Hour, detected = true, toolTip = "Changes the name of everyone in the room to a banned word."}, // DeleteMe: If it doesn't ban them than they'll get banned from reports as people will report them
+                new ButtonInfo { buttonText = "Detected Ban Gun", overlapText = "Ban Gun", method = Detected.BanGun1Hour, detected = true, toolTip = "Changes the name of whoever your hand desires to a banned word."},
+                new ButtonInfo { buttonText = "Detected Ban All", overlapText = "Ban All", method = Detected.BanAll1Hour, detected = true, toolTip = "Changes the name of everyone in the room to a banned word."},
 
                 new ButtonInfo { buttonText = "Break Network Triggers", method =() => Detected.BreakNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Breaks the network triggers."},
                 new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
