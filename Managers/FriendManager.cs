@@ -618,7 +618,7 @@ namespace iiMenu.Managers
 
         public IEnumerator UpdateFriendsList()
         {
-            using UnityWebRequest request = new UnityWebRequest("https://iidk.online/getfriends", "GET");
+            using UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/getfriends", "GET");
             byte[] bodyRaw = Encoding.UTF8.GetBytes("{}");
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
@@ -794,7 +794,7 @@ namespace iiMenu.Managers
 
         public static IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
         {
-            UnityWebRequest request = new UnityWebRequest($"https://iidk.online/{action}", "POST");
+            UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/{action}", "POST");
 
             string json = JsonConvert.SerializeObject(new { uid });
 
@@ -1231,6 +1231,8 @@ namespace iiMenu.Managers
 
         public class FriendWebSocket : MonoBehaviour
         {
+            public const string FriendWebsocket = "wss://iidk.online";
+
             public ClientWebSocket ws;
             public CancellationTokenSource cts;
 
@@ -1265,7 +1267,7 @@ namespace iiMenu.Managers
                 try
                 {
                     ws = new ClientWebSocket();
-                    await ws.ConnectAsync(new Uri("wss://iidk.online"), cts.Token);
+                    await ws.ConnectAsync(new Uri(FriendWebsocket), cts.Token);
 
                     if (ws.State == WebSocketState.Open)
                     {
