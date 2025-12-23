@@ -974,6 +974,51 @@ namespace iiMenu.Mods
                 NotificationManager.information.Remove("Nearby");
         }
 
+        public static void InfoOverlayGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    NotificationManager.information["Name"] = lockTarget.GetName();
+                    NotificationManager.information["Color"] = lockTarget.GetColor().ToRGBString();
+                    NotificationManager.information["ID"] = lockTarget.GetPlayer().UserId;
+                    NotificationManager.information["Platform"] = lockTarget.GetPlatform();
+                    NotificationManager.information["Ping"] = lockTarget.GetPing().ToString();
+                    NotificationManager.information["FPS"] = lockTarget.fps.ToString();
+                    NotificationManager.information["Creation Date"] = lockTarget.GetCreationDate();
+                    NotificationManager.information["Turn"] = $"{lockTarget.turnType.ToTitleCase()} {lockTarget.turnFactor}";
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    NotificationManager.information.Remove("Name");
+                    NotificationManager.information.Remove("Color");
+                    NotificationManager.information.Remove("ID");
+                    NotificationManager.information.Remove("Platform");
+                    NotificationManager.information.Remove("Ping");
+                    NotificationManager.information.Remove("FPS");
+                    NotificationManager.information.Remove("Creation Date");
+                    NotificationManager.information.Remove("Turn");
+                }
+            }
+        }
+
         public static void NearbyTaggerLabel()
         {
             if (DoPerformanceCheck())

@@ -46,6 +46,10 @@ namespace iiMenu.Managers
         private readonly Material textMaterial = new Material(Shader.Find("GUI/Text Shader"));
 
         public static string PreviousNotifi;
+        /// <summary>
+        /// Elements in this dictionary are displayed on the user's
+        /// screen as an overlay in the top left or right corner of the view.
+        /// </summary>
         public static readonly Dictionary<string, string> information = new Dictionary<string, string>();
 
         public static Text NotifiText;

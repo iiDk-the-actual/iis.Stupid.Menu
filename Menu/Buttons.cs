@@ -861,6 +861,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotificationManager.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotificationManager.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
                 new ButtonInfo { buttonText = "Velocity Overlay", method =() => NotificationManager.information["Velocity"] = $"{GorillaTagger.Instance.rigidbody.linearVelocity.magnitude:F1}m/s", disableMethod =() => NotificationManager.information.Remove("Velocity"), toolTip = "Displays your velocity on your screen."},
                 new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotificationManager.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
+                new ButtonInfo { buttonText = "Info Overlay Gun", method = Visuals.InfoOverlayGun, toolTip = "Displays an overlay, showing the information of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod = Visuals.WatchOn, method = Visuals.WatchStep, disableMethod = Visuals.WatchOff, toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
                 new ButtonInfo { buttonText = "Leaderboard Info", enableMethod =() => UpdatePatch.enabled = true, method = Visuals.LeaderboardInfo, disableMethod =() => UpdatePatch.enabled = false, toolTip = "Shows info next to players' names on the leaderboard."},
@@ -896,7 +897,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Verified Name Tags", method = Visuals.VerifiedTags, disableMethod = Visuals.DisableVerifiedTags, toolTip = "Gives players name tags above their heads if they are a verified player."},
                 new ButtonInfo { buttonText = "Lag Name Tags", method = Visuals.CrashedTags, disableMethod = Visuals.DisableCrashedTags, toolTip = "Gives players name tags above their heads if they are lagging."},
                 new ButtonInfo { buttonText = "Compact Name Tags", overlapText = "VRChat Name Tags", method = Visuals.CompactTags, disableMethod = Visuals.DisableCompactTags, toolTip = "Gives players name tags above their heads that show a lot of information compactly."},
-
+                
                 new ButtonInfo { buttonText = "Fix Rig Colors", method = Visuals.FixRigColors, toolTip = "Fixes a Steam bug where other players' color would be wrong between servers."},
                 new ButtonInfo { buttonText = "Disable Rig Lerping", overlapText = "Disable Rig Smoothing", method = Visuals.NoSmoothRigs, disableMethod = Visuals.ReSmoothRigs, toolTip = "Disable the smoothing on the other player's rigs."},
                 new ButtonInfo { buttonText = "Better Rig Lerping", overlapText = "Better Rig Smoothing", enableMethod =() => PlayerSerializePatch.OnPlayerSerialize += Visuals.BetterRigLerping, disableMethod =() => PlayerSerializePatch.OnPlayerSerialize -= Visuals.BetterRigLerping, toolTip = "Estimates the inbetween positions using a real velocity emulator on the other player's rigs."},

@@ -29,8 +29,8 @@ namespace iiMenu.Extensions
         public static string ClearTags(this string input) =>
             NoRichtextTags(input);
 
-        public static string ISO8601(this string _) =>
-            CurrentTimestamp();
+        public static string ToTitleCase(this string input) =>
+            Menu.Main.ToTitleCase(input);
 
         public static string Hash(this string input) =>
             GetSHA256(input);

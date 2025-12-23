@@ -61,6 +61,9 @@ namespace iiMenu.Extensions
             return "Standalone";
         }
 
+        public static string GetCreationDate(this VRRig rig, Action<string> onTranslated = null, string format = "MMMM dd, yyyy h:mm tt") =>
+            RigUtilities.GetCreationDate(rig.Creator.UserId, onTranslated, format);
+
         public static Color GetColor(this VRRig rig)
         {
             if (Buttons.GetIndex("Follow Player Colors").enabled)
