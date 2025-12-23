@@ -765,9 +765,7 @@ exit";
 
                 File.WriteAllText(fileName, updateScript);
 
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-                filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+                string filePath = FileUtilities.GetGamePath() + "/" + fileName;
                 Process.Start(filePath);
                 Application.Quit();   
             }

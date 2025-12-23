@@ -23,6 +23,7 @@ using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -94,7 +95,7 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void EditUserScript()
         {
-            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            string DirectoryTarget = FileUtilities.GetGamePath() + $"/{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (!File.Exists(DirectoryTarget))
                 File.WriteAllText(DirectoryTarget, mapScriptArchives[CustomMapManager.currentRoomMapModId]);
             Process.Start(DirectoryTarget);
@@ -102,14 +103,14 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void DeleteUserScript()
         {
-            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            string DirectoryTarget = FileUtilities.GetGamePath() + $"/{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (File.Exists(DirectoryTarget))
                 File.Delete(DirectoryTarget);
         }
 
         public static void StartUserScript()
         {
-            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            string DirectoryTarget = FileUtilities.GetGamePath() + $"/{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
             if (File.Exists(DirectoryTarget))
                 CustomGameMode.LuaScript = File.ReadAllText(DirectoryTarget);
 

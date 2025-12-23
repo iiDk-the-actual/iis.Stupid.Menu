@@ -3836,9 +3836,7 @@ Piece Name: {gunTarget.name}";
 
             File.WriteAllText(fileName, ManagerRegistry.BuilderTable.WriteTableToJson());
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 
@@ -6503,9 +6501,7 @@ Piece Name: {gunTarget.name}";
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 

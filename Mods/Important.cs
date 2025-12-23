@@ -26,6 +26,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Managers.DiscordRPC;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.CloudScriptModels;
@@ -221,9 +222,7 @@ exit";
 
             File.WriteAllText(fileName, restartScript);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
             Application.Quit();
         }

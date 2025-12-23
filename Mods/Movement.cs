@@ -1977,8 +1977,7 @@ namespace iiMenu.Mods
 
         public static void OpenMacrosFolder()
         {
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Macros");
-            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Macros";
+            string filePath = FileUtilities.GetGamePath() + $"/{PluginInfo.BaseDirectory}/Macros";
             Process.Start(filePath);
         }
 

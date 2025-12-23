@@ -20,6 +20,7 @@
  */
 
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace iiMenu.Utilities
@@ -79,6 +80,9 @@ namespace iiMenu.Utilities
             }
             return path;
         }
+
+        public static string GetGamePath() =>
+            Assembly.GetExecutingAssembly().Location.Replace("\\", "/").Split("/BepInEx")[0];
 
         public static string SanitizeFileName(string input)
         {

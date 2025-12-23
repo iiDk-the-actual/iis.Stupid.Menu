@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -67,9 +68,7 @@ namespace iiMenu.Utilities
             AudioClip sound;
             if (!audioFilePool.TryGetValue(fileName, out var value))
             {
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
-                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{fileName}";
-                filePath = filePath.Replace("\\", "/");
+                string filePath = $"{GetGamePath()}/{PluginInfo.BaseDirectory}/{fileName}";
 
                 UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip($"file://{filePath}", GetAudioType(GetFileExtension(fileName)));
                 UnityWebRequestAsyncOperation newvar = actualrequest.SendWebRequest();
@@ -173,6 +172,12 @@ namespace iiMenu.Utilities
             textureFileDirectory[fileName] = texture;
 
             return texture;
+        }
+
+        public static readonly Dictionary<string, Font> fontDirectory = new Dictionary<string, Font>();
+        public static Font LoadFontFromFile(string path)
+        {
+            return null;
         }
     }
 }

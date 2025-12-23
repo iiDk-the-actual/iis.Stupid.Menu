@@ -192,7 +192,7 @@ namespace iiMenu.Mods
                     admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(administrator) ? "Super " : "") + "Admin</color>";
             }
             text += "<color=green>Theme</color> " + themeType + admin + "\n";
-            text += "<color=green>Preferences Directory</color><color=grey>:</color> " + Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}";
+            text += "<color=green>Preferences Directory</color><color=grey>:</color> " + $"{FileUtilities.GetGamePath()}/{PluginInfo.BaseDirectory}";
 
             GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = text;
         }

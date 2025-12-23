@@ -260,9 +260,7 @@ namespace iiMenu.Classes.Menu
                     yield break;
                 }
 
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{fileName}");
-                filePath = $"{filePath.Split("BepInEx\\")[0]}{fileName}";
-                filePath = filePath.Replace("\\", "/");
+                string filePath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + fileName;
 
                 Log($"Loading audio from {filePath}");
 

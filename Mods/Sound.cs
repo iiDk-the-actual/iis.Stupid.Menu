@@ -25,6 +25,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -235,8 +236,7 @@ namespace iiMenu.Mods
 
         public static void OpenSoundFolder()
         {
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Sounds");
-            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Sounds";
+            string filePath = GetGamePath() + $"/{PluginInfo.BaseDirectory}/Sounds";
             Process.Start(filePath);
         }
 

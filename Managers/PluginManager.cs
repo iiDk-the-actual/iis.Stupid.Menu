@@ -21,6 +21,7 @@
 
 using iiMenu.Classes.Menu;
 using iiMenu.Menu;
+using iiMenu.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -290,12 +291,8 @@ namespace iiMenu.Managers
             currentCategoryName = "Main";
         }
 
-        public static void OpenPluginsFolder()
-        {
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Plugins");
-            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Plugins";
-            Process.Start(filePath);
-        }
+        public static void OpenPluginsFolder() =>
+            Process.Start(GetGamePath() + $"/{PluginInfo.BaseDirectory}/Plugins");
 
         public static void LoadPluginLibrary()
         {

@@ -128,15 +128,13 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 
         public static void DumpCosmeticData()
         {
-            string text = "Cosmetic Data\n(from GorillaNetworking.CosmeticsController.allCosmeticsDict)";
+            string text = "Cosmetic Data\n(from CosmeticsController.instance.allCosmetics)";
             foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 try
@@ -152,9 +150,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 
@@ -173,9 +169,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 
@@ -199,9 +193,7 @@ namespace iiMenu.Mods
 
             File.WriteAllText(fileName, text);
 
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, fileName);
-            filePath = filePath.Split("BepInEx\\")[0] + fileName;
-            
+            string filePath = FileUtilities.GetGamePath() + "/" + fileName;
             Process.Start(filePath);
         }
 
@@ -230,13 +222,13 @@ namespace iiMenu.Mods
         public static string restartRoom;
         public static void SafeRestartGame()
         {
+            string restartDataPath = $"{PluginInfo.BaseDirectory}/RestartData.txt";
             switch (restartIndex)
             {
                 case 0:
-                    string readPath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
-                    if (File.Exists(readPath))
+                    if (File.Exists(restartDataPath))
                     {
-                        string data = File.ReadAllText(readPath);
+                        string data = File.ReadAllText(restartDataPath);
                         restartRoom = data.Split(";")[0];
                         List<string> positionData = data.Split(";")[1].Split(",").ToList();
                         restartPosition = new Vector3(float.Parse(positionData[0]), float.Parse(positionData[1]), float.Parse(positionData[2]));
@@ -251,14 +243,12 @@ namespace iiMenu.Mods
                     restartDelay = Time.time + 6f;
                     break;
                 case 1:
-                    string writePath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
                     Settings.SavePreferences();
-                    File.WriteAllText(writePath, restartRoom + $";{restartPosition.x},{restartPosition.y},{restartPosition.z}");
+                    File.WriteAllText(restartDataPath, restartRoom + $";{restartPosition.x},{restartPosition.y},{restartPosition.z}");
                     restartIndex = 2;
                     break;
                 case 2:
-                    string existsPath = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt";
-                    if (File.Exists(existsPath) && Time.time > restartDelay)
+                    if (File.Exists(restartDataPath) && Time.time > restartDelay)
                     {
                         Important.RestartGame();
                         restartIndex = 4;
@@ -273,7 +263,7 @@ namespace iiMenu.Mods
                     else
                     {
                         TeleportPlayer(restartPosition);
-                        File.Delete(Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "RestartData.txt");
+                        File.Delete(restartDataPath);
                         NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Restarted game with information.");
                         restartIndex = 4;
                         Buttons.GetIndex("Safe Restart Game").enabled = false;
