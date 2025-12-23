@@ -3303,8 +3303,8 @@ namespace iiMenu.Mods
                                 voiceMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                                 if (voicetxt == null)
-                                    voicetxt = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.speak.png");
-                                
+                                    voicetxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/speak.png", $"Images/Mods/Visuals/speak.png");
+
                                 voiceMat.mainTexture = voicetxt;
 
                                 voiceMat.SetFloat("_Surface", 1);
@@ -3366,7 +3366,7 @@ namespace iiMenu.Mods
                                 voiceEspMat = new Material(Shader.Find("GUI/Text Shader"));
 
                             if (voicetxt == null)
-                                voicetxt = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.speak.png");
+                                voicetxt = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Visuals/speak.png", $"Images/Mods/Visuals/speak.png");
 
                             voiceEspMat.mainTexture = voicetxt;
 
