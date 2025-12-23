@@ -3614,7 +3614,7 @@ namespace iiMenu.Menu
             // Creds: libyyyreal for optimization tech
             Outline outline = canvasObject.gameObject.AddComponent<Outline>();
             outline.effectColor = Color.black;
-            outline.effectDistance = new Vector2(0.0015f, 0.0015f);
+            outline.effectDistance = new Vector2(0.001f, 0.001f);
             outline.useGraphicAlpha = true;
         }
 
