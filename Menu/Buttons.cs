@@ -498,9 +498,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Target Gamemode <color=grey>[</color><color=green>Super Infection</color><color=grey>]</color>", method =() => GorillaComputer.instance.SetGameModeWithoutButton("SuperInfect"), isTogglable = false, toolTip = "Changes your target gamemode to super infection."},
                 new ButtonInfo { buttonText = "Change Target Gamemode <color=grey>[</color><color=green>Error</color><color=grey>]</color>", method =() => GorillaComputer.instance.SetGameModeWithoutButton("None"), isTogglable = false, toolTip = "Changes your target gamemode to none."},
 
-                new ButtonInfo { buttonText = "Connect to US", method =() => PhotonNetwork.ConnectToRegion("us"), isTogglable = false, toolTip = "Connects you to the United States servers."},
-                new ButtonInfo { buttonText = "Connect to US West", method =() => PhotonNetwork.ConnectToRegion("usw"), isTogglable = false, toolTip = "Connects you to the western United States servers."},
-                new ButtonInfo { buttonText = "Connect to EU", method =() => PhotonNetwork.ConnectToRegion("eu"), isTogglable = false, toolTip = "Connects you to the Europe servers."},
+                new ButtonInfo { buttonText = "Connect to US", method =() => Important.ConnectToRegion("us"), toolTip = "Connects you to the United States servers."},
+                new ButtonInfo { buttonText = "Connect to US West", method =() => Important.ConnectToRegion("usw"), toolTip = "Connects you to the western United States servers."},
+                new ButtonInfo { buttonText = "Connect to EU", method =() => Important.ConnectToRegion("eu"), toolTip = "Connects you to the Europe servers."},
             },
 
             new[] { // Safety Mods [8]
