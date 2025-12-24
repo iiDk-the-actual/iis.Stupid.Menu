@@ -859,7 +859,7 @@ namespace iiMenu.Mods
             {
                 Hashtable hashtable = new Hashtable
                 {
-                    [byte.MaxValue] = banName
+                    [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
                 };
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
