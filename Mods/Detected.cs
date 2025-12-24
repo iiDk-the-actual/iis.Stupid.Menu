@@ -765,7 +765,7 @@ namespace iiMenu.Mods
         public static float nameDelay;
         public static float banDelay;
         public static string name = "GOLDENTROPHY";
-        public static string banName = "KKK";
+        public static string banName = "MINI99";
         
         public static void PromptNameChange()
         {
