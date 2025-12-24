@@ -765,7 +765,6 @@ namespace iiMenu.Mods
         public static float nameDelay;
         public static float banDelay;
         public static string name = "GOLDENTROPHY";
-        public static string banName = "MINI99";
         
         public static void PromptNameChange()
         {
@@ -830,14 +829,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > banDelay)
+                    Hashtable hashtable = new Hashtable
                     {
-                        Hashtable hashtable = new Hashtable
-                        {
-                            [byte.MaxValue] = banName
-                        };
-                        PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
-                    }
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
                 }
 
                 if (GetGunInput(true))
