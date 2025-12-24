@@ -5062,6 +5062,16 @@ namespace iiMenu.Menu
             if (uppercaseMode)
                 input = input.ToUpper();
 
+            if (redactText)
+            {
+                var result = new char[input.Length];
+
+                for (int i = 0; i < input.Length; i++)
+                    result[i] = input[i] == ' ' ? ' ' : '█';
+
+                input = new string(result);
+            }
+
             return input;
         }
 
@@ -5090,11 +5100,23 @@ namespace iiMenu.Menu
         {
             canvasObject.characterSpacing = -9f;
 
+            if (redactText)
+                canvasObject.characterSpacing -= 3f;
+
             if (outlineText)
             {
                 canvasObject.outlineWidth = 0.2f;
                 canvasObject.outlineColor = Color.black;
             }
+
+            if (underlineText)
+                canvasObject.fontStyle |= FontStyles.Underline;
+
+            if (smallCapsText)
+                canvasObject.fontStyle |= FontStyles.SmallCaps;
+
+            if (strikethroughText)
+                canvasObject.fontStyle |= FontStyles.Strikethrough;
         }
 
         /// <summary>
@@ -6072,6 +6094,9 @@ jgs \_   _/ |Oo\
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
         public static bool outlineText;
+        public static bool underlineText;
+        public static bool strikethroughText;
+        public static bool smallCapsText;
         public static bool innerOutline;
         public static bool smoothLines;
         public static bool shouldRound;
@@ -6562,6 +6587,8 @@ jgs \_   _/ |Oo\
 
         public static bool lowercaseMode;
         public static bool uppercaseMode;
+        public static bool redactText;
+
         public static string inputTextColor = "green";
         
         public static bool annoyingMode; // Build with this enabled for a surprise

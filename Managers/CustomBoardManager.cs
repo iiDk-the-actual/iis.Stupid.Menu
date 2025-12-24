@@ -282,24 +282,25 @@ namespace iiMenu.Managers
                     motdObject.SetActive(false);
                 }
 
-                TextMeshPro motdTc = motdTitle.GetComponent<TextMeshPro>();
-                if (!textMeshPro.Contains(motdTc))
-                    textMeshPro.Add(motdTc);
+                TextMeshPro motdHeadingText = motdTitle.GetComponent<TextMeshPro>();
+                if (!textMeshPro.Contains(motdHeadingText))
+                    textMeshPro.Add(motdHeadingText);
 
-                motdTc.richText = true;
-                motdTc.fontSize = 100;
-                motdTc.text = "Thanks for using ii's Stupid Menu!";
-                motdTc.fontStyle = activeFontStyle;
-                motdTc.font = activeFont;
-                motdTc.characterSpacing = -4f;
+                motdHeadingText.richText = true;
+                motdHeadingText.fontSize = 100;
+                motdHeadingText.text = $"Thanks for using {(doCustomName ? customMenuName : "ii's Stupid Menu")}!";
+                motdHeadingText.fontStyle = activeFontStyle;
+                motdHeadingText.font = activeFont;
+                FollowMenuSettings(motdHeadingText);
+                motdHeadingText.characterSpacing = -4f;
 
                 if (doCustomName)
-                    motdTc.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
+                    motdHeadingText.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
 
-                motdTc.text = FollowMenuSettings(motdTc.text);
+                motdHeadingText.text = FollowMenuSettings(motdHeadingText.text);
 
-                motdTc.color = textColors[0].GetCurrentColor();
-                motdTc.overflowMode = TextOverflowModes.Overflow;
+                motdHeadingText.color = textColors[0].GetCurrentColor();
+                motdHeadingText.overflowMode = TextOverflowModes.Overflow;
 
                 if (motdText == null)
                 {
@@ -310,18 +311,19 @@ namespace iiMenu.Managers
                     motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
                 }
 
-                TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
-                if (!textMeshPro.Contains(motdTextB))
-                    textMeshPro.Add(motdTextB);
+                TextMeshPro motdBodyText = motdText.GetComponent<TextMeshPro>();
+                if (!textMeshPro.Contains(motdBodyText))
+                    textMeshPro.Add(motdBodyText);
 
-                motdTextB.richText = true;
-                motdTextB.fontSize = 100;
-                motdTextB.color = textColors[0].GetCurrentColor();
-                motdTextB.fontStyle = activeFontStyle;
-                motdTextB.font = activeFont;
-                motdTextB.characterSpacing = -4f;
+                motdBodyText.richText = true;
+                motdBodyText.fontSize = 100;
+                motdBodyText.color = textColors[0].GetCurrentColor();
+                motdBodyText.fontStyle = activeFontStyle;
+                motdBodyText.font = activeFont;
+                FollowMenuSettings(motdBodyText);
+                motdBodyText.characterSpacing = -4f;
 
-                motdTextB.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
+                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
             }
             catch { }
             
