@@ -39,6 +39,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -409,11 +410,9 @@ namespace iiMenu.Managers
                                     Nametag = new GameObject("iiMenu_Nametag");
                                     Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
-                                    TextMesh textMesh = Nametag.AddComponent<TextMesh>();
+                                    TextMeshPro textMesh = Nametag.AddComponent<TextMeshPro>();
                                     textMesh.fontSize = 48;
-                                    textMesh.characterSize = 0.1f;
-                                    textMesh.anchor = TextAnchor.MiddleCenter;
-                                    textMesh.alignment = TextAlignment.Center;
+                                    textMesh.alignment = TextAlignmentOptions.Center;
 
                                     textMesh.text = Sender.NickName;
                                     textMesh.color = SenderRig.playerColor;

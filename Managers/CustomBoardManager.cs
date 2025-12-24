@@ -287,8 +287,11 @@ namespace iiMenu.Managers
                     textMeshPro.Add(motdTc);
 
                 motdTc.richText = true;
-                motdTc.fontSize = 70;
+                motdTc.fontSize = 100;
                 motdTc.text = "Thanks for using ii's Stupid Menu!";
+                motdTc.fontStyle = activeFontStyle;
+                motdTc.font = activeFont;
+                motdTc.characterSpacing = -4f;
 
                 if (doCustomName)
                     motdTc.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
@@ -314,6 +317,9 @@ namespace iiMenu.Managers
                 motdTextB.richText = true;
                 motdTextB.fontSize = 100;
                 motdTextB.color = textColors[0].GetCurrentColor();
+                motdTextB.fontStyle = activeFontStyle;
+                motdTextB.font = activeFont;
+                motdTextB.characterSpacing = -4f;
 
                 motdTextB.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
             }

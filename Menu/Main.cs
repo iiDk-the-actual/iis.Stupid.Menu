@@ -47,10 +47,12 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using UnityEngine.TextCore;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.XR;
@@ -98,8 +100,8 @@ namespace iiMenu.Menu
             timeMenuStarted = Time.time;
             IsSteam = PlayFabAuthenticator.instance.platform;
 
-            if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
-                AgencyFB = LoadAsset<Font>("Agency");
+            InitializeFonts();
+            activeFont = AgencyFB;
 
             if (Plugin.FirstLaunch)
                 Prompt("It seems like this is your first time using the menu. Would you like to watch a quick tutorial to get to know how to use it?", Settings.ShowTutorial);
@@ -645,12 +647,12 @@ namespace iiMenu.Menu
                 if (annoyingMode)
                 {
                     CustomBoardManager.BoardMaterial.color = new Color32(226, 74, 44, 255);
-                    int randy = Random.Range(1, 400);
-                    if (randy == 21)
+                    int randomChance = Random.Range(1, 400);
+                    if (randomChance == 21)
                     {
                         VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
                         VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                        NotificationManager.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=#FF00FF>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
                     }
                 }
 
@@ -1741,13 +1743,13 @@ namespace iiMenu.Menu
                 FollowMenuSettings(buttonObject, shouldSwap ? method.enabled : !method.enabled);
             }
 
-            Text buttonText = new GameObject
+            TextMeshPro buttonText = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
+            }.AddComponent<TextMeshPro>();
 
             buttonText.font = activeFont;
             buttonText.text = method.buttonText;
@@ -1841,9 +1843,12 @@ namespace iiMenu.Menu
             buttonText.text = FollowMenuSettings(buttonText.text);
 
             if (favorites.Contains(method.buttonText))
-                buttonText.text += " ✦";
+            {
+                buttonText.spriteAsset = ButtonSpriteSheet;
+                buttonText.text = $"    {buttonText.text}    <sprite name=\"Favorite\">";
+            }
 
-            buttonText.supportRichText = true;
+            buttonText.richText = true;
             buttonText.fontSize = 1;
 
             if (joystickMenu && buttonIndex == joystickButtonSelected && themeType == 30)
@@ -1851,10 +1856,10 @@ namespace iiMenu.Menu
             else
                 buttonText.AddComponent<TextColorChanger>().colors = textColors[method.enabled ? 2 : 1];
 
-            buttonText.alignment = checkMode ? TextAnchor.MiddleLeft : TextAnchor.MiddleCenter;
+            buttonText.alignment = checkMode ? TextAlignmentOptions.Left : TextAlignmentOptions.Center;
             buttonText.fontStyle = activeFontStyle;
-            buttonText.resizeTextForBestFit = true;
-            buttonText.resizeTextMinSize = 0;
+            buttonText.enableAutoSizing = true;
+            buttonText.fontSizeMin = 0;
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
@@ -1924,6 +1929,87 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             FollowMenuSettings(searchImage);
+        }
+
+        private static TMP_SpriteAsset _buttonSpriteSheet;
+        public static TMP_SpriteAsset ButtonSpriteSheet
+        {
+            get
+            {
+                if (_buttonSpriteSheet == null)
+                {
+                    _buttonSpriteSheet = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
+                    _buttonSpriteSheet.name = "iiMenu_SpriteSheet";
+
+                    var textureList = new List<Texture2D>();
+                    var spriteDataList = new List<(string name, int index)>();
+
+                    void AddSprite(string name, Texture2D tex)
+                    {
+                        spriteDataList.Add((name, textureList.Count));
+                        textureList.Add(tex);
+                    }
+
+                    AddSprite("Favorite", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.favorite.png"));
+
+                    int maxSize = 512;
+                    Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
+                    Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
+
+                    _buttonSpriteSheet.spriteSheet = spriteSheet;
+                    _buttonSpriteSheet.material = new Material(Shader.Find("TextMeshPro/Sprite"))
+                    {
+                        mainTexture = spriteSheet
+                    };
+
+                    _buttonSpriteSheet.spriteInfoList = new List<TMP_Sprite>();
+                    Traverse.Create(_buttonSpriteSheet).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
+
+                    _buttonSpriteSheet.spriteGlyphTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var rect = rects[i];
+
+                        var glyph = new TMP_SpriteGlyph
+                        {
+                            index = (uint)i,
+                            metrics = new GlyphMetrics(
+                                width: rect.width * spriteSheet.width,
+                                height: rect.height * spriteSheet.height,
+                                bearingX: -(rect.width * spriteSheet.width) / 2f,
+                                bearingY: rect.height * spriteSheet.height * 0.8f,
+                                advance: rect.width * spriteSheet.width
+                            ),
+                            glyphRect = new GlyphRect(
+                                x: (int)(rect.x * spriteSheet.width),
+                                y: (int)(rect.y * spriteSheet.height),
+                                width: (int)(rect.width * spriteSheet.width),
+                                height: (int)(rect.height * spriteSheet.height)
+                            ),
+                            scale = 1f,
+                            atlasIndex = 0
+                        };
+                        _buttonSpriteSheet.spriteGlyphTable.Add(glyph);
+                    }
+
+                    _buttonSpriteSheet.spriteCharacterTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var (name, _) = spriteDataList[i];
+
+                        var character = new TMP_SpriteCharacter(0xFFFE, _buttonSpriteSheet.spriteGlyphTable[i])
+                        {
+                            name = name,
+                            scale = 1f,
+                            glyphIndex = (uint)i
+                        };
+                        _buttonSpriteSheet.spriteCharacterTable.Add(character);
+                    }
+
+                    _buttonSpriteSheet.UpdateLookupTables();
+                }
+                return _buttonSpriteSheet;
+            }
         }
 
         private static void AddDebugButton()
@@ -2171,24 +2257,24 @@ namespace iiMenu.Menu
 
         public static void RenderIncrementalText(bool increment, float offset)
         {
-            Text buttonText = new GameObject
+            TextMeshPro buttonText = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
+            }.AddComponent<TextMeshPro>();
 
             buttonText.font = activeFont;
             buttonText.text = increment ? "+" : "-";
-            buttonText.supportRichText = true;
+            buttonText.richText = true;
             buttonText.fontSize = 1;
             buttonText.AddComponent<TextColorChanger>().colors = textColors[1];
 
-            buttonText.alignment = TextAnchor.MiddleCenter;
+            buttonText.alignment = TextAlignmentOptions.Center;
             buttonText.fontStyle = activeFontStyle;
-            buttonText.resizeTextForBestFit = true;
-            buttonText.resizeTextMinSize = 0;
+            buttonText.enableAutoSizing = true;
+            buttonText.fontSizeMin = 0;
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
@@ -2392,7 +2478,7 @@ namespace iiMenu.Menu
 
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
             canvas.renderMode = RenderMode.WorldSpace;
-            canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
+            canvasScaler.dynamicPixelsPerUnit = 2500f;
 
             canvasObj.AddComponent<GraphicRaycaster>();
 
@@ -2404,7 +2490,7 @@ namespace iiMenu.Menu
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Text>();
+                }.AddComponent<TextMeshPro>();
                 title.font = activeFont;
                 title.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
 
@@ -2441,9 +2527,9 @@ namespace iiMenu.Menu
                     title.text = RichtextGradient(NoRichtextTags(title.text),
                         new[]
                         {
-                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
-                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
-                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
                         });
 
                 if (animatedTitle)
@@ -2456,11 +2542,11 @@ namespace iiMenu.Menu
                 title.fontSize = 1;
                 title.AddComponent<TextColorChanger>().colors = textColors[0];
 
-                title.supportRichText = true;
+                title.richText = true;
                 title.fontStyle = activeFontStyle;
-                title.alignment = TextAnchor.MiddleCenter;
-                title.resizeTextForBestFit = true;
-                title.resizeTextMinSize = 0;
+                title.alignment = TextAlignmentOptions.Center;
+                title.enableAutoSizing = true;
+                title.fontSizeMin = 0;
                 RectTransform component = title.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.28f, 0.05f);
@@ -2475,13 +2561,13 @@ namespace iiMenu.Menu
 
             if (!backgroundColor.transparent)
             {
-                Text buildLabel = new GameObject
+                TextMeshPro buildLabel = new GameObject
                 {
                     transform =
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Text>();
+                }.AddComponent<TextMeshPro>();
                 buildLabel.font = activeFont;
                 buildLabel.text = $"Build {PluginInfo.Version}";
 
@@ -2489,11 +2575,11 @@ namespace iiMenu.Menu
 
                 buildLabel.fontSize = 1;
                 buildLabel.AddComponent<TextColorChanger>().colors = textColors[0];
-                buildLabel.supportRichText = true;
+                buildLabel.richText = true;
                 buildLabel.fontStyle = activeFontStyle;
-                buildLabel.alignment = TextAnchor.MiddleRight;
-                buildLabel.resizeTextForBestFit = true;
-                buildLabel.resizeTextMinSize = 0;
+                buildLabel.alignment = TextAlignmentOptions.Right;
+                buildLabel.enableAutoSizing = true;
+                buildLabel.fontSizeMin = 0;
 
                 RectTransform component = buildLabel.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
@@ -2538,13 +2624,13 @@ namespace iiMenu.Menu
 
             if (!disableFpsCounter)
             {
-                Text fps = new GameObject
+                TextMeshPro fps = new GameObject
                 {
                     transform =
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Text>();
+                }.AddComponent<TextMeshPro>();
                 fps.font = activeFont;
 
                 string textToSet = ftCount ? $"FT: {Mathf.Floor(1f / lastDeltaTime * 10000f) / 10f} ms" : $"FPS: {lastDeltaTime}";
@@ -2556,12 +2642,12 @@ namespace iiMenu.Menu
                 fps.AddComponent<TextColorChanger>().colors = textColors[0];
                 fpsCount = fps;
                 fps.fontSize = 1;
-                fps.supportRichText = true;
+                fps.richText = true;
                 fps.fontStyle = activeFontStyle;
-                fps.alignment = TextAnchor.MiddleCenter;
-                fps.horizontalOverflow = HorizontalWrapMode.Overflow;
-                fps.resizeTextForBestFit = true;
-                fps.resizeTextMinSize = 0;
+                fps.alignment = TextAlignmentOptions.Center;
+                fps.overflowMode = TextOverflowModes.Overflow;
+                fps.enableAutoSizing = true;
+                fps.fontSizeMin = 0;
                 RectTransform fpsTransform = fps.GetComponent<RectTransform>();
                 fpsTransform.sizeDelta = NoAutoSizeText ? new Vector2(9f, 0.015f) : new Vector2(0.28f, 0.02f);
                 fpsTransform.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
@@ -2644,12 +2730,12 @@ namespace iiMenu.Menu
                         {
                             parent = canvasObj.transform
                         }
-                }.AddComponent<Text>();
+                }.AddComponent<TextMeshPro>();
 
                 keyboardInputObject.font = activeFont;
                 keyboardInputObject.text = FollowMenuSettings(keyboardInput) + ((Time.time % 1f) > 0.5f ? "|" : "");
 
-                keyboardInputObject.supportRichText = true;
+                keyboardInputObject.richText = true;
                 keyboardInputObject.fontSize = 1;
 
                 if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
@@ -2657,10 +2743,10 @@ namespace iiMenu.Menu
                 else
                     keyboardInputObject.AddComponent<TextColorChanger>().colors = textColors[1];
 
-                keyboardInputObject.alignment = TextAnchor.MiddleCenter;
+                keyboardInputObject.alignment = TextAlignmentOptions.Center;
                 keyboardInputObject.fontStyle = activeFontStyle;
-                keyboardInputObject.resizeTextForBestFit = true;
-                keyboardInputObject.resizeTextMinSize = 0;
+                keyboardInputObject.enableAutoSizing = true;
+                keyboardInputObject.fontSizeMin = 0;
 
                 RectTransform textTransform = keyboardInputObject.GetComponent<RectTransform>();
                 textTransform.localPosition = Vector3.zero;
@@ -2811,9 +2897,9 @@ namespace iiMenu.Menu
                     particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                     particle.GetComponent<Renderer>().material.color = Color.white;
 
-                    if (cannmat == null)
+                    if (cannabisMat == null)
                     {
-                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+                        cannabisMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                         {
                             color = Color.white
                         };
@@ -2821,17 +2907,17 @@ namespace iiMenu.Menu
                         if (cann == null)
                             cann = LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Themes/cannabis.png", "Images/Themes/cannabis.png");
 
-                        cannmat.mainTexture = cann;
+                        cannabisMat.mainTexture = cann;
 
-                        cannmat.SetFloat("_Surface", 1);
-                        cannmat.SetFloat("_Blend", 0);
-                        cannmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                        cannmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                        cannmat.SetFloat("_ZWrite", 0);
-                        cannmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                        cannmat.renderQueue = (int)RenderQueue.Transparent;
+                        cannabisMat.SetFloat("_Surface", 1);
+                        cannabisMat.SetFloat("_Blend", 0);
+                        cannabisMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        cannabisMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        cannabisMat.SetFloat("_ZWrite", 0);
+                        cannabisMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        cannabisMat.renderQueue = (int)RenderQueue.Transparent;
                     }
-                    particle.GetComponent<Renderer>().material = cannmat;
+                    particle.GetComponent<Renderer>().material = cannabisMat;
 
                     Rigidbody comp = particle.AddComponent(typeof(Rigidbody)) as Rigidbody;
                     comp.position = menuBackground.transform.position;
@@ -3251,13 +3337,13 @@ namespace iiMenu.Menu
 
         private static void RenderPrompt()
         {
-            Text promptText = new GameObject
+            TextMeshPro promptText = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
+            }.AddComponent<TextMeshPro>();
             promptText.font = activeFont;
             promptText.text = CurrentPrompt.Message;
 
@@ -3271,11 +3357,11 @@ namespace iiMenu.Menu
             promptText.lineSpacing = 0.8f;
             promptText.AddComponent<TextColorChanger>().colors = textColors[0];
 
-            promptText.supportRichText = true;
+            promptText.richText = true;
             promptText.fontStyle = activeFontStyle;
-            promptText.alignment = TextAnchor.MiddleCenter;
-            promptText.resizeTextForBestFit = true;
-            promptText.resizeTextMinSize = 0;
+            promptText.alignment = TextAlignmentOptions.Center;
+            promptText.enableAutoSizing = true;
+            promptText.fontSizeMin = 0;
             RectTransform component = promptText.GetComponent<RectTransform>();
             component.sizeDelta = new Vector2(0.28f, CurrentPrompt.IsText ? 0.25f : 0.28f);
 
@@ -3384,14 +3470,14 @@ namespace iiMenu.Menu
                 else
                     CoroutineManager.instance.StartCoroutine(ButtonClick(0, button.GetComponent<Renderer>()));
 
-                Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+                TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
                 text.text = FollowMenuSettings(CurrentPrompt.AcceptText);
                 text.fontSize = 1;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
+                text.alignment = TextAlignmentOptions.Center;
+                text.enableAutoSizing = true;
+                text.fontSizeMin = 0;
 
                 text.AddComponent<TextColorChanger>().colors = textColors[1];
 
@@ -3444,14 +3530,14 @@ namespace iiMenu.Menu
                 else
                     CoroutineManager.instance.StartCoroutine(ButtonClick(1, button.GetComponent<Renderer>()));
 
-                Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+                TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
                 text.text = FollowMenuSettings(CurrentPrompt.DeclineText);
                 text.fontSize = 1;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
+                text.alignment = TextAlignmentOptions.Center;
+                text.enableAutoSizing = true;
+                text.fontSizeMin = 0;
 
                 text.AddComponent<TextColorChanger>().colors = textColors[1];
 
@@ -3513,13 +3599,13 @@ namespace iiMenu.Menu
             else
                 CoroutineManager.instance.StartCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
 
-            Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+            TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
             text.font = activeFont;
             text.text = arrowTypes[arrowType][arrowIndex];
             text.fontSize = 1;
-            text.alignment = TextAnchor.MiddleCenter;
-            text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = 0;
+            text.alignment = TextAlignmentOptions.Center;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 0;
 
             text.AddComponent<TextColorChanger>().colors = textColors[1];
 
@@ -3536,7 +3622,7 @@ namespace iiMenu.Menu
             textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             FollowMenuSettings(text);
-            FollowMenuSettings(button);
+            FollowMenuSettings(button, !swapButtonColors);
 
             return button;
         }
@@ -5000,6 +5086,22 @@ namespace iiMenu.Menu
         /// current configuration.
         /// </summary>
         /// <param name="canvasObject">The canvas object to which the menu appearance settings will be applied.</param>
+        public static void FollowMenuSettings(TextMeshPro canvasObject)
+        {
+            canvasObject.characterSpacing = -9f;
+
+            if (outlineText)
+            {
+                canvasObject.outlineWidth = 0.2f;
+                canvasObject.outlineColor = Color.black;
+            }
+        }
+
+        /// <summary>
+        /// Applies menu appearance settings to the specified canvas object, such as outlining, based on
+        /// current configuration.
+        /// </summary>
+        /// <param name="canvasObject">The canvas object to which the menu appearance settings will be applied.</param>
         public static void FollowMenuSettings(MaskableGraphic canvasObject)
         {
             if (outlineText)
@@ -5888,6 +5990,49 @@ namespace iiMenu.Menu
             PatchHandler.UnpatchAll();
         }
 
+        public static void InitializeFonts()
+        {
+            AgencyFB ??= LoadAsset<TMP_FontAsset>("Agency");
+            Arial ??= LoadAsset<TMP_FontAsset>("Arial");
+            Candara ??= LoadAsset<TMP_FontAsset>("Candara");
+            ComicSans ??= LoadAsset<TMP_FontAsset>("ComicSans");
+            Consolas ??= LoadAsset<TMP_FontAsset>("Consolas");
+            Impact ??= LoadAsset<TMP_FontAsset>("Impact");
+            Minecraft ??= LoadAsset<TMP_FontAsset>("Minecraft");
+            MSGothic ??= LoadAsset<TMP_FontAsset>("MSGothic");
+            OpenDyslexic ??= LoadAsset<TMP_FontAsset>("OpenDyslexic");
+            SimSun ??= LoadAsset<TMP_FontAsset>("SimSun");
+            Taiko ??= LoadAsset<TMP_FontAsset>("Taiko");
+            Terminal ??= LoadAsset<TMP_FontAsset>("Terminal");
+            Utopium ??= LoadAsset<TMP_FontAsset>("Utopium");
+            Verdana ??= LoadAsset<TMP_FontAsset>("Verdana");
+
+            foreach (TMP_FontAsset font in new[] { AgencyFB, Arial, Candara, ComicSans, 
+                Consolas, Impact, Minecraft, MSGothic, OpenDyslexic, SimSun, Taiko, 
+                Terminal, Utopium, Verdana })
+                font.fallbackFontAssetTable.Add(LiberationSans);
+        }
+
+        public static TMP_FontAsset activeFont;
+        public static FontStyles activeFontStyle = FontStyles.Italic;
+
+        public static TMP_FontAsset AgencyFB;
+        public static TMP_FontAsset Arial;
+        public static TMP_FontAsset Candara;
+        public static TMP_FontAsset ComicSans;
+        public static TMP_FontAsset Consolas;
+        public static TMP_FontAsset Impact;
+        public static TMP_FontAsset Minecraft;
+        public static TMP_FontAsset MSGothic;
+        public static TMP_FontAsset OpenDyslexic;
+        public static TMP_FontAsset SimSun;
+        public static TMP_FontAsset Taiko;
+        public static TMP_FontAsset Terminal;
+        public static TMP_FontAsset Utopium;
+        public static TMP_FontAsset Verdana;
+
+        public static TMP_FontAsset LiberationSans = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
+
         // The variable warehouse
         public static string rat = @"
      _   _
@@ -6138,7 +6283,6 @@ jgs \_   _/ |Oo\
         public static bool legacyGhostview;
         public static bool checkMode;
         public static bool lastChecker;
-        public static bool highQualityText;
         public static bool rockWatermark = true;
         public static bool disableWatermark;
         public static string CosmeticsOwned;
@@ -6171,7 +6315,6 @@ jgs \_   _/ |Oo\
         public static bool lastGunSpawnedVibration;
 
         public static int fontCycle;
-        public static int fontStyleType = 2;
         public static bool NoAutoSizeText;
 
         public static bool doCustomName;
@@ -6273,7 +6416,7 @@ jgs \_   _/ |Oo\
         public static VideoPlayer promptVideoPlayer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
-        public static Text fpsCount;
+        public static TextMeshPro fpsCount;
         public static Image watermarkImage;
         private static float fpsAvgTime;
         private static float fpsAverageNumber;
@@ -6282,8 +6425,8 @@ jgs \_   _/ |Oo\
         public static bool ftCount;
         public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
-        public static Text keyboardInputObject;
-        public static Text title;
+        public static TextMeshPro keyboardInputObject;
+        public static TextMeshPro title;
         public static VRRig GhostRig;
         public static GameObject legacyGhostViewLeft;
         public static GameObject legacyGhostViewRight;
@@ -6296,22 +6439,6 @@ jgs \_   _/ |Oo\
         public static Material returnMat;
         public static Material debugMat;
         public static Material donateMat;
-
-        public static Font AgencyFB = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
-        public static readonly Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
-        public static readonly Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
-        public static readonly Font ComicSans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
-        public static readonly Font Consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
-        public static readonly Font Candara = Font.CreateDynamicFontFromOSFont("Candara", 24);
-        public static readonly Font MSGothic = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
-        public static readonly Font Impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
-        public static readonly Font SimSun = Font.CreateDynamicFontFromOSFont("SimSun", 24);
-        public static Font GTFont;
-        public static Font Minecraft;
-        public static Font Terminal;
-        public static Font OpenDyslexic;
-        public static Font activeFont = AgencyFB;
-        public static FontStyle activeFontStyle = FontStyle.Italic;
 
         public static GameObject lKeyReference;
         public static SphereCollider lKeyCollider;
@@ -6336,7 +6463,7 @@ jgs \_   _/ |Oo\
         public static GameObject regwatchShell;
         public static Material glass;
 
-        public static Material cannmat;
+        public static Material cannabisMat;
         public static Texture2D cann;
         public static Texture2D pride;
         public static Texture2D trans;

@@ -42,6 +42,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -2537,15 +2538,13 @@ namespace iiMenu.Mods
                     GameObject MeshHolder = new GameObject("Label");
                     MeshHolder.transform.parent = newCheckpoint.transform;
                     MeshHolder.transform.localPosition = Vector3.zero;
-                    TextMesh newMesh = MeshHolder.AddComponent<TextMesh>();
+                    TextMeshPro newMesh = MeshHolder.AddComponent<TextMeshPro>();
 
                     Renderer MeshRender = newMesh.GetComponent<Renderer>();
                     MeshRender.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     newMesh.fontSize = 12;
                     newMesh.fontStyle = activeFontStyle;
-                    newMesh.characterSize = 0.1f;
-                    newMesh.anchor = TextAnchor.MiddleCenter;
-                    newMesh.alignment = TextAlignment.Center;
+                    newMesh.alignment = TextAlignmentOptions.Center;
                     newMesh.color = Color.white;
                     newMesh.text = (checkpoints.Count + 1).ToString();
 
@@ -2590,22 +2589,7 @@ namespace iiMenu.Mods
             if (selectedCheckpoint > checkpoints.Count - 1)
                 selectedCheckpoint = 0;
 
-            GameObject go = new GameObject("Lbl");
-            if (Buttons.GetIndex("Hidden Labels").enabled) { go.layer = 19; }
-            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-            TextMesh textMesh = go.AddComponent<TextMesh>();
-            textMesh.color = GorillaTagger.Instance.rigidbody.linearVelocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
-            textMesh.fontSize = 24;
-            textMesh.fontStyle = activeFontStyle;
-            textMesh.characterSize = 0.1f;
-            textMesh.anchor = TextAnchor.MiddleCenter;
-            textMesh.alignment = TextAlignment.Center;
-            textMesh.text = (selectedCheckpoint + 1).ToString();
-
-            go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
-            go.transform.LookAt(Camera.main.transform.position);
-            go.transform.Rotate(0f, 180f, 0f);
-            Object.Destroy(go, Time.deltaTime);
+            Visuals.GetLabel("CheckpointLabel", false, (selectedCheckpoint + 1).ToString(), Color.white);
         }
 
         public static void DisableAdvancedCheckpoints()

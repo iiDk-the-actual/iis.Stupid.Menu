@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
@@ -43,7 +44,7 @@ namespace iiMenu.Managers
 
         public GameObject canvas;
         private GameObject mainCamera;
-        private readonly Material textMaterial = new Material(Shader.Find("GUI/Text Shader"));
+        private Material textMaterial;
 
         public static string PreviousNotifi;
         /// <summary>
@@ -52,9 +53,9 @@ namespace iiMenu.Managers
         /// </summary>
         public static readonly Dictionary<string, string> information = new Dictionary<string, string>();
 
-        public static Text NotifiText;
-        public static Text ModText;
-        public static Text StatsText;
+        public static TextMeshProUGUI NotifiText;
+        public static TextMeshProUGUI ModText;
+        public static TextMeshProUGUI StatsText;
 
         private bool hasInitialized;
         public static bool noRichText;
@@ -100,34 +101,38 @@ namespace iiMenu.Managers
             rotation.y = -270f;
             canvasRect.rotation = Quaternion.Euler(rotation);
 
+            textMaterial = new Material(LoadAsset<Shader>("Chams"));
+
             NotifiText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
-                new Vector2(450f, 210f), 30, TextAnchor.LowerLeft);
+                new Vector2(450f, 210f), 30, TextAlignmentOptions.BottomLeft);
 
             ModText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
-                new Vector2(450f, 1000f), 20, TextAnchor.UpperLeft);
+                new Vector2(450f, 1000f), 20, TextAlignmentOptions.TopLeft);
 
             StatsText = CreateText(canvas.transform, new Vector3(-1f, -1f, 0.5f),
-                new Vector2(450f, 1000f), 30, TextAnchor.UpperRight);
+                new Vector2(450f, 1000f), 30, TextAlignmentOptions.TopRight);
         }
 
-        private Text CreateText(Transform parent, Vector3 localPos, Vector2 size, int fontSize, TextAnchor anchor)
+        private TextMeshProUGUI CreateText(Transform parent, Vector3 localPos, Vector2 size, int fontSize, TextAlignmentOptions anchor)
         {
             GameObject textObj = new GameObject { transform = { parent = parent } };
-            Text text = textObj.AddComponent<Text>();
+            TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
 
             text.text = "";
             text.fontSize = fontSize;
             text.font = AgencyFB;
             text.rectTransform.sizeDelta = size;
             text.alignment = anchor;
-            text.verticalOverflow = anchor == TextAnchor.LowerLeft ? VerticalWrapMode.Overflow : VerticalWrapMode.Truncate;
+            text.overflowMode = anchor == TextAlignmentOptions.BottomLeft ? TextOverflowModes.Overflow : TextOverflowModes.Truncate;
             text.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
             text.rectTransform.localPosition = localPos;
             text.material = textMaterial;
+            text.characterSpacing = -9f;
 
             return text;
         }
 
+        private float updateArraylistTimer;
         private void FixedUpdate()
         {
             try
@@ -138,7 +143,7 @@ namespace iiMenu.Managers
                     hasInitialized = true;
                 }
 
-                canvas.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
+                canvas.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = 2f;
 
                 canvas.transform.position = mainCamera.transform.TransformPoint(0f, 0f, 1.6f);
                 canvas.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(0, 90, 0);
@@ -159,25 +164,38 @@ namespace iiMenu.Managers
                     StatsText.fontStyle = activeFontStyle;
                     StatsText.fontSize = overlayScale;
 
-                    if (advancedArraylist)
-                        ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
+                    if (outlineText)
+                    {
+                        ModText.outlineWidth = 0.2f;
+                        ModText.outlineColor = Color.black;
+
+                        NotifiText.outlineWidth = 0.2f;
+                        NotifiText.outlineColor = Color.black;
+
+                        StatsText.outlineWidth = 0.2f;
+                        StatsText.outlineColor = Color.black;
+                    } else
+                    {
+                        ModText.outlineWidth = 0f;
+                        NotifiText.outlineWidth = 0f;
+                        StatsText.outlineWidth = 0f;
+                    }
                 }
                 catch { }
 
                 ModText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
-                ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
+                ModText.alignment = flipArraylist ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
 
                 StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
-                StatsText.alignment = flipArraylist ? TextAnchor.UpperLeft : TextAnchor.UpperRight;
+                StatsText.alignment = flipArraylist ? TextAlignmentOptions.TopLeft : TextAlignmentOptions.TopRight;
 
                 if (information.Count > 0)
                 {
                     Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
-                    TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     List<string> statsLines = information
                         .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColors[1].GetColor(0))}>{item.Value}</color>")
-                        .OrderByDescending(item => StatsText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(item), settings))
+                        .OrderByDescending(item => StatsText.GetPreferredValues(NoRichtextTags(item)).x)
                         .ToList();
 
                     StatsText.text = string.Join("\n", statsLines);
@@ -186,8 +204,9 @@ namespace iiMenu.Managers
                 else
                     StatsText.text = "";
 
-                if (showEnabledModsVR)
+                if (showEnabledModsVR && Time.time > updateArraylistTimer)
                 {
+                    updateArraylistTimer = Time.time + (advancedArraylist ? 0.1f : 0.5f);
                     List<string> enabledMods = new List<string>();
                     int categoryIndex = 0;
 
@@ -213,9 +232,8 @@ namespace iiMenu.Managers
                         categoryIndex++;
                     }
 
-                    TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     string[] sortedMods = enabledMods
-                        .OrderByDescending(s => ModText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(s), settings))
+                        .OrderByDescending(s => ModText.GetPreferredValues(NoRichtextTags(s)).x)
                         .ToArray();
 
                     string modListText = "";
@@ -225,8 +243,8 @@ namespace iiMenu.Managers
 
                         if (advancedArraylist)
                             modListText += (flipArraylist ?
-                                  $"<color=#{ColorToHex(textColors[1].GetColor(0))}>{sortedMods[i]}</color><color=#{ColorToHex(targetColor)}> |</color>"
-                                : $"<color=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}>| </color><color=#{ColorToHex(textColors[1].GetColor(0))}>{sortedMods[i]}</color>") + "\n";
+                            /* Flipped */ $"<mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark><mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark>" :
+                            /* Normal  */ $"<mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark><mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark>") + "\n";
                         else
                             modListText += sortedMods[i] + "\n";
                     }
@@ -345,7 +363,7 @@ namespace iiMenu.Managers
                     if (uppercaseMode)
                         NotifiText.text = NotifiText.text.ToUpper();
 
-                    NotifiText.supportRichText = !noRichText;
+                    NotifiText.richText = !noRichText;
 
                     if (narrateNotifications)
                         NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(notificationText) : notificationText));

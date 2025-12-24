@@ -173,11 +173,5 @@ namespace iiMenu.Utilities
 
             return texture;
         }
-
-        public static readonly Dictionary<string, Font> fontDirectory = new Dictionary<string, Font>();
-        public static Font LoadFontFromFile(string path)
-        {
-            return null;
-        }
     }
 }
