@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -4139,10 +4140,7 @@ exit 0";
                     activeFont = Verdana;
                     return;
                 case 3:
-                    if (GTFont == null)
-                        GTFont = LoadAsset<Font>("Utopium");
-
-                    activeFont = GTFont;
+                    activeFont = Utopium;
                     return;
                 case 4:
                     activeFont = ComicSans;
@@ -4163,22 +4161,19 @@ exit 0";
                     activeFont = SimSun;
                     return;
                 case 10:
-                    if (Minecraft == null)
-                        Minecraft = LoadAsset<Font>("Minecraft");
-
                     activeFont = Minecraft;
                     return;
                 case 11:
-                    if (Terminal == null)
-                        Terminal = LoadAsset<Font>("Terminal");
-
                     activeFont = Terminal;
                     return;
                 case 12:
-                    if (OpenDyslexic == null)
-                        OpenDyslexic = LoadAsset<Font>("OpenDyslexic");
-
                     activeFont = OpenDyslexic;
+                    return;
+                case 13:
+                    activeFont = Taiko;
+                    return;
+                case 14:
+                    activeFont = LiberationSans;
                     return;
             }
         }
@@ -4195,6 +4190,7 @@ exit 0";
             }
         }
 
+        public static int fontStyleType = 2;
         public static void ChangeFontStyleType(bool positive = true)
         {
             if (positive)
@@ -4206,7 +4202,14 @@ exit 0";
             if (fontStyleType < 0)
                 fontStyleType = 3;
 
-            activeFontStyle = (FontStyle)fontStyleType;
+            activeFontStyle = fontStyleType switch
+            {
+                0 => FontStyles.Normal,
+                1 => FontStyles.Bold,
+                2 => FontStyles.Italic,
+                3 => FontStyles.Bold | FontStyles.Italic,
+                _ => FontStyles.Normal
+            };
         }
 
         public static int inputTextColorInt = 3;
@@ -4232,9 +4235,9 @@ exit 0";
                 "yellow",
                 "green",
                 "blue",
-                "cyan",
-                "#7700ff",
-                "magenta",
+                "#00FFFF",
+                "purple",
+                "#FF00FF",
                 "white",
                 "grey",
                 "black",
@@ -4864,7 +4867,7 @@ exit 0";
         {
             bool leftHand = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
 
-            var targetHand = leftHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
+            var (_, _, _, forward, _) = leftHand ? ControllerUtilities.GetTrueLeftHand() : ControllerUtilities.GetTrueRightHand();
             bool canSelect = NetworkSystem.Instance.InRoom && menu != null && reference != null && Vector3.Distance(menu.transform.position, reference.transform.position) > 0.5f;
 
             if (canSelect)
@@ -4891,7 +4894,7 @@ exit 0";
                 }
 
                 Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
-                Vector3 Direction = targetHand.forward;
+                Vector3 Direction = forward;
 
                 Physics.SphereCast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), 0.15f, Direction, out var Ray, 512f, NoInvisLayerMask());
                 Vector3 EndPosition = Ray.point == Vector3.zero ? StartPosition + (Direction * 512f) : Ray.point;

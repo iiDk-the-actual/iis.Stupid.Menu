@@ -1218,11 +1218,9 @@ namespace iiMenu.Mods
                                 {
                                     GameObject go = new GameObject("iiMenu_Nametag");
                                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                    TextMesh textMesh = go.AddComponent<TextMesh>();
-                                    textMesh.fontSize = 48;
-                                    textMesh.characterSize = 0.1f;
-                                    textMesh.anchor = TextAnchor.MiddleCenter;
-                                    textMesh.alignment = TextAlignment.Center;
+                                    TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
+                                    textMesh.fontSize = 4.8f;
+                                    textMesh.alignment = TextAlignmentOptions.Center;
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
@@ -1234,7 +1232,7 @@ namespace iiMenu.Mods
                                     nametags.Add(vrrig, go);
                                 } else
                                 {
-                                    TextMesh textMesh = nametag.GetComponent<TextMesh>();
+                                    TextMeshPro textMesh = nametag.GetComponent<TextMeshPro>();
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
@@ -1283,7 +1281,8 @@ namespace iiMenu.Mods
                     nametags.Remove(nametag.Key);
                 } else
                 {
-                    nametag.Value.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+                    nametag.Value.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
+                    nametag.Value.GetComponent<TextMeshPro>().font = activeFont;
 
                     nametag.Value.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * nametag.Key.scaleFactor;
 
@@ -1332,11 +1331,9 @@ namespace iiMenu.Mods
                                 {
                                     GameObject go = new GameObject("iiMenu_Nametag");
                                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                                    TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
                                     textMesh.fontSize = 48;
-                                    textMesh.characterSize = 0.1f;
-                                    textMesh.anchor = TextAnchor.MiddleCenter;
-                                    textMesh.alignment = TextAlignment.Center;
+                                    textMesh.alignment = TextAlignmentOptions.Center;
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
@@ -1349,7 +1346,7 @@ namespace iiMenu.Mods
                                 }
                                 else
                                 {
-                                    TextMesh textMesh = nametag.GetComponent<TextMesh>();
+                                    TextMeshPro textMesh = nametag.GetComponent<TextMeshPro>();
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)

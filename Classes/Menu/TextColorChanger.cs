@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,7 +35,7 @@ namespace iiMenu.Classes.Menu
                 return;
             }
 
-            targetText = gameObject.GetComponent<Text>();
+            targetText = gameObject.GetComponent<TextMeshPro>();
 
             if (colors.IsFlat())
             {
@@ -49,7 +50,7 @@ namespace iiMenu.Classes.Menu
         public void Update() =>
             targetText.color = colors.GetCurrentColor();
             
-        public Text targetText;
+        public TextMeshPro targetText;
         public ExtGradient colors;
     }
 }
