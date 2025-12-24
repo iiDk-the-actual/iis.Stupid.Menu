@@ -423,30 +423,25 @@ namespace iiMenu.Menu
                     RecenterMenu();
                 #endregion
 
-                #region PC Search Keyboard
-                
-                #endregion
-
                 #region Get Camera
                 try
+                {
+                    if (TPC == null)
                     {
-                        if (TPC == null)
+                        try
                         {
-                            try
-                            {
-                                TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
-                            }
-                            catch
-                            {
-                                TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
-                            }
+                            TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                        }
+                        catch
+                        {
+                            TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
                         }
                     }
-                    catch { }
+                }
+                catch { }
                 #endregion
 
                 #region Menu Animations
-
                 if (fpsCountAverage)
                 {
                     fpsAverageNumber *= 99f;
