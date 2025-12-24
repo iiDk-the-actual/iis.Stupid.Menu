@@ -763,14 +763,12 @@ namespace iiMenu.Mods
         }
 
         public static float nameDelay;
-        public static float banDelay;
         public static string name = "GOLDENTROPHY";
         
         public static void PromptNameChange()
         {
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
         }
-
 
         public static void ChangeNameGun()
         {
@@ -781,14 +779,11 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > nameDelay)
+                    Hashtable hashtable = new Hashtable
                     {
-                        Hashtable hashtable = new Hashtable
-                        {
-                            [byte.MaxValue] = name
-                        };
-                        PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
-                    }
+                        [byte.MaxValue] = name
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
                 }
 
                 if (GetGunInput(true))
@@ -834,6 +829,7 @@ namespace iiMenu.Mods
                         [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
                     };
                     PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", lockTarget.GetPlayer().UserId, lockTarget.GetPlayer().NickName);
                 }
 
                 if (GetGunInput(true))
@@ -859,9 +855,10 @@ namespace iiMenu.Mods
             {
                 Hashtable hashtable = new Hashtable
                 {
-                    [byte.MaxValue] = banName
+                    [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
                 };
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
+                GorillaNot.instance.SendReport("evading the name ban", player.UserId, player.NickName);
             }
         }
 
