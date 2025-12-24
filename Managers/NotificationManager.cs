@@ -101,7 +101,7 @@ namespace iiMenu.Managers
             rotation.y = -270f;
             canvasRect.rotation = Quaternion.Euler(rotation);
 
-            textMaterial = new Material(LoadAsset<Shader>("TMP_SDF-Mobile Overlay"));
+            textMaterial = new Material(Shader.Find("GUI/Text Shader"));
 
             NotifiText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
                 new Vector2(450f, 210f), 30, TextAlignmentOptions.BottomLeft);
