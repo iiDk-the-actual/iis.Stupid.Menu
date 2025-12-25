@@ -1412,9 +1412,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 5f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Speeds up the firefly." },
                 new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Speeds up the bat." },
 
-                new ButtonInfo { buttonText = "Fast Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
-                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
-                new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
+                new ButtonInfo { buttonText = "Slow Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
+                new ButtonInfo { buttonText = "Slow Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
+                new ButtonInfo { buttonText = "Slow Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
 
                 new ButtonInfo { buttonText = "Physical Bug", method =() => Fun.PhysicalObject("Floating Bug Holdable"), toolTip = "Gives the bug physics, letting you grab onto it and throw it." },
                 new ButtonInfo { buttonText = "Physical Firefly", method =() => Fun.PhysicalObject("Firefly"), toolTip = "Gives the firefly physics, letting you grab onto it and throw it." },
