@@ -575,6 +575,25 @@ exit";
             ControllerInputPoller.instance.rightControllerIndexFloat += UnityInput.Current.GetKey(KeyCode.Equals) ? 1f : 0f;
         }
 
+        public static void ConnectToRegion(string region)
+        {
+            string currentRegion = PhotonNetwork.CloudRegion;
+            if (!string.IsNullOrEmpty(currentRegion))
+                currentRegion = currentRegion.Replace("/*", "");
+
+            if (currentRegion != region)
+                PhotonNetwork.ConnectToRegion(region);
+
+            NetworkSystem.Instance.currentRegionIndex = Array.IndexOf(NetworkSystem.Instance.regionNames, region);
+
+            NetworkSystemPUN punNetwork = (NetworkSystemPUN)NetworkSystem.Instance;
+            for (int i = 0; i < punNetwork.regionData.Length; i++)
+            {
+                NetworkRegionInfo regionInfo = punNetwork.regionData[i];
+                regionInfo.pingToRegion = Array.IndexOf(NetworkSystem.Instance.regionNames, regionInfo) == i ? 0 : 9999;
+            }
+        }
+
         private static bool lastTagLag;
         public static void TagLagDetector()
         {

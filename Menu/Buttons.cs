@@ -122,6 +122,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Round Menu", enableMethod =() => shouldRound = true, disableMethod =() => shouldRound = false, toolTip = "Makes the menu objects round."},
                 new ButtonInfo { buttonText = "Outline Menu", enableMethod =() => shouldOutline = true, disableMethod =() => shouldOutline = false, toolTip = "Gives the menu objects an outline."},
                 new ButtonInfo { buttonText = "Outline Text", enableMethod =() => outlineText = true, disableMethod =() => outlineText = false, toolTip = "Gives the text objects an outline."},
+                new ButtonInfo { buttonText = "Strikethrough Text", enableMethod =() => strikethroughText = true, disableMethod =() => strikethroughText = false, toolTip = "Strikes out all text on the menu."},
+                new ButtonInfo { buttonText = "Underline Text", enableMethod =() => underlineText = true, disableMethod =() => underlineText = false, toolTip = "Underlines all text on the menu."},
+                new ButtonInfo { buttonText = "Small-Caps Text", enableMethod =() => smallCapsText = true, disableMethod =() => smallCapsText = false, toolTip = "Turns all text into a small capital version."},
+                new ButtonInfo { buttonText = "Redact Text", enableMethod =() => redactText = true, disableMethod =() => redactText = false, toolTip = "Redacts all text on the menu."},
                 new ButtonInfo { buttonText = "Inner Outline Menu", enableMethod =() => innerOutline = true, disableMethod =() => innerOutline = false, toolTip = "Gives the menu an outline on the inside."},
                 new ButtonInfo { buttonText = "Smooth Menu Position", enableMethod =() => smoothMenuPosition = true, disableMethod =() => smoothMenuPosition = false, toolTip = "Smoothes the menu's position."},
                 new ButtonInfo { buttonText = "Smooth Menu Rotation", enableMethod =() => smoothMenuRotation = true, disableMethod =() => smoothMenuRotation = false, toolTip = "Smoothes the menu's rotation."},
@@ -494,9 +498,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Target Gamemode <color=grey>[</color><color=green>Super Infection</color><color=grey>]</color>", method =() => GorillaComputer.instance.SetGameModeWithoutButton("SuperInfect"), isTogglable = false, toolTip = "Changes your target gamemode to super infection."},
                 new ButtonInfo { buttonText = "Change Target Gamemode <color=grey>[</color><color=green>Error</color><color=grey>]</color>", method =() => GorillaComputer.instance.SetGameModeWithoutButton("None"), isTogglable = false, toolTip = "Changes your target gamemode to none."},
 
-                new ButtonInfo { buttonText = "Connect to US", method =() => PhotonNetwork.ConnectToRegion("us"), isTogglable = false, toolTip = "Connects you to the United States servers."},
-                new ButtonInfo { buttonText = "Connect to US West", method =() => PhotonNetwork.ConnectToRegion("usw"), isTogglable = false, toolTip = "Connects you to the western United States servers."},
-                new ButtonInfo { buttonText = "Connect to EU", method =() => PhotonNetwork.ConnectToRegion("eu"), isTogglable = false, toolTip = "Connects you to the Europe servers."},
+                new ButtonInfo { buttonText = "Connect to US", method =() => Important.ConnectToRegion("us"), toolTip = "Connects you to the United States servers."},
+                new ButtonInfo { buttonText = "Connect to US West", method =() => Important.ConnectToRegion("usw"), toolTip = "Connects you to the western United States servers."},
+                new ButtonInfo { buttonText = "Connect to EU", method =() => Important.ConnectToRegion("eu"), toolTip = "Connects you to the Europe servers."},
             },
 
             new[] { // Safety Mods [8]
@@ -635,7 +639,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Safety Bubble", method = Movement.SafetyBubble, toolTip = "Moves you away from players if they get too close to you."},
                 new ButtonInfo { buttonText = "Solid Players", method = Movement.SolidPlayers, disableMethod = Movement.DisableSolidPlayers, toolTip = "Lets you walk on top of other players."},
                 new ButtonInfo { buttonText = "Pull Mod <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.PullMod, toolTip = "Pulls you more whenever you walk to simulate speed without modifying your velocity."},
-                new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.LongJump, toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.PlayspaceAbuse, toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod = Movement.CreateVelocityTrackers, method = Movement.VelocityLongArms, disableMethod = Movement.DestroyVelocityTrackers, toolTip = "Moves your arms farther depending on how fast you move them."},
 
                 new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, method = Movement.Timer, disableMethod =() => { TimerPatch.enabled = false; Time.timeScale = 1f; GorillaLocomotion.GTPlayer.Instance.debugMovement = false;  }, toolTip = "Speeds up or slows down the time of your game."},
@@ -1408,9 +1412,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 5f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Speeds up the firefly." },
                 new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Speeds up the bat." },
 
-                new ButtonInfo { buttonText = "Fast Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
-                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
-                new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
+                new ButtonInfo { buttonText = "Slow Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
+                new ButtonInfo { buttonText = "Slow Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
+                new ButtonInfo { buttonText = "Slow Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
 
                 new ButtonInfo { buttonText = "Physical Bug", method =() => Fun.PhysicalObject("Floating Bug Holdable"), toolTip = "Gives the bug physics, letting you grab onto it and throw it." },
                 new ButtonInfo { buttonText = "Physical Firefly", method =() => Fun.PhysicalObject("Firefly"), toolTip = "Gives the firefly physics, letting you grab onto it and throw it." },

@@ -101,7 +101,7 @@ namespace iiMenu.Managers
             rotation.y = -270f;
             canvasRect.rotation = Quaternion.Euler(rotation);
 
-            textMaterial = new Material(LoadAsset<Shader>("Chams"));
+            textMaterial = new Material(Shader.Find("GUI/Text Shader"));
 
             NotifiText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
                 new Vector2(450f, 210f), 30, TextAlignmentOptions.BottomLeft);
@@ -111,6 +111,8 @@ namespace iiMenu.Managers
 
             StatsText = CreateText(canvas.transform, new Vector3(-1f, -1f, 0.5f),
                 new Vector2(450f, 1000f), 30, TextAlignmentOptions.TopRight);
+
+            StartCoroutine(SetShaderAfterInit());
         }
 
         private TextMeshProUGUI CreateText(Transform parent, Vector3 localPos, Vector2 size, int fontSize, TextAlignmentOptions anchor)
@@ -154,15 +156,18 @@ namespace iiMenu.Managers
                     ModText.font = activeFont;
                     ModText.fontStyle = activeFontStyle;
                     ModText.fontSize = arraylistScale;
+                    UpdateShaderForText(ModText);
 
                     NotifiText.font = activeFont;
                     NotifiText.fontStyle = activeFontStyle;
                     NotifiText.fontSize = notificationScale;
                     NotifiText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
+                    UpdateShaderForText(NotifiText);
 
                     StatsText.font = activeFont;
                     StatsText.fontStyle = activeFontStyle;
                     StatsText.fontSize = overlayScale;
+                    UpdateShaderForText(StatsText);
 
                     if (outlineText)
                     {
@@ -174,7 +179,8 @@ namespace iiMenu.Managers
 
                         StatsText.outlineWidth = 0.2f;
                         StatsText.outlineColor = Color.black;
-                    } else
+                    }
+                    else
                     {
                         ModText.outlineWidth = 0f;
                         NotifiText.outlineWidth = 0f;
@@ -272,6 +278,12 @@ namespace iiMenu.Managers
                 canvas.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             }
             catch (Exception e) { LogManager.Log(e); }
+        }
+
+        private static void UpdateShaderForText(TextMeshProUGUI text)
+        {
+            if (text != null && text.fontMaterial != null)
+                text.fontMaterial.shader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
         }
 
         /// <summary>
@@ -437,6 +449,15 @@ namespace iiMenu.Managers
         {
             yield return new WaitForSeconds(time);
             ClearPastNotifications(1);
+        }
+
+        private IEnumerator SetShaderAfterInit()
+        {
+            yield return null; yield return null; yield return null; yield return null; yield return null;
+
+            UpdateShaderForText(NotifiText);
+            UpdateShaderForText(ModText);
+            UpdateShaderForText(StatsText);
         }
 
         private static void CancelClear(Coroutine coroutine)

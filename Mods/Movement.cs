@@ -4286,19 +4286,29 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.GetControllerTransform(false).transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, -1.5f, 0f);
         }
 
-        public static Vector3 longJumpPower = Vector3.zero;
+        public static Vector3? longJumpPower;
+        public static float? keepVelocityUntil;
+        public static Vector3? velocity;
+
         public static float playspaceAbusePower = 0.004f;
-        public static void LongJump()
+        public static void PlayspaceAbuse()
         {
             if (rightPrimary)
             {
-                if (longJumpPower == Vector3.zero)
-                    longJumpPower = (GorillaTagger.Instance.rigidbody.linearVelocity * playspaceAbusePower).X_Z();
-                
-                GTPlayer.Instance.transform.position += longJumpPower;
+                keepVelocityUntil ??= Time.time + 0.5f;
+                velocity ??= GorillaTagger.Instance.rigidbody.linearVelocity;
+
+                if (Time.time < keepVelocityUntil)
+                    GorillaTagger.Instance.rigidbody.linearVelocity = velocity.Value;
+
+                longJumpPower ??= (GorillaTagger.Instance.rigidbody.linearVelocity * playspaceAbusePower).X_Z();
+                GTPlayer.Instance.transform.position += longJumpPower.Value;
             }
             else
-                longJumpPower = Vector3.zero;
+            {
+                longJumpPower = null;
+                velocity = null;
+            }
         }
 
         public static void BunnyHop()
