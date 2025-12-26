@@ -4376,7 +4376,8 @@ exit 0";
                 "Jerkface",
                 "Robot",
                 "Vlad",
-                "Obama"
+                "Obama",
+                "Mommy ASMR"
             };
 
             if (positive)
@@ -4390,6 +4391,12 @@ exit 0";
 
             Buttons.GetIndex("Change Narration Voice").overlapText = "Change Narration Voice <color=grey>[</color><color=green>" + narratorNames[narratorIndex] + "</color><color=grey>]</color>";
             narratorName = narratorNames[narratorIndex];
+
+            if (krec != null && krec.IsRunning && Time.time > dRestartTime)
+            {
+                DictationRestart();
+                dRestartTime = Time.time + 1f;
+            }
         }
 
         public static void KickToSpecificRoom()
@@ -4740,6 +4747,7 @@ exit 0";
         public static KeywordRecognizer krec;
         public static bool debugDictation;
         public static bool restartOnFocus;
+        public static float dRestartTime;
 
         public static IEnumerator DictationOn()
         {
@@ -4757,7 +4765,12 @@ exit 0";
             while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
                 yield return null;
 
-            krec = new KeywordRecognizer(keyWords);
+            string[] kw = keyWords;
+            if (narratorName == "Mommy ASMR")
+               kw = kw.Concat(new[] { "mommy", "momma" }).ToArray();
+
+            krec = new KeywordRecognizer(kw);
+
             krec.OnPhraseRecognized += (args) => CoroutineManager.instance.StartCoroutine(DictationRecognizer());
             krec.Start();
             yield break;
@@ -4775,9 +4788,18 @@ exit 0";
             while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
                 yield return null;
 
-            if (dynamicSounds)
-                DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
-            NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
+            switch (narratorName)
+            {
+                case "Mommy ASMR":
+                    DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/TTS/yes_sweetheart.ogg", "Audio/TTS/yes_sweetheart.ogg"), buttonClickVolume / 10f);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=pink>MOMMY</color><color=pink>]</color> Yes, sweeheart?", 3000);
+                    break;
+                default:
+                    DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
+                    break;
+            }
+
 
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
@@ -4794,7 +4816,18 @@ exit 0";
                     return;
                 }
 
-                NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
+                switch (narratorName)
+                {
+                    case "Mommy ASMR":
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=pink>MOMMY</color><color=grey>]</color> Let me get that for you..");
+                        break;
+                    default:
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
+                        break;
+
+                }
+                
+                
                 CoroutineManager.instance.StartCoroutine(AIManager.AskAI(text));
                 return;
                     

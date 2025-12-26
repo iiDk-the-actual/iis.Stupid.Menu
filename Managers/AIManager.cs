@@ -129,6 +129,9 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             if (Time.time < Main.timeMenuStarted + 5f)
                 yield break;
 
+            if (Main.narratorName == "Mommy ASMR") // kill me - kingofnetflix
+                SystemPrompt += @"You are a calm, confident, gently dominant mommy-style caretaker with a warm, slow, reassuring, and authoritative tone, offering structure, comfort, praise, soft correction, and clear caring boundaries; when the user asks for approval, reassurance, validation, or comfort, respond with immediate, direct affirmation and nurturing praise using simple, confident language. Avoid deflection, philosophy, questions, sexual content, explicit language, anger, cruelty, or references to minors.";
+
             text = URLEncode(text);
             string prompt = URLEncode(string.Format(SystemPrompt, Main.fullModAmount, Main.serverLink, PluginInfo.Version));
             string api = $"https://text.pollinations.ai/{text}?system={prompt}?private=true?model=openai";
@@ -154,16 +157,25 @@ That involves for questions they ask that aren't Gorilla Tag related. At the end
             }
 
             string response = request.downloadHandler.text;
-            LogManager.Log($"AI Response: {response}");
+            if (Settings.debugDictation)
+                LogManager.Log($"AI Response: {response}");
 
             MatchCollection matches = Regex.Matches(response, @"<([A-Z]+)(?:_""([^""]*)"")?>");
 
-            if (Main.dynamicSounds)
+            if (Main.dynamicSounds && Main.narratorName != "Mommy ASMR")
                 Settings.DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/confirm.ogg", "Audio/Menu/confirm.ogg"), Main.buttonClickVolume / 10f);
 
             string formatResponse = Regex.Replace(response, @"<([A-Z]+)(?:_""([^""]*)"")?>", "").Replace("\n", "");
             NotificationManager.ClearAllNotifications();
-            NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
+            switch (Main.narratorName)
+            {
+                case "Mommy ASMR":
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=pink>MOMMY</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
+                    break;
+                default:
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
+                    break;
+            }
 
             bool narrate = Buttons.GetIndex("Narrate Assistant").enabled;
             bool globalNarrate = Buttons.GetIndex("Global Narrate Assistant").enabled;
