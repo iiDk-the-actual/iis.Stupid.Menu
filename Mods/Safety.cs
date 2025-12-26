@@ -150,7 +150,7 @@ namespace iiMenu.Mods
         }
 
         public static void SpoofSupportPage() =>
-            GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
+            GorillaComputer.instance.screenText.currentText = GorillaComputer.instance.screenText.currentText.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
 
         private static string previousNickName;
         public static void AntiNameBan()
