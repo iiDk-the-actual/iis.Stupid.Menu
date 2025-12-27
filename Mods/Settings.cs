@@ -4106,6 +4106,22 @@ exit 0";
             Buttons.GetIndex("Change Page Size").overlapText = $"Change Page Size <color=grey>[</color><color=green>{_pageSize}</color><color=grey>]</color>";
         }
 
+        public static void ChangeCharacterDistance(bool positive = true)
+        {
+            if (positive)
+                characterDistance++;
+            else
+                characterDistance--;
+
+            if (characterDistance > 15)
+                characterDistance = 0;
+
+            if (characterDistance < 0)
+                characterDistance = 15;
+
+            Buttons.GetIndex("Change Character Distance").overlapText = $"Change Character Distance <color=grey>[</color><color=green>{characterDistance + 1}</color><color=grey>]</color>";
+        }
+
         public static void ChangeArrowType(bool positive = true)
         {
             if (positive)
@@ -5112,7 +5128,8 @@ exit 0";
                 Fun.targetFOV.ToString(),
                 Projectiles.targetProjectileIndex.ToString(),
                 Movement.fakeLagDelayIndex.ToString(),
-                Projectiles.snowballIndex.ToString()
+                Projectiles.snowballIndex.ToString(),
+                characterDistance.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5373,6 +5390,9 @@ exit 0";
 
                 Projectiles.snowballIndex = int.Parse(data[63]) - 1;
                 Projectiles.ChangeGrowingProjectile();
+
+                characterDistance = int.Parse(data[64]) - 1;
+                ChangeCharacterDistance();
             }
             catch { LogManager.Log("Save file out of date"); }
 
