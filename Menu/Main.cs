@@ -1258,7 +1258,7 @@ namespace iiMenu.Menu
                             }
                             if (button.postMethod != null)
                                 postActions.Add(button.buttonText);
-                            button.method.Invoke();
+                            button.method?.Invoke();
                             if (button.rebindKey != null)
                             {
                                 leftPrimary = _leftPrimary;
