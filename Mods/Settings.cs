@@ -4800,6 +4800,8 @@ exit 0";
                     break;
             }
 
+            if (debugDictation)
+                LogManager.Log("Dictation listening");
 
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>

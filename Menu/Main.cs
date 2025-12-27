@@ -4686,7 +4686,7 @@ namespace iiMenu.Menu
                                     method = "synthesize",
                                     args = new
                                     {
-                                        text,
+                                        text = text,
                                         provider = "elevenlabs",
                                         voice = "j05EIz3iI3JmBTWC3CsA",
                                         model = "eleven_multilingual_v2",
@@ -4704,6 +4704,7 @@ namespace iiMenu.Menu
                                     ttsRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
                                     ttsRequest.downloadHandler = new DownloadHandlerBuffer();
                                     ttsRequest.SetRequestHeader("Content-Type", "application/json");
+                                    ttsRequest.SetRequestHeader("Origin", "https://puter.com");
 
                                     yield return ttsRequest.SendWebRequest();
 
