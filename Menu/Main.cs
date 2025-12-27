@@ -5163,7 +5163,7 @@ namespace iiMenu.Menu
         /// <param name="canvasObject">The canvas object to which the menu appearance settings will be applied.</param>
         public static void FollowMenuSettings(TextMeshPro canvasObject)
         {
-            canvasObject.characterSpacing = -9f;
+            canvasObject.characterSpacing = -8f;
 
             if (redactText)
                 canvasObject.characterSpacing -= 3f;
