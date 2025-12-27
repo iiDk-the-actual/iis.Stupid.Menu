@@ -4125,9 +4125,9 @@ exit 0";
             else
                 fontCycle--;
 
-            fontCycle %= 13;
+            fontCycle %= 15;
             if (fontCycle < 0)
-                fontCycle = 12;
+                fontCycle = 14;
 
             switch (fontCycle) {
                 case 0:
