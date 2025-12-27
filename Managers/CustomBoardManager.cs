@@ -143,8 +143,8 @@ namespace iiMenu.Managers
         }
 
         #region Game Boards
-        public const int StumpLeaderboardIndex = 4;
-        public const int ForestLeaderboardIndex = 6;
+        public const int StumpLeaderboardIndex = 3;
+        public const int ForestLeaderboardIndex = 5;
 
         public Material forestMaterial;
         public Material stumpMaterial;
