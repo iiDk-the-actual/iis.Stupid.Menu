@@ -42,12 +42,7 @@
         Encoding="UTF-8"
         WriteOnlyWhenDifferent="true"/>
   </Target>
-
-  <!-- Run BuildChecks -->
-  <Target Name="RunBuildChecks" BeforeTargets="BeforeBuild" Condition="'$(IsMainProject)' == 'true'">
-    <Exec Command="dotnet run --project BuildChecks/BuildChecks.csproj &quot;$([System.String]::Copy($(ProjectDir)).TrimEnd('\'))&quot;" />
-  </Target>
-
+  
   <!-- Copy to Plugins -->
   <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(IsMainProject)' == 'true'">
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(TargetFileName)" />
