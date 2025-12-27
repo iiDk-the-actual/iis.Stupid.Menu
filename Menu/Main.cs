@@ -1178,7 +1178,7 @@ namespace iiMenu.Menu
                 // Menu
                 foreach (ButtonInfo button in Buttons.buttons
                     .SelectMany(list => list)
-                    .Where(button => button.enabled && button.method != null))
+                    .Where(button => button.enabled && (button.method != null || button.postMethod != null)))
                 {
                     try
                     {
