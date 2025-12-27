@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -45,6 +46,7 @@ using UnityEngine.XR;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static Liv.Lck.Encoding.LckNativeEncodingApi;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 
@@ -4072,6 +4074,32 @@ exit 0";
 
             textureFileDirectory.Remove("CustomWatermark.png");
             customWatermark = LoadTextureFromFile("CustomWatermark.png");
+        }
+
+        private static TMP_FontAsset chosenFont;
+        public static void CustomFontType()
+        {
+            string filePath = $"{PluginInfo.BaseDirectory}/CustomFont.ttf";
+            if (!File.Exists(filePath))
+            {
+                LogManager.Log("Downloading CustomFont.ttf");
+                WebClient stream = new WebClient();
+                stream.DownloadFile($"{PluginInfo.ServerResourcePath}/Fonts/LiberationSans.ttf", filePath);
+            }
+
+            chosenFont = TMP_FontAsset.CreateFontAsset(new Font(filePath));
+        }
+
+        public static void PersistCustomFont()
+        {
+            if (activeFont != chosenFont)
+                activeFont = chosenFont;
+        }
+
+        public static void DisableCustomFont()
+        {
+            fontCycle--;
+            ChangeFontType();
         }
 
         public static void ChangePageType(bool positive = true)
