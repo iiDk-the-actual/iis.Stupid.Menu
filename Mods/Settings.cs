@@ -4837,7 +4837,7 @@ exit 0";
             {
                 case "Mommy ASMR":
                     DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/TTS/yes_sweetheart.ogg", "Audio/TTS/yes_sweetheart.ogg"), buttonClickVolume / 10f);
-                    NotificationManager.SendNotification("<color=grey>[</color><color=pink>MOMMY</color><color=pink>]</color> Yes, sweeheart?", 3000);
+                    NotificationManager.SendNotification("<color=grey>[</color><color=lightPink>MOMMY</color><color=grey>]</color> Yes, sweetheart?", 3000);
                     break;
                 default:
                     DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/select.ogg", "Audio/Menu/select.ogg"), buttonClickVolume / 10f);
@@ -4866,7 +4866,7 @@ exit 0";
                 switch (narratorName)
                 {
                     case "Mommy ASMR":
-                        NotificationManager.SendNotification($"<color=grey>[</color><color=pink>MOMMY</color><color=grey>]</color> Let me get that for you..");
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=lightPink>MOMMY</color><color=grey>]</color> Let me get that for you..");
                         break;
                     default:
                         NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> Generating response..");
