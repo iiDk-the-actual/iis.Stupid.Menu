@@ -310,7 +310,7 @@ exit";
         public static void EnableFPC()
         {
             if (TPC != null)
-                wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineCamera>().enabled;
+                wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
         }
 
         public static void MoveFPC()
@@ -319,9 +319,8 @@ exit";
             {
                 if (menu != null && !XRSettings.isDeviceActive)
                     return;
-
                 TPC.fieldOfView = 90f;
-                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineCamera>().enabled = false;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = false;
                 TPC.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
                 TPC.gameObject.transform.rotation = Quaternion.Lerp(TPC.transform.rotation, GorillaTagger.Instance.headCollider.transform.rotation, 0.075f);
             }
@@ -332,7 +331,7 @@ exit";
             if (TPC != null)
             {
                 TPC.GetComponent<Camera>().fieldOfView = 60f;
-                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineCamera>().enabled = wasenabled;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
 #pragma warning restore CS0618 // Type or member is obsolete
