@@ -119,7 +119,7 @@ namespace iiMenu.Menu
             PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
 
             CrystalMaterial = GetObject("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk")?.GetComponent<Renderer>()?.material;
-            TryOnRoom = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom");
+            TryOnRoom = GetObject("NetworkTriggers/Cosmetics Room Triggers/TryOnRoom");
 
             fullModAmount ??= Buttons.buttons.SelectMany(list => list).ToArray().Length;
 
