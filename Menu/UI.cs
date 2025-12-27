@@ -161,10 +161,22 @@ namespace iiMenu.Menu
                 arraylist.color = guiColor;
                 watermark.color = guiColor;
 
+                versionLabel.font = activeFont;
+                roomStatus.font = activeFont;
+                arraylist.font = activeFont;
+
+                versionLabel.fontStyle = activeFontStyle;
+                roomStatus.fontStyle = activeFontStyle;
+                arraylist.fontStyle = activeFontStyle;
+
                 controlBackground.color = backgroundColor.GetCurrentColor();
 
                 foreach (var textObject in textObjects)
+                {
                     textObject.color = textColors[1].GetCurrentColor();
+                    textObject.font = activeFont;
+                    textObject.fontStyle = activeFontStyle;
+                }
 
                 foreach (var imageObject in imageObjects)
                     imageObject.color = buttonColors[0].GetCurrentColor();
