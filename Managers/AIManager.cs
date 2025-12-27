@@ -123,7 +123,7 @@ namespace iiMenu.Managers
             switch (Main.narratorName)
             {
                 case "Mommy ASMR":
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=lightPink>MOMMY</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=#ffb6c1>MOMMY</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
                     break;
                 default:
                     NotificationManager.SendNotification($"<color=grey>[</color><color=blue>AI</color><color=grey>]</color> {formatResponse}", Duration(formatResponse));
