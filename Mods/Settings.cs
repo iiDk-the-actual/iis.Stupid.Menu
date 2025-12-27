@@ -4087,7 +4087,8 @@ exit 0";
                 stream.DownloadFile($"{PluginInfo.ServerResourcePath}/Fonts/LiberationSans.ttf", filePath);
             }
 
-            chosenFont = TMP_FontAsset.CreateFontAsset(new Font(filePath));
+            chosenFont = TMP_FontAsset.CreateFontAsset(new Font($"{FileUtilities.GetGamePath()}/{filePath}"));
+            PersistCustomFont();
         }
 
         public static void PersistCustomFont()
