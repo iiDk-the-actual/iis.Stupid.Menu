@@ -21,7 +21,9 @@
 
 using iiMenu;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure [for legacy compatibility with default SMI settings]
 namespace Loading
+#pragma warning restore IDE0130 // Namespace does not match folder structure [for legacy compatibility with default SMI settings]
 {
     public static class Loader 
     {
