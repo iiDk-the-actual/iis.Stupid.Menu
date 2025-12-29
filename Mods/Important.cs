@@ -20,8 +20,10 @@
  */
 
 using BepInEx;
+using GorillaExtensions;
 using GorillaNetworking;
 using GorillaTagScripts;
+using HarmonyLib;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Managers.DiscordRPC;
@@ -32,20 +34,27 @@ using PlayFab;
 using PlayFab.CloudScriptModels;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Networking;
+using UnityEngine.TextCore;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
+using Valve.Newtonsoft.Json;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
+using static Oculus.Interaction.Context;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
 
@@ -302,6 +311,331 @@ exit";
                 discord.Dispose();
                 discord = null;
             }
+        }
+
+        private static bool quickSongExists;
+        public static void EnsureIntegrationProgram()
+        {
+            quickSongExists = File.Exists($"{PluginInfo.BaseDirectory}/QuickSong.exe");
+            if (!quickSongExists)
+            {
+                Prompt("This mod requires the \"QuickSong\" library. Would you like to automatically download it? (16.3mb)", () =>
+                {
+                    using UnityWebRequest request = UnityWebRequest.Get("https://github.com/iiDk-the-actual/QuickSong/releases/latest/download/QuickSong.exe");
+                    UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+
+                    while (!operation.isDone) { }
+
+                    if (request.result == UnityWebRequest.Result.Success)
+                    {
+                        File.WriteAllBytes($"{PluginInfo.BaseDirectory}/QuickSong.exe", request.downloadHandler.data);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded QuickSong to {PluginInfo.BaseDirectory}/QuickSong.exe.");
+                    }
+                    else
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not download QuickSong: {(request.error.IsNullOrEmpty() ? "Unknown error" : request.error)}");
+
+                    quickSongExists = File.Exists($"{PluginInfo.BaseDirectory}/QuickSong.exe");
+                }, () => Toggle("Media Integration"));
+            }
+        }
+
+        public static string Title { get; private set; } = "Unknown";
+        public static string Artist { get; private set; } = "Unknown";
+        public static Texture2D Icon { get; private set; } = new Texture2D(2, 2);
+        public static bool Paused { get; private set; } = true;
+
+        public static float StartTime { get; private set; }
+        public static float EndTime { get; private set; }
+        public static float ElapsedTime { get; private set; }
+
+        public static bool ValidData { get; private set; }
+
+        public static async Task UpdateDataAsync()
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = $"{FileUtilities.GetGamePath()}/{PluginInfo.BaseDirectory}/QuickSong.exe",
+                Arguments = "-all",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+
+            using Process proc = new Process { StartInfo = psi };
+            proc.Start();
+            string output = await proc.StandardOutput.ReadToEndAsync();
+
+            await Task.Run(() => proc.WaitForExit());
+
+            Paused = true;
+            Title = "Unknown";
+            Artist = "Unknown";
+
+            StartTime = 0f;
+            EndTime = 0f;
+            ElapsedTime = 0f;
+
+            try
+            {
+                Dictionary<string, object> data = JsonConvert.DeserializeObject<Dictionary<string, object>>(output);
+                Title = (string)data["Title"];
+                Artist = (string)data["Artist"];
+
+                StartTime = Convert.ToSingle(data["StartTime"]);
+                EndTime = Convert.ToSingle(data["EndTime"]);
+                ElapsedTime = Convert.ToSingle(data["ElapsedTime"]);
+
+                Paused = (string)data["Status"] != "Playing";
+                Icon.LoadImage(Convert.FromBase64String((string)data["ThumbnailBase64"]));
+
+                ValidData = true;
+            }
+            catch { }
+        }
+
+        private static IEnumerator UpdateDataCoroutine(float delay = 0f)
+        {
+            yield return new WaitForSeconds(delay);
+
+            _ = UpdateDataAsync();
+            yield return null;
+        }
+
+        // Credits to The-Graze/MusicControls for control methods
+        internal enum VirtualKeyCodes : uint
+        {
+            NEXT_TRACK = 0xB0,
+            PREVIOUS_TRACK = 0xB1,
+            PLAY_PAUSE = 0xB3,
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void keybd_event(uint bVk, uint bScan, uint dwFlags, uint dwExtraInfo);
+        internal static void SendKey(VirtualKeyCodes virtualKeyCode) => keybd_event((uint)virtualKeyCode, 0, 0, 0);
+
+        public static void PreviousTrack()
+        {
+            CoroutineManager.instance.StartCoroutine(UpdateDataCoroutine(0.1f));
+            ElapsedTime = 0f;
+            SendKey(VirtualKeyCodes.PREVIOUS_TRACK);
+        }
+
+        public static void PauseTrack()
+        {
+            Paused = !Paused;
+            SendKey(VirtualKeyCodes.PLAY_PAUSE);
+        }
+
+        public static void SkipTrack()
+        {
+            CoroutineManager.instance.StartCoroutine(UpdateDataCoroutine(0.1f));
+            ElapsedTime = 0f;
+            SendKey(VirtualKeyCodes.NEXT_TRACK);
+        }
+
+        private static float updateDataDelay;
+        private static float inputDelay;
+
+        private static GameObject mediaIcon;
+        private static Material mediaIconMaterial;
+
+        private static TextMeshPro mediaText;
+
+        private static Shader _tmpShader;
+        private static Shader TmpShader
+        {
+            get
+            {
+                if (_tmpShader == null)
+                    _tmpShader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
+
+                return _tmpShader;
+            }
+        }
+
+        private static TMP_SpriteAsset _mediaSpriteSheet;
+        public static TMP_SpriteAsset MediaSpriteSheet
+        {
+            get
+            {
+                if (_mediaSpriteSheet == null)
+                {
+                    _mediaSpriteSheet = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
+                    _mediaSpriteSheet.name = "iiMenu_SpriteSheet";
+
+                    var textureList = new List<Texture2D>();
+                    var spriteDataList = new List<(string name, int index)>();
+
+                    void AddSprite(string name, Texture2D tex)
+                    {
+                        spriteDataList.Add((name, textureList.Count));
+                        textureList.Add(tex);
+                    }
+
+                    AddSprite("Pause", LoadTextureFromURL($"{PluginInfo.ServerResourcePath}/Images/Mods/Important/pause.png", $"Images/Mods/Important/pause.png"));
+
+                    int maxSize = 512;
+                    Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
+                    Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
+
+                    _mediaSpriteSheet.spriteSheet = spriteSheet;
+                    _mediaSpriteSheet.material = new Material(Shader.Find("TextMeshPro/Sprite"))
+                    {
+                        mainTexture = spriteSheet
+                    };
+
+                    _mediaSpriteSheet.spriteInfoList = new List<TMP_Sprite>();
+                    Traverse.Create(_mediaSpriteSheet).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
+
+                    _mediaSpriteSheet.spriteGlyphTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var rect = rects[i];
+
+                        var glyph = new TMP_SpriteGlyph
+                        {
+                            index = (uint)i,
+                            metrics = new GlyphMetrics(
+                                width: rect.width * spriteSheet.width,
+                                height: rect.height * spriteSheet.height,
+                                bearingX: -(rect.width * spriteSheet.width) / 2f,
+                                bearingY: rect.height * spriteSheet.height * 0.8f,
+                                advance: rect.width * spriteSheet.width
+                            ),
+                            glyphRect = new GlyphRect(
+                                x: (int)(rect.x * spriteSheet.width),
+                                y: (int)(rect.y * spriteSheet.height),
+                                width: (int)(rect.width * spriteSheet.width),
+                                height: (int)(rect.height * spriteSheet.height)
+                            ),
+                            scale = 1f,
+                            atlasIndex = 0
+                        };
+                        _mediaSpriteSheet.spriteGlyphTable.Add(glyph);
+                    }
+
+                    _mediaSpriteSheet.spriteCharacterTable.Clear();
+                    for (int i = 0; i < spriteDataList.Count; i++)
+                    {
+                        var (name, _) = spriteDataList[i];
+
+                        var character = new TMP_SpriteCharacter(0xFFFE, _mediaSpriteSheet.spriteGlyphTable[i])
+                        {
+                            name = name,
+                            scale = 1f,
+                            glyphIndex = (uint)i
+                        };
+                        _mediaSpriteSheet.spriteCharacterTable.Add(character);
+                    }
+
+                    _mediaSpriteSheet.UpdateLookupTables();
+                }
+                return _mediaSpriteSheet;
+            }
+        }
+
+        public static void MediaIntegration()
+        {
+            if (quickSongExists)
+            {
+                if (mediaIcon == null)
+                {
+                    mediaIcon = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Object.Destroy(mediaIcon.GetComponent<Collider>());
+
+                    if (mediaIconMaterial == null)
+                        mediaIconMaterial = new Material(LoadAsset<Shader>("Chams"));
+
+                    mediaIcon.GetComponent<Renderer>().material = mediaIconMaterial;
+                }
+
+                mediaIcon.transform.localScale = new Vector3(0.25f, 0.25f, 0.01f) * VRRig.LocalRig.scaleFactor;
+                mediaIcon.transform.position = GorillaTagger.Instance.headCollider.transform.TransformPoint(new Vector3(-0.5f, 0.2f, 1f));
+                mediaIcon.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+
+                if (mediaText == null)
+                {
+                    GameObject textHolder = new GameObject("iiMenu_MediaText");
+
+                    TextMeshPro text = textHolder.GetOrAddComponent<TextMeshPro>();
+                    text.color = Color.white;
+                    text.fontSize = 0.75f;
+                    text.fontStyle = activeFontStyle;
+                    text.font = activeFont;
+                    text.alignment = TextAlignmentOptions.Left;
+                    text.spriteAsset = MediaSpriteSheet;
+                    text.margin = new Vector4(0.5f, 0, 0, 0);
+
+                    if (text != null && text.fontMaterial != null)
+                        text.fontMaterial.shader = TmpShader;
+
+                    mediaText = text;
+                }
+
+                mediaText.transform.localScale = Vector3.one * VRRig.LocalRig.scaleFactor;
+                mediaText.transform.position = GorillaTagger.Instance.headCollider.transform.TransformPoint(new Vector3(-0.35f, 0.2f, 1f));
+                mediaText.transform.LookAt(Camera.main.transform.position);
+                mediaText.transform.Rotate(0f, 180f, 0f);
+                mediaText.transform.position += mediaText.transform.right * mediaText.bounds.size.x;
+
+                FollowMenuSettings(mediaText);
+
+                float clampedElapsed = Mathf.Clamp(ElapsedTime, StartTime, EndTime);
+                mediaText.text =
+                    $@"{Artist} - {Title}
+{(Paused ? "  <sprite name=\"Pause\"> " : "")}{Mathf.Floor(clampedElapsed / 60)}:{Mathf.Floor(clampedElapsed % 60):00} - {Mathf.Floor(EndTime / 60)}:{Mathf.Floor(EndTime % 60):00}";
+
+                if (Time.time > updateDataDelay)
+                {
+                    updateDataDelay = Time.time + 5f;
+                    CoroutineManager.instance.StartCoroutine(UpdateDataCoroutine());
+                }
+
+                if (!Paused)
+                    ElapsedTime += Time.deltaTime;
+
+                if (Time.time > inputDelay)
+                {
+                    if (Mathf.Abs(leftJoystick.x) > 0.5f)
+                    {
+                        inputDelay = Time.time + 0.5f;
+                        PlayButtonSound(null, true, true);
+
+                        if (leftJoystick.x > 0f)
+                            SkipTrack();
+                        else
+                            PreviousTrack();
+                    }
+
+                    if (leftJoystickClick)
+                    {
+                        inputDelay = Time.time + 0.5f;
+                        PlayButtonSound(null, true, true);
+
+                        PauseTrack();
+                    }
+                }
+
+                Texture2D targetIcon = Icon == null || !ValidData ? null : Icon;
+                Renderer icon = mediaIcon.GetComponent<Renderer>();
+
+                if (icon.material.GetTexture("_MainTex") != targetIcon)
+                    icon.material.SetTexture("_MainTex", targetIcon);
+            }
+        }
+
+        public static void DisableMediaIntegration()
+        {
+            quickSongExists = false;
+
+            if (mediaIcon != null)
+                Object.Destroy(mediaIcon);
+
+            if (mediaText != null)
+                Object.Destroy(mediaText.gameObject);
+
+            mediaIcon = null;
+            mediaText = null;
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
