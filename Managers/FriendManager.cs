@@ -828,8 +828,10 @@ namespace iiMenu.Managers
             }
         }
 
+#pragma warning disable IDE1006 // Naming Styles due to JSON format
         public class FriendData
         {
+
             public Dictionary<string, Friend> friends { get; set; }
             public Dictionary<string, PendingFriend> incoming { get; set; }
             public Dictionary<string, PendingFriend> outgoing { get; set; }
@@ -843,6 +845,7 @@ namespace iiMenu.Managers
                     this.currentName = currentName;
                     this.currentUserID = currentUserID;
                 }
+
 
                 public bool online { get; }
                 public string currentRoom { get; }
@@ -862,6 +865,7 @@ namespace iiMenu.Managers
                 public string currentUserID { get; }
             }
         }
+#pragma warning restore IDE1006 // Naming Styles
         #endregion
 
         #region Menu Implementation
