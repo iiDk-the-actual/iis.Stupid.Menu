@@ -35,7 +35,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -46,7 +45,6 @@ using UnityEngine.XR;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
-using static Liv.Lck.Encoding.LckNativeEncodingApi;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 

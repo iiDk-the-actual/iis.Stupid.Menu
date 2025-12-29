@@ -37,10 +37,10 @@ using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Text;
 using TMPro;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.TextCore;
@@ -1016,6 +1016,32 @@ namespace iiMenu.Mods
                     NotificationManager.information.Remove("Turn");
                 }
             }
+        }
+
+        public static void EnableDebugHUD()
+        {
+            DebugHudStats debugStats = Camera.main.transform.Find("DebugCanvas").GetComponent<DebugHudStats>();
+
+            debugStats.builder = new StringBuilder();
+            debugStats.drawCallsRecorder = ProfilerRecorder.StartNew(
+                ProfilerCategory.Render,
+                "Draw Calls Count"
+            );
+            debugStats.trisRecorder = ProfilerRecorder.StartNew(
+                ProfilerCategory.Render,
+                "Tris Count"
+            );
+
+            debugStats.gameObject.SetActive(true);
+            debugStats.text.gameObject.SetActive(true);
+
+            debugStats.enabled = true;
+        }
+
+        public static void DisableDebugHUD()
+        {
+            DebugHudStats debugStats = Camera.main.transform.Find("DebugCanvas").GetComponent<DebugHudStats>();
+            debugStats.gameObject.SetActive(false);
         }
 
         public static void NearbyTaggerLabel()

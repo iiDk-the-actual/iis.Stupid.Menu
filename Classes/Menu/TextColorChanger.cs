@@ -21,7 +21,6 @@
 
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace iiMenu.Classes.Menu
 {
