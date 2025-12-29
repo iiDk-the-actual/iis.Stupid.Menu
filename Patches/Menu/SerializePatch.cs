@@ -47,7 +47,15 @@ namespace iiMenu.Patches.Menu
 
             if (OverrideSerialization == null)
                 return true;
-            return OverrideSerialization();
+
+            try
+            {
+                return OverrideSerialization();
+            } catch (Exception e)
+            {
+                LogManager.LogError($"Error in SerializePatch.OverrideSerialization: ${e}");
+                return false;
+            }
         }
     }
 }
