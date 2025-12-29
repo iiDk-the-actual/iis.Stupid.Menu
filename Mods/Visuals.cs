@@ -5650,16 +5650,6 @@ namespace iiMenu.Mods
                         transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                         transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                     }
-                    else if (transform.gameObject.name == "oh") // Outline holder
-                    {
-                        nameTagText.GetComponent<TextMeshPro>().text = finalString;
-
-                        foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
-                        {
-                            if (secondTransform.parent == transform)
-                                secondTransform.gameObject.GetComponent<TextMeshPro>().text = finalString;
-                        }
-                    }
                 }
             }
         }
@@ -5729,16 +5719,6 @@ namespace iiMenu.Mods
                         transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                         transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                     }
-                    else if (transform.gameObject.name == "oh") //outline holder
-                    {
-                        nameTagText.GetComponent<TextMeshPro>().text = finalString;
-
-                        foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
-                        {
-                            if (secondTransform.parent == transform)
-                                secondTransform.gameObject.GetComponent<TextMeshPro>().text = finalString;
-                        }
-                    }
                 }
             }
 
@@ -5807,16 +5787,6 @@ namespace iiMenu.Mods
                             transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                             transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                         }
-                        else if (transform.gameObject.name == "oh") // Outline holder
-                        {
-                            nameTagText.GetComponent<TextMeshPro>().text = finalString;
-
-                            foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
-                            {
-                                if (secondTransform.parent == transform)
-                                    secondTransform.gameObject.GetComponent<TextMeshPro>().text = finalString;
-                            }
-                        }
                     }
                 } 
                 else if (sillyComputer.IsTargetOf(GetPlayerFromVRRig(playerRig), PhotonNetwork.LocalPlayer))
@@ -5847,16 +5817,6 @@ namespace iiMenu.Mods
                         {
                             transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                             transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
-                        }
-                        else if (transform.gameObject.name == "oh") // Outline holder
-                        {
-                            nameTagText.GetComponent<TextMeshPro>().text = finalString;
-
-                            foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
-                            {
-                                if (secondTransform.parent == transform)
-                                    secondTransform.gameObject.GetComponent<TextMeshPro>().text = finalString;
-                            }
                         }
                     }
                 }
@@ -5921,58 +5881,8 @@ namespace iiMenu.Mods
                 backgroundRender.material.color = Color.white;
                 MeshRender.material.renderQueue = backgroundRender.material.renderQueue + 2;
 
-                // I could do this a better way but right now, I just couldnt care less
-
-                GameObject outlineHolder = new GameObject("oh"); // Outline holder
-                outlineHolder.transform.parent = MeshHolder.transform;
-
-                GameObject textOutline1 = new GameObject("outline1");
-                textOutline1.transform.parent = outlineHolder.transform;
-                textOutline1.transform.localPosition = new Vector3(-0.01f, 0.01f, 0);
-
-                TextMeshPro textOutline1_mesh = textOutline1.AddComponent<TextMeshPro>();
-                textOutline1_mesh.GetComponent<Renderer>().material.renderQueue = backgroundRender.material.renderQueue + 1;
-                textOutline1_mesh.fontSize = 1.8f;
-                textOutline1_mesh.fontStyle = activeFontStyle;
-                textOutline1_mesh.font = activeFont;
-                textOutline1_mesh.alignment = TextAlignmentOptions.Center;
-                textOutline1_mesh.color = Color.black;
-
-                GameObject textOutline2 = new GameObject("outline2");
-                textOutline2.transform.parent = outlineHolder.transform;
-                textOutline2.transform.localPosition = new Vector3(0.01f, -0.01f, 0);
-
-                TextMeshPro textOutline2_mesh = textOutline2.AddComponent<TextMeshPro>();
-                textOutline2_mesh.GetComponent<Renderer>().material.renderQueue = backgroundRender.material.renderQueue + 1;
-                textOutline2_mesh.fontSize = 1.8f;
-                textOutline2_mesh.fontStyle = activeFontStyle;
-                textOutline2_mesh.font = activeFont;
-                textOutline2_mesh.alignment = TextAlignmentOptions.Center;
-                textOutline2_mesh.color = Color.black;
-
-                GameObject textOutline3 = new GameObject("outline3");
-                textOutline3.transform.parent = outlineHolder.transform;
-                textOutline3.transform.localPosition = new Vector3(-0.01f, -0.01f, 0);
-
-                TextMeshPro textOutline3_mesh = textOutline3.AddComponent<TextMeshPro>();
-                textOutline3_mesh.GetComponent<Renderer>().material.renderQueue = backgroundRender.material.renderQueue + 1;
-                textOutline3_mesh.fontSize = 1.8f;
-                textOutline3_mesh.fontStyle = activeFontStyle;
-                textOutline3_mesh.font = activeFont;
-                textOutline3_mesh.alignment = TextAlignmentOptions.Center;
-                textOutline3_mesh.color = Color.black;
-
-                GameObject textOutline4 = new GameObject("outline4");
-                textOutline4.transform.parent = outlineHolder.transform;
-                textOutline4.transform.localPosition = new Vector3(0.01f, 0.01f, 0);
-
-                TextMeshPro textOutline4_mesh = textOutline4.AddComponent<TextMeshPro>();
-                textOutline4_mesh.GetComponent<Renderer>().material.renderQueue = backgroundRender.material.renderQueue + 1;
-                textOutline4_mesh.fontSize = 1.8f;
-                textOutline4_mesh.fontStyle = activeFontStyle;
-                textOutline4_mesh.font = activeFont;
-                textOutline4_mesh.alignment = TextAlignmentOptions.Center;
-                textOutline4_mesh.color = Color.black;
+                newMesh.outlineWidth = 0.2f;
+                newMesh.outlineColor = Color.black;
 
                 nameTagPool.Add(newMesh);
 
