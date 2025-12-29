@@ -4820,6 +4820,7 @@ exit 0";
             krec.Start();
             yield break;
         }
+
         public static IEnumerator DictationRecognizer()
         {
             ButtonInfo mod = Buttons.GetIndex("AI Assistant");
@@ -4879,6 +4880,7 @@ exit 0";
                 return;
                     
             };
+
             drec.DictationComplete += (completionCause) =>
             {
                 if (debugDictation)
@@ -4889,9 +4891,8 @@ exit 0";
                         DictationPlay(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/close.ogg", "Audio/Menu/close.ogg"), buttonClickVolume / 10f);
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>AI</color><color=grey>]</color> Cancelling...", 3000);
                 }
-                
-
             };
+
             drec.DictationError += (error, hresult) =>
             {
                 if (debugDictation)
@@ -4901,9 +4902,10 @@ exit 0";
                     DictationOff();
 
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Online Speech Recognition is not enabled on this device. Either open the menu to enable it, or check your internet connection.", 3000);
-                    Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => mod.enabled = false, "Ok! :)"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => mod.enabled = false, "Ok :("));
+                    Prompt("Online Speech Recognition is not enabled on your device. Would you like to open the Settings page to enable it?", () => { Process.Start("ms-settings:privacy-speech"); PromptSingle("Once you enable Online Speech Recognition, turn this mod back on!", () => mod.enabled = false, "Ok"); }, () => PromptSingle("You will not be able to use this mod until you enable Online Speech Recognition.", () => mod.enabled = false, "Ok"));
                 }
             };
+
             drec.DictationHypothesis += (text) =>
             {
                 if (debugDictation)
@@ -4912,6 +4914,7 @@ exit 0";
                 NotificationManager.ClearAllNotifications();
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
             };
+
             drec?.Start();
             yield break;
         }

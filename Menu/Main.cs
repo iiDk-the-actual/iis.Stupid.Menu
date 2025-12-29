@@ -4653,70 +4653,66 @@ namespace iiMenu.Menu
                         }
                     case 30: // mommy asmr
                         {
-                            using (UnityWebRequest tokenRequest = UnityWebRequest.Get("https://iidk.online/gpt"))
+                            using UnityWebRequest tokenRequest = UnityWebRequest.Get("https://iidk.online/gpt");
+                            yield return tokenRequest.SendWebRequest();
+
+                            if (tokenRequest.result != UnityWebRequest.Result.Success)
                             {
-                                yield return tokenRequest.SendWebRequest();
-
-                                if (tokenRequest.result != UnityWebRequest.Result.Success)
-                                {
-                                    LogManager.LogError("Error fetching puter token: " + tokenRequest.error);
-                                    yield break;
-                                }
-
-                                string tokenResponse = tokenRequest.downloadHandler.text;
-                                var tokenData = JsonConvert.DeserializeObject<Dictionary<string, object>>(tokenResponse);
-
-                                if (!tokenData.TryGetValue("token", out var tokenObj))
-                                {
-                                    LogManager.LogError("No token returned for puter");
-                                    yield break;
-                                }
-
-                                string authToken = tokenObj.ToString();
-                                if (Settings.debugDictation)
-                                    LogManager.Log($"Puter token: {authToken}");
-
-                                if (text.Length > 300)
-                                    text = text[..300];
-
-                                var payload = new
-                                {
-                                    @interface = "puter-tts",
-                                    driver = "elevenlabs-tts",
-                                    method = "synthesize",
-                                    args = new
-                                    {
-                                        text = text,
-                                        provider = "elevenlabs",
-                                        voice = "j05EIz3iI3JmBTWC3CsA",
-                                        model = "eleven_multilingual_v2",
-                                        output_format = "mp3_44100_128"
-                                    },
-                                    auth_token = authToken,
-                                    test_mode = false
-                                };
-
-                                string jsonPayload = JsonConvert.SerializeObject(payload);
-
-                                using (UnityWebRequest ttsRequest = new UnityWebRequest("https://api.puter.com/drivers/call", "POST"))
-                                {
-                                    byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload); 
-                                    ttsRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                                    ttsRequest.downloadHandler = new DownloadHandlerBuffer();
-                                    ttsRequest.SetRequestHeader("Content-Type", "application/json");
-                                    ttsRequest.SetRequestHeader("Origin", "https://puter.com");
-
-                                    yield return ttsRequest.SendWebRequest();
-
-                                    if (ttsRequest.result != UnityWebRequest.Result.Success)
-                                    {
-                                        LogManager.LogError("Error getting TTS: " + ttsRequest.error);
-                                        yield break;
-                                    }
-
-                                    File.WriteAllBytes(filePath, ttsRequest.downloadHandler.data);
-                                }
+                                LogManager.LogError("Error fetching puter token: " + tokenRequest.error);
+                                yield break;
                             }
+
+                            string tokenResponse = tokenRequest.downloadHandler.text;
+                            var tokenData = JsonConvert.DeserializeObject<Dictionary<string, object>>(tokenResponse);
+
+                            if (!tokenData.TryGetValue("token", out var tokenObj))
+                            {
+                                LogManager.LogError("No token returned for puter");
+                                yield break;
+                            }
+
+                            string authToken = tokenObj.ToString();
+                            if (Settings.debugDictation)
+                                LogManager.Log($"Puter token: {authToken}");
+
+                            if (text.Length > 300)
+                                text = text[..300];
+
+                            var payload = new
+                            {
+                                @interface = "puter-tts",
+                                driver = "elevenlabs-tts",
+                                method = "synthesize",
+                                args = new
+                                {
+                                    text,
+                                    provider = "elevenlabs",
+                                    voice = "j05EIz3iI3JmBTWC3CsA",
+                                    model = "eleven_multilingual_v2",
+                                    output_format = "mp3_44100_128"
+                                },
+                                auth_token = authToken,
+                                test_mode = false
+                            };
+
+                            string jsonPayload = JsonConvert.SerializeObject(payload);
+
+                            using UnityWebRequest ttsRequest = new UnityWebRequest("https://api.puter.com/drivers/call", "POST");
+                            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonPayload);
+                            ttsRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                            ttsRequest.downloadHandler = new DownloadHandlerBuffer();
+                            ttsRequest.SetRequestHeader("Content-Type", "application/json");
+                            ttsRequest.SetRequestHeader("Origin", "https://puter.com");
+
+                            yield return ttsRequest.SendWebRequest();
+
+                            if (ttsRequest.result != UnityWebRequest.Result.Success)
+                            {
+                                LogManager.LogError("Error getting TTS: " + ttsRequest.error);
+                                yield break;
+                            }
+
+                            File.WriteAllBytes(filePath, ttsRequest.downloadHandler.data);
                             break;
                         }
 

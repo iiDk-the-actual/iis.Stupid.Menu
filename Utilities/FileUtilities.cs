@@ -101,7 +101,7 @@ namespace iiMenu.Utilities
                          .Replace("/", "");
 
             if (input.Length > 64)
-                input = input.Substring(0, 64);
+                input = input[..64];
 
             if (string.IsNullOrWhiteSpace(input))
                 input = "file"; // fallback

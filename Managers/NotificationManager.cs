@@ -280,10 +280,22 @@ namespace iiMenu.Managers
             catch (Exception e) { LogManager.Log(e); }
         }
 
+        private static Shader _tmpShader;
+        private static Shader TmpShader
+        {
+            get
+            {
+                if (_tmpShader == null)
+                    _tmpShader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
+
+                return _tmpShader;
+            }
+        }
+
         private static void UpdateShaderForText(TextMeshProUGUI text)
         {
             if (text != null && text.fontMaterial != null)
-                text.fontMaterial.shader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
+                text.fontMaterial.shader = TmpShader;
         }
 
         /// <summary>
