@@ -6076,7 +6076,7 @@ namespace iiMenu.Menu
         public static void InitializeFonts()
         {
             AgencyFB ??= LoadAsset<TMP_FontAsset>("Agency");
-            Arial ??= LoadAsset<TMP_FontAsset>("Arial");
+            FreeSans ??= LoadAsset<TMP_FontAsset>("FreeSans");
             Candara ??= LoadAsset<TMP_FontAsset>("Candara");
             ComicSans ??= LoadAsset<TMP_FontAsset>("ComicSans");
             Consolas ??= LoadAsset<TMP_FontAsset>("Consolas");
@@ -6090,7 +6090,7 @@ namespace iiMenu.Menu
             Utopium ??= LoadAsset<TMP_FontAsset>("Utopium");
             Verdana ??= LoadAsset<TMP_FontAsset>("Verdana");
 
-            foreach (TMP_FontAsset font in new[] { AgencyFB, Arial, Candara, ComicSans, 
+            foreach (TMP_FontAsset font in new[] { AgencyFB, FreeSans, Candara, ComicSans, 
                 Consolas, Impact, Minecraft, MSGothic, OpenDyslexic, SimSun, Taiko, 
                 Terminal, Utopium, Verdana })
                 font.fallbackFontAssetTable.Add(LiberationSans);
@@ -6100,7 +6100,7 @@ namespace iiMenu.Menu
         public static FontStyles activeFontStyle = FontStyles.Italic;
 
         public static TMP_FontAsset AgencyFB;
-        public static TMP_FontAsset Arial;
+        public static TMP_FontAsset FreeSans;
         public static TMP_FontAsset Candara;
         public static TMP_FontAsset ComicSans;
         public static TMP_FontAsset Consolas;

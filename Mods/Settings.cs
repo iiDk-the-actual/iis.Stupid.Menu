@@ -4177,7 +4177,7 @@ exit 0";
                     activeFont = AgencyFB;
                     return;
                 case 1:
-                    activeFont = Arial;
+                    activeFont = FreeSans;
                     return;
                 case 2:
                     activeFont = Verdana;
