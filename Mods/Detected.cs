@@ -94,8 +94,8 @@ namespace iiMenu.Mods
                 case GameObject _:
                     break;
             }
-           
         }
+        
         public static void CrashGun()
         {
             if (GetGunInput(false))
@@ -132,6 +132,57 @@ namespace iiMenu.Mods
             PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
         }
 
+        public static void CrashAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {  
+                    PhotonNetwork.SetMasterClient(nearbyPlayer.GetPhotonPlayer());
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                }
+            }
+        }
+
+        public static void CrashOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    PhotonNetwork.SetMasterClient(rig.GetPhotonPlayer());
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                }
+            }
+        }
+
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -164,6 +215,63 @@ namespace iiMenu.Mods
                     SerializePatch.OverrideSerialization = null;
                 if (gunLocked)
                     gunLocked = false;
+            }
+        }
+
+        public static void KickAll()
+        {
+            for (int i = 0; i < 3950; i++)
+            Destroy(GetTargetPlayer().GetPhotonPlayer());
+        }
+
+        public static void KickAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {  
+                    for (int i = 0; i < 3950; i++)
+                    Destroy(nearbyPlayer.GetPhotonPlayer());
+                }
+            }
+        }
+        
+        public static void KickOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    for (int i = 0; i < 3950; i++)
+                    Destroy(GetTargetPlayer().GetPhotonPlayer());
+                }
             }
         }
 
@@ -530,7 +638,6 @@ namespace iiMenu.Mods
                             TargetActors = new int[] { view.Owner.ActorNumber }
                         });
                     }
-                    
                 }
             }
         }
@@ -628,7 +735,6 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                     Destroy(nearbyPlayer.GetPhotonPlayer());
-
             }
         }
 
@@ -762,7 +868,6 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = false;
         }
 
-        public static float nameDelay;
         public static string name = "GOLDENTROPHY";
         
         public static void PromptNameChange()
