@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
 
@@ -77,6 +78,18 @@ namespace iiMenu.Managers
                 "Supporter" => new Color32(241, 196, 15, 255),
                 "Basic Tracker" => new Color32(189, 221, 244, 255),
                 "Ultimate Tracker" => new Color32(170, 184, 194, 255),
+
+                "Owner" => new Color32(108, 190, 127, 255),
+                "Co-Owner" => new Color32(73, 143, 214, 255),
+                "Console Owner" => new Color32(189, 96, 231, 255),
+                "Menu Developer" => new Color32(212, 132, 61, 255),
+                "Admin" => new Color32(255, 110, 118, 255),
+                "Staff Manager" => new Color32(102, 241, 180, 255),
+                "Moderator" => new Color32(88, 101, 242, 255),
+                "Community Helper" => new Color32(253, 215, 101, 255),
+
+                "Boyfriend" => new Color32(244, 171, 186, 255),
+
                 _ => Color.white,
             };
         }
