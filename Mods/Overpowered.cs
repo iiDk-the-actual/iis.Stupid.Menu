@@ -3042,7 +3042,7 @@ namespace iiMenu.Mods
         public static float _snowballSpawnDelay = 0.1f;
         public static float SnowballSpawnDelay
         {
-            get { return _snowballSpawnDelay * snowballMultiplicationFactor; }
+            get { return (NoDelaySnowballs ? (1f/30f) : _snowballSpawnDelay) * snowballMultiplicationFactor; }
             set { _snowballSpawnDelay = value; }
         }
 
@@ -3061,6 +3061,7 @@ namespace iiMenu.Mods
 
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
+        public static bool NoDelaySnowballs;
 
         /// <remarks>
         /// As of depot 21167324, growing snowballs no longer properly work in the game. They have been switched to mashed potatoes.
@@ -3143,6 +3144,9 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.transform.position = archivePosition;
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 }
+
+                if (NoDelaySnowballs && SnowballHandIndex)
+                    Projectiles.ChangeGrowingProjectile();
             }
             catch { }
 
