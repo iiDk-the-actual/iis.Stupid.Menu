@@ -37,6 +37,6 @@ namespace iiMenu.Patches.Menu
     public class UnloadModPatch
     {
         public static void Prefix(bool returnToSinglePlayerIfInPublic) =>
-            Manager.UpdateCustomMapsTab(-1);
+            Manager.UpdateCustomMapsTab(null);
     }
 }

@@ -39,14 +39,18 @@ namespace iiMenu.Mods.CustomMaps
         public static readonly Dictionary<long, string> mapScriptArchives = new Dictionary<long, string>();
         public static readonly Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap>();
 
+        public static long? currentMapId;
+
         public static void UpdateCustomMapsTab(long? overwriteId = null)
         {
+            currentMapId = overwriteId;
+
             int category = Buttons.GetCategory("Custom Maps");
             List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
 
-            if (overwriteId != -1)
+            if (overwriteId != null)
             {
-                long mapID = overwriteId ?? -1;
+                long mapID = overwriteId.Value;
                 if (!mapScriptArchives.ContainsKey(mapID))
                     mapScriptArchives.Add(mapID, CustomGameMode.LuaScript);
 

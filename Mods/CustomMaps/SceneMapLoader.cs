@@ -42,13 +42,9 @@ namespace iiMenu.Mods.CustomMaps
         {
             var map = SceneMapRegistry.GetMapForScene(sceneName);
             if (map != null)
-            {
                 Manager.UpdateCustomMapsTab(map.MapID);
-            }
             else
-            {
-                Manager.UpdateCustomMapsTab(-1);
-            }
+                Manager.UpdateCustomMapsTab(null);
         }
     }
 }

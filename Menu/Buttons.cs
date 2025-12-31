@@ -2427,7 +2427,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Unlock Driver", method =() => Detected.DriverStatus(false), isTogglable = false, detected = true, toolTip = "Unlocks the driver in virtual stump."},
                 new ButtonInfo { buttonText = "Become Driver", method =() => Detected.DriverStatus(true), isTogglable = false, detected = true, toolTip = "Makes you the driver in virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Detected.VirtualStumpKickGun, isTogglable = false, detected = true, toolTip = "Kicks whoever your hand desires in virtual stump."},
+                
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Detected.VirtualStumpKickGun, isTogglable = false, detected = true, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Detected.VirtualStumpKickAll, detected = true, toolTip = "Kicks everyone in the virtual stump."},
             },
 
             new[] // Detected Settings [44]

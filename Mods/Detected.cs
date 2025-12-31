@@ -1076,11 +1076,11 @@ namespace iiMenu.Mods
 
                 if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
                 {
-                    id = Random.Range(1, 999999);
+                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
 
                     CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
                     {
-                        CustomMapsTerminal.CurrentScreen,
+                        6,
                         id,
                         CustomMapsTerminal.GetDriverID()
                     });
@@ -1102,6 +1102,48 @@ namespace iiMenu.Mods
                         CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPhotonPlayer(), id.Value);
                 }
             }
+        }
+
+        public static void VirtualStumpKickAll()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                id = null;
+                return;
+            }
+
+            if (id == null && Time.time > setMapDelay)
+            {
+                setMapDelay = Time.time + 1f;
+
+                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
+                    BecomeDriver();
+                    return;
+                }
+
+                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
+
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
+                    {
+                        6,
+                        id,
+                        CustomMapsTerminal.GetDriverID()
+                    });
+
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                }
+                else
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
+            }
+
+            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", RpcTarget.Others, id.Value);
+
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully kicked others.");
+            Toggle("Virtual Stump Kick All");
         }
     }
 }
