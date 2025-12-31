@@ -408,6 +408,9 @@ namespace iiMenu.Menu
                 if (watchMenu)
                     buttonCondition = isKeyboardCondition;
 
+                if (barkMenu)
+                    buttonCondition = isKeyboardCondition || barkMenuOpen;
+
                 isMenuButtonHeld = buttonCondition;
                 switch (buttonCondition)
                 {
@@ -794,6 +797,48 @@ namespace iiMenu.Menu
                             ReloadMenu();
                             joystickDelay = Time.time + 0.2f;
                         }
+                    }
+                }
+
+                if (barkMenu)
+                {
+                    if (barkMenuOpen)
+                    {
+                        if (barkMenuGrabbed == null)
+                        {
+                            bool leftGrabbing = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, menu.transform.position) < 0.3f && leftGrab;
+                            bool rightGrabbing = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, menu.transform.position) < 0.3f && rightGrab;
+
+                            if (leftGrabbing || rightGrabbing)
+                                barkMenuOpen = leftGrabbing;
+                        }
+                        else
+                        {
+                            bool gripping = barkMenuGrabbed.Value ? leftGrab : rightGrab;
+
+                            if (!gripping)
+                            {
+                                barkMenuGrabbed = null;
+                                barkMenuOpen = false;
+                            }
+                        }
+                    } else
+                    {
+                        bool bangingChest = Physics.OverlapSphere(ControllerUtilities.GetTrueLeftHand().position, 0.1f).Length > 0 || Physics.OverlapSphere(ControllerUtilities.GetTrueRightHand().position, 0.1f).Length > 0;
+
+                        if (bangingChest && !previousBarkBangState)
+                        {
+                            if (Time.time > barkBangDelay)
+                                barkBangCount = 0;
+
+                            barkBangDelay = Time.time + 0.5f;
+                            barkBangCount++;
+
+                            if (barkBangCount > 5)
+                                barkMenuOpen = true;
+                        }
+
+                        previousBarkBangState = bangingChest;
                     }
                 }
 
@@ -2949,7 +2994,14 @@ namespace iiMenu.Menu
                         rotModify += new Vector3(-90f, 0f, -90f);
                         menu.transform.rotation = Quaternion.Euler(rotModify);
                     }
-                    else
+                    else if (barkMenuOpen && (barkMenuGrabbed == null))
+                    {
+                        menu.transform.position = GorillaTagger.Instance.bodyCollider.transform.TransformPoint(new Vector3(0f, 0.15f, 0.5f));
+                        menu.transform.LookAt(GorillaTagger.Instance.bodyCollider.transform);
+                        Vector3 rotModify = menu.transform.rotation.eulerAngles;
+                        rotModify += new Vector3(-90f, 0f, -90f);
+                        menu.transform.rotation = Quaternion.Euler(rotModify);
+                    } else
                     {
                         if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
                         {
@@ -6306,7 +6358,18 @@ jgs \_   _/ |Oo\
 
         public static bool joystickMenu;
         public static bool joystickMenuSearching;
+
         public static bool physicalMenu;
+
+        public static bool barkMenu;
+        private static bool barkMenuOpen;
+        private static bool? barkMenuGrabbed;
+
+        private static float barkBangDelay;
+        private static int barkBangCount;
+
+        private static bool previousBarkBangState;
+
         public static Vector3 physicalOpenPosition = Vector3.zero;
         public static Quaternion physicalOpenRotation = Quaternion.identity;
         public static Vector3 smoothTargetPosition = Vector3.zero;
