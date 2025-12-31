@@ -367,9 +367,9 @@ namespace iiMenu.Menu
 
                 if (wristMenu)
                 {
-                    bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - GorillaTagger.Instance.leftHandTransform.forward * 0.1f, ControllerUtilities.GetTrueRightHand().position) < 0.1f;
+                    bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 0.1f, ControllerUtilities.GetTrueRightHand().position) < 0.1f;
                     if (rightHand)
-                        shouldOpen = Vector3.Distance(ControllerUtilities.GetTrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - GorillaTagger.Instance.rightHandTransform.forward * 0.1f) < 0.1f;
+                        shouldOpen = Vector3.Distance(ControllerUtilities.GetTrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.1f) < 0.1f;
 
                     if (shouldOpen && !lastChecker)
                         wristOpen = !wristOpen;
