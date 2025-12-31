@@ -297,5 +297,11 @@ namespace iiMenu.Menu
             GameObject closeMessage = uiPrefab.transform?.Find("Canvas")?.Find("HideMessage")?.gameObject;
             closeMessage?.SetActive(false);
         }
+
+        private void OnGUI() // Legacy plugin OnGUI compatibility
+        {
+            if (isOpen)
+                PluginManager.ExecuteOnGUI();
+        }
     }
 }
