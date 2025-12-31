@@ -476,8 +476,8 @@ namespace iiMenu.Mods
             {
                 if (scoreboard.buttonText.text.Contains("GHOST"))
                     scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
-                
             }
+
             foreach(GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
                 line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
@@ -736,7 +736,6 @@ namespace iiMenu.Mods
                 if (!rig.IsLocal())
                     Destroy(rig.GetPhotonPlayer());
             }
-                
         }
 
         public static void LagAura()
@@ -886,15 +885,13 @@ namespace iiMenu.Mods
             while (PhotonNetwork.InRoom || PhotonNetwork.IsMasterClient)
                 yield return null;
             
-            Patches.Menu.GameModePatch.enabled = false;
+            GameModePatch.enabled = false;
         }
 
         public static string name = "GOLDENTROPHY";
         
-        public static void PromptNameChange()
-        {
+        public static void PromptNameChange() =>
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
-        }
 
         public static void ChangeNameGun()
         {
