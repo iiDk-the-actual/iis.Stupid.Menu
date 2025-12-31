@@ -218,10 +218,17 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float kickDelay;
         public static void KickAll()
         {
-            for (int i = 0; i < 3950; i++)
-            Destroy(GetTargetPlayer().GetPhotonPlayer());
+            SerializePatch.OverrideSerialization ??= () => false;
+
+            if (Time.time > kickDelay)
+            {
+                kickDelay = Time.time + 10f;
+                for (int i = 0; i < 3950; i++)
+                    Destroy(GetTargetPlayer().GetPhotonPlayer());
+            }
         }
 
         public static void KickAura()
@@ -239,12 +246,19 @@ namespace iiMenu.Mods
 
             if (nearbyPlayers.Count > 0)
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {  
-                    for (int i = 0; i < 3950; i++)
-                    Destroy(nearbyPlayer.GetPhotonPlayer());
+                SerializePatch.OverrideSerialization ??= () => false;
+
+                if (Time.time > kickDelay)
+                {
+                    foreach (VRRig nearbyPlayer in nearbyPlayers)
+                    {
+                        for (int i = 0; i < 3950; i++)
+                            Destroy(nearbyPlayer.GetPhotonPlayer());
+                    }
                 }
             }
+            else
+                SerializePatch.OverrideSerialization = null;
         }
         
         public static void KickOnTouch()
@@ -267,12 +281,19 @@ namespace iiMenu.Mods
 
             if (touchedPlayers.Count > 0)
             {
-                foreach (VRRig rig in touchedPlayers)
+                SerializePatch.OverrideSerialization ??= () => false;
+
+                if (Time.time > kickDelay)
                 {
-                    for (int i = 0; i < 3950; i++)
-                    Destroy(GetTargetPlayer().GetPhotonPlayer());
+                    foreach (VRRig rig in touchedPlayers)
+                    {
+                        for (int i = 0; i < 3950; i++)
+                            Destroy(GetTargetPlayer().GetPhotonPlayer());
+                    }
                 }
             }
+            else
+                SerializePatch.OverrideSerialization = null;
         }
 
         public static void GhostGun()
