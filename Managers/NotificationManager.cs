@@ -186,6 +186,10 @@ namespace iiMenu.Managers
                         NotifiText.outlineWidth = 0f;
                         StatsText.outlineWidth = 0f;
                     }
+
+                    FollowMenuSettings(ModText);
+                    FollowMenuSettings(NotifiText);
+                    FollowMenuSettings(StatsText);
                 }
                 catch { }
 
