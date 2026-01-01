@@ -630,6 +630,73 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LazerSpam()
+        {
+            int projIndex = projMode * 2;
+
+            if (rightGrab || Mouse.current.leftButton.isPressed)
+            {
+                if (Buttons.GetIndex("Random Projectile").enabled)
+                    projIndex = Random.Range(0, ProjectileObjectNames.Length);
+                
+                string projectilename = ProjectileObjectNames[projIndex];
+
+                Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position;
+                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 30f;
+
+                if (Buttons.GetIndex("Shoot Projectiles").enabled)
+                {
+                    charvel = GTPlayer.Instance.RigidbodyVelocity + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                    if (Mouse.current.leftButton.isPressed)
+                    {
+                        Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                        Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                        charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                        charvel.Normalize();
+                        charvel *= ShootStrength * 2f;
+                    }
+                }
+
+                if (Buttons.GetIndex("Random Direction").enabled)
+                    charvel = RandomVector3(100f);
+
+                if (Buttons.GetIndex("Above Players").enabled)
+                {
+                    VRRig targetRig = GetTargetPlayer();
+                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
+                }
+
+                if (Buttons.GetIndex("Rain Projectiles").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-2f, 2f), 2f, Random.Range(-2f, 2f));
+                    charvel = Vector3.zero;
+                }
+
+                if (Buttons.GetIndex("Projectile Aura").enabled)
+                {
+                    float time = Time.frameCount;
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                }
+
+                if (Buttons.GetIndex("True Projectile Aura").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+                    charvel = RandomVector3(10f);
+                }
+
+                if (Buttons.GetIndex("Projectile Fountain").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
+                    charvel = new Vector3(Random.Range(-10, 10), 15, Random.Range(-10, 10));
+                }
+
+                if (Buttons.GetIndex("Include Hand Velocity").enabled)
+                    charvel = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
+
+                BetaFireProjectile(projectilename, startpos, charvel, CalculateProjectileColor());
+            }
+        }
+
         public static void GiveProjectileSpamGun()
         {
             if (GetGunInput(false))
@@ -852,6 +919,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LazerEyes()
+        {
+            if (rightGrab || Mouse.current.leftButton.isPressed)
+            {
+                Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position;
+                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 30f;
+                
+                BetaFireProjectile("Walnut_Anchor_Right", startpos, charvel, Color.red);
+            }
+        }
+
         public static void UrineGun()
         {
             if (GetGunInput(false))
@@ -1001,6 +1079,40 @@ namespace iiMenu.Mods
                     Vector3 charvel = lockTarget.headMesh.transform.forward * 8.33f;
 
                     BetaFireProjectile("WaterBalloonLeftAnchor", startpos, charvel, Color.cyan);
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void LazerEyesGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Vector3 startpos = lockTarget.headMesh.transform.position + lockTarget.headMesh.transform.forward * 0.4f + lockTarget.headMesh.transform.up * -0.05f;
+                    Vector3 charvel = lockTarget.headMesh.transform.forward * 30f;
+                
+                    BetaFireProjectile("Walnut_Anchor_Right", startpos, charvel, Color.red);
                 }
                 if (GetGunInput(true))
                 {
