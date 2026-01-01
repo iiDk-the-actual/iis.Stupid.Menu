@@ -854,7 +854,7 @@ exit";
         private static Vector3? oldLocalPosition;
         public static void PCButtonClick()
         {
-            if (Mouse.current.leftButton.isPressed)
+            if (Mouse.current.leftButton.isPressed && GunPointer == null)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());

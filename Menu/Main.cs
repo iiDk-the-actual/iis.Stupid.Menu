@@ -4130,7 +4130,7 @@ namespace iiMenu.Menu
         private static readonly List<float> volumeArchive = new List<float>();
         private static Vector3 GunPositionSmoothed = Vector3.zero;
 
-        private static GameObject GunPointer;
+        public static GameObject GunPointer;
         private static LineRenderer GunLine;
 
         /// <summary>
