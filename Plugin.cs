@@ -100,6 +100,9 @@ namespace iiMenu
             GorillaTagger.OnPlayerSpawned(LoadMenu);
         }
 
+        private static void OnDestroy() =>
+            Main.UnloadMenu();
+
         private static void LoadMenu()
         {
             PatchHandler.PatchAll();
