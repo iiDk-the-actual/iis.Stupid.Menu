@@ -3063,9 +3063,6 @@ namespace iiMenu.Mods
         public static bool NoTeleportSnowballs;
         public static bool NoDelaySnowballs;
 
-        /// <remarks>
-        /// As of depot 21167324, growing snowballs no longer properly work in the game. They have been switched to mashed potatoes.
-        /// </remarks>
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null)
         {
             try

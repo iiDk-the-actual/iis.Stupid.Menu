@@ -111,10 +111,7 @@ namespace iiMenu.Mods
             "Walnut_Anchor_Right"
         };
 
-        /// <remarks>
-        /// Should be used as {SnowballName}{Left/Right}Anchor
-        /// </remarks>
-        public static string SnowballName = "GrowingMashedPotato";
+        public static string SnowballName = "GrowingSnowball";
 
         public static Coroutine RigCoroutine;
         public static IEnumerator EnableRig()
@@ -381,7 +378,7 @@ namespace iiMenu.Mods
             Buttons.GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projMode] + "</color><color=grey>]</color>";
         }
 
-        public static int snowballIndex = 1;
+        public static int snowballIndex;
         public static void ChangeGrowingProjectile(bool positive = true)
         {
             string[] shortProjectileNames = {
