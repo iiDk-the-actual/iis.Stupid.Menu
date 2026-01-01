@@ -1618,6 +1618,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Grab Projectile <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.GrabProjectile, toolTip = "Grabs your selected projectile(s) holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
                 new ButtonInfo { buttonText = "Projectile Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.ProjectileSpam, toolTip = "Spams your selected projectile(s) when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
+                new ButtonInfo { buttonText = "Lazer Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.LazerSpam, toolTip = "Spams your selected projectile(s) out of your eyes like lazers when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
                 new ButtonInfo { buttonText = "Give Projectile Spam Gun", method = Projectiles.GiveProjectileSpamGun, toolTip = "Acts like the projectile spam, but you can give it to whoever your hand desires. They need to hold grip." },
                 new ButtonInfo { buttonText = "Impact Spam", method = Projectiles.ImpactSpam, toolTip = "Acts like the projectile spam, but uses the impacts instead." },
 
@@ -1626,12 +1627,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Semen <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.Semen, toolTip = "Makes you ejaculate when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Vomit <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.Vomit, toolTip = "Makes you throw up when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Spit <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.Spit, toolTip = "Makes you spit when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Lazer Eyes <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.LazerEyes, toolTip = "Makes you shoot lazers out of your eyes when holding <color=green>grip</color>." },
 
                 new ButtonInfo { buttonText = "Urine Gun", method = Projectiles.UrineGun, toolTip = "Makes whoever your hand desires pee." },
                 new ButtonInfo { buttonText = "Feces Gun", method = Projectiles.FecesGun, toolTip = "Makes whoever your hand desires poo." },
                 new ButtonInfo { buttonText = "Semen Gun", method = Projectiles.SemenGun, toolTip = "Makes whoever your hand desires ejaculate." },
                 new ButtonInfo { buttonText = "Vomit Gun", method = Projectiles.VomitGun, toolTip = "Makes whoever your hand desires throw up." },
                 new ButtonInfo { buttonText = "Spit Gun", method = Projectiles.SpitGun, toolTip = "Makes whoever your hand desires spit." },
+                new ButtonInfo { buttonText = "Lazer Eyes Gun", method = Projectiles.LazerEyesGun, toolTip = "Makes whoever your hand desires shoot lazers out of their eyes." },
 
                 new ButtonInfo { buttonText = "Projectile Blind Gun", method = Projectiles.ProjectileBlindGun, toolTip = "Blinds whoever your hand desires using the egg projectiles."},
                 new ButtonInfo { buttonText = "Projectile Blind All", enableMethod = Projectiles.ProjectileBlindAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Blinds everybody in the room using the egg projectiles."},
@@ -1672,6 +1675,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", method = Overpowered.SnowballFlingPlayerTowardsGun, toolTip = "Flings whoever your hand desires towards you."},
                 new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", method = Overpowered.SnowballFlingPlayerAwayGun, toolTip = "Flings whoever your hand desires away from you."},
+
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Snowball Fling</color><color=grey>]</color>", method = Overpowered.AntiReportSnowballFling, toolTip = "Flings whoever tries to report you with the snowballs."}
             },
 
