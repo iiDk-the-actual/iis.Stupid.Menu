@@ -919,7 +919,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LazerEyes() // Superman Reference
+        public static void LazerEyes()
         {
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
