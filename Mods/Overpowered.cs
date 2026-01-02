@@ -33,7 +33,6 @@ using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
-using PlayFab.ClientModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -4560,10 +4559,10 @@ namespace iiMenu.Mods
             if (lagIndex < 0)
                 lagIndex = 2;
 
-            lagAmount = new[] { 40, 113, 425 }[lagIndex];
-            lagDelay = new[] { 0.1f, 0.25f, 1f }[lagIndex];
+            lagAmount = new[] { 40, 113, 425, 3800 }[lagIndex];
+            lagDelay = new[] { 0.1f, 0.25f, 1f, 8f }[lagIndex];
 
-            Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike", "Freeze" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
         public static int lagTypeIndex;
@@ -4571,7 +4570,9 @@ namespace iiMenu.Mods
         {
             string[] lagNames = {
                 "Party",
-                "VRRig"
+                "VRRig",
+                "NaN",
+                "Destroy"
             };
 
             if (positive)
@@ -4584,6 +4585,19 @@ namespace iiMenu.Mods
                 lagTypeIndex = lagNames.Length - 1;
 
             Buttons.GetIndex("Change Lag Type").overlapText = "Change Lag Type <color=grey>[</color><color=green>" + lagNames[lagTypeIndex] + "</color><color=grey>]</color>";
+        }
+
+        public static bool IsLagMethodRPC()
+        {
+            return lagTypeIndex switch
+            {
+                0 => true,
+                1 => true,
+                2 => false,
+                3 => false,
+
+                _ => true
+            };
         }
 
         private static float lagDebounce;
@@ -4602,48 +4616,96 @@ namespace iiMenu.Mods
 
             lagDebounce = Time.time + lagDelay;
 
-            PhotonView view = lagTypeIndex switch
+            if (IsLagMethodRPC())
             {
-                0 => FriendshipGroupDetection.Instance.photonView,
-                1 => GorillaTagger.Instance.myVRRig.GetView,
+                PhotonView view = lagTypeIndex switch
+                {
+                    1 => GorillaTagger.Instance.myVRRig.GetView,
+                    _ => FriendshipGroupDetection.Instance.photonView
+                };
+                string rpcName = lagTypeIndex switch
+                {
+                    1 => "RPC_UpdateCosmeticsWithTryonPacked",
+                    _ => "AddPartyMembers"
+                };
+                object[] data = lagTypeIndex switch
+                {
+                    1 => new object[] { null, null, false },
+                    _ => new object[] { "Infection", (short)12, null }
+                };
 
-                _ => FriendshipGroupDetection.Instance.photonView
-            };
-            string rpcName = lagTypeIndex switch
-            {
-                0 => "AddPartyMembers",
-                1 => "RPC_UpdateCosmeticsWithTryonPacked",
+                switch (target)
+                {
+                    case RpcTarget rpcTarget:
+                        for (int i = 0; i < lagAmount; i++)
+                            view.RPC(rpcName, rpcTarget, data);
 
-                _ => "AddPartyMembers"
-            };
-            object[] data = lagTypeIndex switch
-            {
-                0 => new object[] { "Infection", (short)12, null },
-                1 => new object[] { null, null, false },
-
-                _ => new object[] { "Infection", (short)12, null }
-            };
-
-            switch (target)
-            {
-                case RpcTarget rpcTarget:
-                    for (int i = 0; i < lagAmount; i++)
-                        view.RPC(rpcName, rpcTarget, data);
-
-                    break;
-                case Player player:
-                    for (int i = 0; i < lagAmount; i++)
-                        view.RPC(rpcName, player, data);
-
-                    break;
-                case int[] actorNumbers:
-                    if (actorNumbers.Length == 0)
                         break;
+                    case Player player:
+                        for (int i = 0; i < lagAmount; i++)
+                            view.RPC(rpcName, player, data);
 
-                    for (int i = 0; i < lagAmount; i++)
-                        SpecialTargetRPC(view, rpcName, new RaiseEventOptions { TargetActors = actorNumbers }, data);
+                        break;
+                    case int[] actorNumbers:
+                        if (actorNumbers.Length == 0)
+                            break;
 
-                    break;
+                        for (int i = 0; i < lagAmount; i++)
+                            SpecialTargetRPC(view, rpcName, new RaiseEventOptions { TargetActors = actorNumbers }, data);
+
+                        break;
+                }
+            } else
+            {
+                bool isOp = lagTypeIndex switch
+                {
+                    _ => true
+                };
+
+                byte eventIndex = lagTypeIndex switch
+                {
+                    3 => 204,
+                    _ => 186
+                };
+
+                SendOptions sendOptions = lagTypeIndex switch
+                {
+                    3 => new SendOptions { Encrypt = true, Reliability = false, DeliveryMode = DeliveryMode.Unreliable },
+                    _ => SendOptions.SendUnreliable
+                };
+
+                object data = lagTypeIndex switch
+                {
+                    3 => new object[] { float.NaN },
+                    _ => new Hashtable { { float.NaN, float.NaN } }
+                };
+
+                RaiseEventOptions raiseEventOptions = lagTypeIndex switch 
+                {
+                    3 => new RaiseEventOptions { CachingOption = EventCaching.DoNotCache },
+                    _ => new RaiseEventOptions { }
+                };
+
+                switch (target)
+                {
+                    case RpcTarget rpcTarget:
+                        raiseEventOptions.Receivers = rpcTarget == RpcTarget.All ? ReceiverGroup.All : (rpcTarget == RpcTarget.Others ? ReceiverGroup.Others : (rpcTarget == RpcTarget.MasterClient ? ReceiverGroup.MasterClient : ReceiverGroup.Others));
+                        break;
+                    case Player player:
+                        raiseEventOptions.TargetActors = new int[] { player.ActorNumber };
+                        break;
+                    case int[] actorNumbers:
+                        raiseEventOptions.TargetActors = actorNumbers;
+                        break;
+                }
+
+                for (int i = 0; i < lagAmount; i++)
+                {
+                    if (isOp)
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(eventIndex, data, raiseEventOptions, sendOptions);
+                    else
+                        PhotonNetwork.RaiseEvent(eventIndex, data, raiseEventOptions, sendOptions);
+                }
             }
 
             RPCProtection();
