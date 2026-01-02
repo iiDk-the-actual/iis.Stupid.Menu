@@ -989,7 +989,7 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = true;
             NetworkSystem.Instance.NetDestroy(GameMode.activeNetworkHandler.NetView.gameObject);
 
-            string queue = moddedGamemode ? GorillaComputer.instance.currentQueue + "MODDED" : GorillaComputer.instance.currentQueue;
+            string queue = moddedGamemode ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
 
             Hashtable hash = new Hashtable
             {
