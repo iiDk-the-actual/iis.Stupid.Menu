@@ -1035,7 +1035,7 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = true;
             NetworkSystem.Instance.NetDestroy(GameMode.activeNetworkHandler.NetView.gameObject);
 
-            string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
+            string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED" : GorillaComputer.instance.currentQueue;
 
             Hashtable hash = new Hashtable
             {
