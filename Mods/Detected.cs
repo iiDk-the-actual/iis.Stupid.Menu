@@ -942,53 +942,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BanGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    Hashtable hashtable = new Hashtable
-                    {
-                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
-                    };
-                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
-                    GorillaNot.instance.SendReport("evading the name ban", lockTarget.GetPlayer().UserId, lockTarget.GetPlayer().NickName);
-                }
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void BanAll()
-        {
-            foreach (Player player in PhotonNetwork.PlayerListOthers)
-            {
-                Hashtable hashtable = new Hashtable
-                {
-                    [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
-                };
-                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
-                GorillaNot.instance.SendReport("evading the name ban", player.UserId, player.NickName);
-            }
-        }
-
         public static void BreakNetworkTriggers()
         {
             string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;

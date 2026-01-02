@@ -2415,9 +2415,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Change Name Gun", overlapText = "Change Name Gun", enableMethod = Detected.PromptNameChange, method = Detected.ChangeNameGun, detected = true, toolTip = "Changes the name of whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Change Name All", overlapText = "Change Name All", enableMethod = Detected.PromptNameChange, method = Detected.ChangeNameAll, detected = true, toolTip = "Changes the name of everyone in the room."},
 
-                new ButtonInfo { buttonText = "Detected Ban Gun", overlapText = "Ban Gun", method = Detected.BanGun, detected = true, toolTip = "Changes the name of whoever your hand desires to a banned word."},
-                new ButtonInfo { buttonText = "Detected Ban All", overlapText = "Ban All", method = Detected.BanGun, detected = true, toolTip = "Changes the name of everyone in the room to a banned word."},
-
                 new ButtonInfo { buttonText = "Break Network Triggers", method =() => Detected.BreakNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Breaks the network triggers."},
                 new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
 
