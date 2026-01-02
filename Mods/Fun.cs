@@ -63,7 +63,6 @@ using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 

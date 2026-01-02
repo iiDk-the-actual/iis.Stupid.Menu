@@ -2014,6 +2014,12 @@ namespace iiMenu.Menu
                     AddSprite("Favorite", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.favorite.png"));
                     AddSprite("Folder", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.folder.png"));
 
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        AddSprite("Left" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.left{i}.png"));
+                        AddSprite("Right" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.right{i}.png"));
+                    }
+
                     int maxSize = 512;
                     Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
                     Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
@@ -3694,6 +3700,7 @@ namespace iiMenu.Menu
             text.alignment = TextAlignmentOptions.Center;
             text.enableAutoSizing = true;
             text.fontSizeMin = 0;
+            text.spriteAsset = ButtonSpriteSheet;
 
             text.AddComponent<TextColorChanger>().colors = textColors[1];
 
@@ -6731,12 +6738,12 @@ jgs \_   _/ |Oo\
         public static readonly string[][] arrowTypes = {
             new[] {"<", ">"},
             new[] {"←", "→"},
-            new[] {"↞", "↠"},
+            new[] { "    <sprite name=\"Left1\">", "    <sprite name=\"Right1\">"},
             new[] {"◄", "►"},
-            new[] {"〈 ", " 〉"},
+            new[] { "    <sprite name=\"Left2\">", "    <sprite name=\"Right2\">"},
             new[] {"‹", "›"},
             new[] {"«", "»"},
-            new[] {"◀", "▶"},
+            new[] { "    <sprite name=\"Left3\">", "    <sprite name=\"Right3\">"},
             new[] {"-", "+"},
             new[] {"", ""},
             new[] {"v", "ʌ"},
