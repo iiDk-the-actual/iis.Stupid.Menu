@@ -66,6 +66,15 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SetMasterClientAll()
+        {
+            if (Time.time > masterDelay)
+            {
+                PhotonNetwork.SetMasterClient(GetTargetPlayer().GetPhotonPlayer());
+                masterDelay = Time.time + 0.02f;
+            }
+        }
+
         public static void AutoSetMasterClient()
         {
             if (!PhotonNetwork.InRoom) return;
