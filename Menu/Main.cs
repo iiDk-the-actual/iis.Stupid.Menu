@@ -476,7 +476,7 @@ namespace iiMenu.Menu
                 if (animatedTitle && title != null)
                 {
                     string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
-                    int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
+                    int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length + 1);
                     title.text = length > 0 ? targetString[..length] : "";
                 }
 
