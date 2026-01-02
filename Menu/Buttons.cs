@@ -2443,7 +2443,7 @@ namespace iiMenu.Menu
             {
                 new ButtonInfo { buttonText = "Exit Detected Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Switch to Modded Gamemode", toolTip = "Automatically sets the gamemode as modded when changed."},
+                new ButtonInfo { buttonText = "Switch to Modded Gamemode", enableMethod =() => Detected.moddedGamemode = true, disableMethod =() => Detected.moddedGamemode = false, toolTip = "Automatically sets the gamemode as modded when changed."},
                 new ButtonInfo { buttonText = "Isolate Others", toolTip = "Allows you to still be seen when isolating players."}
             }
         };
