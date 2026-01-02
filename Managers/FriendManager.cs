@@ -411,7 +411,9 @@ namespace iiMenu.Managers
                                     Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
 
                                     TextMeshPro textMesh = Nametag.AddComponent<TextMeshPro>();
-                                    textMesh.fontSize = 48;
+                                    textMesh.fontSize = 4.8f;
+                                    textMesh.font = activeFont;
+                                    textMesh.fontStyle = activeFontStyle;
                                     textMesh.alignment = TextAlignmentOptions.Center;
 
                                     textMesh.text = Sender.NickName;
