@@ -950,6 +950,63 @@ namespace iiMenu.Mods
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
         }
+        
+        public static void ChangeNameAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {  
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = name
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.ActorNumber, hashtable);
+                }
+            }
+        }
+
+        public static void ChangeNameOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = name
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.ActorNumber, hashtable);
+                }
+            }
+        }
 
         public static void BanGun()
         {
@@ -997,6 +1054,65 @@ namespace iiMenu.Mods
                 GorillaNot.instance.SendReport("evading the name ban", player.UserId, player.NickName);
             }
         }
+        
+        public static void BanAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {  
+                   Hashtable hashtable = new Hashtable
+                   {
+                       [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                   };
+                   PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.ActorNumber, hashtable);
+                   GorillaNot.instance.SendReport("evading the name ban", nearbyPlayer.UserId, nearbyPlayer.NickName);
+                }
+            }
+        }
+
+        public static void BanOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", rig.UserId, rig.NickName);
+                }
+            }
+        }        
 
         public static void BreakNetworkTriggers()
         {
