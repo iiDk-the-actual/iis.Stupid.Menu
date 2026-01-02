@@ -53,9 +53,9 @@ namespace iiMenu.Managers
         /// </summary>
         public static readonly Dictionary<string, string> information = new Dictionary<string, string>();
 
-        public static TextMeshProUGUI NotifiText;
-        public static TextMeshProUGUI ModText;
-        public static TextMeshProUGUI StatsText;
+        public static TextMeshProUGUI notificationText;
+        public static TextMeshProUGUI arraylistText;
+        public static TextMeshProUGUI informationText;
 
         private bool hasInitialized;
         public static bool noRichText;
@@ -103,13 +103,13 @@ namespace iiMenu.Managers
 
             textMaterial = new Material(Shader.Find("GUI/Text Shader"));
 
-            NotifiText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
+            notificationText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
                 new Vector2(450f, 210f), 30, TextAlignmentOptions.BottomLeft);
 
-            ModText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
+            arraylistText = CreateText(canvas.transform, new Vector3(-1f, -1f, -0.5f),
                 new Vector2(450f, 1000f), 20, TextAlignmentOptions.TopLeft);
 
-            StatsText = CreateText(canvas.transform, new Vector3(-1f, -1f, 0.5f),
+            informationText = CreateText(canvas.transform, new Vector3(-1f, -1f, 0.5f),
                 new Vector2(450f, 1000f), 30, TextAlignmentOptions.TopRight);
 
             StartCoroutine(SetShaderAfterInit());
@@ -153,51 +153,33 @@ namespace iiMenu.Managers
 
                 try
                 {
-                    ModText.font = activeFont;
-                    ModText.fontStyle = activeFontStyle;
-                    ModText.fontSize = arraylistScale;
-                    UpdateShaderForText(ModText);
+                    arraylistText.font = activeFont;
+                    arraylistText.fontStyle = activeFontStyle;
+                    arraylistText.fontSize = arraylistScale;
+                    UpdateShaderForText(arraylistText);
 
-                    NotifiText.font = activeFont;
-                    NotifiText.fontStyle = activeFontStyle;
-                    NotifiText.fontSize = notificationScale;
-                    NotifiText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
-                    UpdateShaderForText(NotifiText);
+                    notificationText.font = activeFont;
+                    notificationText.fontStyle = activeFontStyle;
+                    notificationText.fontSize = notificationScale;
+                    notificationText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
+                    UpdateShaderForText(notificationText);
 
-                    StatsText.font = activeFont;
-                    StatsText.fontStyle = activeFontStyle;
-                    StatsText.fontSize = overlayScale;
-                    UpdateShaderForText(StatsText);
+                    informationText.font = activeFont;
+                    informationText.fontStyle = activeFontStyle;
+                    informationText.fontSize = overlayScale;
+                    UpdateShaderForText(informationText);
 
-                    if (outlineText)
-                    {
-                        ModText.outlineWidth = 0.2f;
-                        ModText.outlineColor = Color.black;
-
-                        NotifiText.outlineWidth = 0.2f;
-                        NotifiText.outlineColor = Color.black;
-
-                        StatsText.outlineWidth = 0.2f;
-                        StatsText.outlineColor = Color.black;
-                    }
-                    else
-                    {
-                        ModText.outlineWidth = 0f;
-                        NotifiText.outlineWidth = 0f;
-                        StatsText.outlineWidth = 0f;
-                    }
-
-                    FollowMenuSettings(ModText);
-                    FollowMenuSettings(NotifiText);
-                    FollowMenuSettings(StatsText);
+                    FollowMenuSettings(arraylistText);
+                    FollowMenuSettings(notificationText);
+                    FollowMenuSettings(informationText);
                 }
                 catch { }
 
-                ModText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
-                ModText.alignment = flipArraylist ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+                arraylistText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
+                arraylistText.alignment = flipArraylist ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
 
-                StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
-                StatsText.alignment = flipArraylist ? TextAlignmentOptions.TopLeft : TextAlignmentOptions.TopRight;
+                informationText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
+                informationText.alignment = flipArraylist ? TextAlignmentOptions.TopLeft : TextAlignmentOptions.TopRight;
 
                 if (information.Count > 0)
                 {
@@ -205,78 +187,91 @@ namespace iiMenu.Managers
 
                     List<string> statsLines = information
                         .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColors[1].GetColor(0))}>{item.Value}</color>")
-                        .OrderByDescending(item => StatsText.GetPreferredValues(NoRichtextTags(item)).x)
+                        .OrderByDescending(item => informationText.GetPreferredValues(NoRichtextTags(item)).x)
                         .ToList();
 
-                    StatsText.text = string.Join("\n", statsLines);
-                    StatsText.color = Color.white;
+                    informationText.text = string.Join("\n", statsLines);
+                    informationText.color = Color.white;
                 }
-                else
-                    StatsText.text = "";
+                else if (!informationText.text.IsNullOrEmpty())
+                    informationText.text = "";
 
-                if (showEnabledModsVR && Time.time > updateArraylistTimer)
+                if (showEnabledModsVR)
                 {
-                    updateArraylistTimer = Time.time + (advancedArraylist ? 0.1f : 0.5f);
-                    List<string> enabledMods = new List<string>();
-                    int categoryIndex = 0;
-
-                    foreach (ButtonInfo[] buttonList in Buttons.buttons)
+                    if (Time.time > updateArraylistTimer)
                     {
-                        foreach (ButtonInfo button in buttonList)
+                        updateArraylistTimer = Time.time + (advancedArraylist ? 0.1f : 0.5f);
+                        List<string> enabledMods = new List<string>();
+                        int categoryIndex = 0;
+
+                        foreach (ButtonInfo[] buttonList in Buttons.buttons)
                         {
-                            try
+                            foreach (ButtonInfo button in buttonList)
                             {
-                                if (button.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
+                                try
                                 {
-                                    string buttonText = button.overlapText ?? button.buttonText;
+                                    if (button.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
+                                    {
+                                        string buttonText = button.overlapText ?? button.buttonText;
 
-                                    if (inputTextColor != "green")
-                                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                                        if (inputTextColor != "green")
+                                            buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
-                                    buttonText = FollowMenuSettings(buttonText);
-                                    enabledMods.Add(buttonText);
+                                        buttonText = FollowMenuSettings(buttonText);
+                                        enabledMods.Add(buttonText);
+                                    }
                                 }
+                                catch { }
                             }
-                            catch { }
+                            categoryIndex++;
                         }
-                        categoryIndex++;
+
+                        string[] sortedMods = enabledMods
+                            .OrderByDescending(s => arraylistText.GetPreferredValues(NoRichtextTags(s)).x)
+                            .ToArray();
+
+                        string modListText = "";
+                        for (int i = 0; i < sortedMods.Length; i++)
+                        {
+                            Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(i * -0.1f) : backgroundColor.GetCurrentColor(i * -0.1f);
+
+                            if (advancedArraylist)
+                                modListText += (flipArraylist ?
+                                /* Flipped */ $"<mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark><mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark>" :
+                                /* Normal  */ $"<mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark><mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark>") + "\n";
+                            else
+                                modListText += sortedMods[i] + "\n";
+                        }
+
+                        arraylistText.text = modListText;
+                        arraylistText.color = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                     }
-
-                    string[] sortedMods = enabledMods
-                        .OrderByDescending(s => ModText.GetPreferredValues(NoRichtextTags(s)).x)
-                        .ToArray();
-
-                    string modListText = "";
-                    for (int i = 0; i < sortedMods.Length; i++)
-                    {
-                        Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(i * -0.1f) : backgroundColor.GetCurrentColor(i * -0.1f);
-
-                        if (advancedArraylist)
-                            modListText += (flipArraylist ?
-                            /* Flipped */ $"<mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark><mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark>" :
-                            /* Normal  */ $"<mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark><mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark>") + "\n";
-                        else
-                            modListText += sortedMods[i] + "\n";
-                    }
-
-                    ModText.text = modListText;
-                    ModText.color = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                 }
-                else
-                    ModText.text = "";
+                else if (!arraylistText.text.IsNullOrEmpty())
+                    arraylistText.text = "";
 
-                // Apply text case transformations
                 if (lowercaseMode)
                 {
-                    ModText.text = ModText.text.ToLower();
-                    NotifiText.text = NotifiText.text.ToLower();
-                    StatsText.text = StatsText.text.ToLower();
+                    if (!arraylistText.text.IsNullOrEmpty())
+                        arraylistText.text = arraylistText.text.ToLower();
+
+                    if (!notificationText.text.IsNullOrEmpty())
+                        notificationText.text = notificationText.text.ToLower();
+
+                    if (!informationText.text.IsNullOrEmpty())
+                        informationText.text = informationText.text.ToLower();
                 }
-                if (uppercaseMode)
+
+                if (lowercaseMode)
                 {
-                    ModText.text = ModText.text.ToUpper();
-                    NotifiText.text = NotifiText.text.ToUpper();
-                    StatsText.text = StatsText.text.ToUpper();
+                    if (!arraylistText.text.IsNullOrEmpty())
+                        arraylistText.text = arraylistText.text.ToUpper();
+
+                    if (!notificationText.text.IsNullOrEmpty())
+                        notificationText.text = notificationText.text.ToUpper();
+
+                    if (!informationText.text.IsNullOrEmpty())
+                        informationText.text = informationText.text.ToUpper();
                 }
 
                 canvas.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
@@ -350,7 +345,7 @@ namespace iiMenu.Managers
                     {
                         NotifiCounter++;
 
-                        string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] lines = NotificationManager.notificationText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (lines.Length > 0)
                         {
@@ -360,7 +355,7 @@ namespace iiMenu.Managers
                                 lastLine = lastLine[..counterIndex];
 
                             lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
-                            NotifiText.text = string.Join(Environment.NewLine, lines);
+                            NotificationManager.notificationText.text = string.Join(Environment.NewLine, lines);
                         }
 
                         if (clearCoroutines.Count > 0)
@@ -371,27 +366,27 @@ namespace iiMenu.Managers
                         NotifiCounter = 0;
                         PreviousNotifi = notificationText;
 
-                        if (!string.IsNullOrEmpty(NotifiText.text))
+                        if (!string.IsNullOrEmpty(NotificationManager.notificationText.text))
                         {
-                            string currentText = NotifiText.text.TrimEnd('\n', '\r');
-                            NotifiText.text = currentText + Environment.NewLine + notificationText;
+                            string currentText = NotificationManager.notificationText.text.TrimEnd('\n', '\r');
+                            NotificationManager.notificationText.text = currentText + Environment.NewLine + notificationText;
                         }
                         else
-                            NotifiText.text = notificationText;
+                            NotificationManager.notificationText.text = notificationText;
                     }
 
                     CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
 
                     if (noRichText)
-                        NotifiText.text = NoRichtextTags(NotifiText.text);
+                        NotificationManager.notificationText.text = NoRichtextTags(NotificationManager.notificationText.text);
 
                     if (lowercaseMode)
-                        NotifiText.text = NotifiText.text.ToLower();
+                        NotificationManager.notificationText.text = NotificationManager.notificationText.text.ToLower();
 
                     if (uppercaseMode)
-                        NotifiText.text = NotifiText.text.ToUpper();
+                        NotificationManager.notificationText.text = NotificationManager.notificationText.text.ToUpper();
 
-                    NotifiText.richText = !noRichText;
+                    NotificationManager.notificationText.richText = !noRichText;
 
                     if (narrateNotifications)
                         NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(notificationText) : notificationText));
@@ -414,7 +409,7 @@ namespace iiMenu.Managers
         /// are no longer relevant.</remarks>
         public static void ClearAllNotifications()
         {
-            NotifiText.text = "";
+            notificationText.text = "";
 
             foreach (Coroutine coroutine in clearCoroutines)
                 CoroutineManager.instance.StopCoroutine(coroutine);
@@ -429,14 +424,14 @@ namespace iiMenu.Managers
         /// equal to the total number of notification lines, all notifications are cleared.</param>
         public static void ClearPastNotifications(int amount)
         {
-            if (string.IsNullOrEmpty(NotifiText.text))
+            if (string.IsNullOrEmpty(notificationText.text))
                 return;
 
-            string[] lines = NotifiText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = notificationText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             if (amount >= lines.Length)
             {
-                NotifiText.text = "";
+                notificationText.text = "";
                 return;
             }
 
@@ -444,8 +439,8 @@ namespace iiMenu.Managers
             for (int i = amount; i < lines.Length; i++)
                 remainingLines.Add(lines[i]);
 
-            NotifiText.text = string.Join(Environment.NewLine, remainingLines);
-            NotifiText.text = NotifiText.text.TrimEnd('\n', '\r');
+            notificationText.text = string.Join(Environment.NewLine, remainingLines);
+            notificationText.text = notificationText.text.TrimEnd('\n', '\r');
         }
 
         private static IEnumerator TrackCoroutine(IEnumerator routine)
@@ -471,9 +466,9 @@ namespace iiMenu.Managers
         {
             yield return null; yield return null; yield return null; yield return null; yield return null;
 
-            UpdateShaderForText(NotifiText);
-            UpdateShaderForText(ModText);
-            UpdateShaderForText(StatsText);
+            UpdateShaderForText(notificationText);
+            UpdateShaderForText(arraylistText);
+            UpdateShaderForText(informationText);
         }
 
         private static void CancelClear(Coroutine coroutine)

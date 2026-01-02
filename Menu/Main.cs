@@ -5208,28 +5208,90 @@ namespace iiMenu.Menu
         /// Applies menu appearance settings to the specified canvas object, such as outlining, based on
         /// current configuration.
         /// </summary>
-        /// <param name="canvasObject">The canvas object to which the menu appearance settings will be applied.</param>
-        public static void FollowMenuSettings(TextMeshPro canvasObject)
+        /// <param name="tmp">The canvas object to which the menu appearance settings will be applied.</param>
+        public static void FollowMenuSettings(TextMeshPro tmp)
         {
-            canvasObject.characterSpacing = -8f + characterDistance;
+            if (tmp == null)
+                return;
 
+            float targetSpacing = -8f + characterDistance;
             if (redactText)
-                canvasObject.characterSpacing -= 3f;
+                targetSpacing -= 3f;
+
+            if (!Mathf.Approximately(tmp.characterSpacing, targetSpacing))
+                tmp.characterSpacing = targetSpacing;
 
             if (outlineText)
             {
-                canvasObject.outlineWidth = 0.2f;
-                canvasObject.outlineColor = Color.black;
+                const float outlineWidth = 0.2f;
+
+                if (!Mathf.Approximately(tmp.outlineWidth, outlineWidth))
+                    tmp.outlineWidth = outlineWidth;
+
+                if (tmp.outlineColor != Color.black)
+                    tmp.outlineColor = Color.black;
             }
+            else if (!Mathf.Approximately(tmp.outlineWidth, 0f))
+                tmp.outlineWidth = 0f;
+
+            FontStyles targetStyle = tmp.fontStyle;
 
             if (underlineText)
-                canvasObject.fontStyle |= FontStyles.Underline;
+                targetStyle |= FontStyles.Underline;
 
             if (smallCapsText)
-                canvasObject.fontStyle |= FontStyles.SmallCaps;
+                targetStyle |= FontStyles.SmallCaps;
 
             if (strikethroughText)
-                canvasObject.fontStyle |= FontStyles.Strikethrough;
+                targetStyle |= FontStyles.Strikethrough;
+
+            if (tmp.fontStyle != targetStyle)
+                tmp.fontStyle = targetStyle;
+        }
+
+        /// <summary>
+        /// Applies menu appearance settings to the specified canvas object, such as outlining, based on
+        /// current configuration.
+        /// </summary>
+        /// <param name="tmp">The canvas object to which the menu appearance settings will be applied.</param>
+        public static void FollowMenuSettings(TextMeshProUGUI tmp)
+        {
+            if (tmp == null)
+                return;
+
+            float targetSpacing = -8f + characterDistance;
+            if (redactText)
+                targetSpacing -= 3f;
+
+            if (!Mathf.Approximately(tmp.characterSpacing, targetSpacing))
+                tmp.characterSpacing = targetSpacing;
+
+            if (outlineText)
+            {
+                const float outlineWidth = 0.2f;
+
+                if (!Mathf.Approximately(tmp.outlineWidth, outlineWidth))
+                    tmp.outlineWidth = outlineWidth;
+
+                if (tmp.outlineColor != Color.black)
+                    tmp.outlineColor = Color.black;
+            }
+            else if (!Mathf.Approximately(tmp.outlineWidth, 0f))
+                tmp.outlineWidth = 0f;
+
+            FontStyles targetStyle = tmp.fontStyle;
+
+            if (underlineText)
+                targetStyle |= FontStyles.Underline;
+
+            if (smallCapsText)
+                targetStyle |= FontStyles.SmallCaps;
+
+            if (strikethroughText)
+                targetStyle |= FontStyles.Strikethrough;
+
+            if (tmp.fontStyle != targetStyle)
+                tmp.fontStyle = targetStyle;
         }
 
         /// <summary>
@@ -6053,8 +6115,8 @@ namespace iiMenu.Menu
             if (NotificationManager.Instance != null)
             {
                 Destroy(NotificationManager.Instance.canvas);
-                Destroy(NotificationManager.ModText);
-                Destroy(NotificationManager.NotifiText);
+                Destroy(NotificationManager.arraylistText);
+                Destroy(NotificationManager.notificationText);
                 Destroy(NotificationManager.Instance.gameObject);
             }
 
