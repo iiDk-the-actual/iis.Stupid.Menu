@@ -806,11 +806,17 @@ namespace iiMenu.Menu
                     {
                         if (barkMenuGrabbed == null)
                         {
-                            bool leftGrabbing = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, menu.transform.position) < 0.3f && leftGrab;
-                            bool rightGrabbing = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, menu.transform.position) < 0.3f && rightGrab;
+                            if (menuBackground != null)
+                            {
+                                bool leftGrabbing = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, menuBackground.transform.position) < 0.4f && leftGrab;
+                                bool rightGrabbing = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, menuBackground.transform.position) < 0.4f && rightGrab;
 
-                            if (leftGrabbing || rightGrabbing)
-                                barkMenuOpen = leftGrabbing;
+                                if (leftGrabbing || rightGrabbing)
+                                {
+                                    barkMenuGrabbed = leftGrabbing;
+                                    rightHand = rightGrabbing;
+                                }
+                            }
                         }
                         else
                         {
@@ -824,7 +830,13 @@ namespace iiMenu.Menu
                         }
                     } else
                     {
-                        bool bangingChest = Physics.OverlapSphere(ControllerUtilities.GetTrueLeftHand().position, 0.1f).Length > 0 || Physics.OverlapSphere(ControllerUtilities.GetTrueRightHand().position, 0.1f).Length > 0;
+                        static bool IsBangingPosition(Vector3 position)
+                        {
+                            Vector3 closestPoint = GorillaTagger.Instance.bodyCollider.ClosestPoint(position);
+                            return closestPoint.Distance(position) <= 0.1f;
+                        }
+
+                        bool bangingChest = IsBangingPosition(ControllerUtilities.GetTrueLeftHand().position) || IsBangingPosition(ControllerUtilities.GetTrueRightHand().position);
 
                         if (bangingChest && !previousBarkBangState)
                         {
@@ -834,7 +846,7 @@ namespace iiMenu.Menu
                             barkBangDelay = Time.time + 0.5f;
                             barkBangCount++;
 
-                            if (barkBangCount > 5)
+                            if (barkBangCount >= 3)
                                 barkMenuOpen = true;
                         }
 
@@ -2329,10 +2341,10 @@ namespace iiMenu.Menu
             FollowMenuSettings(buttonText);
         }
 
-        public static void CreateReference()
+        public static void CreateReference(bool? rightHandOverride = null)
         {
             reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            reference.transform.parent = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton) ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
+            reference.transform.parent = rightHandOverride ?? (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton)) ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
             reference.transform.localPosition = pointerOffset;
             reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             buttonCollider = reference.GetComponent<SphereCollider>();
@@ -2994,13 +3006,32 @@ namespace iiMenu.Menu
                         rotModify += new Vector3(-90f, 0f, -90f);
                         menu.transform.rotation = Quaternion.Euler(rotModify);
                     }
-                    else if (barkMenuOpen && (barkMenuGrabbed == null))
+                    else if (barkMenu && barkMenuOpen)
                     {
-                        menu.transform.position = GorillaTagger.Instance.bodyCollider.transform.TransformPoint(new Vector3(0f, 0.15f, 0.5f));
-                        menu.transform.LookAt(GorillaTagger.Instance.bodyCollider.transform);
-                        Vector3 rotModify = menu.transform.rotation.eulerAngles;
-                        rotModify += new Vector3(-90f, 0f, -90f);
-                        menu.transform.rotation = Quaternion.Euler(rotModify);
+                        if (barkMenuGrabbed != null)
+                        {
+                            if (barkMenuGrabbed.Value)
+                            {
+                                menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                                menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                            }
+                            else
+                            {
+                                menu.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                                Vector3 rotation = GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles;
+                                rotation += new Vector3(0f, 0f, 180f);
+                                menu.transform.rotation = Quaternion.Euler(rotation);
+                            }
+                        } else
+                        {
+                            menu.transform.position = GorillaTagger.Instance.bodyCollider.transform.TransformPoint(new Vector3(0f, 0f, 0.5f));
+                            menu.transform.position = new Vector3(menu.transform.position.x, GorillaTagger.Instance.headCollider.transform.position.y, menu.transform.position.z);
+                            menu.transform.LookAt(GorillaTagger.Instance.bodyCollider.transform);
+                            menu.transform.rotation = Quaternion.Euler(0f, menu.transform.eulerAngles.y, 0f);
+                            Vector3 rotModify = menu.transform.rotation.eulerAngles;
+                            rotModify += new Vector3(-90f, 0f, -90f);
+                            menu.transform.rotation = Quaternion.Euler(rotModify);
+                        }
                     } else
                     {
                         if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
@@ -3099,7 +3130,7 @@ namespace iiMenu.Menu
 
                     if (reference != null)
                     {
-                        if (Mouse.current.leftButton.isPressed && !lastclicking)
+                        if (Mouse.current.leftButton.isPressed && !isMouseDown)
                         {
                             Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                             bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f, NoInvisLayerMask());
@@ -3116,7 +3147,7 @@ namespace iiMenu.Menu
                         else
                             reference.transform.position = new Vector3(999f, -999f, -999f);
 
-                        lastclicking = Mouse.current.leftButton.isPressed;
+                        isMouseDown = Mouse.current.leftButton.isPressed;
                     }
                 }
             } else
@@ -6275,7 +6306,7 @@ jgs \_   _/ |Oo\
         public static bool innerOutline;
         public static bool smoothLines;
         public static bool shouldRound;
-        public static bool lastclicking;
+        public static bool isMouseDown;
         public static bool openedwithright;
         public static bool oneHand;
 
