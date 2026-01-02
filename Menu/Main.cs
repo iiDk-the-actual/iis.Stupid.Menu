@@ -2012,6 +2012,7 @@ namespace iiMenu.Menu
                     }
 
                     AddSprite("Favorite", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.favorite.png"));
+                    AddSprite("Folder", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.folder.png"));
 
                     int maxSize = 512;
                     Texture2D spriteSheet = new Texture2D(maxSize, maxSize);

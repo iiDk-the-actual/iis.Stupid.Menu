@@ -70,7 +70,7 @@ namespace iiMenu.Mods
                 index++;
                 int substringLength = ($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory + "/").Length;
                 string FolderName = folder.Replace("\\", "/")[substringLength..];
-                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + FolderName.Hash(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
+                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + FolderName.Hash(), overlapText = $"<sprite name=\"Folder\">    {FolderName}    ", method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
             }
 
             index = 0;
