@@ -288,7 +288,7 @@ namespace iiMenu.Managers
 
                 motdHeadingText.richText = true;
                 motdHeadingText.fontSize = 100;
-                motdHeadingText.text = $"Thanks for using {(doCustomName ? customMenuName : "ii's Stupid Menu")}!";
+                motdHeadingText.text = $"Thanks for using {(doCustomName ? customMenuName : "ii's <b>Stupid</b> Menu")}!";
                 motdHeadingText.fontStyle = activeFontStyle;
                 motdHeadingText.font = activeFont;
                 FollowMenuSettings(motdHeadingText);
@@ -323,7 +323,7 @@ namespace iiMenu.Managers
                 FollowMenuSettings(motdBodyText);
                 motdBodyText.characterSpacing = -4f;
 
-                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount));
+                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Release" : "Beta", PluginInfo.BuildTimestamp ));
             }
             catch { }
             

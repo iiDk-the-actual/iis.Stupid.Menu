@@ -6604,9 +6604,9 @@ jgs \_   _/ |Oo\
 
         public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@crimsoncauldron) on Discord. " +
         "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
-        "There are a total of {1} mods on this menu. " +
+        "There are a total of <b>{1}</b> mods on this menu. " +
         "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
-        "If you get banned while using this, it's your responsibility.";
+        "If you get banned while using this, it's your responsibility.\n\nCurrent status: Functional, undetected\n{2} {0} : {3}";
 
         public static bool isMenuButtonHeld;
         public static bool shouldBePC;
