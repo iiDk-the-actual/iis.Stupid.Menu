@@ -183,7 +183,7 @@ namespace iiMenu.Classes.Menu
                 JObject data = JObject.Parse(json);
 
                 Main.serverLink = (string)data["discord-invite"];
-                Main.motdTemplate = (string)data["motd"];
+                CustomBoardManager.motdTemplate = (string)data["motd"];
 
                 // Version Check
                 string minimumVersion = (string)data["min-version"];
