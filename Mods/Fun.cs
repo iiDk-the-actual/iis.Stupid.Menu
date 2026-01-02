@@ -6228,11 +6228,11 @@ Piece Name: {gunTarget.name}";
         public static void AutoPurchaseCosmetics()
         {
             if (!GorillaComputer.instance.isConnectedToMaster)
-                lastTimeCosmeticsChecked = Time.time + 60f;
+                lastTimeCosmeticsChecked = Time.time + 120f;
 
             if (Time.time > lastTimeCosmeticsChecked)
             {
-                lastTimeCosmeticsChecked = Time.time + 60f;
+                lastTimeCosmeticsChecked = Time.time + 120f;
                 foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
                 {
                     if (hat.cost == 0 && hat.canTryOn && !CosmeticsOwned.Contains(hat.itemName))
@@ -6245,11 +6245,11 @@ Piece Name: {gunTarget.name}";
         public static void AutoPurchasePaidCosmetics()
         {
             if (!GorillaComputer.instance.isConnectedToMaster)
-                lastTimePaidCosmeticsChecked = Time.time + 60f;
+                lastTimePaidCosmeticsChecked = Time.time + 120f;
 
             if (Time.time > lastTimePaidCosmeticsChecked)
             {
-                lastTimePaidCosmeticsChecked = Time.time + 60f;
+                lastTimePaidCosmeticsChecked = Time.time + 120f;
 
                 CosmeticsController.CosmeticItem[] items = CosmeticsController.instance.currentWornSet.items;
                 int allocatedShinyRocks = CosmeticsController.instance.CurrencyBalance;
