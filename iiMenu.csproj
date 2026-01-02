@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ii's Stupid Menu</AssemblyName>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TargetFramework>netstandard2.1</TargetFramework>
+	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup> 
     <StartAction>Program</StartAction>
     <StartProgram>C:\Windows\explorer.exe</StartProgram>
     <StartArguments>steam://run/1533390</StartArguments>
@@ -24,6 +25,11 @@
     <EmbeddedResource Include="Resources\Client\*" />
   </ItemGroup>
 
+  <ItemGroup>
+	<Compile Remove="BuildChecks\**\*.cs" />
+	<None Remove="BuildChecks\**\*" />
+  </ItemGroup>
+	
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->
   <ItemGroup>
 	  <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
@@ -35,7 +41,7 @@
   <PropertyGroup>
     <PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
   </PropertyGroup>
-  
+	
   <ItemGroup>
     <Reference Include="Assembly-CSharp" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\Assembly-CSharp.dll</HintPath>
