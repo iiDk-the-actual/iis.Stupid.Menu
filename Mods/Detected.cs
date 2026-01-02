@@ -902,7 +902,7 @@ namespace iiMenu.Mods
         }
 
         public static string name = "GOLDENTROPHY";
-        
+
         public static void PromptNameChange() =>
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
 
@@ -950,7 +950,7 @@ namespace iiMenu.Mods
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
             }
         }
-        
+
         public static void ChangeNameAura()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -967,12 +967,12 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0)
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {  
+                {
                     Hashtable hashtable = new Hashtable
                     {
                         [byte.MaxValue] = name
                     };
-                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.ActorNumber, hashtable);
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.GetPlayer().ActorNumber, hashtable);
                 }
             }
         }
@@ -1003,7 +1003,7 @@ namespace iiMenu.Mods
                     {
                         [byte.MaxValue] = name
                     };
-                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.ActorNumber, hashtable);
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.GetPlayer().ActorNumber, hashtable);
                 }
             }
         }
@@ -1054,7 +1054,7 @@ namespace iiMenu.Mods
                 GorillaNot.instance.SendReport("evading the name ban", player.UserId, player.NickName);
             }
         }
-        
+
         public static void BanAura()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -1071,13 +1071,13 @@ namespace iiMenu.Mods
             if (nearbyPlayers.Count > 0)
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {  
-                   Hashtable hashtable = new Hashtable
-                   {
-                       [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
-                   };
-                   PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.ActorNumber, hashtable);
-                   GorillaNot.instance.SendReport("evading the name ban", nearbyPlayer.UserId, nearbyPlayer.NickName);
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", nearbyPlayer.GetPlayer().UserId, nearbyPlayer.GetPlayer().NickName);
                 }
             }
         }
@@ -1108,11 +1108,11 @@ namespace iiMenu.Mods
                     {
                         [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
                     };
-                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.ActorNumber, hashtable);
-                    GorillaNot.instance.SendReport("evading the name ban", rig.UserId, rig.NickName);
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", rig.GetPlayer().UserId, rig.GetPlayer().NickName);
                 }
             }
-        }        
+        }
 
         public static void BreakNetworkTriggers()
         {
