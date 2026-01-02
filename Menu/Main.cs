@@ -1902,12 +1902,10 @@ namespace iiMenu.Menu
                 buttonText.text = buttonText.text.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
             buttonText.text = FollowMenuSettings(buttonText.text);
+            buttonText.spriteAsset = ButtonSpriteSheet;
 
             if (favorites.Contains(method.buttonText))
-            {
-                buttonText.spriteAsset = ButtonSpriteSheet;
                 buttonText.text = $"    {buttonText.text}    <sprite name=\"Favorite\">";
-            }
 
             buttonText.richText = true;
             buttonText.fontSize = 1;
