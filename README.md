@@ -93,7 +93,7 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 |Quest 3/3s|✅|✅|
 |Pico 4|✅|✅|
 |Valve Index|✅|✅|
-|HTC VIVE/PRO|✅|⚠️|
+|HTC VIVE/Pro|✅|⚠️|
 |HP Reverb G2|✅|❓|
 
 > ✅ Fully functional ; ⚠️ Limited functionality ; ❌ Not functionable ; ❓ Untested
