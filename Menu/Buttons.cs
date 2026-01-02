@@ -1937,20 +1937,23 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stump Kick Gun", method = Overpowered.StumpKickGun, toolTip = "Kicks whoever your hand desires if they are in stump." },
                 new ButtonInfo { buttonText = "Stump Kick All", method = Overpowered.StumpKickAll, isTogglable = false, toolTip = "Kicks everyone in stump." },
 
-                new ButtonInfo { buttonText = "Elevator Kick Gun", method = Fun.ElevatorKickGun, toolTip = "Kicks whoever your hand desires if they are in the elevator."},
-                new ButtonInfo { buttonText = "Elevator Kick All", method = Fun.ElevatorKickAll, isTogglable = false, toolTip = "Kicks everyone in the elevator."},
+                new ButtonInfo { buttonText = "Elevator Kick Gun", method = Overpowered.ElevatorKickGun, toolTip = "Kicks whoever your hand desires if they are in the elevator."},
+                new ButtonInfo { buttonText = "Elevator Kick All", method = Overpowered.ElevatorKickAll, isTogglable = false, toolTip = "Kicks everyone in the elevator."},
 
-                new ButtonInfo { buttonText = "Kick Master Client", method = Fun.KickMasterClient, toolTip = "Kicks the master client from the room." },
+                new ButtonInfo { buttonText = "Kick Master Client", method = Overpowered.KickMasterClient, toolTip = "Kicks the master client from the room." },
 
                 new ButtonInfo { buttonText = "Instant Party", method = Fun.InstantParty, toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
-                new ButtonInfo { buttonText = "Party Break Network Triggers", method = Fun.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },
+                new ButtonInfo { buttonText = "Party Break Network Triggers", method = Overpowered.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },
 
-                new ButtonInfo { buttonText = "Kick All in Party", method = Fun.KickAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
-                new ButtonInfo { buttonText = "Ban All in Party", method = Fun.BanAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a bannable code." },
+                new ButtonInfo { buttonText = "Party Kick Gun", method = Overpowered.PartyKickGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks whoever your hand desires if they're in your party from the room."},
+                new ButtonInfo { buttonText = "Party Kick All", method = Overpowered.PartyKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in your party from the room."},
 
-                new ButtonInfo { buttonText = "Auto Party Kick", method = Fun.AutoPartyKick, toolTip = "When you party, you will automatically send everyone in your party to a random room." },
-                new ButtonInfo { buttonText = "Auto Party Ban", method = Fun.AutoPartyBan, toolTip = "When you party, you will automatically send everyone in your party to a bannable code." },
+                new ButtonInfo { buttonText = "Kick All in Party", overlapText = "Party Send All", method = Overpowered.KickAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
+                new ButtonInfo { buttonText = "Ban All in Party", overlapText = "Party Ban All", method = Overpowered.BanAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a bannable code." },
+
+                new ButtonInfo { buttonText = "Auto Party Kick", method = Overpowered.AutoPartyKick, toolTip = "When you party, you will automatically send everyone in your party to a random room." },
+                new ButtonInfo { buttonText = "Auto Party Ban", method = Overpowered.AutoPartyBan, toolTip = "When you party, you will automatically send everyone in your party to a bannable code." },
 
                 new ButtonInfo { buttonText = "Break Audio Gun", method = Overpowered.BreakAudioGun, toolTip = "Attempts to break the audio of whoever your hand desires." },
                 new ButtonInfo { buttonText = "Break Audio All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BreakAudioAll, toolTip = "Attempts to breaks everyone's audio when holding trigger." },
@@ -2371,10 +2374,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Lag Aura", overlapText = "Lag Aura", method = Detected.LagAura, detected = true, toolTip = "Lags players nearby you."},
                 new ButtonInfo { buttonText = "Detected Lag On Touch", overlapText = "Lag On Touch", method = Detected.LagOnTouch, detected = true, toolTip = "Lags players that you touch."},
                 
-                new ButtonInfo { buttonText = "Detected Kick Gun", overlapText = "Kick Gun", method = Detected.KickGun, detected = true, toolTip = "Kicks whoever your hand desires by bringing them into a new lobby with you."},
-                new ButtonInfo { buttonText = "Detected Kick All", overlapText = "Kick All", method = Detected.KickAll, detected = true, toolTip = "Kicks everyone in the room by bringing them into a new lobby with you."},
-                new ButtonInfo { buttonText = "Detected Kick Aura", overlapText = "Kick Aura", method = Detected.KickAura, detected = true, toolTip = "Kicks players nearby by bringing them into a new lobby with you."},
-                new ButtonInfo { buttonText = "Detected Kick On Touch", overlapText = "Kick On Touch", method = Detected.KickOnTouch, detected = true, toolTip = "Kicks players you touch by bringing them into a new lobby with you."},
+                new ButtonInfo { buttonText = "Detected Kick Gun", overlapText = "Kick Gun", method = Detected.KickGun, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks whoever your hand desires."},
+                new ButtonInfo { buttonText = "Detected Kick All", overlapText = "Kick All", method = Detected.KickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks everyone in the room."},
+                new ButtonInfo { buttonText = "Detected Kick Aura", overlapText = "Kick Aura", method = Detected.KickAura, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks players nearby."},
+                new ButtonInfo { buttonText = "Detected Kick On Touch", overlapText = "Kick On Touch", method = Detected.KickOnTouch, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks players you touch."},
 
                 new ButtonInfo { buttonText = "Detected Crash Gun", overlapText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Crash All", overlapText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},

@@ -202,6 +202,8 @@ namespace iiMenu.Mods
                         {
                             for (int i = 0; i < 3950; i++)
                                 Destroy(gunTarget);
+
+                            RPCProtection();
                         }
 
                         gunLocked = true;
@@ -228,6 +230,8 @@ namespace iiMenu.Mods
                 kickDelay = Time.time + 10f;
                 for (int i = 0; i < 3950; i++)
                     Destroy(GetTargetPlayer().GetPhotonPlayer());
+
+                RPCProtection();
             }
         }
 

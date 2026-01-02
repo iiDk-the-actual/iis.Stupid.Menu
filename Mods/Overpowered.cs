@@ -647,7 +647,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    CreateItem(lockTarget.GetPlayer(), Overpowered.GadgetByName["WristJetGadgetPropellor"], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
+                    CreateItem(lockTarget.GetPlayer(), GadgetByName["WristJetGadgetPropellor"], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
 
                 if (GetGunInput(true))
                 {
@@ -667,7 +667,7 @@ namespace iiMenu.Mods
         }
 
         public static void SuperInfectionBreakAudioAll() =>
-            CreateItem(RpcTarget.Others, Overpowered.GadgetByName["WristJetGadgetPropellor"], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
+            CreateItem(RpcTarget.Others, GadgetByName["WristJetGadgetPropellor"], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
 
         private static float reportDelay;
         public static void DelayBanGun()
@@ -5259,6 +5259,242 @@ namespace iiMenu.Mods
             }
             else
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+        }
+
+        private static float elevatorKickDelay;
+        public static void ElevatorKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > elevatorKickDelay)
+                    {
+                        elevatorKickDelay = Time.time + 0.5f;
+
+                        if (PhotonNetwork.IsMasterClient)
+                            SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { TargetActors = new[] { gunTarget.GetPlayer().ActorNumber } }, (int)GRElevatorManager._instance.currentLocation, 3, GRElevatorManager.LowestActorNumberInElevator());
+                        else
+                            GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
+
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void ElevatorKickAll()
+        {
+            if (PhotonNetwork.IsMasterClient)
+                SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { Receivers = ReceiverGroup.Others }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
+            else
+                GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
+        }
+
+        public static void KickMasterClient()
+        {
+            if (NetworkSystem.Instance.SessionIsPrivate)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
+                Buttons.GetIndex("Kick Master Client").enabled = false;
+
+                return;
+            }
+
+            GRPlayer self = GRPlayer.GetLocal();
+
+            if (self == null) // how
+                return;
+
+            if (GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).GetOwner() == null) // how???
+                return;
+
+            GorillaFriendCollider currentCollider = GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).friendCollider;
+            GorillaFriendCollider targetCollider = GRElevatorManager.GetShuttle(self.shuttleData.targetShuttleId).friendCollider;
+
+            if (currentCollider == null && targetCollider == null)
+                return;
+
+            GorillaFriendCollider collider = currentCollider ?? targetCollider;
+
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = collider.transform.position;
+
+            if (ServerPos.Distance(collider.transform.position) < 0.5f)
+            {
+                CoroutineManager.instance.StartCoroutine(Overpowered.StumpKickDelay(() =>
+                {
+                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                    BetaShuttleFollowCommand(GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).GetOwner().GetPlayer());
+                    RPCProtection();
+                }, () =>
+                {
+                    Overpowered.CreateKickRoom();
+                    Buttons.GetIndex("Kick Master Client").enabled = false;
+                    VRRig.LocalRig.enabled = true;
+
+                }));
+            }
+        }
+
+        public static void BetaShuttleFollowCommand(Player player)
+        {
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
+            object[] groupJoinSendData = new object[2];
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+            NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new[] { player.ActorNumber } };
+
+            RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
+        }
+
+        public static void KickAllInParty()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty)
+            {
+                partyLastCode = PhotonNetwork.CurrentRoom.Name;
+                waitForPlayerJoin = false;
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(Important.RandomRoomName(), JoinType.ForceJoinWithParty);
+                partyTime = Time.time + 0.25f;
+                partyKickReconnecting = false;
+                amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Kicking " + amountPartying + " party members, please be patient..");
+            }
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a party.");
+        }
+
+        public static void BanAllInParty()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty)
+            {
+                partyLastCode = PhotonNetwork.CurrentRoom.Name;
+                waitForPlayerJoin = true;
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("KKK", JoinType.ForceJoinWithParty);
+                partyTime = Time.time + 0.25f;
+                partyKickReconnecting = false;
+                amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Banning " + amountPartying + " party members, please be patient..");
+            }
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a party.");
+        }
+
+        public static Coroutine partyKickDelayCoroutine;
+        public static IEnumerator PartyKickDelay(bool ban)
+        {
+            yield return new WaitForSeconds(0.25f);
+
+            if (ban)
+                BanAllInParty();
+            else
+                KickAllInParty();
+
+            Coroutine thisCoroutine = partyKickDelayCoroutine;
+            partyKickDelayCoroutine = null;
+
+            CoroutineManager.instance.StopCoroutine(thisCoroutine);
+        }
+
+        public static bool previousInParty;
+        public static void AutoPartyKick()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
+                partyKickDelayCoroutine ??= CoroutineManager.instance.StartCoroutine(PartyKickDelay(false));
+
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
+        public static void AutoPartyBan()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && !previousInParty)
+                partyKickDelayCoroutine ??= CoroutineManager.instance.StartCoroutine(PartyKickDelay(true));
+
+            previousInParty = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
+        private static float breakDelay;
+        public static void PartyBreakNetworkTriggers()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && Time.time > breakDelay)
+            {
+                breakDelay = Time.time + 1f;
+                FriendshipGroupDetection.Instance.photonView.RPC("PartyMemberIsAboutToGroupJoin", RpcTarget.All, Array.Empty<object>());
+            }
+        }
+
+        public static void PartyKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    SerializePatch.OverrideSerialization ??= () => false;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        if (lockTarget == null && FriendshipGroupDetection.Instance.IsInMyGroup(lockTarget.GetPlayer().UserId))
+                        {
+                            for (int i = 0; i < 3950; i++)
+                                FriendshipGroupDetection.Instance.photonView.RPC("RequestPartyGameMode", lockTarget.GetPhotonPlayer(), 
+                                    new object[] { GameMode.gameModeKeyByName.Keys.ToArray()[Random.Range(0, GameMode.gameModeKeyByName.Keys.Count)] });
+
+                            RPCProtection();
+                        }
+
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (SerializePatch.OverrideSerialization != null)
+                    SerializePatch.OverrideSerialization = null;
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void PartyKickAll()
+        {
+            SerializePatch.OverrideSerialization ??= () => false;
+
+            if (Time.time > kickDelay)
+            {
+                kickDelay = Time.time + 10f;
+                for (int i = 0; i < 3950; i++)
+                    SpecialTargetRPC
+                    (
+                        FriendshipGroupDetection.Instance.photonView,
+                        "RequestPartyGameMode",
+                        new RaiseEventOptions
+                        {
+                            TargetActors =
+                            NetworkSystem.Instance.PlayerListOthers
+                                .Where(plr => FriendshipGroupDetection.Instance.IsInMyGroup(plr.UserId))
+                                .Select(plr => plr.ActorNumber).ToArray()
+                        },
+                        new object[]
+                        {
+                            GameMode.gameModeKeyByName.Keys.ToArray()[Random.Range(0, GameMode.gameModeKeyByName.Keys.Count)]
+                        }
+                    );
+
+                RPCProtection();
+            }
         }
 
         private static float antiReportLagDelay;
