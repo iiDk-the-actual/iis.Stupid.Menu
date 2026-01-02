@@ -646,15 +646,29 @@ exit";
                 wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
         }
 
+        public static float zoomFOV = 35f;
         public static void MoveFPC()
         {
             if (TPC != null)
             {
                 if (menu != null && !XRSettings.isDeviceActive)
                     return;
-                TPC.fieldOfView = 90f;
+
+                float FOV = 90f;
+                if (Keyboard.current.cKey.isPressed)
+                {
+                    Vector2 scroll = Mouse.current.scroll.ReadValue();
+                    zoomFOV += -scroll.y * 5f;
+                    zoomFOV = Mathf.Clamp(zoomFOV, 10f, 90f);
+                    TPC.fieldOfView = Mathf.Lerp(TPC.fieldOfView, zoomFOV, 0.1f);
+                }
+                else
+                {
+                    zoomFOV = 35f;
+                    TPC.fieldOfView = Mathf.Lerp(TPC.fieldOfView, FOV, 0.1f);
+                }
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = false;
-                TPC.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+                TPC.gameObject.transform.position = Keyboard.current.cKey.isPressed ? Vector3.Lerp(TPC.transform.position, GorillaTagger.Instance.headCollider.transform.position, 0.1f) : GorillaTagger.Instance.headCollider.transform.position;
                 TPC.gameObject.transform.rotation = Quaternion.Lerp(TPC.transform.rotation, GorillaTagger.Instance.headCollider.transform.rotation, 0.075f);
             }
         }
