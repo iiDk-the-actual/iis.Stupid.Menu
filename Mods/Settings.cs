@@ -4186,7 +4186,7 @@ exit 0";
                     activeFont = FreeSans;
                     return;
                 case 2:
-                    activeFont = Verdana;
+                    activeFont = DejaVuSans;
                     return;
                 case 3:
                     activeFont = Utopium;
@@ -4195,7 +4195,7 @@ exit 0";
                     activeFont = ComicSans;
                     return;
                 case 5:
-                    activeFont = Consolas;
+                    activeFont = CascadiaMono;
                     return;
                 case 6:
                     activeFont = Candara;
@@ -4204,7 +4204,7 @@ exit 0";
                     activeFont = MSGothic;
                     return;
                 case 8:
-                    activeFont = Impact;
+                    activeFont = Anton;
                     return;
                 case 9:
                     activeFont = SimSun;

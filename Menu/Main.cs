@@ -6232,8 +6232,8 @@ namespace iiMenu.Menu
             FreeSans ??= LoadAsset<TMP_FontAsset>("FreeSans");
             Candara ??= LoadAsset<TMP_FontAsset>("Candara");
             ComicSans ??= LoadAsset<TMP_FontAsset>("ComicSans");
-            Consolas ??= LoadAsset<TMP_FontAsset>("Consolas");
-            Impact ??= LoadAsset<TMP_FontAsset>("Impact");
+            CascadiaMono ??= LoadAsset<TMP_FontAsset>("CascadiaMono");
+            Anton ??= LoadAsset<TMP_FontAsset>("Anton");
             Minecraft ??= LoadAsset<TMP_FontAsset>("Minecraft");
             MSGothic ??= LoadAsset<TMP_FontAsset>("MSGothic");
             OpenDyslexic ??= LoadAsset<TMP_FontAsset>("OpenDyslexic");
@@ -6241,23 +6241,23 @@ namespace iiMenu.Menu
             Taiko ??= LoadAsset<TMP_FontAsset>("Taiko");
             Terminal ??= LoadAsset<TMP_FontAsset>("Terminal");
             Utopium ??= LoadAsset<TMP_FontAsset>("Utopium");
-            Verdana ??= LoadAsset<TMP_FontAsset>("Verdana");
+            DejaVuSans ??= LoadAsset<TMP_FontAsset>("DejaVuSans");
 
             foreach (TMP_FontAsset font in new[] { AgencyFB, FreeSans, Candara, ComicSans, 
-                Consolas, Impact, Minecraft, MSGothic, OpenDyslexic, SimSun, Taiko, 
-                Terminal, Utopium, Verdana })
+                CascadiaMono, Anton, Minecraft, MSGothic, OpenDyslexic, SimSun, Taiko, 
+                Terminal, Utopium, DejaVuSans })
                 font.fallbackFontAssetTable.Add(LiberationSans);
         }
 
-        public static TMP_FontAsset activeFont;
+        public static TMP_FontAsset activeFont = LiberationSans;
         public static FontStyles activeFontStyle = FontStyles.Italic;
 
         public static TMP_FontAsset AgencyFB;
         public static TMP_FontAsset FreeSans;
         public static TMP_FontAsset Candara;
         public static TMP_FontAsset ComicSans;
-        public static TMP_FontAsset Consolas;
-        public static TMP_FontAsset Impact;
+        public static TMP_FontAsset CascadiaMono;
+        public static TMP_FontAsset Anton;
         public static TMP_FontAsset Minecraft;
         public static TMP_FontAsset MSGothic;
         public static TMP_FontAsset OpenDyslexic;
@@ -6265,8 +6265,7 @@ namespace iiMenu.Menu
         public static TMP_FontAsset Taiko;
         public static TMP_FontAsset Terminal;
         public static TMP_FontAsset Utopium;
-        public static TMP_FontAsset Verdana;
-
+        public static TMP_FontAsset DejaVuSans;
         public static TMP_FontAsset LiberationSans = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
 
         // The variable warehouse
