@@ -33,6 +33,7 @@ using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
+using PlayFab.ClientModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -4565,7 +4566,89 @@ namespace iiMenu.Mods
             Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
+        public static int lagTypeIndex;
+        public static void ChangeLagType(bool positive = true)
+        {
+            string[] lagNames = {
+                "Party",
+                "VRRig"
+            };
+
+            if (positive)
+                lagTypeIndex++;
+            else
+                lagTypeIndex--;
+
+            lagTypeIndex %= lagNames.Length;
+            if (lagTypeIndex < 0)
+                lagTypeIndex = lagNames.Length - 1;
+
+            Buttons.GetIndex("Change Lag Type").overlapText = "Change Lag Type <color=grey>[</color><color=green>" + lagNames[lagTypeIndex] + "</color><color=grey>]</color>";
+        }
+
         private static float lagDebounce;
+        public static void LagTarget(object target)
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            if (Time.time < lagDebounce)
+                return;
+
+            if (target is VRRig rig)
+                target = rig.GetPlayer().GetPlayer();
+
+            if (target is NetPlayer legacyNetPlayerTarget)
+                target = legacyNetPlayerTarget.GetPlayer();
+
+            lagDebounce = Time.time + lagDelay;
+
+            PhotonView view = lagTypeIndex switch
+            {
+                0 => FriendshipGroupDetection.Instance.photonView,
+                1 => GorillaTagger.Instance.myVRRig.GetView,
+
+                _ => FriendshipGroupDetection.Instance.photonView
+            };
+            string rpcName = lagTypeIndex switch
+            {
+                0 => "AddPartyMembers",
+                1 => "RPC_UpdateCosmeticsWithTryonPacked",
+
+                _ => "AddPartyMembers"
+            };
+            object[] data = lagTypeIndex switch
+            {
+                0 => new object[] { "Infection", (short)12, null },
+                1 => new object[] { null, null, false },
+
+                _ => new object[] { "Infection", (short)12, null }
+            };
+
+            switch (target)
+            {
+                case RpcTarget rpcTarget:
+                    for (int i = 0; i < lagAmount; i++)
+                        view.RPC(rpcName, rpcTarget, data);
+
+                    break;
+                case Player player:
+                    for (int i = 0; i < lagAmount; i++)
+                        view.RPC(rpcName, player, data);
+
+                    break;
+                case int[] actorNumbers:
+                    if (actorNumbers.Length == 0)
+                        break;
+
+                    for (int i = 0; i < lagAmount; i++)
+                        SpecialTargetRPC(view, rpcName, new RaiseEventOptions { TargetActors = actorNumbers }, data);
+
+                    break;
+            }
+
+            RPCProtection();
+        }
+
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -4574,16 +4657,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > lagDebounce)
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", lockTarget.GetPhotonPlayer(), new object[] { "Infection", (short)12, null });
-
-                        lagDebounce = Time.time + lagDelay;
-                        RPCProtection();
-                    }
-                }
+                    LagTarget(lockTarget.GetPlayer());
 
                 if (GetGunInput(true))
                 {
@@ -4602,17 +4676,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll()
-        {
-            if (!PhotonNetwork.InRoom) return;
-            if (Time.time > lagDebounce)
-            {
-                for (int i = 0; i < lagAmount; i++)
-                    FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", RpcTarget.Others, new object[] { "Infection", (short)12, null });
-                lagDebounce = Time.time + lagDelay;
-                RPCProtection();
-            }
-        }
+        public static void LagAll() =>
+            LagTarget(RpcTarget.Others);
 
         public static void LagAura()
         {
@@ -4627,13 +4692,8 @@ namespace iiMenu.Mods
                     nearbyPlayers.Remove(GetPlayerFromVRRig(vrrig).ActorNumber);
             }
 
-            if (nearbyPlayers.Count > 0 && Time.time > lagDebounce)
-            {
-                for (int i = 0; i < lagAmount; i++)
-                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = nearbyPlayers.ToArray() }, new object[] { "Infection", (short)12, null });
-                lagDebounce = Time.time + lagDelay;
-                RPCProtection();
-            }
+            if (nearbyPlayers.Count > 0)
+                LagTarget(nearbyPlayers);
         }
 
         public static void LagOnTouch()
@@ -4649,13 +4709,8 @@ namespace iiMenu.Mods
                     touchedPlayers.Add(GetPlayerFromVRRig(rig).ActorNumber);
             }
 
-            if (touchedPlayers.Count > 0 && Time.time > lagDebounce)
-            {
-                for (int i = 0; i < lagAmount; i++)
-                    SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = touchedPlayers.ToArray() }, new object[] { "Infection", (short)12, null });
-                lagDebounce = Time.time + lagDelay;
-                RPCProtection();
-            }
+            if (touchedPlayers.Count > 0)
+                LagTarget(touchedPlayers);
         }
 
         public static void BarrelFlingGun()
@@ -5159,15 +5214,7 @@ namespace iiMenu.Mods
                 });
 
                 if (actors.Count > 0)
-                {
-                    if (Time.time > lagDebounce)
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "AddPartyMembers", new RaiseEventOptions { TargetActors = actors.ToArray() }, new object[] { "Infection", (short)12, null });
-                        lagDebounce = Time.time + lagDelay;
-                        RPCProtection();
-                    }
-                }
+                    LagTarget(actors);
             }
         }
 

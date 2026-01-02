@@ -475,6 +475,12 @@ namespace iiMenu.Mods
                     toolTip = $"Lags {targetName} using the firework projectiles."
                 },
                 new ButtonInfo {
+                    buttonText = "Lag Player",
+                    overlapText = $"Lag {targetName}",
+                    method =() => Overpowered.LagTarget(player),
+                    toolTip = $"Lags {targetName}."
+                },
+                new ButtonInfo {
                     buttonText = "Destroy Player",
                     overlapText = $"Destroy {targetName}",
                     method =() => Overpowered.DestroyPlayer(player),
@@ -5159,7 +5165,8 @@ exit 0";
                 Projectiles.targetProjectileIndex.ToString(),
                 Movement.fakeLagDelayIndex.ToString(),
                 Projectiles.snowballIndex.ToString(),
-                characterDistance.ToString()
+                characterDistance.ToString(),
+                Overpowered.lagTypeIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5423,6 +5430,9 @@ exit 0";
 
                 characterDistance = int.Parse(data[64]) - 1;
                 ChangeCharacterDistance();
+
+                Overpowered.lagTypeIndex = int.Parse(data[65]) - 1;
+                Overpowered.ChangeLagType();
             }
             catch { LogManager.Log("Save file out of date"); }
 
