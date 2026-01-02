@@ -4559,10 +4559,10 @@ namespace iiMenu.Mods
             if (lagIndex < 0)
                 lagIndex = 2;
 
-            lagAmount = new[] { 40, 113, 425, 3800 }[lagIndex];
-            lagDelay = new[] { 0.1f, 0.25f, 1f, 8f }[lagIndex];
+            lagAmount = new[] { 40, 113, 425, 1000, 3800 }[lagIndex];
+            lagDelay = new[] { 0.1f, 0.25f, 1f, 3f, 8f }[lagIndex];
 
-            Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike", "Freeze" }[lagIndex] + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new[] { "Light", "Heavy", "Spike", "Stutter", "Freeze" }[lagIndex] + "</color><color=grey>]</color>";
         }
 
         public static int lagTypeIndex;
