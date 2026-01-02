@@ -815,6 +815,14 @@ namespace iiMenu.Menu
                                 {
                                     barkMenuGrabbed = leftGrabbing;
                                     rightHand = rightGrabbing;
+                                    
+                                    if (reference != null)
+                                    {
+                                        Destroy(reference);
+                                        reference = null;
+
+                                        CreateReference();
+                                    }
                                 }
                             }
                         }
