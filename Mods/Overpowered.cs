@@ -583,6 +583,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > spazDriverDelay)
                 {
+                    spazDriverDelay = Time.time + 0.1f;
                     CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, PhotonNetwork.LocalPlayer.ActorNumber);
                     CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, false, PhotonNetwork.LocalPlayer.ActorNumber);
                 }
@@ -632,6 +633,7 @@ namespace iiMenu.Mods
                     {
                         if (Time.time > spazDriverDelay)
                         {
+                            spazDriverDelay = Time.time + 0.1f;
                             CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, lockTarget.GetPlayer().ActorNumber);
                             CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, false, lockTarget.GetPlayer().ActorNumber);
                         }
