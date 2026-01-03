@@ -329,7 +329,7 @@ namespace iiMenu.Managers
                 FollowMenuSettings(motdBodyText);
                 motdBodyText.characterSpacing = -4f;
 
-                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Release" : "Beta", PluginInfo.BuildTimestamp ));
+                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Beta" : "Release", PluginInfo.BuildTimestamp ));
             }
             catch { }
             
