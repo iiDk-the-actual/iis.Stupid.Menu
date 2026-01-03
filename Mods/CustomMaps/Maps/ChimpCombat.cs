@@ -50,6 +50,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Chimp Combat Crash Gun", overlapText = "Crash Gun", method = CrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
             new ButtonInfo { buttonText = "Chimp Combat Crash All", overlapText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
             new ButtonInfo { buttonText = "Chimp Combat Anti Report", overlapText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
+            new ButtonInfo { buttonText = "Chimp Combat Crash Aura", overlapText = "Crash Aura", method = CrashAura, toolTip = "Crashes players nearby you in the custom map." },
             new ButtonInfo { buttonText = "Chimp Combat Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
         };
 
@@ -177,6 +178,31 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 if (gunLocked)
                     gunLocked = false;
+            }
+        }
+        public static void CrashAura()
+        {
+            if (Time.time < crashDelay)
+                return;
+
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    CrashPlayer(nearbyPlayer.OwningNetPlayer.ActorNumber);
+                    crashDelay = Time.time + 0.2f;
+                }
             }
         }
         public static void CrashOnTouch()
