@@ -5007,11 +5007,12 @@ namespace iiMenu.Mods
                 barrelAllDelay = Time.time + 0.3f;
         }
 
+        public const int BarrelIndex = 621;
         public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
             options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
-            int index = 621;
+            int index = BarrelIndex;
             DistancePatch.enabled = true;
 
             if (Fun.DisableThrowableCoroutine != null)
