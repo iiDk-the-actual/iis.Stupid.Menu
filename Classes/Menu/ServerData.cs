@@ -41,7 +41,7 @@ namespace iiMenu.Classes.Menu
     public class ServerData : MonoBehaviour
     {
         #region Configuration
-        public static readonly bool ServerDataEnabled = true; // Disables Console, telemetry, and admin panel
+        public static readonly bool ServerDataEnabled = true; // Disables Console and admin panel
         public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
 
         // Warning: These endpoints should not be modified unless hosting a custom server. Use with caution.
@@ -414,6 +414,13 @@ namespace iiMenu.Classes.Menu
 
                 categoryIndex++;
             }
+
+            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+            {
+                name = "Purgatory",
+                description = "Get banned with the menu.",
+                icon = "Images/Achievements/banned.png"
+            });
 
             UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/reportban", "POST");
 

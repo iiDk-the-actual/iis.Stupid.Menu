@@ -888,6 +888,16 @@ namespace iiMenu.Managers
 
             FriendData.Friend[] organizedFriends = onlineFriends.Concat(offlineFriends).ToArray();
 
+            if (organizedFriends.Length > 0)
+            {
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "All Star",
+                    description = "Make a friend.",
+                    icon = "Images/Achievements/all-star.png"
+                });
+            }
+
             if (onlineFriends.Length > previousOnlineCount && onlineFriends.Length > 0)
             {
                 if (SoundEffects)

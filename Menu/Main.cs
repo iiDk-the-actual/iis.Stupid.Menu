@@ -225,6 +225,15 @@ namespace iiMenu.Menu
                 }
             }
 
+            if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime <= DateTime.Now.AddYears(-1))
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Veteran",
+                    description = "Use the menu for over a year.",
+                    icon = "Images/Achievements/veteran.png"
+                });
+
+
             if (PatchHandler.PatchErrors > 0)
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
         }
@@ -6034,7 +6043,6 @@ namespace iiMenu.Menu
                                                     name = "Dedicated",
                                                     description = "Enable 50 mods at the same time.",
                                                     icon = "Images/Achievements/award.png"
-
                                                 });
 
                                             if (enabledButtons >= 100)
@@ -6043,7 +6051,6 @@ namespace iiMenu.Menu
                                                     name = "Too Dedicated",
                                                     description = "Enable 100 mods at the same time.",
                                                     icon = "Images/Achievements/red-award.png"
-
                                                 });
                                         }
                                 else
