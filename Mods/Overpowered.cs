@@ -4780,7 +4780,7 @@ namespace iiMenu.Mods
             string[] lagNames = {
                 "Party",
                 "VRRig",
-                "NaN",
+                "GTSignal",
                 "Destroy"
             };
 
