@@ -479,6 +479,26 @@ namespace iiMenu.Menu
                     fpsCount.text = FollowMenuSettings(textToSet, false);
                 }
 
+                if (potatoTime != null)
+                {
+                    if (1f / Time.unscaledDeltaTime < 15f)
+                    {
+                        potatoTime += Time.unscaledDeltaTime;
+                        if (potatoTime > 60f)
+                        {
+                            potatoTime = null;
+                            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                            {
+                                name = "Potato",
+                                description = "Have 15 FPS for over a minute.",
+                                icon = "Images/Achievements/potato.png"
+                            });
+                        }
+                    }
+                    else
+                        potatoTime = 0f;
+                }
+
                 if (watermarkImage != null)
                     watermarkImage.GetComponent<RectTransform>().localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
@@ -6711,6 +6731,7 @@ jgs \_   _/ |Oo\
         public static Image watermarkImage;
         private static float fpsAvgTime;
         private static float fpsAverageNumber;
+        private static float? potatoTime = 0f;
         public static bool fpsCountTimed;
         public static bool fpsCountAverage;
         public static bool ftCount;
