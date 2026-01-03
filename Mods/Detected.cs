@@ -85,6 +85,15 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SetMasterClientAll()
+        {
+            if (Time.time > masterDelay)
+            {
+                PhotonNetwork.SetMasterClient(GetTargetPlayer().GetPhotonPlayer());
+                masterDelay = Time.time + 0.02f;
+            }
+        }
+
         public static void AutoSetMasterClient()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -912,7 +921,7 @@ namespace iiMenu.Mods
         }
 
         public static string name = "GOLDENTROPHY";
-        
+
         public static void PromptNameChange() =>
             Prompt("Would you like to set a name?", () => PromptSingleText("Please enter the name you'd like to use:", () => name = keyboardInput));
 
@@ -958,6 +967,169 @@ namespace iiMenu.Mods
                     [byte.MaxValue] = name
                 };
                 PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
+            }
+        }
+
+        public static void ChangeNameAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = name
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.GetPlayer().ActorNumber, hashtable);
+                }
+            }
+        }
+
+        public static void ChangeNameOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = name
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.GetPlayer().ActorNumber, hashtable);
+                }
+            }
+        }
+
+        public static void BanGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(lockTarget.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", lockTarget.GetPlayer().UserId, lockTarget.GetPlayer().NickName);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BanAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerListOthers)
+            {
+                Hashtable hashtable = new Hashtable
+                {
+                    [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                };
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(player.ActorNumber, hashtable);
+                GorillaNot.instance.SendReport("evading the name ban", player.UserId, player.NickName);
+            }
+        }
+
+        public static void BanAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(nearbyPlayer.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", nearbyPlayer.GetPlayer().UserId, nearbyPlayer.GetPlayer().NickName);
+                }
+            }
+        }
+
+        public static void BanOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable hashtable = new Hashtable
+                    {
+                        [byte.MaxValue] = GorillaComputer.instance.anywhereTwoWeek[Random.Range(0, GorillaComputer.instance.anywhereTwoWeek.Length)]
+                    };
+                    PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetPropertiesOfActor(rig.GetPlayer().ActorNumber, hashtable);
+                    GorillaNot.instance.SendReport("evading the name ban", rig.GetPlayer().UserId, rig.GetPlayer().NickName);
+                }
             }
         }
 
