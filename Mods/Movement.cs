@@ -4214,11 +4214,14 @@ namespace iiMenu.Mods
             else
                 PlayerSerializePatch.delay = null;
 
-            SerializePatch.OverrideSerialization = () =>
-            {
-                MassSerialize(true, delay: fakeLagDelay);
-                return false;
-            };
+            if (!Buttons.GetIndex("Disable Fake Lag Self").enabled)
+                SerializePatch.OverrideSerialization = () =>
+                {
+                    MassSerialize(true, delay: fakeLagDelay);
+                    return false;
+                };
+            else
+                SerializePatch.OverrideSerialization = null;
         }
 
         public static void LagRange()
