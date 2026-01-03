@@ -402,19 +402,14 @@ namespace iiMenu.Classes.Menu
 
         public static AudioType GetAudioType(string extension)
         {
-            switch (extension.ToLower())
+            return extension.ToLower() switch
             {
-                case "mp3":
-                    return AudioType.MPEG;
-                case "wav":
-                    return AudioType.WAV;
-                case "ogg":
-                    return AudioType.OGGVORBIS;
-                case "aiff":
-                    return AudioType.AIFF;
-                default:
-                    return AudioType.WAV;
-            }
+                "mp3" => AudioType.MPEG,
+                "wav" => AudioType.WAV,
+                "ogg" => AudioType.OGGVORBIS,
+                "aiff" => AudioType.AIFF,
+                _ => AudioType.WAV,
+            };
         }
 
         public static IEnumerator PreloadAssets()

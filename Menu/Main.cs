@@ -58,6 +58,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json;
 using Valve.VR;
+using Valve.VR.InteractionSystem;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
@@ -497,6 +498,26 @@ namespace iiMenu.Menu
                     }
                     else
                         potatoTime = 0f;
+                }
+
+                if (adminTime != null && PhotonNetwork.InRoom)
+                {
+                    if (PhotonNetwork.PlayerListOthers.Any(player => ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && !Console.excludedCones.Contains(player)))
+                    {
+                        adminTime += Time.unscaledDeltaTime;
+                        if (adminTime > 10f)
+                        {
+                            adminTime = null;
+                            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                            {
+                                name = "I Am Your Leader",
+                                description = "Meet a Console administrator.",
+                                icon = "Images/Achievements/leader.png"
+                            });
+                        }
+                    }
+                    else
+                        adminTime = 0f;
                 }
 
                 if (watermarkImage != null)
@@ -6736,6 +6757,7 @@ jgs \_   _/ |Oo\
         private static float fpsAvgTime;
         private static float fpsAverageNumber;
         private static float? potatoTime = 0f;
+        private static float? adminTime = 0f;
         public static bool fpsCountTimed;
         public static bool fpsCountAverage;
         public static bool ftCount;
