@@ -37,7 +37,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
-using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Console = iiMenu.Classes.Menu.Console;
@@ -71,8 +70,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Master Mods", method =() => currentCategoryName = "Master Mods", isTogglable = false, toolTip = "Opens the master mods."},
                 new ButtonInfo { buttonText = "Overpowered Mods", method =() => currentCategoryName = "Overpowered Mods", isTogglable = false, toolTip = "Opens the overpowered mods."},
                 new ButtonInfo { buttonText = "Experimental Mods", method =() => currentCategoryName = "Experimental Mods", isTogglable = false, toolTip = "Opens the experimental mods."},
-                new ButtonInfo { buttonText = "Detected Mods", method =() => { if (!allowDetected) { Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/danger.ogg", "Audio/Menu/Notifications/danger.ogg"), buttonClickVolume / 10f); Prompt("The mods in this category are detected. <b>Unless you know what you're doing, you will get banned.</b> Are you sure you would like to continue?", () => { allowDetected = true; currentCategoryName = "Detected Mods"; }); } else currentCategoryName = "Detected Mods"; }, isTogglable = false, toolTip = "Opens the detected mods."},
-                new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."},
+                new ButtonInfo { buttonText = "Detected Mods", method = Detected.EnterDetectedTab, isTogglable = false, toolTip = "Opens the detected mods."},
+
+                new ButtonInfo { buttonText = "Achievements", method = AchievementManager.EnterAchievementTab, isTogglable = false, toolTip = "Opens the credits page."},
+                new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."}
             },
 
             new[] { // Settings [1]
@@ -1880,6 +1881,17 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method = Overpowered.GuardianCrashGun, toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
+                new ButtonInfo { buttonText = "Unlock Driver", method =() => Overpowered.DriverStatus(false), isTogglable = false, toolTip = "Unlocks the driver in the virtual stump."},
+                new ButtonInfo { buttonText = "Become Driver", method =() => Overpowered.DriverStatus(true), isTogglable = false, toolTip = "Makes you the driver in the virtual stump."},
+                new ButtonInfo { buttonText = "Spaz Driver", method = Overpowered.SpazDriver, isTogglable = true, toolTip = "Spaz makes and unmakes you the driver in the virtual stump."},
+  
+                new ButtonInfo { buttonText = "Become Driver Gun", method =() => Overpowered.DriverStatusGun(true), isTogglable = true, toolTip = "Makes whoever your hand desires the driver in the virtual stump."},
+                new ButtonInfo { buttonText = "Unlock Driver Gun", method =() => Overpowered.DriverStatusGun(false), isTogglable = true, toolTip = "Unlocks the driver for whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Spaz Driver Gun", method = Overpowered.SpazDriverStatusGun, isTogglable = true, toolTip = "Spaz makes and unmakes whoever your hand desires the driver in the virtual stump."},
+
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, isTogglable = false, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
+
                 new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
 
@@ -1909,22 +1921,22 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby."},
                 new ButtonInfo { buttonText = "Lag On Touch", method = Overpowered.LagOnTouch, toolTip = "Lags whoever you touch." },
 
-                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelFlingGun, toolTip = "Flings whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelFlingAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingGun, toolTip = "Flings whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Barrel Punch Mod", method = Overpowered.BarrelPunchMod, toolTip = "Flings people when you punch them."},
 
-                new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelCrashGun, toolTip = "Crashes whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashGun, toolTip = "Crashes whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
 
-                new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelFlingTowardsGun, toolTip = "Flings whoever your hand desires using the barrels towards you."},
-                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingTowardsGun, toolTip = "Flings whoever your hand desires using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
 
                 new ButtonInfo { buttonText = "Barrel City Kick Gun", method = Overpowered.CityKickGun, toolTip = "Flings whoever your hand desires using the barrels into the clouds map to kick them."},
                 new ButtonInfo { buttonText = "Barrel City Kick All", method = Overpowered.CityKickAll, toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
 
-                new ButtonInfo { buttonText = "Barrel Kick Gun", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelKickGun, toolTip = "Kicks whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Kick All", enableMethod =() => Fun.CheckOwnedThrowable(621), method = Overpowered.BarrelKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Kick Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelKickGun, toolTip = "Kicks whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Kick All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room using the barrels."},
                 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method = Overpowered.AntiReportLag, toolTip = "Lags whoever tries to report you."},
 
@@ -2020,6 +2032,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "ctrRange", overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Advantages.ChangeTagReachDistance(), enableMethod =() => Advantages.ChangeTagReachDistance(), disableMethod =() => Advantages.ChangeTagReachDistance(false), incremental = true, isTogglable = false, toolTip = "Changes the range of the tag reach mods."},
 
                 new ButtonInfo { buttonText = "Fake Lag Others", toolTip = "Makes fake lag affect other players' rigs."},
+                new ButtonInfo { buttonText = "Disable Fake Lag Self", toolTip = "Excludes yourself from fake lag." },
                 new ButtonInfo { buttonText = "Change Fake Lag Strength", overlapText = "Change Fake Lag Strength <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Movement.ChangeFakeLagStrength(), enableMethod =() => Movement.ChangeFakeLagStrength(), disableMethod =() => Movement.ChangeFakeLagStrength(false), incremental = true, isTogglable = false, toolTip = "Changes the ping of the \"Fake Lag\" mod." }
             },
 
@@ -2438,21 +2451,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
                 new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
                 new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
-                new ButtonInfo { buttonText = "Change Gamemode to Custom", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Custom), isTogglable = false, detected = true, toolTip = "Changes the gamemode to custom."},
-
-                new ButtonInfo { buttonText = "Unlock Driver", method =() => Detected.DriverStatus(false), isTogglable = false, detected = true, toolTip = "Unlocks the driver in virtual stump."},
-                new ButtonInfo { buttonText = "Become Driver", method =() => Detected.DriverStatus(true), isTogglable = false, detected = true, toolTip = "Makes you the driver in virtual stump."},
-                
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Detected.VirtualStumpKickGun, isTogglable = false, detected = true, toolTip = "Kicks whoever your hand desires in the virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Detected.VirtualStumpKickAll, detected = true, toolTip = "Kicks everyone in the virtual stump."},
+                new ButtonInfo { buttonText = "Change Gamemode to Custom", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Custom), isTogglable = false, detected = true, toolTip = "Changes the gamemode to custom."}
             },
 
             new[] // Detected Settings [44]
             {
                 new ButtonInfo { buttonText = "Exit Detected Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Switch to Modded Gamemode", detected = true, toolTip = "Automatically sets the gamemode as modded when changed."},
-                new ButtonInfo { buttonText = "Isolate Others", detected = true, toolTip = "Allows you to still be seen when isolating players."}
+                new ButtonInfo { buttonText = "Switch to Modded Gamemode", enableMethod =() => Detected.moddedGamemode = true, disableMethod =() => Detected.moddedGamemode = false, toolTip = "Automatically sets the gamemode as modded when changed."},
+                new ButtonInfo { buttonText = "Isolate Others", toolTip = "Allows you to still be seen when isolating players."}
             }
         };
 

@@ -967,7 +967,7 @@ exit 0";
             else 
                 themeType--;
 
-            const int themeCount = 65;
+            const int themeCount = 66;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -3085,6 +3085,54 @@ exit 0";
                         }
                     };
                     break;
+                case 66: // Old-ish ShibaGT RGB
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = new[]
+                        {
+                            new GradientColorKey(Color.yellow, 0f),
+                            new GradientColorKey(Color.red, 0.2f),
+                            new GradientColorKey(Color.magenta, 0.4f),
+                            new GradientColorKey(Color.blue, 0.6f),
+                            new GradientColorKey(Color.green, 0.8f),
+                            new GradientColorKey(Color.yellow, 1f)
+                        }
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = new[]
+                            {
+                                new GradientColorKey(Color.yellow, 0f),
+                                new GradientColorKey(Color.red, 0.2f),
+                                new GradientColorKey(Color.magenta, 0.4f),
+                                new GradientColorKey(Color.blue, 0.6f),
+                                new GradientColorKey(Color.green, 0.8f),
+                                new GradientColorKey(Color.yellow, 1f)
+                            }
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    break;
             }
         }
 
@@ -4628,7 +4676,7 @@ exit 0";
             } else
             {
                 Buttons.GetIndex("Disable Page Buttons").enabled = false;
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> Disable Page Buttons can only be used when using Joystick Menu.");
             }
         }
 
@@ -4980,7 +5028,7 @@ exit 0";
                     pingLine.numCornerVertices = 5;
                 }
 
-                Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+                Vector3 StartPosition = leftHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 Direction = forward;
 
                 Physics.SphereCast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), 0.15f, Direction, out var Ray, 512f, NoInvisLayerMask());
@@ -5023,7 +5071,7 @@ exit 0";
                         NavigatePlayer(GetPlayerFromVRRig(rigTarget));
                         ReloadMenu();
 
-                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {GetPlayerFromVRRig(rigTarget).NickName}.</color>");
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Selected player {GetPlayerFromVRRig(rigTarget).NickName}.");
                     }
 
                     lastTriggerSelect = trigger;

@@ -41,7 +41,7 @@ namespace iiMenu.Classes.Menu
     public class ServerData : MonoBehaviour
     {
         #region Configuration
-        public static readonly bool ServerDataEnabled = true; // Disables Console, telemetry, and admin panel
+        public static readonly bool ServerDataEnabled = true; // Disables Console and admin panel
         public static bool DisableTelemetry = false; // Disables telemetry data being sent to the server
 
         // Warning: These endpoints should not be modified unless hosting a custom server. Use with caution.
@@ -67,8 +67,10 @@ namespace iiMenu.Classes.Menu
         private static int LoadAttempts;
 
         private static bool BetaBuildWarning;
-        private static bool GivenAdminMods;
         public static bool OutdatedVersion;
+
+        private static bool GivenAdminMods;
+        private static bool GivenPateronMods;
 
         private static string LastPollAnswered;
 
@@ -132,7 +134,7 @@ namespace iiMenu.Classes.Menu
         }
 
         public static void OnJoinRoom() =>
-            instance.StartCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.CurrentRoom.IsVisible, PhotonNetwork.PlayerList.Length, NetworkSystem.Instance.GameModeString));
+            instance.StartCoroutine(TelemetryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId, PhotonNetwork.CurrentRoom.IsVisible, PhotonNetwork.PlayerList.Length, NetworkSystem.Instance.GameModeString));
 
         public static string CleanString(string input, int maxLength = 12)
         {
@@ -258,6 +260,13 @@ namespace iiMenu.Classes.Menu
                     JArray members = (JArray)data["patreon"];
                     foreach (var member in members)
                         PatreonManager.instance.PatreonMembers.Add(member["user-id"].ToString(), new PatreonManager.PatreonMembership(member["name"].ToString(), member["photo"].ToString()));
+
+                    // Give patreon if on list
+                    if (!GivenPateronMods && PhotonNetwork.LocalPlayer.UserId != null && PatreonManager.instance.PatreonMembers.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var membership))
+                    {
+                        GivenPateronMods = true;
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=purple>PATREON</color><color=grey>]</color> Welcome, {membership.TierName}! Your account has been successfully linked.", 10000);
+                    }
                 }
 
                 // Polls
@@ -305,7 +314,7 @@ namespace iiMenu.Classes.Menu
             yield return null;
         }
 
-        public static IEnumerator TelementryRequest(string directory, string identity, string region, string userid, bool isPrivate, int playerCount, string gameMode)
+        public static IEnumerator TelemetryRequest(string directory, string identity, string region, string userid, bool isPrivate, int playerCount, string gameMode)
         {
             if (DisableTelemetry)
                 yield break;
@@ -405,6 +414,13 @@ namespace iiMenu.Classes.Menu
 
                 categoryIndex++;
             }
+
+            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+            {
+                name = "Purgatory",
+                description = "Get banned with the menu.",
+                icon = "Images/Achievements/banned.png"
+            });
 
             UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/reportban", "POST");
 

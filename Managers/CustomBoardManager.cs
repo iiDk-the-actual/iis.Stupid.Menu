@@ -150,7 +150,7 @@ namespace iiMenu.Managers
         "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
         "There are a total of <b>{1}</b> mods on this menu. " +
         "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
-        "If you get banned while using this, it's your responsibility.\n\nCurrent menu status: <b>Fully functional, undetected</b>\nMade with <3 by iiDk, kingofnetflix, and others\n\n<alpha=128>{2} {0} {3}<alpha=255>";
+        "If you get banned while using this, it's your responsibility.\n\nCurrent menu status: <b>Loading...</b>\nMade with <3 by iiDk, kingofnetflix, and others\n\n<alpha=128>{2} {0} {3}<alpha=255>";
 
         public Material forestMaterial;
         public Material stumpMaterial;
@@ -329,7 +329,7 @@ namespace iiMenu.Managers
                 FollowMenuSettings(motdBodyText);
                 motdBodyText.characterSpacing = -4f;
 
-                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Release" : "Beta", PluginInfo.BuildTimestamp ));
+                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Beta" : "Release", PluginInfo.BuildTimestamp ));
             }
             catch { }
             

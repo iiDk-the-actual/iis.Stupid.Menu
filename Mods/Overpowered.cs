@@ -26,6 +26,7 @@ using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
+using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -565,6 +566,214 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
+        }
+
+        public static void DriverStatus(bool locked)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, locked, PhotonNetwork.LocalPlayer.ActorNumber);
+            else
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+        }
+
+        private static float spazDriverDelay;
+        public static void SpazDriver()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (Time.time > spazDriverDelay)
+                {
+                    spazDriverDelay = Time.time + 0.1f;
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, PhotonNetwork.LocalPlayer.ActorNumber);
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, false, PhotonNetwork.LocalPlayer.ActorNumber);
+                }
+            }
+        }
+
+        public static void DriverStatusGun(bool locked)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                        CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, locked, lockTarget.GetPlayer().ActorNumber);
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void SpazDriverStatusGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        if (Time.time > spazDriverDelay)
+                        {
+                            spazDriverDelay = Time.time + 0.1f;
+                            CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, lockTarget.GetPlayer().ActorNumber);
+                            CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, false, lockTarget.GetPlayer().ActorNumber);
+                        }
+                    }
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BecomeDriver()
+        {
+            if (PhotonNetwork.IsMasterClient)
+                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, PhotonNetwork.LocalPlayer.ActorNumber);
+            else
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+        }
+
+        private static long? id;
+        private static float setMapDelay;
+        public static void VirtualStumpKickGun()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                id = null;
+                return;
+            }
+
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            if (id == null && Time.time > setMapDelay)
+            {
+                setMapDelay = Time.time + 1f;
+
+                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
+                    BecomeDriver();
+                    return;
+                }
+
+                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
+
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
+                    {
+                        6,
+                        id,
+                        CustomMapsTerminal.GetDriverID()
+                    });
+
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                }
+                else
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
+            }
+
+            if (GetGunInput(false) && id != null)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                        CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPhotonPlayer(), id.Value);
+                }
+            }
+        }
+
+        public static void VirtualStumpKickAll()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                id = null;
+                return;
+            }
+
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            if (id == null && Time.time > setMapDelay)
+            {
+                setMapDelay = Time.time + 1f;
+
+                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
+                    BecomeDriver();
+                    return;
+                }
+
+                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
+
+                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
+                    {
+                        6,
+                        id,
+                        CustomMapsTerminal.GetDriverID()
+                    });
+
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                }
+                else
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
+            }
+
+            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", RpcTarget.Others, id.Value);
+
+            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully kicked others.");
+            Toggle("Virtual Stump Kick All");
         }
 
         public static void GhostReactorCrashGun()
@@ -2711,7 +2920,7 @@ namespace iiMenu.Mods
                 GetNetworkViewFromVRRig(GetVRRigFromPlayer(victim)).SendRPC("DroppedByPlayer", victim, velocity);
             }
             else
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
         }
 
         public static void BetaSetVelocityTargetGroup(RpcTarget victim, Vector3 velocity)
@@ -2752,7 +2961,7 @@ namespace iiMenu.Mods
                 }
             }
             else
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
         }
 
         private static float grabDelay;
@@ -2775,7 +2984,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
                         grabDelay = Time.time + 0.1f;
                     }
                 }
@@ -2797,7 +3006,7 @@ namespace iiMenu.Mods
                     }
                 }
                 else
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
             }
         }
 
@@ -2821,7 +3030,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
 
                         releaseDelay = Time.time + 0.1f;
                     }
@@ -2844,7 +3053,7 @@ namespace iiMenu.Mods
                     }
                 }
                 else
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
             }
         }
 
@@ -4280,7 +4489,7 @@ namespace iiMenu.Mods
                         flip = !flip;
                     }
                     else
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
                     
                     slamDel = Time.time + 0.05f;
                 }
@@ -4297,7 +4506,7 @@ namespace iiMenu.Mods
                         flip = !flip;
                     }
                     else
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
                     
                     slamDel = Time.time + 0.05f;
                 }
@@ -4323,7 +4532,7 @@ namespace iiMenu.Mods
                             flip = !flip;
                         }
                         else
-                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be guardian.");
                         
                         slamDel = Time.time + 0.05f;
                     }
@@ -4879,11 +5088,12 @@ namespace iiMenu.Mods
                 barrelAllDelay = Time.time + 0.3f;
         }
 
+        public const int BarrelIndex = 621;
         public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
             options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
 
-            int index = 621;
+            int index = BarrelIndex;
             DistancePatch.enabled = true;
 
             if (Fun.DisableThrowableCoroutine != null)

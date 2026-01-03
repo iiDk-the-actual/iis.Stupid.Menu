@@ -29,13 +29,14 @@ namespace iiMenu.Patches.Menu
     public class PlayerSerializePatch
     {
         public static bool stopSerialization;
-        public static bool Prefix() => !stopSerialization;
-
         public static float? delay;
 
         public static event Action<VRRig> OnPlayerSerialize;
-        public static void Prefix(VRRig __instance, InputStruct data)
+        public static bool Prefix(VRRig __instance, InputStruct data)
         {
+            if (stopSerialization)
+                return false;
+
             if (delay != null)
             {
                 CoroutineManager.instance.StartCoroutine(
@@ -43,11 +44,18 @@ namespace iiMenu.Patches.Menu
                     {
                         float oldDelay = delay.Value;
                         delay = null;
-                        __instance.SerializeReadShared(data);
+                        try
+                        {
+                            __instance.SerializeReadShared(data);
+                        } catch { }
                         delay = oldDelay;
                     }, delay.Value)
                 );
+
+                return false;
             }
+
+            return true;
         }
 
         public static void Postfix(VRRig __instance, InputStruct data) =>

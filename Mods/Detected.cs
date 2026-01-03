@@ -22,7 +22,6 @@
 using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaNetworking;
-using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -34,6 +33,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -41,6 +41,25 @@ namespace iiMenu.Mods
 {
     public static class Detected
     {
+        public static void EnterDetectedTab()
+        {
+            if (!allowDetected) { 
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/danger.ogg", "Audio/Menu/Notifications/danger.ogg"), buttonClickVolume / 10f); 
+                Prompt("The mods in this category are detected. <b>Unless you know what you're doing, you will get banned.</b> Are you sure you would like to continue?", 
+                    () => { 
+                        allowDetected = true; currentCategoryName = "Detected Mods";
+
+                        AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                        {
+                            name = "Sinister",
+                            description = "Open the \"Detected Mods\" category.",
+                            icon = "Images/Achievements/sinister.png"
+
+                        });
+                    }); 
+            } else currentCategoryName = "Detected Mods";
+        }
+
         public static float masterDelay;
         public static Dictionary<VRRig, int> viewIdArchive = new Dictionary<VRRig, int>();
         public static void SetMasterClientGun()
@@ -1146,11 +1165,12 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool moddedGamemode;
         public static void ChangeGamemode(GameModeType gamemode)
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                CoroutineManager.instance.StartCoroutine(ChangeGamemodeMasterDelay(gamemode));
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
                 return;
             }
 
@@ -1160,7 +1180,7 @@ namespace iiMenu.Mods
             Patches.Menu.GameModePatch.enabled = true;
             NetworkSystem.Instance.NetDestroy(GameMode.activeNetworkHandler.NetView.gameObject);
 
-            string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
+            string queue = moddedGamemode ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
 
             Hashtable hash = new Hashtable
             {
@@ -1173,124 +1193,6 @@ namespace iiMenu.Mods
             GameMode.activeNetworkHandler = null;
 
             GameMode.LoadGameMode(gamemode.ToString());
-        }
-
-        public static IEnumerator ChangeGamemodeMasterDelay(GameModeType gamemode)
-        {
-            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-
-            float timeUntil = Time.time + 1f;
-            while (!(PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) || Time.time < timeUntil)
-                yield return null;
-
-            if (PhotonNetwork.InRoom)
-                ChangeGamemode(gamemode);
-        }
-
-        public static void DriverStatus(bool locked)
-        {
-            if (PhotonNetwork.IsMasterClient)
-                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, locked, PhotonNetwork.LocalPlayer.ActorNumber);
-        }
-
-        public static void BecomeDriver()
-        {
-            if (PhotonNetwork.IsMasterClient)
-                CustomMapsTerminal.instance.mapTerminalNetworkObject.SendRPC("SetTerminalControlStatus_RPC", true, true, PhotonNetwork.LocalPlayer.ActorNumber);
-            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-        }
-
-        private static long? id;
-        private static float setMapDelay;
-        public static void VirtualStumpKickGun()
-        {
-            if (!PhotonNetwork.InRoom)
-            {
-                id = null;
-                return;
-            }
-
-            if (id == null && Time.time > setMapDelay)
-            {
-                setMapDelay = Time.time + 1f;
-
-                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
-                {
-                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
-                    BecomeDriver();
-                    return;
-                }
-
-                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
-                {
-                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
-
-                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
-                    {
-                        6,
-                        id,
-                        CustomMapsTerminal.GetDriverID()
-                    });
-
-                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
-                } else
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
-            }
-
-            if (GetGunInput(false) && id != null)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                        CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", lockTarget.GetPhotonPlayer(), id.Value);
-                }
-            }
-        }
-
-        public static void VirtualStumpKickAll()
-        {
-            if (!PhotonNetwork.InRoom)
-            {
-                id = null;
-                return;
-            }
-
-            if (id == null && Time.time > setMapDelay)
-            {
-                setMapDelay = Time.time + 1f;
-
-                if (CustomMapsTerminal.GetDriverID() != PhotonNetwork.LocalPlayer.ActorNumber)
-                {
-                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>VSTUMP</color><color=grey>]</color> Gaining control of the terminal, please wait...");
-                    BecomeDriver();
-                    return;
-                }
-
-                if (CustomMapManager.IsRemotePlayerInVirtualStump(NetworkSystem.Instance.LocalPlayer.UserId))
-                {
-                    id = CustomMaps.Manager.currentMapId == 4977315 ? 5024157 : 4977315;
-
-                    CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("UpdateScreen_RPC", lockTarget.GetPhotonPlayer(), new object[]
-                    {
-                        6,
-                        id,
-                        CustomMapsTerminal.GetDriverID()
-                    });
-
-                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
-                }
-                else
-                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
-            }
-
-            CustomMapsTerminal.instance.mapTerminalNetworkObject.photonView.RPC("SetRoomMap_RPC", RpcTarget.Others, id.Value);
-
-            NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully kicked others.");
-            Toggle("Virtual Stump Kick All");
         }
     }
 }

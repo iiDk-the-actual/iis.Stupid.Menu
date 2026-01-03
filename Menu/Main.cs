@@ -58,6 +58,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json;
 using Valve.VR;
+using Valve.VR.InteractionSystem;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
@@ -224,6 +225,15 @@ namespace iiMenu.Menu
                     CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
                 }
             }
+
+            if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime <= DateTime.Now.AddYears(-1))
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Veteran",
+                    description = "Use the menu for over a year.",
+                    icon = "Images/Achievements/veteran.png"
+                });
+
 
             if (PatchHandler.PatchErrors > 0)
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
@@ -470,6 +480,46 @@ namespace iiMenu.Menu
                     fpsCount.text = FollowMenuSettings(textToSet, false);
                 }
 
+                if (potatoTime != null)
+                {
+                    if (1f / Time.unscaledDeltaTime < 15f)
+                    {
+                        potatoTime += Time.unscaledDeltaTime;
+                        if (potatoTime > 60f)
+                        {
+                            potatoTime = null;
+                            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                            {
+                                name = "Potato",
+                                description = "Have 15 FPS for over a minute.",
+                                icon = "Images/Achievements/potato.png"
+                            });
+                        }
+                    }
+                    else
+                        potatoTime = 0f;
+                }
+
+                if (adminTime != null && PhotonNetwork.InRoom)
+                {
+                    if (PhotonNetwork.PlayerListOthers.Any(player => ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && !Console.excludedCones.Contains(player)))
+                    {
+                        adminTime += Time.unscaledDeltaTime;
+                        if (adminTime > 10f)
+                        {
+                            adminTime = null;
+                            AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                            {
+                                name = "I Am Your Leader",
+                                description = "Meet a Console administrator.",
+                                icon = "Images/Achievements/leader.png"
+                            });
+                        }
+                    }
+                    else
+                        adminTime = 0f;
+                }
+
                 if (watermarkImage != null)
                     watermarkImage.GetComponent<RectTransform>().localRotation = Quaternion.Euler(new Vector3(0f, 90f, 90f - (rockWatermark ? (Mathf.Sin(Time.time * 2f) * 10f) : 0f)));
 
@@ -650,7 +700,7 @@ namespace iiMenu.Menu
                     {
                         VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
                         VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                        NotificationManager.SendNotification("<color=grey>[</color><color=#FF00FF>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=#FF00FF>FUN FACT</color><color=grey>]</color> " + facts[Random.Range(0, facts.Length - 1)] + "");
                     }
                 }
 
@@ -1902,12 +1952,10 @@ namespace iiMenu.Menu
                 buttonText.text = buttonText.text.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
             buttonText.text = FollowMenuSettings(buttonText.text);
+            buttonText.spriteAsset = ButtonSpriteSheet;
 
             if (favorites.Contains(method.buttonText))
-            {
-                buttonText.spriteAsset = ButtonSpriteSheet;
                 buttonText.text = $"    {buttonText.text}    <sprite name=\"Favorite\">";
-            }
 
             buttonText.richText = true;
             buttonText.fontSize = 1;
@@ -3193,6 +3241,8 @@ namespace iiMenu.Menu
             menu.transform.rotation = smoothTargetRotation;
         }
 
+        private static int menuOpenCount;
+
         public static event Action OnMenuOpened;
         public static void OpenMenu()
         {
@@ -3220,6 +3270,16 @@ namespace iiMenu.Menu
                     Destroy(Particle.GetComponent<Collider>());
                 }
             }
+
+            menuOpenCount++;
+            if (menuOpenCount == 100)
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Persistent",
+                    description = "Open the menu 100 times.",
+                    icon = "Images/Achievements/persistent.png"
+
+                });
 
             if (joystickMenu) return;
             if (reference == null)
@@ -5595,13 +5655,17 @@ namespace iiMenu.Menu
             objectUpdate[0] = PhotonNetwork.ServerTimestamp + timeOffset;
             objectUpdate[1] = currentLevelPrefix != 0 ? (object)currentLevelPrefix : null;
 
+
             if (delay <= 0f)
                 PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
                     reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
             else
+            {
+                objectUpdate = new List<object>(objectUpdate);
                 CoroutineManager.instance.StartCoroutine(SerializationDelay(() =>
                     PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
                         reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable), delay));
+            }
 
             serializeViewBatch.Clear();
         }
@@ -5991,7 +6055,7 @@ namespace iiMenu.Menu
                                 break;
                             }
                             default:
-                                {
+                            {
                                 if (target.isTogglable)
                                 {
                                     target.enabled = !target.enabled;
@@ -6013,7 +6077,27 @@ namespace iiMenu.Menu
                                             try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                                                 $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
                                     }
-                                }
+
+                                            int enabledButtons = Buttons.buttons
+                                                .SelectMany(list => list)
+                                                .Where(button => button.enabled).Count();
+
+                                            if (enabledButtons >= 50)
+                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                                {
+                                                    name = "Dedicated",
+                                                    description = "Enable 50 mods at the same time.",
+                                                    icon = "Images/Achievements/award.png"
+                                                });
+
+                                            if (enabledButtons >= 100)
+                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                                {
+                                                    name = "Too Dedicated",
+                                                    description = "Enable 100 mods at the same time.",
+                                                    icon = "Images/Achievements/red-award.png"
+                                                });
+                                        }
                                 else
                                 {
                                     if (dynamicAnimations)
@@ -6672,6 +6756,8 @@ jgs \_   _/ |Oo\
         public static Image watermarkImage;
         private static float fpsAvgTime;
         private static float fpsAverageNumber;
+        private static float? potatoTime = 0f;
+        private static float? adminTime = 0f;
         public static bool fpsCountTimed;
         public static bool fpsCountAverage;
         public static bool ftCount;
