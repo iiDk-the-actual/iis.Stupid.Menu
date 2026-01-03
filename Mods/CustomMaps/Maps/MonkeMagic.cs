@@ -52,7 +52,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Monke Magic Crash Gun", overlapText = "Crash Gun", method = CrashGun, toolTip = "Crashes whoever your hand desires in the custom map." },
             new ButtonInfo { buttonText = "Monke Magic Crash All", overlapText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
             new ButtonInfo { buttonText = "Monke Magic Anti Report", overlapText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
-            new ButtonInfo { buttonText = "Monke Magic Crash Aura", overlapText = "Crash Aura", method = CrashAura, toolTip = "Crashes players nearby you in the custom map." }
+            new ButtonInfo { buttonText = "Monke Magic Crash Aura", overlapText = "Crash Aura", method = CrashAura, toolTip = "Crashes players nearby you in the custom map." },
             new ButtonInfo { buttonText = "Monke Magic Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
         };
 
