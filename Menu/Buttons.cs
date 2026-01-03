@@ -37,7 +37,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
-using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Console = iiMenu.Classes.Menu.Console;
@@ -71,8 +70,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Master Mods", method =() => currentCategoryName = "Master Mods", isTogglable = false, toolTip = "Opens the master mods."},
                 new ButtonInfo { buttonText = "Overpowered Mods", method =() => currentCategoryName = "Overpowered Mods", isTogglable = false, toolTip = "Opens the overpowered mods."},
                 new ButtonInfo { buttonText = "Experimental Mods", method =() => currentCategoryName = "Experimental Mods", isTogglable = false, toolTip = "Opens the experimental mods."},
-                new ButtonInfo { buttonText = "Detected Mods", method =() => { if (!allowDetected) { Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/danger.ogg", "Audio/Menu/Notifications/danger.ogg"), buttonClickVolume / 10f); Prompt("The mods in this category are detected. <b>Unless you know what you're doing, you will get banned.</b> Are you sure you would like to continue?", () => { allowDetected = true; currentCategoryName = "Detected Mods"; }); } else currentCategoryName = "Detected Mods"; }, isTogglable = false, toolTip = "Opens the detected mods."},
-                new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."},
+                new ButtonInfo { buttonText = "Detected Mods", method = Detected.EnterDetectedTab, isTogglable = false, toolTip = "Opens the detected mods."},
+
+                new ButtonInfo { buttonText = "Achievements", method = AchievementManager.EnterAchievementTab, isTogglable = false, toolTip = "Opens the credits page."},
+                new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."}
             },
 
             new[] { // Settings [1]

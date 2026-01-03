@@ -78,6 +78,7 @@ namespace iiMenu
                 "/CustomScripts",
                 "/Friends",
                 "/Friends/Messages",
+                "/Achievements"
             };
 
             foreach (string DirectoryString in ExistingDirectories)
@@ -108,10 +109,11 @@ namespace iiMenu
             PatchHandler.PatchAll();
 
             GameObject Loader = new GameObject("iiMenu_Loader");
-            Loader.AddComponent<UI>();
-            Loader.AddComponent<NotificationManager>();
             Loader.AddComponent<CoroutineManager>();
+            Loader.AddComponent<NotificationManager>();
             Loader.AddComponent<CustomBoardManager>();
+
+            Loader.AddComponent<UI>();
 
             DontDestroyOnLoad(Loader);
         }

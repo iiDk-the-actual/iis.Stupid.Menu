@@ -22,7 +22,6 @@
 using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaNetworking;
-using GorillaTagScripts.VirtualStumpCustomMaps;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -34,6 +33,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
+using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -41,6 +41,25 @@ namespace iiMenu.Mods
 {
     public static class Detected
     {
+        public static void EnterDetectedTab()
+        {
+            if (!allowDetected) { 
+                Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/Notifications/danger.ogg", "Audio/Menu/Notifications/danger.ogg"), buttonClickVolume / 10f); 
+                Prompt("The mods in this category are detected. <b>Unless you know what you're doing, you will get banned.</b> Are you sure you would like to continue?", 
+                    () => { 
+                        allowDetected = true; currentCategoryName = "Detected Mods";
+
+                        AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                        {
+                            name = "Sinister",
+                            description = "Open the \"Detected Mods\" category.",
+                            icon = "Images/Achievements/sinister.png"
+
+                        });
+                    }); 
+            } else currentCategoryName = "Detected Mods";
+        }
+
         public static float masterDelay;
         public static Dictionary<VRRig, int> viewIdArchive = new Dictionary<VRRig, int>();
         public static void SetMasterClientGun()

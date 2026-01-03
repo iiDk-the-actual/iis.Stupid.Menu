@@ -33,7 +33,6 @@ namespace iiMenu.Managers
 {
     public class PatreonManager : MonoBehaviour
     {
-        #region Patreon Manager Code
         public static PatreonManager instance;
 
         public void Awake() =>
@@ -166,6 +165,5 @@ namespace iiMenu.Managers
                 }
             }
         }
-        #endregion
     }
 }

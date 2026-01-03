@@ -3191,6 +3191,8 @@ namespace iiMenu.Menu
             menu.transform.rotation = smoothTargetRotation;
         }
 
+        private static int menuOpenCount;
+
         public static event Action OnMenuOpened;
         public static void OpenMenu()
         {
@@ -3218,6 +3220,16 @@ namespace iiMenu.Menu
                     Destroy(Particle.GetComponent<Collider>());
                 }
             }
+
+            menuOpenCount++;
+            if (menuOpenCount == 100)
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Persistent",
+                    description = "Open the menu 100 times.",
+                    icon = "Images/Achievements/persistent.png"
+
+                });
 
             if (joystickMenu) return;
             if (reference == null)
@@ -5989,7 +6001,7 @@ namespace iiMenu.Menu
                                 break;
                             }
                             default:
-                                {
+                            {
                                 if (target.isTogglable)
                                 {
                                     target.enabled = !target.enabled;
@@ -6011,7 +6023,29 @@ namespace iiMenu.Menu
                                             try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(
                                                 $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
                                     }
-                                }
+
+                                            int enabledButtons = Buttons.buttons
+                                                .SelectMany(list => list)
+                                                .Where(button => button.enabled).Count();
+
+                                            if (enabledButtons >= 50)
+                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                                {
+                                                    name = "Dedicated",
+                                                    description = "Enable 50 mods at the same time.",
+                                                    icon = "Images/Achievements/award.png"
+
+                                                });
+
+                                            if (enabledButtons >= 100)
+                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                                {
+                                                    name = "Too Dedicated",
+                                                    description = "Enable 100 mods at the same time.",
+                                                    icon = "Images/Achievements/red-award.png"
+
+                                                });
+                                        }
                                 else
                                 {
                                     if (dynamicAnimations)
