@@ -1880,6 +1880,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method = Overpowered.GuardianCrashGun, toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
+                new ButtonInfo { buttonText = "Unlock Driver", method =() => Overpowered.DriverStatus(false), isTogglable = false, toolTip = "Unlocks the driver in virtual stump."},
+                new ButtonInfo { buttonText = "Become Driver", method =() => Overpowered.DriverStatus(true), isTogglable = false, toolTip = "Makes you the driver in virtual stump."},
+
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, isTogglable = false, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
+
                 new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
 
@@ -2430,13 +2436,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
                 new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
                 new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
-                new ButtonInfo { buttonText = "Change Gamemode to Custom", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Custom), isTogglable = false, detected = true, toolTip = "Changes the gamemode to custom."},
-
-                new ButtonInfo { buttonText = "Unlock Driver", method =() => Detected.DriverStatus(false), isTogglable = false, detected = true, toolTip = "Unlocks the driver in virtual stump."},
-                new ButtonInfo { buttonText = "Become Driver", method =() => Detected.DriverStatus(true), isTogglable = false, detected = true, toolTip = "Makes you the driver in virtual stump."},
-                
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Detected.VirtualStumpKickGun, isTogglable = false, detected = true, toolTip = "Kicks whoever your hand desires in the virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Detected.VirtualStumpKickAll, detected = true, toolTip = "Kicks everyone in the virtual stump."},
+                new ButtonInfo { buttonText = "Change Gamemode to Custom", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Custom), isTogglable = false, detected = true, toolTip = "Changes the gamemode to custom."}
             },
 
             new[] // Detected Settings [44]
