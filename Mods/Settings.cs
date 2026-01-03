@@ -967,7 +967,7 @@ exit 0";
             else 
                 themeType--;
 
-            const int themeCount = 65;
+            const int themeCount = 66;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -3066,6 +3066,54 @@ exit 0";
                                 new GradientColorKey(Color.green, 0.333f),
                                 new GradientColorKey(Color.blue, 0.666f),
                                 new GradientColorKey(Color.red, 1f),
+                            }
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    break;
+                case 66: // Old-ish ShibaGT RGB
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = new[]
+                        {
+                            new GradientColorKey(Color.yellow, 0f),
+                            new GradientColorKey(Color.red, 0.2f),
+                            new GradientColorKey(Color.magenta, 0.4f),
+                            new GradientColorKey(Color.blue, 0.6f),
+                            new GradientColorKey(Color.green, 0.8f),
+                            new GradientColorKey(Color.yellow, 1f)
+                        }
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = new[]
+                            {
+                                new GradientColorKey(Color.yellow, 0f),
+                                new GradientColorKey(Color.red, 0.2f),
+                                new GradientColorKey(Color.magenta, 0.4f),
+                                new GradientColorKey(Color.blue, 0.6f),
+                                new GradientColorKey(Color.green, 0.8f),
+                                new GradientColorKey(Color.yellow, 1f)
                             }
                         }
                     };
