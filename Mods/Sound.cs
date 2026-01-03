@@ -270,7 +270,7 @@ namespace iiMenu.Mods
         public static void BetaPlayTag(int id, float volume)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
                 if (Time.time > sendEffectDelay)

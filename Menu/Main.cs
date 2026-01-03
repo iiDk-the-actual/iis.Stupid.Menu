@@ -650,7 +650,7 @@ namespace iiMenu.Menu
                     {
                         VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
                         VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                        NotificationManager.SendNotification("<color=grey>[</color><color=#FF00FF>FUN FACT</color><color=grey>]</color> <color=white>" + facts[Random.Range(0, facts.Length - 1)] + "</color>");
+                        NotificationManager.SendNotification("<color=grey>[</color><color=#FF00FF>FUN FACT</color><color=grey>]</color> " + facts[Random.Range(0, facts.Length - 1)] + "");
                     }
                 }
 

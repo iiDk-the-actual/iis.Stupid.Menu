@@ -4628,7 +4628,7 @@ exit 0";
             } else
             {
                 Buttons.GetIndex("Disable Page Buttons").enabled = false;
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> Disable Page Buttons can only be used when using Joystick Menu.");
             }
         }
 
@@ -4980,7 +4980,7 @@ exit 0";
                     pingLine.numCornerVertices = 5;
                 }
 
-                Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+                Vector3 StartPosition = leftHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 Direction = forward;
 
                 Physics.SphereCast(StartPosition + Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f), 0.15f, Direction, out var Ray, 512f, NoInvisLayerMask());
@@ -5023,7 +5023,7 @@ exit 0";
                         NavigatePlayer(GetPlayerFromVRRig(rigTarget));
                         ReloadMenu();
 
-                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected player {GetPlayerFromVRRig(rigTarget).NickName}.</color>");
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Selected player {GetPlayerFromVRRig(rigTarget).NickName}.");
                     }
 
                     lastTriggerSelect = trigger;
