@@ -94,7 +94,7 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 |Pico 4|✅|✅|
 |Valve Index|✅|✅|
 |HTC VIVE/Pro|✅|⚠️|
-|HP Reverb G2|✅|❓|
+|HP Reverb G2|✅|⚠️|
 
 > ✅ Fully functional ; ⚠️ Limited functionality ; ❌ Not functionable ; ❓ Untested
 

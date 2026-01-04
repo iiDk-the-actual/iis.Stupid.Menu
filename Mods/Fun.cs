@@ -373,7 +373,7 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
-
+		
         public static void WaterSplashAura()
         {
             if (Time.time > splashDel)
@@ -6161,6 +6161,69 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void CopyIDAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    string id = GetPlayerFromVRRig(nearbyPlayer).UserId;
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+                    GUIUtility.systemCopyBuffer = id;
+                }
+            }
+        }
+
+        public static void CopyIDOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    string id = GetPlayerFromVRRig(rig).UserId;
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+                    GUIUtility.systemCopyBuffer = id;
+                }
+            }
+        }
+
+        public static void CopyIDAll()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                string id = GetPlayerFromVRRig(vrrig).UserId;
+                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+                GUIUtility.systemCopyBuffer = id;
+            }
+        }
+
         public static void CopySelfID()
         {
             string id = PhotonNetwork.LocalPlayer.UserId;
@@ -6198,10 +6261,58 @@ Piece Name: {gunTarget.name}";
             SpeakText(ids);
         }
 
+        public static void NarrateIDAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    SpeakText("Name: " + GetPlayerFromVRRig(nearbyPlayer).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(nearbyPlayer).UserId));
+                }
+            }
+        }
+
+        public static void NarrateIDOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    SpeakText("Name: " + GetPlayerFromVRRig(rig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(rig).UserId));
+                }
+            }
+        }
+
         public static void NarrateSelfID() =>
             SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId));
 
-// DELETE ME: Untested so it might not work but I've used basically this same code for saving to a text file (not narrating but I assume it will basically work the same)
         public static void NarrateFakeDoxxGun()
         {
             if (GetGunInput(false))
@@ -6230,6 +6341,55 @@ Piece Name: {gunTarget.name}";
                     ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}") + ". ";
             }
             SpeakText(ids);
+        }
+
+        public static void NarrateFakeDoxxAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    SpeakText("Name: " + GetPlayerFromVRRig(nearbyPlayer).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
+                }
+            }
+        }
+
+        public static void NarrateFakeDoxxOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    SpeakText("Name: " + GetPlayerFromVRRig(rig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
+                }
+            }
         }
 
         public static void NarrateFakeDoxxSelf() =>
@@ -6265,6 +6425,69 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void CopyCreationDateAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    string date = GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => CopyCreationDate(date));
+                    if (date != "Loading...")
+                        CopyCreationDate(date);
+                }
+            }
+        }
+
+        public static void CopyCreationDateOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    string date = GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => CopyCreationDate(date));
+                    if (date != "Loading...")
+                        CopyCreationDate(date);
+                }
+            }
+        }
+
+        public static void CopyCreationDateAll()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                string date = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, date => CopyCreationDate(date));
+                if (date != "Loading...")
+                    CopyCreationDate(date);
+            }
+        }
+
         public static void CopyCreationDate(string date)
         {
             NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
@@ -6276,6 +6499,69 @@ Piece Name: {gunTarget.name}";
             string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, date => SpeakText(date));
             if (date != "Loading...")
                 SpeakText(date);
+        }
+
+        public static void NarrateCreationDateAll()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                string date = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, date => SpeakText(date));
+                if (date != "Loading...")
+                    SpeakText(date);
+            }
+        }
+
+        public static void NarrateCreationDateAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    string date = GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => SpeakText(date));
+                    if (date != "Loading...")
+                        SpeakText(date);
+                }
+            }
+        }
+
+        public static void NarrateCreationDateOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    string date = GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => SpeakText(date));
+                    if (date != "Loading...")
+                        SpeakText(date);
+                }
+            }
         }
 
         public static void NarrateCreationDateGun()
