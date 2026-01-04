@@ -2394,11 +2394,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Kick All", overlapText = "Kick All", method = Detected.KickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks everyone in the room."},
                 new ButtonInfo { buttonText = "Detected Kick Aura", overlapText = "Kick Aura", method = Detected.KickAura, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks players nearby."},
                 new ButtonInfo { buttonText = "Detected Kick On Touch", overlapText = "Kick On Touch", method = Detected.KickOnTouch, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks players you touch."},
+                new ButtonInfo { buttonText = "Detected Kick When Touched", overlapText = "Kick When Touched", method = Detected.KickWhenTouched, detected = true, toolTip = "Kicks players that touch you."},
 
                 new ButtonInfo { buttonText = "Detected Crash Gun", overlapText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Crash All", overlapText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},
                 new ButtonInfo { buttonText = "Detected Crash Aura", overlapText = "Crash Aura", method = Detected.CrashAura, detected = true, toolTip = "Crashes players nearby you."},
                 new ButtonInfo { buttonText = "Detected Crash On Touch", overlapText = "Crash On Touch", method = Detected.CrashOnTouch, detected = true, toolTip = "Crashes players that you touch."},
+                new ButtonInfo { buttonText = "Detected Crash When Touched", overlapText = "Crash When Touched", method = Detected.CrashWhenTouched, detected = true, toolTip = "Crashes players that touch you."},
 
                 new ButtonInfo { buttonText = "Detected Mute Gun", overlapText = "Mute Gun", method = Detected.MuteGun, detected = true, toolTip = "Mutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Mute All", overlapText = "Mute All", method = Detected.MuteAll, detected = true, toolTip = "Mutes everyone in the room."},

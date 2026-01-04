@@ -211,6 +211,20 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CrashWhenTouched()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
+                {
+                    NetPlayer playerFromVRRig = GetPlayerFromVRRig(vrrig);
+
+                    PhotonNetwork.SetMasterClient(playerFromVRRig.GetPlayer());
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                }
+            }
+        }
+
         public static void KickGun()
         {
             if (GetGunInput(false))
@@ -326,6 +340,20 @@ namespace iiMenu.Mods
             }
             else
                 SerializePatch.OverrideSerialization = null;
+        }
+
+        public static void KickWhenTouched()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
+                {
+                    NetPlayer playerFromVRRig = GetPlayerFromVRRig(vrrig);
+
+                    for (int i = 0; i < 3950; i++)
+                        Destroy(playerFromVRRig);
+                }
+            }
         }
 
         public static void GhostGun()
