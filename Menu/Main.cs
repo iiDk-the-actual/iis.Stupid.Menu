@@ -501,7 +501,7 @@ namespace iiMenu.Menu
 
                 if (adminTime != null && PhotonNetwork.InRoom)
                 {
-                    if (PhotonNetwork.PlayerListOthers.Any(player => ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && !Console.excludedCones.Contains(player)))
+                    if (PhotonNetwork.PlayerListOthers.Any(player => ServerData.Administrators.ContainsKey(player.UserId) && !Console.excludedCones.Contains(player)))
                     {
                         adminTime += Time.unscaledDeltaTime;
                         if (adminTime > 10f)
