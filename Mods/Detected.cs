@@ -1206,7 +1206,6 @@ namespace iiMenu.Mods
                     }
                 }
             }
-
         }
 
         public static void BreakModCheckersAll()
@@ -1214,6 +1213,56 @@ namespace iiMenu.Mods
             Hashtable props = new Hashtable();
             foreach (string mod in Visuals.modDictionary.Keys)
                 props[mod] = true;
+
+            foreach (Player player in PhotonNetwork.PlayerList)
+                player.SetCustomProperties(props);
+        }
+
+        public static void GamemodeExcludeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
+                    {
+                        customPropertyDelay = Time.time + 0.25f;
+
+                        Hashtable props = new Hashtable { { "didTutorial", false } };
+                        gunTarget.GetPhotonPlayer().SetCustomProperties(props);
+                    }
+                }
+            }
+        }
+
+        public static void GamemodeIncludeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
+                    {
+                        customPropertyDelay = Time.time + 0.25f;
+
+                        Hashtable props = new Hashtable { { "didTutorial", true } };
+                        gunTarget.GetPhotonPlayer().SetCustomProperties(props);
+                    }
+                }
+            }
+        }
+
+        public static void BreakGamemode(bool breaking)
+        {
+            Hashtable props = new Hashtable { { "didTutorial", !breaking } };
 
             foreach (Player player in PhotonNetwork.PlayerList)
                 player.SetCustomProperties(props);
