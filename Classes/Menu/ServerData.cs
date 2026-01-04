@@ -224,7 +224,7 @@ namespace iiMenu.Classes.Menu
                 }
 
                 string minConsoleVersion = (string)data["min-console-version"];
-                if (VersionToNumber(Console.ConsoleVersion) <= VersionToNumber(minConsoleVersion))
+                if (VersionToNumber(Console.ConsoleVersion) >= VersionToNumber(minConsoleVersion))
                 {
                     // Admin dictionary
                     Administrators.Clear();
