@@ -263,9 +263,27 @@ namespace iiMenu.Mods
 
         public static void VisualizeAntiReport()
         {
-            foreach (var report in from line in GorillaScoreboardTotalUpdater.allScoreboardLines where line.linePlayer == NetworkSystem.Instance.LocalPlayer select line.reportButton.gameObject.transform)
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer != NetworkSystem.Instance.LocalPlayer) continue;
+                Transform report = line.reportButton.gameObject.transform;
+
                 Visuals.VisualizeAura(report.position, threshold, Color.red);
+
+                if (antiMute)
+                    Visuals.VisualizeAura(line.muteButton.gameObject.transform.position, threshold, Color.red);
+            }
         }
+
+        private static bool OverlappingButton(VRRig vrrig, Vector3 position)
+        {
+            var D1 = Vector3.Distance(vrrig.rightHandTransform.position, position);
+            var D2 = Vector3.Distance(vrrig.leftHandTransform.position, position);
+            return D1 < threshold || D2 < threshold;
+        }
+
+        public static bool antiMute;
 
 		public static VRRig reportRig;
         public static void AntiReport(Action<VRRig, Vector3> onReport)
@@ -284,7 +302,7 @@ namespace iiMenu.Mods
                 if (line.linePlayer != NetworkSystem.Instance.LocalPlayer) continue;
                 Transform report = line.reportButton.gameObject.transform;
 
-                foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isLocal let D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position) let D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position) where D1 < threshold || D2 < threshold where !smartAntiReport || SmartAntiReport(line.linePlayer) select vrrig)
+                foreach (var vrrig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isLocal where OverlappingButton(vrrig, report.position) || (antiMute && OverlappingButton(vrrig, line.muteButton.gameObject.transform.position)) where !smartAntiReport || SmartAntiReport(line.linePlayer) select vrrig)
                     onReport?.Invoke(vrrig, report.transform.position);
             }
         }
