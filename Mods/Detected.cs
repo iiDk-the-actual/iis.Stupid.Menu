@@ -1133,6 +1133,92 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float customPropertyDelay;
+        public static void BypassModCheckersGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
+                    {
+                        customPropertyDelay = Time.time + 0.25f;
+
+                        var player = gunTarget.GetPhotonPlayer();
+                        if (player == null) return;
+
+                        if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+
+                        Hashtable toRemove = new Hashtable();
+
+                        foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
+                            toRemove[key] = null;
+
+                        if (toRemove.Count > 0)
+                            player.SetCustomProperties(toRemove);
+                    }
+                }
+            }
+
+        }
+
+        public static void BypassModCheckersAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerList)
+            {
+                if (player == null) continue;
+
+                if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+
+                Hashtable toRemove = new Hashtable();
+
+                foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
+                    toRemove[key] = null;
+
+                if (toRemove.Count > 0)
+                    player.SetCustomProperties(toRemove);
+            }
+        }
+
+        public static void BreakModCheckersGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
+                    {
+                        customPropertyDelay = Time.time + 0.25f;
+
+                        Hashtable props = new Hashtable();
+                        foreach (string mod in Visuals.modDictionary.Keys)
+                            props[mod] = true;
+
+                        gunTarget.GetPhotonPlayer().SetCustomProperties(props);
+                    }
+                }
+            }
+
+        }
+
+        public static void BreakModCheckersAll()
+        {
+            Hashtable props = new Hashtable();
+            foreach (string mod in Visuals.modDictionary.Keys)
+                props[mod] = true;
+
+            foreach (Player player in PhotonNetwork.PlayerList)
+                player.SetCustomProperties(props);
+        }
+
         public static void BreakNetworkTriggers()
         {
             string queue = Buttons.GetIndex("Switch to Modded Gamemode").enabled ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;

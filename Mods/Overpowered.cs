@@ -4818,7 +4818,7 @@ namespace iiMenu.Mods
                 return;
 
             if (target is VRRig rig)
-                target = rig.GetPlayer().GetPlayer();
+                target = rig.GetPhotonPlayer();
 
             if (target is NetPlayer legacyNetPlayerTarget)
                 target = legacyNetPlayerTarget.GetPlayer();
