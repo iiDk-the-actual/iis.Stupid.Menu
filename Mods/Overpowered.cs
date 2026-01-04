@@ -5707,6 +5707,63 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void PartyKickAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    for (int i = 0; i < 3950; i++)
+                        FriendshipGroupDetection.Instance.photonView.RPC("RequestPartyGameMode", nearbyPlayer.GetPhotonPlayer(),
+                            new object[] { GameMode.gameModeKeyByName.Keys.ToArray()[Random.Range(0, GameMode.gameModeKeyByName.Keys.Count)] });
+
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void PartyKickOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    for (int i = 0; i < 3950; i++)
+                        FriendshipGroupDetection.Instance.photonView.RPC("RequestPartyGameMode", rig.GetPhotonPlayer(),
+                            new object[] { GameMode.gameModeKeyByName.Keys.ToArray()[Random.Range(0, GameMode.gameModeKeyByName.Keys.Count)] });
+
+                    RPCProtection();
+                }
+            }
+        }
+
         private static float antiReportLagDelay;
         public static void AntiReportLag()
         {
