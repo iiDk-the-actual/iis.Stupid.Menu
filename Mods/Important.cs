@@ -21,6 +21,7 @@
 
 using BepInEx;
 using GorillaExtensions;
+using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -812,6 +813,16 @@ exit";
         {
             Object.Destroy(physicalQuitBox);
             GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
+        }
+
+        public static void BlockOnMute()
+        {
+            bool selfTagged = VRRig.LocalRig.IsTagged();
+            foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && rig.muted))
+            {
+                if (selfTagged ? !rig.IsTagged() : rig.IsTagged())
+                    rig.transform.position = rig.syncPos - (Vector3.up * 99999f);
+            }
         }
 
         public static void DisablePitchScaling()
