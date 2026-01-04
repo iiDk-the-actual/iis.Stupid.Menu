@@ -1212,6 +1212,79 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BypassModCheckersAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    var player = nearbyPlayer.GetPhotonPlayer();
+
+                    if (player == null) continue;
+
+                    if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+
+                    Hashtable toRemove = new Hashtable();
+
+                    foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
+                        toRemove[key] = null;
+
+                    if (toRemove.Count > 0)
+                        player.SetCustomProperties(toRemove);
+                }
+            }
+        }
+
+        public static void BypassModCheckersOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    var player = rig.GetPhotonPlayer();
+
+                    if (player == null) continue;
+
+                    if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+
+                    Hashtable toRemove = new Hashtable();
+
+                    foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
+                        toRemove[key] = null;
+
+                    if (toRemove.Count > 0)
+                        player.SetCustomProperties(toRemove);
+                }
+            }
+        }
+
         public static void BreakModCheckersGun()
         {
             if (GetGunInput(false))
@@ -1246,23 +1319,59 @@ namespace iiMenu.Mods
                 player.SetCustomProperties(props);
         }
 
-        public static void GamemodeExcludeGun()
+        public static void BreakModCheckersAura()
         {
-            if (GetGunInput(false))
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
 
-                if (GetGunInput(true))
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
-                    {
-                        customPropertyDelay = Time.time + 0.25f;
+                    Hashtable props = new Hashtable();
+                    foreach (string mod in Visuals.modDictionary.Keys)
+                        props[mod] = true;
 
-                        Hashtable props = new Hashtable { { "didTutorial", false } };
-                        gunTarget.GetPhotonPlayer().SetCustomProperties(props);
+                    nearbyPlayer.GetPhotonPlayer().SetCustomProperties(props);
+                }
+            }
+        }
+
+        public static void BreakModCheckersOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
                     }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable props = new Hashtable();
+                    foreach (string mod in Visuals.modDictionary.Keys)
+                        props[mod] = true;
+
+                    rig.GetPhotonPlayer().SetCustomProperties(props);
                 }
             }
         }
@@ -1284,6 +1393,147 @@ namespace iiMenu.Mods
                         Hashtable props = new Hashtable { { "didTutorial", true } };
                         gunTarget.GetPhotonPlayer().SetCustomProperties(props);
                     }
+                }
+            }
+        }
+
+        public static void GamemodeIncludeAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerList)
+            {
+                Hashtable props = new Hashtable { { "didTutorial", true } };
+                player.SetCustomProperties(props);
+            }
+        }
+
+        public static void GamemodeIncludeAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    Hashtable props = new Hashtable { { "didTutorial", true } };
+                    nearbyPlayer.GetPhotonPlayer().SetCustomProperties(props);
+                }
+            }
+        }
+
+        public static void GamemodeIncludeOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable props = new Hashtable { { "didTutorial", true } };
+                    rig.GetPhotonPlayer().SetCustomProperties(props);
+                }
+            }
+        }
+
+        public static void GamemodeExcludeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > customPropertyDelay)
+                    {
+                        customPropertyDelay = Time.time + 0.25f;
+
+                        Hashtable props = new Hashtable { { "didTutorial", false } };
+                        gunTarget.GetPhotonPlayer().SetCustomProperties(props);
+                    }
+                }
+            }
+        }
+
+        public static void GamemodeExcludeAll()
+        {
+            foreach (Player player in PhotonNetwork.PlayerList)
+            {
+                Hashtable props = new Hashtable { { "didTutorial", false } };
+                player.SetCustomProperties(props);
+            }
+        }
+
+        public static void GamemodeExcludeAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    Hashtable props = new Hashtable { { "didTutorial", false } };
+                    nearbyPlayer.GetPhotonPlayer().SetCustomProperties(props);
+                }
+            }
+        }
+
+        public static void GamemodeExcludeOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    Hashtable props = new Hashtable { { "didTutorial", false } };
+                    rig.GetPhotonPlayer().SetCustomProperties(props);
                 }
             }
         }
