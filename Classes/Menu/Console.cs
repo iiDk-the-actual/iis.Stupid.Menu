@@ -108,7 +108,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public static readonly string ConsoleVersion = "2.8.0";
+        public static readonly string ConsoleVersion = "2.9.0";
         public static Console instance;
 
         public void Awake()
@@ -138,12 +138,47 @@ namespace iiMenu.Classes.Menu
     ██ ▄▄ ▄█▀▄ ▐█▐▐▌▄▀▀▀█▄ ▄█▀▄ ██▪  ▐▀▀▪▄
     ▐███▌▐█▌.▐▌██▐█▌▐█▄▪▐█▐█▌.▐▌▐█▌▐▌▐█▄▄▌
     ·▀▀▀  ▀█▄▀▪▀▀ █▪ ▀▀▀▀  ▀█▄▀▪.▀▀▀  ▀▀▀       
-           Console Portable {ConsoleVersion}
+           Console {MenuName} {ConsoleVersion}
      Developed by goldentrophy & Twigcore
 ");
 
             (GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset).supportsCameraOpaqueTexture = true;
             (GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset).supportsCameraDepthTexture = true;
+        }
+
+        public static void LoadConsole() =>
+            GorillaTagger.OnPlayerSpawned(LoadConsoleImmediately);
+
+        public static void LoadConsoleImmediately()
+        {
+            string ConsoleGUID = "goldentrophy_Console";
+            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
+
+            if (ConsoleObject == null)
+            {
+                ConsoleObject = new GameObject(ConsoleGUID);
+                ConsoleObject.AddComponent<Console>();
+            }
+            else
+            {
+                if (ConsoleObject.GetComponents<Component>()
+                    .Select(c => c.GetType().GetField("ConsoleVersion",
+                        BindingFlags.Public |
+                        BindingFlags.Static))
+                    .Select(f => f.GetValue(null))
+                    .FirstOrDefault() is string consoleVersion)
+                {
+                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(ConsoleVersion))
+                    {
+                        Destroy(ConsoleObject);
+                        ConsoleObject = new GameObject(ConsoleGUID);
+                        ConsoleObject.AddComponent<Console>();
+                    }
+                }
+            }
+
+            if (ServerData.ServerDataEnabled)
+                ConsoleObject.AddComponent<ServerData>();
         }
 
         public void OnDisable() =>
@@ -429,7 +464,7 @@ namespace iiMenu.Classes.Menu
             }
         }
 
-        public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
+        public const byte ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
         public const string ServerDataURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData"; // Do not change this unless you are hosting unofficial files for Console
         public const string SafeLuaURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/SafeLua"; // Do not change this unless you are hosting unofficial files for Console
 
@@ -474,10 +509,13 @@ namespace iiMenu.Classes.Menu
                 {
                     List<VRRig> toRemove = new List<VRRig>();
 
-                    foreach (var nametag in from nametag in conePool let nametagPlayer = nametag.Key.Creator?.GetPlayerRef() where !GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
+                    foreach (var nametag in from nametag in conePool
+                                            let nametagPlayer = nametag.Key.Creator?.GetPlayerRef()
+                                            where !GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
                                  nametagPlayer == null ||
                                  !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) ||
-                                 excludedCones.Contains(nametagPlayer) select nametag)
+                                 excludedCones.Contains(nametagPlayer)
+                                            select nametag)
                     {
                         Destroy(nametag.Value);
                         toRemove.Add(nametag.Key);
@@ -538,14 +576,14 @@ namespace iiMenu.Classes.Menu
                                     adminConeObject.GetComponent<Renderer>().material = ServerData.SuperAdministrators.Contains(adminName) ? adminConeMaterial : adminCrownMaterial;
                                     conePool.Add(playerRig, adminConeObject);
                                 }
-                                
+
                                 adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
                                 adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
                                 adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (GetIndicatorDistance(playerRig) * playerRig.scaleFactor);
 
                                 adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                        
+
                                 Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
                                 rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
                                 adminConeObject.transform.rotation = Quaternion.Euler(rot);
@@ -562,7 +600,8 @@ namespace iiMenu.Classes.Menu
                     }
                 }
                 catch { }
-            } else
+            }
+            else
             {
                 if (conePool.Count > 0)
                 {
@@ -649,7 +688,7 @@ namespace iiMenu.Classes.Menu
             liner2.startColor = Color.white; liner2.endColor = Color.white; liner2.startWidth = 0.15f; liner2.endWidth = 0.15f; liner2.positionCount = 5; liner2.useWorldSpace = true;
             for (int i = 0; i < 5; i++)
                 liner2.SetPosition(i, liner.GetPosition(i));
-            
+
             liner2.material.shader = Shader.Find("GUI/Text Shader");
             liner2.material.renderQueue = liner.material.renderQueue + 1;
             Destroy(line2, 2f);
@@ -748,7 +787,7 @@ namespace iiMenu.Classes.Menu
 
             smoothTeleportCoroutine = null;
         }
-        
+
         public static IEnumerator AssetSmoothTeleport(ConsoleAsset asset, Vector3? position, Quaternion? rotation, float time)
         {
             float startTime = Time.time;
@@ -800,7 +839,7 @@ namespace iiMenu.Classes.Menu
             string response = request.downloadHandler.text;
             LuaAPI(response);
         }
-        
+
         public static long isBlocked;
         public static void BlockedCheck()
         {
@@ -812,7 +851,7 @@ namespace iiMenu.Classes.Menu
         }
 
         private static readonly Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
-        public static readonly Dictionary<Player, (string, string)> userDictionary = new Dictionary<Player, (string, string)>(); 
+        public static readonly Dictionary<Player, (string, string)> userDictionary = new Dictionary<Player, (string, string)>();
         public static float indicatorDelay = 0f;
         public static bool allowKickSelf;
         public static bool disableFlingSelf;
@@ -905,7 +944,7 @@ namespace iiMenu.Classes.Menu
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || superAdmin)
                             Thread.Sleep((int)args[1]);
-                        
+
                         break;
                     case "vibrate":
                         switch ((int)args[1])
@@ -930,7 +969,7 @@ namespace iiMenu.Classes.Menu
 
                             EnableMod(ForceMod, EnableValue);
                         }
-                        
+
                         break;
                     case "toggle":
                         if (superAdmin)
@@ -938,7 +977,7 @@ namespace iiMenu.Classes.Menu
                             string Mod = (string)args[1];
                             ToggleMod(Mod);
                         }
-                        
+
                         break;
                     case "togglemenu":
                         DisableMenu = (bool)args[1];
@@ -1041,22 +1080,22 @@ namespace iiMenu.Classes.Menu
                     case "muteall":
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId)))
                             line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                        
+
                         break;
                     case "unmuteall":
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.playerVRRig.muted))
                             line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                        
+
                         break;
                     case "mute":
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId) && line.playerVRRig.Creator.UserId == (string)args[1]))
                             line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                        
+
                         break;
                     case "unmute":
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.playerVRRig.muted && line.playerVRRig.Creator.UserId == (string)args[1]))
                             line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                        
+
                         break;
                     case "rigposition":
                         VRRig.LocalRig.enabled = (bool)args[1];
@@ -1089,7 +1128,7 @@ namespace iiMenu.Classes.Menu
 
                     case "sb":
                         instance.StartCoroutine(GetSoundResource((string)args[1], audio =>
-                            { instance.StartCoroutine(PlaySoundMicrophone(audio)); }));
+                        { instance.StartCoroutine(PlaySoundMicrophone(audio)); }));
                         break;
 
                     case "time":
@@ -1267,7 +1306,7 @@ namespace iiMenu.Classes.Menu
 
                         instance.StartCoroutine(
                             ModifyConsoleAsset(SoundAssetId,
-                            asset => asset.PlayAudioSource(SoundObjectName, AudioClipName), 
+                            asset => asset.PlayAudioSource(SoundObjectName, AudioClipName),
                             true)
                         );
                         break;
@@ -1363,7 +1402,7 @@ namespace iiMenu.Classes.Menu
                             GameObject gameObject = GameObject.Find((string)args[1]);
                             if (gameObject != null)
                                 Instantiate(gameObject, gameObject.transform.position, gameObject.transform.rotation, gameObject.transform.parent).name = (string)args[2];
-                                
+
                             break;
                         }
 
@@ -1518,7 +1557,7 @@ namespace iiMenu.Classes.Menu
                 HandleConsoleEvent(PhotonNetwork.LocalPlayer, new object[] { command }.Concat(parameters).ToArray(), command);
             }
 
-            PhotonNetwork.RaiseEvent(ConsoleByte, 
+            PhotonNetwork.RaiseEvent(ConsoleByte,
                 new object[] { command }
                     .Concat(parameters)
                     .ToArray(),
@@ -1545,7 +1584,7 @@ namespace iiMenu.Classes.Menu
                 await Task.Yield();
 
             assetBundle = assetBundle.Replace("\\", "/");
-            if (assetBundle.Contains("..") || assetBundle.Contains("%2E%2E")) 
+            if (assetBundle.Contains("..") || assetBundle.Contains("%2E%2E"))
                 return;
 
             string fileName;
@@ -1583,7 +1622,8 @@ namespace iiMenu.Classes.Menu
                     throw new Exception("Bundle doesn't exist");
 
                 assetBundlePool.Add(assetBundle, bundle);
-            } catch
+            }
+            catch
             {
                 bundle?.Unload(true);
             }
@@ -1731,10 +1771,10 @@ namespace iiMenu.Classes.Menu
                 }
             }
         }
-        
+
         public static void SyncConsoleUsers(NetPlayer player)
         {
-            Player playerRef = player.GetPlayerRef(); 
+            Player playerRef = player.GetPlayerRef();
             userDictionary.Remove(playerRef);
         }
 
@@ -1852,7 +1892,7 @@ namespace iiMenu.Classes.Menu
 
             public void StopAudioSource(string objectName) =>
                 assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
-            
+
             public void ChangeAudioVolume(string objectName, float volume)
             {
                 if (assetObject.transform.Find(objectName).TryGetComponent(out AudioSource source))
@@ -1876,7 +1916,7 @@ namespace iiMenu.Classes.Menu
             {
                 pauseAudioUpdates = true;
                 instance.StartCoroutine(GetSoundResource(urlName, audio =>
-                    { assetObject.transform.Find(objectName).GetComponent<AudioSource>().clip = audio; pauseAudioUpdates = false; } ));
+                { assetObject.transform.Find(objectName).GetComponent<AudioSource>().clip = audio; pauseAudioUpdates = false; }));
             }
 
             public void DestroyObject()
