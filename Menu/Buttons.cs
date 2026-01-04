@@ -1794,6 +1794,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rock Self", method = Overpowered.RockSelf, isTogglable = false, toolTip = "Sets yourself to rock."},
                 new ButtonInfo { buttonText = "Rock Gun", method = Overpowered.RockGun, toolTip = "Sets whoever your hand desires to rock."},
                 new ButtonInfo { buttonText = "Rock All", method = Overpowered.RockAll, toolTip = "Sets everyone in the room to rock."},
+                new ButtonInfo { buttonText = "Rock Aura", method = Overpowered.RockAura, toolTip = "Sets players nearby you to rock."},
+                new ButtonInfo { buttonText = "Rock On Touch", method = Overpowered.RockOnTouch, toolTip = "Sets whoever you touch to rock."},
 
                 new ButtonInfo { buttonText = "Give Tag Lag Gun", method = Advantages.TagLagGun, toolTip = "Forces tag lag on whoever your hand desires, making them untaggable."},
                 new ButtonInfo { buttonText = "Tag Lag Gun", method = Advantages.TagLagGun, toolTip = "Forces tag lag on whoever your hand desires, letting them not be able to tag anyone."},
@@ -1826,10 +1828,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slow Self", method = Overpowered.SlowSelf, isTogglable = false, toolTip = "Forces tag freeze on yourself." },
                 new ButtonInfo { buttonText = "Slow Gun", method = Overpowered.SlowGun, toolTip = "Forces tag freeze on whoever your hand desires." },
                 new ButtonInfo { buttonText = "Slow All", method = Overpowered.SlowAll, toolTip = "Forces tag freeze on everyone in the the room." },
-
+                new ButtonInfo { buttonText = "Slow Aura", method = Overpowered.SlowAura, toolTip = "Forces tag freeze on players nearby you."},
+                new ButtonInfo { buttonText = "Slow On Touch", method = Overpowered.SlowOnTouch, toolTip = "Forces tag freeze on whoever you touch."},
+                
                 new ButtonInfo { buttonText = "Vibrate Self", method = Overpowered.VibrateSelf, isTogglable = false, toolTip = "Makes your controllers vibrate." },
                 new ButtonInfo { buttonText = "Vibrate Gun", method = Overpowered.VibrateGun, toolTip = "Makes whoever your hand desires' controllers vibrate." },
                 new ButtonInfo { buttonText = "Vibrate All", method = Overpowered.VibrateAll, toolTip = "Makes everyone in the the room's controllers vibrate." },
+                new ButtonInfo { buttonText = "Vibrate Aura", method = Overpowered.VibrateAura, toolTip = "Makes players nearby you controllers vibrate."},
+                new ButtonInfo { buttonText = "Vibrate On Touch", method = Overpowered.VibrateOnTouch, toolTip = "Makes whoever you touch controllers vibrate."},
             },
 
             new[] { // Overpowered Mods [17]
@@ -1961,6 +1967,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Party Kick Gun", method = Overpowered.PartyKickGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks whoever your hand desires if they're in your party from the room."},
                 new ButtonInfo { buttonText = "Party Kick All", method = Overpowered.PartyKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in your party from the room."},
+                new ButtonInfo { buttonText = "Party Kick Aura", method = Overpowered.PartyKickAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks nearby party members from the room."},
+                new ButtonInfo { buttonText = "Party Kick On Touch", method = Overpowered.PartyKickOnTouch, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks party members you touch from the room."},
 
                 new ButtonInfo { buttonText = "Kick All in Party", overlapText = "Party Send All", method = Overpowered.KickAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
                 new ButtonInfo { buttonText = "Ban All in Party", overlapText = "Party Ban All", method = Overpowered.BanAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a bannable code." },
