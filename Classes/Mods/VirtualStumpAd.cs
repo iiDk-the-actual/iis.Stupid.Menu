@@ -126,7 +126,7 @@ namespace iiMenu.Classes.Mods
 
                 videoPlayer = featuredMapImage.GetOrAddComponent<VideoPlayer>();
                 videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
-                videoPlayer.url = "https://github.com/ZlothY29IQ/Mod-Resources/raw/refs/heads/main/hamburger.mp4";
+                videoPlayer.url = $"{PluginInfo.ServerResourcePath}/Videos/vstump-video.mp4";
 
                 RenderTexture rt = new RenderTexture(512, 512, 0);
                 videoPlayer.targetTexture = rt;
