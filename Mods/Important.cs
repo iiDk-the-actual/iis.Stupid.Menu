@@ -820,7 +820,7 @@ exit";
             bool selfTagged = VRRig.LocalRig.IsTagged();
             foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal() && rig.muted))
             {
-                if (selfTagged ? !rig.IsTagged() : rig.IsTagged())
+                if (GameModeUtilities.InfectedList().Count <= 0 || (selfTagged ? !rig.IsTagged() : rig.IsTagged()))
                     rig.transform.position = rig.syncPos - (Vector3.up * 99999f);
             }
         }
