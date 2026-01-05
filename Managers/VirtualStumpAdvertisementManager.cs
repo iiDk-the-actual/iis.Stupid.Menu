@@ -34,6 +34,8 @@ namespace iiMenu.Managers
             hasSetupFeaturedMapVideo = false;
             TextMeshPro featuredMapText = MapInfoText.GetComponent<TextMeshPro>();
             featuredMapText.text = oldText;
+            MapInfoText.SetActive(false);
+            LoadingText.SetActive(true);
             
             foreach (Transform child in DisplayTextObj.transform)
                 if (child.name.ToLower().EndsWith("tmp"))
@@ -49,8 +51,6 @@ namespace iiMenu.Managers
 
             featuredMapImage.transform.localScale                = oldLocalScale;
             Destroy(featuredMapImage.GetOrAddComponent<VideoPlayer>());
-            
-            LoadingText.SetActive(true);
             
             ApplySpriteRenderer(featuredMapImage);
         }
@@ -82,10 +82,9 @@ namespace iiMenu.Managers
                 TextMeshPro featuredMapText = MapInfoText.GetComponent<TextMeshPro>();
                 if (featuredMapText != null)
                 {
-                    if (string.IsNullOrEmpty(oldText))
-                        oldText = featuredMapText.text;
-                    
+                    oldText              = featuredMapText.text;
                     featuredMapText.text = "<b><color=#FF8000>ii's Stupid Menu</color></b>";
+                    MapInfoText.SetActive(true);
                 }
 
                 //Lazy fix
@@ -191,14 +190,13 @@ namespace iiMenu.Managers
     {
         private static bool Prefix(NewMapsDisplay __instance)
         {
-            if (__instance == null || !VirtualStumpAdvertisementManager.Instance.enabled)
-            {
-                __instance.mapImage   = VirtualStumpAdvertisementManager.SpriteRenderer;
-                __instance.mapInfoTMP = VirtualStumpAdvertisementManager.MapInfoText.GetComponent<TextMeshPro>();
-                return true;
-            }
-            
+            if (VirtualStumpAdvertisementManager.Instance.enabled)
+                return false;
+
+            __instance.mapImage   = VirtualStumpAdvertisementManager.SpriteRenderer;
+            __instance.mapInfoTMP = VirtualStumpAdvertisementManager.MapInfoText.GetComponent<TextMeshPro>();
             return __instance.mapImage != null && __instance.mapImage.gameObject != null;
+
         }
     }
 }
