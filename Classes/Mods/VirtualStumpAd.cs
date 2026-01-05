@@ -1,19 +1,40 @@
-﻿using GorillaExtensions;
+﻿/*
+ * ii's Stupid Menu  Classes/Mods/VirtualStumpAd.cs
+ * A mod menu for Gorilla Tag with over 1000+ mods
+ *
+ * Copyright (C) 2025  Goldentrophy Software
+ * https://github.com/iiDk-the-actual/iis.Stupid.Menu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+using GorillaExtensions;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Video;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Managers
+namespace iiMenu.Classes.Mods
 {
-    public class VirtualStumpAdvertisementManager : MonoBehaviour
+    public class VirtualStumpAd : MonoBehaviour
     {
-        public static VirtualStumpAdvertisementManager Instance { get; private set; }
+        public static VirtualStumpAd Instance { get; private set; }
         
         public static SpriteRenderer SpriteRenderer { get; private set; }
         
-        private bool        hasSetupFeaturedMapVideo;
+        private bool hasSetupFeaturedMapVideo;
         private VideoPlayer videoPlayer;
 
         public static GameObject LoadingText;
@@ -21,8 +42,8 @@ namespace iiMenu.Managers
         public static GameObject FeaturedMaps;
         public static GameObject DisplayTextObj;
         
-        private Vector3  oldLocalScale = Vector3.zero;
-        private string   oldText = "";
+        private Vector3 oldLocalScale = Vector3.zero;
+        private string oldText = "";
         
         private SpriteRendererData cachedSpriteRendererData;
 
@@ -65,13 +86,12 @@ namespace iiMenu.Managers
 
             LoadingText = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/LoadingText");
             MapInfoText = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/MapInfo_TMP");
-            FeaturedMaps = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/ModIOFeaturedMapsDisplay/");
+            FeaturedMaps = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/ModIOFeaturedMapsDisplay");
             DisplayTextObj = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/ModIOFeaturedMapsDisplay/DisplayText");
 
             if (DisplayTextObj != null)
                 foreach (Transform child in DisplayTextObj.transform)
                     if (child.name.ToLower().EndsWith("tmp"))
-                            // Safely gets destroyed by new maps display and for some reason lets this work, idk why but yeah
                         child.gameObject.SetActive(!child.gameObject.activeSelf);
 
             if (MapInfoText == null || FeaturedMaps == null)
@@ -87,9 +107,7 @@ namespace iiMenu.Managers
                     MapInfoText.SetActive(true);
                 }
 
-                //Lazy fix
-                if (LoadingText != null)
-                    LoadingText.SetActive(false);
+                LoadingText?.SetActive(false);
 
                 GameObject featuredMapImage = FeaturedMaps.transform.Find("FeaturedMapImage")?.gameObject;
 
@@ -98,21 +116,21 @@ namespace iiMenu.Managers
 
                 CacheAndRemoveSpriteRenderer(featuredMapImage);
 
-                MeshFilter mf                = featuredMapImage.GetOrAddComponent<MeshFilter>();
+                MeshFilter mf = featuredMapImage.GetOrAddComponent<MeshFilter>();
                 mf.mesh = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
 
                 MeshRenderer mr = featuredMapImage.GetOrAddComponent<MeshRenderer>();
 
-                Material videoMat                    = new Material(Shader.Find("Unlit/Texture"));
+                Material videoMat = new Material(Shader.Find("Unlit/Texture"));
                 mr.material = videoMat;
 
                 videoPlayer = featuredMapImage.GetOrAddComponent<VideoPlayer>();
                 videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
-                videoPlayer.url = "https://github.com/ZlothY29IQ/Mod-Resources/raw/refs/heads/main/hamburger.mp4"; // modify this
+                videoPlayer.url = "https://github.com/ZlothY29IQ/Mod-Resources/raw/refs/heads/main/hamburger.mp4";
 
                 RenderTexture rt = new RenderTexture(512, 512, 0);
                 videoPlayer.targetTexture = rt;
-                mr.material.mainTexture   = rt;
+                mr.material.mainTexture = rt;
 
                 if (oldLocalScale == Vector3.zero) oldLocalScale = featuredMapImage.transform.localScale;
                 featuredMapImage.transform.localScale = new Vector3(0.845f, 0.445f, 1f);
@@ -124,10 +142,7 @@ namespace iiMenu.Managers
 
                 hasSetupFeaturedMapVideo = true;
             }
-            catch
-            {
-                //fine it threw ONE null reference exception without the try block
-            }
+            catch { }
         }
         
         private void CacheAndRemoveSpriteRenderer(GameObject target)
@@ -138,15 +153,15 @@ namespace iiMenu.Managers
 
             cachedSpriteRendererData = new SpriteRendererData
             {
-                    Sprite         = SpriteRenderer.sprite,
-                    Material       = SpriteRenderer.material,
-                    Color          = SpriteRenderer.color,
-                    SortingLayerID = SpriteRenderer.sortingLayerID,
-                    SortingOrder   = SpriteRenderer.sortingOrder,
-                    FlipX          = SpriteRenderer.flipX,
-                    FlipY          = SpriteRenderer.flipY,
-                    DrawMode       = SpriteRenderer.drawMode,
-                    Size           = SpriteRenderer.size
+                Sprite = SpriteRenderer.sprite,
+                Material = SpriteRenderer.material,
+                Color = SpriteRenderer.color,
+                SortingLayerID = SpriteRenderer.sortingLayerID,
+                SortingOrder = SpriteRenderer.sortingOrder,
+                FlipX = SpriteRenderer.flipX,
+                FlipY = SpriteRenderer.flipY,
+                DrawMode = SpriteRenderer.drawMode,
+                Size = SpriteRenderer.size
             };
 
             Destroy(SpriteRenderer);
@@ -159,44 +174,28 @@ namespace iiMenu.Managers
 
             SpriteRenderer = target.AddComponent<SpriteRenderer>();
 
-            SpriteRenderer.sprite         = cachedSpriteRendererData.Sprite;
-            SpriteRenderer.material       = cachedSpriteRendererData.Material;
-            SpriteRenderer.color          = cachedSpriteRendererData.Color;
+            SpriteRenderer.sprite = cachedSpriteRendererData.Sprite;
+            SpriteRenderer.material = cachedSpriteRendererData.Material;
+            SpriteRenderer.color = cachedSpriteRendererData.Color;
             SpriteRenderer.sortingLayerID = cachedSpriteRendererData.SortingLayerID;
-            SpriteRenderer.sortingOrder   = cachedSpriteRendererData.SortingOrder;
-            SpriteRenderer.flipX          = cachedSpriteRendererData.FlipX;
-            SpriteRenderer.flipY          = cachedSpriteRendererData.FlipY;
-            SpriteRenderer.drawMode       = cachedSpriteRendererData.DrawMode;
-            SpriteRenderer.size           = cachedSpriteRendererData.Size;
+            SpriteRenderer.sortingOrder = cachedSpriteRendererData.SortingOrder;
+            SpriteRenderer.flipX = cachedSpriteRendererData.FlipX;
+            SpriteRenderer.flipY = cachedSpriteRendererData.FlipY;
+            SpriteRenderer.drawMode = cachedSpriteRendererData.DrawMode;
+            SpriteRenderer.size = cachedSpriteRendererData.Size;
         }
     }
     
     public sealed class SpriteRendererData
     {
-        public Sprite         Sprite;
-        public Material       Material;
-        public Color          Color;
-        public int            SortingLayerID;
-        public int            SortingOrder;
-        public bool           FlipX;
-        public bool           FlipY;
+        public Sprite Sprite;
+        public Material Material;
+        public Color Color;
+        public int SortingLayerID;
+        public int SortingOrder;
+        public bool FlipX;
+        public bool FlipY;
         public SpriteDrawMode DrawMode;
-        public Vector2        Size;
-    }
-
-    
-    [HarmonyPatch(typeof(NewMapsDisplay), nameof(NewMapsDisplay.UpdateSlideshow))]
-    public static class NewMapsDisplay_UpdateSlideshow_Patch
-    {
-        private static bool Prefix(NewMapsDisplay __instance)
-        {
-            if (VirtualStumpAdvertisementManager.Instance.enabled)
-                return false;
-
-            __instance.mapImage   = VirtualStumpAdvertisementManager.SpriteRenderer;
-            __instance.mapInfoTMP = VirtualStumpAdvertisementManager.MapInfoText.GetComponent<TextMeshPro>();
-            return __instance.mapImage != null && __instance.mapImage.gameObject != null;
-
-        }
+        public Vector2 Size;
     }
 }

@@ -1297,6 +1297,16 @@ namespace iiMenu.Mods
             }
         }
 
+        private static VirtualStumpAd virtualStumpAd;
+        public static void CustomVirtualStumpVideo() =>
+            virtualStumpAd ??= new GameObject("iiMenu_VirtualStumpAd").AddComponent<VirtualStumpAd>();
+
+        public static void DisableCustomVirtualStumpVideo()
+        {
+            virtualStumpAd.enabled = false;
+            Object.Destroy(virtualStumpAd.gameObject);
+        }
+
         public static void ChangeCustomQuestScore(bool positive = true)
         {
             if (positive)

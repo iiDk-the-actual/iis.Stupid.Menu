@@ -259,8 +259,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Drop Menu", enableMethod =() => dropOnRemove = false, disableMethod =() => dropOnRemove = true, toolTip = "Makes the menu despawn instead of falling."},
                 new ButtonInfo { buttonText = "Disable Board Colors", overlapText = "Disable Custom Boards", enableMethod =() => CustomBoardManager.CustomBoardsEnabled = false, disableMethod =() => CustomBoardManager.CustomBoardsEnabled = true, toolTip = "Disables the board colors to look legitimate on screen share."},
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => CustomBoardManager.CustomBoardTextEnabled = false, disableMethod =() => CustomBoardManager.CustomBoardTextEnabled = true, toolTip = "Disables the text colors on the boards to make them match their original theme."},
-                new ButtonInfo { buttonText = "Disable Virtual Stump Video", enableMethod =() => VirtualStumpAdvertisementManager.Instance.enabled = false, disableMethod =() => VirtualStumpAdvertisementManager.Instance.enabled = true, toolTip = "Disables the animated GIF playing by the virtual stump VR headset in stump."},
-
+                
                 new ButtonInfo { buttonText = "Disable Keyboard Delay", toolTip = "Disables the delay between pressing keys on the keyboard."},
                 new ButtonInfo { buttonText = "Disable PC Keyboard Sounds", enableMethod =() => pcKeyboardSounds = false, disableMethod =() => pcKeyboardSounds = true, toolTip = "Disables the sound for pressing keys on PC."},
 
@@ -1111,6 +1110,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Basement Door Spam", method = Fun.BasementDoorSpam, toolTip = "Repeatedly opens and closes the basement door."},
                 new ButtonInfo { buttonText = "Elevator Door Spam", method = Fun.ElevatorDoorSpam, toolTip = "Repeatedly opens and closes the elevator door."},
+                
+                new ButtonInfo { buttonText = "Custom Virtual Stump Video", enableMethod = Fun.CustomVirtualStumpVideo, disableMethod = Fun.DisableCustomVirtualStumpVideo, toolTip = "Plays a video by the virtual stump VR headset in stump."},
 
                 new ButtonInfo { buttonText = "Fake FPS", method = Fun.FakeFPS, disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 
