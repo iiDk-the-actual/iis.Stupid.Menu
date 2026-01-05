@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Menu
     [HarmonyPatch(typeof(NewMapsDisplay), "UpdateSlideshow")]
     public static class UpdateSlideshowPatch
     {
-        private static bool Prefix(NewMapsDisplay __instance)
+        public static bool Prefix(NewMapsDisplay __instance)
         {
             if (VirtualStumpAd.Instance == null)
                 return true;
