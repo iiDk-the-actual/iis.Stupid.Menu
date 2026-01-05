@@ -112,6 +112,7 @@ namespace iiMenu
             Loader.AddComponent<CoroutineManager>();
             Loader.AddComponent<NotificationManager>();
             Loader.AddComponent<CustomBoardManager>();
+            Loader.AddComponent<VirtualStumpAdvertisementManager>();
 
             Loader.AddComponent<UI>();
 

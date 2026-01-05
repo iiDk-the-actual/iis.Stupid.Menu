@@ -44,8 +44,13 @@
   </Target>
   
   <!-- Copy to Plugins -->
-  <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(IsMainProject)' == 'true'">
-    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(TargetFileName)" />
-    <Message Text="Copied to Plugins" Importance="high"/>
+  <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(CI)' != 'TRUE'">
+    <ItemGroup>
+      <FilesToCopy Include="$(TargetPath)"/>
+      <FilesToCopy Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
+    </ItemGroup>
+
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(PluginsPath)\$(ProjectName)\%(Filename)%(Extension)')"/>
+    <Message Text="Copied $(TargetFileName) and $(TargetName).pdb to Plugins" Importance="high"/>
   </Target>
 </Project>
