@@ -509,8 +509,8 @@ namespace iiMenu.Menu
                             adminTime = null;
                             AchievementManager.UnlockAchievement(new AchievementManager.Achievement
                             {
-                                name = "I Am Your Leader",
-                                description = "Meet a Console administrator.",
+                                name = "EEEEKK!",
+                                description = "Be in the same room as a Console administrator.",
                                 icon = "Images/Achievements/leader.png"
                             });
                         }

@@ -294,6 +294,12 @@ namespace iiMenu.Mods
             {
                 onReport?.Invoke(reportRig, reportRig.transform.position);
                 reportRig = null;
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Troublemaker",
+                    description = "Evade a player report.",
+                    icon = "Images/Achievements/troublemaker.png"
+                });
                 return;
 			}
             

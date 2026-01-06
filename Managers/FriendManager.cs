@@ -892,9 +892,19 @@ namespace iiMenu.Managers
             {
                 AchievementManager.UnlockAchievement(new AchievementManager.Achievement
                 {
-                    name = "All Star",
-                    description = "Make a friend.",
-                    icon = "Images/Achievements/all-star.png"
+                    name = "Not forever alone...",
+                    description = "Make a friend using the friend system.",
+                    icon = "Images/Achievements/notforeveralone.png"
+                });
+            }
+
+            if (organizedFriends.Length >= 20)
+            {
+                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                {
+                    name = "Popular",
+                    description = "Have 25+ friends.",
+                    icon = "Images/Achievements/popular.png"
                 });
             }
 
