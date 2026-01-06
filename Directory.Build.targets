@@ -47,7 +47,7 @@
   <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(CI)' != 'TRUE'">
     <ItemGroup>
       <FilesToCopy Include="$(TargetPath)"/>
-      <FilesToCopy Include="$(TargetName).pdb" Condition="Exists('$(TargetName).pdb')"/>
+      <FilesToCopy Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
     </ItemGroup>
 
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(PluginsPath)\%(Filename)%(Extension)')"/>
