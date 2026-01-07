@@ -2514,7 +2514,20 @@ namespace iiMenu.Mods
             { "2D7D32651E93866", "Graze" },
             { "B4E45E48C5CE0656", "ZBR" },
             { "F7EE771EB6794ABE", "OfficialLemon" },
-            { "36FD11C9FB61E50B", "Cryptik" }
+            { "36FD11C9FB61E50B", "Cryptik" },
+            { "28579AFACDE1FB19", "Pepsi Dee" },
+            { "8A062E735BBC89ED", "GLTCH" },
+            { "A100E9E6C4D91E75", "Mycrafts 1" },
+            { "7952F9E08FEF8E83", "Mycrafts 2" },
+            { "10E12F25533C13F2", "Kirpi4" },
+            { "10621E029A675705", "AA_Mike" },
+            { "F8FF7B812B0B2F72", "Foggy" },
+            { "1E8298E1E1F40CB2", "Faaduu" },
+            { "289C8FAD58A09D6D", "Pixel" },
+            { "172E4982BEE4A8AD", "H4KPY" },
+            { "A339740A8ED97FC2", "Coffeeperson" },
+            { "502575B001FE6FCD", "Mikeyourman" },
+            { "7DC729B66A15F9DE", "TrumpGT" }
         };
 
         private static readonly Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
