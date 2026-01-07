@@ -1,4 +1,4 @@
-/*
+﻿/*
  * ii's Stupid Menu  Mods/Visuals.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
@@ -2244,7 +2244,14 @@ namespace iiMenu.Mods
             { "I like cheese", "Rec Room Rig" },
             { "silliness", "Silliness" },
             { "EmoteWheel", "Fortnite Emote Wheel" },
-            { "untitled", "Untitled" }
+            { "untitled", "Untitled" },
+            { "BoyDoILoveInformation Public", "BoyDoILoveInformation" },
+            { "DTAOI", "DTAOI" },
+            { "GorillaShop", "GorillaShop" },
+            { "Fusioned", "Fusioned" },
+            { "y u lookin in here weirdo", "Malachi Menu Reborn" },
+            { "ØƦƁƖƬ", "Orbit" },
+            { "Atlas", "Atlas" }
         };
 
         private static readonly Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
