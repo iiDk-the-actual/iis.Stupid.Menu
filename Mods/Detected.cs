@@ -298,9 +298,11 @@ namespace iiMenu.Mods
                     {
                         if (lockTarget == null)
                         {
-                            for (int i = 0; i < 3950; i++)
-                                Destroy(gunTarget);
-
+                            GameModeType gameMode = GorillaGameManager.instance.GameType();
+                            ChangeGamemode(GameModeType.SuperInfect);
+                            PhotonNetwork.SetMasterClient(gunTarget.GetPlayer().GetPlayer());
+                            Overpowered.SuperInfectionKickMasterClient();
+                            ChangeGamemode(gameMode);
                             RPCProtection();
                         }
 
@@ -318,20 +320,35 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float kickDelay;
+        public static Coroutine siKickAllCoroutine;
+        public static IEnumerator SIKickAllCoroutine()
+        {
+            GameModeType gameMode = GorillaGameManager.instance.GameType();
+            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
+            {
+                if (GorillaGameManager.instance.GameType() != GameModeType.SuperInfect)
+                    ChangeGamemode(GameModeType.SuperInfect);
+
+                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
+                Overpowered.SuperInfectionKickMasterClient();
+
+                float timeDelay = Time.time + 1f;
+                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
+            }
+
+            siKickAllCoroutine = null;
+            yield break;
+        }
+
         public static void KickAll()
         {
-            SerializePatch.OverrideSerialization ??= () => false;
+            if (siKickAllCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(siKickAllCoroutine);
 
-            if (Time.time > kickDelay)
-            {
-                kickDelay = Time.time + 10f;
-                for (int i = 0; i < 3950; i++)
-                    Destroy(GetTargetPlayer().GetPhotonPlayer());
-
-                RPCProtection();
-            }
+            siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
+
+
 
         public static void KickAura()
         {
