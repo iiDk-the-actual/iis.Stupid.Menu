@@ -5598,6 +5598,65 @@ namespace iiMenu.Mods
                 GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
         }
 
+        public static void ElevatorKickAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                        SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { TargetActors = new[] { nearbyPlayer.GetPlayer().ActorNumber } }, (int)GRElevatorManager._instance.currentLocation, 3, GRElevatorManager.LowestActorNumberInElevator());
+                    else
+                        GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
+
+                     RPCProtection();
+                }
+            }
+        }
+
+        public static void ElevatorKickOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                        SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { TargetActors = new[] { rig.GetPlayer().ActorNumber } }, (int)GRElevatorManager._instance.currentLocation, 3, GRElevatorManager.LowestActorNumberInElevator());
+                    else
+                        GRElevatorManager._instance.SendRPC("RemoteElevatorButtonPress", RpcTarget.MasterClient, new[] { 3, (int)GRElevatorManager._instance.currentLocation });
+
+                    RPCProtection();
+                }
+            }
+        }
+
         public static void KickMasterClient()
         {
             if (NetworkSystem.Instance.SessionIsPrivate)
@@ -5916,6 +5975,55 @@ namespace iiMenu.Mods
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
                 DestroyPlayer(player);
+        }
+
+        public static void DestroyAura()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            List<VRRig> nearbyPlayers = new List<VRRig>();
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
+                    nearbyPlayers.Add(vrrig);
+                else if (nearbyPlayers.Contains(vrrig))
+                    nearbyPlayers.Remove(vrrig);
+            }
+
+            if (nearbyPlayers.Count > 0)
+            {
+                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                {
+                     DestroyPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(nearbyPlayer)));
+                }
+            }
+        }
+
+        public static void DestroyOnTouch()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            List<VRRig> touchedPlayers = new List<VRRig>();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.IsLocal())
+                {
+                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    {
+                        touchedPlayers.Add(rig);
+                    }
+                }
+            }
+
+            if (touchedPlayers.Count > 0)
+            {
+                foreach (VRRig rig in touchedPlayers)
+                {
+                    DestroyPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+                }
+            }
         }
 
         public static void DestroyPlayer(NetPlayer player) =>
