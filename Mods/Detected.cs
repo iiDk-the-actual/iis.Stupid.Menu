@@ -300,7 +300,7 @@ namespace iiMenu.Mods
                         {
                             GameModeType gameMode = GorillaGameManager.instance.GameType();
                             ChangeGamemode(GameModeType.SuperInfect);
-                            PhotonNetwork.SetMasterClient(gunTarget.GetPlayer().GetPlayer());
+                            PhotonNetwork.SetMasterClient(gunTarget.GetPhotonPlayer());
                             Overpowered.SuperInfectionKickMasterClient();
                             ChangeGamemode(gameMode);
                             RPCProtection();
@@ -347,73 +347,7 @@ namespace iiMenu.Mods
 
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
-
-
-
-        public static void KickAura()
-        {
-            if (!PhotonNetwork.InRoom) return;
-            List<VRRig> nearbyPlayers = new List<VRRig>();
-
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !vrrig.IsLocal())
-                    nearbyPlayers.Add(vrrig);
-                else if (nearbyPlayers.Contains(vrrig))
-                    nearbyPlayers.Remove(vrrig);
-            }
-
-            if (nearbyPlayers.Count > 0)
-            {
-                SerializePatch.OverrideSerialization ??= () => false;
-
-                if (Time.time > kickDelay)
-                {
-                    foreach (VRRig nearbyPlayer in nearbyPlayers)
-                    {
-                        for (int i = 0; i < 3950; i++)
-                            Destroy(nearbyPlayer.GetPhotonPlayer());
-                    }
-                }
-            }
-            else
-                SerializePatch.OverrideSerialization = null;
-        }
         
-        public static void KickOnTouch()
-        {
-            if (!PhotonNetwork.InRoom) return;
-
-            List<VRRig> touchedPlayers = new List<VRRig>();
-
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.IsLocal())
-                {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
-                        touchedPlayers.Add(rig);
-                    }
-                }
-            }
-
-            if (touchedPlayers.Count > 0)
-            {
-                SerializePatch.OverrideSerialization ??= () => false;
-
-                if (Time.time > kickDelay)
-                {
-                    foreach (VRRig rig in touchedPlayers)
-                    {
-                        for (int i = 0; i < 3950; i++)
-                            Destroy(GetTargetPlayer().GetPhotonPlayer());
-                    }
-                }
-            }
-            else
-                SerializePatch.OverrideSerialization = null;
-        }
 
         public static void KickWhenTouched()
         {
@@ -421,10 +355,12 @@ namespace iiMenu.Mods
             {
                 if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
                 {
-                    NetPlayer playerFromVRRig = GetPlayerFromVRRig(vrrig);
-
-                    for (int i = 0; i < 3950; i++)
-                        Destroy(playerFromVRRig);
+                    GameModeType gameMode = GorillaGameManager.instance.GameType();
+                    ChangeGamemode(GameModeType.SuperInfect);
+                    PhotonNetwork.SetMasterClient(vrrig.GetPhotonPlayer());
+                    Overpowered.SuperInfectionKickMasterClient();
+                    ChangeGamemode(gameMode);
+                    RPCProtection();
                 }
             }
         }
