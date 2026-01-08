@@ -851,6 +851,11 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        /*
+         * Be rexon
+         * Make mod that only works on master client
+         * Turn it into a gun
+         */
         public static void SuperInfectionKickGun()
         {
             if (NetworkSystem.Instance.IsMasterClient)
