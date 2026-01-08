@@ -4473,8 +4473,8 @@ exit 0";
                 "Jerkface",
                 "Robot",
                 "Vlad",
-                "Obama",
-                "Mommy ASMR"
+                "Obama"/*,
+                "Mommy ASMR"*/
             };
 
             if (positive)
