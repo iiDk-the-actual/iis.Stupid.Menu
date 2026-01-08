@@ -5059,7 +5059,9 @@ exit 0";
                         GorillaTagger.Instance.StartVibration(leftHand, GorillaTagger.Instance.tagHapticStrength / 2f, 0.05f);
 
                         lastTarget = rigTarget;
-                    }
+                    } else
+                        lastTarget.mainSkin.material.color = targetColor;
+
 
                     bool trigger = leftHand ? leftTrigger > 0.5f : rightTrigger > 0.5f;
 
