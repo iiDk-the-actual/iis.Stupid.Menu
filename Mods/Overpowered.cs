@@ -32,11 +32,13 @@ using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
+using Ionic.Zlib;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -55,6 +57,44 @@ namespace iiMenu.Mods
 {
     public static class Overpowered
     {
+        public static void SuperInfectionKick()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return; // it will kick yourself
+
+            byte[] byteData = new byte[15360];
+            MemoryStream memoryStream = new MemoryStream(byteData);
+            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
+
+            binaryWriter.Write(4);
+
+            for (int i=0; i<4; i++)
+            {
+                binaryWriter.Write(ManagerRegistry.SuperInfection.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
+                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
+                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
+                binaryWriter.Write(0L);
+                binaryWriter.Write((byte)3);
+            }
+
+            byte[] bytes = GZipStream.CompressBuffer(byteData);
+            byte[] padding = new byte[1960];
+
+            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
+            bytes = padding;
+
+            ManagerRegistry.SuperInfection.GameEntityManager.SendRPC(
+                "JoinWithItemsRPC",
+                RpcTarget.MasterClient,
+                bytes,
+                new int[0],
+                NetworkSystem.Instance.LocalPlayer.ActorNumber
+            );
+
+            RPCProtection();
+        }
+
+
         public static void SetGuardianTarget(NetPlayer target)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
