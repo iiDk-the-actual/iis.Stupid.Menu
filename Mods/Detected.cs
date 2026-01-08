@@ -347,23 +347,6 @@ namespace iiMenu.Mods
 
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
-        
-
-        public static void KickWhenTouched()
-        {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
-                {
-                    GameModeType gameMode = GorillaGameManager.instance.GameType();
-                    ChangeGamemode(GameModeType.SuperInfect);
-                    PhotonNetwork.SetMasterClient(vrrig.GetPhotonPlayer());
-                    Overpowered.SuperInfectionKickMasterClient();
-                    ChangeGamemode(gameMode);
-                    RPCProtection();
-                }
-            }
-        }
 
         public static void GhostGun()
         {
