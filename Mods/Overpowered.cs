@@ -856,6 +856,7 @@ namespace iiMenu.Mods
          * Make mod that only works on master client
          * Turn it into a gun
          */
+        private static float kgDebounce;
         public static void SuperInfectionKickGun()
         {
             if (NetworkSystem.Instance.IsMasterClient)
@@ -871,8 +872,11 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        kgDebounce = Time.time + 0.2f;
                         SuperInfectionKickMasterClient();
+                    }
                 }
             }
         }

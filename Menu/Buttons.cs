@@ -1917,7 +1917,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
 
-                new ButtonInfo { buttonText = "Super Infection Kick Master Client", method = Overpowered.SuperInfectionKickMasterClient, toolTip = "Kicks the master client in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Kick Master Client", method = Overpowered.SuperInfectionKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
                 new ButtonInfo { buttonText = "Super Infection Kick All", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode."},
