@@ -2814,6 +2814,30 @@ namespace iiMenu.Mods
             }
         }
 
+        public static readonly List<GameObject> forestColliders = new List<GameObject>();
+        public static void RemoveForestColliders()
+        {
+            Transform ForestCollisions = GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").transform;
+
+            if (ForestCollisions == null)
+                return;
+
+            for (int i = 2; i < 4; i++)
+            {
+                GameObject c = ForestCollisions.transform.GetChild(i).gameObject;
+                    c.SetActive(false);
+                    forestColliders.Add(c);
+            }
+        }
+
+        public static void RestoreForestColliders()
+        {
+            foreach (GameObject c in forestColliders)
+                c.SetActive(true);
+
+            forestColliders.Clear();
+        }
+
         public static bool wasDisabledAlready;
         public static bool invisMonke;
 
