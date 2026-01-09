@@ -25,11 +25,10 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PhotonNetwork), "RPC")]
+    [HarmonyPatch(typeof(PhotonNetwork), "RPC", typeof(PhotonView), typeof(string), typeof(RpcTarget), typeof(Player), typeof(bool), typeof(object[]))]
     public class RPCFilter
     {
         /// <summary>
