@@ -501,7 +501,7 @@ namespace iiMenu.Mods
                 new ButtonInfo {
                     buttonText = "Guardian Kick Player",
                     overlapText = $"Guardian Kick {targetName}",
-                    method =() => Overpowered.KickPlayer(player),
+                    method =() => Overpowered.GuardianKickTarget(player),
                     toolTip = $"Kicks {targetName}."
                 },
                 new ButtonInfo {

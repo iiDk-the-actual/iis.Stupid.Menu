@@ -687,7 +687,6 @@ namespace iiMenu.Menu
                     {
                         partyLastCode = null;
                         partyKickReconnecting = false;
-                        NotificationManager.ClearAllNotifications();
                         NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member.");
                         FriendshipGroupDetection.Instance.LeaveParty();
                     }
@@ -695,9 +694,17 @@ namespace iiMenu.Menu
                     {
                         if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
                         {
-                            LogManager.Log("Attempting rejoin");
-                            NetworkSystem.Instance.ReturnToSinglePlayer();
-                            partyKickReconnecting = true;
+                            if (Buttons.GetIndex("Rejoin on Kick").enabled)
+                            {
+                                LogManager.Log("Attempting rejoin");
+                                NetworkSystem.Instance.ReturnToSinglePlayer();
+                                partyKickReconnecting = true;
+                            } else
+                            {
+                                NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying + " party member.");
+                                partyKickReconnecting = false;
+                                partyLastCode = null;
+                            }
                         }
                     }
                 }

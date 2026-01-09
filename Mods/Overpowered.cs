@@ -454,7 +454,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void KickPlayer(NetPlayer target)
+        public static void GuardianKickTarget(NetPlayer target)
         {
             if (Time.time > crashAllDelay)
             {
@@ -5958,6 +5958,8 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool legacyKickFreeze;
+
         /// <summary>
         /// Indicates whether event optimization is enabled. When enabled, it reduces network load by limiting certain RPC calls and adjusting serialization rates.
         /// </summary>
@@ -5972,14 +5974,19 @@ namespace iiMenu.Mods
                     _optimizeEvents = value;
                     if (_optimizeEvents)
                     {
-                        PhotonNetwork.SerializationRate = 3;
-                        RPCFilter.FilteredRPCs["OnHandTapRPC"] = () => false;
-
-                        SerializePatch.OverrideSerialization = () =>
+                        if (legacyKickFreeze)
+                            SerializePatch.OverrideSerialization = () => false;
+                        else
                         {
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
-                            return true;
-                        };
+                            PhotonNetwork.SerializationRate = 3;
+                            RPCFilter.FilteredRPCs["OnHandTapRPC"] = () => false;
+
+                            SerializePatch.OverrideSerialization = () =>
+                            {
+                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                                return true;
+                            };
+                        }
                     } else
                     {
                         if (SerializePatch.OverrideSerialization != null)
