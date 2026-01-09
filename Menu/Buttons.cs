@@ -1998,10 +1998,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
                 new ButtonInfo { buttonText = "Party Break Network Triggers", method = Overpowered.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },
 
-                new ButtonInfo { buttonText = "Party Kick Gun", method = Overpowered.PartyKickGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks whoever your hand desires if they're in your party from the room."},
-                new ButtonInfo { buttonText = "Party Kick All", method = Overpowered.PartyKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in your party from the room."},
-                new ButtonInfo { buttonText = "Party Kick Aura", method = Overpowered.PartyKickAura, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks nearby party members from the room."},
-                new ButtonInfo { buttonText = "Party Kick On Touch", method = Overpowered.PartyKickOnTouch, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks party members you touch from the room."},
+                new ButtonInfo { buttonText = "Party Kick Gun", method = Overpowered.PartyKickGun, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks whoever your hand desires if they're in your party from the room."},
+                new ButtonInfo { buttonText = "Party Kick All", method = Overpowered.PartyKickAll, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks everyone in your party from the room."},
+                new ButtonInfo { buttonText = "Party Kick Aura", method = Overpowered.PartyKickAura, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks nearby party members from the room."},
+                new ButtonInfo { buttonText = "Party Kick On Touch", method = Overpowered.PartyKickOnTouch, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks party members you touch from the room."},
 
                 new ButtonInfo { buttonText = "Kick All in Party", overlapText = "Party Send All", method = Overpowered.KickAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
                 new ButtonInfo { buttonText = "Ban All in Party", overlapText = "Party Ban All", method = Overpowered.BanAllInParty, isTogglable = false, toolTip = "Sends everyone in your party to a bannable code." },

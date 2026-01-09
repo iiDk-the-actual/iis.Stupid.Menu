@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/SerializePatch.cs
+ * ii's Stupid Menu  Patches/Menu/RPCFilter.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2025  Goldentrophy Software
@@ -22,47 +22,36 @@
 using HarmonyLib;
 using iiMenu.Managers;
 using Photon.Pun;
-﻿using System;
+using Photon.Realtime;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PhotonNetwork), "RunViewUpdate")]
-    public class SerializePatch
+    [HarmonyPatch(typeof(PhotonNetwork), "RPC")]
+    public class RPCFilter
     {
         /// <summary>
-        /// Occurs when a serialization process is initiated.
+        /// Stores a mapping of RPC names to filter functions that determine whether each RPC should be sent.
         /// </summary>
-        public static event Action OnSerialize;
+        public static Dictionary<string, Func<bool>> FilteredRPCs = new Dictionary<string, Func<bool>>();
 
-        /// <summary>
-        /// Delegate that determines whether serialization should be overridden.
-        /// </summary>
-        public static Func<bool> OverrideSerialization;
-
-        public static bool Prefix()
+        public static bool Prefix(PhotonView view, string methodName, RpcTarget target, Player player, bool encrypt, params object[] parameters)
         {
-            if (!PhotonNetwork.InRoom)
+            if (FilteredRPCs.Count <= 0)
                 return true;
 
             try
             {
-                OnSerialize?.Invoke();
+                if (FilteredRPCs.TryGetValue(methodName, out var function))
+                    return function?.Invoke() ?? true;
             } catch (Exception e)
             {
-                LogManager.LogError($"Error in SerializePatch.OnSerialize: {e}");
+                LogManager.LogError($"Error in RPCFilter.FilteredRPCs.{methodName}: {e}");
             }
 
-            if (OverrideSerialization == null)
-                return true;
-
-            try
-            {
-                return OverrideSerialization();
-            } catch (Exception e)
-            {
-                LogManager.LogError($"Error in SerializePatch.OverrideSerialization: {e}");
-                return false;
-            }
+            return true;
         }
     }
 }

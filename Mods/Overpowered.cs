@@ -5872,6 +5872,40 @@ namespace iiMenu.Mods
             }
         }
 
+        /// <summary>
+        /// Indicates whether event optimization is enabled. When enabled, it reduces network load by limiting certain RPC calls and adjusting serialization rates.
+        /// </summary>
+        private static bool _optimizeEvents;
+        public static bool OptimizeEvents
+        {
+            get => _optimizeEvents;
+            set
+            {
+                if (_optimizeEvents != value)
+                {
+                    _optimizeEvents = value;
+                    if (_optimizeEvents)
+                    {
+                        PhotonNetwork.SerializationRate = 3;
+                        RPCFilter.FilteredRPCs["OnHandTapRPC"] = () => false;
+
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                            return true;
+                        };
+                    } else
+                    {
+                        if (SerializePatch.OverrideSerialization != null)
+                            SerializePatch.OverrideSerialization = null;
+
+                        PhotonNetwork.SerializationRate = 10;
+                        RPCFilter.FilteredRPCs.Remove("OnHandTapRPC");
+                    }
+                }
+            }
+        }
+
         public static void PartyKickGun()
         {
             if (GetGunInput(false))
@@ -5880,7 +5914,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    SerializePatch.OverrideSerialization ??= () => false;
+                    OptimizeEvents = true;
 
                 if (GetGunInput(true))
                 {
@@ -5903,8 +5937,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (SerializePatch.OverrideSerialization != null)
-                    SerializePatch.OverrideSerialization = null;
+                OptimizeEvents = false;
                 if (gunLocked)
                     gunLocked = false;
             }
@@ -5912,7 +5945,7 @@ namespace iiMenu.Mods
 
         public static void PartyKickAll()
         {
-            SerializePatch.OverrideSerialization ??= () => false;
+            OptimizeEvents = true;
 
             if (Time.time > kickDelay)
             {
@@ -5954,6 +5987,7 @@ namespace iiMenu.Mods
 
             if (nearbyPlayers.Count > 0)
             {
+                OptimizeEvents = true;
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
                     for (int i = 0; i < 3950; i++)
@@ -5963,6 +5997,8 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
+            else
+                OptimizeEvents = false;
         }
 
         public static void PartyKickOnTouch()
@@ -5985,6 +6021,7 @@ namespace iiMenu.Mods
 
             if (touchedPlayers.Count > 0)
             {
+                OptimizeEvents = true;
                 foreach (VRRig rig in touchedPlayers)
                 {
                     for (int i = 0; i < 3950; i++)
@@ -5994,6 +6031,8 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
+            else
+                OptimizeEvents = false;
         }
 
         private static float antiReportLagDelay;
