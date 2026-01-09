@@ -108,7 +108,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public static readonly string ConsoleVersion = "2.9.2";
+        public static readonly string ConsoleVersion = "2.9.3";
         public static Console instance;
 
         public void Awake()
