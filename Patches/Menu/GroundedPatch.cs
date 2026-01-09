@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        public static void Postfix(TakeMyHand_HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool canBeGrabbed)
+        public static void Postfix(TakeMyHand_HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool isReadyForGrabbing)
         {
             if (enabled)
                 __instance.isGroundedHand = true;
