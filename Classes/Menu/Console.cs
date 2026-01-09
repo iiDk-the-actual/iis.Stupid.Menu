@@ -108,7 +108,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public static readonly string ConsoleVersion = "2.9.1";
+        public static readonly string ConsoleVersion = "2.9.2";
         public static Console instance;
 
         public void Awake()
@@ -147,38 +147,31 @@ namespace iiMenu.Classes.Menu
         }
 
         public static void LoadConsole() =>
-            GorillaTagger.OnPlayerSpawned(LoadConsoleImmediately);
+            GorillaTagger.OnPlayerSpawned(() => LoadConsoleImmediately());
 
-        public static void LoadConsoleImmediately()
+        public const string LoadVersionEventKey = "%<CONSOLE>%LoadVersion"; // Do not change this, it's used to prevent multiple instances of Console from colliding with each other
+        public static void NoOverlapEvents(string eventName, int id)
         {
-            string ConsoleGUID = "goldentrophy_Console";
-            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
+            if (eventName == LoadVersionEventKey)
+            {
+                if (ServerData.VersionToNumber(ConsoleVersion) <= id)
+                    PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
+            }
+        }
 
-            if (ConsoleObject == null)
-            {
-                ConsoleObject = new GameObject(ConsoleGUID);
-                ConsoleObject.AddComponent<Console>();
-            }
-            else
-            {
-                if (ConsoleObject.GetComponents<Component>()
-                    .Select(c => c.GetType().GetField("ConsoleVersion",
-                        BindingFlags.Public |
-                        BindingFlags.Static))
-                    .Select(f => f.GetValue(null))
-                    .FirstOrDefault() is string consoleVersion)
-                {
-                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(ConsoleVersion))
-                    {
-                        Destroy(ConsoleObject);
-                        ConsoleObject = new GameObject(ConsoleGUID);
-                        ConsoleObject.AddComponent<Console>();
-                    }
-                }
-            }
+        public static GameObject LoadConsoleImmediately()
+        {
+            PlayerGameEvents.MiscEvent(LoadVersionEventKey, ServerData.VersionToNumber(ConsoleVersion));
+            PlayerGameEvents.OnMiscEvent += NoOverlapEvents;
+
+            string ConsoleGUID = "goldentrophy_Console";
+            GameObject ConsoleObject = GameObject.Find(ConsoleGUID) ?? new GameObject(ConsoleGUID);
+            ConsoleObject.AddComponent<Console>();
 
             if (ServerData.ServerDataEnabled)
                 ConsoleObject.AddComponent<ServerData>();
+
+            return ConsoleObject;
         }
 
         public void OnDisable() =>
@@ -1171,12 +1164,32 @@ namespace iiMenu.Classes.Menu
                             SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
                         );
                         break;
+
                     case "asset-destroy":
                         int DestroyAssetId = (int)args[1];
 
                         instance.StartCoroutine(
                             ModifyConsoleAsset(DestroyAssetId,
                             asset => asset.DestroyObject())
+                        );
+                        break;
+
+                    case "asset-destroychild":
+                        int DestroyAssetChildId = (int)args[1];
+                        string AssetChildName = (string)args[2];
+
+                        instance.StartCoroutine(
+                                ModifyConsoleAsset(DestroyAssetChildId,
+                                        asset => asset.assetObject.transform.Find(AssetChildName).gameObject.Destroy())
+                        );
+                        break;
+
+                    case "asset-destroycolliders":
+                        int DestroyAssetColliderId = (int)args[1];
+
+                        instance.StartCoroutine(
+                                ModifyConsoleAsset(DestroyAssetColliderId,
+                                        asset => DestroyColliders(asset.assetObject))
                         );
                         break;
 
@@ -1189,6 +1202,7 @@ namespace iiMenu.Classes.Menu
                             asset => asset.SetPosition(TargetPosition))
                         );
                         break;
+
                     case "asset-setlocalposition":
                         int LocalPositionAssetId = (int)args[1];
                         Vector3 TargetLocalPosition = (Vector3)args[2];
@@ -1208,6 +1222,7 @@ namespace iiMenu.Classes.Menu
                             asset => asset.SetRotation(TargetRotation))
                         );
                         break;
+
                     case "asset-setlocalrotation":
                         int LocalRotationAssetId = (int)args[1];
                         Quaternion TargetLocalRotation = (Quaternion)args[2];
@@ -1702,6 +1717,12 @@ namespace iiMenu.Classes.Menu
             }
 
             action.Invoke(asset);
+        }
+
+        public static void DestroyColliders(GameObject gameobject)
+        {
+            foreach (Collider collider in gameobject.GetComponentsInChildren<Collider>(true))
+                collider.Destroy();
         }
 
         public static IEnumerator PreloadAssetBundle(string name)
