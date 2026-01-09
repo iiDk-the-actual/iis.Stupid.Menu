@@ -124,6 +124,28 @@ namespace iiMenu.Managers
             }
         }
 
+        private static bool _customBoardFonts;
+        public static bool CustomBoardFonts
+        {
+            get => _customBoardFonts;
+            set
+            {
+                if (!value && _customBoardFonts)
+                {
+                    foreach (TextMeshPro txt in instance.textMeshPro.Where(text => text.isActiveAndEnabled))
+                    {
+                        if (txt.font != instance.archiveGorillaTagFont)
+                            txt.font = instance.archiveGorillaTagFont;
+
+                        if (txt.fontStyle != FontStyles.Normal)
+                            txt.fontStyle = FontStyles.Normal;
+                    }
+                }
+
+                _customBoardFonts = value;
+            }
+        }
+
         private static Material _screenRed;
         private static Material _screenBlack;
 
@@ -157,6 +179,8 @@ namespace iiMenu.Managers
 
         public GameObject motdTitle;
         public GameObject motdText;
+
+        private TMP_FontAsset archiveGorillaTagFont;
 
         private bool hasFoundAllBoards;
         public void ReloadBoards() =>
@@ -341,7 +365,19 @@ namespace iiMenu.Managers
                     targetColor = Color.white;
 
                 foreach (TextMeshPro txt in textMeshPro.Where(text => text.isActiveAndEnabled))
+                {
                     txt.color = targetColor;
+
+                    if (CustomBoardFonts)
+                    {
+                        archiveGorillaTagFont ??= txt.font;
+                        if (txt.font != activeFont)
+                            txt.font = activeFont;
+
+                        if (txt.fontStyle != activeFontStyle)
+                            txt.fontStyle = activeFontStyle;
+                    }
+                }
             }
             catch { }
         }

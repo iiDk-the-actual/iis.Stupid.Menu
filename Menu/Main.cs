@@ -5437,19 +5437,18 @@ namespace iiMenu.Menu
             return notags.Replace(input, replace);
         }
 
+        private static Gradient richtextGradientGradient = new Gradient();
         public static string RichtextGradient(string input, GradientColorKey[] Colors)
         {
-            Gradient bg = new Gradient
-            {
-                colorKeys = Colors
-            };
+            richtextGradientGradient ??= new Gradient();
+            richtextGradientGradient.colorKeys = Colors;
 
             char[] chars = input.ToCharArray();
             string finalOutput = "";
             for (int i = 0; i < chars.Length; i++)
             {
                 char character = chars[i];
-                Color characterColor = bg.Evaluate((Time.time / 2f + i / 25f) % 1f);
+                Color characterColor = richtextGradientGradient.Evaluate((Time.time / 2f + i / 25f) % 1f);
                 finalOutput += $"<color=#{ColorToHex(characterColor)}>{character}</color>";
             }
 

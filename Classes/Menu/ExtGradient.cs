@@ -101,8 +101,11 @@ namespace iiMenu.Classes.Menu
                 colors[i].color = color;
         }
 
+        private static Gradient getColorGradient;
         public Color GetColorTime(float time)
         {
+            getColorGradient ??= new Gradient();
+
             if (rainbow)
                 return Color.HSVToRGB(time, 1f, 1f);
 
@@ -117,7 +120,7 @@ namespace iiMenu.Classes.Menu
 
             if (transparent)
             {
-                Color targetColor = new Gradient { colorKeys = colors }.Evaluate(time);
+                Color targetColor = getColorGradient.Evaluate(time);
                 targetColor.a = 0f;
 
                 return targetColor;
@@ -126,7 +129,8 @@ namespace iiMenu.Classes.Menu
             if (customColor != null)
                 return customColor?.Invoke() ?? Color.magenta;
 
-            return new Gradient { colorKeys = colors }.Evaluate(time);
+            getColorGradient.colorKeys = colors;
+            return getColorGradient.Evaluate(time);
         }
 
         public Color GetCurrentColor(float offset = 0f) =>
