@@ -1914,6 +1914,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method = Overpowered.GuardianCrashGun, toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method = Overpowered.GhostReactorKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
+
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
+
                 new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
 
