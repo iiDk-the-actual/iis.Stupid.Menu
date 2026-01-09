@@ -1973,12 +1973,16 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Destroy Gun", method = Overpowered.DestroyGun, toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method = Overpowered.DestroyAll, isTogglable = false, toolTip = "Block new players from seeing everyone."},
+                new ButtonInfo { buttonText = "Destroy Aura", method = Overpowered.DestroyAura, toolTip = "Block new players from seeing players nearby you."},
+                new ButtonInfo { buttonText = "Destroy On Touch", method = Overpowered.DestroyOnTouch, toolTip = "Block new players from seeing players you touch."},
 
                 new ButtonInfo { buttonText = "Stump Kick Gun", method = Overpowered.StumpKickGun, toolTip = "Kicks whoever your hand desires if they are in stump." },
                 new ButtonInfo { buttonText = "Stump Kick All", method = Overpowered.StumpKickAll, isTogglable = false, toolTip = "Kicks everyone in stump." },
 
                 new ButtonInfo { buttonText = "Elevator Kick Gun", method = Overpowered.ElevatorKickGun, toolTip = "Kicks whoever your hand desires if they are in the elevator."},
                 new ButtonInfo { buttonText = "Elevator Kick All", method = Overpowered.ElevatorKickAll, isTogglable = false, toolTip = "Kicks everyone in the elevator."},
+                new ButtonInfo { buttonText = "Elevator Kick Aura", method = Overpowered.ElevatorKickAura, toolTip = "Kicks players nearby you if they are in the elevator."},
+                new ButtonInfo { buttonText = "Elevator Kick On Touch", method = Overpowered.ElevatorKickOnTouch, toolTip = "Kicks players you touch if they are in the elevator."},
 
                 new ButtonInfo { buttonText = "Kick Master Client", method = Overpowered.KickMasterClient, toolTip = "Kicks the master client from the room." },
 
@@ -2468,9 +2472,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Ban Aura", overlapText = "Ban Aura", method = Detected.BanAura, detected = true, toolTip = "Changes the name of whoever is near you to a banned name."},
                 new ButtonInfo { buttonText = "Detected Ban On Touch", overlapText = "Ban On Touch", method = Detected.BanOnTouch, detected = true, toolTip = "Changes the name of players that you touch to a banned name."},
 
-                new ButtonInfo { buttonText = "Break Network Triggers", method =() => Detected.BreakNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Breaks the network triggers."},
-                new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
-
                 new ButtonInfo { buttonText = "Bypass Mod Checkers Gun", method = Detected.BypassModCheckersGun, detected = true, toolTip = "Tells players using mod checkers that whoever your hand desires has no mods."},
                 new ButtonInfo { buttonText = "Bypass Mod Checkers All", method = Detected.BypassModCheckersAll, isTogglable = false, detected = true, toolTip = "Tells players using mod checkers that no one has no mods."},
                 new ButtonInfo { buttonText = "Bypass Mod Checkers Aura", method = Detected.BypassModCheckersAura, detected = true, toolTip = "Tells players using mod checkers that players nearby you have no mods."},
@@ -2490,10 +2491,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Gamemode Exclude All", method = Detected.GamemodeExcludeAll, isTogglable = false, detected = true, toolTip = "Excludes everyone from the current gamemode."},
                 new ButtonInfo { buttonText = "Gamemode Exclude Aura", method = Detected.GamemodeExcludeAura, detected = true, toolTip = "Excludes players nearby you from the current gamemode."},
                 new ButtonInfo { buttonText = "Gamemode Exclude On Touch", method = Detected.GamemodeExcludeOnTouch, detected = true, toolTip = "Excludes players you touch from the current gamemode."},
+                
+                new ButtonInfo { buttonText = "Break Network Triggers", method =() => Detected.BreakNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Breaks the network triggers."},
+                new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
 
                 new ButtonInfo { buttonText = "Spaz Gamemode", method = Detected.SpazGamemode, detected = true, toolTip = "Rapidly changes the gamemode."},
-                new ButtonInfo { buttonText = "Break Gamemode", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.None), isTogglable = false, detected = true, toolTip = "Changes the gamemode to error/none."},
-                new ButtonInfo { buttonText = "Destroy Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the gamemode."},
+                new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the gamemode."},
+                new ButtonInfo { buttonText = "Change Gamemode to None", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.None), isTogglable = false, detected = true, toolTip = "Changes the gamemode to error/none."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
                 new ButtonInfo { buttonText = "Change Gamemode to Competitive Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.InfectionCompetitive), isTogglable = false, detected = true, toolTip = "Changes the gamemode to competitive infection."},
