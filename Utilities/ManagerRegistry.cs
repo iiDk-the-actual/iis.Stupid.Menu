@@ -57,6 +57,19 @@ namespace iiMenu.Utilities
             }
         }
 
+        public class CustomMaps
+        {
+            public static CustomMapsGameManager CustomMapsGameManager
+            {
+                get => CustomMapsGameManager.instance;
+            }
+
+            public static GameEntityManager GameEntityManager
+            {
+                get => CustomMapsGameManager.gameEntityManager;
+            }
+        }
+
         public static BuilderTable BuilderTable
         {
             get => GetBuilderTable();

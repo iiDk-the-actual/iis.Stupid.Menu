@@ -684,7 +684,7 @@ namespace iiMenu.Mods
 
             if (!PhotonNetwork.IsMasterClient)
             {
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                VirtualStumpMasterKickGun();
                 return;
             }
 
@@ -710,7 +710,7 @@ namespace iiMenu.Mods
                         CustomMapsTerminal.GetDriverID()
                     });
 
-                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now kick.");
                 }
                 else
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
@@ -740,7 +740,8 @@ namespace iiMenu.Mods
 
             if (!PhotonNetwork.IsMasterClient)
             {
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                VirtualStumpMasterKickAll();
+                Toggle("Virtual Stump Kick All");
                 return;
             }
 
@@ -766,7 +767,7 @@ namespace iiMenu.Mods
                         CustomMapsTerminal.GetDriverID()
                     });
 
-                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now use the kick gun.");
+                    NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully assigned ID. You may now kick.");
                 }
                 else
                     NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please temporarily enter the Virtual Stump.");
@@ -776,6 +777,91 @@ namespace iiMenu.Mods
 
             NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully kicked others.");
             Toggle("Virtual Stump Kick All");
+        }
+
+        public static void VirtualStumpKickMasterClient()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            byte[] byteData = new byte[15360];
+            MemoryStream memoryStream = new MemoryStream(byteData);
+            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
+
+            binaryWriter.Write(4);
+
+            for (int i = 0; i < 4; i++)
+            {
+                binaryWriter.Write(ManagerRegistry.GhostReactor.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
+                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
+                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
+                binaryWriter.Write(0L);
+                binaryWriter.Write((byte)3);
+            }
+
+            byte[] bytes = GZipStream.CompressBuffer(byteData);
+            byte[] padding = new byte[1960];
+
+            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
+            bytes = padding;
+
+            ManagerRegistry.CustomMaps.GameEntityManager.SendRPC(
+                "JoinWithItemsRPC",
+                RpcTarget.MasterClient,
+                bytes,
+                new int[0],
+                NetworkSystem.Instance.LocalPlayer.ActorNumber
+            );
+
+            RPCProtection();
+        }
+
+        public static void VirtualStumpMasterKickGun()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        kgDebounce = Time.time + 0.2f;
+                        VirtualStumpKickMasterClient();
+                    }
+                }
+            }
+        }
+
+        private static Coroutine vstumpKickAllCoroutine;
+        public static IEnumerator VStumpKickAllCoroutine()
+        {
+            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
+            {
+                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
+                VirtualStumpKickMasterClient();
+
+                float timeDelay = Time.time + 1f;
+                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
+            }
+
+            vstumpKickAllCoroutine = null;
+            yield break;
+        }
+
+        public static void VirtualStumpMasterKickAll()
+        {
+            if (vstumpKickAllCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(vstumpKickAllCoroutine);
+
+            vstumpKickAllCoroutine = CoroutineManager.instance.StartCoroutine(VStumpKickAllCoroutine());
         }
 
         public static void GhostReactorCrashGun()
