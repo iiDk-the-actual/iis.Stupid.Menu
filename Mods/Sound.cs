@@ -61,7 +61,7 @@ namespace iiMenu.Mods
             if (Subdirectory != "")
                 soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
 
-            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the fun mods." });
+            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the sound mods." });
             int index = 0;
 
             string[] folders = Directory.GetDirectories($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);

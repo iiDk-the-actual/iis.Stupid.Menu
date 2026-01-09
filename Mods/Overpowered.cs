@@ -814,6 +814,43 @@ namespace iiMenu.Mods
             CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
         }
 
+        public static void GhostReactorKickMasterClient()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            byte[] byteData = new byte[15360];
+            MemoryStream memoryStream = new MemoryStream(byteData);
+            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
+
+            binaryWriter.Write(4);
+
+            for (int i = 0; i < 4; i++)
+            {
+                binaryWriter.Write(ManagerRegistry.GhostReactor.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
+                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
+                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
+                binaryWriter.Write(0L);
+                binaryWriter.Write((byte)3);
+            }
+
+            byte[] bytes = GZipStream.CompressBuffer(byteData);
+            byte[] padding = new byte[1960];
+
+            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
+            bytes = padding;
+
+            ManagerRegistry.GhostReactor.GameEntityManager.SendRPC(
+                "JoinWithItemsRPC",
+                RpcTarget.MasterClient,
+                bytes,
+                new int[0],
+                NetworkSystem.Instance.LocalPlayer.ActorNumber
+            );
+
+            RPCProtection();
+        }
+        
         public static void SuperInfectionKickMasterClient()
         {
             if (NetworkSystem.Instance.IsMasterClient)
@@ -851,12 +888,55 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        /*
-         * Be rexon
-         * Make mod that only works on master client
-         * Turn it into a gun
-         */
         private static float kgDebounce;
+        public static void GhostReactorKickGun()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        kgDebounce = Time.time + 0.2f;
+                        GhostReactorKickMasterClient();
+                    }
+                }
+            }
+        }
+
+        private static Coroutine grKickAllCoroutine;
+        public static IEnumerator GRKickAllCoroutine()
+        {
+            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
+            {
+                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
+                GhostReactorKickMasterClient();
+
+                float timeDelay = Time.time + 1f;
+                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
+            }
+
+            grKickAllCoroutine = null;
+            yield break;
+        }
+
+        public static void GhostReactorKickAll()
+        {
+            if (grKickAllCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(grKickAllCoroutine);
+
+            grKickAllCoroutine = CoroutineManager.instance.StartCoroutine(GRKickAllCoroutine());
+        }
+        
         public static void SuperInfectionKickGun()
         {
             if (NetworkSystem.Instance.IsMasterClient)
