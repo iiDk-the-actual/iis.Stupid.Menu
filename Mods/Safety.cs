@@ -432,7 +432,7 @@ namespace iiMenu.Mods
 
 		public static void AntiModerator()
         {
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY")))
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && vrrig.rawCosmeticString.Contains("LBAAK") || vrrig.rawCosmeticString.Contains("LBAAD") || vrrig.rawCosmeticString.Contains("LMAPY")))
             {
                 try
                 {
@@ -476,7 +476,7 @@ namespace iiMenu.Mods
 
         public static void AntiContentCreator()
         {
-            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && Visuals.specialCosmetics.Keys.Any(x => vrrig.concatStringOfCosmeticsAllowed.Contains(x))))
+            foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.isOfflineVRRig && Visuals.specialCosmetics.Keys.Any(x => vrrig.rawCosmeticString.Contains(x))))
             {
                 try
                 {
@@ -528,7 +528,7 @@ namespace iiMenu.Mods
             {
                 foreach (var cosmetic in Visuals.specialCosmetics)
                 {
-                    if (rig.concatStringOfCosmeticsAllowed.Contains(cosmetic.Key))
+                    if (rig.rawCosmeticString.Contains(cosmetic.Key))
                     {
                         specialRig = rig;
                         specialCosmetic = cosmetic.Value;

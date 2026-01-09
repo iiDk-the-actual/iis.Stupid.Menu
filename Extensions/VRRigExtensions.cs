@@ -51,7 +51,7 @@ namespace iiMenu.Extensions
 
         public static string GetPlatform(this VRRig rig)
         {
-            string concatStringOfCosmeticsAllowed = rig.concatStringOfCosmeticsAllowed;
+            string concatStringOfCosmeticsAllowed = rig.rawCosmeticString;
 
             if (concatStringOfCosmeticsAllowed.Contains("S. FIRST LOGIN"))
                 return "Steam";

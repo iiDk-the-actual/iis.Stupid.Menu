@@ -5813,7 +5813,7 @@ Piece Name: {gunTarget.name}";
                 ownedarchive = new List<string>();
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
-                    if (VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName))
+                    if (VRRig.LocalRig._playerOwnedCosmetics.Contains(dearlord.itemName))
                         ownedarchive.Add(dearlord.itemName);
                 }
             }
@@ -5855,7 +5855,7 @@ Piece Name: {gunTarget.name}";
                 ownedarchive = new List<string>();
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
-                    if (VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName) && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
+                    if (VRRig.LocalRig._playerOwnedCosmetics.Contains(dearlord.itemName) && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
                         ownedarchive.Add(dearlord.itemName);
                 }
             }
@@ -6611,7 +6611,7 @@ Piece Name: {gunTarget.name}";
                     r = plr.playerColor.r * 255;
                     g = plr.playerColor.g * 255;
                     b = plr.playerColor.b * 255;
-                    cosmetics = plr.concatStringOfCosmeticsAllowed;
+                    cosmetics = plr.rawCosmeticString;
                 }
                 catch { LogManager.Log("Failed to log colors, rig most likely nonexistent"); }
                 try

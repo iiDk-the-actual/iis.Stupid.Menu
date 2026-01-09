@@ -25,12 +25,12 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(HandLink), "OnRelease")]
+    [HarmonyPatch(typeof(TakeMyHand_HandLink), "OnRelease")]
     public class ReleasePatch
     {
         public static bool enabled;
 
-        public static bool Prefix(HandLink __instance, bool __result, DropZone zoneReleased, GameObject releasingHand)
+        public static bool Prefix(TakeMyHand_HandLink __instance, bool __result, DropZone zoneReleased, GameObject releasingHand)
         {
             if (enabled)
             {
@@ -38,9 +38,9 @@ namespace iiMenu.Patches.Menu
                 {
                     bool grounded = false;
 
-                    HandLink handLink = releasingHand == EquipmentInteractor.instance.leftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
+                    TakeMyHand_HandLink handLink = releasingHand == EquipmentInteractor.instance.leftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
                    
-                    HandLinkAuthorityStatus selfHandLinkAuthority = GTPlayer.Instance.GetSelfHandLinkAuthority();
+                    HandLinkAuthorityStatus selfHandLinkAuthority = GTPlayer.Instance.TakeMyHand_GetSelfHandLinkAuthority();
                     HandLinkAuthorityStatus selfChainAuthority = handLink.GetChainAuthority(out _);
 
                     if (selfHandLinkAuthority.type >= HandLinkAuthorityType.ButtGrounded && selfChainAuthority.type < selfHandLinkAuthority.type)

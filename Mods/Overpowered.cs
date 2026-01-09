@@ -1254,8 +1254,8 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-                    HandLink link = isLeftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
-                    link.CreateLink(isLeftHand ? rig.leftHandLink : rig.rightHandLink);
+                    TakeMyHand_HandLink link = isLeftHand ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink;
+                    link.LocalCreateLink(isLeftHand ? rig.leftHandLink : rig.rightHandLink); // recheck kingofnetflix
 
                     break;
                 }

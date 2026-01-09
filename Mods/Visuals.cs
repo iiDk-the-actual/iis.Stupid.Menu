@@ -2294,7 +2294,7 @@ namespace iiMenu.Mods
                     CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
                     foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
                     {
-                        if (!cosmetic.isNullItem && !vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.itemName))
+                        if (!cosmetic.isNullItem && !vrrig.rawCosmeticString.Contains(cosmetic.itemName))
                         {
                             if (specialMods == null)
                                 specialMods = "Cosmetx";
@@ -2377,7 +2377,7 @@ namespace iiMenu.Mods
                     string cosmetics = null;
                     foreach (KeyValuePair<string, string> cosmetic in specialCosmetics)
                     {
-                        if (vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.Key))
+                        if (vrrig.rawCosmeticString.Contains(cosmetic.Key))
                         {
                             if (cosmetics == null)
                                 cosmetics = cosmetic.Value;
@@ -3143,7 +3143,7 @@ namespace iiMenu.Mods
                 string currentCosmetic = null;
                 foreach (var (codename, name) in cosmetics)
                 {
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains(codename))
+                    if (vrrig.rawCosmeticString.Contains(codename))
                     {
                         currentCosmetic = name;
                         break;

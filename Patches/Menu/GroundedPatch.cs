@@ -23,12 +23,12 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(HandLink), "LocalUpdate")]
+    [HarmonyPatch(typeof(TakeMyHand_HandLink), "LocalUpdate")]
     public class GroundedPatch
     {
         public static bool enabled;
 
-        public static void Postfix(HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool canBeGrabbed)
+        public static void Postfix(TakeMyHand_HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool canBeGrabbed)
         {
             if (enabled)
                 __instance.isGroundedHand = true;
