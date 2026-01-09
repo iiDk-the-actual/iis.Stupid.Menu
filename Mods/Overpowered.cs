@@ -912,6 +912,30 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        private static Coroutine grKickAllCoroutine;
+        public static IEnumerator GRKickAllCoroutine()
+        {
+            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
+            {
+                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
+                GhostReactorKickMasterClient();
+
+                float timeDelay = Time.time + 1f;
+                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
+            }
+
+            grKickAllCoroutine = null;
+            yield break;
+        }
+
+        public static void GhostReactorKickAll()
+        {
+            if (grKickAllCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(grKickAllCoroutine);
+
+            grKickAllCoroutine = CoroutineManager.instance.StartCoroutine(GRKickAllCoroutine());
+        }
         
         public static void SuperInfectionKickGun()
         {
