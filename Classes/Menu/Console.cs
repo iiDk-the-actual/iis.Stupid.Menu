@@ -147,38 +147,31 @@ namespace iiMenu.Classes.Menu
         }
 
         public static void LoadConsole() =>
-            GorillaTagger.OnPlayerSpawned(LoadConsoleImmediately);
+            GorillaTagger.OnPlayerSpawned(() => LoadConsoleImmediately());
 
-        public static void LoadConsoleImmediately()
+        public const string LoadVersionEventKey = "%<CONSOLE>%LoadVersion"; // Do not change this, it's used to prevent multiple instances of Console from colliding with each other
+        public static void NoOverlapEvents(string eventName, int id)
         {
-            string ConsoleGUID = "goldentrophy_Console";
-            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
+            if (eventName == LoadVersionEventKey)
+            {
+                if (ServerData.VersionToNumber(ConsoleVersion) <= id)
+                    PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
+            }
+        }
 
-            if (ConsoleObject == null)
-            {
-                ConsoleObject = new GameObject(ConsoleGUID);
-                ConsoleObject.AddComponent<Console>();
-            }
-            else
-            {
-                if (ConsoleObject.GetComponents<Component>()
-                    .Select(c => c.GetType().GetField("ConsoleVersion",
-                        BindingFlags.Public |
-                        BindingFlags.Static))
-                    .Select(f => f.GetValue(null))
-                    .FirstOrDefault() is string consoleVersion)
-                {
-                    if (ServerData.VersionToNumber(consoleVersion) < ServerData.VersionToNumber(ConsoleVersion))
-                    {
-                        Destroy(ConsoleObject);
-                        ConsoleObject = new GameObject(ConsoleGUID);
-                        ConsoleObject.AddComponent<Console>();
-                    }
-                }
-            }
+        public static GameObject LoadConsoleImmediately()
+        {
+            PlayerGameEvents.MiscEvent(LoadVersionEventKey, ServerData.VersionToNumber(ConsoleVersion));
+            PlayerGameEvents.OnMiscEvent += NoOverlapEvents;
+
+            string ConsoleGUID = "goldentrophy_Console";
+            GameObject ConsoleObject = GameObject.Find(ConsoleGUID) ?? new GameObject(ConsoleGUID);
+            ConsoleObject.AddComponent<Console>();
 
             if (ServerData.ServerDataEnabled)
                 ConsoleObject.AddComponent<ServerData>();
+
+            return ConsoleObject;
         }
 
         public void OnDisable() =>
