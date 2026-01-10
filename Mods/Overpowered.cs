@@ -1909,7 +1909,10 @@ namespace iiMenu.Mods
                     }
                 }
                 else
+                {
+                    characterIndex = 0;
                     basePosition = null;
+                }
             }
         }
 
@@ -1950,7 +1953,10 @@ namespace iiMenu.Mods
                     }
                 }
                 else
+                {
+                    characterIndex = 0;
                     basePosition = null;
+                }
             }
         }
 

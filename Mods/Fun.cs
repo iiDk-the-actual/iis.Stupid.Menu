@@ -4627,7 +4627,10 @@ Piece Name: {gunTarget.name}";
                     }
                 }
                 else
+                {
                     Overpowered.basePosition = null;
+                    Overpowered.characterIndex = 0;
+                }
             }
         }
 
