@@ -108,7 +108,9 @@ namespace iiMenu.Mods
             "PortableBonfire_Sticks_Anchor_LeftHand",
             "PortableBonfire_Sticks_Anchor_RightHand",
             "Walnut_Anchor_Left",
-            "Walnut_Anchor_Right"
+            "Walnut_Anchor_Right",
+            "HotCocoaCup_Anchor_LEFT",
+            "HotCocoaCup_Anchor_RIGHT"
         };
 
         public static string SnowballName = "GrowingSnowball";
@@ -363,7 +365,8 @@ namespace iiMenu.Mods
                 "Popcorn Ball",
                 "Plate",
                 "Stick",
-                "Walnut"
+                "Walnut",
+                "Hot Cocoa"
             };
 
             if (positive)

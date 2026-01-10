@@ -4975,7 +4975,6 @@ namespace iiMenu.Menu
             }
         }
 
-        public static SnowballThrowable[] snowballs = { };
         public static Dictionary<string, SnowballThrowable> snowballDict;
         public static SnowballThrowable GetProjectile(string projectileName)
         {

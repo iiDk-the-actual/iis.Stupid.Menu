@@ -40,6 +40,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Extensions.VRRigExtensions;
@@ -3523,8 +3524,8 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = true;
             DistancePatch.enabled = false;
 
-            GetProjectile($"{Projectiles.SnowballName}LeftAnchor").SetSnowballActiveLocal(false);
-            GetProjectile($"{Projectiles.SnowballName}RightAnchor").SetSnowballActiveLocal(false);
+            foreach (SnowballThrowable snowball in snowballDict.Values)
+                snowball.SetSnowballActiveLocal(false);
         }
 
         public static bool SnowballHandIndex;
@@ -3567,6 +3568,14 @@ namespace iiMenu.Mods
 
                 for (int i = 0; i < snowballMultiplicationFactor; i++)
                 {
+                    SnowballTime++;
+
+                    if (NoDelaySnowballs && SnowballTime >= 10)
+                    {
+                        Projectiles.ChangeGrowingProjectile();
+                        SnowballTime = 0;
+                    }
+
                     SnowballHandIndex = !SnowballHandIndex;
                     Vel = Vel.ClampMagnitudeSafe(50f);
 
@@ -3610,16 +3619,11 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.transform.position = archivePosition;
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 }
-
-                SnowballTime++;
-
-                if (NoDelaySnowballs && SnowballTime >= 10)
-                {
-                    Projectiles.ChangeGrowingProjectile();
-                    SnowballTime = 0;
-                }
             }
-            catch { }
+            catch (Exception e) 
+            {
+                LogManager.LogError($"Error in BetaSpawnSnowball: {e}");
+            }
 
             RPCProtection();
         }
