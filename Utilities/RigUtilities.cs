@@ -38,23 +38,26 @@ namespace iiMenu.Utilities
         {
             try
             {
-                try
-                {
-                    return GorillaGameManager.StaticFindRigForPlayer(p);
-                }
-                catch
-                {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                    {
-                        if (rig.GetPlayer() == p)
-                            return rig;
-                    }
-                }
-            } catch
+                VRRig rig = GorillaGameManager.StaticFindRigForPlayer(p);
+                
+                if (rig != null)
+                    return rig;
+            } catch { }
+
+            try
             {
                 if (VRRigCache.Instance.TryGetVrrig(p, out var rig))
                     return rig.Rig;
-            }
+            } catch { }
+
+            try
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (rig.GetPlayer() == p)
+                        return rig;
+                }
+            } catch { }
 
             return null;
         }
