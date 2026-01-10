@@ -3682,7 +3682,7 @@ namespace iiMenu.Mods
 
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(snowballNukePosition.Value, velocity, 0);
+                        BetaSpawnSnowball(snowballNukePosition.Value + RandomVector3(velocity.magnitude * 0.25f).X_Z(), velocity, 0);
                         snowballDelay = Time.time + SnowballSpawnDelay;
                     }
                 }
