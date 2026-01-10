@@ -3666,6 +3666,7 @@ namespace iiMenu.Mods
         }
 
         private static Vector3? snowballNukePosition;
+        private static Vector3 velocity;
         public static void SnowballNukeGun()
         {
             if (GetGunInput(false))
@@ -3677,16 +3678,20 @@ namespace iiMenu.Mods
                 {
                     snowballNukePosition ??= NewPointer.transform.position + (Vector3.up * 50f);
                     snowballNukePosition += Time.unscaledDeltaTime * Physics.gravity;
+                    velocity += Time.unscaledDeltaTime * Physics.gravity;
 
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 0);
+                        BetaSpawnSnowball(snowballNukePosition.Value, velocity, 0);
                         snowballDelay = Time.time + SnowballSpawnDelay;
                     }
                 }
             }
             else
+            {
                 snowballNukePosition = null;
+                velocity = Vector3.zero;
+            }
         }
 
         public static void SnowballRain()
