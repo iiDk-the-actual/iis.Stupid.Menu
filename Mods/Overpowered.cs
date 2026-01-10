@@ -3743,68 +3743,62 @@ namespace iiMenu.Mods
 
         public static void SnowballSpam()
         {
-            if (GetGunInput(false))
+            if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                var GunData = RenderGun();
-                GameObject NewPointer = GunData.NewPointer;
+                Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
+                Vector3 charvel = GTPlayer.Instance.RigidbodyVelocity;
 
-                if (GetGunInput(true) && Time.time > snowballDelay)
+                if (Buttons.GetIndex("Shoot Projectiles").enabled)
                 {
-                    Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
-                    Vector3 charvel = GTPlayer.Instance.RigidbodyVelocity;
-
-                    if (Buttons.GetIndex("Shoot Projectiles").enabled)
+                    charvel = GTPlayer.Instance.RigidbodyVelocity + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                    if (Mouse.current.leftButton.isPressed)
                     {
-                        charvel = GTPlayer.Instance.RigidbodyVelocity + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
-                        if (Mouse.current.leftButton.isPressed)
-                        {
-                            Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                            Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
-                            charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
-                            charvel.Normalize();
-                            charvel *= ShootStrength * 2f;
-                        }
+                        Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                        Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                        charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                        charvel.Normalize();
+                        charvel *= ShootStrength * 2f;
                     }
-
-                    if (Buttons.GetIndex("Random Direction").enabled)
-                        charvel = RandomVector3(100f);
-
-                    if (Buttons.GetIndex("Above Players").enabled)
-                    {
-                        VRRig targetRig = GetTargetPlayer();
-                        startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
-                    }
-
-                    if (Buttons.GetIndex("Rain Projectiles").enabled)
-                    {
-                        startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-2f, 2f), 2f, Random.Range(-2f, 2f));
-                        charvel = Vector3.zero;
-                    }
-
-                    if (Buttons.GetIndex("Projectile Aura").enabled)
-                    {
-                        float time = Time.frameCount;
-                        startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
-                    }
-
-                    if (Buttons.GetIndex("True Projectile Aura").enabled)
-                    {
-                        startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
-                        charvel = RandomVector3(10f);
-                    }
-
-                    if (Buttons.GetIndex("Projectile Fountain").enabled)
-                    {
-                        startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-                        charvel = new Vector3(Random.Range(-10, 10), 15, Random.Range(-10, 10));
-                    }
-
-                    if (Buttons.GetIndex("Include Hand Velocity").enabled)
-                        charvel = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
-
-                    BetaSpawnSnowball(startpos, charvel, 0);
-                    snowballDelay = Time.time + SnowballSpawnDelay;
                 }
+
+                if (Buttons.GetIndex("Random Direction").enabled)
+                    charvel = RandomVector3(100f);
+
+                if (Buttons.GetIndex("Above Players").enabled)
+                {
+                    VRRig targetRig = GetTargetPlayer();
+                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
+                }
+
+                if (Buttons.GetIndex("Rain Projectiles").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(Random.Range(-2f, 2f), 2f, Random.Range(-2f, 2f));
+                    charvel = Vector3.zero;
+                }
+
+                if (Buttons.GetIndex("Projectile Aura").enabled)
+                {
+                    float time = Time.frameCount;
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                }
+
+                if (Buttons.GetIndex("True Projectile Aura").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+                    charvel = RandomVector3(10f);
+                }
+
+                if (Buttons.GetIndex("Projectile Fountain").enabled)
+                {
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
+                    charvel = new Vector3(Random.Range(-10, 10), 15, Random.Range(-10, 10));
+                }
+
+                if (Buttons.GetIndex("Include Hand Velocity").enabled)
+                    charvel = GTPlayer.Instance.RightHand.velocityTracker.GetAverageVelocity(true, 0);
+
+                BetaSpawnSnowball(startpos, charvel, 0);
+                snowballDelay = Time.time + SnowballSpawnDelay;
             }
         }
 
