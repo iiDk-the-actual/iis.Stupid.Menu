@@ -792,7 +792,7 @@ namespace iiMenu.Mods
 
             for (int i = 0; i < 4; i++)
             {
-                binaryWriter.Write(ManagerRegistry.GhostReactor.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
+                binaryWriter.Write(ManagerRegistry.CustomMaps.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
                 binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
                 binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
                 binaryWriter.Write(0L);
