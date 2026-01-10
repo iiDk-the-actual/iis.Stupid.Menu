@@ -4565,9 +4565,23 @@ namespace iiMenu.Menu
             return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || (HardGunLocks && gunLocked && !rightSecondary) || Mouse.current.rightButton.isPressed;
         }
 
+        /// <summary>
+        /// Returns the gun direction vector based on the specified transform and the current GunDirection setting.
+        /// </summary>
+        /// <param name="transform">The transform used to determine the gun's orientation.</param>
+        /// <returns>A Vector3 representing the selected gun direction.</returns>
         public static Vector3 GetGunDirection(Transform transform) =>
             new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? ControllerUtilities.GetTrueRightHand().forward : ControllerUtilities.GetTrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
 
+        /// <summary>
+        /// Generates a text-to-speech audio clip from the provided text using various TTS services and invokes a
+        /// callback with the resulting AudioClip.
+        /// </summary>
+        /// <param name="text">The text to be converted to speech.</param>
+        /// <param name="onComplete">Callback invoked with the generated AudioClip or null if the operation fails.</param>
+        /// <param name="customFileName">Optional custom file name for the generated audio file.</param>
+        /// <param name="customPath">Optional custom directory path for storing the generated audio file.</param>
+        /// <returns>An enumerator for coroutine-based asynchronous execution.</returns>
         public static IEnumerator TranscribeText(string text, Action<AudioClip> onComplete, string customFileName = null, string customPath = null)
         {
             if (Time.time < timeMenuStarted + 5f)
@@ -4864,9 +4878,17 @@ namespace iiMenu.Menu
             onComplete?.Invoke(LoadSoundFromFile($"{directoryPath[$"{PluginInfo.BaseDirectory}/".Length..]}/{fileName}"));
         }
 
+        /// <summary>
+        /// Initiates narration of the specified text by transcribing it to audio and playing it with adjusted volume.
+        /// </summary>
+        /// <param name="text">The text to be narrated.</param>
         public static void NarrateText(string text) =>
             CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Play2DAudio(audio, buttonClickSound / 10f)));
 
+        /// <summary>
+        /// Initiates narration of the specified text by transcribing it to audio and playing it through your microphone.
+        /// </summary>
+        /// <param name="text">The text to be narrated.</param>
         public static void SpeakText(string text) =>
             CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
 
@@ -4976,6 +4998,12 @@ namespace iiMenu.Menu
         }
 
         public static Dictionary<string, SnowballThrowable> snowballDict;
+
+        /// <summary>
+        /// Retrieves a SnowballThrowable instance by its projectile name.
+        /// </summary>
+        /// <param name="projectileName">The name of the projectile to retrieve.</param>
+        /// <returns>The matching SnowballThrowable instance if found; otherwise, null.</returns>
         public static SnowballThrowable GetProjectile(string projectileName)
         {
             if (snowballDict == null)
@@ -5188,6 +5216,12 @@ namespace iiMenu.Menu
         }
 
         public static GameObject audioManager;
+
+        /// <summary>
+        /// Plays a 2D audio clip at the specified volume using a singleton audio manager.
+        /// </summary>
+        /// <param name="sound">The audio clip to play.</param>
+        /// <param name="volume">The volume at which to play the audio clip. Defaults to 1f.</param>
         public static void Play2DAudio(AudioClip sound, float volume = 1f)
         {
             if (audioManager == null)
@@ -5201,6 +5235,13 @@ namespace iiMenu.Menu
             ausrc.PlayOneShot(sound);
         }
 
+        /// <summary>
+        /// Plays an audio clip at a specified world position with configurable volume and spatial blend.
+        /// </summary>
+        /// <param name="sound">The audio clip to play.</param>
+        /// <param name="position">The world position where the audio should be played.</param>
+        /// <param name="volume">The volume at which to play the audio clip. Defaults to 1f.</param>
+        /// <param name="spatialBlend">The spatial blend value for 3D audio. Defaults to 1f.</param>
         public static void PlayPositionAudio(AudioClip sound, Vector3 position, float volume = 1f, float spatialBlend = 1f)
         {
             GameObject audioManager = new GameObject("AudioMgr");
@@ -5217,6 +5258,13 @@ namespace iiMenu.Menu
         }
 
         public static GameObject handAudioManager;
+
+        /// <summary>
+        /// Plays a looping audio clip at the specified volume from either the left or right hand in the VR rig.
+        /// </summary>
+        /// <param name="sound">The audio clip to play.</param>
+        /// <param name="volume">The playback volume for the audio clip.</param>
+        /// <param name="left">True to play audio from the left hand; false for the right hand.</param>
         public static void PlayHandAudio(AudioClip sound, float volume, bool left)
         {
             if (handAudioManager == null)
@@ -5475,7 +5523,17 @@ namespace iiMenu.Menu
         public static bool inRoomStatus;
         public static string lastRoom;
 
-        public static void OnJoinRoom()
+        public static string CleanPlayerName(string input, int length = 12)
+        {
+            input = NoRichtextTags(input);
+
+            if (input.Length > length)
+                input = input[..(length - 1)];
+
+            return input;
+        }
+
+        private static void OnJoinRoom()
         {
             if (inRoomStatus)
                 return;
@@ -5489,7 +5547,7 @@ namespace iiMenu.Menu
             RPCProtection();
         }
 
-        public static void OnLeaveRoom()
+        private static void OnLeaveRoom()
         {
             if (!inRoomStatus)
                 return;
@@ -5505,7 +5563,7 @@ namespace iiMenu.Menu
             RPCProtection();
         }
 
-        public static void OnMasterClientSwitch(NetPlayer masterClient)
+        private static void OnMasterClientSwitch(NetPlayer masterClient)
         {
             if (disableMasterClientNotifications)
                 return;
@@ -5519,23 +5577,13 @@ namespace iiMenu.Menu
                 Buttons.GetIndex("MasterLabel").overlapText = "You are not master client.";
         }
 
-        public static string CleanPlayerName(string input, int length = 12)
-        {
-            input = NoRichtextTags(input);
-
-            if (input.Length > length)
-                input = input[..(length - 1)];
-
-            return input;
-        }
-
-        public static void OnPlayerJoin(NetPlayer Player)
+        private static void OnPlayerJoin(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
         }
 
-        public static void OnPlayerLeave(NetPlayer Player)
+        private static void OnPlayerLeave(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
                 NotificationManager.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
@@ -5549,7 +5597,7 @@ namespace iiMenu.Menu
         public static Vector3 ServerLeftHandPos;
         public static Vector3 ServerRightHandPos;
 
-        public static void OnSerialize()
+        private static void OnSerialize()
         {
             ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
             ServerSyncLeftHandPos = VRRig.LocalRig?.leftHand?.rigTarget?.transform.position ?? ServerSyncLeftHandPos;
@@ -5557,10 +5605,17 @@ namespace iiMenu.Menu
         }
 
         public static readonly Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
-
-        public static void OnPlayerSerialize(VRRig rig) =>
+        private static void OnPlayerSerialize(VRRig rig) =>
             playerPing[rig] = rig.GetTruePing();
 
+        /// <summary>
+        /// Serializes multiple PhotonViews owned by the local player, with optional filtering and timing adjustments.
+        /// </summary>
+        /// <param name="exclude">If true, serializes all owned PhotonViews except those in the viewFilter; if false, serializes only those in
+        /// the viewFilter.</param>
+        /// <param name="viewFilter">An array of PhotonViews to include or exclude from serialization, depending on the exclude parameter.</param>
+        /// <param name="timeOffset">An integer offset to apply to the serialization time.</param>
+        /// <param name="delay">A delay in seconds before serialization is sent.</param>
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0, float delay = 0f)
         {
             if (!PhotonNetwork.InRoom)
@@ -5591,6 +5646,14 @@ namespace iiMenu.Menu
                 SendSerialize(view, null, timeOffset, delay);
         }
 
+        /// <summary>
+        /// Serializes and sends the state of a PhotonView to other clients in the room, with optional event options,
+        /// time offset, and delay.
+        /// </summary>
+        /// <param name="pv">The PhotonView to serialize and send.</param>
+        /// <param name="options">Optional RaiseEventOptions to customize event sending.</param>
+        /// <param name="timeOffset">Optional time offset to apply to the event timestamp.</param>
+        /// <param name="delay">Optional delay in seconds before sending the event.</param>
         public static void SendSerialize(PhotonView pv, RaiseEventOptions options = null, int timeOffset = 0, float delay = 0f)
         {
             if (!PhotonNetwork.InRoom)
