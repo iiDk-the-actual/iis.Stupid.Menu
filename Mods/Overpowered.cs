@@ -3524,7 +3524,7 @@ namespace iiMenu.Mods
             DistancePatch.enabled = false;
 
             GetProjectile($"{Projectiles.SnowballName}LeftAnchor").SetSnowballActiveLocal(false);
-            GetProjectile($"{Projectiles.SnowballName}SnowballRightAnchor").SetSnowballActiveLocal(false);
+            GetProjectile($"{Projectiles.SnowballName}RightAnchor").SetSnowballActiveLocal(false);
         }
 
         public static bool SnowballHandIndex;
