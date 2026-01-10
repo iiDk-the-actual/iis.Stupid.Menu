@@ -1155,7 +1155,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => EnablePatch.enabled = true, disableMethod =() => EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Spaz Snowballs <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.SpazSnowballs, toolTip = "Randomizes the size of the snowballs. Credits to test for the idea."},
 
-                new ButtonInfo { buttonText = "Multiply Snowballs", method =() => ThrowPatch.enabled = true, disableMethod =() => ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
+                new ButtonInfo { buttonText = "Multiply Snowballs", method =() => ThrowPatch.enabled = true, disableMethod =() => ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you throw by 5."},
 
                 new ButtonInfo { buttonText = "Fast Snowballs", overlapText = "Fast Projectiles", method = Fun.FastSnowballs, disableMethod = Fun.FixSnowballs, toolTip = "Makes projectiles go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", overlapText = "Slow Projectiles", method = Fun.SlowSnowballs, disableMethod = Fun.FixSnowballs, toolTip = "Makes projectiles go really slow when thrown."},
