@@ -52,7 +52,7 @@ namespace iiMenu.Utilities
         }
 
         public static NetPlayer GetPlayerFromVRRig(VRRig p) =>
-            p.Creator;
+            p.Creator ?? p.OwningNetPlayer ?? NetworkSystem.Instance.GetPlayer(NetworkSystem.Instance.GetOwningPlayerID(p.gameObject));
 
         public static NetPlayer GetPlayerFromID(string id) =>
             PhotonNetwork.PlayerList.FirstOrDefault(player => player.UserId == id);

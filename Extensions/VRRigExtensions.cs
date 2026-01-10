@@ -35,7 +35,7 @@ namespace iiMenu.Extensions
     public static class VRRigExtensions
     {
         public static bool IsLocal(this VRRig rig) =>
-            rig != null && (rig.isLocal || rig == GhostRig);
+            rig != null && (rig.isLocal || (GhostRig != null && rig == GhostRig));
 
         public static bool IsTagged(this VRRig rig)
         {
