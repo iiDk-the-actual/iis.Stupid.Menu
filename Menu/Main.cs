@@ -6476,13 +6476,6 @@ jgs \_   _/ |Oo\
                     for (int i = 0; i < Buttons.buttons.Length; i++)
                     {
                         var buttonList = Buttons.buttons[i];
-                        var category = Buttons.categoryNames[i];
-
-                        bool skipSettings = hideSettings && category.Contains("Settings");
-                        bool skipMacros = hideMacros && category.Contains("Macro");
-
-                        if (skipSettings || skipMacros)
-                            continue;
 
                         foreach (var v in buttonList)
                         {
