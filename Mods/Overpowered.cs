@@ -3530,6 +3530,7 @@ namespace iiMenu.Mods
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
         public static bool NoDelaySnowballs;
+        public static int SnowballTime;
 
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null)
         {
@@ -3610,8 +3611,10 @@ namespace iiMenu.Mods
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 }
 
-                if (NoDelaySnowballs && SnowballHandIndex)
+                if (NoDelaySnowballs && SnowballTime % 11 == 10)
                     Projectiles.ChangeGrowingProjectile();
+
+                SnowballTime++;
             }
             catch { }
 
