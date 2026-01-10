@@ -3525,7 +3525,7 @@ namespace iiMenu.Mods
             DistancePatch.enabled = false;
 
             foreach (SnowballThrowable snowball in snowballDict.Values)
-                snowball.SetSnowballActiveLocal(false);
+                try { snowball.SetSnowballActiveLocal(false); } catch { }
         }
 
         public static bool SnowballHandIndex;
