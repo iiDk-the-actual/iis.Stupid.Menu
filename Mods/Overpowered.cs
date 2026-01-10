@@ -3771,6 +3771,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballShotgun()
+        {
+            if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
+            {
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
+                if (Mouse.current.leftButton.isPressed)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                    velocity = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                    velocity.Normalize();
+                    velocity *= ShootStrength * 2f;
+                }
+
+                for (int i = 0; i < 5; i++)
+                    BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity + RandomVector3(5f), 0);
+
+                snowballDelay = Time.time + (SnowballSpawnDelay * 5);
+            }
+        }
+
         public static void GiveSnowballMinigun()
         {
             if (GetGunInput(false))
