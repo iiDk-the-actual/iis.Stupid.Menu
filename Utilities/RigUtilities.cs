@@ -34,33 +34,8 @@ namespace iiMenu.Utilities
 {
     public class RigUtilities
     {
-        public static VRRig GetVRRigFromPlayer(NetPlayer p)
-        {
-            try
-            {
-                VRRig rig = GorillaGameManager.StaticFindRigForPlayer(p);
-                
-                if (rig != null)
-                    return rig;
-            } catch { }
-
-            try
-            {
-                if (VRRigCache.Instance.TryGetVrrig(p, out var rig))
-                    return rig.Rig;
-            } catch { }
-
-            try
-            {
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                {
-                    if (rig.GetPlayer() == p)
-                        return rig;
-                }
-            } catch { }
-
-            return null;
-        }
+        public static VRRig GetVRRigFromPlayer(NetPlayer p) =>
+            GorillaGameManager.StaticFindRigForPlayer(p);
 
         public static NetPlayer GetPlayerFromVRRig(VRRig p) =>
             p.Creator ?? p.OwningNetPlayer ?? NetworkSystem.Instance.GetPlayer(NetworkSystem.Instance.GetOwningPlayerID(p.gameObject));
