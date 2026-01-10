@@ -3665,6 +3665,30 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Vector3? snowballNukePosition;
+        public static void SnowballNukeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    snowballNukePosition ??= NewPointer.transform.position + (Vector3.up * 50f);
+                    snowballNukePosition += Time.unscaledDeltaTime * Physics.gravity;
+
+                    if (Time.time > snowballDelay)
+                    {
+                        BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 0);
+                        snowballDelay = Time.time + SnowballSpawnDelay;
+                    }
+                }
+            }
+            else
+                snowballNukePosition = null;
+        }
+
         public static void SnowballRain()
         {
             if (rightTrigger > 0.5f)
