@@ -38,17 +38,25 @@ namespace iiMenu.Utilities
         {
             try
             {
-                return GorillaGameManager.StaticFindRigForPlayer(p);
+                try
+                {
+                    return GorillaGameManager.StaticFindRigForPlayer(p);
+                }
+                catch
+                {
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    {
+                        if (rig.GetPlayer() == p)
+                            return rig;
+                    }
+                }
             } catch
             {
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                {
-                    if (rig.GetPlayer() == p)
-                        return rig;
-                }
-
-                return null;
+                if (VRRigCache.Instance.TryGetVrrig(p, out var rig))
+                    return rig.Rig;
             }
+
+            return null;
         }
 
         public static NetPlayer GetPlayerFromVRRig(VRRig p) =>
