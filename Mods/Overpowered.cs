@@ -3611,10 +3611,13 @@ namespace iiMenu.Mods
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 }
 
-                if (NoDelaySnowballs && SnowballTime % 11 == 10)
-                    Projectiles.ChangeGrowingProjectile();
-
                 SnowballTime++;
+
+                if (NoDelaySnowballs && SnowballTime >= 10)
+                {
+                    Projectiles.ChangeGrowingProjectile();
+                    SnowballTime = 0;
+                }
             }
             catch { }
 
