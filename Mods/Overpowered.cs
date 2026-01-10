@@ -683,7 +683,7 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 VirtualStumpMasterKickGun();
                 return;
