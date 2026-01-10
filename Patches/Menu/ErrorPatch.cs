@@ -21,8 +21,6 @@
 
 using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes.Menu;
-using iiMenu.Managers;
 using PlayFab;
 using System;
 using System.Collections.Generic;

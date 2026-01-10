@@ -33,7 +33,7 @@ namespace iiMenu.Utilities
         {
             List<NetPlayer> infected = new List<NetPlayer>();
 
-            if (!PhotonNetwork.InRoom)
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance == null)
                 return infected;
 
             switch (GorillaGameManager.instance.GameType())
@@ -66,6 +66,8 @@ namespace iiMenu.Utilities
                         infected.Add(NetworkSystem.Instance.LocalPlayer);
 
                     break;
+                default:
+                    break;
             }
 
             return infected;
@@ -73,6 +75,9 @@ namespace iiMenu.Utilities
 
         public static void AddInfected(NetPlayer plr)
         {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance == null)
+                return;
+
             switch (GorillaGameManager.instance.GameType())
             {
                 case GameModeType.Infection:
@@ -99,11 +104,16 @@ namespace iiMenu.Utilities
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
                     break;
+                default:
+                    break;
             }
         }
 
         public static void RemoveInfected(NetPlayer plr)
         {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance == null)
+                return;
+
             switch (GorillaGameManager.instance.GameType())
             {
                 case GameModeType.Infection:
@@ -140,11 +150,16 @@ namespace iiMenu.Utilities
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
                     break;
+                default:
+                    break;
             }
         }
 
         public static void AddRock(NetPlayer plr)
         {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance == null)
+                return;
+
             switch (GorillaGameManager.instance.GameType())
             {
                 case GameModeType.Infection:
@@ -167,11 +182,16 @@ namespace iiMenu.Utilities
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
                     break;
+                default:
+                    break;
             }
         }
 
         public static void RemoveRock(NetPlayer plr)
         {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance == null)
+                return;
+
             switch (GorillaGameManager.instance.GameType())
             {
                 case GameModeType.Infection:
@@ -195,6 +215,8 @@ namespace iiMenu.Utilities
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
+                    break;
+                default:
                     break;
             }
         }
