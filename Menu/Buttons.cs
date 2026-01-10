@@ -1662,9 +1662,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Projectile Lag Gun", method = Projectiles.ProjectileLagGun, toolTip = "Lags whoever your hand desires using the firework projectiles."},
                 new ButtonInfo { buttonText = "Projectile Lag All", enableMethod = Projectiles.ProjectileLagAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Lags everybody in the room using the firework projectiles."},
 
-                new ButtonInfo { buttonText = "Snowball Airstrike Gun", method = Overpowered.SnowballAirstrikeGun, toolTip = "Spawns a snowball airstrike wherever your hand desires."},
-                new ButtonInfo { buttonText = "Snowball Nuke Gun", method = Overpowered.SnowballNukeGun, toolTip = "Spawns a long of snowballs airstriking from the sky at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Spam", method = Overpowered.SnowballSpam, toolTip = "Spams snowballs when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings"},
+
                 new ButtonInfo { buttonText = "Snowball Gun", method = Overpowered.SnowballGun, toolTip = "Spawns a snowball wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Nuke Gun", method = Overpowered.SnowballNukeGun, toolTip = "Spawns a long of snowballs airstriking from the sky at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Airstrike Gun", method = Overpowered.SnowballAirstrikeGun, toolTip = "Spawns a snowball airstrike wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Rain <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballRain, toolTip = "Rains snowballs around you when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Snowball Hail <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballHail, toolTip = "Hails snowballs around you when holding <color=green>trigger</color>."},
