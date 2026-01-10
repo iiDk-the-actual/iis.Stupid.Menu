@@ -1190,7 +1190,8 @@ namespace iiMenu.Mods
                 scheduledObject.gameObject.SetActive(true);
                 foreach (GameObject gameObject in scheduledObject.scheduledGameObject)
                     gameObject.SetActive(true);
-
+                foreach (Transform child in scheduledObject.gameObject.transform)
+                    child.gameObject.SetActive(true);
                 scheduledObject.enabled = false;
             }
         }
