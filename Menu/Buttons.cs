@@ -2399,7 +2399,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Will", method =() => Process.Start("https://github.com/64will64"), isTogglable = false, toolTip = "Will gave me the idea to make body rotation mods."},
                 new ButtonInfo { buttonText = "KyleTheScientist", method =() => Process.Start("https://github.com/KyleTheScientist"), isTogglable = false, toolTip = "KyleTheScientist gave me the idea to add \"Bark Fly\" to the menu and helped me create and use asset bundles."},
                 new ButtonInfo { buttonText = "Gorilla Dev", method =() => Process.Start("https://github.com/GorillerDev"), isTogglable = false, toolTip = "Gorilla Dev gave me the idea to add \"Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>\" to the menu."},
-                new ButtonInfo { buttonText = "EyeCantSee", method =() => Process.Start("https://github.com/charlottebutson-pixel"), isTogglable = false, toolTip = "EyeCantSee has pushed minor optimizations and features to the menu."}, // Wait a minute.. IM IN THE CREDITS!!! OMG!!! 🥳🥳🥳🥳🥳🥳 Thx so much iiDk
+                new ButtonInfo { buttonText = "EyeCantSee", method =() => Process.Start("https://github.com/charlottebutson-pixel"), isTogglable = false, toolTip = "EyeCantSee has pushed minor optimizations and features to the menu."},
 
                 new ButtonInfo { buttonText = "GPL v3", method =() => Process.Start("https://www.gnu.org/licenses/gpl-3.0.html"), isTogglable = false, toolTip = "The GNU General Public License Version 3 is the license that my menu uses. It proveides a \"free, copyleft license for software and other kinds of works.\""},
             },
@@ -2420,7 +2420,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Give Platforms Gun", method = Experimental.AdminGivePlatforms, toolTip = "Gives whoever you want platforms if they're using console."},
             },
 
-            new ButtonInfo[] { }, // Chat Messages [41] 
+            new[] { }, // Chat Messages [41] 
 
             new[] // Macros [42]
             {
@@ -2438,8 +2438,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Set Master Client Self", overlapText = "Set Master Client Self", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as master client."},
                 new ButtonInfo { buttonText = "Detected Set Master Client Gun", overlapText = "Set Master Client Gun", method = Detected.SetMasterClientGun, detected = true, toolTip = "Sets whoever your hand desires as master client."},
                 new ButtonInfo { buttonText = "Detected Set Master Client All", overlapText = "Set Master Client All", method = Detected.SetMasterClientAll, detected = true, toolTip = "Sets everyone in the room as master client."},
-                new ButtonInfo { buttonText = "Detected Set Master Client Aura", overlapText = "Set Master Client Aura", method = Detected.SetMasterClientAura, detected = true, toolTip = "Sets everyone in the room as master client."},
-                new ButtonInfo { buttonText = "Detected Set Master Client On Touch", overlapText = "Set Master Client On Touch", method = Detected.SetMasterClientOnTouch, detected = true, toolTip = "Sets everyone in the room as master client."},
+                new ButtonInfo { buttonText = "Detected Set Master Client Aura", overlapText = "Set Master Client Aura", method = Detected.SetMasterClientAura, detected = true, toolTip = "Sets nearby players as master client."},
+                new ButtonInfo { buttonText = "Detected Set Master Client On Touch", overlapText = "Set Master Client On Touch", method = Detected.SetMasterClientOnTouch, detected = true, toolTip = "Sets players you touch as master client."},
 
                 new ButtonInfo { buttonText = "Detected Lag Gun", overlapText = "Lag Gun", method = Detected.LagGun, detected = true, toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Lag All", overlapText = "Lag All", method = Detected.LagAll, detected = true, toolTip = "Lags everyone in the room."},
@@ -2517,7 +2517,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
 
                 new ButtonInfo { buttonText = "Spaz Gamemode", method = Detected.SpazGamemode, detected = true, toolTip = "Rapidly changes the gamemode."},
-                new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the gamemode."},
+                new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the current gamemode."},
                 new ButtonInfo { buttonText = "Change Gamemode to None", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.None), isTogglable = false, detected = true, toolTip = "Changes the gamemode to error/none."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
