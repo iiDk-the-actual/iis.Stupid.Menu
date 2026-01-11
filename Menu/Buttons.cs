@@ -2420,7 +2420,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Give Platforms Gun", method = Experimental.AdminGivePlatforms, toolTip = "Gives whoever you want platforms if they're using console."},
             },
 
-            new[] { }, // Chat Messages [41] 
+            new ButtonInfo[] { }, // Chat Messages [41] 
 
             new[] // Macros [42]
             {
