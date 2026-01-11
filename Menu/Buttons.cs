@@ -72,7 +72,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Experimental Mods", method =() => currentCategoryName = "Experimental Mods", isTogglable = false, toolTip = "Opens the experimental mods."},
                 new ButtonInfo { buttonText = "Detected Mods", method = Detected.EnterDetectedTab, isTogglable = false, toolTip = "Opens the detected mods."},
 
-                new ButtonInfo { buttonText = "Achievements", method = AchievementManager.EnterAchievementTab, isTogglable = false, toolTip = "Opens the credits page."},
+                new ButtonInfo { buttonText = "Achievements", method = AchievementManager.EnterAchievementTab, isTogglable = false, toolTip = "Opens the achievements page."},
                 new ButtonInfo { buttonText = "Credits", method =() => currentCategoryName = "Credits", isTogglable = false, toolTip = "Opens the credits page."}
             },
 
@@ -1665,7 +1665,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Spam", method = Overpowered.SnowballSpam, toolTip = "Spams snowballs when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings"},
 
                 new ButtonInfo { buttonText = "Snowball Gun", method = Overpowered.SnowballGun, toolTip = "Spawns a snowball wherever your hand desires."},
-                new ButtonInfo { buttonText = "Snowball Nuke Gun", method = Overpowered.SnowballNukeGun, toolTip = "Spawns a long of snowballs airstriking from the sky at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Nuke Gun", method = Overpowered.SnowballNukeGun, toolTip = "Spawns a lot of snowballs airstriking from the sky at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method = Overpowered.SnowballAirstrikeGun, toolTip = "Spawns a snowball airstrike wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Rain <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballRain, toolTip = "Rains snowballs around you when holding <color=green>trigger</color>."},
@@ -1809,6 +1809,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Untag Gun", method = Advantages.UntagGun, toolTip = "Untags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Untag All", method = Advantages.UntagAll, isTogglable = false, toolTip = "Removes everyone from the list of tagged players."},
+
+                new ButtonInfo { buttonText = "Break Tag", method = Advantages.UntagAll, toolTip = "Constantly removes everyone from the list of tagged players."},
 
                 new ButtonInfo { buttonText = "Spam Tag Self", method = Advantages.SpamTagSelf, toolTip = "Adds and removes you from the list of tagged players."},
                 new ButtonInfo { buttonText = "Spam Tag Gun", method = Advantages.SpamTagGun, toolTip = "Adds and removes you from the list of tagged players."},
@@ -1987,6 +1989,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomStatus(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
                 new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomStatus(false), isTogglable = false, toolTip = "Unlocks the room so anyone can join."},
+                new ButtonInfo { buttonText = "Spaz Room", method =() => { Overpowered.SetRoomStatus(false); Overpowered.SetRoomStatus(true); }, toolTip = "Locks and unlocks the room so people will get kicked when joining."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method = Overpowered.DestroyGun, toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method = Overpowered.DestroyAll, isTogglable = false, toolTip = "Block new players from seeing everyone."},
@@ -2110,9 +2113,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Get Menu Users", method = Experimental.GetMenuUsers, isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Auto Get Menu Users", enableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent += Experimental.GetMenuUsers, disableMethod =() => NetworkSystem.Instance.OnJoinedRoomEvent -= Experimental.GetMenuUsers, isTogglable = true, toolTip = "Detects who is using the menu on room join."},
-                new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod = Experimental.EnableAdminMenuUserTags, method = Experimental.AdminMenuUserTags, disableMethod = Experimental.DisableAdminMenuUserTags, toolTip = "Detects who is using the menu."},
+                new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod = Experimental.EnableAdminMenuUserTags, method = Experimental.AdminMenuUserTags, disableMethod = Experimental.DisableAdminMenuUserTags, toolTip = "Puts nametags on menu users."},
                 new ButtonInfo { buttonText = "Conduct Menu Users", enableMethod =() => { Experimental.EnableAdminMenuUserTags(); GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "CONSOLE USER LIST"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method = Experimental.ConsoleOnConduct, toolTip = "Shows menu users on the code of conduct."},
-                new ButtonInfo { buttonText = "Menu User Tracers", enableMethod = Experimental.EnableAdminMenuUserTracers, method = Experimental.MenuUserTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows menu users."},
+                new ButtonInfo { buttonText = "Menu User Tracers", enableMethod = Experimental.EnableAdminMenuUserTracers, method = Experimental.MenuUserTracers, disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand to menu users."},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method = Experimental.AdminKickGun, toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method = Experimental.AdminKickAll, isTogglable = false, toolTip = "Kicks everyone using the menu."},
@@ -2435,8 +2438,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Set Master Client Self", overlapText = "Set Master Client Self", method =() => PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer), isTogglable = false, detected = true, toolTip = "Sets you as master client."},
                 new ButtonInfo { buttonText = "Detected Set Master Client Gun", overlapText = "Set Master Client Gun", method = Detected.SetMasterClientGun, detected = true, toolTip = "Sets whoever your hand desires as master client."},
                 new ButtonInfo { buttonText = "Detected Set Master Client All", overlapText = "Set Master Client All", method = Detected.SetMasterClientAll, detected = true, toolTip = "Sets everyone in the room as master client."},
-                new ButtonInfo { buttonText = "Detected Set Master Client Aura", overlapText = "Set Master Client Aura", method = Detected.SetMasterClientAura, detected = true, toolTip = "Sets everyone in the room as master client."},
-                new ButtonInfo { buttonText = "Detected Set Master Client On Touch", overlapText = "Set Master Client On Touch", method = Detected.SetMasterClientOnTouch, detected = true, toolTip = "Sets everyone in the room as master client."},
+                new ButtonInfo { buttonText = "Detected Set Master Client Aura", overlapText = "Set Master Client Aura", method = Detected.SetMasterClientAura, detected = true, toolTip = "Sets nearby players as master client."},
+                new ButtonInfo { buttonText = "Detected Set Master Client On Touch", overlapText = "Set Master Client On Touch", method = Detected.SetMasterClientOnTouch, detected = true, toolTip = "Sets players you touch as master client."},
 
                 new ButtonInfo { buttonText = "Detected Lag Gun", overlapText = "Lag Gun", method = Detected.LagGun, detected = true, toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Lag All", overlapText = "Lag All", method = Detected.LagAll, detected = true, toolTip = "Lags everyone in the room."},
@@ -2514,7 +2517,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick Network Triggers", method =() => Detected.KickNetworkTriggers(), isTogglable = false, detected = true, toolTip = "Makes all network triggers kick you."},
 
                 new ButtonInfo { buttonText = "Spaz Gamemode", method = Detected.SpazGamemode, detected = true, toolTip = "Rapidly changes the gamemode."},
-                new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the gamemode."},
+                new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the current gamemode."},
                 new ButtonInfo { buttonText = "Change Gamemode to None", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.None), isTogglable = false, detected = true, toolTip = "Changes the gamemode to error/none."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},

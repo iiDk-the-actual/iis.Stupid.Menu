@@ -88,13 +88,15 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 |---------|------|------|
 |Rift|✅|✅|
 |Rift S|✅|✅|
+|Oculus Go|✅|❌|
 |Quest 1|✅|✅|
 |Quest 2|✅|✅|
+|Quest Pro|✅|✅|
 |Quest 3/3s|✅|✅|
-|Pico 4|✅|✅|
+|Pico 4/Pro|✅|✅|
 |Valve Index|✅|✅|
 |HTC VIVE/Pro|✅|⚠️|
-|HP Reverb G2|✅|⚠️|
+|HP Reverb G1/G2|✅|⚠️|
 
 > ✅ Fully functional ; ⚠️ Limited functionality ; ❌ Not functionable ; ❓ Untested
 
@@ -128,7 +130,7 @@ If you wish to support me, here are some of the ways you can!
 </details>
 
 > [!NOTE] 
-> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
+> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2026 Another Axiom LLC.<br>
 > Menu sends requests to [https://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for telemetry, administrative, translation and TTS (text to speech) purposes.<br>
 > Menu sends requests to https://text.pollinations.ai for the mod **AI Assistant**. (when enabled)<br>
 > Menu sends requests to https://lazypy.ro for many TTS voices.<br>
