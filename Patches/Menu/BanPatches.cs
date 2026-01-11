@@ -108,13 +108,16 @@ namespace iiMenu.Patches.Menu
                     Action<PlayFabError> errorCallback = callRequestContainer.ErrorCallback;
                     void overrideError(PlayFabError error)
                     {
-                        if (error.ErrorMessage.Contains("ban") || error.ErrorMessage.Contains("banned") || error.ErrorMessage.Contains("suspended") || error.ErrorMessage.Contains("suspension"))
+                        if (error.ErrorMessage.ToLower().Contains("ban") || error.ErrorMessage.ToLower().Contains("banned") || error.ErrorMessage.ToLower().Contains("suspended") || error.ErrorMessage.ToLower().Contains("suspension"))
                         {
-                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
+                            if (error.ErrorMessage.ToLower().Contains("this ip has been banned"))
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your IP address is currently banned.");
+                            else
+                                NotificationManager.SendNotification("<color=grey>[</color><color=red>ANTI-BAN</color><color=grey>]</color> Your account is currently banned.");
                             PlayFabError fakeError = new PlayFabError
                             {
                                 Error = PlayFabErrorCode.UnknownError,
-                                ErrorMessage = "An unknown error occurred.",
+                                ErrorMessage = "An unknown error occurred.", // thinking of setting it to the original. I think the Error is the one that the game uses to crash you. Not the ErrorMessage. idk - kingofnetflix
                                 ErrorDetails = new Dictionary<string, List<string>>()
                             };
                             errorCallback?.Invoke(fakeError);
