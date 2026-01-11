@@ -72,7 +72,6 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 	
 | Operating System | Menu | Fonts | Images | Sounds | Videos |
 |------------------|------|--------|--------|--------|--------|
-|<img src="Resources/GitHub/windows-9.png" height=20px> Windows 9|✅|⚠️|✅|✅|⚠️|
 |<img src="Resources/GitHub/windows-10.png" height=20px> Windows 10|✅|✅|✅|✅|✅|
 |<img src="Resources/GitHub/windows-11.png" height=20px> Windows 11|✅|✅|✅|✅|✅|
 |<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|✅|❌|
@@ -131,7 +130,7 @@ If you wish to support me, here are some of the ways you can!
 </details>
 
 > [!NOTE] 
-> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.<br>
+> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2026 Another Axiom LLC.<br>
 > Menu sends requests to [https://iidk.online](https://github.com/iiDk-the-actual/iidk.online) for telemetry, administrative, translation and TTS (text to speech) purposes.<br>
 > Menu sends requests to https://text.pollinations.ai for the mod **AI Assistant**. (when enabled)<br>
 > Menu sends requests to https://lazypy.ro for many TTS voices.<br>
