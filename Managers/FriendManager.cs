@@ -55,11 +55,31 @@ namespace iiMenu.Managers
     public class FriendManager : MonoBehaviour
     {
         #region Friend Manager Code
+
+        private struct GameObjectData
+        {
+            public GameObject AssociatedGameObject;
+            public Vector3 TargetPosition;
+            public Vector3 OldTargetPosition;
+            public Quaternion TargetRotation;
+            public Quaternion OldTargetRotation;
+
+            public void InterpolateBetween(float t)
+            {
+                AssociatedGameObject.transform.position = Vector3.Lerp(OldTargetPosition, TargetPosition, t);
+                AssociatedGameObject.transform.rotation = Quaternion.Lerp(OldTargetRotation, TargetRotation, t);
+            }
+        }
+
         public static FriendManager instance;
+
+        private readonly Dictionary<VRRig, (float, GameObjectData[], GameObject)> rigDatas = new Dictionary<VRRig, (float, GameObjectData[], GameObject)>();
+        private readonly Dictionary<VRRig, float> rigUpdateDelays = new Dictionary<VRRig, float>();
 
         private float UpdateTime;
         private string FriendResponse;
         public const int FriendByte = 53;
+        private const float RigDespawnTime = 0.5f;
 
         public FriendData Friends = new FriendData { friends = new Dictionary<string, FriendData.Friend>(), incoming = new Dictionary<string, FriendData.PendingFriend>(), outgoing = new Dictionary<string, FriendData.PendingFriend>() };
 
@@ -118,21 +138,36 @@ namespace iiMenu.Managers
             foreach (VRRig rig in toRemoveRigs)
                 starPool.Remove(rig);
 
-            List<VRRig> toRemoveGhosts = new List<VRRig>();
+            // my thingy majig for the rig lerping oo soooooooo cooooooooool
+            Dictionary<VRRig, (float, GameObjectData[], GameObject)> toRemoveGhostRigs = new Dictionary<VRRig, (float, GameObjectData[], GameObject)>();
 
-            foreach (var ghostRig in ghostRigDelay.Where(ghostRig => !GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > ghostRig.Value + 0.05f))
+            foreach ((VRRig rig, (float lastRigUpdate, GameObjectData[] gameObjectDatas, GameObject nametag)) in rigDatas)
             {
-                toRemoveGhosts.Add(ghostRig.Key);
+                float timeSinceLastRigUpdate = Time.time - lastRigUpdate;
 
-                var ghostObjects = ghostRigPool[ghostRig.Key];
-                foreach (GameObject ghostObject in new[] { ghostObjects.Item1, ghostObjects.Item2, ghostObjects.Item3, ghostObjects.Item4 })
-                    Destroy(ghostObject);
+                if (timeSinceLastRigUpdate > RigDespawnTime)
+                {
+                    toRemoveGhostRigs.Add(rig, rigDatas[rig]);
+
+                    continue;
+                }
+
+                float delay = rigUpdateDelays.GetValueOrDefault(rig, 0.1f);
+                float t = timeSinceLastRigUpdate / delay;
+                foreach (GameObjectData gameObjectData in gameObjectDatas)
+                    gameObjectData.InterpolateBetween(t);
+
+                nametag.transform.LookAt(Camera.main.transform.position);
+                nametag.transform.Rotate(0f, 180f, 0f);
             }
 
-            foreach (VRRig rig in toRemoveGhosts)
+            foreach (KeyValuePair<VRRig, (float, GameObjectData[], GameObject)> pair in toRemoveGhostRigs)
             {
-                ghostRigDelay.Remove(rig);
-                ghostRigPool.Remove(rig);
+                rigDatas.Remove(pair.Key);
+                foreach (GameObjectData gameObjectData in pair.Value.Item2)
+                    Destroy(gameObjectData.AssociatedGameObject);
+
+                Destroy(pair.Value.Item3);
             }
 
             if (NetworkSystem.Instance.InRoom)
@@ -377,75 +412,96 @@ namespace iiMenu.Managers
                                 if (!RigNetworking)
                                     break;
 
-                                ghostRigDelay.TryGetValue(SenderRig, out float ghostDelayTime);
-                                if (Time.time < ghostDelayTime)
+                                object[] headTransform = (object[])args[1];
+                                object[] leftHandTransform = (object[])args[2];
+                                object[] rightHandTransform = (object[])args[3];
+
+                                if (instance.rigDatas.TryGetValue(SenderRig, out (float, GameObjectData[], GameObject) rigData))
+                                {
+                                    instance.rigUpdateDelays[SenderRig] = Time.time - rigData.Item1;
+                                    rigData.Item1 = Time.time;
+
+                                    rigData.Item2[0].OldTargetPosition = rigData.Item2[0].TargetPosition;
+                                    rigData.Item2[0].OldTargetRotation = rigData.Item2[0].TargetRotation;
+                                    rigData.Item2[0].TargetPosition = (Vector3)headTransform[0];
+                                    rigData.Item2[0].TargetRotation = (Quaternion)headTransform[1];
+
+                                    rigData.Item2[1].OldTargetPosition = rigData.Item2[1].TargetPosition;
+                                    rigData.Item2[1].OldTargetRotation = rigData.Item2[1].TargetRotation;
+                                    rigData.Item2[1].TargetPosition = (Vector3)leftHandTransform[0];
+                                    rigData.Item2[1].TargetRotation = (Quaternion)leftHandTransform[1];
+
+                                    rigData.Item2[2].OldTargetPosition = rigData.Item2[2].TargetPosition;
+                                    rigData.Item2[2].OldTargetRotation = rigData.Item2[2].TargetRotation;
+                                    rigData.Item2[2].TargetPosition = (Vector3)rightHandTransform[0];
+                                    rigData.Item2[2].TargetRotation = (Quaternion)rightHandTransform[1];
+
+                                    instance.rigDatas[SenderRig] = rigData;
+
                                     break;
-
-                                object[] HeadTransform = (object[])args[1];
-                                object[] LeftTransform = (object[])args[2];
-                                object[] RightTransform = (object[])args[3];
-
-                                GameObject Head;
-                                GameObject LeftHand;
-                                GameObject RightHand;
-                                GameObject Nametag;
-
-                                if (!ghostRigPool.TryGetValue(SenderRig, out var value))
-                                {
-                                    Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                    Destroy(Head.GetComponent<Collider>());
-
-                                    Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-
-                                    LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                    Destroy(LeftHand.GetComponent<Collider>());
-
-                                    LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
-                                    RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                    Destroy(RightHand.GetComponent<Collider>());
-
-                                    RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
-                                    Nametag = new GameObject("iiMenu_Nametag");
-                                    Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-
-                                    TextMeshPro textMesh = Nametag.AddComponent<TextMeshPro>();
-                                    textMesh.fontSize = 4.8f;
-                                    textMesh.font = activeFont;
-                                    textMesh.fontStyle = activeFontStyle;
-                                    textMesh.alignment = TextAlignmentOptions.Center;
-
-                                    textMesh.text = Sender.NickName;
-                                    textMesh.color = SenderRig.playerColor;
-                                    textMesh.fontStyle = activeFontStyle;
-
-                                    ghostRigPool.Add(SenderRig, (Head, LeftHand, RightHand, Nametag));
-                                } else
-                                {
-                                    Head = value.Item1;
-                                    LeftHand = value.Item2;
-                                    RightHand = value.Item3;
-                                    Nametag = value.Item4;
                                 }
 
-                                Head.transform.position = (Vector3)HeadTransform[0];
-                                Head.transform.rotation = (Quaternion)HeadTransform[1];
-                                Head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+                                GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                Destroy(head.GetComponent<Collider>());
+                                head.transform.localScale = Vector3.one * 0.3f;
+                                head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
-                                LeftHand.transform.position = (Vector3)LeftTransform[0];
-                                LeftHand.transform.rotation = (Quaternion)LeftTransform[1];
-                                LeftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+                                GameObject nametag = new GameObject("iiMenu_Nametag");
+                                nametag.transform.SetParent(head.transform);
+                                nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                nametag.transform.localPosition = new Vector3(0f, 0.8f, 0f);
 
-                                RightHand.transform.position = (Vector3)RightTransform[0];
-                                RightHand.transform.rotation = (Quaternion)RightTransform[1];
-                                RightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+                                TextMeshPro nametagText = nametag.AddComponent<TextMeshPro>();
+                                nametagText.fontSize = 24f;
+                                nametagText.font = activeFont;
+                                nametagText.fontStyle = activeFontStyle;
+                                nametagText.alignment = TextAlignmentOptions.Center;
 
-                                Nametag.transform.position = (Vector3)HeadTransform[0] + Vector3.up * 0.25f;
-                                Nametag.transform.LookAt(Camera.main.transform.position);
-                                Nametag.transform.Rotate(0f, 180f, 0f);
+                                nametagText.text = Sender.SanitizedNickName;
+                                nametagText.color = SenderRig.playerColor;
+                                nametagText.fontStyle = activeFontStyle;
 
-                                ghostRigDelay[SenderRig] = Time.time + 0.09f;
+                                GameObject leftHand = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                Destroy(leftHand.GetComponent<Collider>());
+                                leftHand.transform.localScale = Vector3.one * 0.1f;
+                                leftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+
+                                GameObject rightHand = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                Destroy(rightHand.GetComponent<Collider>());
+                                rightHand.transform.localScale = Vector3.one * 0.1f;
+                                rightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+
+                                GameObjectData[] gameObjectDatas = new GameObjectData[]
+                                {
+                                    new GameObjectData()
+                                    {
+                                        AssociatedGameObject = head,
+                                        TargetPosition       = (Vector3)headTransform[0],
+                                        OldTargetPosition = (Vector3)headTransform[0],
+                                        TargetRotation = (Quaternion)headTransform[1],
+                                        OldTargetRotation = (Quaternion)headTransform[1]
+                                    },
+
+                                    new GameObjectData()
+                                    {
+                                        AssociatedGameObject = leftHand,
+                                        TargetPosition = (Vector3)leftHandTransform[0],
+                                        OldTargetPosition = (Vector3)leftHandTransform[0],
+                                        TargetRotation = (Quaternion)leftHandTransform[1],
+                                        OldTargetRotation = (Quaternion)leftHandTransform[1]
+                                    },
+
+                                    new GameObjectData()
+                                    {
+                                        AssociatedGameObject = rightHand,
+                                        TargetPosition = (Vector3)rightHandTransform[0],
+                                        OldTargetPosition = (Vector3)rightHandTransform[0],
+                                        TargetRotation = (Quaternion)rightHandTransform[1],
+                                        OldTargetRotation = (Quaternion)rightHandTransform[1]
+                                    }
+                                };
+
+                                instance.rigDatas[SenderRig] = (Time.time, gameObjectDatas, nametag);
 
                                 break;
                             }
