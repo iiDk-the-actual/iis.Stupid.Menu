@@ -72,6 +72,7 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 	
 | Operating System | Menu | Fonts | Images | Sounds | Videos |
 |------------------|------|--------|--------|--------|--------|
+|<img src="Resources/GitHub/windows-9.png" height=20px> Windows 9|✅|⚠️|✅|✅|⚠️|
 |<img src="Resources/GitHub/windows-10.png" height=20px> Windows 10|✅|✅|✅|✅|✅|
 |<img src="Resources/GitHub/windows-11.png" height=20px> Windows 11|✅|✅|✅|✅|✅|
 |<img src="Resources/GitHub/macos.png" height=20px> Mac OS|✅|✅|✅|✅|❌|
@@ -88,13 +89,15 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 |---------|------|------|
 |Rift|✅|✅|
 |Rift S|✅|✅|
+|Oculus Go|✅|❌|
 |Quest 1|✅|✅|
 |Quest 2|✅|✅|
+|Quest Pro|✅|✅|
 |Quest 3/3s|✅|✅|
-|Pico 4|✅|✅|
+|Pico 4/Pro|✅|✅|
 |Valve Index|✅|✅|
 |HTC VIVE/Pro|✅|⚠️|
-|HP Reverb G2|✅|⚠️|
+|HP Reverb G1/G2|✅|⚠️|
 
 > ✅ Fully functional ; ⚠️ Limited functionality ; ❌ Not functionable ; ❓ Untested
 
