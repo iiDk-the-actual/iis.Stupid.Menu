@@ -194,7 +194,7 @@ namespace iiMenu.Mods
             text += "<color=green>Theme</color> " + themeType + admin + "\n";
             text += "<color=green>Preferences Directory</color><color=grey>:</color> " + $"{FileUtilities.GetGamePath()}/{PluginInfo.BaseDirectory}";
 
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = text;
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().SafeSetText(text);
         }
 
         public static void ToggleSnow(bool enable)
@@ -530,28 +530,26 @@ namespace iiMenu.Mods
             }
         }
 
-        public static bool infoWatchMenuName = false;
-        public static bool infoWatchTime = false;
-        public static bool infoWatchClip = false;
-        public static bool infoWatchFPS = false;
-        public static bool infoWatchCode = false;
+        public static bool infoWatchMenuName;
+        public static bool infoWatchTime;
+        public static bool infoWatchClip;
+        public static bool infoWatchFPS;
+        public static bool infoWatchCode;
         public static void WatchStep()
         {
-            bool deafultWatch = false;
+            bool defaultWatch = !infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode;
             string watchText = "";
-            if (!infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode)
-                deafultWatch = true;
 
             Text watchTextComponent = regwatchText.GetComponent<Text>();
 
-            if (infoWatchMenuName || deafultWatch) watchTextComponent.text = "ii's Stupid Menu\n<color=grey>";
-            if (doCustomName && (infoWatchMenuName || deafultWatch))
+            if (infoWatchMenuName || defaultWatch) watchTextComponent.text = "ii's Stupid Menu\n<color=grey>";
+            if (doCustomName && (infoWatchMenuName || defaultWatch))
                 watchTextComponent.text = NoRichtextTags(customMenuName) + "\n<color=grey>";
-            if (!infoWatchMenuName && !deafultWatch)
+            if (!infoWatchMenuName && !defaultWatch)
                 watchTextComponent.text = "<color=grey>";
             
-            if (infoWatchFPS || deafultWatch) watchText += lastDeltaTime + " FPS\n";
-            if (infoWatchTime || deafultWatch) watchText += DateTime.Now.ToString("hh:mm tt") + "\n";
+            if (infoWatchFPS || defaultWatch) watchText += lastDeltaTime + " FPS\n";
+            if (infoWatchTime || defaultWatch) watchText += DateTime.Now.ToString("hh:mm tt") + "\n";
             if (infoWatchCode) watchText += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
             if (infoWatchClip) watchText += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
 
@@ -843,11 +841,11 @@ namespace iiMenu.Mods
             TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
             TextMeshPro.color = color;
             TextMeshPro.fontSize = 2.4f;
-            TextMeshPro.fontStyle = activeFontStyle;
-            TextMeshPro.font = activeFont;
+            TextMeshPro.SafeSetFontStyle(activeFontStyle);
+            TextMeshPro.SafeSetFont(activeFont);
             TextMeshPro.alignment = TextAlignmentOptions.Center;
 
-            TextMeshPro.text = text;
+            TextMeshPro.SafeSetText(text);
 
             go.transform.position = (leftHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform).position + Vector3.up * (GetLabelDistance(leftHand) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
             go.transform.LookAt(Camera.main.transform.position);
@@ -1702,10 +1700,12 @@ namespace iiMenu.Mods
                     }
 
                     GameObject nameTag = nametags[vrrig];
-                    nameTag.GetComponent<TextMeshPro>().text = CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName);
-                    nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                    nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                    nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                    TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                    tmp.SafeSetText(CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName));
+                    tmp.color = vrrig.GetColor();
+                    tmp.SafeSetFontStyle(activeFontStyle);
+                    tmp.SafeSetFont(activeFont);
 
                     nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1754,10 +1754,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = velnametags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = $"{vrrig.LatestVelocity().magnitude:F1}m/s";
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText($"{vrrig.LatestVelocity().magnitude:F1}m/s");
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1807,10 +1809,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = FPSnametags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = $"{vrrig.fps} FPS";
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText($"{vrrig.fps} FPS");
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1858,13 +1862,14 @@ namespace iiMenu.Mods
 
                             idNameTags.Add(vrrig, go);
                         }
-                        
 
                         GameObject nameTag = idNameTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = GetPlayerFromVRRig(vrrig).UserId;
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText(GetPlayerFromVRRig(vrrig).UserId);
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1914,10 +1919,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = platformTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = $"{vrrig.GetPlatform()}";
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText($"{vrrig.GetPlatform()}");
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1968,10 +1975,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = creationDateTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId);
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText(GetCreationDate(GetPlayerFromVRRig(vrrig).UserId));
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2022,10 +2031,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = pingNameTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = $"{vrrig.GetPing()}ms";
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText($"{vrrig.GetPing()}ms");
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2079,10 +2090,12 @@ namespace iiMenu.Mods
                         int turnFactor = vrrig.turnFactor;
 
                         GameObject nameTag = turnNameTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor;
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
+                        tmp.SafeSetText(turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor);
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2133,19 +2146,21 @@ namespace iiMenu.Mods
 
                         
                         GameObject nameTag = taggedNameTags[vrrig];
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+
                         if (vrrig.IsTagged())
                         {
                             int taggedById = vrrig.taggedById;
                             NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById);
 
                             if (tagger != null)
-                                nameTag.GetComponent<TextMeshPro>().text = "Tagged by " + tagger?.NickName;
+                                tmp.SafeSetText("Tagged by " + tagger?.NickName);
                         } else
-                            nameTag.GetComponent<TextMeshPro>().text = "";
+                            tmp.SafeSetText("");
                             
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2324,11 +2339,13 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = modNameTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = specialMods;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        tmp.SafeSetText(specialMods);
+
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2406,11 +2423,12 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = cosmeticNameTags[vrrig];
-                        nameTag.GetComponent<TextMeshPro>().text = cosmetics;
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        tmp.SafeSetText(cosmetics);
 
-                        nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                        nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2559,7 +2577,7 @@ namespace iiMenu.Mods
                                 TextMeshPro TextMeshPro = go.AddComponent<TextMeshPro>();
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
-                                TextMeshPro.text = name;
+                                TextMeshPro.SafeSetText(name);
 
                                 verifiedNameTags.Add(vrrig, go);
                             } else if (ServerData.Administrators.TryGetValue(userId, out string adminName))
@@ -2569,7 +2587,7 @@ namespace iiMenu.Mods
                                 TextMeshPro TextMeshPro = go.AddComponent<TextMeshPro>();
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
-                                TextMeshPro.text = adminName;
+                                TextMeshPro.SafeSetText(adminName);
 
                                 verifiedNameTags.Add(vrrig, go);
                             }
@@ -2577,9 +2595,10 @@ namespace iiMenu.Mods
 
                         if (verifiedNameTags.TryGetValue(vrrig, out GameObject nameTag))
                         {
-                            nameTag.GetComponent<TextMeshPro>().color = vrrig.GetColor();
-                            nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                            nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
 
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2650,7 +2669,7 @@ namespace iiMenu.Mods
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
                                 TextMeshPro.color = crashedColor;
-                                TextMeshPro.text = "Lagging";
+                                TextMeshPro.SafeSetText("Lagging");
 
                                 crashedNameTags.Add(vrrig, go);
                             }
@@ -2666,10 +2685,11 @@ namespace iiMenu.Mods
                             else if (crashPower > 1500)
                                 crashedColor = new Color32(255, 128, 0, 255);
 
-                            nameTag.GetComponent<TextMeshPro>().color = crashedColor;
-                            nameTag.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
+                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                            tmp.color = crashedColor;
+                            tmp.SafeSetFontStyle(activeFontStyle);
 
-                            nameTag.GetComponent<TextMeshPro>().font = activeFont;
+                            tmp.SafeSetFont(activeFont);
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                             nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2828,9 +2848,9 @@ namespace iiMenu.Mods
 
                         string tagText = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=#00FFFF>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=#00FFFF>Master</color>]" : "")}";
 
-                        infoTextTr.GetComponent<TextMeshPro>().text = tagText;
-                        infoTextTr.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
-                        infoTextTr.GetComponent<TextMeshPro>().font = activeFont;
+                        infoTextTr.GetComponent<TextMeshPro>().SafeSetText(tagText);
+                        infoTextTr.GetComponent<TextMeshPro>().SafeSetFontStyle(activeFontStyle);
+                        infoTextTr.GetComponent<TextMeshPro>().SafeSetFont(activeFont);
 
                         TextMeshPro tm = infoTextTr.GetComponent<TextMeshPro>();
                         string plainText = System.Text.RegularExpressions.Regex.Replace(tagText, "<.*?>", string.Empty);
@@ -2841,9 +2861,9 @@ namespace iiMenu.Mods
                         string playerName = CleanPlayerName(vrrig.GetPlayer().NickName);
                         TextMeshPro nameTm = nameTextTr.GetComponent<TextMeshPro>();
 
-                        nameTm.text = playerName;
-                        nameTm.fontStyle = activeFontStyle;
-                        nameTm.font = activeFont;
+                        nameTm.SafeSetText(playerName);
+                        nameTm.SafeSetFontStyle(activeFontStyle);
+                        nameTm.SafeSetFont(activeFont);
                         nameTm.color = vrrig.playerColor;
                         
                         float nameTextWidth = nameTm.GetPreferredValues(playerName).x * 0.5f;
@@ -5893,8 +5913,8 @@ namespace iiMenu.Mods
                     TextMeshPro.gameObject.transform.LookAt(Camera.main.transform.position);
                     TextMeshPro.gameObject.transform.Rotate(0f, 180f, 0f);
 
-                    TextMeshPro.fontStyle = activeFontStyle;
-                    TextMeshPro.font = activeFont;
+                    TextMeshPro.SafeSetFontStyle(activeFontStyle);
+                    TextMeshPro.SafeSetFont(activeFont);
 
                     // Update font style of outline here
 
@@ -5911,7 +5931,7 @@ namespace iiMenu.Mods
                 Renderer MeshRender = newMesh.GetComponent<Renderer>();
 
                 newMesh.fontSize = 1.8f;
-                newMesh.fontStyle = activeFontStyle;
+                newMesh.SafeSetFontStyle(activeFontStyle);
                 newMesh.alignment = TextAlignmentOptions.Center;
                 newMesh.color = Color.white;
 
