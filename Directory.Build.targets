@@ -44,10 +44,13 @@
   </Target>
   
   <!-- Copy to Plugins -->
+  <!-- ii how do you fuck up the copy to plugins this badly, it doesnt even copy the dll T-T -->
+  <!-- dw i fixed it for you -->
   <Target Name="CopyToPlugins" AfterTargets="Build" Condition="'$(CI)' != 'TRUE'">
     <ItemGroup>
       <FilesToCopy Include="$(TargetPath)"/>
       <FilesToCopy Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
+	  <FilesToCopy Include="$(TargetDir)$(TargetName).dll" Condition="Exists('$(TargetDir)$(TargetName).dll')"/>
     </ItemGroup>
 
     <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(PluginsPath)\%(Filename)%(Extension)')"/>
