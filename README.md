@@ -138,7 +138,7 @@ If you wish to support me, here are some of the ways you can!
 > ii's Stupid Menu  README.md<br>
 > A mod menu for Gorilla Tag with over 1000+ mods
 >
-> Copyright (C) 2025  Goldentrophy Software
+> Copyright (C) 2026  Goldentrophy Software
 > https://github.com/iiDk-the-actual/iis.Stupid.Menu
 > 
 > This program is free software: you can redistribute it and/or modify

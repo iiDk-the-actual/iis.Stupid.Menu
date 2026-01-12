@@ -2,7 +2,7 @@
  * ii's Stupid Menu  Managers/PatreonManager.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
- * Copyright (C) 2025  Goldentrophy Software
+ * Copyright (C) 2026  Goldentrophy Software
  * https://github.com/iiDk-the-actual/iis.Stupid.Menu
  *
  * This program is free software: you can redistribute it and/or modify
