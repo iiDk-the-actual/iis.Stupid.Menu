@@ -2720,7 +2720,7 @@ namespace iiMenu.Mods
 
                                 GameObject go = new GameObject("iiMenu_Crashedtag");
                                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                TextMeshPro TextMeshPro = go.AddComponent<TextMeshPro>();
+                                TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
                                 TextMeshPro.color = crashedColor;
