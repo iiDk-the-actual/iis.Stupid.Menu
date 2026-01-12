@@ -1672,6 +1672,24 @@ namespace iiMenu.Mods
             return 0.4f * rig.scaleFactor;
         }
 
+        private static int optimizeChangeStep;
+        private static float optimizeDelay;
+        public static bool NameTagOptimize()
+        {
+            if (Time.time < optimizeDelay)
+            {
+                if (Time.frameCount != optimizeChangeStep)
+                    return false;
+            }
+            else
+            {
+                optimizeDelay = Time.time + (PerformanceVisuals ? PerformanceVisualDelay : 0.1f);
+                optimizeChangeStep = Time.frameCount;
+            }
+
+            return true;
+        }
+
         private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void NameTags()
         {
@@ -1702,10 +1720,13 @@ namespace iiMenu.Mods
                     GameObject nameTag = nametags[vrrig];
                     TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                    tmp.SafeSetText(CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName));
-                    tmp.color = vrrig.GetColor();
-                    tmp.SafeSetFontStyle(activeFontStyle);
-                    tmp.SafeSetFont(activeFont);
+                    if (NameTagOptimize())
+                    {
+                        tmp.SafeSetText(CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName));
+                        tmp.color = vrrig.GetColor();
+                        tmp.SafeSetFontStyle(activeFontStyle);
+                        tmp.SafeSetFont(activeFont);
+                    }
 
                     nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1756,10 +1777,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = velnametags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText($"{vrrig.LatestVelocity().magnitude:F1}m/s");
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText($"{vrrig.LatestVelocity().magnitude:F1}m/s");
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1811,10 +1835,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = FPSnametags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText($"{vrrig.fps} FPS");
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText($"{vrrig.fps} FPS");
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1866,10 +1893,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = idNameTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText(GetPlayerFromVRRig(vrrig).UserId);
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText(GetPlayerFromVRRig(vrrig).UserId);
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1921,10 +1951,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = platformTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText($"{vrrig.GetPlatform()}");
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText($"{vrrig.GetPlatform()}");
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -1977,10 +2010,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = creationDateTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText(GetCreationDate(GetPlayerFromVRRig(vrrig).UserId));
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText(GetCreationDate(GetPlayerFromVRRig(vrrig).UserId));
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2033,10 +2069,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = pingNameTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText($"{vrrig.GetPing()}ms");
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText($"{vrrig.GetPing()}ms");
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2092,10 +2131,13 @@ namespace iiMenu.Mods
                         GameObject nameTag = turnNameTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText(turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor);
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            tmp.SafeSetText(turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor);
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2148,19 +2190,23 @@ namespace iiMenu.Mods
                         GameObject nameTag = taggedNameTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        if (vrrig.IsTagged())
+                        if (NameTagOptimize())
                         {
-                            int taggedById = vrrig.taggedById;
-                            NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById);
+                            if (vrrig.IsTagged())
+                            {
+                                int taggedById = vrrig.taggedById;
+                                NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById);
 
-                            if (tagger != null)
-                                tmp.SafeSetText("Tagged by " + tagger?.NickName);
-                        } else
-                            tmp.SafeSetText("");
-                            
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                                if (tagger != null)
+                                    tmp.SafeSetText("Tagged by " + tagger?.NickName);
+                            }
+                            else
+                                tmp.SafeSetText("");
+
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2286,46 +2332,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    string specialMods = null;
-                    Dictionary<string, object> customProps = new Dictionary<string, object>();
-                    foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
-                        customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
-
-                    foreach (KeyValuePair<string, string> mod in modDictionary)
-                    {
-                        if (customProps.ContainsKey(mod.Key.ToLower()))
-                        {
-                            if (specialMods == null)
-                                specialMods = mod.Value;
-                            else
-                            {
-                                if (specialMods.Contains("&"))
-                                    specialMods = mod.Value + ", " + specialMods;
-                                else
-                                    specialMods += " & " + mod.Value;
-                            }
-                        }
-                    }
-
-                    CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
-                    foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
-                    {
-                        if (!cosmetic.isNullItem && !vrrig.rawCosmeticString.Contains(cosmetic.itemName))
-                        {
-                            if (specialMods == null)
-                                specialMods = "Cosmetx";
-                            else
-                            {
-                                if (specialMods.Contains("&"))
-                                    specialMods = "Cosmetx, " + specialMods;
-                                else
-                                    specialMods += " & Cosmetx";
-                            }
-                            break;
-                        }
-                    }
-
-                    if (!vrrig.isLocal && specialMods != null)
+                    if (!vrrig.isLocal)
                     {
                         if (!modNameTags.ContainsKey(vrrig))
                         {
@@ -2341,11 +2348,53 @@ namespace iiMenu.Mods
                         GameObject nameTag = modNameTags[vrrig];
                         TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
 
-                        tmp.SafeSetText(specialMods);
+                        if (NameTagOptimize())
+                        {
+                            string specialMods = null;
+                            Dictionary<string, object> customProps = new Dictionary<string, object>();
+                            foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
+                                customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
 
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                            foreach (KeyValuePair<string, string> mod in modDictionary)
+                            {
+                                if (customProps.ContainsKey(mod.Key.ToLower()))
+                                {
+                                    if (specialMods == null)
+                                        specialMods = mod.Value;
+                                    else
+                                    {
+                                        if (specialMods.Contains("&"))
+                                            specialMods = mod.Value + ", " + specialMods;
+                                        else
+                                            specialMods += " & " + mod.Value;
+                                    }
+                                }
+                            }
+
+                            CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
+                            foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
+                            {
+                                if (!cosmetic.isNullItem && !vrrig.rawCosmeticString.Contains(cosmetic.itemName))
+                                {
+                                    if (specialMods == null)
+                                        specialMods = "Cosmetx";
+                                    else
+                                    {
+                                        if (specialMods.Contains("&"))
+                                            specialMods = "Cosmetx, " + specialMods;
+                                        else
+                                            specialMods += " & Cosmetx";
+                                    }
+                                    break;
+                                }
+                            }
+
+                            tmp.SafeSetText(specialMods);
+
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2392,23 +2441,6 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    string cosmetics = null;
-                    foreach (KeyValuePair<string, string> cosmetic in specialCosmetics)
-                    {
-                        if (vrrig.rawCosmeticString.Contains(cosmetic.Key))
-                        {
-                            if (cosmetics == null)
-                                cosmetics = cosmetic.Value;
-                            else
-                            {
-                                if (cosmetics.Contains("&"))
-                                    cosmetics = cosmetic.Value + ", " + cosmetics;
-                                else
-                                    cosmetics += " & " + cosmetic.Value;
-                            }
-                        }
-                    }
-
                     if (!vrrig.isLocal && cosmetics == null)
                     {
                         if (!cosmeticNameTags.ContainsKey(vrrig))
@@ -2423,12 +2455,32 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = cosmeticNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
-                        tmp.SafeSetText(cosmetics);
+                        if (NameTagOptimize())
+                        {
+                            string cosmetics = null;
+                            foreach (KeyValuePair<string, string> cosmetic in specialCosmetics)
+                            {
+                                if (vrrig.rawCosmeticString.Contains(cosmetic.Key))
+                                {
+                                    if (cosmetics == null)
+                                        cosmetics = cosmetic.Value;
+                                    else
+                                    {
+                                        if (cosmetics.Contains("&"))
+                                            cosmetics = cosmetic.Value + ", " + cosmetics;
+                                        else
+                                            cosmetics += " & " + cosmetic.Value;
+                                    }
+                                }
+                            }
 
-                        tmp.color = vrrig.GetColor();
-                        tmp.SafeSetFontStyle(activeFontStyle);
-                        tmp.SafeSetFont(activeFont);
+                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                            tmp.SafeSetText(cosmetics);
+
+                            tmp.color = vrrig.GetColor();
+                            tmp.SafeSetFontStyle(activeFontStyle);
+                            tmp.SafeSetFont(activeFont);
+                        }
 
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2597,8 +2649,11 @@ namespace iiMenu.Mods
                         {
                             TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
                             tmp.color = vrrig.GetColor();
-                            tmp.SafeSetFontStyle(activeFontStyle);
-                            tmp.SafeSetFont(activeFont);
+                            if (NameTagOptimize()) 
+                            {
+                                tmp.SafeSetFontStyle(activeFontStyle);
+                                tmp.SafeSetFont(activeFont);
+                            }
 
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
@@ -2687,9 +2742,12 @@ namespace iiMenu.Mods
 
                             TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
                             tmp.color = crashedColor;
-                            tmp.SafeSetFontStyle(activeFontStyle);
-
-                            tmp.SafeSetFont(activeFont);
+                            if (NameTagOptimize())
+                            {
+                                tmp.SafeSetFontStyle(activeFontStyle);
+                                tmp.SafeSetFont(activeFont);
+                            }
+                                
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                             nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2848,9 +2906,12 @@ namespace iiMenu.Mods
 
                         string tagText = $"{(vrrig.GetTruePing() > 2500 ? "[<color=red>Crashed</color>] | " : "")}[<color=#00FFFF>{GetCreationDate(vrrig.GetPlayer().UserId, null, "MMM dd, yyyy")}</color>] | [{GetPrettyPlatform(vrrig)}] | [Ping: {GetPrettyPing(vrrig)}] | [FPS: {GetPrettyFPS(vrrig)}]{(vrrig.GetPlayer().IsMasterClient ? " | [<color=#00FFFF>Master</color>]" : "")}";
 
-                        infoTextTr.GetComponent<TextMeshPro>().SafeSetText(tagText);
-                        infoTextTr.GetComponent<TextMeshPro>().SafeSetFontStyle(activeFontStyle);
-                        infoTextTr.GetComponent<TextMeshPro>().SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            infoTextTr.GetComponent<TextMeshPro>().SafeSetText(tagText);
+                            infoTextTr.GetComponent<TextMeshPro>().SafeSetFontStyle(activeFontStyle);
+                            infoTextTr.GetComponent<TextMeshPro>().SafeSetFont(activeFont);
+                        }
 
                         TextMeshPro tm = infoTextTr.GetComponent<TextMeshPro>();
                         string plainText = System.Text.RegularExpressions.Regex.Replace(tagText, "<.*?>", string.Empty);
@@ -2861,9 +2922,12 @@ namespace iiMenu.Mods
                         string playerName = CleanPlayerName(vrrig.GetPlayer().NickName);
                         TextMeshPro nameTm = nameTextTr.GetComponent<TextMeshPro>();
 
-                        nameTm.SafeSetText(playerName);
-                        nameTm.SafeSetFontStyle(activeFontStyle);
-                        nameTm.SafeSetFont(activeFont);
+                        if (NameTagOptimize())
+                        {
+                            nameTm.SafeSetText(playerName);
+                            nameTm.SafeSetFontStyle(activeFontStyle);
+                            nameTm.SafeSetFont(activeFont);
+                        }
                         nameTm.color = vrrig.playerColor;
                         
                         float nameTextWidth = nameTm.GetPreferredValues(playerName).x * 0.5f;
