@@ -415,21 +415,27 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Join Room", method =() => PromptText("What room would you like to join?", () => Important.QueueRoom(keyboardInput), null, "Done", "Cancel"), isTogglable = false, toolTip = "Automatically attempts to connect to whatever room you desire every couple of seconds until connected." },
 
                 new ButtonInfo { buttonText = "Auto Join Room \"RUN\"", method =() => Important.QueueRoom("RUN"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"RUN\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"HIDE\"", method =() => Important.QueueRoom("HIDE"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"HIDE\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"DAISY\"", method =() => Important.QueueRoom("DAISY"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"DAISY01\"", method =() => Important.QueueRoom("DAISY01"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY01\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"DAISY09\"", method =() => Important.QueueRoom("DAISY09"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY09\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"JV3U\"", method =() => Important.QueueRoom("JV3U"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"JV3U\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"J3VU\"", method =() => Important.QueueRoom("J3VU"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"J3VU\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"PBBV\"", method =() => Important.QueueRoom("PBBV"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"PBBV\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"BOT\"", method =() => Important.QueueRoom("BOT"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"BOT\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"LUCIO\"", method =() => Important.QueueRoom("LUCIO"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"LUCIO\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"VEN1\"", method =() => Important.QueueRoom("VEN1"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"VEN1\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"SREN16\"", method =() => Important.QueueRoom("SREN16"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"SREN16\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"SREN17\"", method =() => Important.QueueRoom("SREN17"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"SREN17\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"SREN18\"", method =() => Important.QueueRoom("SREN18"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"SREN18\" every couple of seconds until connected." },
-                new ButtonInfo { buttonText = "Auto Join Room \"SREN16\"", method =() => Important.QueueRoom("SREN16"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"SREN16\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"HELP\"", method =() => Important.QueueRoom("HELP"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"HELP\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"STATUE\"", method =() => Important.QueueRoom("STATUE"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"STATUE\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"ECHO\"", method =() => Important.QueueRoom("ECHO"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"ECHO\" every couple of seconds until connected." },
 
                 new ButtonInfo { buttonText = "Auto Join Room \"MOD\"", method =() => Important.QueueRoom("MOD"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"MOD\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"MODS\"", method =() => Important.QueueRoom("MODS"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"MODS\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"HACK\"", method =() => Important.QueueRoom("HACK"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"HACK\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"HACKER\"", method =() => Important.QueueRoom("HACKER"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"HACKER\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"LEMUR\"", method =() => Important.QueueRoom("LEMUR"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"LEMUR\" every couple of seconds until connected. Lemming joins this code very often." },
                 new ButtonInfo { buttonText = "Auto Join Room \"JMANCURLY\"", method =() => Important.QueueRoom("JMANCURLY"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"JMANCURLY\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"JMAN\"", method =() => Important.QueueRoom("JMAN"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"JMAN\" every couple of seconds until connected." },
@@ -479,6 +485,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotificationManager.information["REFUND"] = "Refund soon"; } else { NotificationManager.information.Remove("REFUND"); } }, enableMethod = Important.CheckNewAcc, disableMethod =() => NotificationManager.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
                 new ButtonInfo { buttonText = "Advanced Ban Message", enableMethod =() => ErrorPatch.enabled = true, disableMethod =() => ErrorPatch.enabled = false, toolTip = "Shows more information, such as remaining time and unban date, when banned."},
 
+                new ButtonInfo { buttonText = "120 FPS", method =() => Important.CapFPS(120), toolTip = "Caps your FPS at 120 frames per second."},
                 new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
                 new ButtonInfo { buttonText = "72 FPS", method =() => Important.CapFPS(72), toolTip = "Caps your FPS at 72 frames per second."},
                 new ButtonInfo { buttonText = "60 FPS", method =() => Important.CapFPS(60), toolTip = "Caps your FPS at 60 frames per second."},
@@ -760,6 +767,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Floating Rig", enableMethod = Movement.EnableFloatingRig, method = Movement.FloatingRig, disableMethod = Movement.DisableFloatingRig, toolTip = "Makes your rig float."},
 
                 new ButtonInfo { buttonText = "Bees", method = Movement.Bees, disableMethod = Movement.EnableRig, toolTip = "Makes your rig teleport to random players, imitating the bees ghost."},
+                new ButtonInfo { buttonText = "Bees <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() =>{ if (rightGrab) {Movement.Bees(); } }, disableMethod = Movement.EnableRig, toolTip = "Makes your rig teleport to random players when holding <color=green>grip</color>, imitating the bees ghost."},
 
                 new ButtonInfo { buttonText = "Piggyback Gun", method = Movement.PiggybackGun, toolTip = "Teleports you on top of whoever your hand desires repeatedly."},
                 new ButtonInfo { buttonText = "Piggyback All", enableMethod = Movement.PiggybackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you appear on top of everyone in the room"},
@@ -790,6 +798,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Advantage Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Tag Self", method = Advantages.TagSelf, disableMethod = Movement.EnableRig, toolTip = "Attempts to tags yourself."},
+                new ButtonInfo { buttonText = "Tag Gun", method = Advantages.TagGun, toolTip = "Tags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Tag All", method = Advantages.TagAll, disableMethod = Movement.EnableRig, toolTip = "Attempts to tag everyone in the the room."},
 
                 new ButtonInfo { buttonText = "Tag Aura", method = Advantages.TagAura, toolTip = "Moves your hand into nearby players when tagged."},
                 new ButtonInfo { buttonText = "Grip Tag Aura <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Advantages.GripTagAura, toolTip = "Moves your hand into nearby players when tagged and when holding <color=green>grip</color>."},
@@ -799,10 +809,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Tag Reach", method = Advantages.TagReach, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Makes your hand tag hitbox larger."},
 
-                new ButtonInfo { buttonText = "Tag Gun", method = Advantages.TagGun, toolTip = "Tags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Flick Tag Gun", method = Advantages.FlickTagGun, toolTip = "Moves your hand to wherever your hand desires in an attempt to tag whoever your hand desires."},
 
-                new ButtonInfo { buttonText = "Tag All", method = Advantages.TagAll, disableMethod = Movement.EnableRig, toolTip = "Attempts to tag everyone in the the room."},
                 new ButtonInfo { buttonText = "Tag Bot", method = Advantages.TagBot, disableMethod = Movement.EnableRig, toolTip = "Automatically tags yourself and everyone else on a loop, use <color=green>B</color> to turn it off."},
 
                 new ButtonInfo { buttonText = "No Tag on Join", method = Advantages.NoTagOnJoin, disableMethod = Advantages.TagOnJoin, toolTip = "When you join a the room, you won't be tagged when you join."},
@@ -1045,6 +1053,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Nausea", method = Fun.Nausea, disableMethod = Fun.DisableFreecam, toolTip = "Gives you the Nausea effect from Minecraft."},
                 new ButtonInfo { buttonText = "LSD", method =() => { Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f); Fun.HueShift(new Color(rgb.r, rgb.g, rgb.b, 0.1f)); }, disableMethod =() => Fun.HueShift(Color.clear), toolTip = "Hue shifts your game to a rainbow color."},
                 new ButtonInfo { buttonText = "Jumpscare on Tag", enableMethod = Fun.PreloadJumpscareData, method = Fun.JumpscareOnTag, toolTip = "Gives a 1/2000 chance of a jumpscare happening when getting tagged."},
+                new ButtonInfo { buttonText = "Spam Jumpscare", method = Fun.Jumpscare, toolTip = "Repeatedly jumpscares you."},
                 new ButtonInfo { buttonText = "Jumpscare", method = Fun.Jumpscare, isTogglable = false, toolTip = "Jumpscares you."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method = Fun.MuteGun, toolTip = "Mutes or unmutes whoever your hand desires."},
@@ -1066,8 +1075,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
                 new ButtonInfo { buttonText = "Mute Microphone", method =() => Fun.MuteMicrophone(true), disableMethod =() => Fun.MuteMicrophone(false), toolTip = "Disables your microphone."},
 
+                new ButtonInfo { buttonText = "Very High Pitch Microphone", method =() => Fun.SetMicrophonePitch(2.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone very very high pitched."},
                 new ButtonInfo { buttonText = "High Pitch Microphone", method =() => Fun.SetMicrophonePitch(1.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone high pitched."},
                 new ButtonInfo { buttonText = "Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone low pitched."},
+                new ButtonInfo { buttonText = "Very Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.01f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone very very low pitched."},
 
                 new ButtonInfo { buttonText = "Reload Microphone", method = Fun.ReloadMicrophone, isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
 
@@ -1105,11 +1116,17 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method = Fun.ArcadeTeleporterEffectSpam, toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method = Fun.StumpTeleporterEffectSpam, toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Open Basement Door", method =() => Fun.SetBasementDoorState(true), toolTip = "Repeatedly opens the basement door."},
-                new ButtonInfo { buttonText = "Open Elevator Door", method =() => Fun.SetElevatorDoorState(true), toolTip = "Repeatedly opens the elevator door."},
+                new ButtonInfo { buttonText = "Open Basement Door", method =() => Fun.SetBasementDoorState(true), isTogglable = false, toolTip = "Opens the basement door."},
+                new ButtonInfo { buttonText = "Open Elevator Door", method =() => Fun.SetElevatorDoorState(true), isTogglable = false, toolTip = "Opens the elevator door."},
 
-                new ButtonInfo { buttonText = "Close Basement Door", method =() => Fun.SetBasementDoorState(false), toolTip = "Repeatedly closes the basement door."},
-                new ButtonInfo { buttonText = "Close Elevator Door", method =() => Fun.SetElevatorDoorState(false), toolTip = "Repeatedly closes the elevator door."},
+                new ButtonInfo { buttonText = "Close Basement Door", method =() => Fun.SetBasementDoorState(false), isTogglable = false, toolTip = "Closes the basement door."},
+                new ButtonInfo { buttonText = "Close Elevator Door", method =() => Fun.SetElevatorDoorState(false), isTogglable = false, toolTip = "Closes the elevator door."},
+                    
+                new ButtonInfo { buttonText = "Spam Open Basement Door", method =() => Fun.SetBasementDoorState(true), toolTip = "Repeatedly opens the basement door."},
+                new ButtonInfo { buttonText = "Spam Open Elevator Door", method =() => Fun.SetElevatorDoorState(true), toolTip = "Repeatedly opens the elevator door."},
+
+                new ButtonInfo { buttonText = "Spam Close Basement Door", method =() => Fun.SetBasementDoorState(false), toolTip = "Repeatedly closes the basement door."},
+                new ButtonInfo { buttonText = "Spam Close Elevator Door", method =() => Fun.SetElevatorDoorState(false), toolTip = "Repeatedly closes the elevator door."},
 
                 new ButtonInfo { buttonText = "Basement Door Spam", method = Fun.BasementDoorSpam, toolTip = "Repeatedly opens and closes the basement door."},
                 new ButtonInfo { buttonText = "Elevator Door Spam", method = Fun.ElevatorDoorSpam, toolTip = "Repeatedly opens and closes the elevator door."},
@@ -1195,6 +1212,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rainbow Screen All", method =() => Fun.HoverboardScreenAll(Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f)), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to make the screen of everyone in the room rainbow."},
 
                 new ButtonInfo { buttonText = "Hoverboard Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.HoverboardSpam, toolTip = "Spams hoverboards from your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Spam Spawn Hoverboards", method = Fun.SpawnHoverboard, toolTip = "Spam spawns hoverboards at your player position."},
                 new ButtonInfo { buttonText = "Spawn Hoverboard", method = Fun.SpawnHoverboard, isTogglable = false, toolTip = "Spawns a hoverboard at your player position."},
 
                 new ButtonInfo { buttonText = "Start All Races", method = Fun.StartAllRaces, isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
@@ -1247,12 +1265,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Critter Sticky Goo Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo in your hand when holding <color=green>grip</color>"},
 
+                new ButtonInfo { buttonText = "Critter Food Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.Food), toolTip = "Spams food in your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Noise Maker Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers in your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Stun Bomb Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs in your hand when holding <color=green>grip</color>"},
                 new ButtonInfo { buttonText = "Critter Sticky Trap Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps in your hand when holding <color=green>grip</color>"},
-
+  
                 new ButtonInfo { buttonText = "Critter Sticky Goo Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo at wherever your hand desires."},
 
+                new ButtonInfo { buttonText = "Critter Food Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.Food), toolTip = "Spams food at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Noise Maker Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Stun Bomb Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Sticky Trap Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps at wherever your hand desires."},
@@ -1284,8 +1304,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Barrel Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorBreakableBarrel"]), toolTip = "Spawns barrels out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Bug Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyPest"]), toolTip = "Spawns the annoying bug enemies out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Large Bug Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyPestBig"]), toolTip = "Spawns the large annoying bug enemies out of your hand when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Ranged Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies out of your hand when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Chaser Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Ranged Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyRanged"]), toolTip = "Spawns ranged enemies out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Chaser Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyChaser"]), toolTip = "Spawns chasing enemies out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Armored Ranged Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns armored ranged enemies out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Armored Chaser Enemy Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectGrip(Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns armored chasing enemies out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Entity Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamEntityGrip(), toolTip = "Spawns a random entity out of your hand when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Gate Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnergyCostGate"]), toolTip = "Spawns gates at wherever your hand desires."},
@@ -1296,8 +1318,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Barrel Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorBreakableBarrel"]), toolTip = "Spawns barrels at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Bug Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyPest"]), toolTip = "Spawns the annoying bug enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Large Bug Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyPestBig"]), toolTip = "Spawns the large annoying bug enemies at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Ranged Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Chaser Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Ranged Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyRanged"]), toolTip = "Spawns ranged enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Chaser Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyChaser"]), toolTip = "Spawns chasing enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Armored Ranged Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyRangedArmored"]), toolTip = "Spawns armored ranged enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Armored Chaser Enemy Gun", method =() => Overpowered.SpamObjectGun(Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"]), toolTip = "Spawns armored chasing enemies at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Entity Gun", method = Overpowered.SpamEntityGun, toolTip = "Spawns a random entity at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Rain Entities", method = Overpowered.RainEntities, toolTip = "Makes random entities fall around you like rain."},
@@ -1320,11 +1344,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Blaster Laser Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.BlasterLaserSpam, toolTip = "Spams lasers out of your hand when holding <color=green>grip</color>."},
                 
-                new ButtonInfo { buttonText = "Blaster Fling Gun", method =() => Overpowered.BlasterFlingGun(RandomVector3()), toolTip = "Uses the blasters to fling whoever your hand desires."},
-                new ButtonInfo { buttonText = "Blaster Fling All", method =() => Overpowered.BlasterFlingAll(RandomVector3()), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room."},
-
                 new ButtonInfo { buttonText = "Blaster Float Gun", method =() => Overpowered.BlasterFlingGun(Vector3.up), toolTip = "Uses the blasters to fling whoever your hand desires vertically."},
                 new ButtonInfo { buttonText = "Blaster Float All", method =() => Overpowered.BlasterFlingAll(Vector3.up), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room vertically."},
+
+                new ButtonInfo { buttonText = "Blaster Control Gun", method = Overpowered.BlasterControlGun, toolTip = "Uses the blasters to control whoever your hand desires."},
+
+                new ButtonInfo { buttonText = "Blaster Fling Gun", method =() => Overpowered.BlasterFlingGun(RandomVector3()), toolTip = "Uses the blasters to fling whoever your hand desires."},
+                new ButtonInfo { buttonText = "Blaster Fling All", method =() => Overpowered.BlasterFlingAll(RandomVector3()), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room."},
 
                 new ButtonInfo { buttonText = "Blaster Fling Towards Gun", method = Overpowered.BlasterFlingTowardsGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
                 new ButtonInfo { buttonText = "Blaster Fling Towards All", method = Overpowered.BlasterFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room towards you."},
@@ -1337,8 +1363,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Blaster Crash Gun", method = Overpowered.BlasterCrashGun, toolTip = "Crashes whoever your hand desires using the blasters." },
                 new ButtonInfo { buttonText = "Blaster Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color> using the blasters." },
-
-                new ButtonInfo { buttonText = "Blaster Control Gun", method = Overpowered.BlasterControlGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
 
                 new ButtonInfo { buttonText = "Stilt Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["StiltGadget FixedScaledLong"]), toolTip = "Spawns stilts out of your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Thruster Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamGadgetGrip(Overpowered.GadgetByName["WristJetGadgetPropellor"]), toolTip = "Spawns thrusters out of your hand when holding <color=green>grip</color>."},
@@ -1396,13 +1420,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitMoleType(true), toolTip = "Hits all of the hazards automatically."},
 
                 new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable"), disableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable", 50f), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
-                new ButtonInfo { buttonText = "No Respawn Firefly", enableMethod =() => Fun.SetRespawnDistance("Firefly"), disableMethod =() => Fun.SetRespawnDistance("Firefly", 50f), toolTip = "Doesn't respawn the firefly if it goes too far outside the bounds of forest."},
                 new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable"), disableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable", 50f), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
+                new ButtonInfo { buttonText = "No Respawn Firefly", enableMethod =() => Fun.SetRespawnDistance("Firefly"), disableMethod =() => Fun.SetRespawnDistance("Firefly", 50f), toolTip = "Doesn't respawn the firefly if it goes too far outside the bounds of forest."},
 
                 new ButtonInfo { buttonText = "Permanent Bug", method =() => Fun.PermanentOwnership("Floating Bug Holdable"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bug."},
-                new ButtonInfo { buttonText = "Permanent Firefly", method =() => Fun.PermanentOwnership("Firefly"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the firefly."},
                 new ButtonInfo { buttonText = "Permanent Bat", method =() => Fun.PermanentOwnership("Cave Bat Holdable"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bat."},
-
+                new ButtonInfo { buttonText = "Permanent Firefly", method =() => Fun.PermanentOwnership("Firefly"), disableMethod =() => OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the firefly."},
+ 
                 new ButtonInfo { buttonText = "Bug Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.BugSpam, disableMethod = Fun.DisableBugSpam, toolTip = "Shoots the bug and firefly out of your hand repeatedly." },
                 new ButtonInfo { buttonText = "Camera Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.CameraSpam, disableMethod = Fun.DisableCameraSpam, toolTip = "Shoots the camera out of your hand repeatedly." },
                 new ButtonInfo { buttonText = "Everything Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.EverythingSpam, disableMethod = Fun.DisableEverythingSpam, toolTip = "Shoots everything out of your hand repeatedly." },
@@ -1414,37 +1438,37 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bug Vibrate All", enableMethod = Fun.EnableBugVibrateAll, method = Fun.BugVibrateAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Vibrates the controllers of everyone in the room using the bugs." },
 
                 new ButtonInfo { buttonText = "Holster Bug", method =() => Fun.HolsterObject("Floating Bug Holdable", TransferrableObject.PositionState.OnLeftArm), toolTip = "Holsters the bug on your left arm." },
-                new ButtonInfo { buttonText = "Holster Firefly", method =() => Fun.HolsterObject("Firefly", TransferrableObject.PositionState.OnRightArm), toolTip = "Holsters the firefly on your right arm." },
                 new ButtonInfo { buttonText = "Holster Bat", method =() => Fun.HolsterObject("Cave Bat Holdable", TransferrableObject.PositionState.OnChest), toolTip = "Holsters the bat on your chest." },
+                new ButtonInfo { buttonText = "Holster Firefly", method =() => Fun.HolsterObject("Firefly", TransferrableObject.PositionState.OnRightArm), toolTip = "Holsters the firefly on your right arm." },
 
                 new ButtonInfo { buttonText = "Freeze Bug", method =() => Fun.FreezeObject("Floating Bug Holdable"), toolTip = "Freezes the bug in place." },
-                new ButtonInfo { buttonText = "Freeze Firefly", method =() => Fun.FreezeObject("Firefly"), toolTip = "Freezes the firefly in place." },
                 new ButtonInfo { buttonText = "Freeze Bat", method =() => Fun.FreezeObject("Cave Bat Holdable"), toolTip = "Freezes the bat in place." },
+                new ButtonInfo { buttonText = "Freeze Firefly", method =() => Fun.FreezeObject("Firefly"), toolTip = "Freezes the firefly in place." },
 
                 new ButtonInfo { buttonText = "Fast Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Speeds up the bug." },
-                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 5f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Speeds up the firefly." },
                 new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Speeds up the bat." },
+                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 5f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Speeds up the firefly." },
 
                 new ButtonInfo { buttonText = "Slow Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
-                new ButtonInfo { buttonText = "Slow Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
                 new ButtonInfo { buttonText = "Slow Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
+                new ButtonInfo { buttonText = "Slow Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
 
                 new ButtonInfo { buttonText = "Physical Bug", method =() => Fun.PhysicalObject("Floating Bug Holdable"), toolTip = "Gives the bug physics, letting you grab onto it and throw it." },
-                new ButtonInfo { buttonText = "Physical Firefly", method =() => Fun.PhysicalObject("Firefly"), toolTip = "Gives the firefly physics, letting you grab onto it and throw it." },
                 new ButtonInfo { buttonText = "Physical Bat", method =() => Fun.PhysicalObject("Cave Bat Holdable"), toolTip = "Gives the bat physics, letting you grab onto it and throw it." },
+                new ButtonInfo { buttonText = "Physical Firefly", method =() => Fun.PhysicalObject("Firefly"), toolTip = "Gives the firefly physics, letting you grab onto it and throw it." },
                 new ButtonInfo { buttonText = "Physical Camera", method = Fun.PhysicalCamera, toolTip = "Gives the camera physics, letting you grab onto it and throw it." },
 
                 new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Floating Bug Holdable"), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Grab Firefly <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Firefly"), toolTip = "Forces the firefly into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Cave Bat Holdable"), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Firefly <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Firefly"), toolTip = "Forces the firefly into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Camera <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabCamera, toolTip = "Forces the camera into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Tablet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabTablet, toolTip = "Forces the tablet into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabBalloons, toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.GrabGliders, toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
 
                 new ButtonInfo { buttonText = "Bug Gun", method =() => Fun.ObjectToPointGun("Floating Bug Holdable"), toolTip = "Moves the bug to wherever your hand desires." },
-                new ButtonInfo { buttonText = "Firefly Gun", method =() => Fun.ObjectToPointGun("Firefly"), toolTip = "Moves the firefly to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.ObjectToPointGun("Cave Bat Holdable"), toolTip = "Moves the bat to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Firefly Gun", method =() => Fun.ObjectToPointGun("Firefly"), toolTip = "Moves the firefly to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Camera Gun", method = Fun.CameraGun, toolTip = "Moves the camera to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Tablet Gun", method = Fun.TabletGun, toolTip = "Moves the tablet to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Balloon Gun", method = Fun.BalloonGun, toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
@@ -1452,8 +1476,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hoverboard Gun", method = Fun.HoverboardGun, toolTip = "Spawns hoverboards at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Spaz Bug", method =() => Fun.SpazObject("Floating Bug Holdable"), toolTip = "Gives the bug a seizure." },
-                new ButtonInfo { buttonText = "Spaz Firefly", method =() => Fun.SpazObject("Firefly"), toolTip = "Gives the firefly a seizure." },
                 new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazObject("Cave Bat Holdable"), toolTip = "Gives the bat a seizure." },
+                new ButtonInfo { buttonText = "Spaz Firefly", method =() => Fun.SpazObject("Firefly"), toolTip = "Gives the firefly a seizure." },
                 new ButtonInfo { buttonText = "Spaz Camera", method = Fun.SpazCamera, toolTip = "Gives the camera a seizure." },
                 new ButtonInfo { buttonText = "Spaz Tablet", method = Fun.SpazTablet, toolTip = "Gives the tablet a seizure." },
                 new ButtonInfo { buttonText = "Spaz Balloons", method = Fun.SpazBalloons, toolTip = "Gives the balloons a seizure." },
@@ -1461,8 +1485,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Hoverboard", method = Fun.SpazHoverboard, toolTip = "Gives your hoverboard a seizure while holding it."},
 
                 new ButtonInfo { buttonText = "Orbit Bug", method =() => Fun.OrbitObject("Floating Bug Holdable"), toolTip = "Orbits the bug around you." },
-                new ButtonInfo { buttonText = "Orbit Firefly", method =() => Fun.OrbitObject("Firefly", 120f), toolTip = "Orbits the firefly around you." },
                 new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.OrbitObject("Cave Bat Holdable", 240f), toolTip = "Orbits the bat around you." },
+                new ButtonInfo { buttonText = "Orbit Firefly", method =() => Fun.OrbitObject("Firefly", 120f), toolTip = "Orbits the firefly around you." },
                 new ButtonInfo { buttonText = "Orbit Camera", method = Fun.OrbitCamera, toolTip = "Orbits the camera around you." },
                 new ButtonInfo { buttonText = "Orbit Tablet", method = Fun.OrbitTablet, toolTip = "Orbits the tablet around you." },
                 new ButtonInfo { buttonText = "Orbit Balloons", method = Fun.OrbitBalloons, toolTip = "Orbits the balloons around you." },
@@ -1470,8 +1494,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Orbit Hoverboards", method = Fun.OrbitHoverboards, toolTip = "Orbits the hoverboards around you."},
 
                 new ButtonInfo { buttonText = "Bug Aura", method =() => Fun.ObjectAura("Floating Bug Holdable"), toolTip = "Teleports the bug around you in random positions." },
-                new ButtonInfo { buttonText = "Firefly Aura", method =() => Fun.ObjectAura("Firefly"), toolTip = "Teleports the firefly around you in random positions." },
                 new ButtonInfo { buttonText = "Bat Aura", method =() => Fun.ObjectAura("Cave Bat Holdable"), toolTip = "Teleports the bat around you in random positions." },
+                new ButtonInfo { buttonText = "Firefly Aura", method =() => Fun.ObjectAura("Firefly"), toolTip = "Teleports the firefly around you in random positions." },
                 new ButtonInfo { buttonText = "Camera Aura", method = Fun.CameraAura, toolTip = "Teleports the camera around you in random positions." },
                 new ButtonInfo { buttonText = "Tablet Aura", method = Fun.TabletAura, toolTip = "Teleports the tablet around you in random positions." },
                 new ButtonInfo { buttonText = "Balloon Aura", method = Fun.BalloonAura, toolTip = "Teleports the balloons around you in random positions." },
@@ -1479,12 +1503,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hoverboard Aura", method = Fun.HoverboardAura, toolTip = "Teleports the hoverboards around you in random positions."},
 
                 new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideObject("Floating Bug Holdable"), toolTip = "Repeatedly teleports you on top of the bug." },
-                new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
                 new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideObject("Cave Bat Holdable"), toolTip = "Repeatedly teleports you on top of the bat." },
+                new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
 
                 new ButtonInfo { buttonText = "Become Bug", method =() => Fun.BecomeObject("Floating Bug Holdable"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the bug." },
-                new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the firefly." },
                 new ButtonInfo { buttonText = "Become Bat", method =() => Fun.BecomeObject("Cave Bat Holdable"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the bat." },
+                new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), disableMethod = Movement.EnableRig, toolTip = "Turns you into the firefly." },
                 new ButtonInfo { buttonText = "Become Camera", method = Fun.BecomeCamera, disableMethod = Movement.EnableRig, toolTip = "Turns you into the camera." },
                 new ButtonInfo { buttonText = "Become Tablet", method = Fun.BecomeTablet, disableMethod = Movement.EnableRig, toolTip = "Turns you into the tablet." },
                 new ButtonInfo { buttonText = "Become Balloon", method = Fun.BecomeBalloon, disableMethod = Movement.EnableRig, toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
@@ -1502,12 +1526,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Pop All Balloons", method = Fun.PopAllBalloons, isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
 
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
+                new ButtonInfo { buttonText = "Set Name to \"HIDE\"", method =() => ChangeName("HIDE"), isTogglable = false, toolTip = "Sets your name to \"HIDE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
                 new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
                 new ButtonInfo { buttonText = "Set Name to \"iiOnTop\"", method =() => ChangeName("iiOnTop"), isTogglable = false, toolTip = "Sets your name to \"iiOnTop\"." },
 
                 new ButtonInfo { buttonText = "PBBV Name Cycle", method =() => Fun.NameCycle(new[] { "PPBV", "IS", "HERE" }), toolTip = "Sets your name on a loop to \"PBBV\", \"IS\", and \"HERE\"." },
                 new ButtonInfo { buttonText = "J3VU Name Cycle", method =() => Fun.NameCycle(new[] { "J3VU", "HAS", "BECOME", "HOSTILE" }), toolTip = "Sets your name on a loop to \"J3VU\", \"HAS\", \"BECOME\", and \"HOSTILE\"" },
+                new ButtonInfo { buttonText = "H1D3 Name Cycle", method =() => Fun.NameCycle(new[] { "H1D3", "HE", "HAS", "AWOKEN" }), toolTip = "Sets your name on a loop to \"H1D3\", \"HE\", \"HAS\", and \"AWOKEN\"" },
+                new ButtonInfo { buttonText = "No Escape Name Cycle", method =() => Fun.NameCycle(new[] { "THERE", "IS", "NO", "ESCAPE" }), toolTip = "Sets your name on a loop to \"THERE\", \"IS\", \"NO\", and \"ESCAPE\"" },
                 new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.NameCycle(new[] { "RUN", "RABBIT" }), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
                 new ButtonInfo { buttonText = "Random Name Cycle", method = Fun.RandomNameCycle, toolTip = "Sets your name on a loop to a bunch of random characters." },
                 new ButtonInfo { buttonText = "Custom Name Cycle", enableMethod = Fun.EnableCustomNameCycle, method =() => Fun.NameCycle(Fun.names), toolTip = "Sets your name on a loop to whatever's in the file." },
@@ -1518,6 +1545,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hard Rainbow Color", method = Fun.HardRainbowColor, toolTip = "Makes your character flash from red, green, blue, and magenta." },
 
                 new ButtonInfo { buttonText = "Become \"goldentrophy\"", method =() => Fun.BecomePlayer("goldentrophy", new Color32(255, 128, 0, 255)), isTogglable = false, toolTip = "Sets your name to \"goldentrophy\" and color to orange." },
+                new ButtonInfo { buttonText = "Become \"NOESCAPE\"", method =() => Fun.BecomePlayer("NOESCAPE", Color.black), isTogglable = false, toolTip = "Sets your name to \"NOESCAPE\" and color to black." },
+                new ButtonInfo { buttonText = "Become \"H1D3\"", method =() => Fun.BecomePlayer("H1D3", Color.black), isTogglable = false, toolTip = "Sets your name to \"H1D3\" and color to black." },
                 new ButtonInfo { buttonText = "Become \"PBBV\"", method =() => Fun.BecomePlayer("PBBV", new Color32(230, 127, 102, 255)), isTogglable = false, toolTip = "Sets your name to \"PBBV\" and color to salmon." },
                 new ButtonInfo { buttonText = "Become \"J3VU\"", method =() => Fun.BecomePlayer("J3VU", Color.green), isTogglable = false, toolTip = "Sets your name to \"J3VU\" and color to green." },
                 new ButtonInfo { buttonText = "Become \"ECHO\"", method =() => Fun.BecomePlayer("ECHO", new Color32(0, 150, 255, 255)), isTogglable = false, toolTip = "Sets your name to \"ECHO\" and color to sky blue." },
@@ -1525,7 +1554,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Become \"STATUE\"", method =() => Fun.BecomePlayer("STATUE", Color.black), isTogglable = false, toolTip = "Sets your name to \"STATUE\" and color to black." },
                 new ButtonInfo { buttonText = "Become Child", method = Fun.BecomeMinigamesKid, isTogglable = false, toolTip = "Sets your name and color to something a child would pick." },
 
-                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomePlayer("I", new Color32(0, 53, 2, 255)), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark green, matching the leaderboard." },
+                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomePlayer("I", new Color32(0, 53, 2, 255)), isTogglable = false, toolTip = "Sets your name to \"I\" and your color to a dark green, matching the leaderboard." },
                 new ButtonInfo { buttonText = "Copy Identity Gun", method = Fun.CopyIdentityGun, toolTip = "Steals the identity of whoever your hand desires." },
                 new ButtonInfo { buttonText = "Copy Cosmetics Gun", method = Fun.CopyCosmeticsGun, toolTip = "Steals the cosmetics of whoever your hand desires." },
 
@@ -1688,9 +1717,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Punch Mod", method = Overpowered.SnowballPunchMod, toolTip = "Flings people when you punch them."},
                 new ButtonInfo { buttonText = "Snowball Kamehameha", enableMethod = Overpowered.Enable_Kamehameha, method = Overpowered.Kamehameha, disableMethod = Overpowered.Disable_Kamehameha, toolTip = "Spawns a flaming ball when holding down both triggers and grips.." },
 
-                new ButtonInfo { buttonText = "Snowball Fling Aura", method = Overpowered.SnowballSafetyBubble, toolTip = "Anyone who gets too close to you will be launched away."},
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method = Overpowered.SnowballFlingGun, toolTip = "Flings whoever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballFlingAll, toolTip = "Flings everybody when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Fling Aura", method = Overpowered.SnowballSafetyBubble, toolTip = "Anyone who gets too close to you will be launched away."},
 
                 new ButtonInfo { buttonText = "Snowball Fling Vertical Gun", method = Overpowered.SnowballFlingVerticalGun, toolTip = "Flings whoever your hand desires vertically."},
                 new ButtonInfo { buttonText = "Snowball Fling Vertical All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballFlingVerticalAll, toolTip = "Flings everybody vertically when holding <color=green>trigger</color>."},
@@ -1742,23 +1771,23 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Prop Hunt", method = Overpowered.SpazPropHunt, toolTip = "Repeatedly starts and ends the prop hunt gamemode."},
                 new ButtonInfo { buttonText = "Spaz Prop Hunt Objects", method = Overpowered.SpazPropHuntObjects, toolTip = "Repeatedly randomizes everyone's selected object in the prop hunt gamemode."},
 
-                new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
-                new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
-                new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.SetCurrencyAll(int.MaxValue), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the ghost reactor (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the ghost reactor (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.SetCurrencyAll(int.MaxValue), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the ghost reactor (2 billion)."},
 
-                new ButtonInfo { buttonText = "Add Currency Self", method =() => Fun.AddCurrencySelf(100), isTogglable = false, toolTip = "Gives you 100 more currency in the horror map."},
-                new ButtonInfo { buttonText = "Add Currency Gun", method =() => Fun.AddCurrencyGun(100), toolTip = "Gives whoever your hand desires 100 more currency in the horror map."},
-                new ButtonInfo { buttonText = "Add Currency All", method =() => Fun.AddCurrencyAll(100), isTogglable = false, toolTip = "Gives everyone in the room 100 more currency in the horror map."},
+                new ButtonInfo { buttonText = "Add Currency Self", method =() => Fun.AddCurrencySelf(100), isTogglable = false, toolTip = "Gives you 100 more currency in the ghost reactor."},
+                new ButtonInfo { buttonText = "Add Currency Gun", method =() => Fun.AddCurrencyGun(100), toolTip = "Gives whoever your hand desires 100 more currency in the ghost reactor."},
+                new ButtonInfo { buttonText = "Add Currency All", method =() => Fun.AddCurrencyAll(100), isTogglable = false, toolTip = "Gives everyone in the room 100 more currency in the ghost reactor."},
 
-                new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.SetCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
-                new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.SetCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
-                new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.SetCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the horror map from everyone in the room."},
+                new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.SetCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the ghost reactor from yourself."},
+                new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.SetCurrencyGun(), toolTip = "Removes all currency in the ghost reactor from whoever your hand desires."},
+                new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.SetCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the ghost reactor from everyone in the room."},
 
-                new ButtonInfo { buttonText = "Invincibility", method = Fun.Invincibility, toolTip = "Makes you unable to die in the horror map."},
+                new ButtonInfo { buttonText = "Invincibility", method = Fun.Invincibility, toolTip = "Makes you unable to die in the ghost reactor."},
 
                 new ButtonInfo { buttonText = "Start Shift", method = Fun.StartShift, isTogglable = false, toolTip = "Starts a new ghost reactor shift."},
                 new ButtonInfo { buttonText = "End Shift", method = Fun.EndShift, isTogglable = false, toolTip = "Ends the current ghost reactor shift."},
-                new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Meets the quota fora you."},
+                new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Meets the quota for you."},
 
                 new ButtonInfo { buttonText = "Ghost Reactor Freeze Gun", method = Fun.GhostReactorFreezeGun, toolTip = "Freezes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Freeze All", method = Fun.GhostReactorFreezeAll, toolTip = "Freezes everyone in the ghost reactor."},
@@ -1952,9 +1981,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
                 new ButtonInfo { buttonText = "Force Grab", method = Overpowered.ForceGrab, toolTip = "Attempts to grab the hand of anyone who presses their grips." },
+                new ButtonInfo { buttonText = "Fling on Grab", method = Overpowered.FlingOnGrab, toolTip = "Flings the player when they grab you." },
                 new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
                 new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.one), toolTip = "Crashes the player when they grab you." },
-                new ButtonInfo { buttonText = "Fling on Grab", method = Overpowered.FlingOnGrab, toolTip = "Flings the player when they grab you." },
+                new ButtonInfo { buttonText = "Destroy on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-9999999.99999f, 999999.999999f, -99999.999999f)), toolTip = "Destroys the player when they grab you." },
                 new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
                 new ButtonInfo { buttonText = "Towards Point on Grab Gun", method = Overpowered.TowardsPointOnGrab, disableMethod = Overpowered.DisableTowardsPointOnGrab, toolTip = "Sends the player to your target position when they grab you." },
 
@@ -1968,22 +1998,22 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag Aura", method = Overpowered.LagAura, toolTip = "Lags players nearby."},
                 new ButtonInfo { buttonText = "Lag On Touch", method = Overpowered.LagOnTouch, toolTip = "Lags whoever you touch." },
 
-                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingGun, toolTip = "Flings whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
-
                 new ButtonInfo { buttonText = "Barrel Punch Mod", method = Overpowered.BarrelPunchMod, toolTip = "Flings people when you punch them."},
 
-                new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashGun, toolTip = "Crashes whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingGun, toolTip = "Flings whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingTowardsGun, toolTip = "Flings whoever your hand desires using the barrels towards you."},
                 new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
 
-                new ButtonInfo { buttonText = "Barrel City Kick Gun", method = Overpowered.CityKickGun, toolTip = "Flings whoever your hand desires using the barrels into the clouds map to kick them."},
-                new ButtonInfo { buttonText = "Barrel City Kick All", method = Overpowered.CityKickAll, toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
-
                 new ButtonInfo { buttonText = "Barrel Kick Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelKickGun, toolTip = "Kicks whoever your hand desires using the barrels."},
                 new ButtonInfo { buttonText = "Barrel Kick All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashGun, toolTip = "Crashes whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(Overpowered.BarrelIndex), method = Overpowered.BarrelCrashAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Barrel City Kick Gun", method = Overpowered.CityKickGun, toolTip = "Flings whoever your hand desires using the barrels into the clouds map to kick them."},
+                new ButtonInfo { buttonText = "Barrel City Kick All", method = Overpowered.CityKickAll, toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
                 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method = Overpowered.AntiReportLag, toolTip = "Lags whoever tries to report you."},
 
@@ -2519,16 +2549,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Gamemode", method = Detected.SpazGamemode, detected = true, toolTip = "Rapidly changes the gamemode."},
                 new ButtonInfo { buttonText = "Break Gamemode", enableMethod =() => Detected.BreakGamemode(true), disableMethod =() => Detected.BreakGamemode(false), detected = true, toolTip = "Breaks the current gamemode."},
                 new ButtonInfo { buttonText = "Change Gamemode to None", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.None), isTogglable = false, detected = true, toolTip = "Changes the gamemode to error/none."},
+                new ButtonInfo { buttonText = "Change Gamemode to Count", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Count), isTogglable = false, detected = true, toolTip = "Changes the gamemode to count."},
                 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Casual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Infection), isTogglable = false, detected = true, toolTip = "Changes the gamemode to infection."},
                 new ButtonInfo { buttonText = "Change Gamemode to Competitive Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.InfectionCompetitive), isTogglable = false, detected = true, toolTip = "Changes the gamemode to competitive infection."},
-                new ButtonInfo { buttonText = "Change Gamemode to Super Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+                new ButtonInfo { buttonText = "Change Gamemode to Super Infection", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperInfect), isTogglable = false, detected = true, toolTip = "Changes the gamemode to super infection."},
+                new ButtonInfo { buttonText = "Change Gamemode to Super Casual", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.SuperCasual), isTogglable = false, detected = true, toolTip = "Changes the gamemode to super casual."},
                 new ButtonInfo { buttonText = "Change Gamemode to Hunt", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.HuntDown), isTogglable = false, detected = true, toolTip = "Changes the gamemode to hunt."},
                 new ButtonInfo { buttonText = "Change Gamemode to Paintbrawl", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Paintbrawl), isTogglable = false, detected = true, toolTip = "Changes the gamemode to paintbrawl."},
                 new ButtonInfo { buttonText = "Change Gamemode to Ambush", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ambush), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ambush."},
                 new ButtonInfo { buttonText = "Change Gamemode to Ghost Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Ghost), isTogglable = false, detected = true, toolTip = "Changes the gamemode to ghost tag."},
                 new ButtonInfo { buttonText = "Change Gamemode to Guardian", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Guardian), isTogglable = false, detected = true, toolTip = "Changes the gamemode to guardian."},
                 new ButtonInfo { buttonText = "Change Gamemode to Freeze Tag", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.FreezeTag), isTogglable = false, detected = true, toolTip = "Changes the gamemode to freeze tag."},
+                new ButtonInfo { buttonText = "Change Gamemode to Prop Hunt", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.PropHunt), isTogglable = false, detected = true, toolTip = "Changes the gamemode to prop hunt."},
                 new ButtonInfo { buttonText = "Change Gamemode to Custom", method =() => Detected.ChangeGamemode(GorillaGameModes.GameModeType.Custom), isTogglable = false, detected = true, toolTip = "Changes the gamemode to custom."}
             },
 

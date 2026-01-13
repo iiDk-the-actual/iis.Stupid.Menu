@@ -54,9 +54,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Monke Magic Crash All", overlapText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
             new ButtonInfo { buttonText = "Monke Magic Anti Report", overlapText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
             new ButtonInfo { buttonText = "Monke Magic Crash Aura", overlapText = "Crash Aura", method = CrashAura, toolTip = "Crashes players nearby you in the custom map." },
-            new ButtonInfo { buttonText = "Monke Magic Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
+            new ButtonInfo { buttonText = "Monke Magic Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." },
+            new ButtonInfo { buttonText = "Monke Magic Crash When Touched", overlapText = "Crash When Touched", method = CrashWhenTouched, toolTip = "Crashes whoever touches you in the custom map." }
         };
-
+        
         private static float lightningDelay;
         public static void LightningStrikeSelf()
         {
@@ -273,6 +274,20 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 CrashPlayer(Player.ActorNumber);
                 crashDelay = Time.time + 0.2f;
+            }
+        }
+        public static void CrashWhenTouched()
+        {
+            if (Time.time < crashDelay)
+                return;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
+                {
+                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
+                    CrashPlayer(Player.ActorNumber);
+                    crashDelay = Time.time + 0.2f;
+                }
             }
         }
         public static void CrashAll()
