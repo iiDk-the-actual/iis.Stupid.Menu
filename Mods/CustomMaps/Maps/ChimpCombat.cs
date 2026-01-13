@@ -39,7 +39,9 @@ namespace iiMenu.Mods.CustomMaps.Maps
         public override long MapID => 5135423;
         public override ButtonInfo[] Buttons => new[]
         {
-            new ButtonInfo { buttonText = "Kill All Players", method = KillAll, toolTip = "Kills everyone in the room."},
+            new ButtonInfo { buttonText = "Kill Self Player", overlapText = "Kill Self", method = KillSelf, isTogglable = false, toolTip = "Kills yourself."},
+            new ButtonInfo { buttonText = "Kill Player Gun", overlapText = "Kill Gun", method = KillGun, toolTip = "Kills whoever your hand desires."},
+            new ButtonInfo { buttonText = "Kill All Players", overlapText = "Kill All", method = KillAll, isTogglable = false, toolTip = "Kills everyone in the room."},
             new ButtonInfo { buttonText = "God Mode_", overlapText = "God Mode", enableMethod = GodMode, disableMethod = DisableGodMode, toolTip = "Prevents you from getting killed."},
             new ButtonInfo { buttonText = "No Grenade Cooldown", enableMethod = NoGrenadeCooldown, disableMethod = DisableNoGrenadeCooldown, toolTip = "Disables the cooldown on spawning grenades."},
             new ButtonInfo { buttonText = "No Shoot Cooldown", enableMethod = NoShootCooldown, disableMethod = DisableNoShootCooldown, toolTip = "Disables the cooldown on shooting."},
@@ -51,13 +53,67 @@ namespace iiMenu.Mods.CustomMaps.Maps
             new ButtonInfo { buttonText = "Chimp Combat Crash All", overlapText = "Crash All", method = CrashAll, isTogglable = false, toolTip = "Crashes everyone in the custom map." },
             new ButtonInfo { buttonText = "Chimp Combat Anti Report", overlapText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method = AntiReportCrash, toolTip = "Crashes everyone who tries to report you." },
             new ButtonInfo { buttonText = "Chimp Combat Crash Aura", overlapText = "Crash Aura", method = CrashAura, toolTip = "Crashes players nearby you in the custom map." },
-            new ButtonInfo { buttonText = "Chimp Combat Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." }
+            new ButtonInfo { buttonText = "Chimp Combat Crash On Touch", overlapText = "Crash On Touch", method = CrashOnTouch, toolTip = "Crashes whoever you touch in the custom map." },
+            new ButtonInfo { buttonText = "Chimp Combat Crash When Touched", overlapText = "Crash When Touched", method = CrashWhenTouched, toolTip = "Crashes whoever touches you in the custom map." }
         };
+
+        public static float killDelay;
+        public static void KillPlayer(int ActorNumber)
+        {
+            PhotonNetwork.RaiseEvent(180, new object[] { "HitPlayer", (double)ActorNumber, false, (double)ActorNumber }, new RaiseEventOptions
+            {
+                TargetActors = new[]
+                {
+                    ActorNumber
+                }
+            }, SendOptions.SendReliable);
+            RPCProtection();
+        }
+
+        public static void KillSelf()
+        {
+            NetPlayer Player = PhotonNetwork.LocalPlayer;
+            KillPlayer(Player.ActorNumber);
+        }
+
+        public static void KillGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && Time.time > killDelay)
+                {
+                    NetPlayer Player = GetPlayerFromVRRig(lockTarget);
+                    KillPlayer(Player.ActorNumber);
+                    killDelay = Time.time + 0.2f;
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
 
         public static void KillAll()
         {
-            PhotonNetwork.RaiseEvent(180, new object[] { "HitPlayer", (double)GetRandomPlayer(false).ActorNumber, (double)99999, (double)GetRandomPlayer(false).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-            RPCProtection();
+            if (!(Time.time > killDelay)) return;
+            foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                KillPlayer(player.ActorNumber);
+
+            killDelay = Time.time + 0.1f;
         }
 
         public static void GodMode()
@@ -213,6 +269,20 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 CrashPlayer(netPlayer.ActorNumber);
                 crashDelay = Time.time + 0.2f;
+            }
+        }
+        public static void CrashWhenTouched()
+        {
+            if (Time.time < crashDelay)
+                return;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
+                {
+                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
+                    CrashPlayer(Player.ActorNumber);
+                    crashDelay = Time.time + 0.2f;
+                }
             }
         }
         public static void CrashAll()
