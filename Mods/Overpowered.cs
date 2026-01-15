@@ -864,6 +864,205 @@ namespace iiMenu.Mods
             vstumpKickAllCoroutine = CoroutineManager.instance.StartCoroutine(VStumpKickAllCoroutine());
         }
 
+        private static readonly Dictionary<VRRig, GameObject> MasterClientBoxESP = new Dictionary<VRRig, GameObject>();
+        public static void DisableMasterClientBoxESP()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> box in MasterClientBoxESP)
+                Object.Destroy(box.Value);
+
+            MasterClientBoxESP.Clear();
+        }
+
+        public static void GhostReactorKickGun_Box()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, GameObject> box in MasterClientBoxESP)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
+                {
+                    toRemove.Add(box.Key);
+                    Object.Destroy(box.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                MasterClientBoxESP.Remove(rig);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    if (!MasterClientBoxESP.TryGetValue(vrrig, out GameObject box))
+                    {
+                        box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Object.Destroy(box.GetComponent<BoxCollider>());
+
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                        MasterClientBoxESP.Add(vrrig, box);
+                    }
+
+                    Color thecolor = Color.blue;
+
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
+                    box.transform.position = NetworkSystem.Instance.MasterClient.VRRig().transform.position;
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                }
+            }
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        foreach (KeyValuePair<VRRig, GameObject> box in MasterClientBoxESP)
+                        {
+                            if (!GorillaParent.instance.vrrigs.Contains(box.Key))
+                            {
+                                toRemove.Add(box.Key);
+                                Object.Destroy(box.Value);
+                            }
+                        }
+
+                        foreach (VRRig rig in toRemove)
+                            MasterClientBoxESP.Remove(rig);
+
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        {
+                            if (!vrrig.isLocal)
+                            {
+                                if (!MasterClientBoxESP.TryGetValue(vrrig, out GameObject box))
+                                {
+                                    box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Object.Destroy(box.GetComponent<BoxCollider>());
+
+                                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                                    MasterClientBoxESP.Add(vrrig, box);
+                                }
+
+                                Color thecolor = Color.red;
+
+                                box.GetComponent<Renderer>().material.color = thecolor;
+
+                                box.transform.position = NetworkSystem.Instance.MasterClient.VRRig().transform.position;
+                                box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                            }
+                        }
+                        kgDebounce = Time.time + 0.2f;
+                        GhostReactorKickMasterClient();
+                    }
+                }
+            }
+        }
+
+        public static void SuperInfectionKickGun_Box()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, GameObject> box in MasterClientBoxESP)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
+                {
+                    toRemove.Add(box.Key);
+                    Object.Destroy(box.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                MasterClientBoxESP.Remove(rig);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                {
+                    if (!MasterClientBoxESP.TryGetValue(vrrig, out GameObject box))
+                    {
+                        box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Object.Destroy(box.GetComponent<BoxCollider>());
+
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                        MasterClientBoxESP.Add(vrrig, box);
+                    }
+
+                    Color thecolor = Color.blue;
+
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
+                    box.transform.position = NetworkSystem.Instance.MasterClient.VRRig().transform.position;
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                }
+            }
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        foreach (KeyValuePair<VRRig, GameObject> box in MasterClientBoxESP)
+                        {
+                            if (!GorillaParent.instance.vrrigs.Contains(box.Key))
+                            {
+                                toRemove.Add(box.Key);
+                                Object.Destroy(box.Value);
+                            }
+                        }
+
+                        foreach (VRRig rig in toRemove)
+                            MasterClientBoxESP.Remove(rig);
+
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        {
+                            if (!vrrig.isLocal)
+                            {
+                                if (!MasterClientBoxESP.TryGetValue(vrrig, out GameObject box))
+                                {
+                                    box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Object.Destroy(box.GetComponent<BoxCollider>());
+
+                                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                                    MasterClientBoxESP.Add(vrrig, box);
+                                }
+
+                                Color thecolor = Color.red;
+
+                                box.GetComponent<Renderer>().material.color = thecolor;
+
+                                box.transform.position = NetworkSystem.Instance.MasterClient.VRRig().transform.position;
+                                box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                            }
+                        }
+                        kgDebounce = Time.time + 0.2f;
+                        SuperInfectionKickMasterClient();
+                    }
+                }
+            }
+        }
+
         public static void GhostReactorCrashGun()
         {
             if (GetGunInput(false))
