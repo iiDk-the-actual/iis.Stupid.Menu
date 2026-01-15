@@ -488,7 +488,7 @@ namespace iiMenu.Menu
                             {
                                 name = "EEEEKK!",
                                 description = "Be in the same room as a Console administrator.",
-                                icon = "Images/Achievements/leader.png"
+                                icon = "Images/Achievements/eeeekk.png"
                             });
                         }
                     }
