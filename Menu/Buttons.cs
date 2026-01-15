@@ -466,7 +466,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method = Important.OculusReportMenu, toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
-                new ButtonInfo { buttonText = "Accept TOS", method = Important.AcceptTOS, disableMethod =() => TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
+                new ButtonInfo { buttonText = "Accept TOS", method = Important.AcceptTOS, disableMethod =() => TOSPatches.enabled = false, toolTip = "Accepts the Terms of Service for you."},
                 new ButtonInfo { buttonText = "Bypass K-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by K-ID for underage users."},
                 new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.instance.StartCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
 
@@ -549,7 +549,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cosmetic Notifications", method = Safety.CosmeticNotifications, toolTip = "Sends you a notification if there is a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator in your room."},
 
                 new ButtonInfo { buttonText = "Bypass Automod", method = Safety.BypassAutomod, toolTip = "Attempts to bypass automod muting yourself and others."},
-                new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatch.enabled = true, method = Safety.BypassModCheckers, disableMethod =() => PropertiesPatch.enabled = false, toolTip = "Tells players using mod checkers that you have no mods."},
+                new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatches.enabled = true, method = Safety.BypassModCheckers, disableMethod =() => PropertiesPatches.enabled = false, toolTip = "Tells players using mod checkers that you have no mods."},
                 new ButtonInfo { buttonText = "Bypass Cosmetic Check", method =() => RequestPatch.bypassCosmeticCheck = true, disableMethod =() => RequestPatch.bypassCosmeticCheck = false, toolTip = "Turns off the networking for any cosmetic mods, stopping people from seeing if you're using one."},
                 new ButtonInfo { buttonText = "Anti Predictions", enableMethod = Safety.AntiPredictions, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Prevents people from checking if your predictions are too high."},
 
@@ -708,7 +708,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Air Swim", method = Movement.AirSwim, disableMethod = Movement.DisableAirSwim, toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.SetSwimSpeed(10f), disableMethod =() => Movement.SetSwimSpeed(), toolTip = "Lets you swim faster in water." },
                 new ButtonInfo { buttonText = "Water Run Helper", overlapText = "Water Run", enableMethod =() => Movement.WaterRunHelper(true), disableMethod =() => Movement.WaterRunHelper(false), toolTip = "Adds back water running to the game." },
-                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { ForcePatch.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(false); }, disableMethod =() => { ForcePatch.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
+                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { ForcePatches.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(false); }, disableMethod =() => { ForcePatches.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Ghost, disableMethod = Movement.EnableRig, toolTip = "Keeps your rig still when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method = Movement.Invisible, disableMethod = Movement.EnableRig, toolTip = "Makes you go invisible when holding <color=green>B</color>."},
@@ -1163,8 +1163,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Multiply Knockback", enableMethod =() => MultiplyKnockback.enabled = true, disableMethod =() => MultiplyKnockback.enabled = false, toolTip = "Multiplies your knockback by an amount set in settings."},
                 new ButtonInfo { buttonText = "Multiply Self Knockback", enableMethod =() => MultiplySelfKnockbackPatch.enabled = true, disableMethod =() => MultiplySelfKnockbackPatch.enabled = false, toolTip = "Multiplies your projectile knockback by an amount set in settings."},
 
-                new ButtonInfo { buttonText = "Fast Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 10f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 10."},
-                new ButtonInfo { buttonText = "Slow Throw", method =() => { VelocityPatch.enabled = true; VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
+                new ButtonInfo { buttonText = "Fast Throw", method =() => { VelocityPatches.enabled = true; VelocityPatches.multipleFactor = 10f; }, disableMethod =() => VelocityPatches.enabled = false, toolTip = "Multiplies your throw factor by 10."},
+                new ButtonInfo { buttonText = "Slow Throw", method =() => { VelocityPatches.enabled = true; VelocityPatches.multipleFactor = 0.1f; }, disableMethod =() => VelocityPatches.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
                 new ButtonInfo { buttonText = "Slingshot Self", enableMethod =() => Fun.SlingshotSelf(), disableMethod =() => Fun.SlingshotSelf(false), toolTip = "Gives you a client sided slingshot."},
                 new ButtonInfo { buttonText = "Angry Birds", enableMethod =() => LaunchProjectilePatch.enabled = true, method = Fun.AngryBirdsSounds, disableMethod =() => LaunchProjectilePatch.enabled = false, toolTip = "Flings you in whatever direction your slingshot's projectiles are heading."},
@@ -1561,7 +1561,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method = Fun.ChangeAccessories, toolTip = "Use your grips to change what hat you're wearing." },
                 new ButtonInfo { buttonText = "Spaz Accessories", overlapText = "Spaz Cosmetics <color=grey>[</color><color=green>All</color><color=grey>]</color>", method = Fun.SpazAccessories, toolTip = "Spazzes your hats out for everyone when holding <color=green>trigger</color>." },
                 new ButtonInfo { buttonText = "Spaz Cosmetics <color=grey>[</color><color=green>Others</color><color=grey>]</color>", method = Fun.SpazAccessoriesOthers, toolTip = "Spazzes your hats out for everyone except you when holding <color=green>trigger</color>." },
-
+                
                 new ButtonInfo { buttonText = "Spaz Balloon Cosmetics <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.SpazAccessoriesBalloon, toolTip = "Spazzes your balloons out for everyone when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Cosmetic Spoof", enableMethod = Fun.TryOnAnywhere, disableMethod = Fun.TryOffAnywhere, toolTip = "Lets you try on cosmetics from anywhere. Enable this mod after wearing the cosmetics." },

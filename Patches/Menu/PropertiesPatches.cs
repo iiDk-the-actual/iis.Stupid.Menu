@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/PropertiesPatch.cs
+ * ii's Stupid Menu  Patches/Menu/PropertiesPatches.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2026  Goldentrophy Software
@@ -26,36 +26,38 @@ using Photon.Realtime;
 
 namespace iiMenu.Patches.Menu
 {
-    // Gizmo I didn't steal this idea from you
-    [HarmonyPatch(typeof(Player), "SetCustomProperties")]
-    public class PropertiesPatch
+    public class PropertiesPatches
     {
         public static bool enabled;
 
-        public static bool Prefix(Player __instance, ref Hashtable propertiesToSet)
+        [HarmonyPatch(typeof(Player), "SetCustomProperties")]
+        public class SetCustomPropertiesMethod
         {
-            if (__instance.IsLocal && enabled)
+            public static bool Prefix(Player __instance, ref Hashtable propertiesToSet)
             {
-                if (propertiesToSet.Any(prop => prop.Key.ToString() != "didTutorial"))
-                    return false;
-            }
+                if (__instance.IsLocal && enabled)
+                {
+                    if (propertiesToSet.Any(prop => prop.Key.ToString() != "didTutorial"))
+                        return false;
+                }
 
-            return true;
+                return true;
+            }
         }
-    }
 
-    [HarmonyPatch(typeof(Player), "set_CustomProperties")]
-    public class PropertiesPatch2
-    {
-        public static bool Prefix(Player __instance, ref Hashtable value)
+        [HarmonyPatch(typeof(Player), "set_CustomProperties")]
+        public class SetCustomPropertiesField
         {
-            if (__instance.IsLocal && PropertiesPatch.enabled)
+            public static bool Prefix(Player __instance, ref Hashtable value)
             {
-                if (value.Any(prop => prop.Key.ToString() != "didTutorial"))
-                    return false;
-            }
+                if (__instance.IsLocal && enabled)
+                {
+                    if (value.Any(prop => prop.Key.ToString() != "didTutorial"))
+                        return false;
+                }
 
-            return true;
+                return true;
+            }
         }
     }
 }

@@ -726,11 +726,11 @@ exit";
                 PrivateUIRoom.overlayForcedActive = false;
                 PrivateUIRoom.StopOverlay();
 
-                if (!TOSPatch.enabled)
+                if (!TOSPatches.enabled)
                 {
                     GorillaTagger.Instance.tapHapticStrength = 0.5f;
                     GorillaSnapTurn.LoadSettingsFromCache();
-                    TOSPatch.enabled = true;
+                    TOSPatches.enabled = true;
                 }
 
                 acceptedTOS = true;

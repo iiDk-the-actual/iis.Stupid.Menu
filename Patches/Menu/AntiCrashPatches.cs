@@ -34,7 +34,7 @@ namespace iiMenu.Patches.Menu
         public static bool enabled;
 
         [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
-        public class AntiCrashPatch1
+        public class DroppedByPlayer
         {
             public static bool enabled;
 
@@ -48,7 +48,7 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
-        public class AntiCrashPatch2
+        public class RequestCosmetics
         {
             private static readonly List<float> callTimestamps = new List<float>();
             public static bool Prefix(VRRig __instance)
@@ -65,7 +65,7 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(VRRig), "RequestMaterialColor")]
-        public class AntiCrashPatch3
+        public class RequestMaterialColor
         {
             private static readonly List<float> callTimestamps = new List<float>();
             public static bool Prefix(VRRig __instance)
@@ -82,7 +82,7 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(DeployedChild), "Deploy")]
-        public class AntiCrashPatch4
+        public class Deploy
         {
             public static void Postfix(DeployedChild __instance, DeployableObject parent, Vector3 launchPos, Quaternion launchRot, Vector3 releaseVel, bool isRemote = false)
             {
@@ -92,7 +92,7 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(LuauVm), "OnEvent")]
-        public class AntiCrashPatch5
+        public class OnEvent
         {
             public static bool Prefix(EventData eventData)
             {
@@ -114,16 +114,14 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(RoomSystem), "SearchForShuttle")]
-        public class AntiCrashPatch6
+        public class SearchForShuttle
         {
-            public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info)
-            {
-                return !enabled;
-            }
+            public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info) =>
+                !enabled;
         }
 
         [HarmonyPatch(typeof(RoomInfo), "InternalCacheProperties")]
-        public class AntiCrashPatch7
+        public class InternalCacheProperties
         {
             public static bool Prefix(RoomInfo __instance, Hashtable propertiesToCache)
             {
@@ -134,7 +132,7 @@ namespace iiMenu.Patches.Menu
         }
 
         [HarmonyPatch(typeof(GameEntityManager), "JoinWithItemsRPC")]
-        public class AntiCrashPatch8
+        public class JoinWithItemsRPC
         {
             public static bool Prefix(GameEntityManager __instance, byte[] stateData, int[] netIds, int joiningActorNum, PhotonMessageInfo info)
             {

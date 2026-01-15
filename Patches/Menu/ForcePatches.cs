@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/ForcePatch.cs
+ * ii's Stupid Menu  Patches/Menu/ForcePatches.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2026  Goldentrophy Software
@@ -23,26 +23,29 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(ForceVolume), "OnTriggerEnter")]
-    public class ForcePatch
+    public class ForcePatches
     {
         public static bool enabled;
 
-        public static bool Prefix() =>
-            !enabled;
-    }
+        [HarmonyPatch(typeof(ForceVolume), "OnTriggerEnter")]
+        public class OnTriggerEnter
+        {
+            public static bool Prefix() =>
+                !enabled;
+        }
 
-    [HarmonyPatch(typeof(ForceVolume), "OnTriggerExit")]
-    public class ForcePatch2
-    {
-        public static bool Prefix() =>
-            !ForcePatch.enabled;
-    }
+        [HarmonyPatch(typeof(ForceVolume), "OnTriggerExit")]
+        public class OnTriggerExit
+        {
+            public static bool Prefix() =>
+                !enabled;
+        }
 
-    [HarmonyPatch(typeof(ForceVolume), "OnTriggerStay")]
-    public class ForcePatch3
-    {
-        public static bool Prefix() =>
-            !ForcePatch.enabled;
+        [HarmonyPatch(typeof(ForceVolume), "OnTriggerStay")]
+        public class OnTriggerStay
+        {
+            public static bool Prefix() =>
+                !enabled;
+        }
     }
 }
