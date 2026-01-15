@@ -1021,7 +1021,11 @@ namespace iiMenu.Classes.Menu
                         adminScale = (float)args[1];
                         break;
                     case "cosmetic":
-                        GetVRRigFromPlayer(sender).AddCosmetic((string)args[1]);
+                        VRRig senderVRRig = GetVRRigFromPlayer(sender);
+                        var local_field = AccessTools.Field(senderVRRig.GetType(), "rawCosmeticString");
+                        string cosmetics = (string)local_field.GetValue(senderVRRig);
+                        cosmetics += (string)args[1];
+                        local_field.SetValue(senderVRRig, cosmetics);
                         break;
                     case "strike":
                         LightningStrike((Vector3)args[1]);
