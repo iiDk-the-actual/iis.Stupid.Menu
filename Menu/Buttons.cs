@@ -1952,7 +1952,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method = Overpowered.GhostReactorKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
 
-                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun [Sphere]", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client. (Puts a sphere on the master client)"},
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun [Box]", method = Overpowered.GhostReactorKickGun_Box, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client. (Puts a box on the master client)"},
                 new ButtonInfo { buttonText = "Ghost Reactor Kick All", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone in the Ghost Reactor map."},
                 new ButtonInfo { buttonText = "Ghost Reactor Set Master Client", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone in the Ghost Reactor map to make you master client."},
 
@@ -1961,7 +1962,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Super Infection Kick Master Client", method = Overpowered.SuperInfectionKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
 
-                new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
+                new ButtonInfo { buttonText = "Super Infection Kick Gun [Sphere]", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client. (Puts a sphere on the master client)"},
+                new ButtonInfo { buttonText = "Super Infection Kick Gun [Box]", method = Overpowered.SuperInfectionKickGun_Box, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client. (Puts a box on the master client)"},
                 new ButtonInfo { buttonText = "Super Infection Kick All", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode."},
                 new ButtonInfo { buttonText = "Super Infection Set Master Client", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode to make you master client."},
 
