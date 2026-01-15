@@ -24,6 +24,7 @@ using iiMenu.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Utilities.AssetUtilities;
@@ -68,7 +69,7 @@ namespace iiMenu.Managers
         public static bool IsPlayerPatreonMember(NetPlayer player) =>
             instance.PatreonMembers.ContainsKey(player.UserId);
 
-        public static Color GetTierColor(string color)
+        public static Color GetTierColor(string color) // Hard coded slop my beloved
         {
             return color switch
             {
@@ -137,15 +138,13 @@ namespace iiMenu.Managers
 
                             GameObject go = new GameObject("iiMenu_Nametag");
                             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                            TextMesh textMesh = go.AddComponent<TextMesh>();
-                            textMesh.fontSize = 48;
-                            textMesh.characterSize = 0.1f;
-                            textMesh.anchor = TextAnchor.MiddleCenter;
-                            textMesh.alignment = TextAlignment.Center;
+                            TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
+                            textMesh.fontSize = 4.8f;
+                            textMesh.alignment = TextAlignmentOptions.Center;
 
-                            textMesh.text = member.Value.TierName;
+                            textMesh.SafeSetText(member.Value.TierName);
+                            textMesh.SafeSetFontStyle(FontStyles.Bold);
                             textMesh.color = GetTierColor(member.Value.TierName);
-                            textMesh.fontStyle = FontStyle.Bold;
                             textMesh.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
                             textMesh.transform.SetParent(playerIndicator.transform, false);
 
