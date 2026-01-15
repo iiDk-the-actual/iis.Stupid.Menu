@@ -864,6 +864,56 @@ namespace iiMenu.Mods
             vstumpKickAllCoroutine = CoroutineManager.instance.StartCoroutine(VStumpKickAllCoroutine());
         }
 
+        public static void GhostReactorKickGun_Cube()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            Visuals.VisualizeCube(NetworkSystem.Instance.MasterClient.VRRig().transform.position, NetworkSystem.Instance.MasterClient.VRRig().transform.rotation, NetworkSystem.Instance.MasterClient.VRRig().transform.localScale, Color.blue, 2017928);
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        Visuals.VisualizeCube(NetworkSystem.Instance.MasterClient.VRRig().transform.position, NetworkSystem.Instance.MasterClient.VRRig().transform.rotation, NetworkSystem.Instance.MasterClient.VRRig().transform.localScale, Color.red, 2017928);
+                        kgDebounce = Time.time + 0.2f;
+                        GhostReactorKickMasterClient();
+                    }
+                }
+            }
+        }
+
+        public static void SuperInfectionKickGun_Cube()
+        {
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            Visuals.VisualizeCube(NetworkSystem.Instance.MasterClient.VRRig().transform.position, NetworkSystem.Instance.MasterClient.VRRig().transform.rotation, NetworkSystem.Instance.MasterClient.VRRig().transform.localScale, Color.blue, 2017928);
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
+                    {
+                        Visuals.VisualizeCube(NetworkSystem.Instance.MasterClient.VRRig().transform.position, NetworkSystem.Instance.MasterClient.VRRig().transform.rotation, NetworkSystem.Instance.MasterClient.VRRig().transform.localScale, Color.red, 2017928);
+                        kgDebounce = Time.time + 0.2f;
+                        SuperInfectionKickMasterClient();
+                    }
+                }
+            }
+        }
+
         private static readonly Dictionary<VRRig, GameObject> MasterClientBoxESP = new Dictionary<VRRig, GameObject>();
         public static void DisableMasterClientBoxESP()
         {
