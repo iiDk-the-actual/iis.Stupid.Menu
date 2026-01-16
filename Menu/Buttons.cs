@@ -2334,11 +2334,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Overpowered.kickToPublic = true, disableMethod =() => Overpowered.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." },
                 new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod = Settings.KickToSpecificRoom, disableMethod =() => Overpowered.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." },
                 new ButtonInfo { buttonText = "Rejoin on Kick", enableMethod =() => Overpowered.rejoinOnKick = true, disableMethod =() => Overpowered.rejoinOnKick = false, toolTip = "Makes room based kick mods join the room you kicked the target in once they have been kicked." },
-                new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." }
+                new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." },
 
                 new ButtonInfo { buttonText = "Master Client Kick Gun [Sphere]", enableMethod =() => Overpowered.sphereKick = true, disableMethod =() => Overpowered.sphereKick = false, enabled = true, toolTip = "Makes the master client kick guns have a sphere on whoever is master client."},
                 new ButtonInfo { buttonText = "Master Client Kick Gun [Cube]", enableMethod =() => Overpowered.cubeKick = true, disableMethod =() => Overpowered.cubeKick = false, toolTip = "Makes the master client kick guns have a cube on whoever is master client."},
-                new ButtonInfo { buttonText = "Master Client Kick Gun [Box]", enableMethod =() => Overpowered.boxKick = true, disableMethod =() => Overpowered.boxKick = false, toolTip = "Makes the master client kick guns have a box on whoever is master client."},
+                new ButtonInfo { buttonText = "Master Client Kick Gun [Box]", enableMethod =() => Overpowered.boxKick = true, disableMethod =() => Overpowered.boxKick = false, toolTip = "Makes the master client kick guns have a box on whoever is master client."}
             },
 
             new[] { // Keybind Settings [32]
