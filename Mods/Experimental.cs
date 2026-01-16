@@ -1393,7 +1393,7 @@ namespace iiMenu.Mods
 
                 Color lineColor = Console.GetMenuTypeName(userData.Value);
 
-                LineRenderer line = Visuals.GetLineRender(hiddenOnCamera);
+                LineRenderer line = Visuals.GetLineRender();
 
                 if (followMenuTheme)
                     lineColor = menuColor;

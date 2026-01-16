@@ -5346,57 +5346,12 @@ namespace iiMenu.Menu
         /// current configuration.
         /// </summary>
         /// <param name="tmp">The canvas object to which the menu appearance settings will be applied.</param>
-        public static void FollowMenuSettings(TextMeshPro tmp)
+        public static void FollowMenuSettings(TMP_Text tmp, float? overlapTargetSpacing = null)
         {
             if (tmp == null)
                 return;
 
-            float targetSpacing = -8f + characterDistance;
-            if (redactText)
-                targetSpacing -= 3f;
-
-            if (!Mathf.Approximately(tmp.characterSpacing, targetSpacing))
-                tmp.characterSpacing = targetSpacing;
-
-            if (outlineText)
-            {
-                const float outlineWidth = 0.2f;
-
-                if (!Mathf.Approximately(tmp.outlineWidth, outlineWidth))
-                    tmp.outlineWidth = outlineWidth;
-
-                if (tmp.outlineColor != Color.black)
-                    tmp.outlineColor = Color.black;
-            }
-            else if (!Mathf.Approximately(tmp.outlineWidth, 0f))
-                tmp.outlineWidth = 0f;
-
-            FontStyles targetStyle = tmp.fontStyle;
-
-            if (underlineText)
-                targetStyle |= FontStyles.Underline;
-
-            if (smallCapsText)
-                targetStyle |= FontStyles.SmallCaps;
-
-            if (strikethroughText)
-                targetStyle |= FontStyles.Strikethrough;
-
-            if (tmp.fontStyle != targetStyle)
-                tmp.fontStyle = targetStyle;
-        }
-
-        /// <summary>
-        /// Applies menu appearance settings to the specified canvas object, such as outlining, based on
-        /// current configuration.
-        /// </summary>
-        /// <param name="tmp">The canvas object to which the menu appearance settings will be applied.</param>
-        public static void FollowMenuSettings(TextMeshProUGUI tmp)
-        {
-            if (tmp == null)
-                return;
-
-            float targetSpacing = -8f + characterDistance;
+            float targetSpacing = overlapTargetSpacing ?? (-8f + characterDistance);
             if (redactText)
                 targetSpacing -= 3f;
 

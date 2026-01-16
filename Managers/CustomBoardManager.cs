@@ -124,6 +124,8 @@ namespace iiMenu.Managers
             }
         }
 
+        private static readonly Dictionary<TextMeshPro, float> characterDistanceArchive = new Dictionary<TextMeshPro, float>();
+
         private static bool _customBoardFonts;
         public static bool CustomBoardFonts
         {
@@ -134,11 +136,11 @@ namespace iiMenu.Managers
                 {
                     foreach (TextMeshPro txt in instance.textMeshPro.Where(text => text.isActiveAndEnabled))
                     {
-                        if (txt.font != instance.archiveGorillaTagFont)
-                            txt.font = instance.archiveGorillaTagFont;
+                        txt.SafeSetFont(instance.archiveGorillaTagFont);
+                        txt.SafeSetFontStyle(FontStyles.Normal);
 
-                        if (txt.fontStyle != FontStyles.Normal)
-                            txt.fontStyle = FontStyles.Normal;
+                        if (characterDistanceArchive.TryGetValue(txt, out float charDistance))
+                            txt.characterSpacing = charDistance;
                     }
                 }
 
@@ -317,17 +319,16 @@ namespace iiMenu.Managers
                     textMeshPro.Add(motdHeadingText);
 
                 motdHeadingText.richText = true;
-                motdHeadingText.fontSize = 100;
-                motdHeadingText.text = $"Thanks for using {(doCustomName ? customMenuName : "ii's <b>Stupid</b> Menu")}!";
-                motdHeadingText.fontStyle = activeFontStyle;
-                motdHeadingText.font = activeFont;
-                FollowMenuSettings(motdHeadingText);
-                motdHeadingText.characterSpacing = -4f;
+                motdHeadingText.SafeSetFontSize(100);
+                motdHeadingText.SafeSetText($"Thanks for using {(doCustomName ? customMenuName : "ii's <b>Stupid</b> Menu")}!");
+                motdHeadingText.SafeSetFontStyle(activeFontStyle);
+                motdHeadingText.SafeSetFont(activeFont);
+                FollowMenuSettings(motdHeadingText, -4f);
 
                 if (doCustomName)
-                    motdHeadingText.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
+                    motdHeadingText.SafeSetText("Thanks for using " + NoRichtextTags(customMenuName) + "!");
 
-                motdHeadingText.text = FollowMenuSettings(motdHeadingText.text);
+                motdHeadingText.SafeSetText(FollowMenuSettings(motdHeadingText.text));
 
                 motdHeadingText.color = textColors[0].GetCurrentColor();
                 motdHeadingText.overflowMode = TextOverflowModes.Overflow;
@@ -346,14 +347,13 @@ namespace iiMenu.Managers
                     textMeshPro.Add(motdBodyText);
 
                 motdBodyText.richText = true;
-                motdBodyText.fontSize = 100;
+                motdBodyText.SafeSetFontSize(100);
                 motdBodyText.color = textColors[0].GetCurrentColor();
-                motdBodyText.fontStyle = activeFontStyle;
-                motdBodyText.font = activeFont;
-                FollowMenuSettings(motdBodyText);
-                motdBodyText.characterSpacing = -4f;
+                motdBodyText.SafeSetFontStyle(activeFontStyle);
+                motdBodyText.SafeSetFont(activeFont);
+                FollowMenuSettings(motdBodyText, -4f);
 
-                motdBodyText.text = FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Beta" : "Release", PluginInfo.BuildTimestamp ));
+                motdBodyText.SafeSetText(FollowMenuSettings(string.Format(motdTemplate, PluginInfo.Version, fullModAmount, PluginInfo.BetaBuild ? "Beta" : "Release", PluginInfo.BuildTimestamp )));
             }
             catch { }
             
@@ -371,11 +371,14 @@ namespace iiMenu.Managers
                     if (CustomBoardFonts)
                     {
                         archiveGorillaTagFont ??= txt.font;
-                        if (txt.font != activeFont)
-                            txt.font = activeFont;
 
-                        if (txt.fontStyle != activeFontStyle)
-                            txt.fontStyle = activeFontStyle;
+                        if (!characterDistanceArchive.ContainsKey(txt))
+                            characterDistanceArchive[txt] = txt.characterSpacing;
+
+                        txt.characterSpacing = 0f;
+
+                        txt.SafeSetFont(activeFont);
+                        txt.SafeSetFontStyle(activeFontStyle);
                     }
                 }
             }

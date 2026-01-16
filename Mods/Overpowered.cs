@@ -816,12 +816,70 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        public static int masterVisualizationType;
+        public static void MasterVisualizationType(bool positive = true)
+        {
+            string[] visualizationTypes = {
+                "Sphere",
+                "Cube",
+                "Tracer"
+            };
+
+            if (positive)
+                masterVisualizationType++;
+            else
+                masterVisualizationType--;
+
+            masterVisualizationType %= visualizationTypes.Length;
+            if (masterVisualizationType < 0)
+                masterVisualizationType = visualizationTypes.Length - 1;
+
+            Buttons.GetIndex("Master Visualization Type").overlapText = "Master Visualization Type <color=grey>[</color><color=green>" + visualizationTypes[masterVisualizationType] + "</color><color=grey>]</color>";
+        }
+
+        public static void VisualizeMasterClient()
+        {
+            if (Visuals.DoPerformanceCheck())
+                return;
+
+            if (NetworkSystem.Instance.IsMasterClient)
+                return;
+
+            VRRig rig = NetworkSystem.Instance.MasterClient.VRRig();
+            if (rig == null)
+                return;
+
+            long visualizeId = 2017928;
+            switch (masterVisualizationType)
+            {
+                case 0:
+                    Visuals.VisualizeAura(rig.transform.position, 0.15f, Color.blue, visualizeId);
+                    break;
+                case 1:
+                    Visuals.VisualizeCube(rig.transform.position, Quaternion.Euler(Time.time * 90, Time.time * 60, Time.time * 30), new Vector3(0.3f, 0.3f, 0.3f), Color.blue);
+                    break;
+                case 2:
+                    LineRenderer line = Visuals.GetLineRender();
+
+                    line.startColor = Color.blue;
+                    line.endColor = Color.blue;
+                    float width = 0.025f;
+                    line.startWidth = width;
+                    line.endWidth = width;
+                    line.SetPosition(0, rig.transform.position);
+                    line.SetPosition(1, GorillaTagger.Instance.rightHandTransform.position);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public static void VirtualStumpMasterKickGun()
         {
             if (NetworkSystem.Instance.IsMasterClient)
                 return;
 
-            Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+            VisualizeMasterClient();
 
             if (GetGunInput(false))
             {
@@ -1004,7 +1062,7 @@ namespace iiMenu.Mods
             if (NetworkSystem.Instance.IsMasterClient)
                 return;
 
-            Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+            VisualizeMasterClient();
 
             if (GetGunInput(false))
             {
@@ -1052,7 +1110,7 @@ namespace iiMenu.Mods
             if (NetworkSystem.Instance.IsMasterClient)
                 return;
 
-            Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+            VisualizeMasterClient();
 
             if (GetGunInput(false))
             {
@@ -1098,6 +1156,9 @@ namespace iiMenu.Mods
         public const int ItemCrashCount = 80;
         public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
         {
+            if (manager == null)
+                return;
+
             targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
 
             int[] objectIds = manager.itemPrefabFactory.Keys.ToArray();
@@ -6017,7 +6078,7 @@ namespace iiMenu.Mods
 
             if (ServerPos.Distance(collider.transform.position) < 0.5f)
             {
-                CoroutineManager.instance.StartCoroutine(Overpowered.StumpKickDelay(() =>
+                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
                     PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                     PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
@@ -6026,7 +6087,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    Overpowered.CreateKickRoom();
+                    CreateKickRoom();
                     Buttons.GetIndex("Kick Master Client").enabled = false;
                     VRRig.LocalRig.enabled = true;
 

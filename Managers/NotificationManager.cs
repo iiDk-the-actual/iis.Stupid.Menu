@@ -21,6 +21,7 @@
 
 using GorillaLocomotion;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using System;
@@ -120,9 +121,9 @@ namespace iiMenu.Managers
             GameObject textObj = new GameObject { transform = { parent = parent } };
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
 
-            text.text = "";
+            text.SafeSetText("");
             text.fontSize = fontSize;
-            text.font = AgencyFB;
+            text.SafeSetFont(AgencyFB);
             text.rectTransform.sizeDelta = size;
             text.alignment = anchor;
             text.overflowMode = anchor == TextAlignmentOptions.BottomLeft ? TextOverflowModes.Overflow : TextOverflowModes.Truncate;
@@ -153,20 +154,20 @@ namespace iiMenu.Managers
 
                 try
                 {
-                    arraylistText.font = activeFont;
-                    arraylistText.fontStyle = activeFontStyle;
-                    arraylistText.fontSize = arraylistScale;
+                    arraylistText.SafeSetFont(activeFont);
+                    arraylistText.SafeSetFontStyle(activeFontStyle);
+                    arraylistText.SafeSetFontSize(arraylistScale);
                     UpdateShaderForText(arraylistText);
 
-                    notificationText.font = activeFont;
-                    notificationText.fontStyle = activeFontStyle;
-                    notificationText.fontSize = notificationScale;
+                    notificationText.SafeSetFont(activeFont);
+                    notificationText.SafeSetFontStyle(activeFontStyle);
+                    notificationText.SafeSetFontSize(notificationScale);
                     notificationText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
                     UpdateShaderForText(notificationText);
 
-                    informationText.font = activeFont;
-                    informationText.fontStyle = activeFontStyle;
-                    informationText.fontSize = overlayScale;
+                    informationText.SafeSetFont(activeFont);
+                    informationText.SafeSetFontStyle(activeFontStyle);
+                    informationText.SafeSetFontSize(overlayScale);
                     UpdateShaderForText(informationText);
 
                     FollowMenuSettings(arraylistText);
@@ -190,11 +191,11 @@ namespace iiMenu.Managers
                         .OrderByDescending(item => informationText.GetPreferredValues(NoRichtextTags(item)).x)
                         .ToList();
 
-                    informationText.text = string.Join("\n", statsLines);
+                    informationText.SafeSetText(string.Join("\n", statsLines));
                     informationText.color = Color.white;
                 }
                 else if (!informationText.text.IsNullOrEmpty())
-                    informationText.text = "";
+                    informationText.SafeSetText("");
 
                 if (showEnabledModsVR)
                 {
@@ -243,35 +244,35 @@ namespace iiMenu.Managers
                                 modListText += sortedMods[i] + "\n";
                         }
 
-                        arraylistText.text = modListText;
+                        arraylistText.SafeSetText(modListText);
                         arraylistText.color = Buttons.GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                     }
                 }
                 else if (!arraylistText.text.IsNullOrEmpty())
-                    arraylistText.text = "";
+                    arraylistText.SafeSetText("");
 
                 if (lowercaseMode)
                 {
                     if (!arraylistText.text.IsNullOrEmpty())
-                        arraylistText.text = arraylistText.text.ToLower();
+                        arraylistText.SafeSetText(arraylistText.text.ToLower());
 
                     if (!notificationText.text.IsNullOrEmpty())
-                        notificationText.text = notificationText.text.ToLower();
+                        notificationText.SafeSetText(notificationText.text.ToLower());
 
                     if (!informationText.text.IsNullOrEmpty())
-                        informationText.text = informationText.text.ToLower();
+                        informationText.SafeSetText(informationText.text.ToLower());
                 }
 
                 if (lowercaseMode)
                 {
                     if (!arraylistText.text.IsNullOrEmpty())
-                        arraylistText.text = arraylistText.text.ToUpper();
+                        arraylistText.SafeSetText(arraylistText.text.ToUpper());
 
                     if (!notificationText.text.IsNullOrEmpty())
-                        notificationText.text = notificationText.text.ToUpper();
+                        notificationText.SafeSetText(notificationText.text.ToUpper());
 
                     if (!informationText.text.IsNullOrEmpty())
-                        informationText.text = informationText.text.ToUpper();
+                        informationText.SafeSetText(informationText.text.ToUpper());
                 }
 
                 canvas.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
@@ -355,7 +356,7 @@ namespace iiMenu.Managers
                                 lastLine = lastLine[..counterIndex];
 
                             lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
-                            NotificationManager.notificationText.text = string.Join(Environment.NewLine, lines);
+                            NotificationManager.notificationText.SafeSetText(string.Join(Environment.NewLine, lines));
                         }
 
                         if (clearCoroutines.Count > 0)
@@ -369,22 +370,22 @@ namespace iiMenu.Managers
                         if (!string.IsNullOrEmpty(NotificationManager.notificationText.text))
                         {
                             string currentText = NotificationManager.notificationText.text.TrimEnd('\n', '\r');
-                            NotificationManager.notificationText.text = currentText + Environment.NewLine + notificationText;
+                            NotificationManager.notificationText.SafeSetText(currentText + Environment.NewLine + notificationText);
                         }
                         else
-                            NotificationManager.notificationText.text = notificationText;
+                            NotificationManager.notificationText.SafeSetText(notificationText);
                     }
 
                     CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
 
                     if (noRichText)
-                        NotificationManager.notificationText.text = NoRichtextTags(NotificationManager.notificationText.text);
+                        NotificationManager.notificationText.SafeSetText(NoRichtextTags(NotificationManager.notificationText.text));
 
                     if (lowercaseMode)
-                        NotificationManager.notificationText.text = NotificationManager.notificationText.text.ToLower();
+                        NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToLower());
 
                     if (uppercaseMode)
-                        NotificationManager.notificationText.text = NotificationManager.notificationText.text.ToUpper();
+                        NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToUpper());
 
                     NotificationManager.notificationText.richText = !noRichText;
 
@@ -409,7 +410,7 @@ namespace iiMenu.Managers
         /// are no longer relevant.</remarks>
         public static void ClearAllNotifications()
         {
-            notificationText.text = "";
+            notificationText.SafeSetText("");
 
             foreach (Coroutine coroutine in clearCoroutines)
                 CoroutineManager.instance.StopCoroutine(coroutine);
@@ -431,7 +432,7 @@ namespace iiMenu.Managers
 
             if (amount >= lines.Length)
             {
-                notificationText.text = "";
+                notificationText.SafeSetText("");
                 return;
             }
 
@@ -439,8 +440,8 @@ namespace iiMenu.Managers
             for (int i = amount; i < lines.Length; i++)
                 remainingLines.Add(lines[i]);
 
-            notificationText.text = string.Join(Environment.NewLine, remainingLines);
-            notificationText.text = notificationText.text.TrimEnd('\n', '\r');
+            notificationText.SafeSetText(string.Join(Environment.NewLine, remainingLines));
+            notificationText.SafeSetText(notificationText.text.TrimEnd('\n', '\r'));
         }
 
         private static IEnumerator TrackCoroutine(IEnumerator routine)

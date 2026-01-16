@@ -5216,7 +5216,8 @@ exit 0";
                 Movement.fakeLagDelayIndex.ToString(),
                 Projectiles.snowballIndex.ToString(),
                 characterDistance.ToString(),
-                Overpowered.lagTypeIndex.ToString()
+                Overpowered.lagTypeIndex.ToString(),
+                Overpowered.masterVisualizationType.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -5483,6 +5484,9 @@ exit 0";
 
                 Overpowered.lagTypeIndex = int.Parse(data[65]) - 1;
                 Overpowered.ChangeLagType();
+
+                Overpowered.masterVisualizationType = int.Parse(data[66]) - 1;
+                Overpowered.MasterVisualizationType();
             }
             catch { LogManager.Log("Save file out of date"); }
 

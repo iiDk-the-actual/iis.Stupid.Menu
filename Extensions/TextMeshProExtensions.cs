@@ -19,20 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using iiMenu.Utilities;
-using Photon.Pun;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Extensions
 {
     public static class TextMeshProExtensions
     {
-        public static void SafeSetText(this TextMeshPro tmp, string text)
+        public static void SafeSetText(this TMP_Text tmp, string text)
         {
             if (tmp == null)
                 return;
@@ -41,28 +36,40 @@ namespace iiMenu.Extensions
                 tmp.text = text;
         }
 
-        public static void SafeSetFont(this TextMeshPro tmp, TMP_FontAsset font)
+        public static void SafeSetFont(this TMP_Text tmp, TMP_FontAsset font)
         {
             if (tmp == null)
                 return;
+
             if (tmp.font.hashCode != font.hashCode)
                 tmp.font = font;
         }
 
-        public static void SafeSetFontSize(this TextMeshPro tmp, float size)
+        public static void SafeSetFontSize(this TMP_Text tmp, float size)
         {
             if (tmp == null)
                 return;
+
             if (Math.Abs(tmp.fontSize - size) > 0.01f)
                 tmp.fontSize = size;
         }
 
-        public static void SafeSetFontStyle(this TextMeshPro tmp, FontStyles style)
+        public static void SafeSetFontStyle(this TMP_Text tmp, FontStyles style)
         {
             if (tmp == null)
                 return;
+
             if (tmp.fontStyle != style)
                 tmp.fontStyle = style;
+        }
+
+        public static void SafeSetCharacterSpacing(this TMP_Text tmp, float targetSpacing)
+        {
+            if (tmp == null)
+                return;
+
+            if (!Mathf.Approximately(tmp.characterSpacing, targetSpacing))
+                tmp.characterSpacing = targetSpacing;
         }
     }
 }

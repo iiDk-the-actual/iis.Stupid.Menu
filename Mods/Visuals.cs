@@ -756,15 +756,15 @@ namespace iiMenu.Mods
 
         public static void DisableGamesenseRing()
         {
-            HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
-
-            foreach (VRRig removal in handTaps.Keys.ToList())
+            foreach (var removal in handTaps)
             {
-                if ((GameObject)handTaps[removal][3] != null)
-                    Object.Destroy((GameObject)handTaps[removal][3]);
+                if (removal.Value[3] != null)
+                    Object.Destroy((GameObject)removal.Value[3]);
             }
 
             handTaps.Clear();
+
+            HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
         }
 
         public static bool PerformanceVisuals;
@@ -5372,7 +5372,6 @@ namespace iiMenu.Mods
 
             bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
             float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = backgroundColor.GetCurrentColor();
@@ -5384,7 +5383,7 @@ namespace iiMenu.Mods
 
                 Color lineColor = playerRig.playerColor;
 
-                LineRenderer line = GetLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender();
 
                 if (followMenuTheme)
                     lineColor = menuColor;
@@ -5431,7 +5430,7 @@ namespace iiMenu.Mods
             {
                 Color lineColor = playerRig.playerColor;
 
-                LineRenderer line = GetLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender();
 
                 if (followMenuTheme)
                     lineColor = menuColor;
@@ -5486,7 +5485,7 @@ namespace iiMenu.Mods
                     }
                 }
 
-                LineRenderer line = GetLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender();
 
                 if (transparentTheme)
                     lineColor.a = 0.5f;
@@ -5531,7 +5530,7 @@ namespace iiMenu.Mods
                 {
                     Color lineColor = playerRig.playerColor;
 
-                    LineRenderer line = GetLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender();
 
                     if (transparentTheme)
                         lineColor.a = 0.5f;
@@ -5547,7 +5546,7 @@ namespace iiMenu.Mods
                 {
                     Color lineColor = Color.red;
 
-                    LineRenderer line = GetLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender();
 
                     if (transparentTheme)
                         lineColor.a = 0.5f;
@@ -5585,7 +5584,7 @@ namespace iiMenu.Mods
 
                 Color lineColor = playerRig.playerColor;
 
-                LineRenderer line = GetLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender();
 
                 if (followMenuTheme)
                     lineColor = menuColor;
@@ -5644,7 +5643,7 @@ namespace iiMenu.Mods
                     }
                 }
 
-                LineRenderer line = GetLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender();
 
                 if (followMenuTheme)
                     lineColor = menuColor;
@@ -5695,7 +5694,7 @@ namespace iiMenu.Mods
                 if (GetPlayerFromVRRig(playerRig) == currentTarget)
                 {
                     Color lineColor = playerRig.playerColor;
-                    LineRenderer line = GetLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender();
 
                     if (followMenuTheme)
                         lineColor = menuColor;
@@ -5715,7 +5714,7 @@ namespace iiMenu.Mods
                 {
                     Color lineColor = Color.red;
 
-                    LineRenderer line = GetLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender();
 
                     if (followMenuTheme)
                         lineColor = menuColor;
@@ -6052,8 +6051,10 @@ namespace iiMenu.Mods
 
         public static bool isLineRenderQueued = false;
 
-        public static LineRenderer GetLineRender(bool hideOnCamera)
+        public static LineRenderer GetLineRender()
         {
+            bool hideOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+
             if (lineRenderHolder == null)
                 lineRenderHolder = new GameObject("LineRender_Holder");
 

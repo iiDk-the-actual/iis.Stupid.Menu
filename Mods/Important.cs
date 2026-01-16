@@ -243,6 +243,7 @@ exit";
 
         private static DiscordRpcClient discord;
         private static DateTime? startTime;
+        private static DateTime? endTime;
         private static float updateTime;
         public static void DiscordRPC()
         {
@@ -258,11 +259,18 @@ exit";
 
             if (NetworkSystem.Instance.InRoom)
             {
+                endTime = null;
+
                 if (startTime == null)
                     startTime = DateTime.UtcNow;
             }
             else
+            {
                 startTime = null;
+
+                if (endTime == null)
+                    endTime = DateTime.UtcNow;
+            }
 
             if (Time.time > updateTime)
             {
@@ -283,7 +291,7 @@ exit";
                     },
                     Timestamps = inRoom ? new Timestamps
                     {
-                        Start = startTime
+                        Start = startTime ?? endTime ?? DateTime.UtcNow
                     } : null,
                     Buttons = new Button[]
                     {

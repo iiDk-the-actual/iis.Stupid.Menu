@@ -22,6 +22,7 @@
 using BepInEx;
 using GorillaNetworking;
 using iiMenu.Classes.Menu;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using Photon.Pun;
 using System.Collections.Generic;
@@ -161,32 +162,32 @@ namespace iiMenu.Menu
                 arraylist.color = guiColor;
                 watermark.color = guiColor;
 
-                versionLabel.font = activeFont;
-                roomStatus.font = activeFont;
-                arraylist.font = activeFont;
+                versionLabel.SafeSetFont(activeFont);
+                roomStatus.SafeSetFont(activeFont);
+                arraylist.SafeSetFont(activeFont);
 
-                versionLabel.fontStyle = activeFontStyle;
-                roomStatus.fontStyle = activeFontStyle;
-                arraylist.fontStyle = activeFontStyle;
+                versionLabel.SafeSetFontStyle(activeFontStyle);
+                roomStatus.SafeSetFontStyle(activeFontStyle);
+                arraylist.SafeSetFontStyle(activeFontStyle);
 
                 controlBackground.color = backgroundColor.GetCurrentColor();
 
                 foreach (var textObject in textObjects)
                 {
                     textObject.color = textColors[1].GetCurrentColor();
-                    textObject.font = activeFont;
-                    textObject.fontStyle = activeFontStyle;
+                    textObject.SafeSetFont(activeFont);
+                    textObject.SafeSetFontStyle(activeFontStyle);
                 }
 
                 foreach (var imageObject in imageObjects)
                     imageObject.color = buttonColors[0].GetCurrentColor();
 
                 watermark.transform.rotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
-                versionLabel.text = FollowMenuSettings("Build") + " " + PluginInfo.Version + "\n" +
-                                    serverLink.Replace("https://", "");
+                versionLabel.SafeSetText(FollowMenuSettings("Build") + " " + PluginInfo.Version + "\n" +
+                                    serverLink.Replace("https://", ""));
 
-                roomStatus.text = FollowMenuSettings(!PhotonNetwork.InRoom ? "Not connected to room" : "Connected to room ") +
-                   (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "");
+                roomStatus.SafeSetText(FollowMenuSettings(!PhotonNetwork.InRoom ? "Not connected to room" : "Connected to room ") +
+                   (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : ""));
 
                 if (Time.time > uiUpdateDelay)
                 {
@@ -273,7 +274,7 @@ namespace iiMenu.Menu
                             modListText += sortedMods[i] + "\n";
                     }
 
-                    arraylist.text = modListText;
+                    arraylist.SafeSetText(modListText);
                 }
             } else
                 uiPrefab.SetActive(false);
