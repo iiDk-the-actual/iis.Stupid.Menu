@@ -2740,7 +2740,7 @@ namespace iiMenu.Mods
                             else if (crashPower > 1500)
                                 crashedColor = new Color32(255, 128, 0, 255);
 
-                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                            TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
                             tmp.color = crashedColor;
                             if (NameTagOptimize())
                             {
