@@ -1973,7 +1973,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Virtual Stump Kick Master Client", method = Overpowered.VirtualStumpKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the virtual stump."},
 
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, toolTip = "Kicks whoever your hand desires in the virtual stump."},
                 new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
                 new ButtonInfo { buttonText = "Virtual Stump Set Master Client", method = Overpowered.VirtualStumpMasterKickAll, isTogglable = false, toolTip = "Kicks everyone in the virtual stump to make you master client."},
 
