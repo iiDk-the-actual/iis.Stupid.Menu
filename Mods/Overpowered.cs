@@ -864,7 +864,7 @@ namespace iiMenu.Mods
             vstumpKickAllCoroutine = CoroutineManager.instance.StartCoroutine(VStumpKickAllCoroutine());
         }
 
-        public static void GhostReactorCrashGun()
+        public static void VirtualStumpCrashGun()
         {
             if (GetGunInput(false))
             {
@@ -872,10 +872,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    int[] objectIds = ObjectByName.Select(x => x.Value).ToArray();
-                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
-                }
+                    GameEntityCrash(ManagerRegistry.CustomMaps.GameEntityManager, lockTarget.GetPhotonPlayer(), lockTarget.transform.position);
 
                 if (GetGunInput(true))
                 {
@@ -894,11 +891,38 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void GhostReactorCrashAll()
+        public static void VirtualStumpCrashAll() =>
+            GameEntityCrash(ManagerRegistry.CustomMaps.GameEntityManager, RpcTarget.Others);
+
+        public static void GhostReactorCrashGun()
         {
-            int[] objectIds = ObjectByName.Select(x => x.Value).ToArray();
-            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero);
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null) 
+                    GameEntityCrash(ManagerRegistry.GhostReactor.GameEntityManager, lockTarget.GetPhotonPlayer(), lockTarget.transform.position);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
         }
+
+        public static void GhostReactorCrashAll() =>
+            GameEntityCrash(ManagerRegistry.GhostReactor.GameEntityManager, RpcTarget.Others);
 
         public static void GhostReactorKickMasterClient()
         {
@@ -1071,6 +1095,25 @@ namespace iiMenu.Mods
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
 
+        public const int ItemCrashCount = 50;
+        public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
+        {
+            targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
+
+            int[] objectIds = manager.itemPrefabFactory.Keys.ToArray();
+            int[] randomObjectIds = Enumerable.Range(0, ItemCrashCount)
+                .Select(_ => objectIds[Random.Range(0, objectIds.Length)])
+                .ToArray();
+            Vector3[] randomPositions = Enumerable.Range(0, ItemCrashCount)
+                .Select(_ => targetPosition.Value)
+                .ToArray();
+            Quaternion[] randomQuaternions = Enumerable.Range(0, ItemCrashCount)
+                .Select(_ => RandomQuaternion())
+                .ToArray();
+
+            CreateItems(target, randomObjectIds, randomPositions, randomQuaternions, manager: manager);
+        }
+
         public static void SuperInfectionCrashGun()
         {
             if (GetGunInput(false))
@@ -1079,10 +1122,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    int[] objectIds = GadgetByName.Select(x => x.Value).ToArray();
-                    CreateItem(lockTarget.GetPlayer(), objectIds[Random.Range(0, objectIds.Length)], lockTarget.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
-                }
+                    GameEntityCrash(ManagerRegistry.SuperInfection.GameEntityManager, lockTarget.GetPhotonPlayer(), lockTarget.transform.position);
 
                 if (GetGunInput(true))
                 {
@@ -1101,11 +1141,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SuperInfectionCrashAll()
-        {
-            int[] objectIds = GadgetByName.Select(x => x.Value).ToArray();
-            CreateItem(RpcTarget.Others, objectIds[Random.Range(0, objectIds.Length)], GorillaTagger.Instance.bodyCollider.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, 0L, ManagerRegistry.SuperInfection.GameEntityManager);
-        }
+        public static void SuperInfectionCrashAll() =>
+            GameEntityCrash(ManagerRegistry.SuperInfection.GameEntityManager, RpcTarget.Others);
 
         public static void SuperInfectionBreakAudioGun()
         {
