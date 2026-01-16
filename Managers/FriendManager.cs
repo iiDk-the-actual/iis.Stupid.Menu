@@ -451,7 +451,7 @@ namespace iiMenu.Managers
                                 nametag.transform.localPosition = new Vector3(0f, 0.8f, 0f);
 
                                 TextMeshPro nametagText = nametag.AddComponent<TextMeshPro>();
-                                nametagText.fontSize = 24f;
+                                nametagText.fontSize = 2.4f;
                                 nametagText.font = activeFont;
                                 nametagText.fontStyle = activeFontStyle;
                                 nametagText.alignment = TextAlignmentOptions.Center;
