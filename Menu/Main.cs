@@ -1126,8 +1126,11 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        GhostRig?.gameObject?.SetActive(false);
-                        GhostRig?.transform?.position = Vector3.one * float.MaxValue;
+                        if (GhostRig != null)
+                        {
+                            GhostRig.gameObject.SetActive(false);
+                            GhostRig.transform.position = Vector3.one * float.MaxValue;
+                        }
 
                         legacyGhostViewLeft.SetActive(false);
                         legacyGhostViewRight.SetActive(false);

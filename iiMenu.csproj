@@ -6,7 +6,6 @@
     <TargetFramework>netstandard2.1</TargetFramework>
 	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 
-    <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
