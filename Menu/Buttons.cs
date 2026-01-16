@@ -1952,7 +1952,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method = Overpowered.GhostReactorKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
 
-                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
                 new ButtonInfo { buttonText = "Ghost Reactor Kick All", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone in the Ghost Reactor map."},
                 new ButtonInfo { buttonText = "Ghost Reactor Set Master Client", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone in the Ghost Reactor map to make you master client."},
 
@@ -1961,7 +1961,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Super Infection Kick Master Client", method = Overpowered.SuperInfectionKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
 
-                new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
+                new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
                 new ButtonInfo { buttonText = "Super Infection Kick All", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode."},
                 new ButtonInfo { buttonText = "Super Infection Set Master Client", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode to make you master client."},
 
@@ -1973,7 +1973,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Virtual Stump Kick Master Client", method = Overpowered.VirtualStumpKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the virtual stump."},
 
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, disableMethod = Overpowered.DisableMasterClientBoxESP, toolTip = "Kicks whoever your hand desires in the virtual stump."},
                 new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
                 new ButtonInfo { buttonText = "Virtual Stump Set Master Client", method = Overpowered.VirtualStumpMasterKickAll, isTogglable = false, toolTip = "Kicks everyone in the virtual stump to make you master client."},
 
@@ -2327,6 +2327,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod = Settings.KickToSpecificRoom, disableMethod =() => Overpowered.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." },
                 new ButtonInfo { buttonText = "Rejoin on Kick", enableMethod =() => Overpowered.rejoinOnKick = true, disableMethod =() => Overpowered.rejoinOnKick = false, toolTip = "Makes room based kick mods join the room you kicked the target in once they have been kicked." },
                 new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." }
+
+                new ButtonInfo { buttonText = "Master Client Kick Gun [Sphere]", enableMethod =() => Overpowered.sphereKick = true, disableMethod =() => Overpowered.sphereKick = false, toolTip = "Makes the master client kick guns have a sphere on whoever is master client."},
+                new ButtonInfo { buttonText = "Master Client Kick Gun [Cube]", enableMethod =() => Overpowered.cubeKick = true, disableMethod =() => Overpowered.cubeKick = false, toolTip = "Makes the master client kick guns have a cube on whoever is master client."},
+                new ButtonInfo { buttonText = "Master Client Kick Gun [Box]", enableMethod =() => Overpowered.boxKick = true, disableMethod =() => Overpowered.boxKick = false, toolTip = "Makes the master client kick guns have a box on whoever is master client."},
             },
 
             new[] { // Keybind Settings [32]
