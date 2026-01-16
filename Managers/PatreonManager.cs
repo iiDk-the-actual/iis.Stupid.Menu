@@ -144,6 +144,7 @@ namespace iiMenu.Managers
 
                             textMesh.SafeSetText(member.Value.TierName);
                             textMesh.SafeSetFontStyle(FontStyles.Bold);
+                            textMesh.SafeSetFont(Menu.Main.activeFont);
                             textMesh.color = GetTierColor(member.Value.TierName);
                             textMesh.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
                             textMesh.transform.SetParent(playerIndicator.transform, false);
