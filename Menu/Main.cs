@@ -1094,7 +1094,7 @@ namespace iiMenu.Menu
 
                         if (legacyGhostview)
                         {
-                            if (GhostRig.gameObject.activeSelf)
+                            if (GhostRig != null && GhostRig.gameObject.activeSelf)
                             {
                                 GhostRig.gameObject.SetActive(false);
                                 GhostRig.transform.position = Vector3.one * float.MaxValue;
@@ -1110,10 +1110,11 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            if (legacyGhostViewLeft.activeSelf)
+                            if (legacyGhostViewLeft != null && legacyGhostViewLeft.activeSelf)
                                 legacyGhostViewLeft.SetActive(false);
-                            if (legacyGhostViewRight.activeSelf)
+                            if (legacyGhostViewRight != null && legacyGhostViewRight.activeSelf)
                                 legacyGhostViewRight.SetActive(false);
+
                             GhostRig.gameObject.SetActive(true);
 
                             Color ghm = color;
@@ -1125,8 +1126,8 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        GhostRig.gameObject.SetActive(false);
-                        GhostRig.transform.position = Vector3.one * float.MaxValue;
+                        GhostRig?.gameObject?.SetActive(false);
+                        GhostRig?.transform?.position = Vector3.one * float.MaxValue;
 
                         legacyGhostViewLeft.SetActive(false);
                         legacyGhostViewRight.SetActive(false);
