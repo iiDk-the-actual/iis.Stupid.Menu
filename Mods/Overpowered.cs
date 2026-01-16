@@ -1095,7 +1095,7 @@ namespace iiMenu.Mods
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
 
-        public const int ItemCrashCount = 50;
+        public static int ItemCrashCount = 80;
         public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
         {
             targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
