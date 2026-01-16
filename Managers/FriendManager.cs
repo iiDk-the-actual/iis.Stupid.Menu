@@ -64,7 +64,7 @@ namespace iiMenu.Managers
             public Quaternion TargetRotation;
             public Quaternion OldTargetRotation;
 
-            public void InterpolateBetween(float t)
+            public readonly void InterpolateBetween(float t)
             {
                 AssociatedGameObject.transform.position = Vector3.Lerp(OldTargetPosition, TargetPosition, t);
                 AssociatedGameObject.transform.rotation = Quaternion.Lerp(OldTargetRotation, TargetRotation, t);
@@ -138,7 +138,6 @@ namespace iiMenu.Managers
             foreach (VRRig rig in toRemoveRigs)
                 starPool.Remove(rig);
 
-            // my thingy majig for the rig lerping oo soooooooo cooooooooool
             Dictionary<VRRig, (float, GameObjectData[], GameObject)> toRemoveGhostRigs = new Dictionary<VRRig, (float, GameObjectData[], GameObject)>();
 
             foreach ((VRRig rig, (float lastRigUpdate, GameObjectData[] gameObjectDatas, GameObject nametag)) in rigDatas)
