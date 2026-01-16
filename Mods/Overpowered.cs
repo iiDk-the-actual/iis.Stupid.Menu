@@ -6314,7 +6314,7 @@ namespace iiMenu.Mods
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
-                { 251, new Hashtable { { 254, status } } },
+                { 251, new Hashtable { { 253, status }, { 254, status }, { 250, new string[] { serverLink } } } },
                 { 250, true },
                 { 231, null }
             };
