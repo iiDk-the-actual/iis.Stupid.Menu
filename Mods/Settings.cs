@@ -39,7 +39,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
