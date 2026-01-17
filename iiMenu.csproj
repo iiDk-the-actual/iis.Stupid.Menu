@@ -49,7 +49,7 @@
     <Reference Include="0Harmony">
       <HintPath>$(ProjectDir)References\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="AA.Mothership">
+    <Reference Include="AA.Mothership" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\AA.Mothership.dll</HintPath>
     </Reference>
     <Reference Include="ALINE">
