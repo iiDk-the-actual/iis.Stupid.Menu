@@ -6204,6 +6204,7 @@ namespace iiMenu.Mods
                         {
                             PhotonNetwork.SerializationRate = 3;
                             RPCFilter.FilteredRPCs["OnHandTapRPC"] = () => false;
+                            RPCFilter.FilteredRPCs["RPC_UpdateCosmeticsWithTryonPacked"] = () => false;
 
                             SerializePatch.OverrideSerialization = () =>
                             {
@@ -6218,6 +6219,7 @@ namespace iiMenu.Mods
 
                         PhotonNetwork.SerializationRate = 10;
                         RPCFilter.FilteredRPCs.Remove("OnHandTapRPC");
+                        RPCFilter.FilteredRPCs.Remove("RPC_UpdateCosmeticsWithTryonPacked");
                     }
                 }
             }
@@ -6238,10 +6240,10 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !gunTarget.IsLocal())
                     {
-                        if (lockTarget == null && FriendshipGroupDetection.Instance.IsInMyGroup(lockTarget.GetPlayer().UserId))
+                        if (lockTarget == null && FriendshipGroupDetection.Instance.IsInMyGroup(gunTarget.GetPlayer().UserId))
                         {
-                            for (int i = 0; i < 3950; i++)
-                                FriendshipGroupDetection.Instance.photonView.RPC("RequestPartyGameMode", lockTarget.GetPhotonPlayer(), 
+                            for (int i = 0; i < 3970; i++)
+                                FriendshipGroupDetection.Instance.photonView.RPC("RequestPartyGameMode", gunTarget.GetPhotonPlayer(), 
                                     new object[] { GameMode.gameModeKeyByName.Keys.ToArray()[Random.Range(0, GameMode.gameModeKeyByName.Keys.Count)] });
 
                             RPCProtection();
@@ -6267,7 +6269,7 @@ namespace iiMenu.Mods
             if (Time.time > kickDelay)
             {
                 kickDelay = Time.time + 10f;
-                for (int i = 0; i < 3950; i++)
+                for (int i = 0; i < 3970; i++)
                     SpecialTargetRPC
                     (
                         FriendshipGroupDetection.Instance.photonView,
