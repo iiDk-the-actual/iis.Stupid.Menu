@@ -346,6 +346,7 @@ namespace iiMenu.Menu
                     if (buttonCondition && !toggleButtonHeld)
                         toggleButtonActive = !toggleButtonActive;
 
+                    toggleButtonHeld = buttonCondition;
                     buttonCondition = toggleButtonActive;
                 }
 
