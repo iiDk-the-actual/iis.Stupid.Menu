@@ -41,6 +41,9 @@ namespace iiMenu.Extensions
             if (tmp == null)
                 return;
 
+            if (font == null)
+                return;
+
             if (tmp.font.hashCode != font.hashCode)
                 tmp.font = font;
         }

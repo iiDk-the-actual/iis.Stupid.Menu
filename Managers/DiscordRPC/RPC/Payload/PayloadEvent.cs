@@ -39,9 +39,8 @@ namespace iiMenu.Managers.DiscordRPC.RPC.Payload
 		/// <returns></returns>
 		public T GetObject<T>()
 		{
-			if (Data == null) return default(T);
-            return Data.ToObject<T>();
-		}
+            return Data == null ? default(T) : Data.ToObject<T>();
+        }
 
         /// <summary>
         /// Converts the object into a human readable string

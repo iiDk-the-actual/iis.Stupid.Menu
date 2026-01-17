@@ -98,26 +98,26 @@ namespace iiMenu.Managers.DiscordRPC.RPC
 
 		#region Privates
 
-		private string applicationID;                   //ID of the Discord APP
-		private int processID;                          //ID of the process to track
+		private readonly string applicationID;                   //ID of the Discord APP
+		private readonly int processID;                          //ID of the process to track
 
 		private long nonce;                             //Current command index
 
 		private Thread thread;                          //The current thread
-		private INamedPipeClient namedPipe;
+		private readonly INamedPipeClient namedPipe;
 
-		private int targetPipe;                             //The pipe to taget. Leave as -1 for any available pipe.
+		private readonly int targetPipe;                             //The pipe to taget. Leave as -1 for any available pipe.
 
 		private readonly object l_rtqueue = new object();   //Lock for the send queue
 		private readonly uint _maxRtQueueSize;
-		private Queue<ICommand> _rtqueue;                   //The send queue
+		private readonly Queue<ICommand> _rtqueue;                   //The send queue
 
 		private readonly object l_rxqueue = new object();   //Lock for the receive queue
 		private readonly uint _maxRxQueueSize;              //The max size of the RX queue
-		private Queue<IMessage> _rxqueue;                   //The receive queue
+		private readonly Queue<IMessage> _rxqueue;                   //The receive queue
 
-		private AutoResetEvent queueUpdatedEvent = new AutoResetEvent(false);
-		private BackoffDelay delay;                     //The backoff delay before reconnecting.
+		private readonly AutoResetEvent queueUpdatedEvent = new AutoResetEvent(false);
+		private readonly BackoffDelay delay;                     //The backoff delay before reconnecting.
 		#endregion
 
 		/// <summary>
@@ -781,11 +781,13 @@ namespace iiMenu.Managers.DiscordRPC.RPC
 				return false;
 			}
 
-			//Start the thread up
-			thread = new Thread(MainLoop);
-			thread.Name = "Discord IPC Thread";
-			thread.IsBackground = true;
-			thread.Start();
+            //Start the thread up
+            thread = new Thread(MainLoop)
+            {
+                Name = "Discord IPC Thread",
+                IsBackground = true
+            };
+            thread.Start();
 
 			return true;
 		}

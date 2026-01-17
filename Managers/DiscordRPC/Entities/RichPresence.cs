@@ -205,10 +205,7 @@ namespace iiMenu.Managers.DiscordRPC
                 return true;
 
             //Check if the URL is valid
-            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
-                return false;
-
-            return true;
+            return Uri.TryCreate(url, UriKind.Absolute, out _);
         }
 
         /// <summary>
@@ -306,16 +303,18 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns></returns>
         public RichPresence ToRichPresence()
         {
-            var presence = new RichPresence();
-            presence.State = State;
-            presence.StateUrl = StateUrl;
-            presence.Details = Details;
-            presence.DetailsUrl = DetailsUrl;
-            presence.Type = Type;
-            presence.StatusDisplay = StatusDisplay;
+            var presence = new RichPresence
+            {
+                State = State,
+                StateUrl = StateUrl,
+                Details = Details,
+                DetailsUrl = DetailsUrl,
+                Type = Type,
+                StatusDisplay = StatusDisplay,
 
-            presence.Party = !HasParty() ? Party : null;
-            presence.Secrets = !HasSecrets() ? Secrets : null;
+                Party = !HasParty() ? Party : null,
+                Secrets = !HasSecrets() ? Secrets : null
+            };
 
             if (HasAssets())
             {
@@ -483,18 +482,9 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>The modified Rich Presence.</returns>
         public RichPresence WithButtons(Button topButton, Button bottomButton = null)
         {
-            if (topButton != null && bottomButton != null)
-            {
-                Buttons = new Button[] { topButton, bottomButton };
-            }
-            else if (topButton == null && bottomButton == null)
-            {
-                Buttons = default;
-            }
-            else
-            {
-                Buttons = new Button[] { topButton ?? bottomButton };
-            }
+            Buttons = topButton != null && bottomButton != null
+                ? (new Button[] { topButton, bottomButton })
+                : topButton == null && bottomButton == null ? default : (new Button[] { topButton ?? bottomButton });
 
             return this;
         }

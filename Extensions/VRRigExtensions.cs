@@ -108,10 +108,7 @@ namespace iiMenu.Extensions
 
         public static int GetPing(this VRRig rig)
         {
-            if (playerPing.TryGetValue(rig, out int ping))
-                return ping;
-            else
-                return PhotonNetwork.GetPing();
+            return playerPing.TryGetValue(rig, out int ping) ? ping : PhotonNetwork.GetPing();
         }
 
         public static int GetTruePing(this VRRig rig)
@@ -144,38 +141,29 @@ namespace iiMenu.Extensions
                 case GameModeType.FreezeTag:
                 case GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
-                    if (tagManager.isCurrentlyTag)
-                    {
-                        if (player == tagManager.currentIt)
-                            return new[]
+                    return tagManager.isCurrentlyTag
+                        ? player == tagManager.currentIt
+                            ? (new[]
                             {
                                 tagManager.fastJumpLimit,
                                 tagManager.fastJumpMultiplier
-                            };
-
-                        return new[]
+                            })
+                            : (new[]
                         {
                             tagManager.slowJumpLimit,
                             tagManager.slowJumpMultiplier
-                        };
-                    }
-                    else
-                    {
-                        if (tagManager.currentInfected.Contains(player))
-                        {
-                            return new[]
+                        })
+                        : tagManager.currentInfected.Contains(player)
+                            ? (new[]
                             {
                                 tagManager.InterpolatedInfectedJumpSpeed(tagManager.currentInfected.Count),
                                 tagManager.InterpolatedInfectedJumpMultiplier(tagManager.currentInfected.Count)
-                            };
-                        }
-
-                        return new[]
+                            })
+                            : (new[]
                         {
                             tagManager.InterpolatedNoobJumpSpeed(tagManager.currentInfected.Count),
                             tagManager.InterpolatedNoobJumpMultiplier(tagManager.currentInfected.Count)
-                        };
-                    }
+                        });
                 default:
                     return new[] { 6.5f, 1.1f };
             }

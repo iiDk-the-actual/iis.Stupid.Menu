@@ -37,7 +37,9 @@ using System.Linq;
 using System.Net;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
@@ -4995,6 +4997,481 @@ exit 0";
             else if (!enabled)
                 Play2DAudio(clip, volume);
         }
+
+        private static LineRenderer clickGuiLine;
+        private static bool lastTriggerClick;
+
+        private static EventSystem eventSystem;
+        private static PointerEventData pointerData;
+        private static readonly List<RaycastResult> uiResults = new List<RaycastResult>();
+        private static GameObject currentUI;
+
+        private static GameObject pressedUI;
+        private static GameObject draggedUI;
+        private static Vector2 lastPointerPos;
+        private static Canvas canvas;
+
+        private static bool isDragging;
+
+        public static void ReloadOnCategoryChange() =>
+            ReloadMenu();
+
+        public static void EnableClickGUI()
+        {
+            clickGUI = true; 
+            ReloadMenu();
+
+            OnCategoryChanged += ReloadOnCategoryChange;
+        }
+
+        public static void DisableClickGUI()
+        {
+            clickGUI = false;
+            OnCategoryChanged -= ReloadOnCategoryChange;
+
+            if (clickGuiLine != null)
+            {
+                Object.Destroy(clickGuiLine.gameObject);
+                clickGuiLine = null;
+            }
+        }
+
+        public static void InitializeClickGUI()
+        {
+            canvas = menu.transform.Find("Canvas").GetComponent<Canvas>();
+
+            Transform canvasTransform = canvas.gameObject.transform;
+            canvasTransform.Find("Main").AddComponent<UIColorChanger>().colors = backgroundColor;
+
+            ExtGradient sidebarColor = buttonColors[1].Clone();
+            for (int i = 0; i < sidebarColor.colors.Length; i++)
+            {
+                GradientColorKey colorKey = sidebarColor.colors[i];
+                sidebarColor.colors[i] = new GradientColorKey { time = colorKey.time, color = DarkenColor(colorKey.color, 0.35f) };
+            }
+
+            canvasTransform.Find("Main/Sidebar").AddComponent<UIColorChanger>().colors = sidebarColor;
+            canvasTransform.Find("Main/Separator").AddComponent<UIColorChanger>().colors = buttonColors[1];
+
+            List<MaskableGraphic> toRecolor = new List<MaskableGraphic>();
+            foreach (string partName in new string[]
+            {
+                "Main/Sidebar/Title",
+                "Main/Sidebar/Watermark",
+                "Main/Sidebar/Settings",
+                "Main/Sidebar/Players",
+                "Main/Sidebar/Friends",
+                "Main/Sidebar/Scroll View/Scrollbar Vertical/Sliding Area/Handle"
+            })
+                toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
+
+            Transform sidebarTransform = canvasTransform.Find("Main/Sidebar");
+            foreach (string buttonName in new string[]
+            {
+                "Settings", "Players", "Friends"
+            })
+                sidebarTransform.Find(buttonName).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                {
+                    Toggle(buttonName);
+                    PlayButtonSound();
+                    ReloadMenu();
+                });
+
+            canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection").AddComponent<UIColorChanger>().colors = buttonColors[1];
+
+            var selection = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection");
+            bool movedSelection = false;
+            foreach (GameObject tab in canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content").Children())
+            {
+                toRecolor.Add(tab.transform.Find("Title").GetComponent<MaskableGraphic>());
+                toRecolor.Add(tab.transform.Find("Image").GetComponent<MaskableGraphic>());
+
+                tab.AddComponent<UIColorChanger>().colors = buttonColors[0];
+                tab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                {
+                    Toggle(Buttons.buttons[0].Where(button => button.buttonText.StartsWith(tab.name)).FirstOrDefault() ?? Buttons.GetIndex("Exit Settings"));
+                    PlayButtonSound();
+                    ReloadMenu();
+                });
+
+                if (currentCategoryName.StartsWith(tab.name == "Home" ? "Main" : tab.name))
+                {
+                    movedSelection = true;
+                    selection.SetParent(tab.transform, false);
+                }
+                else
+                {
+                    tab.transform.Find("Title").GetComponent<RectTransform>().localPosition += Vector3.left * 10f;
+                    tab.transform.Find("Image").GetComponent<RectTransform>().localPosition += Vector3.left * 10f;
+                }
+            }
+
+            if (!movedSelection)
+                selection.gameObject.SetActive(false);
+
+            GameObject buttonTemplate = canvasTransform.Find("Main/Button").gameObject;
+            void AddButton(Transform parent, ButtonInfo info)
+            {
+                static void UpdateButton(GameObject button, ButtonInfo info)
+                {
+                    Transform transform = button.transform;
+                    string buttonText = info.overlapText ?? info.buttonText;
+
+                    if (inputTextColor != "green")
+                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
+
+                    buttonText = FollowMenuSettings(buttonText);
+
+                    transform.Find("Title").GetComponent<TextMeshProUGUI>().SafeSetText(buttonText);
+                    transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(info.toolTip);
+
+                    if (info.incremental)
+                    {
+                        transform.Find("Increment").gameObject.SetActive(true);
+                        transform.Find("Decrement").gameObject.SetActive(true);
+
+                        transform.Find("Increment").gameObject.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
+                        transform.Find("Decrement").gameObject.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
+
+                        transform.Find("Increment/Image").gameObject.GetOrAddComponent<UIColorChanger>().colors = textColors[1];
+                        transform.Find("Decrement/Image").gameObject.GetOrAddComponent<UIColorChanger>().colors = textColors[1];
+                    }
+                    else
+                    {
+                        transform.Find("Toggle").gameObject.SetActive(true);
+                        transform.Find("Toggle/Image").gameObject.SetActive(info.enabled);
+
+                        transform.Find("Toggle").gameObject.GetOrAddComponent<UIColorChanger>().colors = info.enabled ? buttonColors[1] : buttonColors[0];
+                        transform.Find("Toggle/Image").gameObject.GetOrAddComponent<UIColorChanger>().colors = info.enabled ? textColors[2] : textColors[1];
+                    }
+
+                    transform.Find("Title").AddComponent<UIColorChanger>().colors = textColors[1];
+                    transform.Find("ToolTip").AddComponent<UIColorChanger>().colors = textColors[1];
+                }
+
+                GameObject button = Object.Instantiate(buttonTemplate, parent, false);
+                button.SetActive(true);
+
+                ExtGradient buttonBackgroundColor = backgroundColor.Clone();
+                for (int i = 0; i < buttonBackgroundColor.colors.Length; i++)
+                {
+                    GradientColorKey colorKey = buttonBackgroundColor.colors[i];
+                    buttonBackgroundColor.colors[i] = new GradientColorKey { time = colorKey.time, color = DarkenColor(colorKey.color, 0.75f) };
+                }
+                button.AddComponent<UIColorChanger>().colors = buttonBackgroundColor;
+
+                UpdateButton(button, info);
+
+                Transform transform = button.transform;
+                if (info.incremental)
+                {
+                    transform.Find("Increment").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        ToggleIncremental(info.buttonText, true);
+                        PlayButtonSound();
+                        UpdateButton(button, info);
+                    });
+                    transform.Find("Decrement").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        ToggleIncremental(info.buttonText, false);
+                        PlayButtonSound();
+                        UpdateButton(button, info);
+                    });
+                }
+                else
+                {
+                    transform.Find("Toggle").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        Toggle(info);
+                        PlayButtonSound();
+                        UpdateButton(button, info);
+                    });
+                }
+            }
+
+            if (CurrentPrompt != null)
+            {
+                canvasTransform.Find("Main/PromptTab").gameObject.SetActive(true);
+
+                foreach (string partName in new string[]
+                    {
+                        "Main/PromptTab/Title",
+                        "Main/PromptTab/Accept/Text",
+                        "Main/PromptTab/Decline/Text"
+                    })
+                    toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
+
+                GameObject title = canvasTransform.Find("Main/PromptTab/Title").gameObject;
+                title.GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.Message);
+
+                GameObject accept = canvasTransform.Find("Main/PromptTab/Accept").gameObject;
+                accept.transform.Find("Text").GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.AcceptText);
+                accept.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
+                accept.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                {
+                    Toggle("Accept Prompt");
+                    PlayButtonSound();
+                    ReloadMenu();
+                });
+
+                if (CurrentPrompt.DeclineText != null)
+                {
+                    GameObject decline = canvasTransform.Find("Main/PromptTab/Decline").gameObject;
+                    decline.transform.Find("Text").GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.DeclineText);
+                    decline.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
+                    decline.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    {
+                        Toggle("Decline Prompt");
+                        PlayButtonSound();
+                        ReloadMenu();
+                    });
+                }
+                else
+                {
+                    RectTransform rectTransform = accept.GetComponent<RectTransform>();
+                    rectTransform.localPosition = new Vector3(title.GetComponent<RectTransform>().localPosition.x, rectTransform.localPosition.y, rectTransform.localPosition.z);
+                    rectTransform.localScale = new Vector3(rectTransform.localScale.y * 2.05f, rectTransform.localScale.y, rectTransform.localScale.z);
+                }
+            }
+            else if (currentCategoryIndex == 0)
+            {
+                canvasTransform.Find("Main/HomeTab").gameObject.SetActive(true);
+                canvasTransform.Find("Main/HomeTab/Title").GetComponent<TextMeshProUGUI>().SafeSetText($"Hey, {PhotonNetwork.NickName ?? "null"}!");
+
+                if (currentCategoryIndex == 0)
+                {
+                    foreach (string partName in new string[]
+                    {
+                        "Main/HomeTab/Title",
+                        "Main/HomeTab/EnabledTitle",
+                        "Main/HomeTab/FavoritesTitle",
+                        "Main/HomeTab/EnabledIcon",
+                        "Main/HomeTab/FavoritesIcon",
+                        "Main/HomeTab/Enabled/Viewport/Content/None",
+                        "Main/HomeTab/Favorites/Viewport/Content/None",
+                        "Main/HomeTab/Enabled/Scrollbar Vertical/Sliding Area/Handle",
+                        "Main/HomeTab/Favorites/Scrollbar Vertical/Sliding Area/Handle"
+                    })
+                        toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
+                }
+
+                Transform enabledModsTransform = canvasTransform.Find("Main/HomeTab/Enabled/Viewport/Content");
+
+                List<ButtonInfo> enabledMods = new List<ButtonInfo>();
+                int categoryIndex = 0;
+                foreach (ButtonInfo[] buttonList in Buttons.buttons)
+                {
+                    enabledMods.AddRange(buttonList.Where(v => v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")) && (!hideMacros || !Buttons.categoryNames[categoryIndex].Contains("Macro"))));
+                    categoryIndex++;
+                }
+                enabledMods = enabledMods.OrderBy(v => v.overlapText ?? v.buttonText).ToList();
+                
+                if (enabledMods.Count > 0)
+                {
+                    canvasTransform.Find("Main/HomeTab/Enabled/Viewport/Content/None").gameObject.SetActive(false);
+                    foreach (ButtonInfo info in enabledMods)
+                        AddButton(enabledModsTransform, info);
+                }
+
+                Transform favoritedModsTransform = canvasTransform.Find("Main/HomeTab/Favorites/Viewport/Content");
+                List<ButtonInfo> favoriteMods = StringsToInfos(favorites.ToArray()).ToList();
+
+                if (favoriteMods.Count > 0)
+                    favoriteMods.RemoveAt(0);
+
+                if (favoriteMods.Count > 0)
+                {
+                    canvasTransform.Find("Main/HomeTab/Favorites/Viewport/Content/None").gameObject.SetActive(false);
+                    foreach (ButtonInfo info in favoriteMods)
+                        AddButton(favoritedModsTransform, info);
+                }
+            }
+            else
+            {
+                canvasTransform.Find("Main/ModuleTab").gameObject.SetActive(true);
+
+                foreach (string partName in new string[]
+                    {
+                        "Main/ModuleTab/Search/SearchIcon",
+                        "Main/ModuleTab/Search/Text Area/Placeholder",
+                        "Main/ModuleTab/Search/Text Area/Text",
+                        "Main/ModuleTab/Modules/Scrollbar Vertical/Sliding Area/Handle"
+                    })
+                    toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
+
+                List<ButtonInfo> buttons = Buttons.buttons[currentCategoryIndex].ToList();
+
+                if (buttons.Count > 0)
+                    buttons.RemoveAt(0);
+
+                if (buttons.Count > 0)
+                {
+                    Transform modulesTransform = canvasTransform.Find("Main/ModuleTab/Modules/Viewport/Content");
+                    foreach (ButtonInfo button in buttons)
+                        AddButton(modulesTransform, button);
+                }
+            }
+
+            for (int i = 0; i < toRecolor.Count; i++)
+            {
+                MaskableGraphic graphic = toRecolor[i];
+                graphic.gameObject.AddComponent<UIColorChanger>().colors = textColors[i <= 1 ? 0 : 1];
+            }
+
+            ExtGradient buttonBackgroundColor = backgroundColor.Clone();
+            for (int i = 0; i < buttonBackgroundColor.colors.Length; i++)
+            {
+                GradientColorKey colorKey = buttonBackgroundColor.colors[i];
+                buttonBackgroundColor.colors[i] = new GradientColorKey { time = colorKey.time, color = DarkenColor(colorKey.color, 0.75f) };
+            }
+            canvasTransform.Find("Main/ModuleTab/Search").AddComponent<UIColorChanger>().colors = buttonBackgroundColor;
+        }
+
+        public static void ClickGUI()
+        {
+            if (menu == null)
+            {
+                if (clickGuiLine != null)
+                {
+                    Object.Destroy(clickGuiLine.gameObject);
+                    clickGuiLine = null;
+                }
+            } else
+            {
+                canvas.transform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
+
+                if (XRSettings.isDeviceActive)
+                {
+                    if (clickGuiLine == null)
+                    {
+                        clickGuiLine = new GameObject("iiMenu_ClickGUILine")
+                            .GetOrAddComponent<LineRenderer>();
+
+                        clickGuiLine.material = new Material(Shader.Find("GUI/Text Shader"));
+                        clickGuiLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                        clickGuiLine.endWidth = clickGuiLine.startWidth;
+                        clickGuiLine.useWorldSpace = true;
+                        clickGuiLine.positionCount = 2;
+
+                        if (smoothLines)
+                        {
+                            clickGuiLine.numCapVertices = 10;
+                            clickGuiLine.numCornerVertices = 5;
+                        }
+                    }
+
+                    clickGuiLine.startColor = backgroundColor.GetCurrentColor();
+                    clickGuiLine.endColor = backgroundColor.GetCurrentColor(0.5f);
+
+                    var uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
+                    eventSystem ??= EventSystem.current;
+
+                    pointerData ??= new PointerEventData(eventSystem);
+
+                    var (_, _, _, forward, _) = rightHand
+                        ? ControllerUtilities.GetTrueLeftHand()
+                        : ControllerUtilities.GetTrueRightHand();
+
+                    Vector3 startPos = rightHand
+                        ? GorillaTagger.Instance.leftHandTransform.position
+                        : GorillaTagger.Instance.rightHandTransform.position;
+
+                    Vector3 direction = forward.normalized;
+
+                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(startPos + direction * 5f);
+                    pointerData.position = screenPoint;
+
+                    uiResults.Clear();
+                    uiRaycaster.Raycast(pointerData, uiResults);
+
+                    currentUI = uiResults.Count > 0 ? uiResults[0].gameObject : null;
+
+                    Vector3 endPos = currentUI != null
+                        ? uiResults[0].worldPosition
+                        : startPos + direction * 5f;
+
+                    clickGuiLine.SetPosition(0, startPos);
+                    clickGuiLine.SetPosition(1, endPos);
+
+                    bool trigger = rightHand ? leftTrigger > 0.5f : rightTrigger > 0.5f;
+                    Vector2 currentPos = pointerData.position;
+                    pointerData.delta = currentPos - lastPointerPos;
+                    lastPointerPos = currentPos;
+
+                    if (trigger && !lastTriggerClick && currentUI != null)
+                    {
+                        GameObject targetUI = null;
+                        foreach (var result in uiResults)
+                        {
+                            var button = result.gameObject.GetComponent<UnityEngine.UI.Button>();
+                            var toggle = result.gameObject.GetComponent<Toggle>();
+                            var slider = result.gameObject.GetComponent<Slider>();
+
+                            if (button != null || toggle != null || slider != null)
+                            {
+                                targetUI = result.gameObject;
+                                break;
+                            }
+                        }
+
+                        pressedUI = targetUI ?? currentUI;
+                        pointerData.pressPosition = currentPos;
+                        pointerData.pointerPressRaycast = uiResults[0];
+
+                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerDownHandler);
+                        pointerData.pointerPress = pressedUI;
+
+                        isDragging = false;
+                        draggedUI = ExecuteEvents.GetEventHandler<IDragHandler>(currentUI);
+                        pointerData.pointerDrag = draggedUI ?? null;
+                    }
+
+                    if (trigger && draggedUI != null)
+                    {
+                        if (!isDragging)
+                        {
+                            if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
+                            {
+                                isDragging = true;
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
+
+                                if (pressedUI != null && pressedUI != draggedUI)
+                                {
+                                    ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                    pointerData.pointerPress = null;
+                                }
+                            }
+                        }
+
+                        if (isDragging)
+                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
+                    }
+
+                    if (!trigger && lastTriggerClick)
+                    {
+                        if (pressedUI != null && !isDragging)
+                        {
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
+                        }
+                        else if (pressedUI != null)
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+
+                        if (isDragging && draggedUI != null)
+                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
+
+                        pressedUI = null;
+                        draggedUI = null;
+                        pointerData.pointerDrag = null;
+                        pointerData.pointerPress = null;
+                        isDragging = false;
+                    }
+
+                    lastTriggerClick = trigger;
+                }
+            }
+        }
+
         public static GameObject selectObject;
         public static VRRig lastTarget;
         public static bool lastTriggerSelect;
@@ -5061,7 +5538,6 @@ exit 0";
                         lastTarget = rigTarget;
                     } else
                         lastTarget.mainSkin.material.color = targetColor;
-
 
                     bool trigger = leftHand ? leftTrigger > 0.5f : rightTrigger > 0.5f;
 

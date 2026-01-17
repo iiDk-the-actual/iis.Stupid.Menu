@@ -256,10 +256,7 @@ namespace iiMenu.Mods
             float nextStrikeTime = ManagerRegistry.LightningManager.lightningTimestampsRealtime[ManagerRegistry.LightningManager.nextLightningTimestampIndex];
             float timeUntilStrike = nextStrikeTime - Time.realtimeSinceStartup;
 
-            if (timeUntilStrike < 0f)
-                return 0f;
-
-            return timeUntilStrike;
+            return timeUntilStrike < 0f ? 0f : timeUntilStrike;
         }
 
         public static void CoreESP()
@@ -2789,26 +2786,14 @@ namespace iiMenu.Mods
         {
             int ping = vrrig.GetPing();
 
-            if (ping < 300)
-                return $"<color=green>{ping}</color>";
-
-            if (ping < 1000)
-                return $"<color=yellow>{ping}</color>";
-
-            return $"<color=red>{ping}</color>";
+            return ping < 300 ? $"<color=green>{ping}</color>" : ping < 1000 ? $"<color=yellow>{ping}</color>" : $"<color=red>{ping}</color>";
         }
 
         public static string GetPrettyFPS(VRRig vrrig)
         {
             int fps = vrrig.fps;
 
-            if (fps < 30)
-                return $"<color=red>{fps}</color>";
-
-            if (fps < 60)
-                return $"<color=yellow>{fps}</color>";
-
-            return $"<color=green>{fps}</color>";
+            return fps < 30 ? $"<color=red>{fps}</color>" : fps < 60 ? $"<color=yellow>{fps}</color>" : $"<color=green>{fps}</color>";
         }
 
         public static void CompactTags()

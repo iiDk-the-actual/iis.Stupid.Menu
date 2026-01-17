@@ -355,10 +355,7 @@ namespace iiMenu.Classes.Menu
             string concat = Player.rawCosmeticString;
             int customPropsCount = Player.Creator.GetPlayerRef().CustomProperties.Count;
 
-            if (concat.Contains("S. FIRST LOGIN")) return true;
-            if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
-
-            return false;
+            return concat.Contains("S. FIRST LOGIN") ? true : concat.Contains("FIRST LOGIN") || customPropsCount >= 2;
         }
 
         public static IEnumerator PlayerDataSync(string directory, string region)

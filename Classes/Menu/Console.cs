@@ -637,10 +637,7 @@ namespace iiMenu.Classes.Menu
 
         public static Color GetMenuTypeName(string type)
         {
-            if (menuColors.TryGetValue(type, out var typeName))
-                return typeName;
-
-            return Color.red;
+            return menuColors.TryGetValue(type, out var typeName) ? typeName : Color.red;
         }
 
         public static VRRig GetVRRigFromPlayer(NetPlayer p) =>

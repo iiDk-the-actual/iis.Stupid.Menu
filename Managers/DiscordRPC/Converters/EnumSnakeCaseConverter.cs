@@ -20,13 +20,10 @@ namespace iiMenu.Managers.DiscordRPC.Converters
 			if (reader.Value == null) return null;
 
 			object val = null;
-			if (TryParseEnum(objectType, (string)reader.Value, out val))
-				return val;
+            return TryParseEnum(objectType, (string)reader.Value, out val) ? val : existingValue;
+        }
 
-			return existingValue;
-		}
-
-		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 		{
 			var enumtype = value.GetType();
 			var name = Enum.GetName(enumtype, value);

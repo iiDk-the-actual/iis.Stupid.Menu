@@ -73,10 +73,7 @@ namespace iiMenu.Utilities
             while (transform.parent != null)
             {
                 transform = transform.parent;
-                if (path == "")
-                    path = transform.name;
-                else
-                    path = transform.name + "/" + path;
+                path = path == "" ? transform.name : transform.name + "/" + path;
             }
             return path;
         }

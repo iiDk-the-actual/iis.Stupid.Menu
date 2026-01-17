@@ -32,15 +32,10 @@ namespace iiMenu.Managers.DiscordRPC.IO
 		public static IEnumerable<string> GetPipes(int startPipe = 0)
 		{
 			bool isUnix = IsOSUnix();
-			if (IsOSUnix())
-			{
-				return Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetUnixPipes);
-			}
-			else
-			{
-				return Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetWindowsPipes);
-			}
-		}
+            return IsOSUnix()
+                ? Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetUnixPipes)
+                : Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetWindowsPipes);
+        }
 
 		private static IEnumerable<string> GetWindowsPipes(int index)
 		{

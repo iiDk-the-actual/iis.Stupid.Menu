@@ -57,10 +57,9 @@ namespace iiMenu.Managers
 
         public static KeyValuePair<NetPlayer, PatreonMembership>[] GetAllMembersInRoom()
         {
-            if (!NetworkSystem.Instance.InRoom)
-                return Array.Empty<KeyValuePair<NetPlayer, PatreonMembership>>();
-
-            return NetworkSystem.Instance.PlayerListOthers
+            return !NetworkSystem.Instance.InRoom
+                ? Array.Empty<KeyValuePair<NetPlayer, PatreonMembership>>()
+                : NetworkSystem.Instance.PlayerListOthers
                 .Where(player => instance.PatreonMembers.ContainsKey(player.UserId))
                 .Select(player => new KeyValuePair<NetPlayer, PatreonMembership>(player, instance.PatreonMembers[player.UserId]))
                 .ToArray();

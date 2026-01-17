@@ -153,17 +153,16 @@ namespace iiMenu.Managers.DiscordRPC.IO
         /// </summary>
 		private int Min(int a, uint b)
 		{
-			if (b >= a) return a;
-			return (int) b;
-		}
+            return b >= a ? a : (int) b;
+        }
 
-		/// <summary>
-		/// Attempts to read a UInt32
-		/// </summary>
-		/// <param name="stream"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		private bool TryReadUInt32(Stream stream, out uint value)
+        /// <summary>
+        /// Attempts to read a UInt32
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private bool TryReadUInt32(Stream stream, out uint value)
 		{
 			//Read the bytes available to us
 			byte[] bytes = new byte[4];

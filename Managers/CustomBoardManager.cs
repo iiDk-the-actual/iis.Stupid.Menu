@@ -302,10 +302,7 @@ namespace iiMenu.Managers
 
             try
             {
-                if (CustomBoardsEnabled)
-                    BoardMaterial.color = backgroundColor.GetCurrentColor();
-                else
-                    BoardMaterial.color = new Color32(0, 59, 4, 255);
+                BoardMaterial.color = CustomBoardsEnabled ? backgroundColor.GetCurrentColor() : (Color)new Color32(0, 59, 4, 255);
 
                 if (motdTitle == null)
                 {

@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Classes/Menu/ImageColorChanger.cs
+ * ii's Stupid Menu  Classes/Menu/UIColorChanger.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2026  Goldentrophy Software
@@ -24,7 +24,7 @@ using UnityEngine.UI;
 
 namespace iiMenu.Classes.Menu
 {
-    public class ImageColorChanger : MonoBehaviour
+    public class UIColorChanger : MonoBehaviour
     {
         public void Start()
         {
@@ -34,7 +34,7 @@ namespace iiMenu.Classes.Menu
                 return;
             }
 
-            targetImage = gameObject.GetComponent<Image>();
+            targetGraphic = gameObject.GetComponent<MaskableGraphic>();
 
             if (colors.IsFlat())
             {
@@ -47,9 +47,9 @@ namespace iiMenu.Classes.Menu
         }
 
         public void Update() =>
-            targetImage.color = colors.GetCurrentColor();
+            targetGraphic.color = colors.GetCurrentColor();
 
-        public Image targetImage;
+        public MaskableGraphic targetGraphic;
         public ExtGradient colors;
     }
 }

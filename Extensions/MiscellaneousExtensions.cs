@@ -114,13 +114,7 @@ namespace iiMenu.Extensions
 
         public static string ShiftedKey(this KeyCode key)
         {
-            if (key >= KeyCode.A && key <= KeyCode.Z)
-                return key.ToString();
-
-            if (shiftMap.TryGetValue(key, out string shifted))
-                return shifted;
-
-            return key.Key();
+            return key >= KeyCode.A && key <= KeyCode.Z ? key.ToString() : shiftMap.TryGetValue(key, out string shifted) ? shifted : key.Key();
         }
 
         public static IEnumerable<GameObject> Children(this Transform t)
@@ -177,14 +171,16 @@ namespace iiMenu.Extensions
 
         public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TKey actualKey)
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            return TryGetKeyInternal(dictionary, key, out actualKey, null);
+            return dictionary == null
+                ? throw new ArgumentNullException(nameof(dictionary))
+                : TryGetKeyInternal(dictionary, key, out actualKey, null);
         }
 
         public static bool TryGetKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TKey actualKey, IEqualityComparer<TKey> comparer)
         {
-            if (dictionary == null) throw new ArgumentNullException(nameof(dictionary));
-            return TryGetKeyInternal(dictionary, key, out actualKey, comparer);
+            return dictionary == null
+                ? throw new ArgumentNullException(nameof(dictionary))
+                : TryGetKeyInternal(dictionary, key, out actualKey, comparer);
         }
 
         public static bool TryGetKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs, TKey key, out TKey actualKey, IEqualityComparer<TKey> comparer = null)

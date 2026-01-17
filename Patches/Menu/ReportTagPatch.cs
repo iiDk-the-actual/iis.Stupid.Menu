@@ -32,10 +32,7 @@ namespace iiMenu.Patches.Menu
 
         public static bool Prefix(NetPlayer taggedPlayer, NetPlayer taggingPlayer)
         {
-            if (blacklistedPlayers.Contains(taggingPlayer) || invinciblePlayers.Contains(taggedPlayer))
-                return false;
-
-            return true;
+            return !blacklistedPlayers.Contains(taggingPlayer) && !invinciblePlayers.Contains(taggedPlayer);
         }
     }
 }

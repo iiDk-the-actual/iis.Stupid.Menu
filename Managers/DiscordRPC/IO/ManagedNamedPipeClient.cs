@@ -41,15 +41,15 @@ namespace iiMenu.Managers.DiscordRPC.IO
 
         private NamedPipeClientStream _stream;
 
-        private byte[] _buffer = new byte[PipeFrame.MAX_SIZE];
+        private readonly byte[] _buffer = new byte[PipeFrame.MAX_SIZE];
 
-        private Queue<PipeFrame> _framequeue = new Queue<PipeFrame>();
-        private object _framequeuelock = new object();
+        private readonly Queue<PipeFrame> _framequeue = new Queue<PipeFrame>();
+        private readonly object _framequeuelock = new object();
 
         private volatile bool _isDisposed = false;
         private volatile bool _isClosed = true;
 
-        private object l_stream = new object();
+        private readonly object l_stream = new object();
 
         /// <summary>
         /// Creates a new instance of a Managed NamedPipe client. Doesn't connect to anything yet, just setups the values.

@@ -344,10 +344,9 @@ namespace iiMenu.Managers
 
         public static NetPlayer[] GetAllFriendsInRoom()
         {
-            if (!NetworkSystem.Instance.InRoom)
-                return Array.Empty<NetPlayer>();
-
-            return NetworkSystem.Instance.PlayerListOthers
+            return !NetworkSystem.Instance.InRoom
+                ? Array.Empty<NetPlayer>()
+                : NetworkSystem.Instance.PlayerListOthers
                 .Where(player => instance.Friends.friends.Values
                     .Any(friend => player.UserId == friend.currentUserID))
                 .ToArray();

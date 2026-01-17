@@ -541,10 +541,7 @@ namespace iiMenu.Mods
 
                                     string currentText = (string)keyLog[1];
 
-                                    if (closestKey.Contains("Delete"))
-                                        keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
-                                    else
-                                        keyLogs[i][1] = currentText + closestKey;
+                                    keyLogs[i][1] = closestKey.Contains("Delete") ? currentText.Length == 0 ? currentText : currentText[..^1] : currentText + closestKey;
 
                                     keyLogs[i][2] = Time.time + 5f;
                                     break;
@@ -2874,10 +2871,7 @@ Piece Name: {gunTarget.name}";
                 return null;
 
             ThrowableBug bug = bugObject.GetComponent<ThrowableBug>();
-            if (bug == null)
-                return null;
-
-            return bug;
+            return bug ?? null;
         }
 
         public static ThrowableBug GetBug(string name)

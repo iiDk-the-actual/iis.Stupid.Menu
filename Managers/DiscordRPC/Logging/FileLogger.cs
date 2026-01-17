@@ -15,7 +15,7 @@
 		/// </summary>
 		public string File { get; set; }
 
-		private object filelock;
+		private readonly object filelock;
 
         /// <summary>
         /// Creates a new instance of the file logger

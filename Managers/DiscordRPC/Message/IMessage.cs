@@ -16,7 +16,7 @@ namespace iiMenu.Managers.DiscordRPC.Message
 		/// The time the message was created
 		/// </summary>
 		public DateTime TimeCreated { get { return _timecreated; } }
-		private DateTime _timecreated;
+		private readonly DateTime _timecreated;
 
 		/// <summary>
 		/// Creates a new instance of the message

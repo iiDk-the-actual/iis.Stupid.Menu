@@ -40,10 +40,7 @@ namespace iiMenu.Patches.Menu
 
             public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
             {
-                if (enabled && __instance.isLocal && !throwVelocity.IsValid())
-                    return false;
-
-                return true;
+                return !enabled || !__instance.isLocal || throwVelocity.IsValid();
             }
         }
 
@@ -125,9 +122,7 @@ namespace iiMenu.Patches.Menu
         {
             public static bool Prefix(RoomInfo __instance, Hashtable propertiesToCache)
             {
-                if (__instance.masterClientId == PhotonNetwork.LocalPlayer.ActorNumber && propertiesToCache.Count == 1 && propertiesToCache.ContainsKey(248) && enabled)
-                    return false;
-                return true;
+                return __instance.masterClientId != PhotonNetwork.LocalPlayer.ActorNumber || propertiesToCache.Count != 1 || !propertiesToCache.ContainsKey(248) || !enabled;
             }
         }
 
@@ -136,10 +131,7 @@ namespace iiMenu.Patches.Menu
         {
             public static bool Prefix(GameEntityManager __instance, byte[] stateData, int[] netIds, int joiningActorNum, PhotonMessageInfo info)
             {
-                if (stateData.Length > 1000)
-                    return false;
-
-                return true;
+                return stateData.Length <= 1000;
             }
         }
     }

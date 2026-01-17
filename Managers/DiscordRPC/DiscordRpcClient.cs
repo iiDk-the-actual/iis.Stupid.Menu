@@ -80,7 +80,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// </summary>
         public int TargetPipe { get; private set; }
 
-        private RpcConnection connection;
+        private readonly RpcConnection connection;
 
         /// <summary>
         /// The current presence that the client has. Gets set with <see cref="SetPresence(RichPresence)"/> and updated on <see cref="OnPresenceUpdate"/>.
@@ -121,7 +121,7 @@ namespace iiMenu.Managers.DiscordRPC
             }
         }
         private bool _shutdownOnly = true;
-        private object _sync = new object();
+        private readonly object _sync = new object();
 
         #region Events
 
@@ -617,8 +617,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>Updated Rich Presence</returns>
         public RichPresence UpdateLargeAsset(string key = null, string tooltip = null) => Update(p =>
         {
-            if (p.Assets == null)
-                p.Assets = new Assets();
+            p.Assets ??= new Assets();
 
             p.Assets.LargeImageKey = key ?? p.Assets.LargeImageKey;
             p.Assets.LargeImageText = tooltip ?? p.Assets.LargeImageText;
@@ -632,8 +631,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>Updated Rich Presence</returns>
         public RichPresence UpdateSmallAsset(string key = null, string tooltip = null) => Update(p =>
         {
-            if (p.Assets == null)
-                p.Assets = new Assets();
+            p.Assets ??= new Assets();
 
             p.Assets.SmallImageKey = key ?? p.Assets.SmallImageKey;
             p.Assets.SmallImageText = tooltip ?? p.Assets.SmallImageText;
@@ -659,8 +657,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>Updated Rich Presence</returns>
         public RichPresence UpdateStartTime(DateTime time) => Update(p =>
         {
-            if (p.Timestamps == null)
-                p.Timestamps = new Timestamps();
+            p.Timestamps ??= new Timestamps();
 
             p.Timestamps.Start = time;
         });
@@ -678,8 +675,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>Updated Rich Presence</returns>
         public RichPresence UpdateEndTime(DateTime time) => Update(p =>
         {
-            if (p.Timestamps == null)
-                p.Timestamps = new Timestamps();
+            p.Timestamps ??= new Timestamps();
 
             p.Timestamps.End = time;
         });
@@ -810,16 +806,13 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns></returns>
         public bool Initialize()
         {
-            if (IsDisposed)
-                throw new ObjectDisposedException("Discord IPC Client");
-
-            if (IsInitialized)
-                throw new UninitializedException("Cannot initialize a client that is already initialized");
-
-            if (connection == null)
-                throw new ObjectDisposedException("Connection", "Cannot initialize as the connection has been deinitialized");
-
-            return IsInitialized = connection.AttemptConnection();
+            return IsDisposed
+                ? throw new ObjectDisposedException("Discord IPC Client")
+                : IsInitialized
+                ? throw new UninitializedException("Cannot initialize a client that is already initialized")
+                : connection == null
+                ? throw new ObjectDisposedException("Connection", "Cannot initialize as the connection has been deinitialized")
+                : (IsInitialized = connection.AttemptConnection());
         }
 
         /// <summary>

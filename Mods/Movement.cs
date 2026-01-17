@@ -1913,10 +1913,7 @@ namespace iiMenu.Mods
                 foreach (var token in (JArray)obj["positions"])
                     macro.positions.Add(PlayerPosition.FromJObject((JObject)token));
 
-                if (obj.TryGetValue("step-time", out JToken stepTimeToken))
-                    macro.macroStepDuration = (float)stepTimeToken;
-                else
-                    macro.macroStepDuration = 0.1f;
+                macro.macroStepDuration = obj.TryGetValue("step-time", out JToken stepTimeToken) ? (float)stepTimeToken : 0.1f;
 
                 return macro;
             }
@@ -4234,19 +4231,15 @@ namespace iiMenu.Mods
 
         public static void FakeLag()
         {
-            if (Buttons.GetIndex("Fake Lag Others").enabled)
-                PlayerSerializePatch.delay = fakeLagDelay;
-            else
-                PlayerSerializePatch.delay = null;
+            PlayerSerializePatch.delay = Buttons.GetIndex("Fake Lag Others").enabled ? fakeLagDelay : (float?)null;
 
-            if (!Buttons.GetIndex("Disable Fake Lag Self").enabled)
-                SerializePatch.OverrideSerialization = () =>
+            SerializePatch.OverrideSerialization = !Buttons.GetIndex("Disable Fake Lag Self").enabled
+                ? (() =>
                 {
                     MassSerialize(true, delay: fakeLagDelay);
                     return false;
-                };
-            else
-                SerializePatch.OverrideSerialization = null;
+                })
+                : (Func<bool>)null;
         }
 
         public static void LagRange()

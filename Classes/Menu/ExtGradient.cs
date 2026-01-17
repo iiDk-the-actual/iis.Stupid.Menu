@@ -60,10 +60,7 @@ namespace iiMenu.Classes.Menu
                 return targetColor;
             }
 
-            if (customColor != null)
-                return customColor?.Invoke() ?? Color.magenta;
-
-            return colors[index].color;
+            return customColor != null ? customColor?.Invoke() ?? Color.magenta : colors[index].color;
         }
 
         public void SetColor(int index, Color color, bool setMirror = true)

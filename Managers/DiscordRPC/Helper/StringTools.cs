@@ -50,19 +50,19 @@ namespace iiMenu.Managers.DiscordRPC.Helper
 		/// <returns></returns>
         public static string ToCamelCase(this string str)
         {
-            if (str == null) return null;
-            
-            return str.ToLowerInvariant()
-				.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(s => char.ToUpper(s[0]) + s.Substring(1, s.Length - 1))
-				.Aggregate(string.Empty, (s1, s2) => s1 + s2);
+            return str == null
+                ? null
+                : str.ToLowerInvariant()
+                .Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => char.ToUpper(s[0]) + s.Substring(1, s.Length - 1))
+                .Aggregate(string.Empty, (s1, s2) => s1 + s2);
         }
 
-		/// <summary>
-		/// Converts the string into UPPER_SNAKE_CASE
-		/// </summary>
-		/// <param name="str">The string to convert</param>
-		/// <returns></returns>
+        /// <summary>
+        /// Converts the string into UPPER_SNAKE_CASE
+        /// </summary>
+        /// <param name="str">The string to convert</param>
+        /// <returns></returns>
         public static string ToSnakeCase(this string str)
         {
             if (str == null) return null;
