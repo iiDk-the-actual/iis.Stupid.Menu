@@ -5071,7 +5071,7 @@ exit 0";
             {
                 "Settings", "Players", "Friends"
             })
-                sidebarTransform.Find(buttonName).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                sidebarTransform.Find(buttonName).GetComponent<Button>().onClick.AddListener(() =>
                 {
                     Toggle(buttonName);
                     PlayButtonSound();
@@ -5082,13 +5082,54 @@ exit 0";
 
             var selection = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection");
             bool movedSelection = false;
+
+            string[] ignoreButtons = new[]
+            {
+                "Join Discord",
+                "Settings",
+                "Friends",
+                "Players",
+                "Favorite Mods",
+                "Enabled Mods",
+                "Room Mods",
+                "Important Mods",
+                "Safety Mods",
+                "Movement Mods",
+                "Advantage Mods",
+                "Visual Mods",
+                "Fun Mods",
+                "Sound Mods",
+                "Projectile Mods",
+                "Master Mods",
+                "Overpowered Mods",
+                "Experimental Mods",
+                "Detected Mods",
+                "Achievements",
+                "Credits"
+            };
+
+            GameObject otherBase = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Other").gameObject;
+            foreach (ButtonInfo button in Buttons.buttons[0])
+            {
+                if (!ignoreButtons.Contains(button.buttonText))
+                {
+                    GameObject otherButton = Object.Instantiate(otherBase, canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content"), false);
+                    otherButton.SetActive(true);
+                    otherButton.name = button.buttonText;
+                    otherButton.transform.Find("Title").GetComponent<TextMeshProUGUI>().SafeSetText(button.buttonText);
+                }
+            }
+
             foreach (GameObject tab in canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content").Children())
             {
+                if (!tab.activeSelf)
+                    continue;
+
                 toRecolor.Add(tab.transform.Find("Title").GetComponent<MaskableGraphic>());
                 toRecolor.Add(tab.transform.Find("Image").GetComponent<MaskableGraphic>());
 
                 tab.AddComponent<UIColorChanger>().colors = buttonColors[0];
-                tab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                tab.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     Toggle(Buttons.buttons[0].Where(button => button.buttonText.StartsWith(tab.name)).FirstOrDefault() ?? Buttons.GetIndex("Exit Settings"));
                     PlayButtonSound();
@@ -5174,13 +5215,13 @@ exit 0";
                 Transform transform = button.transform;
                 if (info.incremental)
                 {
-                    transform.Find("Increment").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    transform.Find("Increment").GetComponent<Button>().onClick.AddListener(() =>
                     {
                         ToggleIncremental(info.buttonText, true);
                         PlayButtonSound();
                         UpdateButton(button, info);
                     });
-                    transform.Find("Decrement").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    transform.Find("Decrement").GetComponent<Button>().onClick.AddListener(() =>
                     {
                         ToggleIncremental(info.buttonText, false);
                         PlayButtonSound();
@@ -5189,7 +5230,7 @@ exit 0";
                 }
                 else
                 {
-                    transform.Find("Toggle").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    transform.Find("Toggle").GetComponent<Button>().onClick.AddListener(() =>
                     {
                         Toggle(info);
                         PlayButtonSound();
@@ -5216,7 +5257,7 @@ exit 0";
                 GameObject accept = canvasTransform.Find("Main/PromptTab/Accept").gameObject;
                 accept.transform.Find("Text").GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.AcceptText);
                 accept.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
-                accept.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                accept.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     Toggle("Accept Prompt");
                     PlayButtonSound();
@@ -5228,7 +5269,7 @@ exit 0";
                     GameObject decline = canvasTransform.Find("Main/PromptTab/Decline").gameObject;
                     decline.transform.Find("Text").GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.DeclineText);
                     decline.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
-                    decline.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+                    decline.GetComponent<Button>().onClick.AddListener(() =>
                     {
                         Toggle("Decline Prompt");
                         PlayButtonSound();
@@ -5440,7 +5481,7 @@ exit 0";
                         GameObject targetUI = null;
                         foreach (var result in uiResults)
                         {
-                            var button = result.gameObject.GetComponent<UnityEngine.UI.Button>();
+                            var button = result.gameObject.GetComponent<Button>();
                             var toggle = result.gameObject.GetComponent<Toggle>();
                             var slider = result.gameObject.GetComponent<Slider>();
                             var inputField = result.gameObject.GetComponent<TMP_InputField>();
