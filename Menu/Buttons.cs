@@ -157,7 +157,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Voice Commands", enableMethod = Settings.VoiceRecognitionOn, method = Settings.CheckFocus, disableMethod = Settings.VoiceRecognitionOff, toolTip = "Enable and disable mods using your voice. Activate it like how you would any other voice assistant, such as \"Jarvis, Platforms\"."},
                 new ButtonInfo { buttonText = "Chain Voice Commands", toolTip = "Makes voice commands chain together, so you don't have to repeatedly ask it to listen to you."},
                 new ButtonInfo { buttonText = "AI Assistant", enableMethod =() => CoroutineManager.instance.StartCoroutine(Settings.DictationOn()), method = Settings.CheckFocus, disableMethod = Settings.DictationOff, toolTip = "A voice assistant with artificial intelligence capabilities."},
-                new ButtonInfo { buttonText = "Click GUI", enableMethod = Settings.EnableClickGUI, method = Settings.ClickGUI, disableMethod =() => { clickGUI = false; ReloadMenu(); }, toolTip = "A modern version of the menu."},
+                new ButtonInfo { buttonText = "Click GUI", enableMethod = Settings.EnableClickGUI, method = Settings.ClickGUI, disableMethod = Settings.DisableClickGUI, toolTip = "A modern version of the menu."},
 
                 new ButtonInfo { buttonText = "Narrate Assistant", toolTip = "Narrates what the voice assistant says locally."},
                 new ButtonInfo { buttonText = "Global Narrate Assistant", toolTip = "Narrates what the voice assistant says globally."},
