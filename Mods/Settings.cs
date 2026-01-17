@@ -5052,6 +5052,8 @@ exit 0";
             canvasTransform.Find("Main/Sidebar").AddComponent<UIColorChanger>().colors = sidebarColor;
             canvasTransform.Find("Main/Separator").AddComponent<UIColorChanger>().colors = buttonColors[1];
 
+            canvasTransform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
+
             List<MaskableGraphic> toRecolor = new List<MaskableGraphic>();
             foreach (string partName in new string[]
             {
