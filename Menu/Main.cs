@@ -2419,7 +2419,7 @@ namespace iiMenu.Menu
             if (clickGUI)
             {
                 menu = LoadObject<GameObject>("ClickGUI");
-                menu.transform.localScale *= (0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
+                menu.transform.localScale *= (menuScale * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
 
                 Settings.InitializeClickGUI();
 
