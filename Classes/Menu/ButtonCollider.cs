@@ -25,7 +25,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Classes.Menu
 {
-    public class Button : MonoBehaviour
+    public class ButtonCollider : MonoBehaviour
 	{
 		public string relatedText;
 

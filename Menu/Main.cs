@@ -60,7 +60,7 @@ using Valve.VR;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
-using Button = iiMenu.Classes.Menu.Button;
+using ButtonCollider = iiMenu.Classes.Menu.ButtonCollider;
 using CommonUsages = UnityEngine.XR.CommonUsages;
 using Console = iiMenu.Classes.Menu.Console;
 using JoinType = GorillaNetworking.JoinType;
@@ -1798,7 +1798,7 @@ namespace iiMenu.Menu
                     buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.399f, 0.28f - offset) : new Vector3(0.56f, 0.599f, 0.28f - offset);
                 }
 
-                Button Button = buttonObject.AddComponent<Button>();
+                ButtonCollider Button = buttonObject.AddComponent<ButtonCollider>();
                 Button.relatedText = method.buttonText;
 
                 if (incrementalButtons)
@@ -1988,7 +1988,7 @@ namespace iiMenu.Menu
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, -0.450f, -0.58f) : new Vector3(0.56f, -0.7f, -0.58f);
 
-            buttonObject.AddComponent<Button>().relatedText = "Search";
+            buttonObject.AddComponent<ButtonCollider>().relatedText = "Search";
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[isSearching ^ !swapButtonColors ? 0 : 1];
@@ -2136,7 +2136,7 @@ namespace iiMenu.Menu
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Button>().relatedText = "Info Screen";
+            buttonObject.AddComponent<ButtonCollider>().relatedText = "Info Screen";
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[infoScreenEnabled ^ swapButtonColors ? 0 : 1];
@@ -2184,7 +2184,7 @@ namespace iiMenu.Menu
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Button>().relatedText = "Donate Button";
+            buttonObject.AddComponent<ButtonCollider>().relatedText = "Donate Button";
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
@@ -2232,7 +2232,7 @@ namespace iiMenu.Menu
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.450f, -0.58f) : new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Button>().relatedText = "Update Button";
+            buttonObject.AddComponent<ButtonCollider>().relatedText = "Update Button";
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
@@ -2283,7 +2283,7 @@ namespace iiMenu.Menu
             if (offcenteredPosition)
                 buttonObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
 
-            buttonObject.AddComponent<Button>().relatedText = "Global Return";
+            buttonObject.AddComponent<ButtonCollider>().relatedText = "Global Return";
 
             if (lastClickedName != "Global Return")
             {
@@ -2342,7 +2342,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, ButtonDistance * 0.8f);
                 buttonObject.transform.localPosition = thinMenu ? new Vector3(0.56f, 0.399f, 0.28f - offset) : new Vector3(0.56f, 0.599f, 0.28f - offset);
 
-                Button button = buttonObject.AddComponent<Button>();
+                ButtonCollider button = buttonObject.AddComponent<ButtonCollider>();
                 button.relatedText = method.buttonText;
                 button.incremental = true;
                 button.positive = increment;
@@ -3219,7 +3219,7 @@ namespace iiMenu.Menu
                             bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f, NoInvisLayerMask());
                             if (worked)
                             {
-                                Button collide = hit.transform.gameObject.GetComponent<Button>();
+                                ButtonCollider collide = hit.transform.gameObject.GetComponent<ButtonCollider>();
                                 if (collide != null)
                                 {
                                     collide.OnTriggerEnter(buttonCollider);
@@ -3627,7 +3627,7 @@ namespace iiMenu.Menu
                 button.transform.localScale = new Vector3(0.09f, CurrentPrompt.DeclineText == null ? 0.9f : 0.4375f, 0.08f);
                 button.transform.localPosition = new Vector3(0.56f, CurrentPrompt.DeclineText == null ? 0f : 0.2375f, -0.43f);
 
-                button.AddComponent<Button>().relatedText = "Accept Prompt";
+                button.AddComponent<ButtonCollider>().relatedText = "Accept Prompt";
 
                 if (lastClickedName != "Accept Prompt")
                 {
@@ -3687,7 +3687,7 @@ namespace iiMenu.Menu
                 button.transform.localScale = new Vector3(0.09f, 0.4375f, 0.08f);
                 button.transform.localPosition = new Vector3(0.56f, -0.2375f, -0.43f);
 
-                button.AddComponent<Button>().relatedText = "Decline Prompt";
+                button.AddComponent<ButtonCollider>().relatedText = "Decline Prompt";
 
                 if (lastClickedName != "Decline Prompt")
                 {
@@ -3763,7 +3763,7 @@ namespace iiMenu.Menu
             button.transform.localScale = scale;
             button.transform.localPosition = position;
 
-            button.AddComponent<Button>().relatedText = buttonName;
+            button.AddComponent<ButtonCollider>().relatedText = buttonName;
 
             if (lastClickedName != buttonName)
             {
