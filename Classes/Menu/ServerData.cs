@@ -23,6 +23,7 @@ using GorillaNetworking;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
+using MonoMod.Utils;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -48,12 +49,14 @@ namespace iiMenu.Classes.Menu
         public const string ServerEndpoint = "https://iidk.online";
         public static readonly string ServerDataEndpoint = $"{ServerEndpoint}/serverdata";
 
+        // The dictionary used to assign the admins only seen in your mod.
+        public static readonly Dictionary<string, string> LocalAdmins = new Dictionary<string, string>()
+        {
+            // { "Placeholder Admin UserID", "Placeholder Admin Name" },
+        };
+
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
             Main.SetupAdminPanel(playername);
-
-        public static void JoinDiscordServer() => // Method used to join the Discord server
-            Important.JoinDiscord();
-
         #endregion
 
         #region Server Data Code
@@ -236,6 +239,8 @@ namespace iiMenu.Classes.Menu
                         string userId = admin["user-id"].ToString();
                         Administrators[userId] = name;
                     }
+
+                    Administrators.AddRange(LocalAdmins);
 
                     SuperAdministrators.Clear();
 
