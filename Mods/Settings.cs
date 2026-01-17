@@ -5122,7 +5122,15 @@ exit 0";
                     buttonText = FollowMenuSettings(buttonText);
 
                     transform.Find("Title").GetComponent<TextMeshProUGUI>().SafeSetText(buttonText);
-                    transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(info.toolTip);
+
+                    string toolTipText = info.toolTip;
+
+                    if (inputTextColor != "green")
+                        toolTipText = buttonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
+
+                    transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
+
+                    button.name = buttonText;
 
                     if (info.incremental)
                     {
@@ -5309,6 +5317,21 @@ exit 0";
                     foreach (ButtonInfo button in buttons)
                         AddButton(modulesTransform, button);
                 }
+
+                Transform searchBar = canvasTransform.Find("Main/ModuleTab/Search");
+                TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
+
+                inputField.onSelect.AddListener(_ =>
+                {
+                    if (!isSearching)
+                        Search();
+                });
+
+                inputField.onDeselect.AddListener(_ =>
+                {
+                    if (isSearching && keyboardInput.IsNullOrEmpty())
+                        Search();
+                });
             }
 
             for (int i = 0; i < toRecolor.Count; i++)
@@ -5338,6 +5361,19 @@ exit 0";
             } else
             {
                 canvas.transform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
+
+                if (isSearching && currentCategoryIndex != 0)
+                {
+                    Transform searchBar = canvas.transform.Find("Main/ModuleTab/Search");
+                    TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
+
+                    if (inputField.text != keyboardInput)
+                    {
+                        inputField.text = keyboardInput;
+                        foreach (GameObject button in canvas.transform.Find("Main/ModuleTab/Modules/Viewport/Content").Children())
+                            button.SetActive(keyboardInput.IsNullOrEmpty() || button.name.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()));
+                    }
+                }
 
                 if (XRSettings.isDeviceActive)
                 {
@@ -5405,8 +5441,9 @@ exit 0";
                             var button = result.gameObject.GetComponent<UnityEngine.UI.Button>();
                             var toggle = result.gameObject.GetComponent<Toggle>();
                             var slider = result.gameObject.GetComponent<Slider>();
+                            var inputField = result.gameObject.GetComponent<TMP_InputField>();
 
-                            if (button != null || toggle != null || slider != null)
+                            if (button != null || toggle != null || slider != null || inputField != null)
                             {
                                 targetUI = result.gameObject;
                                 break;

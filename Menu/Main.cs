@@ -3152,7 +3152,7 @@ namespace iiMenu.Menu
                     menu.transform.rotation = Quaternion.Euler(rotModify);
                 }
             }
-            if (inTextInput && !isKeyboardPc)
+            if (inTextInput && !isKeyboardPc && !clickGUI)
             {
                 menu.transform.position = menuSpawnPosition.transform.position;
                 menu.transform.rotation = menuSpawnPosition.transform.rotation;
