@@ -5126,7 +5126,7 @@ exit 0";
                     string toolTipText = info.toolTip;
 
                     if (inputTextColor != "green")
-                        toolTipText = buttonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
+                        toolTipText = toolTipText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
                     transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
 
