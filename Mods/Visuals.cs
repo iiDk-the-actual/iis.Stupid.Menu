@@ -2465,6 +2465,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = cosmeticNameTags[vrrig];
+                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
                         if (NameTagOptimize())
                         {
                             string cosmetics = null;
@@ -2484,7 +2485,6 @@ namespace iiMenu.Mods
                                 }
                             }
 
-                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
                             tmp.SafeSetText(cosmetics);
 
                             tmp.color = vrrig.GetColor();
