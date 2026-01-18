@@ -1765,7 +1765,8 @@ namespace iiMenu.Menu
 
             pageNumber = 0;
 
-            ReloadMenu();
+            if (!clickGUI)
+                ReloadMenu();
         }
 
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
