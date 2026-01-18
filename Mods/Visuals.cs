@@ -176,10 +176,10 @@ namespace iiMenu.Mods
             text += "<color=green>Color</color><color=grey>:</color> " + red + green + blue + " <color=grey>[</color>"+ redS + greenS + blueS +"<color=grey>]</color>\\n";
 
             string master = PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient ? "<color=grey> [</color><color=red>Master</color><color=grey>]</color>" : "";
-            text += "<color=green>Name</color><color=grey>:</color> " + PhotonNetwork.LocalPlayer.NickName + master + "\\n";
+            text += "<color=green>Name</color><color=grey>:</color> " + PhotonNetwork.LocalPlayer?.NickName + master + "\\n";
 
-            text += "<color=green>ID</color><color=grey>:</color> " + (Settings.hideId ? "Hidden" : PhotonNetwork.LocalPlayer.UserId) + "\\n";
-            text += "<color=green>Clip</color><color=grey>:</color> " + (GUIUtility.systemCopyBuffer.Length > 35 ? GUIUtility.systemCopyBuffer[..35] : GUIUtility.systemCopyBuffer) + "\\n";
+            text += "<color=green>ID</color><color=grey>:</color> " + (Settings.hideId ? "Hidden" : PhotonNetwork.LocalPlayer?.UserId) + "\\n";
+            text += "<color=green>Clip</color><color=grey>:</color> " + (GUIUtility.systemCopyBuffer?.Length > 35 ? GUIUtility.systemCopyBuffer[..35] : GUIUtility.systemCopyBuffer) + "\\n";
             text += lastDeltaTime + " <color=green>FPS</color> <color=grey>|</color> " + PhotonNetwork.GetPing() + " <color=green>Ping</color>\\n";
 
             string room = PhotonNetwork.InRoom ? NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public" : "Not in room";
@@ -188,7 +188,7 @@ namespace iiMenu.Mods
             string admin = "";
             if (Time.time > 5f)
             {
-                if (ServerData.Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var administrator))
+                if (ServerData.Administrators.TryGetValue(PhotonNetwork.LocalPlayer?.UserId, out var administrator))
                     admin = " <color=grey>|</color> <color=red>Console " + (ServerData.SuperAdministrators.Contains(administrator) ? "Super " : "") + "Admin</color>";
             }
             text += "<color=green>Theme</color> " + themeType + admin + "\n";
@@ -1688,6 +1688,8 @@ namespace iiMenu.Mods
         }
 
         private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
+        public static bool nameTagChams;
+        public static bool selfNameTag;
         public static void NameTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
@@ -1701,7 +1703,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (!vrrig.isLocal || selfNameTag)
                 {
                     if (!nametags.ContainsKey(vrrig))
                     {
@@ -1715,7 +1717,7 @@ namespace iiMenu.Mods
                     }
 
                     GameObject nameTag = nametags[vrrig];
-                    TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                    TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                     if (NameTagOptimize())
                     {
@@ -1725,6 +1727,8 @@ namespace iiMenu.Mods
                         tmp.SafeSetFont(activeFont);
                     }
 
+                    if (nameTagChams)
+                        tmp.Chams();
                     nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                     nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1758,7 +1762,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!velnametags.ContainsKey(vrrig))
                         {
@@ -1781,7 +1785,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1816,7 +1821,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!FPSnametags.ContainsKey(vrrig))
                         {
@@ -1839,7 +1844,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1874,7 +1880,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!idNameTags.ContainsKey(vrrig))
                         {
@@ -1897,7 +1903,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1932,7 +1939,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!platformTags.ContainsKey(vrrig))
                         {
@@ -1955,7 +1962,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1991,7 +1999,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!creationDateTags.ContainsKey(vrrig))
                         {
@@ -2014,7 +2022,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2050,7 +2059,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!pingNameTags.ContainsKey(vrrig))
                         {
@@ -2073,7 +2082,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2109,7 +2119,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!turnNameTags.ContainsKey(vrrig))
                         {
@@ -2135,7 +2145,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2170,7 +2181,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!taggedNameTags.ContainsKey(vrrig))
                         {
@@ -2204,7 +2215,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2329,7 +2341,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!modNameTags.ContainsKey(vrrig))
                         {
@@ -2392,7 +2404,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2438,7 +2451,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal && cosmetics == null)
+                    if ((!vrrig.isLocal || selfNameTag) && cosmetics == null)
                     {
                         if (!cosmeticNameTags.ContainsKey(vrrig))
                         {
@@ -2478,7 +2491,8 @@ namespace iiMenu.Mods
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
                         }
-
+                        if (nameTagChams)
+                            tmp.Chams();
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2614,7 +2628,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag) 
                     {
                         if (!verifiedNameTags.ContainsKey(vrrig))
                         {
@@ -2651,7 +2665,8 @@ namespace iiMenu.Mods
                                 tmp.SafeSetFontStyle(activeFontStyle);
                                 tmp.SafeSetFont(activeFont);
                             }
-
+                            if (nameTagChams)
+                                tmp.Chams();
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                             nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2698,7 +2713,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!crashedNameTags.ContainsKey(vrrig))
                         {
@@ -2744,7 +2759,8 @@ namespace iiMenu.Mods
                                 tmp.SafeSetFontStyle(activeFontStyle);
                                 tmp.SafeSetFont(activeFont);
                             }
-                                
+                            if (nameTagChams)
+                                tmp.Chams();
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                             nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2814,7 +2830,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (!vrrig.isLocal || selfNameTag)
                     {
                         if (!compactNameTags.ContainsKey(vrrig))
                         {
@@ -2852,7 +2868,7 @@ namespace iiMenu.Mods
                             infoBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                             Object.Destroy(infoBg.GetComponent<Collider>());
                             LineRenderer rendererInfo = infoBg.AddComponent<LineRenderer>();
-                            rendererInfo.material.shader = Shader.Find("Sprites/Default");
+                            rendererInfo.material.shader = Shader.Find(nameTagChams ? "GUI/Text Shader" : "Sprites/Default");
                             rendererInfo.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererInfo.numCapVertices = 10;
                             rendererInfo.numCornerVertices = 5;
@@ -2868,7 +2884,7 @@ namespace iiMenu.Mods
                             nameBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                             Object.Destroy(nameBg.GetComponent<Collider>());
                             LineRenderer rendererName = nameBg.AddComponent<LineRenderer>();
-                            rendererName.material.shader = Shader.Find("Sprites/Default");
+                            rendererName.material.shader = Shader.Find(nameTagChams ? "GUI/Text Shader" : "Sprites/Default");
                             rendererName.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererName.numCapVertices = 10;
                             rendererName.numCornerVertices = 5;
@@ -2897,8 +2913,11 @@ namespace iiMenu.Mods
                             infoTextTr.GetComponent<TextMeshPro>().SafeSetFontStyle(activeFontStyle);
                             infoTextTr.GetComponent<TextMeshPro>().SafeSetFont(activeFont);
                         }
+                        
 
                         TextMeshPro tm = infoTextTr.GetComponent<TextMeshPro>();
+                        if (nameTagChams)
+                            tm.Chams();
                         string plainText = System.Text.RegularExpressions.Regex.Replace(tagText, "<.*?>", string.Empty);
                         float textWidth = tm.GetPreferredValues(plainText).x * 0.65f;
                         float bgHeight = textWidth + 0.15f;
@@ -2913,6 +2932,8 @@ namespace iiMenu.Mods
                             nameTm.SafeSetFontStyle(activeFontStyle);
                             nameTm.SafeSetFont(activeFont);
                         }
+                        if (nameTagChams)
+                            nameTm.Chams();
                         nameTm.color = vrrig.playerColor;
                         
                         float nameTextWidth = nameTm.GetPreferredValues(playerName).x * 0.5f;
@@ -3285,7 +3306,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (!vrrig.isLocal || selfNameTag)
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
@@ -3331,7 +3352,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (!vrrig.isLocal || selfNameTag)
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
@@ -3383,7 +3404,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (!vrrig.isLocal || selfNameTag)
                 {
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
