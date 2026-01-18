@@ -2595,6 +2595,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Switch to Modded Gamemode", enableMethod =() => Detected.moddedGamemode = true, disableMethod =() => Detected.moddedGamemode = false, toolTip = "Automatically sets the gamemode as modded when changed."},
                 new ButtonInfo { buttonText = "Isolate Others", toolTip = "Allows you to still be seen when isolating players."}
+            },
+
+            new[] // Achievements
+            {
+                new ButtonInfo { buttonText = "Exit Achievements", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." }
             }
         };
 
