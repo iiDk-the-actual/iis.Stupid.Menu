@@ -19,9 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Utilities;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 namespace iiMenu.Extensions
 {
@@ -73,6 +76,28 @@ namespace iiMenu.Extensions
 
             if (!Mathf.Approximately(tmp.characterSpacing, targetSpacing))
                 tmp.characterSpacing = targetSpacing;
+        }
+
+        private static Shader _tmpShader;
+        private static Shader TmpShader
+        {
+            get
+            {
+                if (_tmpShader == null)
+                    _tmpShader = AssetUtilities.LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
+
+                return _tmpShader;
+            }
+        }
+
+        public static void Chams(this TMP_Text tmp)
+        {
+            if (tmp == null)
+                return;
+
+            var mat = tmp.fontMaterial;
+            if (mat != null && mat.shader != TmpShader)
+                mat.shader = TmpShader;
         }
     }
 }

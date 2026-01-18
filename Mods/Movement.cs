@@ -2540,9 +2540,11 @@ namespace iiMenu.Mods
 
                     Renderer MeshRender = newMesh.GetComponent<Renderer>();
                     MeshRender.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    newMesh.fontSize = 12;
-                    newMesh.fontStyle = activeFontStyle;
+                    newMesh.fontSize = 1.2f;
+                    newMesh.SafeSetFont(activeFont);
+                    newMesh.SafeSetFontStyle(activeFontStyle);
                     newMesh.alignment = TextAlignmentOptions.Center;
+                    newMesh.Chams();
                     newMesh.color = Color.white;
                     newMesh.text = (checkpoints.Count + 1).ToString();
 

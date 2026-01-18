@@ -157,18 +157,18 @@ namespace iiMenu.Managers
                     arraylistText.SafeSetFont(activeFont);
                     arraylistText.SafeSetFontStyle(activeFontStyle);
                     arraylistText.SafeSetFontSize(arraylistScale);
-                    UpdateShaderForText(arraylistText);
+                    arraylistText.Chams();
 
                     notificationText.SafeSetFont(activeFont);
                     notificationText.SafeSetFontStyle(activeFontStyle);
                     notificationText.SafeSetFontSize(notificationScale);
                     notificationText.rectTransform.localPosition = new Vector3(-1f, disableNotifications ? -100f : -1f, -0.5f);
-                    UpdateShaderForText(notificationText);
+                    notificationText.Chams();
 
                     informationText.SafeSetFont(activeFont);
                     informationText.SafeSetFontStyle(activeFontStyle);
                     informationText.SafeSetFontSize(overlayScale);
-                    UpdateShaderForText(informationText);
+                    informationText.Chams();
 
                     FollowMenuSettings(arraylistText);
                     FollowMenuSettings(notificationText);
@@ -278,24 +278,6 @@ namespace iiMenu.Managers
                 canvas.layer = Buttons.GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             }
             catch (Exception e) { LogManager.Log(e); }
-        }
-
-        private static Shader _tmpShader;
-        private static Shader TmpShader
-        {
-            get
-            {
-                if (_tmpShader == null)
-                    _tmpShader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
-
-                return _tmpShader;
-            }
-        }
-
-        private static void UpdateShaderForText(TextMeshProUGUI text)
-        {
-            if (text != null && text.fontMaterial != null)
-                text.fontMaterial.shader = TmpShader;
         }
 
         /// <summary>
@@ -467,9 +449,9 @@ namespace iiMenu.Managers
         {
             yield return null; yield return null; yield return null; yield return null; yield return null;
 
-            UpdateShaderForText(notificationText);
-            UpdateShaderForText(arraylistText);
-            UpdateShaderForText(informationText);
+            notificationText.Chams();
+            arraylistText.Chams();
+            informationText.Chams();
         }
 
         private static void CancelClear(Coroutine coroutine)
