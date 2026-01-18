@@ -5164,9 +5164,6 @@ namespace iiMenu.Mods
         }
 
         private static float freezeAllDelay;
-        private static float freezeAllNotificationDelay;
-        private static bool heldTriggerWhilePlayersCorrect;
-
         public static void FreezeAll_OnPlayerLeave(NetPlayer _) =>
             NotificationManager.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Freeze All.");
 
@@ -5176,44 +5173,28 @@ namespace iiMenu.Mods
 
             if (rightTrigger > 0.5f)
             {
-                if (PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers || heldTriggerWhilePlayersCorrect)
+                SerializePatch.OverrideSerialization = () => false;
+
+                if (Time.time > freezeAllDelay)
                 {
-                    SerializePatch.OverrideSerialization = () => false;
-
-                    heldTriggerWhilePlayersCorrect = true;
-
-                    if (Time.time > freezeAllDelay)
+                    for (int i = 0; i < 11; i++)
                     {
-                        for (int i = 0; i < 11; i++)
+                        WebFlags flags = new WebFlags(255);
+                        NetEventOptions options = new NetEventOptions
                         {
-                            WebFlags flags = new WebFlags(1);
-                            NetEventOptions options = new NetEventOptions
-                            {
-                                Flags = flags,
-                                TargetActors = new[] { -1 }
-                            };
-                            byte code = 51;
-                            NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                        }
+                            Flags = flags,
+                            TargetActors = new[] { -1 }
+                        };
+                        byte code = 51;
+                        NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
+                    }
 
-                        RPCProtection();
-                        freezeAllDelay = Time.time + 0.1f;
-                    }
-                }
-                else
-                {
-                    if (Time.time > freezeAllNotificationDelay)
-                    {
-                        freezeAllNotificationDelay = Time.time + 0.1f;
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
-                    }
+                    RPCProtection();
+                    freezeAllDelay = Time.time + 0.1f;
                 }
             }
             else
-            {
                 SerializePatch.OverrideSerialization = null;
-                heldTriggerWhilePlayersCorrect = false;
-            }
         }
 
         public static float zaWarudoNotificationDelay;
@@ -5235,18 +5216,19 @@ namespace iiMenu.Mods
         public static void ZaWarudo_OnPlayerLeave(NetPlayer player) =>
             NotificationManager.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Za Warudo.");
 
+        private static bool zaWarudoTrigger;
         public static void ZaWarudo()
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (rightTrigger > 0.5f && PhotonNetwork.PlayerList.Length < PhotonNetwork.CurrentRoom.MaxPlayers)
+            if (rightTrigger > 0.5f)
             {
-                if (heldTriggerWhilePlayersCorrect || Buttons.GetIndex("No Freeze Za Warudo").enabled)
+                if (Buttons.GetIndex("No Freeze Za Warudo").enabled)
                 {
                     if (!Buttons.GetIndex("No Freeze Za Warudo").enabled)
                         SerializePatch.OverrideSerialization = () => false;
 
-                    if (!heldTriggerWhilePlayersCorrect)
+                    if (!zaWarudoTrigger)
                     {
                         if (ZaWarudo_StartCoroutineVariable != null)
                         {
@@ -5263,7 +5245,7 @@ namespace iiMenu.Mods
                         ZaWarudo_StartCoroutineVariable = CoroutineManager.instance.StartCoroutine(ZaWarudo_StartCoroutine());
                     }
 
-                    heldTriggerWhilePlayersCorrect = true;
+                    zaWarudoTrigger = true;
 
                     Movement.LowGravity();
 
@@ -5271,7 +5253,7 @@ namespace iiMenu.Mods
                     {
                         for (int i = 0; i < 11; i++)
                         {
-                            WebFlags flags = new WebFlags(1);
+                            WebFlags flags = new WebFlags(255);
                             NetEventOptions options = new NetEventOptions
                             {
                                 Flags = flags,
@@ -5285,18 +5267,10 @@ namespace iiMenu.Mods
                         freezeAllDelay = Time.time + 0.1f;
                     }
                 }
-                else
-                {
-                    if (Time.time > freezeAllNotificationDelay)
-                    {
-                        freezeAllNotificationDelay = Time.time + 0.1f;
-                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Please wait for a user to leave.");
-                    }
-                }
             }
             else
             {
-                if (heldTriggerWhilePlayersCorrect)
+                if (zaWarudoTrigger)
                 {
                     if (ZaWarudo_StartCoroutineVariable != null)
                     {
@@ -5314,8 +5288,7 @@ namespace iiMenu.Mods
                 }
 
                 SerializePatch.OverrideSerialization = null;
-
-                heldTriggerWhilePlayersCorrect = false;
+                zaWarudoTrigger = false;
             }
         }
 

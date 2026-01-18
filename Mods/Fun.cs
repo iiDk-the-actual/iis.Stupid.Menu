@@ -6682,6 +6682,7 @@ Piece Name: {gunTarget.name}";
             Process.Start(filePath);
         }
 
+        /*
         public static string consoleTyped = "";
         public static int currentModIndex = 0;
         public static int pageNumber = 0;
@@ -6820,6 +6821,6 @@ $@"{largeNewLine}
 {screenLine}
 
 > {consoleTyped}");
-        }
+        }*/
     }
 }
