@@ -978,7 +978,7 @@ namespace iiMenu.Mods
         }
         public static void CustomModSpoofer()
         {
-            PromptText("Would you like to choose from a mod list or type the mod property?", () =>
+            Prompt("Would you like to choose from a mod list or type the mod property?", () =>
             {
                 List<ButtonInfo> modList = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Mod List", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
 
@@ -1024,7 +1024,7 @@ namespace iiMenu.Mods
 
                     PhotonNetwork.LocalPlayer.SetCustomProperties(props);
                 }, "Done");
-            });
+            }, "Mod List", "Type");
         }
 
         public static void MuteDJSets()
