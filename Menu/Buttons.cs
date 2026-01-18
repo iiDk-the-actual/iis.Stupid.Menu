@@ -549,6 +549,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Moderator", method = Safety.AntiModerator, toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
                 new ButtonInfo { buttonText = "Anti Content Creator", method = Safety.AntiContentCreator, toolTip = "When a content creator joins, you get disconnected and their player ID and room code gets saved to a file."},
                 new ButtonInfo { buttonText = "Cosmetic Notifications", method = Safety.CosmeticNotifications, toolTip = "Sends you a notification if there is a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator in your room."},
+                new ButtonInfo { buttonText = "Steam Detector", method = Important.SteamDetector, toolTip = "Detects when a player in your room is on Steam."},
 
                 new ButtonInfo { buttonText = "Bypass Automod", method = Safety.BypassAutomod, toolTip = "Attempts to bypass automod muting yourself and others."},
                 new ButtonInfo { buttonText = "Bypass Mod Checkers", enableMethod =() => PropertiesPatches.enabled = true, method = Safety.BypassModCheckers, disableMethod =() => PropertiesPatches.enabled = false, toolTip = "Tells players using mod checkers that you have no mods."},
@@ -823,8 +824,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "No Tag Limit", method =() => GorillaTagger.Instance.maxTagDistance = float.MaxValue, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Removes the distance check when tagging players."},
                 new ButtonInfo { buttonText = "Tag Lag Detector", method = Important.TagLagDetector, toolTip = "Detects when the master client is not currently allowing tag requests."},
-                new ButtonInfo { buttonText = "Steam Detector", method = Important.SteamDetector, toolTip = "Detects when a player in your room is on Steam."},
-
+                
                 new ButtonInfo { buttonText = "Fake Lag", method = Movement.FakeLag, disableMethod =() => { SerializePatch.OverrideSerialization = null; PlayerSerializePatch.delay = null; }, toolTip = "Forces your ping to be high."},
                 new ButtonInfo { buttonText = "Lag Range", method = Movement.LagRange, toolTip = "Dynamically changes how much your rig updates depending on how close you are to others."},
                 new ButtonInfo { buttonText = "Blink", method = Movement.Blink, disableMethod = Movement.DisableBlink, toolTip = "Stops your client from sending and receiving player update packets."},

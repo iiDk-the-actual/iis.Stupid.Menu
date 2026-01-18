@@ -5175,7 +5175,20 @@ exit 0";
 
                     button.name = buttonText;
 
-                    if (info.incremental)
+                    if (info.label)
+                    {
+                        RectTransform title = transform.Find("Title").gameObject.GetComponent<RectTransform>();
+                        title.anchorMin = new Vector2(0.5f, 0.5f);
+                        title.anchorMax = new Vector2(0.5f, 0.5f);
+
+                        title.localPosition = new Vector3(0f, 0f, 0f);
+
+                        transform.Find("ToolTip").gameObject.SetActive(false);
+                        transform.Find("Toggle").gameObject.SetActive(false);
+                        transform.Find("Increment").gameObject.SetActive(false);
+                        transform.Find("Decrement").gameObject.SetActive(false);
+                    }
+                    else if (info.incremental)
                     {
                         transform.Find("Increment").gameObject.SetActive(true);
                         transform.Find("Decrement").gameObject.SetActive(true);
@@ -5214,29 +5227,29 @@ exit 0";
 
                 Transform transform = button.transform;
                 if (info.incremental)
-                {
-                    transform.Find("Increment").GetComponent<Button>().onClick.AddListener(() =>
                     {
-                        ToggleIncremental(info.buttonText, true);
-                        PlayButtonSound();
-                        UpdateButton(button, info);
-                    });
-                    transform.Find("Decrement").GetComponent<Button>().onClick.AddListener(() =>
+                        transform.Find("Increment").GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            ToggleIncremental(info.buttonText, true);
+                            PlayButtonSound();
+                            UpdateButton(button, info);
+                        });
+                        transform.Find("Decrement").GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            ToggleIncremental(info.buttonText, false);
+                            PlayButtonSound();
+                            UpdateButton(button, info);
+                        });
+                    }
+                    else
                     {
-                        ToggleIncremental(info.buttonText, false);
-                        PlayButtonSound();
-                        UpdateButton(button, info);
-                    });
-                }
-                else
-                {
-                    transform.Find("Toggle").GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        Toggle(info);
-                        PlayButtonSound();
-                        UpdateButton(button, info);
-                    });
-                }
+                        transform.Find("Toggle").GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            Toggle(info);
+                            PlayButtonSound();
+                            UpdateButton(button, info);
+                        });
+                    }
             }
 
             if (CurrentPrompt != null)
@@ -5278,9 +5291,13 @@ exit 0";
                 }
                 else
                 {
+                    canvasTransform.Find("Main/PromptTab/Decline").gameObject.SetActive(false);
+
                     RectTransform rectTransform = accept.GetComponent<RectTransform>();
                     rectTransform.localPosition = new Vector3(title.GetComponent<RectTransform>().localPosition.x, rectTransform.localPosition.y, rectTransform.localPosition.z);
                     rectTransform.localScale = new Vector3(rectTransform.localScale.y * 2.05f, rectTransform.localScale.y, rectTransform.localScale.z);
+
+                    accept.transform.Find("Text").GetComponent<RectTransform>().localScale = new Vector3(rectTransform.localScale.y / 2.05f, rectTransform.localScale.y, rectTransform.localScale.z);
                 }
             }
             else if (currentCategoryIndex == 0)
