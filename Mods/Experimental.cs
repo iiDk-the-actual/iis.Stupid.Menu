@@ -1283,6 +1283,9 @@ namespace iiMenu.Mods
                     nametag.Value.GetComponent<TextMeshPro>().fontStyle = activeFontStyle;
                     nametag.Value.GetComponent<TextMeshPro>().font = activeFont;
 
+                    if (Visuals.nameTagChams)
+                        nametag.Value.GetComponent<TextMeshPro>().Chams();
+
                     nametag.Value.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * nametag.Key.scaleFactor;
 
                     nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * Visuals.GetTagDistance(nametag.Key);
