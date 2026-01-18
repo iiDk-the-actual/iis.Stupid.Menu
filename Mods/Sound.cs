@@ -45,9 +45,6 @@ namespace iiMenu.Mods
         public static string Subdirectory = "";
         public static void LoadSoundboard(bool openCategory = true)
         {
-            if (openCategory)
-                currentCategoryName = "Soundboard";
-
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             
@@ -102,24 +99,25 @@ namespace iiMenu.Mods
             soundbuttons.Add(new ButtonInfo { buttonText = "Reload Sounds", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Reloads all of your sounds." });
             soundbuttons.Add(new ButtonInfo { buttonText = "Get More Sounds", method = () => LoadSoundLibrary(), isTogglable = false, toolTip = "Opens a public audio library, where you can download your own sounds." });
             Buttons.buttons[18] = soundbuttons.ToArray();
+
+            if (openCategory)
+                currentCategoryName = "Soundboard";
         }
 
         public static void ExitParentDirectory()
         {
             Subdirectory = RemoveLastDirectory(Subdirectory);
-            LoadSoundboard();
+            LoadSoundboard(true);
         }
 
         public static void OpenFolder(string folder)
         {
             Subdirectory = "/" + folder;
-            LoadSoundboard();
+            LoadSoundboard(true);
         }
 
         public static void LoadSoundLibrary()
         {
-            currentCategoryName = "Sound Library";
-
             string library = GetHttp($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Soundboard/SoundLibrary.txt");
             string[] audios = AlphabetizeNoSkip(library.Split("\n"));
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Sound Library", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." } };
@@ -134,6 +132,7 @@ namespace iiMenu.Mods
                 }
             }
             Buttons.buttons[26] = soundbuttons.ToArray();
+            currentCategoryName = "Sound Library";
         }
 
         public static void DownloadSound(string name, string url)
