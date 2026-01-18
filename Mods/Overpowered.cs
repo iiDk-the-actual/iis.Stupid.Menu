@@ -3592,7 +3592,7 @@ namespace iiMenu.Mods
         public static bool NoDelaySnowballs;
         public static int SnowballTime;
 
-        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null)
+        public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null, bool ignoreMultiply = false)
         {
             try
             {
@@ -3625,7 +3625,7 @@ namespace iiMenu.Mods
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
                 }
 
-                for (int i = 0; i < snowballMultiplicationFactor; i++)
+                for (int i = 0; i < (ignoreMultiply ? 1 : snowballMultiplicationFactor); i++)
                 {
                     SnowballTime++;
 
@@ -3719,7 +3719,7 @@ namespace iiMenu.Mods
         }
 
         private static Vector3? snowballNukePosition;
-        private static Vector3 velocity;
+        private static Vector3 snowballNukeVelocity;
         public static void SnowballNukeGun()
         {
             if (GetGunInput(false))
@@ -3731,11 +3731,11 @@ namespace iiMenu.Mods
                 {
                     snowballNukePosition ??= NewPointer.transform.position + (Vector3.up * 50f);
                     snowballNukePosition += Time.unscaledDeltaTime * Physics.gravity;
-                    velocity += Time.unscaledDeltaTime * Physics.gravity;
+                    snowballNukeVelocity += Time.unscaledDeltaTime * Physics.gravity;
 
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(snowballNukePosition.Value + RandomVector3(velocity.magnitude * 0.25f).X_Z(), velocity, 0);
+                        BetaSpawnSnowball(snowballNukePosition.Value + RandomVector3(snowballNukeVelocity.magnitude * 0.25f).X_Z(), snowballNukeVelocity, 0);
                         snowballDelay = Time.time + SnowballSpawnDelay;
                     }
                 }
@@ -3743,7 +3743,7 @@ namespace iiMenu.Mods
             else
             {
                 snowballNukePosition = null;
-                velocity = Vector3.zero;
+                snowballNukeVelocity = Vector3.zero;
             }
         }
 
@@ -3917,10 +3917,81 @@ namespace iiMenu.Mods
                     velocity *= ShootStrength * 2f;
                 }
 
-                for (int i = 0; i < 5; i++)
-                    BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity + RandomVector3(5f), 0);
+                bool customMultiply = snowballMultiplicationFactor > 1;
+                for (int i = 0; i < (customMultiply ? snowballMultiplicationFactor : 5f); i++)
+                    BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity + RandomVector3(5f), 0, ignoreMultiply: customMultiply);
 
-                snowballDelay = Time.time + (SnowballSpawnDelay * 5);
+                snowballDelay = Time.time + (SnowballSpawnDelay * (customMultiply ? snowballMultiplicationFactor : 5f));
+            }
+        }
+
+        public static void SnowballWall()
+        {
+            if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
+            {
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
+                if (Mouse.current.leftButton.isPressed)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                    velocity = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                    velocity.Normalize();
+                    velocity *= ShootStrength * 2f;
+                }
+
+                for (int x = -2; x <= 2; x++)
+                {
+                    for (int y = -2; y <= 2; y++)
+                    {
+                        var (_, _, up, _, right) = ControllerUtilities.GetTrueRightHand();
+                        BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position + (right * (x * 0.5f)) + (up * (y * 0.5f)), velocity + RandomVector3(5f), 0);
+                    }
+                }
+
+                snowballDelay = Time.time + (SnowballSpawnDelay * 16);
+            }
+        }
+
+        public static GameObject BombObject;
+        public static void SnowballBomb()
+        {
+            if (rightGrab)
+            {
+                if (BombObject == null)
+                {
+                    BombObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Object.Destroy(BombObject.GetComponent<SphereCollider>());
+                    BombObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                }
+                BombObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            }
+            if (BombObject != null)
+            {
+                if (rightPrimary)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        bool customMultiply = snowballMultiplicationFactor > 1;
+                        for (int i = 0; i < (customMultiply ? snowballMultiplicationFactor : 5f); i++)
+                            BetaSpawnSnowball(BombObject.transform.position, RandomVector3(500f), 0, ignoreMultiply: customMultiply);
+
+                        snowballDelay = Time.time + (SnowballSpawnDelay * (customMultiply ? snowballMultiplicationFactor : 5f));
+                    }
+
+                    Object.Destroy(BombObject);
+                    BombObject = null;
+                }
+                else
+                    BombObject.GetComponent<Renderer>().material.color = buttonColors[0].GetColor(0);
+            }
+        }
+
+        public static void DisableBomb()
+        {
+            if (BombObject != null)
+            {
+                Object.Destroy(BombObject);
+                BombObject = null;
             }
         }
 
