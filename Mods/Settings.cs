@@ -5463,11 +5463,13 @@ exit 0";
 
                     pointerData ??= new PointerEventData(eventSystem);
 
-                    var (_, _, _, forward, _) = rightHand
+                    bool useLeft = oneHand ? !rightHand : rightHand;
+
+                    var (_, _, _, forward, _) = useLeft
                         ? ControllerUtilities.GetTrueLeftHand()
                         : ControllerUtilities.GetTrueRightHand();
 
-                    Vector3 startPos = rightHand
+                    Vector3 startPos = useLeft
                         ? GorillaTagger.Instance.leftHandTransform.position
                         : GorillaTagger.Instance.rightHandTransform.position;
 
@@ -5488,7 +5490,7 @@ exit 0";
                     clickGuiLine.SetPosition(0, startPos);
                     clickGuiLine.SetPosition(1, endPos);
 
-                    bool trigger = rightHand ? leftTrigger > 0.5f : rightTrigger > 0.5f;
+                    bool trigger = useLeft ? leftTrigger > 0.5f : rightTrigger > 0.5f;
                     Vector2 currentPos = pointerData.position;
                     pointerData.delta = currentPos - lastPointerPos;
                     lastPointerPos = currentPos;
