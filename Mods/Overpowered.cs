@@ -5032,7 +5032,7 @@ namespace iiMenu.Mods
         {
             boxingDelay.Remove(rig);
 
-            boxingDelay.Add(rig, Time.time + 0.5f);
+            boxingDelay.Add(rig, SnowballSpawnDelay);
         }
 
         public static void Boxing()
