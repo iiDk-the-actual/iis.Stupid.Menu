@@ -835,9 +835,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        public static int ItemCrashCount = 500;
-        public static float crashDelay;
-
+        public const int ItemCrashCount = 500;
         public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
         {
             if (manager == null)
