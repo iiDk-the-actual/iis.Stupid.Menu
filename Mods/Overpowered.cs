@@ -1153,7 +1153,7 @@ namespace iiMenu.Mods
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
         }
 
-        public const int ItemCrashCount = 80;
+        public const int ItemCrashCount = 5000;
         public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
         {
             if (manager == null)
@@ -1663,30 +1663,40 @@ namespace iiMenu.Mods
 
                 ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItems].GetDelay();
 
-                List<int> netIds = new List<int>();
-                for (int i = 0; i < hashes.Length; i++)
-                    netIds.Add(gameEntityManager.CreateNetId());
-
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
 
                 sendData ??= Enumerable.Repeat(0L, hashes.Length).ToArray();
 
-                object[] createData = {
-                    netIds.ToArray(),
-                    hashes,
-                    positions.Select(position => BitPackUtils.PackWorldPosForNetwork(position)).ToArray(),
-                    rotations.Select(rotation => BitPackUtils.PackQuaternionForNetwork(rotation)).ToArray(),
-                    sendData
+                byte[] data = new byte[15360];
+                MemoryStream memoryStream = new MemoryStream();
+                BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
+                binaryWriter.Write(hashes.Length);
+
+                for (int i = 0; i < hashes.Length; i++)
+                {
+                    binaryWriter.Write(manager.CreateNetId());
+                    binaryWriter.Write(hashes[i]);
+                    binaryWriter.Write(BitPackUtils.PackWorldPosForNetwork(positions[i]));
+                    binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(rotations[i]));
+                    binaryWriter.Write(sendData[i]);
+                }
+
+                byte[] array = GZipStream.CompressBuffer(data);
+
+                object[] createData = new object[] 
+                { 
+                    manager.zone, 
+                    array 
                 };
 
                 switch (target)
                 {
                     case RpcTarget rpcTarget:
-                        gameEntityManager.photonView.RPC("CreateItemRPC", rpcTarget, createData);
+                        gameEntityManager.photonView.RPC("CreateItemsRPC", rpcTarget, createData);
                         break;
                     case Player player:
-                        gameEntityManager.photonView.RPC("CreateItemRPC", player, createData);
+                        gameEntityManager.photonView.RPC("CreateItemsRPC", player, createData);
                         break;
                 }
 
