@@ -180,6 +180,5 @@ namespace iiMenu.Utilities
         /// </returns>
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
             GetTrueRightHand() => GetTrueHandPosition(false);
-
     }
 }
