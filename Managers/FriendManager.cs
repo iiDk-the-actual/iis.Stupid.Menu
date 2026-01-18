@@ -1048,7 +1048,7 @@ namespace iiMenu.Managers
                     label = true
                 });
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }
@@ -1077,7 +1077,7 @@ namespace iiMenu.Managers
                 toolTip = $"Inspect {friend.currentName}'s friend request."
             }));
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }
@@ -1106,7 +1106,7 @@ namespace iiMenu.Managers
                 toolTip = $"Cancels {friend.currentName}'s friend request."
             }));
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }
@@ -1212,7 +1212,7 @@ namespace iiMenu.Managers
                 label = true
             });
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }
@@ -1247,7 +1247,7 @@ namespace iiMenu.Managers
                 }
             };
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }

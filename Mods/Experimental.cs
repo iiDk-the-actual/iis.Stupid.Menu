@@ -198,7 +198,7 @@ namespace iiMenu.Mods
 
         public static void BlankPage()
         {
-            Buttons.buttons[29] = Array.Empty<ButtonInfo>();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = Array.Empty<ButtonInfo>();
             currentCategoryName = "Temporary Category";
         }
 

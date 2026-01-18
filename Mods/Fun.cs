@@ -2196,7 +2196,7 @@ Piece Name: {gunTarget.name}";
                 i++;
             }
 
-            Buttons.buttons[29] = blockButtons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = blockButtons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
@@ -6038,7 +6038,7 @@ Piece Name: {gunTarget.name}";
                 if (hat.canTryOn)
                     cosmeticbuttons.Add(new ButtonInfo { buttonText = ToTitleCase(hat.overrideDisplayName), method = () => AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
             }
-            Buttons.buttons[29] = cosmeticbuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = cosmeticbuttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }

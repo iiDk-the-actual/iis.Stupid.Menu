@@ -83,8 +83,8 @@ namespace iiMenu.Managers
                         });
                 }
 
-            Buttons.buttons[29] = achievementButtons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.buttons[Buttons.GetCategory("Achievements")] = achievementButtons.ToArray();
+            currentCategoryName = "Achievements";
         }
 
         public static bool HasAchievement(string name) =>

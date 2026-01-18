@@ -628,7 +628,7 @@ namespace iiMenu.Mods
                     }
                 );
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
@@ -3789,33 +3789,33 @@ exit 0";
 
         public static void CustomMenuThemePage()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Custom Menu Theme", method = () => ExitCustomMenuTheme(), isTogglable = false, toolTip = "Returns you back to the settings menu." },
                 new ButtonInfo { buttonText = "Background", method = () => CMTBackground(), isTogglable = false, toolTip = "Choose what segment of the background you would like to modify." },
                 new ButtonInfo { buttonText = "Buttons", method = () => CMTButton(), isTogglable = false, toolTip = "Choose what segment of the button you would like to modify." },
                 new ButtonInfo { buttonText = "Text", method = () => CMTText(), isTogglable = false, toolTip = "Choose what segment of the text you would like to modify." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
         public static void CMTBackground()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Background", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
                 new ButtonInfo { buttonText = "First Color", method = () => CMTBackgroundFirst(), isTogglable = false, toolTip = "Change the color of the first color of the background." },
                 new ButtonInfo { buttonText = "Second Color", method = () => CMTBackgroundSecond(), isTogglable = false, toolTip = "Change the color of the second color of the background." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTBackgroundFirst()
         {
             modifyWhatId = 0;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(backgroundColor.GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the background." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(backgroundColor.GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the background." },
@@ -3823,14 +3823,14 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTBackgroundSecond()
         {
             modifyWhatId = 1;
   
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(backgroundColor.GetColor(1).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the second color of the background." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(backgroundColor.GetColor(1).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the second color of the background." },
@@ -3838,48 +3838,48 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
         public static void CMTButton()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Buttons", method = CustomMenuThemePage, isTogglable = false, toolTip = "Returns you back to the customize menu." },
                 new ButtonInfo { buttonText = "Enabled", method = CMTButtonEnabled, isTogglable = false, toolTip = "Choose what type of button color to modify." },
                 new ButtonInfo { buttonText = "Disabled", method = CMTButtonDisabled, isTogglable = false, toolTip = "Change the color of the second color of the background." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabled()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Enabled", method = CMTButton, isTogglable = false, toolTip = "Returns you back to the customize menu." },
                 new ButtonInfo { buttonText = "First Color", method = CMTButtonEnabledFirst, isTogglable = false, toolTip = "Change the color of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "Second Color", method = () => CMTButtonEnabledSecond(), isTogglable = false, toolTip = "Change the color of the second color of the enabled button color." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabled()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Enabled", method = () => CMTButton(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
                 new ButtonInfo { buttonText = "First Color", method = () => CMTButtonDisabledFirst(), isTogglable = false, toolTip = "Change the color of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "Second Color", method = () => CMTButtonDisabledSecond(), isTogglable = false, toolTip = "Change the color of the second color of the disabled button color." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabledFirst()
         {
             modifyWhatId = 4;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[1].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[1].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
@@ -3887,14 +3887,14 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabledSecond()
         {
             modifyWhatId = 5;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[1].GetColor(1).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[1].GetColor(1).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
@@ -3902,13 +3902,13 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabledFirst()
         {
             modifyWhatId = 2;
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
@@ -3916,14 +3916,14 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabledSecond()
         {
             modifyWhatId = 3;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = CMTButtonDisabled, isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(1).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(buttonColors[0].GetColor(1).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
@@ -3931,27 +3931,27 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
         public static void CMTText()
         {
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Text", method = CustomMenuThemePage, isTogglable = false, toolTip = "Returns you back to the customize menu." },
                 new ButtonInfo { buttonText = "Title", method = CMTTextTitle, isTogglable = false, toolTip = "Change the color of the title." },
                 new ButtonInfo { buttonText = "Enabled", method = CMTTextEnabled, isTogglable = false, toolTip = "Change the color of the enabled text." },
                 new ButtonInfo { buttonText = "Disabled", method = CMTTextDisabled, isTogglable = false, toolTip = "Change the color of the disabled text." },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTTextTitle()
         {
             modifyWhatId = 6;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Title", method = CMTText, isTogglable = false, toolTip = "Returns you back to the text menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(textColors[0].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the title color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(textColors[0].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the title color." },
@@ -3959,14 +3959,14 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTTextEnabled()
         {
             modifyWhatId = 8;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(textColors[2].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the enabled text color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(textColors[2].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the enabled text color." },
@@ -3974,14 +3974,14 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
         public static void CMTTextDisabled()
         {
             modifyWhatId = 7;
 
-            List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + (int)Math.Round(textColors[1].GetColor(0).r * 10f) + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the disabled text color." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + (int)Math.Round(textColors[1].GetColor(0).g * 10f) + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the disabled text color." },
@@ -3989,7 +3989,7 @@ exit 0";
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>", label = true },
             };
 
-            Buttons.buttons[29] = literallybuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
             currentCategoryName = "Temporary Category";
         }
 
@@ -5071,9 +5071,9 @@ exit 0";
                     ReloadMenu();
                 });
 
-            canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection").AddComponent<UIColorChanger>().colors = buttonColors[1];
-
             var selection = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection");
+            selection.AddComponent<UIColorChanger>().colors = buttonColors[1];
+
             bool movedSelection = false;
 
             string[] ignoreButtons = new[]
@@ -5362,7 +5362,7 @@ exit 0";
 
                 List<ButtonInfo> buttons = Buttons.buttons[currentCategoryIndex].ToList();
 
-                if (buttons.Count > 0)
+                if (buttons.Count > 0 && ignoreButtons.Contains(currentCategoryName))
                     buttons.RemoveAt(0);
 
                 if (buttons.Count > 0)

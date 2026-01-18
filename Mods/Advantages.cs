@@ -1125,8 +1125,8 @@ namespace iiMenu.Mods
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                foreach (Player loln in PhotonNetwork.PlayerList)
-                    brawlManager.playerLives[loln.ActorNumber] = 0;
+                foreach (Player player in PhotonNetwork.PlayerList)
+                    brawlManager.playerLives[player.ActorNumber] = 0;
             }
         }
 

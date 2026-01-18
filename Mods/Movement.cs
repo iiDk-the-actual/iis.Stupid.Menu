@@ -2415,7 +2415,7 @@ namespace iiMenu.Mods
             foreach (string[] Data in mapData)
                 tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count, overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
             
-            Buttons.buttons[29] = tpbuttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = tpbuttons.ToArray();
 
             currentCategoryName = "Temporary Category";
         }

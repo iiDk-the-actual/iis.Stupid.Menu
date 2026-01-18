@@ -2642,6 +2642,7 @@ namespace iiMenu.Menu
             "Macros",
             "Detected Mods",
             "Detected Settings",
+            "Achievements"
         };
 
         private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
