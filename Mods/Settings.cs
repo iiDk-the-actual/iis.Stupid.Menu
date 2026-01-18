@@ -5165,6 +5165,8 @@ exit 0";
                     if (inputTextColor != "green")
                         toolTipText = toolTipText.Replace("<color=green>", $"<color={inputTextColor}>");
 
+                    toolTipText = FollowMenuSettings(toolTipText);
+
                     transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
 
                     button.name = buttonText;

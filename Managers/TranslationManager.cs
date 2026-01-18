@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Managers
@@ -65,10 +66,12 @@ namespace iiMenu.Managers
 
         public static IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
         {
-            if (translateCache.TryGetValue(text, out var value))
-            {
-                onTranslated?.Invoke(value);
+            if (string.IsNullOrEmpty(text))
+                yield break;
 
+            if (translateCache.TryGetValue(text, out var cached))
+            {
+                onTranslated?.Invoke(cached);
                 yield break;
             }
 
@@ -83,33 +86,54 @@ namespace iiMenu.Managers
 
             if (!File.Exists(filePath))
             {
-                string postData = JsonConvert.SerializeObject(new { text, lang = language });
+                string cleanText = Regex.Replace(text, @"([""'$`\\])", "\\$1");
+                cleanText = cleanText[..Mathf.Min(cleanText.Length, 4096)];
 
-                using UnityWebRequest request = new UnityWebRequest($"{PluginInfo.ServerAPI}/translate", "POST");
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
+                string cleanLang = Regex.Replace(language, @"[^a-zA-Z0-9]", "");
+                cleanLang = cleanLang[..Mathf.Min(cleanLang.Length, 6)];
+
+                string url =
+                    "https://translate.googleapis.com/translate_a/single" +
+                    "?client=gtx" +
+                    "&sl=auto" +
+                    $"&tl={cleanLang}" +
+                    "&dt=t" +
+                    $"&q={UnityWebRequest.EscapeURL(cleanText)}";
+
+                using UnityWebRequest request = UnityWebRequest.Get(url);
 
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    string json = request.downloadHandler.text;
-                    Match match = Regex.Match(json, "\"translation\"\\s*:\\s*\"(.*?)\"");
-                    if (match.Success)
+                    try
                     {
-                        translation = match.Groups[1].Value;
+                        var parsed = JsonConvert.DeserializeObject<List<object>>(request.downloadHandler.text);
+                        var sentences = parsed[0] as JArray;
+
+                        StringBuilder sb = new StringBuilder();
+
+                        foreach (var sentence in sentences)
+                            sb.Append(sentence[0]?.ToString());
+
+                        translation = sb.ToString();
+
                         File.WriteAllText(filePath, translation);
                     }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Translation parse error: {e}");
+                    }
                 }
+                else
+                    Debug.LogError($"Translation request failed: {request.error}");
             }
             else
                 translation = File.ReadAllText(filePath);
 
-            if (translation != null)
+            if (!string.IsNullOrEmpty(translation))
             {
-                translateCache.Add(text, translation);
+                translateCache[text] = translation;
                 onTranslated?.Invoke(translation);
             }
         }
