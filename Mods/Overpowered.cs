@@ -4113,6 +4113,22 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballHighJump()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (Time.time < GetBoxingDelay(rig))
+                    return;
+                Physics.Raycast(rig.bodyTransform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
+
+                if (!rig.isOfflineVRRig && (Ray.distance > 0.12f && Ray.distance < 0.2f))
+                {
+                    BetaSpawnSnowball(rig.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, rig.OwningNetPlayer.GetPlayerRef());
+                    SetBoxingDelay(rig);
+                }
+            }
+        }
+
         public static AudioClip KameStart;
         public static AudioClip KameStop;
 
