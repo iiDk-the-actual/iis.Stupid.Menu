@@ -3771,6 +3771,19 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballFountain()
+        {
+            
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + Vector3.up * 3f, RandomVector3(15f), 0);
+                    snowballDelay = Time.time + SnowballSpawnDelay;
+                }
+            }
+        }
+
         public static void SnowballOrbit()
         {
             if (rightTrigger > 0.5f)
