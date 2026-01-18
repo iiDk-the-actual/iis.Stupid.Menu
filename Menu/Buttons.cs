@@ -741,10 +741,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze Rig Limbs", method = Movement.FreezeRigLimbs, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your hands and head freeze on your rig, but not your body."},
                 new ButtonInfo { buttonText = "Freeze Rig Body", method = Movement.FreezeRigBody, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
                 new ButtonInfo { buttonText = "Freeze Rig", method = Movement.FreezeRig, disableMethod =() => { VRRig.LocalRig.enabled = true; Movement.startPosition = null; }, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
-
+                
                 new ButtonInfo { buttonText = "Paralyze Rig", method = Movement.ParalyzeRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig. Credits to Expansion for the idea."},
                 new ButtonInfo { buttonText = "Chicken Rig", method = Movement.ChickenRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
                 new ButtonInfo { buttonText = "Amputate Rig", method = Movement.AmputateRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig. Credits to Expansion for the idea."},
+                new ButtonInfo { buttonText = "Decapitate Rig", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.DecapitateRigUpdate, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.DecapitateRigUpdate, toolTip = "Removes the head from your rig."},
 
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SetBodyPatch(true), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your body spin around, but not your head."},
                 new ButtonInfo { buttonText = "Spaz Rig Body", method =() => Movement.SetBodyPatch(true, 1), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Gives your body a seizure, randomizing its rotation."},

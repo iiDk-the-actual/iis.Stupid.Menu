@@ -3115,6 +3115,9 @@ namespace iiMenu.Mods
             VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
         }
 
+        public static void DecapitateRigUpdate() =>
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(160f, 90f, 0f);
+
         public static void SetBodyPatch(bool enabled, int mode = 0)
         {
             TorsoPatch.enabled = enabled;
