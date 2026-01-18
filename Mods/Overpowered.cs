@@ -3944,7 +3944,7 @@ namespace iiMenu.Mods
                     for (int y = -2; y <= 2; y++)
                     {
                         var (_, _, up, _, right) = ControllerUtilities.GetTrueRightHand();
-                        BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position + (right * (x * 0.5f)) + (up * (y * 0.5f)), velocity + RandomVector3(5f), 0);
+                        BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position + (right * (x * 0.5f)) + (up * (y * 0.5f)), velocity, 0);
                     }
                 }
 
