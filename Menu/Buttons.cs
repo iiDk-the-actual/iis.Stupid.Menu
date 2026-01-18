@@ -1720,6 +1720,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Hail <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballHail, toolTip = "Hails snowballs around you when holding <color=green>trigger</color>."},
                 
                 new ButtonInfo { buttonText = "Snowball Fountain <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballFountain, toolTip = "Fountains snowballs above you when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Positional Fountain <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.SnowballPositionalFountain, disableMethod = Overpowered.DisableSnowballPositionalFountain, toolTip = "Place a fountain <color=green>grip</color> and use it with <color=green>trigger</color>. It will fountain snowballs at wherever the fountain is."},
+
                 new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballOrbit, toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Snowball Aura <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballAura, toolTip = "Randomly spawns snowballs around you when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Snowball Mushroom <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballMushroom, toolTip = "Spawns a mushroom cloud of snowballs on you when holding <color=green>trigger</color>."},

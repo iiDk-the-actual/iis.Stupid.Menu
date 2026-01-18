@@ -3813,9 +3813,46 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + Vector3.up, new Vector3(Random.Range(-15f, 15f), Random.Range(0f, 15f), Random.Range(-15f, 15f)), 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + Vector3.up, new Vector3(Random.Range(-15f, 15f), Random.Range(20f, 25f), Random.Range(-15f, 15f)), 0);
                     snowballDelay = Time.time + SnowballSpawnDelay;
                 }
+            }
+        }
+
+        public static GameObject FountainObject;
+        public static void SnowballPositionalFountain()
+        {
+            if (rightGrab)
+            {
+                if (FountainObject == null)
+                {
+                    FountainObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Object.Destroy(FountainObject.GetComponent<SphereCollider>());
+                    FountainObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                }
+                FountainObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            }
+            if (FountainObject != null)
+            {
+                if (rightTrigger > 0.5f)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        BetaSpawnSnowball(FountainObject.transform.position, new Vector3(Random.Range(-15f, 15f), Random.Range(20f, 25f), Random.Range(-15f, 15f)), 0);
+                        snowballDelay = Time.time + SnowballSpawnDelay;
+                    }
+                }
+                else
+                    FountainObject.GetComponent<Renderer>().material.color = buttonColors[0].GetColor(0);
+            }
+        }
+
+        public static void DisableSnowballPositionalFountain()
+        {
+            if (FountainObject != null)
+            {
+                Object.Destroy(FountainObject);
+                FountainObject = null;
             }
         }
 
