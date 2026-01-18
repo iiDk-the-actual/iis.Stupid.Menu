@@ -5167,6 +5167,9 @@ exit 0";
 
                     transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
 
+                    transform.Find("Title").GetComponent<TextMeshProUGUI>().Chams();
+                    transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().Chams();
+
                     button.name = buttonText;
 
                     if (info.label)
@@ -5263,6 +5266,7 @@ exit 0";
 
                 GameObject accept = canvasTransform.Find("Main/PromptTab/Accept").gameObject;
                 accept.transform.Find("Text").GetComponent<TextMeshProUGUI>().SafeSetText(CurrentPrompt.AcceptText);
+                accept.transform.Find("Text").GetComponent<TextMeshProUGUI>().Chams();
                 accept.GetOrAddComponent<UIColorChanger>().colors = buttonColors[0];
                 accept.GetComponent<Button>().onClick.AddListener(() =>
                 {
@@ -5392,6 +5396,9 @@ exit 0";
             {
                 MaskableGraphic graphic = toRecolor[i];
                 graphic.gameObject.AddComponent<UIColorChanger>().colors = textColors[i <= 1 ? 0 : 1];
+
+                if (graphic is TMP_Text text)
+                    text.Chams();
             }
 
             ExtGradient buttonBackgroundColor = backgroundColor.Clone();
