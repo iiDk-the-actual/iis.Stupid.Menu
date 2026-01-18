@@ -4362,6 +4362,68 @@ namespace iiMenu.Mods
             }
         }
 
+        public static readonly List<GameObject> flingZones = new List<GameObject>();
+        public static void SnowballFlingZone()
+        {
+            if (rightGrab)
+            {
+                bool isNearCheckpoint = false;
+                foreach (var checkpoint in flingZones.Where(checkpoint => Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, checkpoint.transform.position) < 0.5f))
+                {
+                    isNearCheckpoint = true;
+                    checkpoint.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                    break;
+                }
+
+                if (!isNearCheckpoint)
+                {
+                    GameObject newCheckpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Object.Destroy(newCheckpoint.GetComponent<SphereCollider>());
+                    newCheckpoint.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                    newCheckpoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    newCheckpoint.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    newCheckpoint.GetComponent<Renderer>().material.color = new Color(1f, 0f, 0f, 0.3f);
+                    flingZones.Add(newCheckpoint);
+                }
+            }
+
+            if (rightTrigger > 0.5f)
+            {
+                foreach (var checkpoint in flingZones.ToList().Where(checkpoint => Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, checkpoint.transform.position) < 0.5f))
+                {
+                    flingZones.Remove(checkpoint);
+                    Object.Destroy(checkpoint);
+                }
+            }
+
+            if (Time.time > snowballDelay)
+            {
+                int flingCount = 0;
+                foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                {
+                    foreach (var checkpoint in flingZones)
+                    {
+                        if (Vector3.Distance(rig.transform.position, checkpoint.transform.position) < 0.5f || Vector3.Distance(rig.leftHandTransform.position, checkpoint.transform.position) < 0.5f || Vector3.Distance(rig.rightHandTransform.position, checkpoint.transform.position) < 0.5f)
+                        {
+                            BetaSpawnSnowball(checkpoint.transform.position, new Vector3(0f, -500f, 0f), 2, rig.GetPhotonPlayer());
+                            flingCount++;
+                        }
+                    }
+                }
+
+                if (flingCount > 0)
+                    snowballDelay = Time.time + SnowballSpawnDelay * flingCount;
+            }
+        }
+
+        public static void DisableSnowballFlingZone()
+        {
+            foreach (GameObject checkpoint in flingZones)
+                Object.Destroy(checkpoint);
+
+            flingZones.Clear();
+        }
+
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f)
