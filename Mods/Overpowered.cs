@@ -3809,12 +3809,11 @@ namespace iiMenu.Mods
 
         public static void SnowballFountain()
         {
-            
             if (rightTrigger > 0.5f)
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + Vector3.up * 3f, RandomVector3(15f), 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + Vector3.up, new Vector3(Random.Range(-15f, 15f), Random.Range(0f, 15f), Random.Range(-15f, 15f)), 0);
                     snowballDelay = Time.time + SnowballSpawnDelay;
                 }
             }
@@ -3840,6 +3839,24 @@ namespace iiMenu.Mods
                 {
                     BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomVector3() * 20f, 0);
                     snowballDelay = Time.time + SnowballSpawnDelay;
+                }
+            }
+        }
+
+        public static void SnowballMushroom()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    int count = 15;
+
+                    snowballDelay = Time.time + SnowballSpawnDelay * count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        float rotation = i == 0 ? 0f : (360f / count * i);
+                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + Vector3.up, (Vector3.up * 15f) + (Quaternion.Euler(0f, rotation, 0f) * Vector3.forward).normalized * 2.5f, 0);
+                    }
                 }
             }
         }

@@ -1722,12 +1722,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Fountain <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballFountain, toolTip = "Fountains snowballs above you when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballOrbit, toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Snowball Aura <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballAura, toolTip = "Randomly spawns snowballs around you when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Mushroom <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballMushroom, toolTip = "Spawns a mushroom cloud of snowballs on you when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Snowball Minigun", method = Overpowered.SnowballMinigun, toolTip = "Spawns snowballs towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.SnowballMinigun, toolTip = "Spawns snowballs towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Give Snowball Minigun", method = Overpowered.GiveSnowballMinigun, toolTip = "Gives whoever your hand desires a snowball minigun." },
 
-                new ButtonInfo { buttonText = "Snowball Shotgun", method = Overpowered.SnowballShotgun, toolTip = "Spawns snowballs around wherever your hand desires."},
-                new ButtonInfo { buttonText = "Snowball Wall", method = Overpowered.SnowballWall, toolTip = "Spawns a wall of snowballs towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.SnowballShotgun, toolTip = "Spawns snowballs around wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Wall <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.SnowballWall, toolTip = "Spawns a wall of snowballs towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball C4 <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Overpowered.SnowballBomb, disableMethod = Overpowered.DisableBomb, toolTip = "Place a C4 with <color=green>grip</color> and detonate it with <color=green>A</color>. It will spawn snowballs at wherever the bomb is."},
 
                 new ButtonInfo { buttonText = "Snowball Boxing", method = Overpowered.SnowballBoxing, toolTip = "Gives everyone punch mod with the snowballs."},
