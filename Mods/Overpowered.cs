@@ -843,23 +843,16 @@ namespace iiMenu.Mods
             if (manager == null)
                 return;
 
-            if (Time.time < crashDelay)
-                return;
-
-            crashDelay = Time.time + 1f;
-
             targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
 
             int[] objectIds = manager.itemPrefabFactory.Keys.ToArray();
-            int randomObject = objectIds[Random.Range(0, objectIds.Length)];
-
             int[] ids = new int[ItemCrashCount];
             Vector3[] positions = new Vector3[ItemCrashCount];
             Quaternion[] rotations = new Quaternion[ItemCrashCount];
 
             for (int i = 0; i < ItemCrashCount; i++)
             {
-                ids[i] = randomObject;
+                ids[i] = objectIds[Random.Range(0, objectIds.Length)];
                 positions[i] = targetPosition.Value;
                 rotations[i] = Quaternion.identity;
             }
