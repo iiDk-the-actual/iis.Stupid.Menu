@@ -5068,7 +5068,6 @@ exit 0";
                 {
                     Toggle(buttonName);
                     PlayButtonSound();
-                    ReloadMenu();
                 });
 
             var selection = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Home/Selection");
@@ -5126,7 +5125,6 @@ exit 0";
                 {
                     Toggle(Buttons.buttons[0].Where(button => button.buttonText.StartsWith(tab.name)).FirstOrDefault() ?? Buttons.GetIndex("Exit Settings"));
                     PlayButtonSound();
-                    ReloadMenu();
                 });
 
                 if (currentCategoryName.StartsWith(tab.name == "Home" ? "Main" : tab.name))
