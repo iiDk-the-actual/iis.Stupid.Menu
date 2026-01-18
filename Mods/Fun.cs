@@ -2175,7 +2175,6 @@ Piece Name: {gunTarget.name}";
         public static void BlockBrowser()
         {
             rememberdirectory = pageNumber;
-            currentCategoryName = "Temporary Category";
 
             Dictionary<int, string> allBlockData = GetAllBlockData();
             List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = RemoveCosmeticBrowser, isTogglable = false, toolTip = "Returns you back to the fun mods." } };
@@ -2198,6 +2197,7 @@ Piece Name: {gunTarget.name}";
             }
 
             Buttons.buttons[29] = blockButtons.ToArray();
+            currentCategoryName = "Temporary Category";
         }
 
         public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
@@ -6031,7 +6031,6 @@ Piece Name: {gunTarget.name}";
         public static void CosmeticBrowser()
         {
             rememberdirectory = pageNumber;
-            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
             foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
@@ -6040,12 +6039,14 @@ Piece Name: {gunTarget.name}";
                     cosmeticbuttons.Add(new ButtonInfo { buttonText = ToTitleCase(hat.overrideDisplayName), method = () => AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
             }
             Buttons.buttons[29] = cosmeticbuttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void RemoveCosmeticBrowser()
         {
-            currentCategoryName = "Fun Mods";
             pageNumber = rememberdirectory;
+            currentCategoryName = "Fun Mods";
         }
 
         public static void AutoLoadCosmetics()

@@ -2409,14 +2409,15 @@ namespace iiMenu.Mods
         public static void EnterTeleportToMap() // Credits to Malachi for the positions
         {
             rememberPageNumber = pageNumber;
-            currentCategoryName = "Temporary Category";
-
+            
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = ExitTeleportToMap, isTogglable = false, toolTip = "Returns you back to the movement mods." } };
 
             foreach (string[] Data in mapData)
                 tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count, overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
             
             Buttons.buttons[29] = tpbuttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void TeleportToMap(string zone, string pos)

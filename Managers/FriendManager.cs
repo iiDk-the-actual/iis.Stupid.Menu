@@ -1014,8 +1014,6 @@ namespace iiMenu.Managers
 
         public static void AddFriendsUI()
         {
-            currentCategoryName = "Temporary Category";
-
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Friends",
@@ -1051,12 +1049,12 @@ namespace iiMenu.Managers
                 });
 
             Buttons.buttons[29] = buttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void IncomingFriendRequests()
         {
-            currentCategoryName = "Temporary Category";
-
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Add Friends",
@@ -1080,12 +1078,12 @@ namespace iiMenu.Managers
             }));
 
             Buttons.buttons[29] = buttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void OutgoingFriendRequests()
         {
-            currentCategoryName = "Temporary Category";
-
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Add Friends",
@@ -1109,12 +1107,12 @@ namespace iiMenu.Managers
             }));
 
             Buttons.buttons[29] = buttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void InspectFriend(string friendTarget)
         {
-            currentCategoryName = "Temporary Category";
-
             FriendData.Friend friend = instance.Friends.friends[friendTarget];
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
@@ -1215,12 +1213,12 @@ namespace iiMenu.Managers
             });
 
             Buttons.buttons[29] = buttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void InspectPendingFriend(string friendTarget)
         {
-            currentCategoryName = "Temporary Category";
-
             FriendData.PendingFriend friend = instance.Friends.incoming[friendTarget];
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
@@ -1250,11 +1248,12 @@ namespace iiMenu.Managers
             };
 
             Buttons.buttons[29] = buttons.ToArray();
+
+            currentCategoryName = "Temporary Category";
         }
 
         public static void ShowChatMessages(string friendTarget)
         {
-            currentCategoryName = "Chat Messages";
             FriendData.Friend friend = instance.Friends.friends[friendTarget];
 
             List<ButtonInfo> buttons = new List<ButtonInfo> {
@@ -1306,6 +1305,7 @@ namespace iiMenu.Managers
             });
 
             Buttons.buttons[41] = buttons.ToArray();
+            currentCategoryName = "Chat Messages";
         }
 
         public class FriendWebSocket : MonoBehaviour
