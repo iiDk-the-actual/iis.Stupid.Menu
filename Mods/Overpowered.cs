@@ -3917,11 +3917,10 @@ namespace iiMenu.Mods
                     velocity *= ShootStrength * 2f;
                 }
 
-                bool customMultiply = snowballMultiplicationFactor > 1;
-                for (int i = 0; i < (customMultiply ? snowballMultiplicationFactor : 5f); i++)
-                    BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity + RandomVector3(5f), 0, ignoreMultiply: customMultiply);
+                for (int i = 0; i < 5; i++)
+                    BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity + RandomVector3(5f), 0);
 
-                snowballDelay = Time.time + (SnowballSpawnDelay * (customMultiply ? snowballMultiplicationFactor : 5f));
+                snowballDelay = Time.time + (SnowballSpawnDelay * 5f);
             }
         }
 
@@ -3944,11 +3943,11 @@ namespace iiMenu.Mods
                     for (int y = -2; y <= 2; y++)
                     {
                         var (_, _, up, _, right) = ControllerUtilities.GetTrueRightHand();
-                        BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position + (right * (x * 0.5f)) + (up * (y * 0.5f)), velocity, 0);
+                        BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position + (right * (x * 0.666f)) + (up * (y * 0.666f)), velocity, 0);
                     }
                 }
 
-                snowballDelay = Time.time + (SnowballSpawnDelay * 16);
+                snowballDelay = Time.time + (SnowballSpawnDelay * 25f);
             }
         }
 
@@ -3971,11 +3970,10 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > snowballDelay)
                     {
-                        bool customMultiply = snowballMultiplicationFactor > 1;
-                        for (int i = 0; i < (customMultiply ? snowballMultiplicationFactor : 5f); i++)
-                            BetaSpawnSnowball(BombObject.transform.position, RandomVector3(500f), 0, ignoreMultiply: customMultiply);
+                        for (int i = 0; i < 5; i++)
+                            BetaSpawnSnowball(BombObject.transform.position, RandomVector3(500f), 0);
 
-                        snowballDelay = Time.time + (SnowballSpawnDelay * (customMultiply ? snowballMultiplicationFactor : 5f));
+                        snowballDelay = Time.time + (SnowballSpawnDelay * 5f);
                     }
 
                     Object.Destroy(BombObject);
