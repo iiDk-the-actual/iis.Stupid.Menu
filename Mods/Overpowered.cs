@@ -2013,6 +2013,42 @@ namespace iiMenu.Mods
             }
         }
 
+        public static IEnumerator DrawSmallDelay(Vector3 position, int id, GameEntityManager manager)
+        {
+            GameObject Temporary = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Temporary.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            Temporary.transform.position = position;
+            Object.Destroy(Temporary.GetComponent<Collider>());
+            yield return new WaitForSeconds(0.5f);
+            CreateItem(RpcTarget.All, id, Temporary.transform.position + new Vector3(0f, 0.1f, 0f), RandomQuaternion(), Vector3.zero, Vector3.zero, manager: manager);
+            Object.Destroy(Temporary);
+            RPCProtection();
+        }
+
+        public static void GhostReactorDrawGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, ObjectByName["GhostReactorCollectibleCore"], ManagerRegistry.GhostReactor.GameEntityManager));
+            }
+        }
+
+        public static void SuperInfectionDrawGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, GadgetByName["SIGadgetDashYoyo"], ManagerRegistry.SuperInfection.GameEntityManager));
+            }
+        }
+
         private static float destroyDelay;
         public static void DestroyEntityGun()
         {
