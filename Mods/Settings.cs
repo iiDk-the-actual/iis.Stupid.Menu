@@ -5158,6 +5158,7 @@ exit 0";
                     buttonText = FollowMenuSettings(buttonText);
 
                     transform.Find("Title").GetComponent<TextMeshProUGUI>().SafeSetText(buttonText);
+                    transform.Find("Title").GetComponent<TextMeshProUGUI>().spriteAsset = ButtonSpriteSheet;
 
                     string toolTipText = info.toolTip;
 
