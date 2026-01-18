@@ -4252,6 +4252,45 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballLaunchGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        int count = 10;
+
+                        snowballDelay = Time.time + SnowballSpawnDelay * count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            float rotation = i == 0 ? 0f : (360f / count * i);
+                            BetaSpawnSnowball(lockTarget.transform.position + new Vector3(0f, 0.5f, 0f) + (Quaternion.Euler(0f, rotation, 0f) * Vector3.forward).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, lockTarget.GetPhotonPlayer());
+                        }
+                    }
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f)
