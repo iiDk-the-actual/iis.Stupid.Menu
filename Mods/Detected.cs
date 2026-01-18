@@ -26,6 +26,7 @@ using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
+using iiMenu.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -301,7 +302,7 @@ namespace iiMenu.Mods
                             GameModeType gameMode = GorillaGameManager.instance.GameType();
                             ChangeGamemode(GameModeType.SuperInfect);
                             PhotonNetwork.SetMasterClient(gunTarget.GetPhotonPlayer());
-                            Overpowered.SuperInfectionKickMasterClient();
+                            Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
                             ChangeGamemode(gameMode);
                             RPCProtection();
                         }
@@ -330,7 +331,7 @@ namespace iiMenu.Mods
                     ChangeGamemode(GameModeType.SuperInfect);
 
                 int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                Overpowered.SuperInfectionKickMasterClient();
+                Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
 
                 float timeDelay = Time.time + 1f;
                 yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);

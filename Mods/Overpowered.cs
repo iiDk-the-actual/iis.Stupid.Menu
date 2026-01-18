@@ -779,10 +779,29 @@ namespace iiMenu.Mods
             Toggle("Virtual Stump Kick All");
         }
 
-        public static void VirtualStumpKickMasterClient()
+        public static void GameEntityKickMaster(GameEntityManager manager)
         {
             if (NetworkSystem.Instance.IsMasterClient)
                 return;
+
+            if (manager == null)
+                return;
+
+            if (Buttons.GetIndex("Kick Fix").enabled)
+            {
+                if (ManagerRegistry.SuperInfection.SuperInfectionManager != null && manager == ManagerRegistry.SuperInfection.SuperInfectionManager)
+                    ManagerRegistry.SuperInfection.SuperInfectionManager.photonView.RPC("SIClientToClientRPC", RpcTarget.MasterClient, new object[]
+                    {
+                        Array.Empty<int>(),
+                        Array.Empty<int>(),
+                        Array.Empty<bool[]>(),
+                        0,
+                        0,
+                        0,
+                        Array.Empty<int>(),
+                        Array.Empty<int>()
+                    });
+            }
 
             byte[] byteData = new byte[15360];
             MemoryStream memoryStream = new MemoryStream(byteData);
@@ -792,7 +811,7 @@ namespace iiMenu.Mods
 
             for (int i = 0; i < 4; i++)
             {
-                binaryWriter.Write(ManagerRegistry.CustomMaps.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
+                binaryWriter.Write(manager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
                 binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
                 binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
                 binaryWriter.Write(0L);
@@ -805,7 +824,7 @@ namespace iiMenu.Mods
             Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
             bytes = padding;
 
-            ManagerRegistry.CustomMaps.GameEntityManager.SendRPC(
+            manager.SendRPC(
                 "JoinWithItemsRPC",
                 RpcTarget.MasterClient,
                 bytes,
@@ -814,6 +833,38 @@ namespace iiMenu.Mods
             );
 
             RPCProtection();
+        }
+
+        public static int ItemCrashCount = 500;
+        public static float crashDelay;
+
+        public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
+        {
+            if (manager == null)
+                return;
+
+            if (Time.time < crashDelay)
+                return;
+
+            crashDelay = Time.time + 1f;
+
+            targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
+
+            int[] objectIds = manager.itemPrefabFactory.Keys.ToArray();
+            int randomObject = objectIds[Random.Range(0, objectIds.Length)];
+
+            int[] ids = new int[ItemCrashCount];
+            Vector3[] positions = new Vector3[ItemCrashCount];
+            Quaternion[] rotations = new Quaternion[ItemCrashCount];
+
+            for (int i = 0; i < ItemCrashCount; i++)
+            {
+                ids[i] = randomObject;
+                positions[i] = targetPosition.Value;
+                rotations[i] = Quaternion.identity;
+            }
+
+            CreateItems(target, ids, positions, rotations, manager: manager);
         }
 
         public static int masterVisualizationType;
@@ -892,7 +943,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
                     {
                         kgDebounce = Time.time + 0.2f;
-                        VirtualStumpKickMasterClient();
+                        GameEntityKickMaster(ManagerRegistry.CustomMaps.GameEntityManager);
                     }
                 }
             }
@@ -904,7 +955,7 @@ namespace iiMenu.Mods
             while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                VirtualStumpKickMasterClient();
+                GameEntityKickMaster(ManagerRegistry.CustomMaps.GameEntityManager);
 
                 float timeDelay = Time.time + 1f;
                 yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
@@ -982,80 +1033,6 @@ namespace iiMenu.Mods
         public static void GhostReactorCrashAll() =>
             GameEntityCrash(ManagerRegistry.GhostReactor.GameEntityManager, RpcTarget.Others);
 
-        public static void GhostReactorKickMasterClient()
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            byte[] byteData = new byte[15360];
-            MemoryStream memoryStream = new MemoryStream(byteData);
-            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
-
-            binaryWriter.Write(4);
-
-            for (int i = 0; i < 4; i++)
-            {
-                binaryWriter.Write(ManagerRegistry.GhostReactor.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
-                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
-                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
-                binaryWriter.Write(0L);
-                binaryWriter.Write((byte)3);
-            }
-
-            byte[] bytes = GZipStream.CompressBuffer(byteData);
-            byte[] padding = new byte[1960];
-
-            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
-            bytes = padding;
-
-            ManagerRegistry.GhostReactor.GameEntityManager.SendRPC(
-                "JoinWithItemsRPC",
-                RpcTarget.MasterClient,
-                bytes,
-                new int[0],
-                NetworkSystem.Instance.LocalPlayer.ActorNumber
-            );
-
-            RPCProtection();
-        }
-        
-        public static void SuperInfectionKickMasterClient()
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            byte[] byteData = new byte[15360];
-            MemoryStream memoryStream = new MemoryStream(byteData);
-            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
-
-            binaryWriter.Write(4);
-
-            for (int i = 0; i < 4; i++)
-            {
-                binaryWriter.Write(ManagerRegistry.SuperInfection.GameEntityManager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
-                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
-                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
-                binaryWriter.Write(0L);
-                binaryWriter.Write((byte)3);
-            }
-
-            byte[] bytes = GZipStream.CompressBuffer(byteData);
-            byte[] padding = new byte[1960];
-
-            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
-            bytes = padding;
-
-            ManagerRegistry.SuperInfection.GameEntityManager.SendRPC(
-                "JoinWithItemsRPC",
-                RpcTarget.MasterClient,
-                bytes,
-                new int[0],
-                NetworkSystem.Instance.LocalPlayer.ActorNumber
-            );
-
-            RPCProtection();
-        }
-
         private static float kgDebounce;
         public static void GhostReactorKickGun()
         {
@@ -1075,7 +1052,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
                     {
                         kgDebounce = Time.time + 0.2f;
-                        GhostReactorKickMasterClient();
+                        GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager);
                     }
                 }
             }
@@ -1087,7 +1064,7 @@ namespace iiMenu.Mods
             while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                GhostReactorKickMasterClient();
+                GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager);
 
                 float timeDelay = Time.time + 1f;
                 yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
@@ -1123,7 +1100,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
                     {
                         kgDebounce = Time.time + 0.2f;
-                        SuperInfectionKickMasterClient();
+                        GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
                     }
                 }
             }
@@ -1135,7 +1112,7 @@ namespace iiMenu.Mods
             while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                SuperInfectionKickMasterClient();
+                GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
 
                 float timeDelay = Time.time + 1f;
                 yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
@@ -1151,28 +1128,6 @@ namespace iiMenu.Mods
                 CoroutineManager.instance.StopCoroutine(siKickAllCoroutine);
 
             siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
-        }
-
-        public const int ItemCrashCount = 5000;
-        public static void GameEntityCrash(GameEntityManager manager, object target, Vector3? targetPosition = null)
-        {
-            if (manager == null)
-                return;
-
-            targetPosition ??= GorillaTagger.Instance.bodyCollider.transform.position;
-
-            int[] objectIds = manager.itemPrefabFactory.Keys.ToArray();
-            int[] randomObjectIds = Enumerable.Range(0, ItemCrashCount)
-                .Select(_ => objectIds[Random.Range(0, objectIds.Length)])
-                .ToArray();
-            Vector3[] randomPositions = Enumerable.Range(0, ItemCrashCount)
-                .Select(_ => targetPosition.Value)
-                .ToArray();
-            Quaternion[] randomQuaternions = Enumerable.Range(0, ItemCrashCount)
-                .Select(_ => RandomQuaternion())
-                .ToArray();
-
-            CreateItems(target, randomObjectIds, randomPositions, randomQuaternions, manager: manager);
         }
 
         public static void SuperInfectionCrashGun()
@@ -1669,7 +1624,7 @@ namespace iiMenu.Mods
                 sendData ??= Enumerable.Repeat(0L, hashes.Length).ToArray();
 
                 byte[] data = new byte[15360];
-                MemoryStream memoryStream = new MemoryStream();
+                MemoryStream memoryStream = new MemoryStream(data);
                 BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
                 binaryWriter.Write(hashes.Length);
 
@@ -1686,7 +1641,7 @@ namespace iiMenu.Mods
 
                 object[] createData = new object[] 
                 { 
-                    manager.zone, 
+                    (int)manager.zone, 
                     array 
                 };
 

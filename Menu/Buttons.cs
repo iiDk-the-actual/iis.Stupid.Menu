@@ -28,6 +28,7 @@ using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
+using iiMenu.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -1969,7 +1970,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Kick Master Client", method = Overpowered.KickMasterClient, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks the master client from the room." },
 
-                new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method = Overpowered.GhostReactorKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
+                new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
 
                 new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
                 new ButtonInfo { buttonText = "Ghost Reactor Kick All", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone in the Ghost Reactor map."},
@@ -1978,7 +1979,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
 
-                new ButtonInfo { buttonText = "Super Infection Kick Master Client", method = Overpowered.SuperInfectionKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
                 new ButtonInfo { buttonText = "Super Infection Kick All", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone in the Super Infection gamemode."},
@@ -1990,7 +1991,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Super Infection Break Audio Gun", method = Overpowered.SuperInfectionBreakAudioGun, toolTip = "Breaks the audio of whoever your hand desires in the Super Infection gamemode."},
                 new ButtonInfo { buttonText = "Super Infection Break Audio All", method = Overpowered.SuperInfectionBreakAudioAll, toolTip = "Breaks the audio of everyone in the Super Infection gamemode."},
 
-                new ButtonInfo { buttonText = "Virtual Stump Kick Master Client", method = Overpowered.VirtualStumpKickMasterClient, isTogglable = false, toolTip = "Kicks the master client in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the virtual stump."},
 
                 new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, toolTip = "Kicks whoever your hand desires in the virtual stump."},
                 new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
@@ -2348,7 +2349,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick to Public", enableMethod =() => Overpowered.kickToPublic = true, disableMethod =() => Overpowered.kickToPublic = false, toolTip = "Makes the kick mods send the user to a public lobby. This allows for chaining of commands." },
                 new ButtonInfo { buttonText = "Kick to Specific Room", enableMethod = Settings.KickToSpecificRoom, disableMethod =() => Overpowered.specificRoom = null, toolTip = "Makes the kick mods send the user to the specific room of your choice." },
                 new ButtonInfo { buttonText = "Rejoin on Kick", enableMethod =() => Overpowered.rejoinOnKick = true, disableMethod =() => Overpowered.rejoinOnKick = false, toolTip = "Makes room based kick mods join the room you kicked the target in once they have been kicked." },
-                new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." }
+                new ButtonInfo { buttonText = "Fast Kick", enableMethod =() => Important.instantCreate = true, disableMethod =() => Important.instantCreate = false, toolTip = "Instantly creates a room instead of checking if one already exists." },
+                new ButtonInfo { buttonText = "Kick Fix", enableMethod =() => JoinPatch.enabled = true, disableMethod =() => JoinPatch.enabled = false, toolTip = "Stops the super infection, virtual stump, and other kick mods from breaking." }
             },
 
             new[] { // Keybind Settings [32]
