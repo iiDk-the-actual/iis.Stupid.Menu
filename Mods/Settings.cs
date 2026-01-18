@@ -5463,7 +5463,7 @@ exit 0";
 
                     pointerData ??= new PointerEventData(eventSystem);
 
-                    bool useLeft = oneHand ? !rightHand : rightHand;
+                    bool useLeft = rightHand;
 
                     var (_, _, _, forward, _) = useLeft
                         ? ControllerUtilities.GetTrueLeftHand()
