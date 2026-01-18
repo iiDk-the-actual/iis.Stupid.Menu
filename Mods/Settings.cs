@@ -5463,7 +5463,7 @@ exit 0";
 
                     pointerData ??= new PointerEventData(eventSystem);
 
-                    bool useLeft = rightHand;
+                    bool useLeft = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
 
                     var (_, _, _, forward, _) = useLeft
                         ? ControllerUtilities.GetTrueLeftHand()
