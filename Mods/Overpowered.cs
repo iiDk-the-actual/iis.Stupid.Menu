@@ -4236,7 +4236,7 @@ namespace iiMenu.Mods
                 Vector3 targetDirection = (cursor.transform.position - snowballPosition).normalized * 60f;
 
                 BetaSpawnSnowball(snowballPosition, targetDirection, 0);
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(SnowballSpawnDelay);
             }
 
             Vector3 _ = GorillaTagger.Instance.leftHandTransform.position.Lerp(GorillaTagger.Instance.rightHandTransform.position, 0.5f);
