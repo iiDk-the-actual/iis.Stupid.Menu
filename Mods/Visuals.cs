@@ -2868,7 +2868,7 @@ namespace iiMenu.Mods
                             infoBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                             Object.Destroy(infoBg.GetComponent<Collider>());
                             LineRenderer rendererInfo = infoBg.AddComponent<LineRenderer>();
-                            rendererInfo.material.shader = Shader.Find(nameTagChams ? "GUI/Text Shader" : "Sprites/Default");
+                            rendererInfo.material.shader = nameTagChams ? LoadAsset<Shader>("Chams") : Shader.Find("Sprites/Default");
                             rendererInfo.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererInfo.numCapVertices = 10;
                             rendererInfo.numCornerVertices = 5;
@@ -2884,7 +2884,7 @@ namespace iiMenu.Mods
                             nameBg.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
                             Object.Destroy(nameBg.GetComponent<Collider>());
                             LineRenderer rendererName = nameBg.AddComponent<LineRenderer>();
-                            rendererName.material.shader = Shader.Find(nameTagChams ? "GUI/Text Shader" : "Sprites/Default");
+                            rendererName.material.shader = nameTagChams ? LoadAsset<Shader>("Chams") : Shader.Find("Sprites/Default");
                             rendererName.material.color = new Color(0.2f, 0.2f, 0.2f, 0.6f);
                             rendererName.numCapVertices = 10;
                             rendererName.numCornerVertices = 5;
