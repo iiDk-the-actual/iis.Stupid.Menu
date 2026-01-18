@@ -38,6 +38,8 @@ using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Ionic.Zlib;
+using Modio.Mods;
+using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -56,6 +58,7 @@ using System.Reflection;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Windows;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -958,20 +961,70 @@ namespace iiMenu.Mods
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
 
-        public static void CustomModSpoofer(string mods)
+        public static readonly Dictionary<string, string> modsToSpoof = new Dictionary<string, string>();
+
+        public static void ReloadModsToSpoof(string key, string value, bool add = true)
         {
-            string[] input = mods.Split(',').Select(s => s.Trim()).ToArray();
+            if (add)
+                modsToSpoof.Add(key, value);
+            else if (!add)
+                modsToSpoof.Remove(key);
             Hashtable props = new Hashtable();
 
-            foreach (string mod in input)
-            {
-                if (Visuals.modDictionary.TryGetKeyByValue(mod, out string keyName))
-                    props[keyName] = true;
-                else
-                    props[mod] = true;
-            }
+            foreach (string mod in modsToSpoof.Keys)
+                props[mod] = true;
 
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+        public static void CustomModSpoofer()
+        {
+            PromptText("Would you like to choose from a mod list or type the mod property?", () =>
+            {
+                List<ButtonInfo> modList = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Mod List", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
+
+                for (int i = 0; i < Visuals.modDictionary.Count; i++)
+                {
+                    KeyValuePair<string, string> mod = Visuals.modDictionary.ElementAt(i);
+                    modList.Add(
+                        new ButtonInfo
+                        {
+                            buttonText = $"Mod{i}",
+                            overlapText = mod.Value,
+                            enableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value),
+                            disableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value, false),
+                            toolTip = $"Show that you are using the mod {mod.Value} to other players."
+                        });
+                }
+
+
+                Buttons.buttons[Buttons.GetCategory("Mod List")] = modList.ToArray();
+                currentCategoryName = "Mod List";
+            }, () =>
+            {
+                PromptSingleText("Please enter what you would like to spoof your mods to (seperated by commas).", () =>
+                {
+                    string[] input = keyboardInput.Split(',').Select(s => s.Trim()).ToArray();
+                    Hashtable props = new Hashtable();
+
+                    foreach(string mod in input)
+                    {
+                        string foundKey = null;
+
+                        foreach (var kv in Visuals.modDictionary)
+                        {
+                            if (string.Equals(kv.Value, mod, StringComparison.OrdinalIgnoreCase))
+                            {
+                                foundKey = kv.Key;
+                                break;
+                            }
+                        }
+
+                        props[foundKey ?? mod] = true;
+                    }
+
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+                }, "Done");
+            });
         }
 
         public static void MuteDJSets()
