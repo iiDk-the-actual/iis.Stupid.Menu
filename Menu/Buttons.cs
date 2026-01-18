@@ -1336,7 +1336,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Entity Fountain", method = Overpowered.EntityFountain, toolTip = "Spurts random entities out of your head like a fountain."},
 
                 new ButtonInfo { buttonText = "Ghost Reactor Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput.ToUpper(), null, "Done", "Cancel"), method = Overpowered.GhostReactorTextGun, toolTip = "Spawns entities in the shape of the text you desire in the ghost reactor."},
-
+                new ButtonInfo { buttonText = "Ghost Reactor Draw Gun", method = Overpowered.GhostReactorDrawGun, toolTip = "Allows you to draw with entities in ghost reactor."},
+                
                 new ButtonInfo { buttonText = "Destroy Entity Gun", method = Overpowered.DestroyEntityGun, toolTip = "Destroys any entity which your hand desires."},
 
                 new ButtonInfo { buttonText = "Infinite Jet Fuel", method =() => FuelPatch.enabled = true, disableMethod =() => FuelPatch.enabled = false, toolTip = "Gives the jet gadgets in Super Infection infinite fuel."},
@@ -1402,6 +1403,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Gadget Fountain", method =() => Overpowered.GadgetFountain(), toolTip = "Spurts random gadgets out of your head like a fountain."},
 
                 new ButtonInfo { buttonText = "Super Infection Text Gun", enableMethod =() => PromptText("What text would you like to show?", () => Overpowered.textToRender = keyboardInput.ToUpper(), null, "Done", "Cancel"), method = Overpowered.SuperInfectionTextGun, toolTip = "Spawns entities in the shape of the text you desire in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Draw Gun", method = Overpowered.SuperInfectionDrawGun, toolTip = "Allows you to draw with entities in Super Infection."},
 
                 new ButtonInfo { buttonText = "Destroy Gadget Gun", method = Overpowered.DestroyGadgetGun, toolTip = "Destroys any gadget which your hand desires."},
 

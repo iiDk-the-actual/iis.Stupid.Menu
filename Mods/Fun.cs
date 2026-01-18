@@ -4216,7 +4216,7 @@ Piece Name: {gunTarget.name}";
                         NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
                     else
                     {
-                        RequestCreatePiece(pieceIdSet, NewPointer.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
+                        RequestCreatePiece(pieceIdSet, NewPointer.transform.position, RandomQuaternion(), 0, null, true);
                         RPCProtection();
                     }
                 }
@@ -4230,7 +4230,7 @@ Piece Name: {gunTarget.name}";
             Temporary.transform.position = position;
             Object.Destroy(Temporary.GetComponent<Collider>());
             yield return new WaitForSeconds(0.5f);
-            RequestCreatePiece(pieceIdSet, Temporary.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
+            RequestCreatePiece(pieceIdSet, Temporary.transform.position, RandomQuaternion(), 0, null, true);
             Object.Destroy(Temporary);
             RPCProtection();
         }
