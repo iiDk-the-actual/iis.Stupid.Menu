@@ -5452,8 +5452,12 @@ namespace iiMenu.Menu
             return notags.Replace(input, replace);
         }
 
+        public static bool vibrantColors;
         public static string FixTMProTags(string input)
         {
+            if (vibrantColors)
+                return input;
+
             input = input.Replace("<color=green>", "<color=#008000>");
             input = input.Replace("<color=purple>", "<color=#800080>");
 
