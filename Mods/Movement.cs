@@ -5195,7 +5195,7 @@ namespace iiMenu.Mods
             AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
 
             float[] data = new float[samples];
-            int samplesPerWave = sampleRate / 7000;
+            int samplesPerWave = sampleRate / 6000;
 
             for (int i = 0; i < samples; i++)
             {
@@ -5293,7 +5293,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    VRRig.LocalRig.transform.position = targetRig.transform.position - (lockTarget.headMesh.transform.forward * 0.2f);
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - (targetRig.headMesh.transform.forward * 0.2f);
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
