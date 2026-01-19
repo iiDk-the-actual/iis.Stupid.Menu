@@ -42,6 +42,7 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static Unity.Burst.Intrinsics.X86.Avx;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -1237,6 +1238,8 @@ namespace iiMenu.Mods
                                     if (args.Length > 2)
                                         userColor = Console.GetMenuTypeName((string)args[2]);
 
+                                    if (Visuals.nameTagChams)
+                                        textMesh.Chams();
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
                                 }
