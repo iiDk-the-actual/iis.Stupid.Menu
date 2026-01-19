@@ -5188,7 +5188,7 @@ namespace iiMenu.Mods
             AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
 
             float[] data = new float[samples];
-            int samplesPerWave = (int)(sampleRate / 6000);
+            int samplesPerWave = (int)(sampleRate / 7000);
 
             for (int i = 0; i < samples; i++)
             {
