@@ -200,7 +200,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime <= DateTime.Now.AddYears(-1))
+            if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime >= DateTime.Now.AddYears(1))
                 AchievementManager.UnlockAchievement(new AchievementManager.Achievement
                 {
                     name = "Veteran",
