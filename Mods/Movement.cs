@@ -3538,7 +3538,7 @@ namespace iiMenu.Mods
             {
                 VRRig target = GetRandomVRRig(false);
 
-                VRRig.LocalRig.transform.position = target.transform.position + new Vector3(0f, 1f, 0f);
+                VRRig.LocalRig.transform.position = target.transform.position + Vector3.up;
 
                 VRRig.LocalRig.leftHand.rigTarget.transform.position = target.transform.position;
                 VRRig.LocalRig.rightHand.rigTarget.transform.position = target.transform.position;

@@ -2026,7 +2026,7 @@ namespace iiMenu.Mods
                 {
                     ThrowableBug bug = GetBug(objectName);
                     if (bug != null)
-                        bug.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        bug.transform.position = NewPointer.transform.position + Vector3.up;
                 }
             }
         }
@@ -2047,7 +2047,7 @@ namespace iiMenu.Mods
                     camera.m_CameraVisuals.SetNetworkedVisualsActive(true);
                     camera.m_CameraVisuals.SetRecordingState(true);
 
-                    camera.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    camera.transform.position = NewPointer.transform.position + Vector3.up;
                 }
             }
         }
@@ -2068,7 +2068,7 @@ namespace iiMenu.Mods
                     camera.m_CameraVisuals.SetNetworkedVisualsActive(true);
                     camera.m_CameraVisuals.SetRecordingState(true);
 
-                    camera.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    camera.transform.position = NewPointer.transform.position + Vector3.up;
                 }
             }
         }
@@ -2085,7 +2085,7 @@ namespace iiMenu.Mods
                     foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                     {
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                            glider.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                            glider.gameObject.transform.position = NewPointer.transform.position + Vector3.up;
                         else
                             glider.OnHover(null, null);
                     }
@@ -4965,7 +4965,7 @@ Piece Name: {gunTarget.name}";
 
             yield return null;
 
-            RequestCreatePiece(pieceType, VRRig.LocalRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0, null, true);
+            RequestCreatePiece(pieceType, VRRig.LocalRig.transform.position + Vector3.up, Quaternion.identity, 0, null, true);
             RPCProtection();
 
             while (pieceId < 0)
@@ -5308,7 +5308,7 @@ Piece Name: {gunTarget.name}";
                     foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
                     {
                         if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
-                        monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        monkeyeAI.gameObject.transform.position = NewPointer.transform.position + Vector3.up;
                     }
                 }
             }
@@ -5492,7 +5492,7 @@ Piece Name: {gunTarget.name}";
                     foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                     {
                         if (balloon.ownerRig.isLocal)
-                            balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                            balloon.gameObject.transform.position = NewPointer.transform.position + Vector3.up;
                         else
                             balloon.WorldShareableRequestOwnership();
                     }

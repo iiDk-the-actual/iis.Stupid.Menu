@@ -3924,7 +3924,7 @@ namespace iiMenu.Mods
                 if (Buttons.GetIndex("Above Players").enabled)
                 {
                     VRRig targetRig = GetTargetPlayer();
-                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
+                    startpos = targetRig.transform.position + Vector3.up;
                 }
 
                 if (Buttons.GetIndex("Rain Projectiles").enabled)
@@ -3968,7 +3968,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + Vector3.up, new Vector3(0f, 30f, 0f), 0);
                     snowballDelay = Time.time + SnowballSpawnDelay;
                 }
             }

@@ -347,9 +347,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reverse Intercourse", toolTip = "Turns you into the receiver when using the intercourse gun."},
 
                 new ButtonInfo { buttonText = "Elevated Sticky Drive", toolTip = "Makes you float higher in the air whenever you use Sticky Drive."},
-
-                new ButtonInfo { buttonText = "Knockback Multiplication Amount", overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>1.5</color><color=grey>]</color>", method =() => Movement.MultiplicationAmount(), enableMethod =() => Movement.MultiplicationAmount(), disableMethod =() => Movement.MultiplicationAmount(false), incremental = true, isTogglable = false, toolTip = "Adjusts how much your knockback is multiplied."},
-
                 new ButtonInfo { buttonText = "High Quality Portals", toolTip = "Makes the view through the portals higher quality." }
             },
 
@@ -1693,9 +1690,10 @@ namespace iiMenu.Menu
             new[] { // Projectile Spam Mods [15]
                 new ButtonInfo { buttonText = "Exit Projectile Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Grab Projectile <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.GrabProjectile, toolTip = "Grabs your selected projectile(s) holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
-                new ButtonInfo { buttonText = "Projectile Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.ProjectileSpam, toolTip = "Spams your selected projectile(s) when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
-                new ButtonInfo { buttonText = "Laser Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.LazerSpam, toolTip = "Spams your selected projectile(s) out of your eyes like lasers when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings" },
+                new ButtonInfo { buttonText = "Grab Projectile <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.GrabProjectile, toolTip = "Grabs your selected projectile(s) holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Projectile Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.ProjectileSpam, toolTip = "Spams your selected projectile(s) when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Projectile Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.ProjectileGun, toolTip = "Spams your selected projectile(s) at wherever your hand desires." },
+                new ButtonInfo { buttonText = "Laser Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Projectiles.LazerSpam, toolTip = "Spams your selected projectile(s) out of your eyes like lasers when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Give Projectile Spam Gun", method = Projectiles.GiveProjectileSpamGun, toolTip = "Acts like the projectile spam, but you can give it to whoever your hand desires when they hold <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Impact Spam", method = Projectiles.ImpactSpam, toolTip = "Acts like the projectile spam, but uses the impacts instead." },
 
@@ -1719,7 +1717,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Projectile Lag Gun", method = Projectiles.ProjectileLagGun, toolTip = "Lags whoever your hand desires using the firework projectiles."},
                 new ButtonInfo { buttonText = "Projectile Lag All", enableMethod = Projectiles.ProjectileLagAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Lags everybody in the room using the firework projectiles."},
 
-                new ButtonInfo { buttonText = "Snowball Spam", method = Overpowered.SnowballSpam, toolTip = "Spams snowballs when holding <color=green>grip</color>. You can change the projectile(s) in Settings > Projectile Settings"},
+                new ButtonInfo { buttonText = "Snowball Spam", method = Overpowered.SnowballSpam, toolTip = "Spams snowballs when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Gun", method = Overpowered.SnowballGun, toolTip = "Spawns a snowball wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Nuke Gun", method = Overpowered.SnowballNukeGun, toolTip = "Spawns a lot of snowballs airstriking from the sky at wherever your hand desires."},
@@ -2436,6 +2434,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Badge Tier", overlapText = "Change Badge Tier <color=grey>[</color><color=green>Banana</color><color=grey>]</color>", method =() => Safety.ChangeBadgeTier(), enableMethod =() => Safety.ChangeBadgeTier(), disableMethod =() => Safety.ChangeBadgeTier(false), incremental = true, isTogglable = false, toolTip = "Changes the target tier for the badge spoof mod."},
 
                 new ButtonInfo { buttonText = "Change Target FOV", overlapText = "Change Target FOV <color=grey>[</color><color=green>90</color><color=grey>]</color>", method =() => Fun.ChangeTargetFOV(), enableMethod =() => Fun.ChangeTargetFOV(), disableMethod =() => Fun.ChangeTargetFOV(false), incremental = true, isTogglable = false, toolTip = "Changes the target field of view for the \"Camera FOV\" mod."},
+                new ButtonInfo { buttonText = "Knockback Multiplication Amount", overlapText = "Knockback Multiplication Amount <color=grey>[</color><color=green>1.5</color><color=grey>]</color>", method =() => Movement.MultiplicationAmount(), enableMethod =() => Movement.MultiplicationAmount(), disableMethod =() => Movement.MultiplicationAmount(false), incremental = true, isTogglable = false, toolTip = "Adjusts how much your knockback is multiplied."},
 
                 new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Removes the gravity from the blocks."},
                 new ButtonInfo { buttonText = "Random Block Type", toolTip = "Selects a random block when using block mods."},
