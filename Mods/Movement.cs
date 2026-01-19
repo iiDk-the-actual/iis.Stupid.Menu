@@ -5179,6 +5179,317 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TinnitusGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
+                        GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position + Vector3.up;
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
+
+                            VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = PhotonNetwork.PlayerList.Where(plr => plr.ActorNumber != target.ActorNumber).Select(plr => plr.ActorNumber).ToArray() });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    Sound.FixMicrophone();
+                    SerializePatch.OverrideSerialization = null;
+                }
+            }
+        }
+
+        public static void TinnitusAll()
+        {
+            Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position + Vector3.up;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+        }
+
+        public static void DisableTinnitus()
+        {
+            SerializePatch.OverrideSerialization = null;
+            Sound.FixMicrophone();
+        }
+
+        private static float hoverboardSpawnDelay;
+        private static float soundSpamDelay;
+        public static void OverstimulateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > Fun.splashDel)
+                    {
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), lockTarget.headMesh.transform.TransformPoint(Vector3.forward * 0.2f), RandomQuaternion(), 4f, 100f, true, false);
+                        Fun.splashDel = Time.time + 0.1f;
+                    }
+
+                    if (Random.Range(0f, 1f) > 0.5f)
+                    {
+                        if (Time.time > soundSpamDelay)
+                        {
+                            soundSpamDelay = Time.time + 0.1f;
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", lockTarget.GetPhotonPlayer(), Random.Range(336, 338), false, 999999f);
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > soundSpamDelay)
+                        {
+                            int[] sounds = {
+                                Random.Range(40,54),
+                                Random.Range(214,221)
+                            };
+
+                            soundSpamDelay = Time.time + 0.1f;
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", lockTarget.GetPhotonPlayer(), sounds[Random.Range(0, 1)], false, 999999f);
+                        }
+                    }
+
+                    if (Time.time > hoverboardSpawnDelay)
+                    {
+                        hoverboardSpawnDelay = Time.time + 0.25f;
+
+                        FreeHoverboardManager.DataPerPlayer orCreatePlayerData = FreeHoverboardManager.instance.GetOrCreatePlayerData(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+                        int boardIndex = orCreatePlayerData.board0.gameObject.activeSelf ? ((!orCreatePlayerData.board1.gameObject.activeSelf) ? 1 : (1 - FreeHoverboardManager.instance.localPlayerLastSpawnedBoardIndex)) : 0;
+
+                        FreeHoverboardManager.instance.photonView.RPC("DropBoard_RPC", lockTarget.GetPhotonPlayer(), boardIndex == 1, 
+                            BitPackUtils.PackWorldPosForNetwork(lockTarget.headMesh.transform.TransformPoint(Vector3.forward * 0.2f)), 
+                            BitPackUtils.PackQuaternionForNetwork(RandomQuaternion()), 
+                            BitPackUtils.PackWorldPosForNetwork(RandomVector3(3)), BitPackUtils.PackWorldPosForNetwork(RandomVector3(3)),
+                            BitPackUtils.PackColorForNetwork(RandomColor()));
+
+                        FreeHoverboardManager.instance.localPlayerLastSpawnedBoardIndex = boardIndex;
+                    }
+
+                    RPCProtection();
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position + RandomVector3();
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    SerializePatch.OverrideSerialization = null;
+                }
+            }
+        }
+
+        public static void OverstimulateAll()
+        {
+            SerializePatch.OverrideSerialization ??= () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+                    VRRig.LocalRig.transform.position = targetRig.transform.position + RandomVector3();
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
+                }
+                RPCProtection();
+                VRRig.LocalRig.transform.position = archivePos;
+                return false;
+            };
+
+            VRRig randomRig = GetRandomVRRig(false);
+
+            if (Time.time > Fun.splashDel)
+            {
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(randomRig), randomRig.headMesh.transform.TransformPoint(Vector3.forward * 0.2f), RandomQuaternion(), 4f, 100f, true, false);
+                Fun.splashDel = Time.time + 0.1f;
+            }
+
+            if (Random.Range(0f, 1f) > 0.5f)
+            {
+                if (Time.time > soundSpamDelay)
+                {
+                    soundSpamDelay = Time.time + 0.1f;
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", randomRig.GetPhotonPlayer(), Random.Range(336, 338), false, 999999f);
+                }
+            }
+            else
+            {
+                if (Time.time > soundSpamDelay)
+                {
+                    int[] sounds = {
+                        Random.Range(40,54),
+                        Random.Range(214,221)
+                    };
+
+                    soundSpamDelay = Time.time + 0.1f;
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", randomRig.GetPhotonPlayer(), sounds[Random.Range(0, 1)], false, 999999f);
+                }
+            }
+
+            if (Time.time > hoverboardSpawnDelay)
+            {
+                hoverboardSpawnDelay = Time.time + 0.25f;
+
+                FreeHoverboardManager.DataPerPlayer orCreatePlayerData = FreeHoverboardManager.instance.GetOrCreatePlayerData(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+                int boardIndex = orCreatePlayerData.board0.gameObject.activeSelf ? ((!orCreatePlayerData.board1.gameObject.activeSelf) ? 1 : (1 - FreeHoverboardManager.instance.localPlayerLastSpawnedBoardIndex)) : 0;
+
+                FreeHoverboardManager.instance.photonView.RPC("DropBoard_RPC", randomRig.GetPhotonPlayer(), boardIndex == 1,
+                    BitPackUtils.PackWorldPosForNetwork(randomRig.headMesh.transform.TransformPoint(Vector3.forward * 0.2f)),
+                    BitPackUtils.PackQuaternionForNetwork(RandomQuaternion()),
+                    BitPackUtils.PackWorldPosForNetwork(RandomVector3(3)), BitPackUtils.PackWorldPosForNetwork(RandomVector3(3)),
+                    BitPackUtils.PackColorForNetwork(RandomColor()));
+
+                FreeHoverboardManager.instance.localPlayerLastSpawnedBoardIndex = boardIndex;
+            }
+        }
+
+        public static void ShutdownHeadsetGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/shutdown.ogg", "Audio/Mods/Fun/shutdown.ogg"));
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            Vector3 angVel = lockTarget.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+
+                            Vector3 HoverboardPos = lockTarget.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + lockTarget.LatestVelocity() * 0.5f;
+                            Quaternion HoverboardRotation = lockTarget.headMesh.transform.rotation * Quaternion.Euler(angVel * (Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
+
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
+
+                            GTPlayer.Instance.SetHoverAllowed(true);
+
+                            HoverboardVisual hoverboardVisual = VRRig.LocalRig.hoverboardVisual;
+
+                            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(HoverboardPos), hoverboardVisual.NominalParentTransform.InverseTransformRotation(HoverboardRotation), Color.black);
+                            GTPlayer.Instance.SetHoverActive(false);
+
+                            hoverboardVisual.interpolatedLocalPosition = hoverboardVisual.NominalLocalPosition;
+                            hoverboardVisual.interpolatedLocalRotation = hoverboardVisual.NominalLocalRotation;
+
+                            GTPlayer.Instance.SetHoverboardPosRot(HoverboardPos, HoverboardRotation);
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
+
+                            GTPlayer.Instance.SetHoverActive(false);
+                            VRRig.LocalRig.hoverboardVisual.SetNotHeld();
+
+                            VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = PhotonNetwork.PlayerList.Where(plr => plr.ActorNumber != target.ActorNumber).Select(plr => plr.ActorNumber).ToArray() });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    Sound.FixMicrophone();
+                    SerializePatch.OverrideSerialization = null;
+                }
+            }
+        }
+
+        public static void ShutdownHeadsetAll()
+        {
+            Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
+            Fun.HoverboardScreenAll(Color.black);
+        }
+
         public static void SchizophrenicGun()
         {
             if (GetGunInput(false))
