@@ -5443,7 +5443,6 @@ namespace iiMenu.Mods
                             Vector3 HoverboardPos = lockTarget.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + lockTarget.LatestVelocity() * 0.5f;
                             Quaternion HoverboardRotation = lockTarget.headMesh.transform.rotation * Quaternion.Euler(angVel * (Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
 
-                            VRRig.LocalRig.enabled = false;
                             VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
 
                             GTPlayer.Instance.SetHoverAllowed(true);
