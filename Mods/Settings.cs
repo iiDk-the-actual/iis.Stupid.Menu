@@ -5170,7 +5170,7 @@ exit 0";
                     if (inputTextColor != "green")
                         toolTipText = toolTipText.Replace("<color=green>", $"<color={inputTextColor}>");
 
-                    toolTipText = FixTMProTags(buttonText);
+                    toolTipText = FixTMProTags(toolTipText);
                     toolTipText = FollowMenuSettings(toolTipText);
 
                     transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
