@@ -75,12 +75,10 @@ namespace iiMenu.Classes.Menu
                 }
             }
 
-            if (Main.transparentMenu)
-            {
-                Color color = targetRenderer.material.color;
-                color.a = 0.5f;
-                targetRenderer.material.color = color;
-            }
+            if (!Main.transparentMenu) return;
+            Color color = targetRenderer.material.color;
+            color.a = 0.5f;
+            targetRenderer.material.color = color;
         }
 
         public Renderer targetRenderer;

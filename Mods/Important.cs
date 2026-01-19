@@ -169,10 +169,17 @@ namespace iiMenu.Mods
             if (roomJoinType == JoinType.JoinWithParty || roomJoinType == JoinType.ForceJoinWithParty)
                 Task.Run(PhotonNetworkController.Instance.SendPartyFollowCommands);
 
-            if (roomJoinType == JoinType.JoinWithNearby || roomJoinType == JoinType.JoinWithElevator)
-                roomConfig.SetFriendIDs(PhotonNetworkController.Instance.FriendIDList);
-            else if (roomJoinType == JoinType.JoinWithParty || roomJoinType == JoinType.ForceJoinWithParty)
-                roomConfig.SetFriendIDs(FriendshipGroupDetection.Instance.PartyMemberIDs.ToList());
+            switch (roomJoinType)
+            {
+                case JoinType.JoinWithNearby:
+                case JoinType.JoinWithElevator:
+                    roomConfig.SetFriendIDs(PhotonNetworkController.Instance.FriendIDList);
+                    break;
+                case JoinType.JoinWithParty:
+                case JoinType.ForceJoinWithParty:
+                    roomConfig.SetFriendIDs(FriendshipGroupDetection.Instance.PartyMemberIDs.ToList());
+                    break;
+            }
 
             if (instantCreate)
             {
@@ -194,17 +201,16 @@ namespace iiMenu.Mods
                 Set = create
             };
 
-            GorillaServer.Instance.BroadcastMyRoom(broadcastMyRoomRequest, delegate (ExecuteFunctionResult result) {}, delegate (PlayFabError error) { });
+            GorillaServer.Instance.BroadcastMyRoom(broadcastMyRoomRequest, delegate {}, delegate { });
         }
 
         // The code below is fully safe. I know, it seems suspicious.
         public static void RestartGame()
         {
-            string logoLines = "";
-            foreach (string line in PluginInfo.Logo.Split(@"
-"))
-                logoLines += Environment.NewLine + "echo      " + line;
-            
+            string logoLines = PluginInfo.Logo.Split(@"
+")
+                .Aggregate("", (current, line) => current + (Environment.NewLine + "echo      " + line));
+
             string restartScript = @"@echo off
 title ii's Stupid Menu
 color 0E
@@ -293,7 +299,7 @@ exit";
                     {
                         Start = startTime ?? endTime ?? DateTime.UtcNow
                     } : null,
-                    Buttons = new Button[]
+                    Buttons = new[]
                     {
                         new Button
                         {

@@ -134,8 +134,8 @@ namespace iiMenu.Managers.DiscordRPC.RPC
 			this.applicationID = applicationID;
 			this.processID = processID;
 			this.targetPipe = targetPipe;
-			this.namedPipe = client;
-			this.ShutdownOnly = true;
+			namedPipe = client;
+			ShutdownOnly = true;
 
 			//Assign a default logger
 			Logger = new ConsoleLogger();
@@ -276,8 +276,8 @@ namespace iiMenu.Managers.DiscordRPC.RPC
 				Logger.Trace("============================");
 				Logger.Trace("Assembly:             " + System.Reflection.Assembly.GetAssembly(typeof(RichPresence)).FullName);
 				Logger.Trace("Pipe:                 " + namedPipe.GetType().FullName);
-				Logger.Trace("Platform:             " + Environment.OSVersion.ToString());
-				Logger.Trace("DotNet:               " + Environment.Version.ToString());
+				Logger.Trace("Platform:             " + Environment.OSVersion);
+				Logger.Trace("DotNet:               " + Environment.Version);
 				Logger.Trace("applicationID:        " + applicationID);
 				Logger.Trace("targetPipe:           " + targetPipe);
 				Logger.Trace("POLL_RATE:            " + POLL_RATE);

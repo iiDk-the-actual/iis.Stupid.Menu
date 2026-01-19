@@ -252,7 +252,7 @@ namespace iiMenu.Managers.DiscordRPC
 		/// <param name="configuration">The configuration received by the OnReady event.</param>
 		internal void SetConfiguration(Configuration configuration)
 		{
-			this.CdnEndpoint = configuration.CdnHost;
+			CdnEndpoint = configuration.CdnHost;
 		}
 
 		/// <summary>
@@ -300,7 +300,7 @@ namespace iiMenu.Managers.DiscordRPC
 			if (string.IsNullOrEmpty(Avatar))
 			{
 				if (format != AvatarFormat.PNG)
-					throw new BadImageFormatException("The user has no avatar and the requested format " + format.ToString() + " is not supported. (Only supports PNG).");
+					throw new BadImageFormatException("The user has no avatar and the requested format " + format + " is not supported. (Only supports PNG).");
 
 				// Get the default avatar for the user.
 				int index = (int)((ID >> 22) % 6);
@@ -313,7 +313,7 @@ namespace iiMenu.Managers.DiscordRPC
 			}
 
 			//Finish of the endpoint
-			return string.Format("https://{0}{1}{2}?size={3}&animated=true", this.CdnEndpoint, endpoint, GetAvatarExtension(format), (int)size);
+			return string.Format("https://{0}{1}{2}?size={3}&animated=true", CdnEndpoint, endpoint, GetAvatarExtension(format), (int)size);
 		}
 
 		/// <summary>
@@ -346,7 +346,7 @@ namespace iiMenu.Managers.DiscordRPC
 				return null;
 
 			string endpoint = $"/avatar-decoration-presets/{AvatarDecoration.Value.Asset}";
-			return string.Format("https://{0}{1}{2}", this.CdnEndpoint, endpoint, GetAvatarExtension(format));
+			return string.Format("https://{0}{1}{2}", CdnEndpoint, endpoint, GetAvatarExtension(format));
 		}
 
 		/// <summary>

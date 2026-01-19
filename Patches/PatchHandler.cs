@@ -34,38 +34,34 @@ namespace iiMenu.Patches
 
         public static void PatchAll()
         {
-            if (!IsPatched)
+            if (IsPatched) return;
+            instance ??= new Harmony(PluginInfo.GUID);
+
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes()
+                         .Where(t => t.IsClass && t.GetCustomAttribute<HarmonyPatch>() != null))
             {
-                instance ??= new Harmony(PluginInfo.GUID);
-
-                foreach (var type in Assembly.GetExecutingAssembly().GetTypes()
-                    .Where(t => t != null && t.IsClass && t.GetCustomAttribute<HarmonyPatch>() != null))
+                try
                 {
-                    try
-                    {
-                        instance.CreateClassProcessor(type).Patch();
-                    }
-                    catch (Exception ex)
-                    {
-                        PatchErrors++;
-                        LogManager.LogError($"Failed to patch {type.FullName}: {ex}");
-                    }
+                    instance.CreateClassProcessor(type).Patch();
                 }
-
-                LogManager.Log($"Patched with {PatchErrors} errors");
-
-                IsPatched = true;
+                catch (Exception ex)
+                {
+                    PatchErrors++;
+                    LogManager.LogError($"Failed to patch {type.FullName}: {ex}");
+                }
             }
+
+            LogManager.Log($"Patched with {PatchErrors} errors");
+
+            IsPatched = true;
         }
 
         public static void UnpatchAll()
         {
-            if (instance != null && IsPatched)
-            {
-                instance.UnpatchSelf();
-                IsPatched = false;
-                instance = null;
-            }
+            if (instance == null || !IsPatched) return;
+            instance.UnpatchSelf();
+            IsPatched = false;
+            instance = null;
         }
 
         public static void ApplyPatch(Type targetClass, string methodName, MethodInfo prefix = null, MethodInfo postfix = null, Type[] parameterTypes = null)

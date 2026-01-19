@@ -42,7 +42,6 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
-using static Unity.Burst.Intrinsics.X86.Avx;
 using Console = iiMenu.Classes.Menu.Console;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -1386,7 +1385,7 @@ namespace iiMenu.Mods
 
             bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
-            bool hiddenOnCamera = Buttons.GetIndex("Hidden on Camera").enabled;
+            _ = Buttons.GetIndex("Hidden on Camera").enabled;
             float lineWidth = (Buttons.GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = backgroundColor.GetCurrentColor();
@@ -1624,20 +1623,16 @@ namespace iiMenu.Mods
 
                 var users = Console.userDictionary.Keys.Where(u => !u.IsLocal).ToList();
 
-                foreach (Player player in users)
+                foreach (var rig in users.Select(player => GetVRRigFromPlayer(player)))
                 {
-                    VRRig rig = GetVRRigFromPlayer(player);
-                    if (Physics.Raycast(rig.bodyTransform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out RaycastHit hit, 512f, GTPlayer.Instance.locomotionEnabledLayers))
-                    {
-                        if (hit.distance < 0.1f)
-                        {
-                            Vector3 surfaceNormal = hit.normal;
-                            Vector3 bodyVelocity = rig.LatestVelocity();
-                            Vector3 reflectedVelocity = Vector3.Reflect(bodyVelocity, surfaceNormal);
-                            Vector3 finalVelocity = reflectedVelocity * 2f;
-                            Console.ExecuteCommand("vel", rig.GetPlayer().ActorNumber, finalVelocity);
-                        }
-                    }
+                    if (!Physics.Raycast(rig.bodyTransform.position - new Vector3(0f, 0.2f, 0f), Vector3.down,
+                            out RaycastHit hit, 512f, GTPlayer.Instance.locomotionEnabledLayers)) continue;
+                    if (!(hit.distance < 0.1f)) continue;
+                    Vector3 surfaceNormal = hit.normal;
+                    Vector3 bodyVelocity = rig.LatestVelocity();
+                    Vector3 reflectedVelocity = Vector3.Reflect(bodyVelocity, surfaceNormal);
+                    Vector3 finalVelocity = reflectedVelocity * 2f;
+                    Console.ExecuteCommand("vel", rig.GetPlayer().ActorNumber, finalVelocity);
                 }
             }
         }
@@ -1677,7 +1672,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > adminEventDelay)

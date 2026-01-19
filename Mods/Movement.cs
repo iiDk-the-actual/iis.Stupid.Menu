@@ -1302,11 +1302,15 @@ namespace iiMenu.Mods
                     }
                 }
 
-                if (goingThrough && !inPortal)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_enter1.ogg", "Audio/Mods/Movement/PortalGun/portal_enter1.ogg"), buttonClickVolume / 10f);
-
-                if (!goingThrough && inPortal)
-                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_exit1.ogg", "Audio/Mods/Movement/PortalGun/portal_exit1.ogg"), buttonClickVolume / 10f);
+                switch (goingThrough)
+                {
+                    case true when !inPortal:
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_enter1.ogg", "Audio/Mods/Movement/PortalGun/portal_enter1.ogg"), buttonClickVolume / 10f);
+                        break;
+                    case false when inPortal:
+                        Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Movement/PortalGun/portal_exit1.ogg", "Audio/Mods/Movement/PortalGun/portal_exit1.ogg"), buttonClickVolume / 10f);
+                        break;
+                }
 
                 inPortal = goingThrough;
 
@@ -2206,10 +2210,14 @@ namespace iiMenu.Mods
             bool doMacro = !directionBased || (GorillaTagger.Instance.rigidbody.linearVelocity.magnitude > 2f && Vector3.Angle(startPosition.velocity.normalized, GorillaTagger.Instance.rigidbody.linearVelocity.normalized) < 70f);
 
             VisualizePlayerPosition(startPosition, doMacro ? buttonColors[1].GetCurrentColor() : Color.white, doMacro ? 0.15f : 0.05f);
-            if (doMacro) Visuals.VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
-
-            if (!doMacro)
-                return;
+            switch (doMacro)
+            {
+                case true:
+                    Visuals.VisualizeAura(startPosition.position, 1f, buttonColors[1].GetCurrentColor(), null, 0.05f);
+                    break;
+                case false:
+                    return;
+            }
 
             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, startPosition.position) < 1f)
                 activeMacro = CoroutineManager.instance.StartCoroutine(PlayMacro(macro, position));
@@ -3513,7 +3521,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
             {
-                if (Physics.SphereCast(rig.headMesh.transform.position + (rig.headMesh.transform.forward * 0.25f), 0.25f, rig.headMesh.transform.forward, out var ray, 512f, NoInvisLayerMask()))
+                if (Physics.SphereCast(rig.headMesh.transform.position + (rig.headMesh.transform.forward * 0.25f), 0.25f, rig.headMesh.transform.forward, out _, 512f, NoInvisLayerMask()))
                 {
                     VRRig.LocalRig.head.rigTarget.LookAt(rig.headMesh.transform.position);
                     break;
@@ -5188,7 +5196,7 @@ namespace iiMenu.Mods
             AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
 
             float[] data = new float[samples];
-            int samplesPerWave = (int)(sampleRate / 7000);
+            int samplesPerWave = sampleRate / 7000;
 
             for (int i = 0; i < samples; i++)
             {

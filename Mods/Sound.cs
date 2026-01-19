@@ -31,6 +31,7 @@ using Photon.Voice.Unity;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -48,57 +49,53 @@ namespace iiMenu.Mods
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             
-            List<string> enabledSounds = new List<string>();
-            foreach (ButtonInfo binfo in Buttons.buttons[18])
-            {
-                if (binfo.enabled)
-                    enabledSounds.Add(binfo.overlapText);
-            }
-            List<ButtonInfo> soundbuttons = new List<ButtonInfo>();
+            List<string> enabledSounds = (from binfo in Buttons.buttons[18] where binfo.enabled select binfo.overlapText).ToList();
+            List<ButtonInfo> soundButtons = new List<ButtonInfo>();
             if (Subdirectory != "")
-                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
+                soundButtons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = ExitParentDirectory, isTogglable = false, toolTip = "Returns you back to the last folder." });
 
-            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the sound mods." });
-            int index = 0;
+            soundButtons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the sound mods." });
 
             string[] folders = Directory.GetDirectories($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
-            foreach (string folder in folders)
+            soundButtons.AddRange(from folder in folders
+            let substringLength = ($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory + "/").Length
+            let FolderName = folder.Replace("\\", "/")[substringLength..]
+            select new ButtonInfo
             {
-                index++;
-                int substringLength = ($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory + "/").Length;
-                string FolderName = folder.Replace("\\", "/")[substringLength..];
-                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + FolderName.Hash(), overlapText = $"<sprite name=\"Folder\">    {FolderName}    ", method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
-            }
+                buttonText = "SoundboardFolder" + FolderName.Hash(),
+                overlapText = $"<sprite name=\"Folder\">    {FolderName}    ",
+                method = () => OpenFolder(folder[21..]),
+                isTogglable = false,
+                toolTip = "Opens the " + FolderName + " folder."
+            });
 
-            index = 0;
             string[] files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             foreach (string file in files)
             {
-                index++;
-                string FileName = file.Replace("\\", "/")[(21 + Subdirectory.Length)..];
+                string fileName = file.Replace("\\", "/")[(21 + Subdirectory.Length)..];
                 if (BindMode > 0)
                 {
-                    string soundName = RemoveFileExtension(FileName).Replace("_", " ");
+                    string soundName = RemoveFileExtension(fileName).Replace("_", " ");
                     bool enabled = enabledSounds.Contains(soundName);
-                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                    soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = FixMicrophone, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                     
                 } else
                 {
-                    string soundName = RemoveFileExtension(FileName).Replace("_", " ");
+                    string soundName = RemoveFileExtension(fileName).Replace("_", " ");
                     if (LoopAudio)
                     {
                         bool enabled = enabledSounds.Contains(soundName);
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = FixMicrophone, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                     }
                     else
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = RemoveFileExtension(fileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                 }
             }
-            soundbuttons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = () => FixMicrophone(), isTogglable = false, toolTip = "Stops all currently playing sounds." });
-            soundbuttons.Add(new ButtonInfo { buttonText = "Open Sound Folder", method = () => OpenSoundFolder(), isTogglable = false, toolTip = "Opens a folder containing all of your sounds." });
-            soundbuttons.Add(new ButtonInfo { buttonText = "Reload Sounds", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Reloads all of your sounds." });
-            soundbuttons.Add(new ButtonInfo { buttonText = "Get More Sounds", method = () => LoadSoundLibrary(), isTogglable = false, toolTip = "Opens a public audio library, where you can download your own sounds." });
-            Buttons.buttons[18] = soundbuttons.ToArray();
+            soundButtons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = FixMicrophone, isTogglable = false, toolTip = "Stops all currently playing sounds." });
+            soundButtons.Add(new ButtonInfo { buttonText = "Open Sound Folder", method = OpenSoundFolder, isTogglable = false, toolTip = "Opens a folder containing all of your sounds." });
+            soundButtons.Add(new ButtonInfo { buttonText = "Reload Sounds", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Reloads all of your sounds." });
+            soundButtons.Add(new ButtonInfo { buttonText = "Get More Sounds", method = LoadSoundLibrary, isTogglable = false, toolTip = "Opens a public audio library, where you can download your own sounds." });
+            Buttons.buttons[18] = soundButtons.ToArray();
 
             if (openCategory)
                 currentCategoryName = "Soundboard";
@@ -107,13 +104,13 @@ namespace iiMenu.Mods
         public static void ExitParentDirectory()
         {
             Subdirectory = RemoveLastDirectory(Subdirectory);
-            LoadSoundboard(true);
+            LoadSoundboard();
         }
 
         public static void OpenFolder(string folder)
         {
             Subdirectory = "/" + folder;
-            LoadSoundboard(true);
+            LoadSoundboard();
         }
 
         public static void LoadSoundLibrary()
@@ -274,8 +271,8 @@ namespace iiMenu.Mods
             {
                 if (Time.time > sendEffectDelay)
                 {
-                    object[] soundSendData = new object[3] { id, volume, false };
-                    object[] sendEventData = new object[3] { PhotonNetwork.ServerTimestamp, (byte)3, soundSendData };
+                    object[] soundSendData = { id, volume, false };
+                    object[] sendEventData = { PhotonNetwork.ServerTimestamp, (byte)3, soundSendData };
 
                     try
                     {

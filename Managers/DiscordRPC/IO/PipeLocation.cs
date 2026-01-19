@@ -13,8 +13,7 @@ namespace iiMenu.Managers.DiscordRPC.IO
 		const string DiscordPipePrefix = @"discord-ipc-";
 		const int MaximumPipeVariations = 10;
 
-		static readonly string[] LinuxPackageManagers = new string[]
-		{
+		static readonly string[] LinuxPackageManagers = {
 			"app/com.discordapp.Discord/",	// Flatpak
 			"snap.discord/",				// Snap
 			// TODO: Add more package managers as needed such as AppImage
@@ -31,11 +30,11 @@ namespace iiMenu.Managers.DiscordRPC.IO
 		/// </remarks>	
 		public static IEnumerable<string> GetPipes(int startPipe = 0)
 		{
-			bool isUnix = IsOSUnix();
-            return IsOSUnix()
+			IsOSUnix();
+			return IsOSUnix()
                 ? Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetUnixPipes)
                 : Enumerable.Range(startPipe, MaximumPipeVariations).SelectMany(GetWindowsPipes);
-        }
+		}
 
 		private static IEnumerable<string> GetWindowsPipes(int index)
 		{

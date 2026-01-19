@@ -22,7 +22,7 @@ namespace iiMenu.Managers.DiscordRPC.IO
 		/// <summary>
 		/// The pipe the client is currently connected too
 		/// </summary>
-		[System.Obsolete("The connected pipe is not neccessary information.")]
+		[Obsolete("The connected pipe is not neccessary information.")]
 		int ConnectedPipe { get; }
 
 		/// <summary>

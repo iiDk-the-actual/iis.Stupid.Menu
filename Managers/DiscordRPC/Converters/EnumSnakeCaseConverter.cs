@@ -19,7 +19,7 @@ namespace iiMenu.Managers.DiscordRPC.Converters
 		{
 			if (reader.Value == null) return null;
 
-			object val = null;
+			object val;
             return TryParseEnum(objectType, (string)reader.Value, out val) ? val : existingValue;
         }
 
@@ -73,16 +73,10 @@ namespace iiMenu.Managers.DiscordRPC.Converters
 			foreach (var m in members)
 			{
 				var attributes = m.GetCustomAttributes(typeof(EnumValueAttribute), true);
-				foreach(var a in attributes)
-				{
-					var enumval = (EnumValueAttribute)a;
-					if (str.Equals(enumval.Value))
-					{
-						obj = Enum.Parse(type, m.Name, ignoreCase: true);
+				if (!attributes.Cast<EnumValueAttribute>().Any(enumValue => str.Equals(enumValue.Value))) continue;
+				obj = Enum.Parse(type, m.Name, ignoreCase: true);
 
-						return true;
-					}
-				}
+				return true;
 			}
 
 			//We failed

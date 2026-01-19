@@ -44,7 +44,7 @@ namespace iiMenu.Mods.CustomMaps
             if (map != null)
                 Manager.UpdateCustomMapsTab(map.MapID);
             else
-                Manager.UpdateCustomMapsTab(null);
+                Manager.UpdateCustomMapsTab();
         }
     }
 }

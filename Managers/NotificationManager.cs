@@ -211,16 +211,16 @@ namespace iiMenu.Managers
                             {
                                 try
                                 {
-                                    if (button.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
-                                    {
-                                        string buttonText = button.overlapText ?? button.buttonText;
+                                    if (!button.enabled || (hideSettings && (!hideSettings ||
+                                                                             Buttons.categoryNames[categoryIndex]
+                                                                                 .Contains("Settings")))) continue;
+                                    string buttonText = button.overlapText ?? button.buttonText;
 
-                                        if (inputTextColor != "green")
-                                            buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                                    if (inputTextColor != "green")
+                                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
-                                        buttonText = FollowMenuSettings(buttonText);
-                                        enabledMods.Add(buttonText);
-                                    }
+                                    buttonText = FollowMenuSettings(buttonText);
+                                    enabledMods.Add(buttonText);
                                 }
                                 catch { }
                             }
@@ -234,8 +234,6 @@ namespace iiMenu.Managers
                         string modListText = "";
                         for (int i = 0; i < sortedMods.Length; i++)
                         {
-                            Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(i * -0.1f) : backgroundColor.GetCurrentColor(i * -0.1f);
-
                             if (advancedArraylist)
                                 modListText += (flipArraylist ?
                                 /* Flipped */ $"<mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}80>{sortedMods[i]}</mark><mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark>" :
@@ -298,86 +296,84 @@ namespace iiMenu.Managers
             if (clearTime < 0)
                 clearTime = notificationDecayTime;
 
-            if (!disableNotifications || Buttons.GetIndex("Conduct Notifications").enabled)
+            if (disableNotifications && !Buttons.GetIndex("Conduct Notifications").enabled) return;
+            try
             {
-                try
+                if (translate)
                 {
-                    if (translate)
-                    {
-                        if (TranslationManager.translateCache.ContainsKey(notificationText))
-                            notificationText = TranslationManager.TranslateText(notificationText);
-                        else
-                        {
-                            TranslationManager.TranslateText(notificationText, delegate { SendNotification(notificationText, clearTime); });
-                            return;
-                        }
-                    }
-
-                    if (notificationSoundIndex != 0 && (!soundOnError || notificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
-                        PlayNotificationSound();
-
-                    if (inputTextColor != "green")
-                        notificationText = notificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
-
-                    if (hideBrackets)
-                        notificationText = notificationText.Replace("[", "").Replace("]", "");
-
-                    notificationText = notificationText.TrimEnd('\n', '\r');
-
-                    if (PreviousNotifi == notificationText && stackNotifications)
-                    {
-                        NotifiCounter++;
-
-                        string[] lines = NotificationManager.notificationText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (lines.Length > 0)
-                        {
-                            string lastLine = lines[^1];
-                            int counterIndex = lastLine.IndexOf(" <color=grey>(x", StringComparison.Ordinal);
-                            if (counterIndex > 0)
-                                lastLine = lastLine[..counterIndex];
-
-                            lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
-                            NotificationManager.notificationText.SafeSetText(string.Join(Environment.NewLine, lines));
-                        }
-
-                        if (clearCoroutines.Count > 0)
-                            CancelClear(clearCoroutines[0]);
-                    }
+                    if (TranslationManager.translateCache.ContainsKey(notificationText))
+                        notificationText = TranslationManager.TranslateText(notificationText);
                     else
                     {
-                        NotifiCounter = 0;
-                        PreviousNotifi = notificationText;
+                        TranslationManager.TranslateText(notificationText, delegate { SendNotification(notificationText, clearTime); });
+                        return;
+                    }
+                }
 
-                        if (!string.IsNullOrEmpty(NotificationManager.notificationText.text))
-                        {
-                            string currentText = NotificationManager.notificationText.text.TrimEnd('\n', '\r');
-                            NotificationManager.notificationText.SafeSetText(currentText + Environment.NewLine + notificationText);
-                        }
-                        else
-                            NotificationManager.notificationText.SafeSetText(notificationText);
+                if (notificationSoundIndex != 0 && (!soundOnError || notificationText.Contains("<color=red>ERROR</color>")) && Time.time > timeMenuStarted + 5f)
+                    PlayNotificationSound();
+
+                if (inputTextColor != "green")
+                    notificationText = notificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
+
+                if (hideBrackets)
+                    notificationText = notificationText.Replace("[", "").Replace("]", "");
+
+                notificationText = notificationText.TrimEnd('\n', '\r');
+
+                if (PreviousNotifi == notificationText && stackNotifications)
+                {
+                    NotifiCounter++;
+
+                    string[] lines = NotificationManager.notificationText.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (lines.Length > 0)
+                    {
+                        string lastLine = lines[^1];
+                        int counterIndex = lastLine.IndexOf(" <color=grey>(x", StringComparison.Ordinal);
+                        if (counterIndex > 0)
+                            lastLine = lastLine[..counterIndex];
+
+                        lines[^1] = $"{lastLine} <color=grey>(x{NotifiCounter + 1})</color>";
+                        NotificationManager.notificationText.SafeSetText(string.Join(Environment.NewLine, lines));
                     }
 
-                    CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
-
-                    if (noRichText)
-                        NotificationManager.notificationText.SafeSetText(NoRichtextTags(NotificationManager.notificationText.text));
-
-                    if (lowercaseMode)
-                        NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToLower());
-
-                    if (uppercaseMode)
-                        NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToUpper());
-
-                    NotificationManager.notificationText.richText = !noRichText;
-
-                    if (narrateNotifications)
-                        NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(notificationText) : notificationText));
+                    if (clearCoroutines.Count > 0)
+                        CancelClear(clearCoroutines[0]);
                 }
-                catch (Exception e)
+                else
                 {
-                    LogManager.LogError($"Notification failed, object probably nil due to third person ; {notificationText} {e.Message}");
+                    NotifiCounter = 0;
+                    PreviousNotifi = notificationText;
+
+                    if (!string.IsNullOrEmpty(NotificationManager.notificationText.text))
+                    {
+                        string currentText = NotificationManager.notificationText.text.TrimEnd('\n', '\r');
+                        NotificationManager.notificationText.SafeSetText(currentText + Environment.NewLine + notificationText);
+                    }
+                    else
+                        NotificationManager.notificationText.SafeSetText(notificationText);
                 }
+
+                CoroutineManager.instance.StartCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
+
+                if (noRichText)
+                    NotificationManager.notificationText.SafeSetText(NoRichtextTags(NotificationManager.notificationText.text));
+
+                if (lowercaseMode)
+                    NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToLower());
+
+                if (uppercaseMode)
+                    NotificationManager.notificationText.SafeSetText(NotificationManager.notificationText.text.ToUpper());
+
+                NotificationManager.notificationText.richText = !noRichText;
+
+                if (narrateNotifications)
+                    NarrateText(NoRichtextTags(noPrefix ? RemovePrefix(notificationText) : notificationText));
+            }
+            catch (Exception e)
+            {
+                LogManager.LogError($"Notification failed, object probably nil due to third person ; {notificationText} {e.Message}");
             }
         }
 
@@ -456,11 +452,9 @@ namespace iiMenu.Managers
 
         private static void CancelClear(Coroutine coroutine)
         {
-            if (clearCoroutines.Contains(coroutine))
-            {
-                clearCoroutines.Remove(coroutine);
-                CoroutineManager.instance.StopCoroutine(coroutine);
-            }
+            if (!clearCoroutines.Contains(coroutine)) return;
+            clearCoroutines.Remove(coroutine);
+            CoroutineManager.instance.StopCoroutine(coroutine);
         }
 
         private static string RemovePrefix(string text)

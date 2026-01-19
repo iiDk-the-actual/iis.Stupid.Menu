@@ -42,7 +42,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static iiMenu.Extensions.VRRigExtensions;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
@@ -911,8 +910,6 @@ namespace iiMenu.Mods
                     line.SetPosition(0, rig.transform.position);
                     line.SetPosition(1, GorillaTagger.Instance.rightHandTransform.position);
                     break;
-                default:
-                    break;
             }
         }
 
@@ -1630,8 +1627,7 @@ namespace iiMenu.Mods
 
                 byte[] array = GZipStream.CompressBuffer(data);
 
-                object[] createData = new object[] 
-                { 
+                object[] createData = { 
                     (int)manager.zone, 
                     array 
                 };
@@ -1715,208 +1711,237 @@ namespace iiMenu.Mods
         }
 
         public static Dictionary<string, bool[][]> Letters = new Dictionary<string, bool[][]> {
-            { "A", new bool[][] {
-                new bool[] { false, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
+            { "A", new[]
+            {
+                new[] { false, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
             } },
-            { "B", new bool[][] {
-                new bool[] { true, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, true },
+            { "B", new[]
+            {
+                new[] { true, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, true },
             } },
-            { "C", new bool[][] {
-                new bool[] { false, true, true, true, true },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { false, true, true, true, true },
+            { "C", new[]
+            {
+                new[] { false, true, true, true, true },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
+                new[] { false, true, true, true, true },
             } },
-            { "D", new bool[][] {
-                new bool[] { true, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, false },
+            { "D", new[]
+            {
+                new[] { true, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, false },
             } },
-            { "E", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, true, true, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, true, true, true, true },
+            { "E", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, false },
+                new[] { true, true, true, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, true, true, true, true },
             } },
-            { "F", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, true, true, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
+            { "F", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, false },
+                new[] { true, true, true, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
             } },
-            { "G", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, true, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, true },
+            { "G", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, true, true },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, true },
             } },
-            { "H", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
+            { "H", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
             } },
-            { "I", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { true, true, true, true, true },
+            { "I", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
+                new[] { true, true, true, true, true },
             } },
-            { "J", new bool[][] {
-                new bool[] { false, false, false, false, true },
-                new bool[] { false, false, false, false, true },
-                new bool[] { false, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, true, true, false },
+            { "J", new[]
+            {
+                new[] { false, false, false, false, true },
+                new[] { false, false, false, false, true },
+                new[] { false, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { false, true, true, true, false },
             } },
-            { "K", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, true, false },
-                new bool[] { true, true, true, false, false },
-                new bool[] { true, false, false, true, false },
-                new bool[] { true, false, false, false, true },
+            { "K", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, true, false },
+                new[] { true, true, true, false, false },
+                new[] { true, false, false, true, false },
+                new[] { true, false, false, false, true },
             } },
-            { "L", new bool[][] {
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, true, true, true, true },
+            { "L", new[]
+            {
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
+                new[] { true, true, true, true, true },
             } },
-            { "M", new bool[][] {
-                new bool[] { true, true, false, true, true },
-                new bool[] { true, false, true, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
+            { "M", new[]
+            {
+                new[] { true, true, false, true, true },
+                new[] { true, false, true, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
             } },
-            { "N", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, false, false, true },
-                new bool[] { true, false, true, false, true },
-                new bool[] { true, false, false, true, true },
-                new bool[] { true, false, false, false, true },
+            { "N", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, true, false, false, true },
+                new[] { true, false, true, false, true },
+                new[] { true, false, false, true, true },
+                new[] { true, false, false, false, true },
             } },
-            { "O", new bool[][] {
-                new bool[] { false, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, true, true, false },
+            { "O", new[]
+            {
+                new[] { false, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { false, true, true, true, false },
             } },
-            { "P", new bool[][] {
-                new bool[] { true, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, false },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, false, false, false, false },
+            { "P", new[]
+            {
+                new[] { true, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, false },
+                new[] { true, false, false, false, false },
+                new[] { true, false, false, false, false },
             } },
-            { "Q", new bool[][] {
-                new bool[] { false, true, true, true, false },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, true, false, true },
-                new bool[] { true, false, false, true, false },
-                new bool[] { false, true, true, false, true },
+            { "Q", new[]
+            {
+                new[] { false, true, true, true, false },
+                new[] { true, false, false, false, true },
+                new[] { true, false, true, false, true },
+                new[] { true, false, false, true, false },
+                new[] { false, true, true, false, true },
             } },
-            { "R", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, true, false },
-                new bool[] { true, false, false, false, true },
+            { "R", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, true },
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, true, false },
+                new[] { true, false, false, false, true },
             } },
-            { "S", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { true, false, false, false, false },
-                new bool[] { true, true, true, true, true },
-                new bool[] { false, false, false, false, true },
-                new bool[] { true, true, true, true, true },
+            { "S", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { true, false, false, false, false },
+                new[] { true, true, true, true, true },
+                new[] { false, false, false, false, true },
+                new[] { true, true, true, true, true },
             } },
-            { "T", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
+            { "T", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
             } },
-            { "U", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, true, true, false },
+            { "U", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { false, true, true, true, false },
             } },
-            { "V", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, false, true, false },
-                new bool[] { false, true, false, true, false },
-                new bool[] { false, false, true, false, false },
+            { "V", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { false, true, false, true, false },
+                new[] { false, true, false, true, false },
+                new[] { false, false, true, false, false },
             } },
-            { "W", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, false, false, true },
-                new bool[] { true, false, true, false, true },
-                new bool[] { false, true, false, true, false },
+            { "W", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, false, false, true },
+                new[] { true, false, true, false, true },
+                new[] { false, true, false, true, false },
             } },
-            { "X", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, false, true, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, true, false, true, false },
-                new bool[] { true, false, false, false, true },
+            { "X", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { false, true, false, true, false },
+                new[] { false, false, true, false, false },
+                new[] { false, true, false, true, false },
+                new[] { true, false, false, false, true },
             } },
-            { "Y", new bool[][] {
-                new bool[] { true, false, false, false, true },
-                new bool[] { false, true, false, true, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, false, true, false, false },
+            { "Y", new[]
+            {
+                new[] { true, false, false, false, true },
+                new[] { false, true, false, true, false },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
+                new[] { false, false, true, false, false },
             } },
-            { "Z", new bool[][] {
-                new bool[] { true, true, true, true, true },
-                new bool[] { false, false, false, true, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, true, false, false, false },
-                new bool[] { true, true, true, true, true },
+            { "Z", new[]
+            {
+                new[] { true, true, true, true, true },
+                new[] { false, false, false, true, false },
+                new[] { false, false, true, false, false },
+                new[] { false, true, false, false, false },
+                new[] { true, true, true, true, true },
             } },
-            { ".", new bool[][] {
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, true, false, false },
+            { ".", new[]
+            {
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, true, false, false },
             } },
-            { "/", new bool[][] {
-                new bool[] { false, false, false, false, true },
-                new bool[] { false, false, false, true, false },
-                new bool[] { false, false, true, false, false },
-                new bool[] { false, true, false, false, false },
-                new bool[] { true, false, false, false, false },
+            { "/", new[]
+            {
+                new[] { false, false, false, false, true },
+                new[] { false, false, false, true, false },
+                new[] { false, false, true, false, false },
+                new[] { false, true, false, false, false },
+                new[] { true, false, false, false, false },
             } },
-            { " ", new bool[][] {
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
-                new bool[] { false, false, false, false, false },
+            { " ", new[]
+            {
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
+                new[] { false, false, false, false, false },
             } }
         };
 
@@ -5622,7 +5647,7 @@ namespace iiMenu.Mods
                         raiseEventOptions.Receivers = rpcTarget == RpcTarget.All ? ReceiverGroup.All : (rpcTarget == RpcTarget.Others ? ReceiverGroup.Others : (rpcTarget == RpcTarget.MasterClient ? ReceiverGroup.MasterClient : ReceiverGroup.Others));
                         break;
                     case Player player:
-                        raiseEventOptions.TargetActors = new int[] { player.ActorNumber };
+                        raiseEventOptions.TargetActors = new[] { player.ActorNumber };
                         break;
                     case int[] actorNumbers:
                         raiseEventOptions.TargetActors = actorNumbers;
@@ -6615,7 +6640,7 @@ namespace iiMenu.Mods
         {
             Dictionary<byte, object> dictionary = new Dictionary<byte, object>
             {
-                { 251, new Hashtable { { 253, status }, { 254, status }, { 250, new string[] { serverLink } } } },
+                { 251, new Hashtable { { 253, status }, { 254, status }, { 250, new[] { serverLink } } } },
                 { 250, true },
                 { 231, null }
             };

@@ -146,12 +146,10 @@ namespace iiMenu.Menu
 
                     foreach (string name in newButtonNames)
                     {
-                        if (!oldButtonNames.Contains(name))
-                        {
-                            ButtonInfo button = Buttons.GetIndex(name);
-                            string buttonText = button.overlapText ?? button.buttonText;
-                            button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
-                        }
+                        if (oldButtonNames.Contains(name)) continue;
+                        ButtonInfo button = Buttons.GetIndex(name);
+                        string buttonText = button.overlapText ?? button.buttonText;
+                        button.overlapText ??= buttonText + " <color=grey>[</color><color=green>New</color><color=grey>]</color>";
                     }
                 }
 
@@ -1184,28 +1182,26 @@ namespace iiMenu.Menu
                         string bindInput = binding.Key;
                         List<string> boundMods = binding.Value;
 
-                        if (boundMods.Count > 0)
+                        if (boundMods.Count <= 0) continue;
+                        bool bindValue = Inputs[bindInput];
+                        foreach (string modName in boundMods)
                         {
-                            bool bindValue = Inputs[bindInput];
-                            foreach (string modName in boundMods)
+                            ButtonInfo buttonInfo = Buttons.GetIndex(modName);
+                            if (buttonInfo == null) continue;
+                            buttonInfo.customBind = bindInput;
+
+                            if (ToggleBindings || !buttonInfo.isTogglable)
                             {
-                                ButtonInfo buttonInfo = Buttons.GetIndex(modName);
-                                if (buttonInfo == null) continue;
-                                buttonInfo.customBind = bindInput;
-
-                                if (ToggleBindings || !buttonInfo.isTogglable)
-                                {
-                                    if (bindValue && !BindStates[bindInput])
-                                        Toggle(modName, true, true);
-                                }
-
-                                if (ToggleBindings) continue;
-                                if ((bindValue && !buttonInfo.enabled) || (!bindValue && buttonInfo.enabled))
+                                if (bindValue && !BindStates[bindInput])
                                     Toggle(modName, true, true);
                             }
 
-                            BindStates[bindInput] = bindValue;
+                            if (ToggleBindings) continue;
+                            if ((bindValue && !buttonInfo.enabled) || (!bindValue && buttonInfo.enabled))
+                                Toggle(modName, true, true);
                         }
+
+                        BindStates[bindInput] = bindValue;
                     }
                 } catch { }
                 #endregion
@@ -1390,19 +1386,17 @@ namespace iiMenu.Menu
                                 $"Error with mod method {button.buttonText} at {exc.StackTrace}: {exc.Message}");
                         }
 
-                        if (OverwriteKeybinds && button.customBind != null)
-                        {
-                            leftPrimary = _leftPrimary;
-                            leftSecondary = _leftSecondary;
-                            rightPrimary = _rightPrimary;
-                            rightSecondary = _rightSecondary;
-                            leftGrab = _leftGrab;
-                            rightGrab = _rightGrab;
-                            leftTrigger = _leftTrigger;
-                            rightTrigger = _rightTrigger;
-                            leftJoystickClick = _leftJoystickClick;
-                            rightJoystickClick = _rightJoystickClick;
-                        }
+                        if (!OverwriteKeybinds || button.customBind == null) continue;
+                        leftPrimary = _leftPrimary;
+                        leftSecondary = _leftSecondary;
+                        rightPrimary = _rightPrimary;
+                        rightSecondary = _rightSecondary;
+                        leftGrab = _leftGrab;
+                        rightGrab = _rightGrab;
+                        leftTrigger = _leftTrigger;
+                        rightTrigger = _rightTrigger;
+                        leftJoystickClick = _leftJoystickClick;
+                        rightJoystickClick = _rightJoystickClick;
                     } catch { }
                 }
                 #endregion
@@ -1518,19 +1512,17 @@ namespace iiMenu.Menu
                                 $"Error with mod postMethod {button.buttonText} at {exc.StackTrace}: {exc.Message}");
                         }
 
-                        if (OverwriteKeybinds && button.customBind != null)
-                        {
-                            leftPrimary = _leftPrimary;
-                            leftSecondary = _leftSecondary;
-                            rightPrimary = _rightPrimary;
-                            rightSecondary = _rightSecondary;
-                            leftGrab = _leftGrab;
-                            rightGrab = _rightGrab;
-                            leftTrigger = _leftTrigger;
-                            rightTrigger = _rightTrigger;
-                            leftJoystickClick = _leftJoystickClick;
-                            rightJoystickClick = _rightJoystickClick;
-                        }
+                        if (!OverwriteKeybinds || button.customBind == null) continue;
+                        leftPrimary = _leftPrimary;
+                        leftSecondary = _leftSecondary;
+                        rightPrimary = _rightPrimary;
+                        rightSecondary = _rightSecondary;
+                        leftGrab = _leftGrab;
+                        rightGrab = _rightGrab;
+                        leftTrigger = _leftTrigger;
+                        rightTrigger = _rightTrigger;
+                        leftJoystickClick = _leftJoystickClick;
+                        rightJoystickClick = _rightJoystickClick;
                     }
                     catch { }
                 }
@@ -1575,133 +1567,131 @@ namespace iiMenu.Menu
                 }
             }
 
-            if (inTextInput && isKeyboardPc)
+            if (!inTextInput || !isKeyboardPc) return;
+            List<KeyCode> keysPressed = new List<KeyCode>();
+            foreach (KeyCode keyCode in detectedKeyCodes)
             {
-                List<KeyCode> keysPressed = new List<KeyCode>();
-                foreach (KeyCode keyCode in detectedKeyCodes)
+                if (UnityInput.Current.GetKey(keyCode))
                 {
-                    if (UnityInput.Current.GetKey(keyCode))
+                    if (keyPressedTimes.TryGetValue(keyCode, out (float, float) delay))
                     {
-                        if (keyPressedTimes.TryGetValue(keyCode, out (float, float) delay))
-                        {
-                            float newDelay = Mathf.Max(delay.Item2 * 0.75f, 0.05f);
+                        float newDelay = Mathf.Max(delay.Item2 * 0.75f, 0.05f);
 
-                            if (Time.time > delay.Item1)
-                                keyPressedTimes[keyCode] = (Time.time + newDelay, newDelay);
-                            else
-                                continue;
-                        }
+                        if (Time.time > delay.Item1)
+                            keyPressedTimes[keyCode] = (Time.time + newDelay, newDelay);
                         else
-                            keyPressedTimes[keyCode] = (Time.time + 0.5f, 0.5f);
+                            continue;
+                    }
+                    else
+                        keyPressedTimes[keyCode] = (Time.time + 0.5f, 0.5f);
 
-                        keysPressed.Add(keyCode);
+                    keysPressed.Add(keyCode);
 
-                        if (lastPressedKeys.Contains(keyCode)) continue;
-                        if (UnityInput.Current.GetKey(KeyCode.LeftControl))
+                    if (lastPressedKeys.Contains(keyCode)) continue;
+                    if (UnityInput.Current.GetKey(KeyCode.LeftControl))
+                    {
+                        switch (keyCode)
                         {
-                            switch (keyCode)
-                            {
-                                case KeyCode.A:
-                                    keyboardInput = "";
-                                    break;
-                                case KeyCode.C:
-                                    GUIUtility.systemCopyBuffer = keyboardInput;
-                                    break;
-                                case KeyCode.V:
-                                    keyboardInput += GUIUtility.systemCopyBuffer;
-                                    break;
-                                case KeyCode.Backspace:
+                            case KeyCode.A:
+                                keyboardInput = "";
+                                break;
+                            case KeyCode.C:
+                                GUIUtility.systemCopyBuffer = keyboardInput;
+                                break;
+                            case KeyCode.V:
+                                keyboardInput += GUIUtility.systemCopyBuffer;
+                                break;
+                            case KeyCode.Backspace:
+                                keyboardInput = keyboardInput[..^1];
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (keyCode)
+                        {
+                            case KeyCode.Backspace:
+                                if (keyboardInput.Length > 0)
                                     keyboardInput = keyboardInput[..^1];
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            switch (keyCode)
-                            {
-                                case KeyCode.Backspace:
-                                    if (keyboardInput.Length > 0)
-                                        keyboardInput = keyboardInput[..^1];
-                                    break;
-                                case KeyCode.Escape:
-                                    Toggle(isSearching ? "Search" : "Decline Prompt");
+                                break;
+                            case KeyCode.Escape:
+                                Toggle(isSearching ? "Search" : "Decline Prompt");
 
-                                    break;
-                                case KeyCode.Return:
-                                    if (isSearching)
+                                break;
+                            case KeyCode.Return:
+                                if (isSearching)
+                                {
+                                    List<ButtonInfo> searchedMods = new List<ButtonInfo>();
+                                    if (nonGlobalSearch && currentCategoryName != "Main")
                                     {
-                                        List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                                        if (nonGlobalSearch && currentCategoryName != "Main")
+                                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                                         {
-                                            foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                            try
+                                            {
+                                                string buttonText = v.overlapText ?? v.buttonText;
+
+                                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                    searchedMods.Add(v);
+                                            }
+                                            catch { }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        int categoryIndex = 0;
+                                        foreach (ButtonInfo[] buttonInfos in Buttons.buttons)
+                                        {
+                                            foreach (ButtonInfo v in buttonInfos)
                                             {
                                                 try
                                                 {
+                                                    if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
+                                                          Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                                         !isAdmin)
+                                                        || (v.detected && !allowDetected))
+                                                        continue;
+
                                                     string buttonText = v.overlapText ?? v.buttonText;
 
-                                                    if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                    if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                         searchedMods.Add(v);
                                                 }
                                                 catch { }
                                             }
+                                            categoryIndex++;
                                         }
-                                        else
-                                        {
-                                            int categoryIndex = 0;
-                                            foreach (ButtonInfo[] buttonInfos in Buttons.buttons)
-                                            {
-                                                foreach (ButtonInfo v in buttonInfos)
-                                                {
-                                                    try
-                                                    {
-                                                        if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
-                                                             Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
-                                                            !isAdmin)
-                                                            || (v.detected && !allowDetected))
-                                                            continue;
-
-                                                        string buttonText = v.overlapText ?? v.buttonText;
-
-                                                        if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
-                                                            searchedMods.Add(v);
-                                                    }
-                                                    catch { }
-                                                }
-                                                categoryIndex++;
-                                            }
-                                        }
-
-                                        ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                        ButtonInfo button = buttons[0];
-
-                                        if (button.incremental)
-                                            ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
-                                        else
-                                            Toggle(buttons[0].buttonText, true);
                                     }
-                                    else if (CurrentPrompt != null && CurrentPrompt.IsText)
-                                        Toggle("Accept Prompt");
 
-                                    break;
-                                default:
-                                    keyboardInput +=
-                                        UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
-                                            keyCode.ShiftedKey().ToUpper() : keyCode.Key().ToLower();
-                                    break;
-                            }
+                                    ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                    ButtonInfo button = buttons[0];
+
+                                    if (button.incremental)
+                                        ToggleIncremental(button.buttonText, UnityInput.Current.GetKey(KeyCode.LeftShift));
+                                    else
+                                        Toggle(buttons[0].buttonText, true);
+                                }
+                                else if (CurrentPrompt != null && CurrentPrompt.IsText)
+                                    Toggle("Accept Prompt");
+
+                                break;
+                            default:
+                                keyboardInput +=
+                                    UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ?
+                                        keyCode.ShiftedKey().ToUpper() : keyCode.Key().ToLower();
+                                break;
                         }
-
-                        if (pcKeyboardSounds)
-                            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
-                        pageNumber = 0;
-                        ReloadMenu();
                     }
-                    else
-                        keyPressedTimes.Remove(keyCode);
-                }
 
-                lastPressedKeys = keysPressed;
+                    if (pcKeyboardSounds)
+                        VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                    pageNumber = 0;
+                    ReloadMenu();
+                }
+                else
+                    keyPressedTimes.Remove(keyCode);
             }
+
+            lastPressedKeys = keysPressed;
         }
 
         public static void PressKeyboardKey(string key)
@@ -1747,8 +1737,8 @@ namespace iiMenu.Menu
 
                     if (isShifted)
                     {
-                        if (shiftMap.ContainsKey(keyStr))
-                            keyboardInput += shiftMap[keyStr];
+                        if (shiftMap.TryGetValue(keyStr, out var value))
+                            keyboardInput += value;
                         else
                             keyboardInput += keyStr.ToUpper();
                     }
@@ -2035,91 +2025,89 @@ namespace iiMenu.Menu
             FollowMenuSettings(searchImage);
         }
 
-        private static TMP_SpriteAsset _buttonSpriteSheet;
+        private static TMP_SpriteAsset buttonSpriteSheet;
         public static TMP_SpriteAsset ButtonSpriteSheet
         {
             get
             {
-                if (_buttonSpriteSheet == null)
+                if (buttonSpriteSheet != null) return buttonSpriteSheet;
+                buttonSpriteSheet = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
+                buttonSpriteSheet.name = "iiMenu_SpriteSheet";
+
+                var textureList = new List<Texture2D>();
+                var spriteDataList = new List<(string name, int index)>();
+
+                void AddSprite(string name, Texture2D tex)
                 {
-                    _buttonSpriteSheet = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
-                    _buttonSpriteSheet.name = "iiMenu_SpriteSheet";
-
-                    var textureList = new List<Texture2D>();
-                    var spriteDataList = new List<(string name, int index)>();
-
-                    void AddSprite(string name, Texture2D tex)
-                    {
-                        spriteDataList.Add((name, textureList.Count));
-                        textureList.Add(tex);
-                    }
-
-                    AddSprite("Favorite", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.favorite.png"));
-                    AddSprite("Folder", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.folder.png"));
-
-                    for (int i = 1; i <= 3; i++)
-                    {
-                        AddSprite("Left" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.left{i}.png"));
-                        AddSprite("Right" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.right{i}.png"));
-                    }
-
-                    int maxSize = 512;
-                    Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
-                    Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
-
-                    _buttonSpriteSheet.spriteSheet = spriteSheet;
-                    _buttonSpriteSheet.material = new Material(Shader.Find("TextMeshPro/Sprite"))
-                    {
-                        mainTexture = spriteSheet
-                    };
-
-                    _buttonSpriteSheet.spriteInfoList = new List<TMP_Sprite>();
-                    Traverse.Create(_buttonSpriteSheet).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
-
-                    _buttonSpriteSheet.spriteGlyphTable.Clear();
-                    for (int i = 0; i < spriteDataList.Count; i++)
-                    {
-                        var rect = rects[i];
-
-                        var glyph = new TMP_SpriteGlyph
-                        {
-                            index = (uint)i,
-                            metrics = new GlyphMetrics(
-                                width: rect.width * spriteSheet.width,
-                                height: rect.height * spriteSheet.height,
-                                bearingX: -(rect.width * spriteSheet.width) / 2f,
-                                bearingY: rect.height * spriteSheet.height * 0.8f,
-                                advance: rect.width * spriteSheet.width
-                            ),
-                            glyphRect = new GlyphRect(
-                                x: (int)(rect.x * spriteSheet.width),
-                                y: (int)(rect.y * spriteSheet.height),
-                                width: (int)(rect.width * spriteSheet.width),
-                                height: (int)(rect.height * spriteSheet.height)
-                            ),
-                            scale = 1f,
-                            atlasIndex = 0
-                        };
-                        _buttonSpriteSheet.spriteGlyphTable.Add(glyph);
-                    }
-
-                    _buttonSpriteSheet.spriteCharacterTable.Clear();
-                    for (int i = 0; i < spriteDataList.Count; i++)
-                    {
-                        var (name, _) = spriteDataList[i];
-
-                        var character = new TMP_SpriteCharacter(0xFFFE, _buttonSpriteSheet.spriteGlyphTable[i])
-                        {
-                            name = name,
-                            scale = 1f,
-                            glyphIndex = (uint)i
-                        };
-                        _buttonSpriteSheet.spriteCharacterTable.Add(character);
-                    }
-
-                    _buttonSpriteSheet.UpdateLookupTables();
+                    spriteDataList.Add((name, textureList.Count));
+                    textureList.Add(tex);
                 }
-                return _buttonSpriteSheet;
+
+                AddSprite("Favorite", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.favorite.png"));
+                AddSprite("Folder", LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.folder.png"));
+
+                for (int i = 1; i <= 3; i++)
+                {
+                    AddSprite("Left" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.left{i}.png"));
+                    AddSprite("Right" + i, LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.right{i}.png"));
+                }
+
+                int maxSize = 512;
+                Texture2D spriteSheet = new Texture2D(maxSize, maxSize);
+                Rect[] rects = spriteSheet.PackTextures(textureList.ToArray(), 2, maxSize);
+
+                buttonSpriteSheet.spriteSheet = spriteSheet;
+                buttonSpriteSheet.material = new Material(Shader.Find("TextMeshPro/Sprite"))
+                {
+                    mainTexture = spriteSheet
+                };
+
+                buttonSpriteSheet.spriteInfoList = new List<TMP_Sprite>();
+                Traverse.Create(buttonSpriteSheet).Field("m_Version").SetValue("1.1.0"); // TextMeshPro kills itself unless this is set.
+
+                buttonSpriteSheet.spriteGlyphTable.Clear();
+                for (int i = 0; i < spriteDataList.Count; i++)
+                {
+                    var rect = rects[i];
+
+                    var glyph = new TMP_SpriteGlyph
+                    {
+                        index = (uint)i,
+                        metrics = new GlyphMetrics(
+                            width: rect.width * spriteSheet.width,
+                            height: rect.height * spriteSheet.height,
+                            bearingX: -(rect.width * spriteSheet.width) / 2f,
+                            bearingY: rect.height * spriteSheet.height * 0.8f,
+                            advance: rect.width * spriteSheet.width
+                        ),
+                        glyphRect = new GlyphRect(
+                            x: (int)(rect.x * spriteSheet.width),
+                            y: (int)(rect.y * spriteSheet.height),
+                            width: (int)(rect.width * spriteSheet.width),
+                            height: (int)(rect.height * spriteSheet.height)
+                        ),
+                        scale = 1f,
+                        atlasIndex = 0
+                    };
+                    buttonSpriteSheet.spriteGlyphTable.Add(glyph);
+                }
+
+                buttonSpriteSheet.spriteCharacterTable.Clear();
+                for (int i = 0; i < spriteDataList.Count; i++)
+                {
+                    var (name, _) = spriteDataList[i];
+
+                    var character = new TMP_SpriteCharacter(0xFFFE, buttonSpriteSheet.spriteGlyphTable[i])
+                    {
+                        name = name,
+                        scale = 1f,
+                        glyphIndex = (uint)i
+                    };
+                    buttonSpriteSheet.spriteCharacterTable.Add(character);
+                }
+
+                buttonSpriteSheet.UpdateLookupTables();
+                return buttonSpriteSheet;
             }
         }
 
@@ -2360,7 +2348,7 @@ namespace iiMenu.Menu
                 else
                     CoroutineManager.instance.StartCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
-                FollowMenuSettings(buttonObject, true);
+                FollowMenuSettings(buttonObject);
             }
 
             RenderIncrementalText(increment, offset);
@@ -2845,7 +2833,7 @@ namespace iiMenu.Menu
                 ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
                 colorChanger.colors = buttonColors[0];
 
-                FollowMenuSettings(searchBoxObject, true);
+                FollowMenuSettings(searchBoxObject);
 
                 keyboardInputObject = new GameObject
                 {
@@ -3072,7 +3060,7 @@ namespace iiMenu.Menu
                 }
 
                 menu.transform.position = recenterPosition.Value;
-                menu.transform.rotation = recenterRotation.Value;
+                menu.transform.rotation = recenterRotation ?? menu.transform.rotation;
             }
             else if (joystickMenu)
             {
@@ -3675,10 +3663,10 @@ namespace iiMenu.Menu
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 FollowMenuSettings(text);
-                FollowMenuSettings(button, true);
+                FollowMenuSettings(button);
             }
 
-            if (CurrentPrompt.DeclineText != null)
+            if (CurrentPrompt.DeclineText == null) return;
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -3735,7 +3723,7 @@ namespace iiMenu.Menu
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 FollowMenuSettings(text);
-                FollowMenuSettings(button, true);
+                FollowMenuSettings(button);
             }
         }
 
@@ -4359,213 +4347,211 @@ namespace iiMenu.Menu
 
             Destroy(GunPointer.GetComponent<Collider>());
 
-            if (!disableGunLine)
+            if (disableGunLine) return (Ray, GunPointer);
+            if (GunLine == null)
             {
-                if (GunLine == null)
-                {
-                    GameObject line = new GameObject("iiMenu_GunLine");
-                    GunLine = line.AddComponent<LineRenderer>();
-                }
+                GameObject line = new GameObject("iiMenu_GunLine");
+                GunLine = line.AddComponent<LineRenderer>();
+            }
 
-                GunLine.gameObject.SetActive(true);
-                GunLine.material.shader = Shader.Find("GUI/Text Shader");
-                GunLine.startColor = backgroundColor.GetCurrentColor();
-                GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
-                GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                GunLine.useWorldSpace = true;
-                if (smoothLines)
-                {
-                    GunLine.numCapVertices = 10;
-                    GunLine.numCornerVertices = 5;
-                }
-                if (gunVariation != 9)
-                {
-                    GunLine.positionCount = 2;
-                    GunLine.SetPosition(0, StartPosition);
-                    GunLine.SetPosition(1, EndPosition);
-                }
-                int Step = GunLineQuality;
-                switch (gunVariation)
-                {
-                    case 1: // Lightning
-                        if (GetGunInput(true) || gunLocked)
+            GunLine.gameObject.SetActive(true);
+            GunLine.material.shader = Shader.Find("GUI/Text Shader");
+            GunLine.startColor = backgroundColor.GetCurrentColor();
+            GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
+            GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            GunLine.useWorldSpace = true;
+            if (smoothLines)
+            {
+                GunLine.numCapVertices = 10;
+                GunLine.numCornerVertices = 5;
+            }
+            if (gunVariation != 9)
+            {
+                GunLine.positionCount = 2;
+                GunLine.SetPosition(0, StartPosition);
+                GunLine.SetPosition(1, EndPosition);
+            }
+            int Step = GunLineQuality;
+            switch (gunVariation)
+            {
+                case 1: // Lightning
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
-
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + (Random.Range(0f, 1f) > 0.75f ? new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f)) : Vector3.zero));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position + (Random.Range(0f, 1f) > 0.75f ? new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f)) : Vector3.zero));
                         }
-                        break;
-                    case 2: // Wavy
-                        if (GetGunInput(true) || gunLocked)
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 2: // Wavy
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
+                            float value = i / (float)Step * 50f;
 
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                float value = i / (float)Step * 50f;
-
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + Up * (Mathf.Sin(Time.time * -10f + value) * 0.1f));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position + Up * (Mathf.Sin(Time.time * -10f + value) * 0.1f));
                         }
-                        break;
-                    case 3: // Blocky
-                        if (GetGunInput(true) || gunLocked)
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 3: // Blocky
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
-
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
                         }
-                        break;
-                    case 4: // Sinewave
-                        Step = GunLineQuality / 2;
 
-                        if (GetGunInput(true) || gunLocked)
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 4: // Sinewave
+                    Step = GunLineQuality / 2;
+
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
-
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + Up * (Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position + Up * (Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
                         }
-                        break;
-                    case 5: // Spring
-                        if (GetGunInput(true) || gunLocked)
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 5: // Spring
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
+                            float value = i / (float)Step * 50f;
 
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                float value = i / (float)Step * 50f;
-
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + Right * (Mathf.Cos(Time.time * -10f + value) * 0.1f) + Up * (Mathf.Sin(Time.time * -10f + value) * 0.1f));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position + Right * (Mathf.Cos(Time.time * -10f + value) * 0.1f) + Up * (Mathf.Sin(Time.time * -10f + value) * 0.1f));
                         }
-                        break;
-                    case 6: // Bouncy
-                        if (GetGunInput(true) || gunLocked)
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 6: // Bouncy
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
+
+                        for (int i = 1; i < Step - 1; i++)
                         {
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
-
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                float value = i / (float)Step * 15f;
-                                GunLine.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + Up * (Mathf.Abs(Mathf.Sin(Time.time * -10f + value)) * 0.3f));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            float value = i / (float)Step * 15f;
+                            GunLine.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + Up * (Mathf.Abs(Mathf.Sin(Time.time * -10f + value)) * 0.3f));
                         }
-                        break;
-                    case 7: // Audio
-                        if (GetGunInput(true) || gunLocked)
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 7: // Audio
+                    if (GetGunInput(true) || gunLocked)
+                    {
+                        float audioSize = 0f;
+
+                        if (gunLocked)
                         {
-                            float audioSize = 0f;
-
-                            if (gunLocked)
-                            {
-                                GorillaSpeakerLoudness targetRecorder = lockTarget.GetComponent<GorillaSpeakerLoudness>();
-                                if (targetRecorder != null)
-                                    audioSize += targetRecorder.Loudness * 3f;
-                            }
-
-                            GorillaSpeakerLoudness localRecorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
-                            if (localRecorder != null)
-                                audioSize += localRecorder.Loudness * 3f;
-
-                            volumeArchive.Insert(0, volumeArchive.Count == 0 ? 0 : audioSize - volumeArchive[0] * 0.1f);
-
-                            if (volumeArchive.Count > Step)
-                                volumeArchive.Remove(Step);
-
-                            GunLine.positionCount = Step;
-                            GunLine.SetPosition(0, StartPosition);
-
-                            for (int i = 1; i < Step - 1; i++)
-                            {
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position + Up * ((i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
-                            }
-
-                            GunLine.SetPosition(Step - 1, EndPosition);
+                            GorillaSpeakerLoudness targetRecorder = lockTarget.GetComponent<GorillaSpeakerLoudness>();
+                            if (targetRecorder != null)
+                                audioSize += targetRecorder.Loudness * 3f;
                         }
-                        break;
-                    case 8: // Bezier, credits to Crisp / Kman / Steal / Untitled One of those 4 I don't really know who
-                        Vector3 BaseMid = Vector3.Lerp(StartPosition, EndPosition, 0.5f);
 
-                        float angle = Time.time * 3f;
-                        Vector3 wobbleOffset = Up * (Mathf.Sin(angle) * 0.15f) + Right * (Mathf.Cos(angle * 1.3f) * 0.15f);
-                        Vector3 targetMid = BaseMid + wobbleOffset;
+                        GorillaSpeakerLoudness localRecorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
+                        if (localRecorder != null)
+                            audioSize += localRecorder.Loudness * 3f;
 
-                        if (MidPosition == Vector3.zero) MidPosition = targetMid;
+                        volumeArchive.Insert(0, volumeArchive.Count == 0 ? 0 : audioSize - volumeArchive[0] * 0.1f);
 
-                        Vector3 force = (targetMid - MidPosition) * 40f;
-                        MidVelocity += force * Time.deltaTime;
-                        MidVelocity *= Mathf.Exp(-6f * Time.deltaTime);
-                        MidPosition += MidVelocity * Time.deltaTime;
+                        if (volumeArchive.Count > Step)
+                            volumeArchive.Remove(Step);
 
                         GunLine.positionCount = Step;
                         GunLine.SetPosition(0, StartPosition);
 
-                        Vector3[] points = new Vector3[Step];
+                        for (int i = 1; i < Step - 1; i++)
+                        {
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position + Up * ((i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
+                        }
+
+                        GunLine.SetPosition(Step - 1, EndPosition);
+                    }
+                    break;
+                case 8: // Bezier, credits to Crisp / Kman / Steal / Untitled One of those 4 I don't really know who
+                    Vector3 BaseMid = Vector3.Lerp(StartPosition, EndPosition, 0.5f);
+
+                    float angle = Time.time * 3f;
+                    Vector3 wobbleOffset = Up * (Mathf.Sin(angle) * 0.15f) + Right * (Mathf.Cos(angle * 1.3f) * 0.15f);
+                    Vector3 targetMid = BaseMid + wobbleOffset;
+
+                    if (MidPosition == Vector3.zero) MidPosition = targetMid;
+
+                    Vector3 force = (targetMid - MidPosition) * 40f;
+                    MidVelocity += force * Time.deltaTime;
+                    MidVelocity *= Mathf.Exp(-6f * Time.deltaTime);
+                    MidPosition += MidVelocity * Time.deltaTime;
+
+                    GunLine.positionCount = Step;
+                    GunLine.SetPosition(0, StartPosition);
+
+                    Vector3[] points = new Vector3[Step];
+                    for (int i = 0; i < Step; i++)
+                    {
+                        float t = (float)i / (Step - 1);
+                        points[i] = Mathf.Pow(1 - t, 2) * StartPosition +
+                                    2 * (1 - t) * t * MidPosition +
+                                    Mathf.Pow(t, 2) * EndPosition;
+                    }
+
+                    GunLine.positionCount = Step;
+                    GunLine.SetPositions(points);
+                    break;
+                case 9: // Rope
+                    GunLine.positionCount = Step;
+
+                    RopePhysics physics = GunLine.gameObject.GetComponent<RopePhysics>();
+                    if (physics == null)
+                    {
                         for (int i = 0; i < Step; i++)
                         {
-                            float t = (float)i / (Step - 1);
-                            points[i] = Mathf.Pow(1 - t, 2) * StartPosition +
-                                        2 * (1 - t) * t * MidPosition +
-                                        Mathf.Pow(t, 2) * EndPosition;
+                            Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                            GunLine.SetPosition(i, Position);
                         }
 
-                        GunLine.positionCount = Step;
-                        GunLine.SetPositions(points);
-                        break;
-                    case 9: // Rope
-                        GunLine.positionCount = Step;
+                        physics = GunLine.gameObject.AddComponent<RopePhysics>();
+                    }
 
-                        RopePhysics physics = GunLine.gameObject.GetComponent<RopePhysics>();
-                        if (physics == null)
-                        {
-                            for (int i = 0; i < Step; i++)
-                            {
-                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                GunLine.SetPosition(i, Position);
-                            }
-
-                            physics = GunLine.gameObject.AddComponent<RopePhysics>();
-                        }
-
-                        physics.segmentLength = Vector3.Distance(StartPosition, EndPosition) / (Step - 1) * (GetGunInput(true) || gunLocked ? 1.1f : 1.2f);
-                        physics.SetStartPosition(StartPosition);
-                        physics.SetEndPosition(EndPosition);
-                        break;
-                }
+                    physics.segmentLength = Vector3.Distance(StartPosition, EndPosition) / (Step - 1) * (GetGunInput(true) || gunLocked ? 1.1f : 1.2f);
+                    physics.SetStartPosition(StartPosition);
+                    physics.SetEndPosition(EndPosition);
+                    break;
             }
 
             return (Ray, GunPointer);
@@ -4925,7 +4911,7 @@ namespace iiMenu.Menu
         /// </summary>
         /// <param name="text">The text to be narrated.</param>
         public static void SpeakText(string text) =>
-            CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Sound.PlayAudio(audio)));
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, Sound.PlayAudio));
 
         public static bool isAdmin;
         public static void SetupAdminPanel(string playername)
@@ -5023,13 +5009,11 @@ namespace iiMenu.Menu
             ColorChanger colorChanger = render.gameObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[buttonIndex < 0 && swapButtonColors ? 1 : 0];
 
-            if (joystickMenu && buttonIndex == joystickButtonSelected)
-            {
-                ExtGradient gradient = colorChanger.colors.Clone();
-                gradient.SetColor(0, Color.red);
+            if (!joystickMenu || buttonIndex != joystickButtonSelected) yield break;
+            ExtGradient gradient = colorChanger.colors.Clone();
+            gradient.SetColor(0, Color.red);
 
-                colorChanger.colors = gradient;
-            }
+            colorChanger.colors = gradient;
         }
 
         public static Dictionary<string, SnowballThrowable> snowballDict;
@@ -5110,11 +5094,9 @@ namespace iiMenu.Menu
         {
             T[] allOfType = GetAllType<T>();
 
-            if (Time.time > randomDecayTime)
-            {
-                randomIndex = Random.Range(0f, 1f);
-                randomDecayTime = Time.time + decayTime;
-            }
+            if (!(Time.time > randomDecayTime)) return allOfType[(int)(randomIndex * allOfType.Length)];
+            randomIndex = Random.Range(0f, 1f);
+            randomDecayTime = Time.time + decayTime;
 
             return allOfType[(int)(randomIndex * allOfType.Length)];
         }
@@ -5345,15 +5327,13 @@ namespace iiMenu.Menu
             if (uppercaseMode)
                 input = input.ToUpper();
 
-            if (redactText)
-            {
-                var result = new char[input.Length];
+            if (!redactText) return input;
+            var result = new char[input.Length];
 
-                for (int i = 0; i < input.Length; i++)
-                    result[i] = input[i] == ' ' ? ' ' : '█';
+            for (int i = 0; i < input.Length; i++)
+                result[i] = input[i] == ' ' ? ' ' : '█';
 
-                input = new string(result);
-            }
+            input = new string(result);
 
             return input;
         }
@@ -5713,11 +5693,9 @@ namespace iiMenu.Menu
 
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
-            if (VRKeyboard != null)
-            {
-                VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
-                VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            }
+            if (VRKeyboard == null) return;
+            VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+            VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
         }
 
         public static void TeleportPlayer(Transform transform, bool matchDestinationRotation = true, bool maintainVelocity = true)
@@ -5725,11 +5703,9 @@ namespace iiMenu.Menu
             GTPlayer.Instance.TeleportTo(transform, matchDestinationRotation, maintainVelocity);
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
-            if (VRKeyboard != null)
-            {
-                VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
-                VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            }
+            if (VRKeyboard == null) return;
+            VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+            VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
         }
 
         public static void SetRotation(Quaternion rotation) =>
@@ -5776,13 +5752,11 @@ namespace iiMenu.Menu
                 CreateMenu();
             }
 
-            if (reference != null)
-            {
-                Destroy(reference);
-                reference = null;
+            if (reference == null) return;
+            Destroy(reference);
+            reference = null;
 
-                CreateReference();
-            }
+            CreateReference();
         }
 
         public static void ChangeName(string PlayerName, bool noColor = false)
@@ -5796,18 +5770,16 @@ namespace iiMenu.Menu
 
             PhotonNetwork.LocalPlayer.NickName = PlayerName;
 
-            if (!noColor)
+            if (noColor) return;
+            try
             {
-                try
-                {
-                    if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
-                    {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
-                        RPCProtection();
-                    }
-                }
-                catch { }
+                if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork
+                        .LocalPlayer.UserId) &&
+                    !CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId)) return;
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b);
+                RPCProtection();
             }
+            catch { }
         }
 
         public static void ChangeColor(Color color, object target = null)
@@ -5999,16 +5971,14 @@ namespace iiMenu.Menu
                                         ModBindings[BindedTo].Remove(target.buttonText);
                                         VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
 
-                                        if (fromMenu)
-                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
                                     } else
                                     {
                                         target.customBind = BindInput;
                                         ModBindings[BindInput].Add(target.buttonText);
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
-                                        if (fromMenu)
-                                            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to <color=green>{BindInput}</color>.");
+                                        NotificationManager.SendNotification($"<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to <color=green>{BindInput}</color>.");
                                     }
                                 }
                                 else
@@ -6019,15 +5989,13 @@ namespace iiMenu.Menu
                                         {
                                             target.rebindKey = null;
                                             VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
-                                            if (fromMenu)
-                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
                                         }
                                         else
                                         {
                                             target.rebindKey = BindInput;
                                             VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
-                                            if (fromMenu)
-                                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to {BindInput}.");
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to {BindInput}.");
                                         }
                                     }
                                     else
@@ -6039,16 +6007,14 @@ namespace iiMenu.Menu
                                                 favorites.Remove(target.buttonText);
                                                 VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
 
-                                                if (fromMenu)
-                                                    NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
+                                                NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
                                             }
                                             else
                                             {
                                                 favorites.Add(target.buttonText);
                                                 VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
-                                                if (fromMenu)
-                                                    NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
+                                                NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
                                             }
                                         }
                                     }
@@ -6063,15 +6029,13 @@ namespace iiMenu.Menu
                                     quickActions.Add(target.buttonText);
                                     VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
-                                    if (fromMenu)
-                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
+                                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
                                 } else
                                 {
                                     quickActions.Remove(target.buttonText);
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     
-                                    if (fromMenu)
-                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
+                                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
                                 }
 
                                 break;
@@ -6105,26 +6069,25 @@ namespace iiMenu.Menu
                                                 $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}"); }
                                     }
 
-                                            int enabledButtons = Buttons.buttons
-                                                .SelectMany(list => list)
-                                                .Where(button => button.enabled).Count();
+                                    int enabledButtons = Buttons.buttons
+                                        .SelectMany(list => list).Count(button => button.enabled);
 
-                                            if (enabledButtons >= 50)
-                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
-                                                {
-                                                    name = "Dedicated",
-                                                    description = "Enable 50 mods at the same time.",
-                                                    icon = "Images/Achievements/award.png"
-                                                });
+                                    if (enabledButtons >= 50)
+                                        AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                        {
+                                            name = "Dedicated",
+                                            description = "Enable 50 mods at the same time.",
+                                            icon = "Images/Achievements/award.png"
+                                        });
 
-                                            if (enabledButtons >= 100)
-                                                AchievementManager.UnlockAchievement(new AchievementManager.Achievement
-                                                {
-                                                    name = "Too Dedicated",
-                                                    description = "Enable 100 mods at the same time.",
-                                                    icon = "Images/Achievements/red-award.png"
-                                                });
-                                        }
+                                    if (enabledButtons >= 100)
+                                        AchievementManager.UnlockAchievement(new AchievementManager.Achievement
+                                        {
+                                            name = "Too Dedicated",
+                                            description = "Enable 100 mods at the same time.",
+                                            icon = "Images/Achievements/red-award.png"
+                                        });
+                                }
                                 else
                                 {
                                     if (dynamicAnimations)
@@ -6206,13 +6169,13 @@ namespace iiMenu.Menu
                     if (boost)
                         for (int i = 0; i < 5; i++)
                         {
-                            if (target.enableMethod != null)
-                                try { target.enableMethod.Invoke(); }
-                                catch (Exception exc)
-                                {
-                                    LogManager.LogError(
+                            if (target.enableMethod == null) continue;
+                            try { target.enableMethod.Invoke(); }
+                            catch (Exception exc)
+                            {
+                                LogManager.LogError(
                                     $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
-                                }
+                            }
                         }
                     else
                         if (target.enableMethod != null)
@@ -6230,14 +6193,14 @@ namespace iiMenu.Menu
                     if (boost)
                         for (int i = 0; i < 5; i++)
                         {
-                            if (target.enableMethod != null)
-                                if (target.disableMethod != null)
-                                    try { target.disableMethod.Invoke(); }
-                                    catch (Exception exc)
-                                    {
-                                        LogManager.LogError(
-                                        $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
-                                    }
+                            if (target.enableMethod == null) continue;
+                            if (target.disableMethod == null) continue;
+                            try { target.disableMethod.Invoke(); }
+                            catch (Exception exc)
+                            {
+                                LogManager.LogError(
+                                    $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                            }
                         }
                     else
                         if (target.disableMethod != null)
@@ -6372,6 +6335,7 @@ namespace iiMenu.Menu
                 font.fallbackFontAssetTable.Add(LiberationSans);
         }
 
+        // ReSharper disable once StaticMemberInitializerReferesToMemberBelow
         public static TMP_FontAsset activeFont = LiberationSans;
         public static FontStyles activeFontStyle = FontStyles.Italic;
 
@@ -6472,17 +6436,13 @@ jgs \_   _/ |Oo\
                         if (skipSettings || skipMacros)
                             continue;
 
-                        foreach (var v in buttonList)
-                        {
-                            if (v.enabled)
-                                enabledMods.Add(v.buttonText);
-                        }
+                        enabledMods.AddRange(from v in buttonList where v.enabled select v.buttonText);
                     }
 
                     count = enabledMods.Count - 1;
                 }
 
-                if (isSearching)
+                if (!isSearching) return count;
                 {
                     List<ButtonInfo> searchedMods = new List<ButtonInfo>();
 
@@ -6510,8 +6470,8 @@ jgs \_   _/ |Oo\
                                 try
                                 {
                                     if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
-                                        Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
-                                        !isAdmin)
+                                          Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
+                                         !isAdmin)
                                         || (v.detected && !allowDetected))
                                         continue;
 

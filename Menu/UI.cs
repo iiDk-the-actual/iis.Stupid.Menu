@@ -63,22 +63,22 @@ namespace iiMenu.Menu
             b = canvas.Find("ControlUI/B").GetComponent<TMP_InputField>();
             textInput = canvas.Find("ControlUI/TextInput").GetComponent<TMP_InputField>();
             LogManager.Log(canvas.Find("ControlUI/QueueButton"));
-            canvas.Find("ControlUI/QueueButton").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            canvas.Find("ControlUI/QueueButton").GetComponent<Button>().onClick.AddListener(() =>
             {
                 Mods.Important.QueueRoom(textInput.text);
             });
 
-            canvas.Find("ControlUI/JoinButton").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            canvas.Find("ControlUI/JoinButton").GetComponent<Button>().onClick.AddListener(() =>
             {
                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(textInput.text, JoinType.Solo);
             });
 
-            canvas.Find("ControlUI/ColorButton").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            canvas.Find("ControlUI/ColorButton").GetComponent<Button>().onClick.AddListener(() =>
             {
                 ChangeColor(new Color32(byte.Parse(r.text), byte.Parse(g.text), byte.Parse(b.text), 255));
             });
 
-            canvas.Find("ControlUI/NameButton").GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            canvas.Find("ControlUI/NameButton").GetComponent<Button>().onClick.AddListener(() =>
             {
                 ChangeName(textInput.text);
             });
@@ -112,7 +112,7 @@ namespace iiMenu.Menu
 
             if (!Plugin.FirstLaunch)
             {
-                GameObject closeMessage = uiPrefab.transform?.Find("Canvas")?.Find("HideMessage")?.gameObject;
+                GameObject closeMessage = uiPrefab.transform.Find("Canvas")?.Find("HideMessage")?.gameObject;
                 closeMessage?.SetActive(false);
             }
 
@@ -189,93 +189,89 @@ namespace iiMenu.Menu
                 roomStatus.SafeSetText(FollowMenuSettings(!PhotonNetwork.InRoom ? "Not connected to room" : "Connected to room ") +
                    (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : ""));
 
-                if (Time.time > uiUpdateDelay)
+                if (!(Time.time > uiUpdateDelay)) return;
+                Texture2D watermarkTexture = customWatermark ?? watermarkImage;
+
+                if (watermark.sprite == null || watermark.sprite.texture == null || watermark.sprite.texture != watermarkTexture)
                 {
-                    Texture2D watermarkTexture = customWatermark ?? watermarkImage;
+                    Sprite sprite = Sprite.Create(
+                        watermarkTexture,
+                        new Rect(0, 0, watermarkTexture.width, watermarkTexture.height),
+                        new Vector2(0.5f, 0.5f),
+                        100f
+                    );
 
-                    if (watermark.sprite == null || watermark.sprite.texture == null || watermark.sprite.texture != watermarkTexture)
-                    {
-                        Sprite sprite = Sprite.Create(
-                            watermarkTexture,
-                            new Rect(0, 0, watermarkTexture.width, watermarkTexture.height),
-                            new Vector2(0.5f, 0.5f),
-                            100f
-                        );
-
-                        watermark.sprite = sprite;
-                    }
+                    watermark.sprite = sprite;
+                }
                    
-                    if (flipArraylist)
+                if (flipArraylist)
+                {
+                    controlBackground.rectTransform.anchoredPosition = new Vector2(10f, -10f);
+                    controlBackground.rectTransform.anchorMin = new Vector2(0f, 1f);
+                    controlBackground.rectTransform.anchorMax = new Vector2(0f, 1f);
+
+                    arraylist.rectTransform.anchoredPosition = new Vector2(-837.5001f, -523f);
+                    arraylist.rectTransform.anchorMin = new Vector2(1f, 1f);
+                    arraylist.rectTransform.anchorMax = new Vector2(1f, 1f);
+
+                    arraylist.alignment = TextAlignmentOptions.TopRight;
+                }
+                else
+                {
+                    controlBackground.rectTransform.anchoredPosition = new Vector2(-250f, -10f);
+                    controlBackground.rectTransform.anchorMin = new Vector2(1f, 1f);
+                    controlBackground.rectTransform.anchorMax = new Vector2(1f, 1f);
+
+                    arraylist.rectTransform.anchoredPosition = new Vector2(837.5001f, -523f);
+                    arraylist.rectTransform.anchorMin = new Vector2(0f, 1f);
+                    arraylist.rectTransform.anchorMax = new Vector2(0f, 1f);
+
+                    arraylist.alignment = TextAlignmentOptions.TopLeft;
+                }
+
+                uiUpdateDelay = Time.time + (advancedArraylist ? 0.1f : 0.5f);
+
+                List<string> enabledMods = new List<string>();
+                int categoryIndex = 0;
+
+                foreach (ButtonInfo[] buttonList in Buttons.buttons)
+                {
+                    foreach (ButtonInfo button in buttonList)
                     {
-                        controlBackground.rectTransform.anchoredPosition = new Vector2(10f, -10f);
-                        controlBackground.rectTransform.anchorMin = new Vector2(0f, 1f);
-                        controlBackground.rectTransform.anchorMax = new Vector2(0f, 1f);
-
-                        arraylist.rectTransform.anchoredPosition = new Vector2(-837.5001f, -523f);
-                        arraylist.rectTransform.anchorMin = new Vector2(1f, 1f);
-                        arraylist.rectTransform.anchorMax = new Vector2(1f, 1f);
-
-                        arraylist.alignment = TextAlignmentOptions.TopRight;
-                    }
-                    else
-                    {
-                        controlBackground.rectTransform.anchoredPosition = new Vector2(-250f, -10f);
-                        controlBackground.rectTransform.anchorMin = new Vector2(1f, 1f);
-                        controlBackground.rectTransform.anchorMax = new Vector2(1f, 1f);
-
-                        arraylist.rectTransform.anchoredPosition = new Vector2(837.5001f, -523f);
-                        arraylist.rectTransform.anchorMin = new Vector2(0f, 1f);
-                        arraylist.rectTransform.anchorMax = new Vector2(0f, 1f);
-
-                        arraylist.alignment = TextAlignmentOptions.TopLeft;
-                    }
-
-                    uiUpdateDelay = Time.time + (advancedArraylist ? 0.1f : 0.5f);
-
-                    List<string> enabledMods = new List<string>();
-                    int categoryIndex = 0;
-
-                    foreach (ButtonInfo[] buttonList in Buttons.buttons)
-                    {
-                        foreach (ButtonInfo button in buttonList)
+                        try
                         {
-                            try
-                            {
-                                if (button.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
-                                {
-                                    string buttonText = button.overlapText ?? button.buttonText;
+                            if (!button.enabled || (hideSettings && (!hideSettings ||
+                                                                     Buttons.categoryNames[categoryIndex]
+                                                                         .Contains("Settings")))) continue;
+                            string buttonText = button.overlapText ?? button.buttonText;
 
-                                    if (inputTextColor != "green")
-                                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                            if (inputTextColor != "green")
+                                buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
-                                    buttonText = FollowMenuSettings(buttonText);
-                                    enabledMods.Add(buttonText);
-                                }
-                            }
-                            catch { }
+                            buttonText = FollowMenuSettings(buttonText);
+                            enabledMods.Add(buttonText);
                         }
-                        categoryIndex++;
+                        catch { }
                     }
+                    categoryIndex++;
+                }
 
-                    string[] sortedMods = enabledMods
-                        .OrderByDescending(s => arraylist.GetPreferredValues(NoRichtextTags(s)).x)
-                        .ToArray();
+                string[] sortedMods = enabledMods
+                    .OrderByDescending(s => arraylist.GetPreferredValues(NoRichtextTags(s)).x)
+                    .ToArray();
 
-                    string modListText = "";
-                    for (int i = 0; i < sortedMods.Length; i++)
-                    {
-                        Color targetColor = Buttons.GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(i * -0.1f) : backgroundColor.GetCurrentColor(i * -0.1f);
-
-                        if (advancedArraylist)
-                            modListText += (flipArraylist ?
+                string modListText = "";
+                for (int i = 0; i < sortedMods.Length; i++)
+                {
+                    if (advancedArraylist)
+                        modListText += (flipArraylist ?
                             /* Flipped */ $"<mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}C0> {sortedMods[i]} </mark><mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark>" :
                             /* Normal  */ $"<mark=#{ColorToHex(buttonColors[1].GetCurrentColor(i * -0.1f))}> </mark><mark=#{ColorToHex(backgroundColor.GetCurrentColor(i * -0.1f))}C0> {sortedMods[i]} </mark>") + "\n";
-                        else
-                            modListText += sortedMods[i] + "\n";
-                    }
-
-                    arraylist.SafeSetText(modListText);
+                    else
+                        modListText += sortedMods[i] + "\n";
                 }
+
+                arraylist.SafeSetText(modListText);
             } else
                 uiPrefab.SetActive(false);
         }
@@ -295,7 +291,7 @@ namespace iiMenu.Menu
                     File.WriteAllText(hideGUIPath, "Text file generated with ii's Stupid Menu");
             }
 
-            GameObject closeMessage = uiPrefab.transform?.Find("Canvas")?.Find("HideMessage")?.gameObject;
+            GameObject closeMessage = uiPrefab.transform.Find("Canvas")?.Find("HideMessage")?.gameObject;
             closeMessage?.SetActive(false);
         }
 

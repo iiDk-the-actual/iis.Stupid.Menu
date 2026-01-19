@@ -716,13 +716,15 @@ namespace iiMenu.Mods
         // The code below is fully safe. I know, it seems suspicious.
         public static void UpdateMenu()
         {
-            if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Windows))
+            switch (SystemInfo.operatingSystemFamily)
             {
-                string logoLines = "";
-                foreach (string line in PluginInfo.Logo.Split(@"
+                case OperatingSystemFamily.Windows:
+                {
+                    string logoLines = "";
+                    foreach (string line in PluginInfo.Logo.Split(@"
 "))
-                    logoLines += Environment.NewLine + @" ""    " + line + @" """;
-                string updateScript = @"@echo off
+                        logoLines += Environment.NewLine + @" ""    " + line + @" """;
+                    string updateScript = @"@echo off
 title ii's Stupid Menu
 color 0E
 
@@ -768,22 +770,22 @@ echo Launching Gorilla Tag...
 start steam://run/1533390
 exit";
 
-                string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.bat";
+                    string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.bat";
 
-                File.WriteAllText(fileName, updateScript);
+                    File.WriteAllText(fileName, updateScript);
 
-                string filePath = FileUtilities.GetGamePath() + "/" + fileName;
-                Process.Start(filePath);
-                Application.Quit();   
-            }
-            if (SystemInfo.operatingSystemFamily.Equals(OperatingSystemFamily.Linux))
-            {
-        
-                string logoLines = "";
-                foreach (string line in PluginInfo.Logo.Split(@"
+                    string filePath = FileUtilities.GetGamePath() + "/" + fileName;
+                    Process.Start(filePath);
+                    Application.Quit();
+                    break;
+                }
+                case OperatingSystemFamily.Linux:
+                {
+                    string logoLines = "";
+                    foreach (string line in PluginInfo.Logo.Split(@"
 "))
-                    logoLines += Environment.NewLine + @" ""    " + line + @" """;
-string updateScript = @"#!/bin/bash
+                        logoLines += Environment.NewLine + @" ""    " + line + @" """;
+                    string updateScript = @"#!/bin/bash
 clear
 echo " + logoLines + @"
 echo
@@ -820,17 +822,18 @@ echo ""Launching Gorilla Tag...""
 xdg-open ""steam://run/1533390""
 exit 0";
 
-            string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.sh";
-            File.WriteAllText(fileName, updateScript);
-            Process.Start("chmod", $"+x \"{fileName}\"");
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "/bin/bash",
-                Arguments = $"\"{fileName}\"",
-                UseShellExecute = false
-            });
-                Application.Quit();
-
+                    string fileName = $"{PluginInfo.BaseDirectory}/UpdateScript.sh";
+                    File.WriteAllText(fileName, updateScript);
+                    Process.Start("chmod", $"+x \"{fileName}\"");
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "/bin/bash",
+                        Arguments = $"\"{fileName}\"",
+                        UseShellExecute = false
+                    });
+                    Application.Quit();
+                    break;
+                }
             }
         }
 
@@ -4983,10 +4986,15 @@ exit 0";
         public static void DictationPlay(AudioClip clip, float volume)
         {
             bool enabled = Buttons.GetIndex("Global Dynamic Sounds").enabled;
-            if (enabled)
-                Sound.PlayAudio(clip);
-            else if (!enabled)
-                Play2DAudio(clip, volume);
+            switch (enabled)
+            {
+                case true:
+                    Sound.PlayAudio(clip);
+                    break;
+                case false:
+                    Play2DAudio(clip, volume);
+                    break;
+            }
         }
 
         private static LineRenderer clickGuiLine;
@@ -5047,7 +5055,7 @@ exit 0";
             canvasTransform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
 
             List<MaskableGraphic> toRecolor = new List<MaskableGraphic>();
-            foreach (string partName in new string[]
+            foreach (string partName in new[]
             {
                 "Main/Sidebar/Title",
                 "Main/Sidebar/Watermark",
@@ -5059,7 +5067,7 @@ exit 0";
                 toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
 
             Transform sidebarTransform = canvasTransform.Find("Main/Sidebar");
-            foreach (string buttonName in new string[]
+            foreach (string buttonName in new[]
             {
                 "Settings", "Players", "Friends"
             })
@@ -5074,8 +5082,7 @@ exit 0";
 
             bool movedSelection = false;
 
-            string[] ignoreButtons = new[]
-            {
+            string[] ignoreButtons = {
                 "Join Discord",
                 "Settings",
                 "Friends",
@@ -5252,7 +5259,7 @@ exit 0";
             {
                 canvasTransform.Find("Main/PromptTab").gameObject.SetActive(true);
 
-                foreach (string partName in new string[]
+                foreach (string partName in new[]
                     {
                         "Main/PromptTab/Title",
                         "Main/PromptTab/Accept/Text",
@@ -5304,7 +5311,7 @@ exit 0";
 
                 if (currentCategoryIndex == 0)
                 {
-                    foreach (string partName in new string[]
+                    foreach (string partName in new[]
                     {
                         "Main/HomeTab/Title",
                         "Main/HomeTab/EnabledTitle",
@@ -5354,7 +5361,7 @@ exit 0";
             {
                 canvasTransform.Find("Main/ModuleTab").gameObject.SetActive(true);
 
-                foreach (string partName in new string[]
+                foreach (string partName in new[]
                     {
                         "Main/ModuleTab/Search/SearchIcon",
                         "Main/ModuleTab/Search/Text Area/Placeholder",
@@ -5524,45 +5531,49 @@ exit 0";
                         pointerData.pointerDrag = draggedUI ?? null;
                     }
 
-                    if (trigger && draggedUI != null)
+                    switch (trigger)
                     {
-                        if (!isDragging)
+                        case true when draggedUI != null:
                         {
-                            if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
+                            if (!isDragging)
                             {
-                                isDragging = true;
-                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
-
-                                if (pressedUI != null && pressedUI != draggedUI)
+                                if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
                                 {
-                                    ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                                    pointerData.pointerPress = null;
+                                    isDragging = true;
+                                    ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
+
+                                    if (pressedUI != null && pressedUI != draggedUI)
+                                    {
+                                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                        pointerData.pointerPress = null;
+                                    }
                                 }
                             }
+
+                            if (isDragging)
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
+                            break;
                         }
-
-                        if (isDragging)
-                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
-                    }
-
-                    if (!trigger && lastTriggerClick)
-                    {
-                        if (pressedUI != null && !isDragging)
+                        case false when lastTriggerClick:
                         {
-                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
+                            if (pressedUI != null && !isDragging)
+                            {
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
+                            }
+                            else if (pressedUI != null)
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+
+                            if (isDragging && draggedUI != null)
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
+
+                            pressedUI = null;
+                            draggedUI = null;
+                            pointerData.pointerDrag = null;
+                            pointerData.pointerPress = null;
+                            isDragging = false;
+                            break;
                         }
-                        else if (pressedUI != null)
-                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-
-                        if (isDragging && draggedUI != null)
-                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
-
-                        pressedUI = null;
-                        draggedUI = null;
-                        pointerData.pointerDrag = null;
-                        pointerData.pointerPress = null;
-                        isDragging = false;
                     }
 
                     lastTriggerClick = trigger;

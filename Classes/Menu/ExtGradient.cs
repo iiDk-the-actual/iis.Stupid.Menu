@@ -52,15 +52,12 @@ namespace iiMenu.Classes.Menu
             if (copyRigColor)
                 return VRRig.LocalRig.GetColor();
 
-            if (transparent)
-            {
-                Color targetColor = colors[index].color;
-                targetColor.a = 0f;
+            if (!transparent) return customColor != null ? customColor?.Invoke() ?? Color.magenta : colors[index].color;
+            Color targetColor = colors[index].color;
+            targetColor.a = 0f;
 
-                return targetColor;
-            }
+            return targetColor;
 
-            return customColor != null ? customColor?.Invoke() ?? Color.magenta : colors[index].color;
         }
 
         public void SetColor(int index, Color color, bool setMirror = true)

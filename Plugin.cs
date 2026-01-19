@@ -48,11 +48,10 @@ namespace iiMenu
             Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
             instance = this;
 
-            string logoLines = "";
-            foreach (string line in PluginInfo.Logo.Split(@"
-"))
-                logoLines += System.Environment.NewLine + "     " + line;
-            
+            string logoLines = PluginInfo.Logo.Split(@"
+")
+                .Aggregate("", (current, line) => current + (System.Environment.NewLine + "     " + line));
+
             LogManager.Log($@"
 {logoLines}
     ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
@@ -101,7 +100,7 @@ namespace iiMenu
             GorillaTagger.OnPlayerSpawned(LoadMenu);
         }
 
-        private static void OnDestroy() =>
+        private void OnDestroy() =>
             Main.UnloadMenu();
 
         private static void LoadMenu()

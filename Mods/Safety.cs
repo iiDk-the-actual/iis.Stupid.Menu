@@ -526,14 +526,11 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
             {
-                foreach (var cosmetic in Visuals.specialCosmetics)
+                foreach (var cosmetic in Visuals.specialCosmetics.Where(cosmetic => rig.rawCosmeticString.Contains(cosmetic.Key)))
                 {
-                    if (rig.rawCosmeticString.Contains(cosmetic.Key))
-                    {
-                        specialRig = rig;
-                        specialCosmetic = cosmetic.Value;
-                        break;
-                    }
+                    specialRig = rig;
+                    specialCosmetic = cosmetic.Value;
+                    break;
                 }
 
                 if (specialRig != null)
@@ -690,7 +687,7 @@ namespace iiMenu.Mods
             {
                 string[] data = File.ReadAllText(fileName).Split("\n");
                 names = data[0].Split(";");
-                colors = data[1].Split(";").Select(hex => HexToColor(hex)).ToArray();
+                colors = data[1].Split(";").Select(HexToColor).ToArray();
             } else
                 File.WriteAllText(fileName, "goldentrophy;me\nff8000;ffffff");
 

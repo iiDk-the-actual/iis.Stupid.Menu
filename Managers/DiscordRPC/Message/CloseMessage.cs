@@ -21,6 +21,6 @@
 		public int Code { get; internal set; }
 
 		internal CloseMessage() { }
-		internal CloseMessage(string reason) { this.Reason = reason; }
+		internal CloseMessage(string reason) { Reason = reason; }
 	}
 }

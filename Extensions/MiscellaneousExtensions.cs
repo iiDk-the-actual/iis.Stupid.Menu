@@ -23,6 +23,7 @@ using iiMenu.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -190,11 +191,9 @@ namespace iiMenu.Extensions
 
             foreach (var kv in pairs)
             {
-                if (comparer.Equals(kv.Key, key))
-                {
-                    actualKey = kv.Key;
-                    return true;
-                }
+                if (!comparer.Equals(kv.Key, key)) continue;
+                actualKey = kv.Key;
+                return true;
             }
 
             actualKey = default!;
@@ -206,13 +205,10 @@ namespace iiMenu.Extensions
             string value,
             out string key)
         {
-            foreach (var kv in dict)
+            foreach (var kv in dict.Where(kv => string.Equals(kv.Value, value, StringComparison.OrdinalIgnoreCase)))
             {
-                if (string.Equals(kv.Value, value, StringComparison.OrdinalIgnoreCase))
-                {
-                    key = kv.Key;
-                    return true;
-                }
+                key = kv.Key;
+                return true;
             }
             key = null!;
             return false;
@@ -224,11 +220,9 @@ namespace iiMenu.Extensions
             comparer ??= TryGetComparerFromDictionary(dictionary) ?? EqualityComparer<TKey>.Default;
             foreach (var k in dictionary.Keys)
             {
-                if (comparer.Equals(k, key))
-                {
-                    actualKey = k;
-                    return true;
-                }
+                if (!comparer.Equals(k, key)) continue;
+                actualKey = k;
+                return true;
             }
 
             actualKey = default!;
@@ -242,13 +236,9 @@ namespace iiMenu.Extensions
 
             var dictType = dictionary.GetType();
             var prop = dictType.GetProperty("Comparer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (prop != null && typeof(IEqualityComparer<TKey>).IsAssignableFrom(prop.PropertyType))
-            {
-                IEqualityComparer<TKey> comp = prop.GetValue(dictionary) as IEqualityComparer<TKey>;
-                if (comp != null) return comp;
-            }
-
-            return null;
+            if (prop == null || !typeof(IEqualityComparer<TKey>).IsAssignableFrom(prop.PropertyType)) return null;
+            IEqualityComparer<TKey> comp = prop.GetValue(dictionary) as IEqualityComparer<TKey>;
+            return comp;
         }
     }
 }

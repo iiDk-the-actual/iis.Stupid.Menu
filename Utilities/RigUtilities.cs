@@ -55,11 +55,9 @@ namespace iiMenu.Utilities
         private static float rigTargetChange;
         public static VRRig GetTargetPlayer(float targetChangeDelay = 1f)
         {
-            if (Time.time > rigTargetChange || !rigTarget.Active())
-            {
-                rigTargetChange = Time.time + targetChangeDelay;
-                rigTarget = GetRandomVRRig(false);
-            }
+            if (!(Time.time > rigTargetChange) && rigTarget.Active()) return rigTarget;
+            rigTargetChange = Time.time + targetChangeDelay;
+            rigTarget = GetRandomVRRig(false);
 
             return rigTarget;
         }
@@ -89,11 +87,9 @@ namespace iiMenu.Utilities
             }
             else
             {
-                if (Time.time > waitingForCreationDate[input])
-                {
-                    waitingForCreationDate[input] = Time.time + 10f;
-                    GetCreationCoroutine(input, onTranslated, format);
-                }
+                if (!(Time.time > waitingForCreationDate[input])) return "Loading...";
+                waitingForCreationDate[input] = Time.time + 10f;
+                GetCreationCoroutine(input, onTranslated, format);
             }
 
             return "Loading...";

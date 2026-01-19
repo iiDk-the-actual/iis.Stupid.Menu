@@ -252,13 +252,11 @@ namespace iiMenu.Mods.CustomMaps.Maps
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
+            if (nearbyPlayers.Count <= 0) return;
+            foreach (VRRig nearbyPlayer in nearbyPlayers)
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    CrashPlayer(nearbyPlayer.OwningNetPlayer.ActorNumber);
-                    crashDelay = Time.time + 0.2f;
-                }
+                CrashPlayer(nearbyPlayer.OwningNetPlayer.ActorNumber);
+                crashDelay = Time.time + 0.2f;
             }
         }
         public static void CrashOnTouch()
@@ -275,14 +273,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time < crashDelay)
                 return;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var player in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isMyPlayer && !vrrig.isOfflineVRRig && (Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5) select GetPlayerFromVRRig(vrrig))
             {
-                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
-                {
-                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = Time.time + 0.2f;
-                }
+                CrashPlayer(player.ActorNumber);
+                crashDelay = Time.time + 0.2f;
             }
         }
         public static void CrashAll()
@@ -297,14 +291,11 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             Safety.AntiReport((vrrig, position) =>
             {
-
-                if (Time.time > crashDelay)
-                {
-                    NetPlayer netPlayer = GetPlayerFromVRRig(vrrig);
-                    CrashPlayer(netPlayer.ActorNumber);
-                    crashDelay = Time.time + 0.5f;
-                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
-                }
+                if (!(Time.time > crashDelay)) return;
+                NetPlayer netPlayer = GetPlayerFromVRRig(vrrig);
+                CrashPlayer(netPlayer.ActorNumber);
+                crashDelay = Time.time + 0.5f;
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been crashed.");
             });
         }
     }

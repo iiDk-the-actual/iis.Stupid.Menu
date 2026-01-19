@@ -92,12 +92,10 @@ namespace iiMenu.Utilities
                 // ReSharper disable once AssignNullToNotNullAttribute
                 Directory.CreateDirectory(directory);
 
-            if (!File.Exists(filePath))
-            {
-                LogManager.Log("Downloading " + fileName);
-                using WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, filePath);
-            }
+            if (File.Exists(filePath)) return LoadSoundFromFile(fileName);
+            LogManager.Log("Downloading " + fileName);
+            using WebClient stream = new WebClient();
+            stream.DownloadFile(resourcePath, filePath);
 
             return LoadSoundFromFile(fileName);
         }

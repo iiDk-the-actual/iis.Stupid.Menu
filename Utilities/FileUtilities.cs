@@ -20,6 +20,7 @@
  */
 
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -44,13 +45,11 @@ namespace iiMenu.Utilities
             foreach (string data in split)
             {
                 index++;
-                if (index != split.Length)
-                {
-                    if (index > 1)
-                        output += ".";
+                if (index == split.Length) continue;
+                if (index > 1)
+                    output += ".";
 
-                    output += data;
-                }
+                output += data;
             }
             return output;
         }
@@ -85,8 +84,7 @@ namespace iiMenu.Utilities
         {
             input = input.Trim();
             char[] illegalChars = Path.GetInvalidFileNameChars();
-            foreach (char c in illegalChars)
-                input = input.Replace(c, '_');
+            input = illegalChars.Aggregate(input, (current, c) => current.Replace(c, '_'));
 
             input = input.Replace("../", "")
                          .Replace("..\\", "")

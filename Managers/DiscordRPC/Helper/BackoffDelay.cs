@@ -36,12 +36,12 @@ namespace iiMenu.Managers.DiscordRPC.Helper
 		public BackoffDelay(int min, int max) : this(min, max, new Random()) { }
 		public BackoffDelay(int min, int max, Random random)
 		{
-			this.Minimum = min;
-			this.Maximum = max;
+			Minimum = min;
+			Maximum = max;
 
-			this._current = min;
-			this._fails = 0;
-			this.Random = random;
+			_current = min;
+			_fails = 0;
+			Random = random;
 		}
 
 		/// <summary>

@@ -23,6 +23,7 @@ using GorillaLocomotion;
 using iiMenu.Managers;
 using iiMenu.Mods;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace iiMenu.Classes.Mods
@@ -31,14 +32,8 @@ namespace iiMenu.Classes.Mods
     {
         private static readonly Type[] allowedTypes = { typeof(ThrowableBug), typeof(SlingshotProjectile) };
 
-        bool HasAllowedComponent(Collider col)
-        {
-            foreach (var t in allowedTypes)
-                if (col.GetComponent(t) != null)
-                    return true;
-
-            return false;
-        }
+        static bool HasAllowedComponent(Collider col) =>
+            allowedTypes.Any(t => col.GetComponent(t) != null);
 
         public GameObject destination;
         public void OnTriggerEnter(Collider other)

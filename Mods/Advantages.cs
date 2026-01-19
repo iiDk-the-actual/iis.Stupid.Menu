@@ -91,40 +91,36 @@ namespace iiMenu.Mods
                         };
                     } else
                     {
-                        if (rig.IsTagged())
-                        {
-                            VRRig.LocalRig.enabled = false;
-                            if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
+                        if (!rig.IsTagged()) return;
+                        VRRig.LocalRig.enabled = false;
+                        if (rig != null) VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
-                            if (Buttons.GetIndex("Obnoxious Tag").enabled)
-                            {
-                                Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                                VRRig.LocalRig.transform.rotation = rotation;
+                        if (!Buttons.GetIndex("Obnoxious Tag").enabled) return;
+                        Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
+                        VRRig.LocalRig.transform.rotation = rotation;
 
-                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
 
-                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                VRRig.LocalRig.leftIndex.calcT = 0f;
-                                VRRig.LocalRig.leftMiddle.calcT = 0f;
-                                VRRig.LocalRig.leftThumb.calcT = 0f;
+                        VRRig.LocalRig.leftIndex.calcT = 0f;
+                        VRRig.LocalRig.leftMiddle.calcT = 0f;
+                        VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                        VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                VRRig.LocalRig.rightIndex.calcT = 0f;
-                                VRRig.LocalRig.rightMiddle.calcT = 0f;
-                                VRRig.LocalRig.rightThumb.calcT = 0f;
+                        VRRig.LocalRig.rightIndex.calcT = 0f;
+                        VRRig.LocalRig.rightMiddle.calcT = 0f;
+                        VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
-                            }
-                        }
+                        VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                     }
                 }
             }
@@ -175,21 +171,19 @@ namespace iiMenu.Mods
             }
         }
 
-        public static float spamtagdelay = -1f;
+        public static float spamTagDelay;
         public static void SpamTagSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
-                if (Time.time > spamtagdelay)
-                {
-                    spamtagdelay = Time.time + 0.1f;
-                    if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
-                        RemoveInfected(PhotonNetwork.LocalPlayer);
-                    else
-                        AddInfected(PhotonNetwork.LocalPlayer);
-                }
+                if (!(Time.time > spamTagDelay)) return;
+                spamTagDelay = Time.time + 0.1f;
+                if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
+                    RemoveInfected(PhotonNetwork.LocalPlayer);
+                else
+                    AddInfected(PhotonNetwork.LocalPlayer);
             }
         }
 
@@ -206,9 +200,9 @@ namespace iiMenu.Mods
                         NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
                     else
                     {
-                        if (Time.time > spamtagdelay)
+                        if (Time.time > spamTagDelay)
                         {
-                            spamtagdelay = Time.time + 0.1f;
+                            spamTagDelay = Time.time + 0.1f;
                             if (InfectedList().Contains(GetPlayerFromVRRig(lockTarget)))
                                 RemoveInfected(GetPlayerFromVRRig(lockTarget));
                             else
@@ -216,18 +210,13 @@ namespace iiMenu.Mods
                         }
                     }
                 }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                    {
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            gunLocked = true;
-                            lockTarget = gunTarget;
-                        }
-                    }
-                }
+
+                if (!GetGunInput(true)) return;
+                VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                if (!gunTarget || gunTarget.IsLocal()) return;
+                if (!PhotonNetwork.IsMasterClient) return;
+                gunLocked = true;
+                lockTarget = gunTarget;
             }
             else
             {
@@ -242,16 +231,14 @@ namespace iiMenu.Mods
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
             else
             {
-                if (Time.time > spamtagdelay)
+                if (!(Time.time > spamTagDelay)) return;
+                spamTagDelay = Time.time + 0.1f;
+                foreach (Player v in PhotonNetwork.PlayerList)
                 {
-                    spamtagdelay = Time.time + 0.1f;
-                    foreach (Player v in PhotonNetwork.PlayerList)
-                    {
-                        if (InfectedList().Contains(v))
-                            AddInfected(v);
-                        else
-                            RemoveInfected(v);
-                    }
+                    if (InfectedList().Contains(v))
+                        AddInfected(v);
+                    else
+                        RemoveInfected(v);
                 }
             }
         }
@@ -457,19 +444,15 @@ namespace iiMenu.Mods
 
         public static void TagReach()
         {
-            if (VRRig.LocalRig.IsTagged())
-            {
-                GorillaTagger.Instance.maxTagDistance = float.MaxValue;
+            if (!VRRig.LocalRig.IsTagged()) return;
+            GorillaTagger.Instance.maxTagDistance = float.MaxValue;
 
-                GorillaTagger.Instance.tagRadiusOverride = tagReachDistance;
-                GorillaTagger.Instance.tagRadiusOverrideFrame = Time.frameCount + 16;
+            GorillaTagger.Instance.tagRadiusOverride = tagReachDistance;
+            GorillaTagger.Instance.tagRadiusOverrideFrame = Time.frameCount + 16;
 
-                if (Buttons.GetIndex("Visualize Tag Reach").enabled)
-                {
-                    Visuals.VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
-                    Visuals.VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
-                }
-            }
+            if (!Buttons.GetIndex("Visualize Tag Reach").enabled) return;
+            Visuals.VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
+            Visuals.VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
         }
 
         public static bool ValidateTag(VRRig Rig) =>
@@ -544,11 +527,9 @@ namespace iiMenu.Mods
                             AddInfected(GetPlayerFromVRRig(gunTarget));
                         else
                         {
-                            if (VRRig.LocalRig.IsTagged())
-                            {
-                                gunLocked = true;
-                                lockTarget = gunTarget;
-                            }
+                            if (!VRRig.LocalRig.IsTagged()) return;
+                            gunLocked = true;
+                            lockTarget = gunTarget;
                         }
                     }
                 }
@@ -710,15 +691,7 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    bool isInfectedPlayers = false;
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (!vrrig.IsTagged())
-                        {
-                            isInfectedPlayers = true;
-                            break;
-                        }
-                    }
+                    bool isInfectedPlayers = GorillaParent.instance.vrrigs.Any(vrrig => !vrrig.IsTagged());
                     if (isInfectedPlayers)
                     {
                         foreach (var vrrig in GorillaParent.instance.vrrigs.Where(vrrig => !vrrig.IsTagged()))
@@ -906,7 +879,7 @@ namespace iiMenu.Mods
         {
             PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("didTutorial", out object obj);
 
-            if (obj == null || (obj is bool @bool && @bool == true))
+            if (obj == null || (obj is bool @bool && @bool))
             {
                 PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
                 {

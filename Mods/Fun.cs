@@ -38,8 +38,6 @@ using iiMenu.Menu;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Ionic.Zlib;
-using Modio.Mods;
-using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -55,10 +53,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Windows;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
@@ -965,10 +961,15 @@ namespace iiMenu.Mods
 
         public static void ReloadModsToSpoof(string key, string value, bool add = true)
         {
-            if (add)
-                modsToSpoof.Add(key, value);
-            else if (!add)
-                modsToSpoof.Remove(key);
+            switch (add)
+            {
+                case true:
+                    modsToSpoof.Add(key, value);
+                    break;
+                case false:
+                    modsToSpoof.Remove(key);
+                    break;
+            }
             Hashtable props = new Hashtable();
 
             foreach (string mod in modsToSpoof.Keys)
@@ -981,20 +982,15 @@ namespace iiMenu.Mods
             Prompt("Would you like to choose from a mod list or type the mod property?", () =>
             {
                 List<ButtonInfo> modList = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Mod List", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
-
-                for (int i = 0; i < Visuals.modDictionary.Count; i++)
+                modList.AddRange(Visuals.modDictionary.Select((t, i) => Visuals.modDictionary.ElementAt(i))
+                .Select((mod, i) => new ButtonInfo
                 {
-                    KeyValuePair<string, string> mod = Visuals.modDictionary.ElementAt(i);
-                    modList.Add(
-                        new ButtonInfo
-                        {
-                            buttonText = $"Mod{i}",
-                            overlapText = mod.Value,
-                            enableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value),
-                            disableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value, false),
-                            toolTip = $"Show that you are using the mod {mod.Value} to other players."
-                        });
-                }
+                    buttonText = $"Mod{i}",
+                    overlapText = mod.Value,
+                    enableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value),
+                    disableMethod = () => ReloadModsToSpoof(mod.Key, mod.Value, false),
+                    toolTip = $"Show that you are using the mod {mod.Value} to other players."
+                }));
 
 
                 Buttons.buttons[Buttons.GetCategory("Mod List")] = modList.ToArray();
@@ -4471,12 +4467,18 @@ Piece Name: {gunTarget.name}";
                         PhotonNetwork.LocalPlayer
                     };
 
-                    if (target is RpcTarget rpcTargetCreate)
-                        Networking.photonView.RPC("PieceCreatedByShelfRPC", rpcTargetCreate, args);
-                    else if (target is Player playerCreate)
-                        Networking.photonView.RPC("PieceCreatedByShelfRPC", playerCreate, args);
-                    else
-                        Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
+                    switch (target)
+                    {
+                        case RpcTarget rpcTargetCreate:
+                            Networking.photonView.RPC("PieceCreatedByShelfRPC", rpcTargetCreate, args);
+                            break;
+                        case Player playerCreate:
+                            Networking.photonView.RPC("PieceCreatedByShelfRPC", playerCreate, args);
+                            break;
+                        default:
+                            Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
+                            break;
+                    }
 
                     if ((!overrideFreeze && !Buttons.GetIndex("Zero Gravity Blocks").enabled) || forceGravity)
                     {
@@ -4491,12 +4493,18 @@ Piece Name: {gunTarget.name}";
                             PhotonNetwork.LocalPlayer
                         };
 
-                        if (target is RpcTarget rpcTargetGrab)
-                            Networking.photonView.RPC("PieceGrabbedRPC", rpcTargetGrab, args);
-                        else if (target is Player playerGrab)
-                            Networking.photonView.RPC("PieceGrabbedRPC", playerGrab, args);
-                        else
-                            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
+                        switch (target)
+                        {
+                            case RpcTarget rpcTargetGrab:
+                                Networking.photonView.RPC("PieceGrabbedRPC", rpcTargetGrab, args);
+                                break;
+                            case Player playerGrab:
+                                Networking.photonView.RPC("PieceGrabbedRPC", playerGrab, args);
+                                break;
+                            default:
+                                Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
+                                break;
+                        }
 
                         args = new object[]
                         {
@@ -4509,12 +4517,18 @@ Piece Name: {gunTarget.name}";
                             PhotonNetwork.LocalPlayer
                         };
 
-                        if (target is RpcTarget rpcTargetDrop)
-                            Networking.photonView.RPC("PieceDroppedRPC", rpcTargetDrop, args);
-                        else if (target is Player playerDrop)
-                            Networking.photonView.RPC("PieceDroppedRPC", playerDrop, args);
-                        else
-                            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
+                        switch (target)
+                        {
+                            case RpcTarget rpcTargetDrop:
+                                Networking.photonView.RPC("PieceDroppedRPC", rpcTargetDrop, args);
+                                break;
+                            case Player playerDrop:
+                                Networking.photonView.RPC("PieceDroppedRPC", playerDrop, args);
+                                break;
+                            default:
+                                Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
+                                break;
+                        }
                     }
                 }
             }
@@ -5715,7 +5729,7 @@ Piece Name: {gunTarget.name}";
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (GetGunInput(true) && Time.time > stealIdentityDelay)
+                if (GetGunInput(true) && Time.time > stealCosmeticsDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !gunTarget.IsLocal())
@@ -5844,72 +5858,56 @@ Piece Name: {gunTarget.name}";
         }
 
         private static readonly Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]>();
-        public static int[] PackCosmetics(string[] Cosmetics)
+        public static int[] PackCosmetics(string[] unpackedCosmetics)
         {
-            if (cachePacked.TryGetValue(Cosmetics, out var cosmetics))
+            if (cachePacked.TryGetValue(unpackedCosmetics, out var cosmetics))
                 return cosmetics;
 
-            CosmeticsController.CosmeticSet Set = new CosmeticsController.CosmeticSet(Cosmetics, CosmeticsController.instance);
-            int[] PackedIDs = Set.ToPackedIDArray();
-            cachePacked.Add(Cosmetics, PackedIDs);
-            return PackedIDs;
+            CosmeticsController.CosmeticSet Set = new CosmeticsController.CosmeticSet(unpackedCosmetics, CosmeticsController.instance);
+            int[] packedIDs = Set.ToPackedIDArray();
+            cachePacked.Add(unpackedCosmetics, packedIDs);
+            return packedIDs;
         }
 
-        private static List<string> ownedarchive;
+        private static List<string> ownedArchive;
         private static string[] GetOwnedCosmetics()
         {
-            if (ownedarchive == null)
-            {
-                ownedarchive = new List<string>();
-                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
-                {
-                    if (VRRig.LocalRig._playerOwnedCosmetics.Contains(dearlord.itemName))
-                        ownedarchive.Add(dearlord.itemName);
-                }
-            }
-            return ownedarchive.ToArray();
+            if (ownedArchive != null) return ownedArchive.ToArray();
+            ownedArchive = new List<string>();
+            foreach (var cosmeticItem in CosmeticsController.instance.allCosmetics.Where(cosmeticItem => VRRig.LocalRig._playerOwnedCosmetics.Contains(cosmeticItem.itemName)))
+                ownedArchive.Add(cosmeticItem.itemName);
+            
+            return ownedArchive.ToArray();
         }
-        private static List<string> tryonarchive;
+        private static List<string> tryOnCosmetics;
         private static string[] GetTryOnCosmetics()
         {
-            if (tryonarchive == null)
-            {
-                tryonarchive = new List<string>();
-                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
-                {
-                    if (dearlord.canTryOn)
-                        tryonarchive.Add(dearlord.itemName);
-                }
-            }
-            return tryonarchive.ToArray();
+            if (tryOnCosmetics != null) return tryOnCosmetics.ToArray();
+            tryOnCosmetics = new List<string>();
+            foreach (var cosmeticItem in CosmeticsController.instance.allCosmetics.Where(cosmeticItem => cosmeticItem.canTryOn))
+                tryOnCosmetics.Add(cosmeticItem.itemName);
+            return tryOnCosmetics.ToArray();
         }
 
         private static string[] GetTryOnBalloons()
         {
-            if (tryonarchive == null)
-            {
-                tryonarchive = new List<string>();
-                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
-                {
-                    if (dearlord.canTryOn && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
-                        tryonarchive.Add(dearlord.itemName);
-                }
-            }
-            return tryonarchive.ToArray();
+            if (tryOnCosmetics != null) return tryOnCosmetics.ToArray();
+            tryOnCosmetics = new List<string>();
+            foreach (var cosmeticItem in CosmeticsController.instance.allCosmetics.Where(cosmeticItem => cosmeticItem.canTryOn && cosmeticItem.overrideDisplayName.ToLower().Contains("balloon")))
+                tryOnCosmetics.Add(cosmeticItem.itemName);
+            
+            return tryOnCosmetics.ToArray();
         }
 
         private static string[] GetOwnedBalloons()
         {
-            if (ownedarchive == null)
+            if (ownedArchive == null)
             {
-                ownedarchive = new List<string>();
-                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
-                {
-                    if (VRRig.LocalRig._playerOwnedCosmetics.Contains(dearlord.itemName) && dearlord.overrideDisplayName.ToLower().Contains("balloon"))
-                        ownedarchive.Add(dearlord.itemName);
-                }
+                ownedArchive = new List<string>();
+                foreach (var cosmeticItem in CosmeticsController.instance.allCosmetics.Where(cosmeticItem => VRRig.LocalRig._playerOwnedCosmetics.Contains(cosmeticItem.itemName) && cosmeticItem.overrideDisplayName.ToLower().Contains("balloon")))
+                    ownedArchive.Add(cosmeticItem.itemName);
             }
-            return ownedarchive.ToArray();
+            return ownedArchive.ToArray();
         }
 
 
@@ -6039,7 +6037,7 @@ Piece Name: {gunTarget.name}";
         private static int[] archiveCosmetics;
         public static void TryOnAnywhere()
         {
-            string[] cosmeticArray = new[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
+            string[] cosmeticArray = { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
 
             archiveCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(cosmeticArray, CosmeticsController.instance);
@@ -6085,7 +6083,7 @@ Piece Name: {gunTarget.name}";
         {
             rememberdirectory = pageNumber;
 
-            List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
+            List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = RemoveCosmeticBrowser, isTogglable = false, toolTip = "Returns you back to the fun mods." } };
             foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 if (hat.canTryOn)
@@ -6124,11 +6122,8 @@ Piece Name: {gunTarget.name}";
             if (Time.time > lastTimeCosmeticsChecked)
             {
                 lastTimeCosmeticsChecked = Time.time + 120f;
-                foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
-                {
-                    if (hat.cost == 0 && hat.canTryOn && !CosmeticsOwned.Contains(hat.itemName))
-                        PurchaseCosmetic(hat.itemName);
-                }
+                foreach (var hat in CosmeticsController.instance.allCosmetics.Where(hat => hat.cost == 0 && hat.canTryOn && !CosmeticsOwned.Contains(hat.itemName)))
+                    PurchaseCosmetic(hat.itemName);
             }
         }
 
@@ -6149,11 +6144,10 @@ Piece Name: {gunTarget.name}";
                     .OrderByDescending(i => i.itemCategory == CosmeticsController.CosmeticCategory.Hat)
                     .ThenBy(i => i.itemCategory == CosmeticsController.CosmeticCategory.Hat ? i.itemName : null))
                 {
-                    if (allocatedShinyRocks >= item.cost && item.canTryOn && !CosmeticsOwned.Contains(item.itemName))
-                    {
-                        PurchaseCosmetic(item.itemName);
-                        allocatedShinyRocks -= item.cost;
-                    }
+                    if (allocatedShinyRocks < item.cost || !item.canTryOn ||
+                        CosmeticsOwned.Contains(item.itemName)) continue;
+                    PurchaseCosmetic(item.itemName);
+                    allocatedShinyRocks -= item.cost;
                 }
             }
         }
@@ -6163,7 +6157,7 @@ Piece Name: {gunTarget.name}";
         {
             if (!lasttagged && VRRig.LocalRig.IsTagged())
             {
-                string[] cosmetics = new[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" };
+                string[] cosmetics = { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" };
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, PackCosmetics(cosmetics), PackCosmetics(cosmetics), false);
                 RPCProtection();
@@ -6180,22 +6174,17 @@ Piece Name: {gunTarget.name}";
         public static void UnlockAllCosmetics()
         {
             CosmeticPatch.enabled = true;
-            if (PostGetData.CosmeticsInitialized && !hasGivenCosmetics)
+            if (!PostGetData.CosmeticsInitialized || hasGivenCosmetics) return;
+            hasGivenCosmetics = true;
+            MethodInfo unlockItem = typeof(CosmeticsController).GetMethod("UnlockItem", BindingFlags.Instance | BindingFlags.NonPublic);
+            foreach (var item in CosmeticsController.instance.allCosmetics.Where(item => !CosmeticsController.instance.concatStringCosmeticsAllowed.Contains(item.itemName)))
             {
-                hasGivenCosmetics = true;
-                MethodInfo UnlockItem = typeof(CosmeticsController).GetMethod("UnlockItem", BindingFlags.Instance | BindingFlags.NonPublic);
-                foreach (CosmeticsController.CosmeticItem item in CosmeticsController.instance.allCosmetics)
+                try
                 {
-                    if (!CosmeticsController.instance.concatStringCosmeticsAllowed.Contains(item.itemName))
-                    {
-                        try
-                        {
-                            UnlockItem.Invoke(CosmeticsController.instance, new object[] { item.itemName, false });
-                        }
-                        catch
-                        {
-                        }
-                    }
+                    unlockItem.Invoke(CosmeticsController.instance, new object[] { item.itemName, false });
+                }
+                catch
+                {
                 }
             }
         }
@@ -6237,9 +6226,8 @@ Piece Name: {gunTarget.name}";
 
             if (nearbyPlayers.Count > 0)
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
+                foreach (var id in nearbyPlayers.Select(nearbyPlayer => GetPlayerFromVRRig(nearbyPlayer).UserId))
                 {
-                    string id = GetPlayerFromVRRig(nearbyPlayer).UserId;
                     NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
                     GUIUtility.systemCopyBuffer = id;
                 }
@@ -6266,9 +6254,8 @@ Piece Name: {gunTarget.name}";
 
             if (touchedPlayers.Count > 0)
             {
-                foreach (VRRig rig in touchedPlayers)
+                foreach (var id in touchedPlayers.Select(rig => GetPlayerFromVRRig(rig).UserId))
                 {
-                    string id = GetPlayerFromVRRig(rig).UserId;
                     NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
                     GUIUtility.systemCopyBuffer = id;
                 }
@@ -6277,9 +6264,8 @@ Piece Name: {gunTarget.name}";
 
         public static void CopyIDAll()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var id in GorillaParent.instance.vrrigs.Select(vrrig => GetPlayerFromVRRig(vrrig).UserId))
             {
-                string id = GetPlayerFromVRRig(vrrig).UserId;
                 NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
                 GUIUtility.systemCopyBuffer = id;
             }
@@ -6456,10 +6442,10 @@ Piece Name: {gunTarget.name}";
         public static void NarrateFakeDoxxSelf() =>
             SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
 
-        private static float cgdgd;
+        private static float creationDateDelay;
         public static void CopyCreationDateSelf()
         {
-            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, date => CopyCreationDate(date));
+            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, CopyCreationDate);
             if (date != "Loading...")
                 CopyCreationDate(date);
         }
@@ -6474,11 +6460,11 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > cgdgd)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > creationDateDelay)
                     {
-                        cgdgd = Time.time + 0.5f;
+                        creationDateDelay = Time.time + 0.5f;
 
-                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, date => CopyCreationDate(date));
+                        string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, CopyCreationDate);
                         if (date != "Loading...")
                             CopyCreationDate(date);
                     }
@@ -6499,15 +6485,9 @@ Piece Name: {gunTarget.name}";
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
-            {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    string date = GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => CopyCreationDate(date));
-                    if (date != "Loading...")
-                        CopyCreationDate(date);
-                }
-            }
+            if (nearbyPlayers.Count <= 0) return;
+            foreach (var date in nearbyPlayers.Select(nearbyPlayer => GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, CopyCreationDate)).Where(date => date != "Loading..."))
+                CopyCreationDate(date);
         }
 
         public static void CopyCreationDateOnTouch()
@@ -6530,22 +6510,16 @@ Piece Name: {gunTarget.name}";
 
             if (touchedPlayers.Count > 0)
             {
-                foreach (VRRig rig in touchedPlayers)
-                {
-                    string date = GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => CopyCreationDate(date));
-                    if (date != "Loading...")
-                        CopyCreationDate(date);
-                }
+                foreach (var date in touchedPlayers.Select(rig => GetCreationDate(GetPlayerFromVRRig(rig).UserId, CopyCreationDate)).Where(date => date != "Loading..."))
+                    CopyCreationDate(date);
             }
         }
 
         public static void CopyCreationDateAll()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var date in GorillaParent.instance.vrrigs.Select(vrrig => GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, CopyCreationDate)).Where(date => date != "Loading..."))
             {
-                string date = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, date => CopyCreationDate(date));
-                if (date != "Loading...")
-                    CopyCreationDate(date);
+                CopyCreationDate(date);
             }
         }
 
@@ -6557,19 +6531,15 @@ Piece Name: {gunTarget.name}";
 
         public static void NarrateCreationDateSelf()
         {
-            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, date => SpeakText(date));
+            string date = GetCreationDate(PhotonNetwork.LocalPlayer.UserId, SpeakText);
             if (date != "Loading...")
                 SpeakText(date);
         }
 
         public static void NarrateCreationDateAll()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                string date = GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, date => SpeakText(date));
-                if (date != "Loading...")
-                    SpeakText(date);
-            }
+            foreach (var date in GorillaParent.instance.vrrigs.Select(vrrig => GetCreationDate(GetPlayerFromVRRig(vrrig).UserId, SpeakText)).Where(date => date != "Loading..."))
+                SpeakText(date);
         }
 
         public static void NarrateCreationDateAura()
@@ -6585,44 +6555,20 @@ Piece Name: {gunTarget.name}";
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
-            {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    string date = GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => SpeakText(date));
-                    if (date != "Loading...")
-                        SpeakText(date);
-                }
-            }
+            if (nearbyPlayers.Count <= 0) return;
+            foreach (var date in nearbyPlayers.Select(nearbyPlayer => GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => SpeakText(date))).Where(date => date != "Loading..."))
+                SpeakText(date);
         }
 
         public static void NarrateCreationDateOnTouch()
         {
             if (!PhotonNetwork.InRoom) return;
 
-            List<VRRig> touchedPlayers = new List<VRRig>();
+            List<VRRig> touchedPlayers = GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()).Where(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f).ToList();
 
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.IsLocal())
-                {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
-                    {
-                        touchedPlayers.Add(rig);
-                    }
-                }
-            }
-
-            if (touchedPlayers.Count > 0)
-            {
-                foreach (VRRig rig in touchedPlayers)
-                {
-                    string date = GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => SpeakText(date));
-                    if (date != "Loading...")
-                        SpeakText(date);
-                }
-            }
+            if (touchedPlayers.Count <= 0) return;
+            foreach (var date in touchedPlayers.Select(rig => GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => SpeakText(date))).Where(date => date != "Loading..."))
+                SpeakText(date);
         }
 
         public static void NarrateCreationDateGun()
@@ -6635,9 +6581,9 @@ Piece Name: {gunTarget.name}";
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > cgdgd)
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > creationDateDelay)
                     {
-                        cgdgd = Time.time + 0.5f;
+                        creationDateDelay = Time.time + 0.5f;
 
                         string date = GetCreationDate(GetPlayerFromVRRig(gunTarget).UserId, date => SpeakText(date));
                         if (date != "Loading...")

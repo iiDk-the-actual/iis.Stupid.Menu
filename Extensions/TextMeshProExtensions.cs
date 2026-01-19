@@ -23,8 +23,6 @@ using iiMenu.Utilities;
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 namespace iiMenu.Extensions
 {

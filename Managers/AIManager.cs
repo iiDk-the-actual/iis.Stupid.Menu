@@ -242,7 +242,6 @@ namespace iiMenu.Managers
 
             if (!Buttons.GetIndex("Chain Voice Commands").enabled)
                 CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
-            yield break;
         }
     }
 }

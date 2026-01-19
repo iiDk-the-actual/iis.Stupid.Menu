@@ -59,7 +59,7 @@ namespace iiMenu.Managers.DiscordRPC
 			{
 				//see issue https://github.com/discordapp/discord-rpc/issues/111
 				int size = Math.Max(1, Size);
-				return new int[] { size, Math.Max(size, Max) };
+				return new[] { size, Math.Max(size, Max) };
 			}
 
 			set

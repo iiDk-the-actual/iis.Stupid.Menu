@@ -114,7 +114,7 @@ namespace iiMenu.Managers
                         StringBuilder sb = new StringBuilder();
 
                         foreach (var sentence in sentences)
-                            sb.Append(sentence[0]?.ToString());
+                            sb.Append(sentence[0]);
 
                         translation = sb.ToString();
 
@@ -131,11 +131,9 @@ namespace iiMenu.Managers
             else
                 translation = File.ReadAllText(filePath);
 
-            if (!string.IsNullOrEmpty(translation))
-            {
-                translateCache[text] = translation;
-                onTranslated?.Invoke(translation);
-            }
+            if (string.IsNullOrEmpty(translation)) yield break;
+            translateCache[text] = translation;
+            onTranslated?.Invoke(translation);
         }
     }
 }

@@ -61,12 +61,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
         private static float lightningDelay;
         public static void LightningStrikeSelf()
         {
-            if (Time.time > lightningDelay)
-            {
-                lightningDelay = Time.time + 0.2f;
-                PhotonNetwork.RaiseEvent(180, new object[] { "SummonThunder", (double)PhotonNetwork.LocalPlayer.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                RPCProtection();
-            }
+            if (!(Time.time > lightningDelay)) return;
+            lightningDelay = Time.time + 0.2f;
+            PhotonNetwork.RaiseEvent(180, new object[] { "SummonThunder", (double)PhotonNetwork.LocalPlayer.ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            RPCProtection();
         }
 
         public static void LightningStrikeGun()
@@ -280,14 +278,10 @@ namespace iiMenu.Mods.CustomMaps.Maps
         {
             if (Time.time < crashDelay)
                 return;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var Player in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isMyPlayer && !vrrig.isOfflineVRRig && (Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5) select GetPlayerFromVRRig(vrrig))
             {
-                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
-                {
-                    NetPlayer Player = GetPlayerFromVRRig(vrrig);
-                    CrashPlayer(Player.ActorNumber);
-                    crashDelay = Time.time + 0.2f;
-                }
+                CrashPlayer(Player.ActorNumber);
+                crashDelay = Time.time + 0.2f;
             }
         }
         public static void CrashAll()

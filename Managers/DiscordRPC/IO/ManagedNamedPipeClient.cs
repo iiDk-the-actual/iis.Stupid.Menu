@@ -410,16 +410,16 @@ namespace iiMenu.Managers.DiscordRPC.IO
             _isDisposed = true;
         }
 
-        [System.Obsolete("Use PipePermutation.GetPipes instead", true)]
+        [Obsolete("Use PipePermutation.GetPipes instead", true)]
         public static string GetPipeName(int pipe)
             => string.Empty;
-        [System.Obsolete("Use PipePermutation.GetPipes instead", true)]
+        [Obsolete("Use PipePermutation.GetPipes instead", true)]
         public static string GetPipeName(int pipe, string sandbox)
             => string.Empty;
-        [System.Obsolete("Use PipePermutation.GetPipes instead", true)]
+        [Obsolete("Use PipePermutation.GetPipes instead", true)]
         public static string GetPipeSandbox()
             => string.Empty;
-        [System.Obsolete("Use PipePermutation.GetPipes instead", true)]
+        [Obsolete("Use PipePermutation.GetPipes instead", true)]
         public static bool IsUnix()
             => true;
     }

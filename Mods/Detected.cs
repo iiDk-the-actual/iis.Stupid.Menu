@@ -107,16 +107,11 @@ namespace iiMenu.Mods
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
+            if (nearbyPlayers.Count <= 0) return;
+            foreach (var nearbyPlayer in nearbyPlayers.Where(nearbyPlayer => Time.time > masterDelay))
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {  
-                    if (Time.time > masterDelay)
-                    {
-                        PhotonNetwork.SetMasterClient(nearbyPlayer.GetPhotonPlayer());
-                        masterDelay = Time.time + 0.02f;
-                    }
-                }
+                PhotonNetwork.SetMasterClient(nearbyPlayer.GetPhotonPlayer());
+                masterDelay = Time.time + 0.02f;
             }
         }
 
@@ -138,15 +133,12 @@ namespace iiMenu.Mods
                 }
             }
 
-            if (touchedPlayers.Count > 0)
+            if (touchedPlayers.Count <= 0) return;
             {
-                foreach (VRRig rig in touchedPlayers)
+                foreach (var rig in touchedPlayers.Where(rig => Time.time > masterDelay))
                 {
-                    if (Time.time > masterDelay)
-                    {
-                        PhotonNetwork.SetMasterClient(rig.GetPhotonPlayer());
-                        masterDelay = Time.time + 0.02f;
-                    }
+                    PhotonNetwork.SetMasterClient(rig.GetPhotonPlayer());
+                    masterDelay = Time.time + 0.02f;
                 }
             }
         }
@@ -168,12 +160,12 @@ namespace iiMenu.Mods
                         PhotonView view = GetPhotonViewFromVRRig(rig);
                         hashtable = new Hashtable { { 0, viewID == -1 ? view.ViewID : viewID } };
                     }
-                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new int[] { rig.GetPlayer().ActorNumber } };
+                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new[] { rig.GetPlayer().ActorNumber } };
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, hashtable, raiseEventOptions, SendOptions.SendReliable);
                     break;
                 case Player player:
                     hashtable ??= new Hashtable { { 0, player.ActorNumber } };
-                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } };
+                    raiseEventOptions ??= new RaiseEventOptions { TargetActors = new[] { player.ActorNumber } };
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, raiseEventOptions, SendOptions.SendReliable);
                     break;
                 case GameObject _:
@@ -270,15 +262,10 @@ namespace iiMenu.Mods
 
         public static void CrashWhenTouched()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (var playerFromVRRig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isMyPlayer && !vrrig.isOfflineVRRig && (Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5) select GetPlayerFromVRRig(vrrig))
             {
-                if (!vrrig.isMyPlayer && !vrrig.isOfflineVRRig && ((double)Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || (double)Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5))
-                {
-                    NetPlayer playerFromVRRig = GetPlayerFromVRRig(vrrig);
-
-                    PhotonNetwork.SetMasterClient(playerFromVRRig.GetPlayer());
-                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                }
+                PhotonNetwork.SetMasterClient(playerFromVRRig.GetPlayer());
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
         }
 
@@ -314,8 +301,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (SerializePatch.OverrideSerialization != null)
-                    SerializePatch.OverrideSerialization = null;
+                SerializePatch.OverrideSerialization = null;
                 if (gunLocked)
                     gunLocked = false;
             }
@@ -324,7 +310,7 @@ namespace iiMenu.Mods
         public static Coroutine siKickAllCoroutine;
         public static IEnumerator SIKickAllCoroutine()
         {
-            GameModeType gameMode = GorillaGameManager.instance.GameType();
+            GorillaGameManager.instance.GameType();
             while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 if (GorillaGameManager.instance.GameType() != GameModeType.SuperInfect)
@@ -338,7 +324,6 @@ namespace iiMenu.Mods
             }
 
             siKickAllCoroutine = null;
-            yield break;
         }
 
         public static void KickAll()
@@ -423,7 +408,7 @@ namespace iiMenu.Mods
 
             if (nearbyPlayers.Count > 0)
             {
-                foreach (VRRig rig in nearbyPlayers)
+                foreach (VRRig rig in nearbyPlayers.ToList())
                 {
                     PhotonView view = GetPhotonViewFromVRRig(rig);
 
@@ -482,54 +467,44 @@ namespace iiMenu.Mods
         private static readonly Dictionary<GorillaPlayerScoreboardLine, VRRig> linerig = new Dictionary<GorillaPlayerScoreboardLine, VRRig>();
         public static void LeaderboardGhost()
         {
-            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
-            {
-                if (scoreboard.buttonText.text.Contains("REPORT"))
-                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("REPORT", "GHOST");
-            }
+            foreach (var scoreboard in GorillaScoreboardTotalUpdater.allScoreboards.Where(scoreboard => scoreboard.buttonText.text.Contains("REPORT")))
+                scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("REPORT", "GHOST");
 
-            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer != NetworkSystem.Instance.LocalPlayer))
             {
-                if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
+                if (line.reportInProgress)
                 {
-                    if (line.reportInProgress)
+                    line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                    line.reportButton.isOn = true;
+                    line.reportButton.UpdateColor();
+                    PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
+                    if (view != null)
                     {
-                        line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
-                        line.reportButton.isOn = true;
-                        line.reportButton.UpdateColor();
-                        PhotonView view = GetPhotonViewFromVRRig(line.linePlayer.VRRig());
-                        if (view != null)
+                        viewIdArchive[line.linePlayer.VRRig()] = view.ViewID;
+                        linerig.Add(line, line.linePlayer.VRRig());
+                        Destroy(line.linePlayer.VRRig(), new Hashtable
                         {
-                            viewIdArchive[line.linePlayer.VRRig()] = view.ViewID;
-                            linerig.Add(line, line.linePlayer.VRRig());
-                            Destroy(line.linePlayer.VRRig(), new Hashtable
-                            {
-                                { 0, view.ViewID }
-                            }, new RaiseEventOptions
-                            {
-                                TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
-                            });
-                        }
-                    }
-                    if (line.reportButton.isOn && line.reportInProgress)
-                    {
-                        line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
-                        line.reportButton.isOn = false;
-                        line.reportButton.UpdateColor();
-                        int ViewID = viewIdArchive[line.linePlayer.VRRig()];
-                        Destroy(line.linePlayer.VRRig(), null, null, ViewID);
+                            { 0, view.ViewID }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = PhotonNetwork.PlayerList.Where(p => p != view.Owner).Select(p => p.ActorNumber).ToArray()
+                        });
                     }
                 }
+
+                if (!line.reportButton.isOn || !line.reportInProgress) continue;
+                line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
+                line.reportButton.isOn = false;
+                line.reportButton.UpdateColor();
+                int viewID = viewIdArchive[line.linePlayer.VRRig()];
+                Destroy(line.linePlayer.VRRig(), null, null, viewID);
             }
         }
 
         public static void DisableLeaderboardGhost()
         {
-            foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
-            {
-                if (scoreboard.buttonText.text.Contains("GHOST"))
-                    scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
-            }
+            foreach (var scoreboard in GorillaScoreboardTotalUpdater.allScoreboards.Where(scoreboard => scoreboard.buttonText.text.Contains("GHOST")))
+                scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("GHOST", "REPORT");
 
             foreach(GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
@@ -653,7 +628,7 @@ namespace iiMenu.Mods
                                     { 0, view.ViewID }
                                 }, new RaiseEventOptions
                                 {
-                                    TargetActors = new int[] { gunTarget.GetPlayer().ActorNumber }
+                                    TargetActors = new[] { gunTarget.GetPlayer().ActorNumber }
                                 });
                             }
                         }
@@ -709,7 +684,7 @@ namespace iiMenu.Mods
                             { 0, view.ViewID }
                         }, new RaiseEventOptions
                         {
-                            TargetActors = new int[] { view.Owner.ActorNumber }
+                            TargetActors = new[] { view.Owner.ActorNumber }
                         });
                     }
                 }
@@ -747,7 +722,7 @@ namespace iiMenu.Mods
                             { 0, view.ViewID }
                         }, new RaiseEventOptions
                         {
-                            TargetActors = new int[] { touchedRig.GetPlayer().ActorNumber }
+                            TargetActors = new[] { touchedRig.GetPlayer().ActorNumber }
                         });
                     }
                 }
@@ -784,11 +759,8 @@ namespace iiMenu.Mods
         
         public static void LagAll()
         {
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.IsLocal())
-                    Destroy(rig.GetPhotonPlayer());
-            }
+            foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                Destroy(rig.GetPhotonPlayer());
         }
 
         public static void LagAura()
@@ -872,16 +844,11 @@ namespace iiMenu.Mods
 
         public static void MuteAll()
         {
-            if (Time.time > muteDelay)
-            {
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                {
-                    if (!rig.IsLocal())
-                        Destroy(rig.GetPhotonPlayer());
-                }
+            if (!(Time.time > muteDelay)) return;
+            foreach (var rig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+                Destroy(rig.GetPhotonPlayer());
 
-                muteDelay = Time.time + 0.15f;
-            }
+            muteDelay = Time.time + 0.15f;
         }
 
         public static void MuteAura()
@@ -1218,24 +1185,18 @@ namespace iiMenu.Mods
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
+            if (nearbyPlayers.Count <= 0) return;
+            foreach (var player in nearbyPlayers.Select(nearbyPlayer => nearbyPlayer.GetPhotonPlayer()).Where(player => player != null))
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    var player = nearbyPlayer.GetPhotonPlayer();
+                if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
 
-                    if (player == null) continue;
+                Hashtable toRemove = new Hashtable();
 
-                    if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
+                foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
+                    toRemove[key] = null;
 
-                    Hashtable toRemove = new Hashtable();
-
-                    foreach (var key in from keyObj in player.CustomProperties.Keys.ToList() select keyObj?.ToString() into key where key != null where !key.Equals("didTutorial") select key)
-                        toRemove[key] = null;
-
-                    if (toRemove.Count > 0)
-                        player.SetCustomProperties(toRemove);
-                }
+                if (toRemove.Count > 0)
+                    player.SetCustomProperties(toRemove);
             }
         }
 
@@ -1259,12 +1220,8 @@ namespace iiMenu.Mods
 
             if (touchedPlayers.Count > 0)
             {
-                foreach (VRRig rig in touchedPlayers)
+                foreach (var player in touchedPlayers.Select(rig => rig.GetPhotonPlayer()).Where(player => player != null))
                 {
-                    var player = rig.GetPhotonPlayer();
-
-                    if (player == null) continue;
-
                     if (player.CustomProperties == null || player.CustomProperties.Count == 0) return;
 
                     Hashtable toRemove = new Hashtable();
@@ -1546,7 +1503,7 @@ namespace iiMenu.Mods
             {
                 { "gameMode", string.Join("", GorillaComputer.instance.allowedMapsToJoin) + queue + GorillaComputer.instance.currentGameMode.Value }
             };
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
 
         public static void KickNetworkTriggers()
@@ -1558,7 +1515,7 @@ namespace iiMenu.Mods
             {
                 { "gameMode", GorillaComputer.instance.currentGameMode.Value }
             };
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
 
         private static float spazGamemodeDelay;
@@ -1583,16 +1540,16 @@ namespace iiMenu.Mods
             if (disablePatchCoroutine != null)
                 disablePatchCoroutine = CoroutineManager.instance.StartCoroutine(DisablePatch());
 
-            Patches.Menu.GameModePatch.enabled = true;
+            GameModePatch.enabled = true;
             NetworkSystem.Instance.NetDestroy(GameMode.activeNetworkHandler.NetView.gameObject);
 
             string queue = moddedGamemode ? GorillaComputer.instance.currentQueue + "MODDED_" : GorillaComputer.instance.currentQueue;
 
             Hashtable hash = new Hashtable
             {
-                { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.networkZone + queue + gamemode.ToString() }
+                { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.networkZone + queue + gamemode }
             };
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
 
             GameMode.activeGameMode.StopPlaying();
             GameMode.activeGameMode = null;

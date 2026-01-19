@@ -57,7 +57,7 @@ namespace iiMenu.Managers.DiscordRPC
             get { return _logger; }
             set
             {
-                this._logger = value;
+                _logger = value;
                 if (connection != null) connection.Logger = value;
             }
         }
@@ -171,7 +171,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// Called when the Discord Client wishes for this process to spectate a game.
         /// <para>If <see cref="AutoEvents"/> is true then this event will execute on a different thread. If it is not true however, then this event is not invoked untill <see cref="Invoke"/> and will be on the calling thread.</para>
         /// </summary>
-        [System.Obsolete("Spectating is no longer supported by Discord.")]
+        [Obsolete("Spectating is no longer supported by Discord.")]
         public event OnSpectateEvent OnSpectate;
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace iiMenu.Managers.DiscordRPC
             {
                 //Clear the presence
                 if (!SkipIdenticalPresence || CurrentPresence != null)
-                    connection.EnqueueCommand(new PresenceCommand() { PID = this.ProcessID, Presence = null });
+                    connection.EnqueueCommand(new PresenceCommand() { PID = ProcessID, Presence = null });
             }
             else
             {
@@ -492,7 +492,7 @@ namespace iiMenu.Managers.DiscordRPC
 
                 //Send the presence, but only if we are not skipping
                 if (!SkipIdenticalPresence || !presence.Matches(CurrentPresence))
-                    connection.EnqueueCommand(new PresenceCommand() { PID = this.ProcessID, Presence = presence.Clone() });
+                    connection.EnqueueCommand(new PresenceCommand() { PID = ProcessID, Presence = presence.Clone() });
             }
 
             //Update our local store

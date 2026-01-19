@@ -33,12 +33,13 @@ namespace iiMenu.Patches.Menu
         {
             if (enabled && __result == null)
             {
-                if (__instance.potentialClimbables.Count == 0)
-                    return;
+                switch (__instance.potentialClimbables.Count)
+                {
+                    case 0:
+                    case 1:
+                        return;
+                }
 
-                if (__instance.potentialClimbables.Count == 1)
-                    return;
-                
                 Vector3 position = __instance.transform.position;
                 Bounds bounds = __instance.col.bounds;
 

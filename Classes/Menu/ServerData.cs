@@ -22,7 +22,6 @@
 using GorillaNetworking;
 using iiMenu.Managers;
 using iiMenu.Menu;
-using iiMenu.Mods;
 using MonoMod.Utils;
 using Photon.Pun;
 using Photon.Realtime;
@@ -127,13 +126,11 @@ namespace iiMenu.Classes.Menu
                     ReloadTime = Time.time + 5f;
             }
 
-            if (Time.time > DataSyncDelay || !PhotonNetwork.InRoom)
-            {
-                if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != PlayerCount)
-                    instance.StartCoroutine(PlayerDataSync(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CloudRegion));
+            if (!(Time.time > DataSyncDelay) && PhotonNetwork.InRoom) return;
+            if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != PlayerCount)
+                instance.StartCoroutine(PlayerDataSync(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CloudRegion));
 
-                PlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
-            }
+            PlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
         }
 
         public static void OnJoinRoom() =>
@@ -296,23 +293,21 @@ namespace iiMenu.Classes.Menu
                 foreach (var detectedMod in detectedMods)
                 {
                     string detectedModName = detectedMod.ToString();
-                    if (!DetectedModsLabelled.Contains(detectedModName))
+                    if (DetectedModsLabelled.Contains(detectedModName)) continue;
+                    ButtonInfo button = Buttons.GetIndex(detectedModName);
+                    if (button != null)
                     {
-                        ButtonInfo Button = Buttons.GetIndex(detectedModName);
-                        if (Button != null)
-                        {
-                            string overlapText = Button.overlapText ?? Button.buttonText;
+                        string overlapText = button.overlapText ?? button.buttonText;
 
-                            Button.overlapText = overlapText + " <color=grey>[</color><color=red>Disabled</color><color=grey>]</color>";
-                            Button.isTogglable = false;
-                            Button.enabled = false;
+                        button.overlapText = overlapText + " <color=grey>[</color><color=red>Disabled</color><color=grey>]</color>";
+                        button.isTogglable = false;
+                        button.enabled = false;
 
-                            Button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
-                            Button.enableMethod = Button.method;
-                            Button.disableMethod = Button.method;
-                        }
-                        DetectedModsLabelled.Add(detectedModName);
+                        button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
+                        button.enableMethod = button.method;
+                        button.disableMethod = button.method;
                     }
+                    DetectedModsLabelled.Add(detectedModName);
                 }
             }
 
@@ -456,33 +451,31 @@ namespace iiMenu.Classes.Menu
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.Success)
+            if (request.result != UnityWebRequest.Result.Success) yield break;
+            try
             {
-                try
+                string responseText = request.downloadHandler.text;
+                Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
+
+                int avotes = Convert.ToInt32(responseJson["a-votes"]);
+                int bvotes = Convert.ToInt32(responseJson["b-votes"]);
+
+                int total = avotes + bvotes;
+
+                string result;
+                if (total > 0)
                 {
-                    string responseText = request.downloadHandler.text;
-                    Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
+                    double aPercent = (double)avotes / total * 100;
+                    double bPercent = (double)bvotes / total * 100;
 
-                    int avotes = Convert.ToInt32(responseJson["a-votes"]);
-                    int bvotes = Convert.ToInt32(responseJson["b-votes"]);
-
-                    int total = avotes + bvotes;
-
-                    string result;
-                    if (total > 0)
-                    {
-                        double aPercent = (double)avotes / total * 100;
-                        double bPercent = (double)bvotes / total * 100;
-
-                        result = $"Total Votes: {total}\n{OptionA}: {aPercent:F2}%\n{OptionB}: {bPercent:F2}%";
-                    }
-                    else
-                        result = "No votes yet.";
-
-                    Main.PromptSingle(result, null, "Ok");
+                    result = $"Total Votes: {total}\n{OptionA}: {aPercent:F2}%\n{OptionB}: {bPercent:F2}%";
                 }
-                catch { }
+                else
+                    result = "No votes yet.";
+
+                Main.PromptSingle(result, null, "Ok");
             }
+            catch { }
         }
         #endregion
     }

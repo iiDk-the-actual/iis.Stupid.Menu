@@ -171,46 +171,44 @@ namespace iiMenu.Managers
 
             if (NetworkSystem.Instance.InRoom)
             {
-                NetPlayer[] AllFriends = GetAllFriendsInRoom();
-                foreach (NetPlayer player in AllFriends)
+                NetPlayer[] allFriends = GetAllFriendsInRoom();
+                foreach (NetPlayer player in allFriends)
                 {
                     VRRig playerRig = GetVRRigFromPlayer(player);
-                    if (playerRig != null)
+                    if (playerRig == null) continue;
+                    if (!starPool.TryGetValue(playerRig, out GameObject playerStar))
                     {
-                        if (!starPool.TryGetValue(playerRig, out GameObject playerStar))
+                        playerStar = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Destroy(playerStar.GetComponent<Collider>());
+
+                        if (starMaterial == null)
                         {
-                            playerStar = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(playerStar.GetComponent<Collider>());
+                            if (starTexture == null)
+                                starTexture = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.star.png");
 
-                            if (starMaterial == null)
+                            starMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                             {
-                                if (starTexture == null)
-                                    starTexture = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.star.png");
+                                mainTexture = starTexture
+                            };
 
-                                starMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
-                                {
-                                    mainTexture = starTexture
-                                };
-
-                                starMaterial.SetFloat("_Surface", 1);
-                                starMaterial.SetFloat("_Blend", 0);
-                                starMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                                starMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                                starMaterial.SetFloat("_ZWrite", 0);
-                                starMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                                starMaterial.renderQueue = (int)RenderQueue.Transparent;
-                            }
-
-                            playerStar.GetComponent<Renderer>().material = starMaterial;
-                            starPool.Add(playerRig, playerStar);
+                            starMaterial.SetFloat("_Surface", 1);
+                            starMaterial.SetFloat("_Blend", 0);
+                            starMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                            starMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                            starMaterial.SetFloat("_ZWrite", 0);
+                            starMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            starMaterial.renderQueue = (int)RenderQueue.Transparent;
                         }
 
-                        playerStar.GetComponent<Renderer>().material.color = playerRig.playerColor;
-
-                        playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
-                        playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(playerRig) * playerRig.scaleFactor);
-                        playerStar.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                        playerStar.GetComponent<Renderer>().material = starMaterial;
+                        starPool.Add(playerRig, playerStar);
                     }
+
+                    playerStar.GetComponent<Renderer>().material.color = playerRig.playerColor;
+
+                    playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
+                    playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (Classes.Menu.Console.GetIndicatorDistance(playerRig) * playerRig.scaleFactor);
+                    playerStar.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
 
                 int[] NetworkedActors = GetAllNetworkActorNumbers();
@@ -368,9 +366,6 @@ namespace iiMenu.Managers
         public static bool IsPlayerFriend(NetPlayer Player) =>
             instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
-        private static readonly Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float>();
-        private static readonly Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)>();
-
         private static readonly Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject>();
         private static readonly Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject>();
 
@@ -396,222 +391,222 @@ namespace iiMenu.Managers
         {
             try
             {
-                NetPlayer Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
-                if (data.Code == FriendByte && (IsPlayerFriend(Sender) || ServerData.Administrators.ContainsKey(Sender.UserId) || ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId)))
+                NetPlayer sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
+                if (data.Code != FriendByte || (!IsPlayerFriend(sender) &&
+                                                !ServerData.Administrators.ContainsKey(sender.UserId) &&
+                                                !ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer
+                                                    .UserId))) return;
+                VRRig senderRig = GetVRRigFromPlayer(sender);
+                object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
+                string command = args.Length > 0 ? (string)args[0] : "";
+
+                switch (command)
                 {
-                    VRRig SenderRig = GetVRRigFromPlayer(Sender);
-                    object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
-                    string command = args.Length > 0 ? (string)args[0] : "";
-
-                    switch (command)
+                    case "rig":
                     {
-                        case "rig":
+                        if (!RigNetworking)
+                            break;
+
+                        object[] headTransform = (object[])args[1];
+                        object[] leftHandTransform = (object[])args[2];
+                        object[] rightHandTransform = (object[])args[3];
+
+                        if (instance.rigDatas.TryGetValue(senderRig, out (float, GameObjectData[], GameObject) rigData))
+                        {
+                            instance.rigUpdateDelays[senderRig] = Time.time - rigData.Item1;
+                            rigData.Item1 = Time.time;
+
+                            rigData.Item2[0].OldTargetPosition = rigData.Item2[0].TargetPosition;
+                            rigData.Item2[0].OldTargetRotation = rigData.Item2[0].TargetRotation;
+                            rigData.Item2[0].TargetPosition = (Vector3)headTransform[0];
+                            rigData.Item2[0].TargetRotation = (Quaternion)headTransform[1];
+
+                            rigData.Item2[1].OldTargetPosition = rigData.Item2[1].TargetPosition;
+                            rigData.Item2[1].OldTargetRotation = rigData.Item2[1].TargetRotation;
+                            rigData.Item2[1].TargetPosition = (Vector3)leftHandTransform[0];
+                            rigData.Item2[1].TargetRotation = (Quaternion)leftHandTransform[1];
+
+                            rigData.Item2[2].OldTargetPosition = rigData.Item2[2].TargetPosition;
+                            rigData.Item2[2].OldTargetRotation = rigData.Item2[2].TargetRotation;
+                            rigData.Item2[2].TargetPosition = (Vector3)rightHandTransform[0];
+                            rigData.Item2[2].TargetRotation = (Quaternion)rightHandTransform[1];
+
+                            instance.rigDatas[senderRig] = rigData;
+
+                            break;
+                        }
+
+                        GameObject head = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Destroy(head.GetComponent<Collider>());
+                        head.transform.localScale = Vector3.one * 0.3f;
+                        head.GetComponent<Renderer>().material.color = senderRig.playerColor;
+
+                        GameObject nametag = new GameObject("iiMenu_Nametag");
+                        nametag.transform.SetParent(head.transform);
+                        nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                        nametag.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+
+                        TextMeshPro nametagText = nametag.AddComponent<TextMeshPro>();
+                        nametagText.fontSize = 24f;
+                        nametagText.font = activeFont;
+                        nametagText.fontStyle = activeFontStyle;
+                        nametagText.alignment = TextAlignmentOptions.Center;
+
+                        nametagText.text = sender.SanitizedNickName;
+                        nametagText.color = senderRig.playerColor;
+                        nametagText.fontStyle = activeFontStyle;
+
+                        GameObject leftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Destroy(leftHand.GetComponent<Collider>());
+                        leftHand.transform.localScale = Vector3.one * 0.1f;
+                        leftHand.GetComponent<Renderer>().material.color = senderRig.playerColor;
+
+                        GameObject rightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Destroy(rightHand.GetComponent<Collider>());
+                        rightHand.transform.localScale = Vector3.one * 0.1f;
+                        rightHand.GetComponent<Renderer>().material.color = senderRig.playerColor;
+
+                        GameObjectData[] gameObjectDatas = {
+                            new GameObjectData()
                             {
-                                if (!RigNetworking)
-                                    break;
+                                AssociatedGameObject = head,
+                                TargetPosition       = (Vector3)headTransform[0],
+                                OldTargetPosition = (Vector3)headTransform[0],
+                                TargetRotation = (Quaternion)headTransform[1],
+                                OldTargetRotation = (Quaternion)headTransform[1]
+                            },
 
-                                object[] headTransform = (object[])args[1];
-                                object[] leftHandTransform = (object[])args[2];
-                                object[] rightHandTransform = (object[])args[3];
-
-                                if (instance.rigDatas.TryGetValue(SenderRig, out (float, GameObjectData[], GameObject) rigData))
-                                {
-                                    instance.rigUpdateDelays[SenderRig] = Time.time - rigData.Item1;
-                                    rigData.Item1 = Time.time;
-
-                                    rigData.Item2[0].OldTargetPosition = rigData.Item2[0].TargetPosition;
-                                    rigData.Item2[0].OldTargetRotation = rigData.Item2[0].TargetRotation;
-                                    rigData.Item2[0].TargetPosition = (Vector3)headTransform[0];
-                                    rigData.Item2[0].TargetRotation = (Quaternion)headTransform[1];
-
-                                    rigData.Item2[1].OldTargetPosition = rigData.Item2[1].TargetPosition;
-                                    rigData.Item2[1].OldTargetRotation = rigData.Item2[1].TargetRotation;
-                                    rigData.Item2[1].TargetPosition = (Vector3)leftHandTransform[0];
-                                    rigData.Item2[1].TargetRotation = (Quaternion)leftHandTransform[1];
-
-                                    rigData.Item2[2].OldTargetPosition = rigData.Item2[2].TargetPosition;
-                                    rigData.Item2[2].OldTargetRotation = rigData.Item2[2].TargetRotation;
-                                    rigData.Item2[2].TargetPosition = (Vector3)rightHandTransform[0];
-                                    rigData.Item2[2].TargetRotation = (Quaternion)rightHandTransform[1];
-
-                                    instance.rigDatas[SenderRig] = rigData;
-
-                                    break;
-                                }
-
-                                GameObject head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(head.GetComponent<Collider>());
-                                head.transform.localScale = Vector3.one * 0.3f;
-                                head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                                GameObject nametag = new GameObject("iiMenu_Nametag");
-                                nametag.transform.SetParent(head.transform);
-                                nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                nametag.transform.localPosition = new Vector3(0f, 0.8f, 0f);
-
-                                TextMeshPro nametagText = nametag.AddComponent<TextMeshPro>();
-                                nametagText.fontSize = 24f;
-                                nametagText.font = activeFont;
-                                nametagText.fontStyle = activeFontStyle;
-                                nametagText.alignment = TextAlignmentOptions.Center;
-
-                                nametagText.text = Sender.SanitizedNickName;
-                                nametagText.color = SenderRig.playerColor;
-                                nametagText.fontStyle = activeFontStyle;
-
-                                GameObject leftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(leftHand.GetComponent<Collider>());
-                                leftHand.transform.localScale = Vector3.one * 0.1f;
-                                leftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                                GameObject rightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(rightHand.GetComponent<Collider>());
-                                rightHand.transform.localScale = Vector3.one * 0.1f;
-                                rightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                                GameObjectData[] gameObjectDatas = new GameObjectData[]
-                                {
-                                    new GameObjectData()
-                                    {
-                                        AssociatedGameObject = head,
-                                        TargetPosition       = (Vector3)headTransform[0],
-                                        OldTargetPosition = (Vector3)headTransform[0],
-                                        TargetRotation = (Quaternion)headTransform[1],
-                                        OldTargetRotation = (Quaternion)headTransform[1]
-                                    },
-
-                                    new GameObjectData()
-                                    {
-                                        AssociatedGameObject = leftHand,
-                                        TargetPosition = (Vector3)leftHandTransform[0],
-                                        OldTargetPosition = (Vector3)leftHandTransform[0],
-                                        TargetRotation = (Quaternion)leftHandTransform[1],
-                                        OldTargetRotation = (Quaternion)leftHandTransform[1]
-                                    },
-
-                                    new GameObjectData()
-                                    {
-                                        AssociatedGameObject = rightHand,
-                                        TargetPosition = (Vector3)rightHandTransform[0],
-                                        OldTargetPosition = (Vector3)rightHandTransform[0],
-                                        TargetRotation = (Quaternion)rightHandTransform[1],
-                                        OldTargetRotation = (Quaternion)rightHandTransform[1]
-                                    }
-                                };
-
-                                instance.rigDatas[SenderRig] = (Time.time, gameObjectDatas, nametag);
-
-                                break;
-                            }
-                        case "ping":
+                            new GameObjectData()
                             {
-                                if (!Pinging)
-                                    break;
+                                AssociatedGameObject = leftHand,
+                                TargetPosition = (Vector3)leftHandTransform[0],
+                                OldTargetPosition = (Vector3)leftHandTransform[0],
+                                TargetRotation = (Quaternion)leftHandTransform[1],
+                                OldTargetRotation = (Quaternion)leftHandTransform[1]
+                            },
 
-                                pingDelay.TryGetValue(SenderRig, out float pingDelayTime);
-                                if (Time.time < pingDelayTime)
-                                    break;
-
-                                Vector3 PingPosition = (Vector3)args[1];
-
-                                GameObject line = new GameObject("Line");
-                                LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
-
-                                lineRenderer.startColor = SenderRig.playerColor;
-                                lineRenderer.endColor = SenderRig.playerColor;
-
-                                lineRenderer.startWidth = 0.25f;
-                                lineRenderer.endWidth = 0.25f;
-
-                                lineRenderer.positionCount = 2;
-                                lineRenderer.useWorldSpace = true;
-
-                                lineRenderer.SetPosition(0, PingPosition);
-                                lineRenderer.SetPosition(1, PingPosition + Vector3.up * 99999f);
-                                lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
-
-                                PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, PingPosition);
-                                instance.StartCoroutine(FadePing(line));
-
-                                pingDelay[SenderRig] = Time.time + 0.1f;
-
-                                break;
-                            }
-                        case "platformSpawn":
+                            new GameObjectData()
                             {
-                                if (!PlatformNetworking)
-                                    break;
-
-                                if (Experimental.platExcluded.Contains(Sender.UserId) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                    break;
-
-                                bool leftHand = (bool)args[1];
-                                Vector3 position = (Vector3)args[2];
-                                Quaternion rotation = (Quaternion)args[3];
-
-                                Vector3 scale = ((Vector3)args[4]).ClampMagnitudeSafe(1f);
-                                PrimitiveType spawnType = (PrimitiveType)(int)args[5];
-
-                                if (!position.IsValid() || !scale.IsValid())
-                                    break;
-
-                                Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
-                                if (targetDictionary.TryGetValue(SenderRig, out GameObject Platform))
-                                {
-                                    Destroy(Platform);
-                                    targetDictionary.Remove(SenderRig);
-                                }
-
-                                Platform = GameObject.CreatePrimitive(spawnType);
-                                Platform.transform.position = position;
-                                Platform.transform.rotation = rotation;
-                                Platform.transform.localScale = scale;
-
-                                Platform.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                                if (!PhysicalPlatforms)
-                                    Destroy(Platform.GetComponent<Collider>());
-
-                                targetDictionary.Add(SenderRig, Platform);
-
-                                break;
+                                AssociatedGameObject = rightHand,
+                                TargetPosition = (Vector3)rightHandTransform[0],
+                                OldTargetPosition = (Vector3)rightHandTransform[0],
+                                TargetRotation = (Quaternion)rightHandTransform[1],
+                                OldTargetRotation = (Quaternion)rightHandTransform[1]
                             }
-                        case "platformDespawn":
-                            {
-                                bool leftHand = (bool)args[1];
+                        };
 
-                                Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
-                                if (targetDictionary.TryGetValue(SenderRig, out GameObject Platform))
-                                {
-                                    Destroy(Platform);
-                                    targetDictionary.Remove(SenderRig);
-                                }
-                                break;
-                            }
-                        case "sendProjectile":
-                            {
-                                RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(Sender.ActorNumber, 0));
-                                break;
-                            }
-                        case "sendSnowball":
-                            {
-                                Vector3 position = (Vector3)args[1];
-                                Vector3 velocity = (Vector3)args[2];
+                        instance.rigDatas[senderRig] = (Time.time, gameObjectDatas, nametag);
 
-                                float r = (float)args[3];
-                                float g = (float)args[4];
-                                float b = (float)args[5];
+                        break;
+                    }
+                    case "ping":
+                    {
+                        if (!Pinging)
+                            break;
 
-                                float scale = (float)args[6];
-                                int index = (int)args[7];
+                        pingDelay.TryGetValue(senderRig, out float pingDelayTime);
+                        if (Time.time < pingDelayTime)
+                            break;
 
-                                GrowingSnowballThrowable snowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
+                        Vector3 PingPosition = (Vector3)args[1];
 
-                                SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
-                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b, 1f));
+                        GameObject line = new GameObject("Line");
+                        LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
 
-                                break;
-                            }
+                        lineRenderer.startColor = senderRig.playerColor;
+                        lineRenderer.endColor = senderRig.playerColor;
+
+                        lineRenderer.startWidth = 0.25f;
+                        lineRenderer.endWidth = 0.25f;
+
+                        lineRenderer.positionCount = 2;
+                        lineRenderer.useWorldSpace = true;
+
+                        lineRenderer.SetPosition(0, PingPosition);
+                        lineRenderer.SetPosition(1, PingPosition + Vector3.up * 99999f);
+                        lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
+
+                        PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, PingPosition);
+                        instance.StartCoroutine(FadePing(line));
+
+                        pingDelay[senderRig] = Time.time + 0.1f;
+
+                        break;
+                    }
+                    case "platformSpawn":
+                    {
+                        if (!PlatformNetworking)
+                            break;
+
+                        if (Experimental.platExcluded.Contains(sender.UserId) && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            break;
+
+                        bool leftHand = (bool)args[1];
+                        Vector3 position = (Vector3)args[2];
+                        Quaternion rotation = (Quaternion)args[3];
+
+                        Vector3 scale = ((Vector3)args[4]).ClampMagnitudeSafe(1f);
+                        PrimitiveType spawnType = (PrimitiveType)(int)args[5];
+
+                        if (!position.IsValid() || !scale.IsValid())
+                            break;
+
+                        Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
+                        if (targetDictionary.TryGetValue(senderRig, out GameObject Platform))
+                        {
+                            Destroy(Platform);
+                            targetDictionary.Remove(senderRig);
+                        }
+
+                        Platform = GameObject.CreatePrimitive(spawnType);
+                        Platform.transform.position = position;
+                        Platform.transform.rotation = rotation;
+                        Platform.transform.localScale = scale;
+
+                        Platform.GetComponent<Renderer>().material.color = senderRig.playerColor;
+
+                        if (!PhysicalPlatforms)
+                            Destroy(Platform.GetComponent<Collider>());
+
+                        targetDictionary.Add(senderRig, Platform);
+
+                        break;
+                    }
+                    case "platformDespawn":
+                    {
+                        bool leftHand = (bool)args[1];
+
+                        Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
+                        if (targetDictionary.TryGetValue(senderRig, out GameObject Platform))
+                        {
+                            Destroy(Platform);
+                            targetDictionary.Remove(senderRig);
+                        }
+                        break;
+                    }
+                    case "sendProjectile":
+                    {
+                        RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(sender.ActorNumber, 0));
+                        break;
+                    }
+                    case "sendSnowball":
+                    {
+                        Vector3 position = (Vector3)args[1];
+                        Vector3 velocity = (Vector3)args[2];
+
+                        float r = (float)args[3];
+                        float g = (float)args[4];
+                        float b = (float)args[5];
+
+                        float scale = (float)args[6];
+                        int index = (int)args[7];
+
+                        GrowingSnowballThrowable snowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
+
+                        SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
+                        projectile.Launch(position, velocity, sender, false, false, index, scale, true, new Color(r, g, b, 1f));
+
+                        break;
                     }
                 }
             }
@@ -791,12 +786,8 @@ namespace iiMenu.Managers
         public static void ShareMacro(string uid, string name)
         {
             Movement.Macro? sendingMacro = null;
-            foreach (KeyValuePair<string, Movement.Macro> macroData in Movement.macros)
-            {
-                Movement.Macro macroItem = macroData.Value;
-                if (String.Equals(macroItem.name.ToLower(), name.ToLower()))
-                    sendingMacro = macroItem;
-            }
+            foreach (var macroItem in Movement.macros.Select(macroData => macroData.Value).Where(macroItem => String.Equals(macroItem.name.ToLower(), name.ToLower())))
+                sendingMacro = macroItem;
 
             if (sendingMacro == null)
             {
@@ -1289,10 +1280,14 @@ namespace iiMenu.Managers
                 string link = ExtractPromptImage(message);
                 string text = link != null ? message.Replace($"<{link}>", "[Media]") : message;
 
-                if (link != null)
-                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, isTogglable = false, method = () => Prompt($"<{link}>", null, () => GUIUtility.systemCopyBuffer = link, "Done", "Copy") });
-                else
-                    buttons.Add(new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, label = true });
+                buttons.Add(link != null
+                    ? new ButtonInfo
+                    {
+                        buttonText = $"FriendMessage{i}", overlapText = text, isTogglable = false,
+                        method = () =>
+                            Prompt($"<{link}>", null, () => GUIUtility.systemCopyBuffer = link, "Done", "Copy")
+                    }
+                    : new ButtonInfo { buttonText = $"FriendMessage{i}", overlapText = text, label = true });
             }
 
             buttons.Add(new ButtonInfo
@@ -1327,15 +1322,11 @@ namespace iiMenu.Managers
 
             public void Update()
             {
-                if (!connected)
-                {
-                    reconnectTime += Time.unscaledDeltaTime;
-                    if (reconnectTime >= 15f)
-                    {
-                        reconnectTime = 0f;
-                        _ = Connect();
-                    }
-                }
+                if (connected) return;
+                reconnectTime += Time.unscaledDeltaTime;
+                if (!(reconnectTime >= 15f)) return;
+                reconnectTime = 0f;
+                _ = Connect();
             }
 
             public async Task Connect()
@@ -1425,125 +1416,123 @@ namespace iiMenu.Managers
                 bool exists = instance.Friends.friends.TryGetValue(from, out FriendData.Friend friend);
                 string friendName = exists ? friend.currentName : from;
 
-                if (from == "Server" || exists)
+                if (from != "Server" && !exists) return;
+                switch (command)
                 {
-                    switch (command)
+                    case "invite":
                     {
-                        case "invite":
-                            {
-                                if (!InviteNotifications)
-                                    break;
+                        if (!InviteNotifications)
+                            break;
 
-                                string to = (string)obj["to"];
-                                if (NetworkSystem.Instance.InRoom && PhotonNetwork.CurrentRoom.Name == to)
-                                    break;
+                        string to = (string)obj["to"];
+                        if (NetworkSystem.Instance.InRoom && PhotonNetwork.CurrentRoom.Name == to)
+                            break;
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
-                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, JoinType.Solo));
-                                break;
-                            }
-                        case "reqinvite":
-                            {
-                                if (!InviteNotifications)
-                                    break;
+                        Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, JoinType.Solo));
+                        break;
+                    }
+                    case "reqinvite":
+                    {
+                        if (!InviteNotifications)
+                            break;
 
-                                if (!NetworkSystem.Instance.InRoom)
-                                    break;
+                        if (!NetworkSystem.Instance.InRoom)
+                            break;
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
 
-                                Prompt($"{friendName} has requested an invite from you, would you like to invite them?", () => InviteFriend(from));
-                                break;
-                            }
-                        case "preferences":
-                            {
-                                if (!PreferenceSharing)
-                                    break;
+                        Prompt($"{friendName} has requested an invite from you, would you like to invite them?", () => InviteFriend(from));
+                        break;
+                    }
+                    case "preferences":
+                    {
+                        if (!PreferenceSharing)
+                            break;
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
 
-                                string preferences = (string)obj["data"];
-                                Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
-                                break;
-                            }
-                        case "theme":
-                            {
-                                if (!ThemeSharing)
-                                    break;
+                        string preferences = (string)obj["data"];
+                        Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
+                        break;
+                    }
+                    case "theme":
+                    {
+                        if (!ThemeSharing)
+                            break;
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their theme with you.", 5000);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their theme with you.", 5000);
 
-                                string theme = (string)obj["data"];
-                                Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => 
-                                {
-                                    ButtonInfo customMenuTheme = Buttons.GetIndex("Custom Menu Theme");
+                        string theme = (string)obj["data"];
+                        Prompt($"{friendName} has shared their theme with you, would you like to use it?", () => 
+                        {
+                            ButtonInfo customMenuTheme = Buttons.GetIndex("Custom Menu Theme");
 
-                                    if (!customMenuTheme.enabled)
-                                        Toggle(customMenuTheme);
+                            if (!customMenuTheme.enabled)
+                                Toggle(customMenuTheme);
 
-                                    Settings.ImportCustomTheme(theme); 
-                                });
-                                break;
-                            }
-                        case "macro":
-                            {
-                                if (!MacroSharing)
-                                    break;
+                            Settings.ImportCustomTheme(theme); 
+                        });
+                        break;
+                    }
+                    case "macro":
+                    {
+                        if (!MacroSharing)
+                            break;
                                 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                Movement.Macro macro = Movement.Macro.LoadJSON((string)obj["data"]);
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their macro " + macro.name + " with you.", 5000);
-                                Prompt($"{friendName} has shared their macro " + macro.name + " with you, would you like to use it?", () => { Movement.macros[Movement.FormatMacroName(macro.name)] = macro; });
-                                break;
-                            }
-                        case "notification":
-                            {
-                                string message = (string)obj["message"];
-                                int time = (int)obj["time"];
+                        Movement.Macro macro = Movement.Macro.LoadJSON((string)obj["data"]);
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their macro " + macro.name + " with you.", 5000);
+                        Prompt($"{friendName} has shared their macro " + macro.name + " with you, would you like to use it?", () => { Movement.macros[Movement.FormatMacroName(macro.name)] = macro; });
+                        break;
+                    }
+                    case "notification":
+                    {
+                        string message = (string)obj["message"];
+                        int time = (int)obj["time"];
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/alert.ogg", "Audio/Friends/alert.ogg"), buttonClickVolume / 10f);
 
-                                NotificationManager.SendNotification(message, time);
-                                break;
-                            }
-                        case "message":
-                            {
-                                if (!Messaging)
-                                    break;
+                        NotificationManager.SendNotification(message, time);
+                        break;
+                    }
+                    case "message":
+                    {
+                        if (!Messaging)
+                            break;
 
-                                if (SoundEffects)
-                                    Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/receive.ogg", "Audio/Friends/receive.ogg"), buttonClickVolume / 10f);
+                        if (SoundEffects)
+                            Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Friends/receive.ogg", "Audio/Friends/receive.ogg"), buttonClickVolume / 10f);
 
-                                string message = (string)obj["message"];
-                                string color = (string)obj["color"];
+                        string message = (string)obj["message"];
+                        string color = (string)obj["color"];
 
-                                NotificationManager.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {Regex.Replace(message, @"<\s*https?://[^\s>]+\s*>", "[Media]")}", 5000);
-                                UpdateFriendMessage(from, $"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}        ");
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {Regex.Replace(message, @"<\s*https?://[^\s>]+\s*>", "[Media]")}", 5000);
+                        UpdateFriendMessage(from, $"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}        ");
 
-                                if (currentCategoryIndex == 41)
-                                {
-                                    ShowChatMessages(from);
-                                    ReloadMenu();
-                                }
+                        if (currentCategoryIndex == 41)
+                        {
+                            ShowChatMessages(from);
+                            ReloadMenu();
+                        }
 
-                                break;
-                            }
+                        break;
                     }
                 }
             }

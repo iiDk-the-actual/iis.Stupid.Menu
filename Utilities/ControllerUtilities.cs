@@ -82,30 +82,24 @@ namespace iiMenu.Utilities
                     ? ControllerInputPoller.instance.leftControllerDevice
                     : ControllerInputPoller.instance.rightControllerDevice;
 
-                if (controller == null)
-                    return ControllerType.Unknown;
+                if (controllerInfo.TryGetValue(left, out var info) && !(Time.time > info.dataCacheTime + 1f))
+                    return info.type;
+                var controllerName = controller.name;
+                var controllerType = ControllerType.Unknown;
 
-                if (!controllerInfo.TryGetValue(left, out var info) || Time.time > info.dataCacheTime + 1f)
+                foreach (var kvp in controllerNames)
                 {
-                    var controllerName = controller.name;
-                    var controllerType = ControllerType.Unknown;
-
-                    foreach (var kvp in controllerNames)
-                    {
-                        if (controllerName.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            controllerType = kvp.Value;
-                            break;
-                        }
-                    }
-
-                    info = new ControllerInfo
-                    {
-                        type = controllerType,
-                        dataCacheTime = Time.time
-                    };
-                    controllerInfo[left] = info;
+                    if (controllerName.IndexOf(kvp.Key, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                    controllerType = kvp.Value;
+                    break;
                 }
+
+                info = new ControllerInfo
+                {
+                    type = controllerType,
+                    dataCacheTime = Time.time
+                };
+                controllerInfo[left] = info;
 
                 return info.type;
             }
@@ -143,11 +137,11 @@ namespace iiMenu.Utilities
         /// <returns>
         /// A tuple containing:
         /// <list type="bullet">
-        /// <item><description><c>position</c> – The final world-space position of the hand.</description></item>
-        /// <item><description><c>rotation</c> – The final world-space rotation of the hand.</description></item>
-        /// <item><description><c>up</c> – The hand’s up direction in world space.</description></item>
-        /// <item><description><c>forward</c> – The hand’s forward direction in world space.</description></item>
-        /// <item><description><c>right</c> – The hand’s right direction in world space.</description></item>
+        /// <item><description><c>position</c> ï¿½ The final world-space position of the hand.</description></item>
+        /// <item><description><c>rotation</c> ï¿½ The final world-space rotation of the hand.</description></item>
+        /// <item><description><c>up</c> ï¿½ The handï¿½s up direction in world space.</description></item>
+        /// <item><description><c>forward</c> ï¿½ The handï¿½s forward direction in world space.</description></item>
+        /// <item><description><c>right</c> ï¿½ The handï¿½s right direction in world space.</description></item>
         /// </list>
         /// </returns>
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) GetTrueHandPosition(bool left)
@@ -164,7 +158,7 @@ namespace iiMenu.Utilities
         /// including position, rotation, and orientation vectors.
         /// </summary>
         /// <returns>
-        /// A tuple containing the left hand’s world-space position, rotation,
+        /// A tuple containing the left handï¿½s world-space position, rotation,
         /// and its up, forward, and right direction vectors.
         /// </returns>
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)
@@ -175,7 +169,7 @@ namespace iiMenu.Utilities
         /// including position, rotation, and orientation vectors.
         /// </summary>
         /// <returns>
-        /// A tuple containing the right hand’s world-space position, rotation,
+        /// A tuple containing the right handï¿½s world-space position, rotation,
         /// and its up, forward, and right direction vectors.
         /// </returns>
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right)

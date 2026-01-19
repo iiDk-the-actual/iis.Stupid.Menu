@@ -36,17 +36,15 @@ namespace iiMenu.Classes.Menu
 		
 		public void OnTriggerEnter(Collider collider)
 		{
-			if ((collider == lKeyCollider || collider == rKeyCollider) && menu != null && Time.time > delay)
-			{
-				if (!iiMenu.Menu.Buttons.GetIndex("Disable Keyboard Delay").enabled)
-					delay = Time.time + 0.1f;
+			if ((collider != lKeyCollider && collider != rKeyCollider) || menu == null || !(Time.time > delay)) return;
+			if (!iiMenu.Menu.Buttons.GetIndex("Disable Keyboard Delay").enabled)
+				delay = Time.time + 0.1f;
 
-                if (doButtonsVibrate)
-					GorillaTagger.Instance.StartVibration(collider == lKeyCollider, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+			if (doButtonsVibrate)
+				GorillaTagger.Instance.StartVibration(collider == lKeyCollider, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 				
-                VRRig.LocalRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
-				PressKeyboardKey(key);
-            }
+			VRRig.LocalRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
+			PressKeyboardKey(key);
 		}
 	}
 }

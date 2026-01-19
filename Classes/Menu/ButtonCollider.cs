@@ -34,25 +34,25 @@ namespace iiMenu.Classes.Menu
 
 		public void OnTriggerEnter(Collider collider)
 		{
-			if (Time.time > buttonCooldown && (collider == buttonCollider || collider == lKeyCollider || collider == rKeyCollider) && !joystickMenu && menu != null)
+			if (!(Time.time > buttonCooldown) ||
+			    (collider != buttonCollider && collider != lKeyCollider && collider != rKeyCollider) || joystickMenu ||
+			    menu == null) return;
+			buttonCooldown = Time.time + 0.2f;
+			PlayButtonSound(relatedText);
+
+			if (annoyingMode)
 			{
-                buttonCooldown = Time.time + 0.2f;
-                PlayButtonSound(relatedText);
+				if (Random.Range(1, 5) == 2)
+				{
+					NotificationManager.SendNotification("Try again loser >:3");
+					return;
+				}
+			}
 
-                if (annoyingMode)
-                {
-                    if (Random.Range(1, 5) == 2)
-                    {
-                        NotificationManager.SendNotification("Try again loser >:3");
-                        return;
-                    }
-                }
-
-                if (incremental)
-					ToggleIncremental(relatedText, positive);
-				else
-					Toggle(relatedText, true);
-            }
+			if (incremental)
+				ToggleIncremental(relatedText, positive);
+			else
+				Toggle(relatedText, true);
 		}
 	}
 }

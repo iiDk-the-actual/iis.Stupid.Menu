@@ -45,7 +45,6 @@ namespace iiMenu.Patches.Menu
 
             KeyValuePair<string, List<string>> keyValuePair = enumerator.Current;
 
-            bool isIp = error.ErrorMessage.Contains("IP");
             bool isIndefinite = keyValuePair.Value[0] == "Indefinite";
 
             DateTime banEnd = DateTime.Parse(keyValuePair.Value[0]);

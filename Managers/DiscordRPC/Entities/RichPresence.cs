@@ -133,7 +133,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns></returns>
         public bool HasTimestamps()
         {
-            return this.Timestamps != null && (Timestamps.Start != null || Timestamps.End != null);
+            return Timestamps != null && (Timestamps.Start != null || Timestamps.End != null);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns></returns>
         public bool HasAssets()
         {
-            return this.Assets != null;
+            return Assets != null;
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns></returns>
         public bool HasParty()
         {
-            return this.Party != null && this.Party.ID != null;
+            return Party != null && Party.ID != null;
         }
 
         /// <summary>
@@ -483,8 +483,8 @@ namespace iiMenu.Managers.DiscordRPC
         public RichPresence WithButtons(Button topButton, Button bottomButton = null)
         {
             Buttons = topButton != null && bottomButton != null
-                ? (new Button[] { topButton, bottomButton })
-                : topButton == null && bottomButton == null ? default : (new Button[] { topButton ?? bottomButton });
+                ? (new[] { topButton, bottomButton })
+                : topButton == null && bottomButton == null ? default : (new[] { topButton ?? bottomButton });
 
             return this;
         }
@@ -501,45 +501,45 @@ namespace iiMenu.Managers.DiscordRPC
         {
             return new RichPresence
             {
-                State = this._state != null ? _state.Clone() as string : null,
-                StateUrl = this._stateUrl != null ? _stateUrl.Clone() as string : null,
-                Details = this._details != null ? _details.Clone() as string : null,
-                DetailsUrl = this._detailsUrl != null ? _detailsUrl.Clone() as string : null,
-                Type = this.Type,
-                StatusDisplay = this.StatusDisplay,
-                Buttons = !HasButtons() ? null : this.Buttons.Clone() as Button[],
+                State = _state != null ? _state.Clone() as string : null,
+                StateUrl = _stateUrl != null ? _stateUrl.Clone() as string : null,
+                Details = _details != null ? _details.Clone() as string : null,
+                DetailsUrl = _detailsUrl != null ? _detailsUrl.Clone() as string : null,
+                Type = Type,
+                StatusDisplay = StatusDisplay,
+                Buttons = !HasButtons() ? null : Buttons.Clone() as Button[],
 
 #pragma warning disable CS0618 // Type or member is obsolete
                 Secrets = !HasSecrets() ? null : new Secrets
                 {
                     //MatchSecret = this.Secrets.MatchSecret?.Clone() as string,
-                    Join = this.Secrets.Join != null ? this.Secrets.Join.Clone() as string : null,
-                    SpectateSecret = this.Secrets.SpectateSecret != null ? this.Secrets.SpectateSecret.Clone() as string : null
+                    Join = Secrets.Join != null ? Secrets.Join.Clone() as string : null,
+                    SpectateSecret = Secrets.SpectateSecret != null ? Secrets.SpectateSecret.Clone() as string : null
                 },
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 Timestamps = !HasTimestamps() ? null : new Timestamps
                 {
-                    Start = this.Timestamps.Start,
-                    End = this.Timestamps.End
+                    Start = Timestamps.Start,
+                    End = Timestamps.End
                 },
 
                 Assets = !HasAssets() ? null : new Assets
                 {
-                    LargeImageKey = this.Assets.LargeImageKey != null ? this.Assets.LargeImageKey.Clone() as string : null,
-                    LargeImageText = this.Assets.LargeImageText != null ? this.Assets.LargeImageText.Clone() as string : null,
-                    LargeImageUrl = this.Assets.LargeImageUrl != null ? this.Assets.LargeImageUrl.Clone() as string : null,
-                    SmallImageKey = this.Assets.SmallImageKey != null ? this.Assets.SmallImageKey.Clone() as string : null,
-                    SmallImageText = this.Assets.SmallImageText != null ? this.Assets.SmallImageText.Clone() as string : null,
-                    SmallImageUrl = this.Assets.SmallImageUrl != null ? this.Assets.SmallImageUrl.Clone() as string : null,
+                    LargeImageKey = Assets.LargeImageKey != null ? Assets.LargeImageKey.Clone() as string : null,
+                    LargeImageText = Assets.LargeImageText != null ? Assets.LargeImageText.Clone() as string : null,
+                    LargeImageUrl = Assets.LargeImageUrl != null ? Assets.LargeImageUrl.Clone() as string : null,
+                    SmallImageKey = Assets.SmallImageKey != null ? Assets.SmallImageKey.Clone() as string : null,
+                    SmallImageText = Assets.SmallImageText != null ? Assets.SmallImageText.Clone() as string : null,
+                    SmallImageUrl = Assets.SmallImageUrl != null ? Assets.SmallImageUrl.Clone() as string : null,
                 },
 
                 Party = !HasParty() ? null : new Party
                 {
-                    ID = this.Party.ID,
-                    Size = this.Party.Size,
-                    Max = this.Party.Max,
-                    Privacy = this.Party.Privacy,
+                    ID = Party.ID,
+                    Size = Party.Size,
+                    Max = Party.Max,
+                    Privacy = Party.Privacy,
                 },
             };
         }
@@ -551,35 +551,35 @@ namespace iiMenu.Managers.DiscordRPC
         /// <returns>self</returns>
         internal RichPresence Merge(BaseRichPresence presence)
         {
-            this._state = presence.State;
-            this._stateUrl = presence.StateUrl;
-            this._details = presence.Details;
-            this._detailsUrl = presence.DetailsUrl;
-            this.Type = presence.Type;
-            this.StatusDisplay = presence.StatusDisplay;
-            this.Party = presence.Party;
-            this.Timestamps = presence.Timestamps;
-            this.Secrets = presence.Secrets;
+            _state = presence.State;
+            _stateUrl = presence.StateUrl;
+            _details = presence.Details;
+            _detailsUrl = presence.DetailsUrl;
+            Type = presence.Type;
+            StatusDisplay = presence.StatusDisplay;
+            Party = presence.Party;
+            Timestamps = presence.Timestamps;
+            Secrets = presence.Secrets;
 
             //If they have assets, we should merge them
             if (presence.HasAssets())
             {
                 //Make sure we actually have assets too
-                if (!this.HasAssets())
+                if (!HasAssets())
                 {
                     //We dont, so we will just use theirs
-                    this.Assets = presence.Assets;
+                    Assets = presence.Assets;
                 }
                 else
                 {
                     //We do, so we better merge them!
-                    this.Assets.Merge(presence.Assets);
+                    Assets.Merge(presence.Assets);
                 }
             }
             else
             {
                 //They dont have assets, so we will just set ours to null
-                this.Assets = null;
+                Assets = null;
             }
 
             return this;

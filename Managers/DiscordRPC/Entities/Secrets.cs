@@ -44,7 +44,7 @@ namespace iiMenu.Managers.DiscordRPC
 
 		/// <summary>Alias of Join</summary>
 		/// <remarks>This was made obsolete as the property name contains redundant information.</remarks>
-		[System.Obsolete("Property name is redundant and replaced with Join.")]
+		[Obsolete("Property name is redundant and replaced with Join.")]
 		[JsonIgnore]
 		public string JoinSecret
 		{
@@ -59,7 +59,7 @@ namespace iiMenu.Managers.DiscordRPC
 		/// </para>
 		/// <para>Max Length of 128 characters</para>
 		/// </summary>
-		[System.Obsolete("Spectating is no longer supported by Discord.")]
+		[Obsolete("Spectating is no longer supported by Discord.")]
 		[JsonIgnore]
 		public string SpectateSecret { get; set; }
 		#region Statics

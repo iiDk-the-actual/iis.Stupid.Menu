@@ -49,11 +49,9 @@ namespace iiMenu.Extensions
         {
             float currentSqrMag = vec.sqrMagnitude;
 
-            if (currentSqrMag > sqrMagnitude && currentSqrMag > 0f)
-            {
-                float scale = MathF.Sqrt(sqrMagnitude / currentSqrMag);
-                vec *= scale;
-            }
+            if (!(currentSqrMag > sqrMagnitude) || !(currentSqrMag > 0f)) return vec;
+            float scale = MathF.Sqrt(sqrMagnitude / currentSqrMag);
+            vec *= scale;
 
             return vec;
         }

@@ -7,7 +7,7 @@ namespace iiMenu.Managers.DiscordRPC.Converters
 		public string Value { get; set; }
 		public EnumValueAttribute(string value)
 		{
-			this.Value = value;
+			Value = value;
 		}
 	}
 }

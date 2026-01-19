@@ -205,7 +205,7 @@ namespace iiMenu.Mods
 
                         int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
-                        SlingshotProjectile slingshotProjectile = null;
+                        SlingshotProjectile slingshotProjectile;
                         if (showSelf)
                         {
                             slingshotProjectile = GrowingSnowball.SpawnGrowingSnowball(ref velocity, scale);
@@ -278,7 +278,7 @@ namespace iiMenu.Mods
                             projectileSendData[7] = color32.b;
                             projectileSendData[8] = color32.a;
 
-                            object[] sendEventData = null;
+                            object[] sendEventData;
                             if (friendSided)
                             {
                                 sendEventData = new object[2];
@@ -422,7 +422,7 @@ namespace iiMenu.Mods
             if (targetProjectileIndex < 0)
                 targetProjectileIndex = 15;
 
-            Buttons.GetIndex("Change Projectile Index").overlapText = "Change Projectile Index <color=grey>[</color><color=green>" + (targetProjectileIndex + 1).ToString() + "</color><color=grey>]</color>";
+            Buttons.GetIndex("Change Projectile Index").overlapText = "Change Projectile Index <color=grey>[</color><color=green>" + (targetProjectileIndex + 1) + "</color><color=grey>]</color>";
         }
 
         public static int shootCycle = 1;

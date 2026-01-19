@@ -119,11 +119,9 @@ namespace iiMenu.Classes.Menu
                 prevPoints[0] = points[0];
             }
 
-            if (pinEnd)
-            {
-                points[pointCount - 1] = endPosition;
-                prevPoints[pointCount - 1] = points[pointCount - 1];
-            }
+            if (!pinEnd) return;
+            points[pointCount - 1] = endPosition;
+            prevPoints[pointCount - 1] = points[pointCount - 1];
         }
 
         void ApplyConstraints()
@@ -136,20 +134,24 @@ namespace iiMenu.Classes.Menu
                 if (currentDist == 0) continue;
 
                 float diff = (currentDist - segmentLength) / currentDist;
-                Vector3 offset = delta * diff * 0.5f * stiffness;
+                Vector3 offset = delta * (diff * 0.5f * stiffness);
 
                 bool startPinned = (i == 0 && pinStart);
                 bool endPinned = (i == pointCount - 2 && pinEnd);
 
-                if (!startPinned && !endPinned)
+                switch (startPinned)
                 {
-                    points[i] += offset;
-                    points[i + 1] -= offset;
+                    case false when !endPinned:
+                        points[i] += offset;
+                        points[i + 1] -= offset;
+                        break;
+                    case true when !endPinned:
+                        points[i + 1] -= offset * 2f;
+                        break;
+                    case false:
+                        points[i] += offset * 2f;
+                        break;
                 }
-                else if (startPinned && !endPinned)
-                    points[i + 1] -= offset * 2f;
-                else if (!startPinned && endPinned)
-                    points[i] += offset * 2f;
             }
         }
 
@@ -158,15 +160,12 @@ namespace iiMenu.Classes.Menu
             Vector3 direction = newPos - oldPos;
             float distance = direction.magnitude;
 
-            if (distance < 0.001f) return newPos;
+            if (distance < 0.001f || !Physics.SphereCast(oldPos, collisionRadius, direction.normalized, out RaycastHit hit, distance,
+                    GTPlayer.Instance.locomotionEnabledLayers)) return newPos;
 
-            if (Physics.SphereCast(oldPos, collisionRadius, direction.normalized, out RaycastHit hit, distance, GTPlayer.Instance.locomotionEnabledLayers))
-            {
-                Vector3 collisionPoint = hit.point + hit.normal * collisionRadius;
-                return collisionPoint;
-            }
+            Vector3 collisionPoint = hit.point + hit.normal * collisionRadius;
+            return collisionPoint;
 
-            return newPos;
         }
 
         void UpdateLineRenderer() =>
@@ -174,49 +173,39 @@ namespace iiMenu.Classes.Menu
 
         public void ApplyForceToPoint(int pointIndex, Vector3 force)
         {
-            if (pointIndex >= 0 && pointIndex < pointCount)
-            {
-                Vector3 acceleration = force / mass;
-                points[pointIndex] += acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime;
-            }
+            if (pointIndex < 0 || pointIndex >= pointCount) return;
+            Vector3 acceleration = force / mass;
+            points[pointIndex] += acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime;
         }
 
         public void ApplyImpulseToPoint(int pointIndex, Vector3 impulse)
         {
-            if (pointIndex >= 0 && pointIndex < pointCount)
-            {
-                Vector3 velocity = impulse / mass;
-                points[pointIndex] += velocity * Time.fixedDeltaTime;
-            }
+            if (pointIndex < 0 || pointIndex >= pointCount) return;
+            Vector3 velocity = impulse / mass;
+            points[pointIndex] += velocity * Time.fixedDeltaTime;
         }
 
         public void SetStartPosition(Vector3 pos)
         {
             startPosition = pos;
-            if (pinStart)
-            {
-                points[0] = pos;
-                prevPoints[0] = pos;
-            }
+            if (!pinStart) return;
+            points[0] = pos;
+            prevPoints[0] = pos;
         }
 
         public void SetEndPosition(Vector3 pos)
         {
             endPosition = pos;
-            if (pinEnd)
-            {
-                points[pointCount - 1] = pos;
-                prevPoints[pointCount - 1] = pos;
-            }
+            if (!pinEnd) return;
+            points[pointCount - 1] = pos;
+            prevPoints[pointCount - 1] = pos;
         }
 
         public void GrabPoint(int pointIndex, Vector3 position)
         {
-            if (pointIndex >= 0 && pointIndex < pointCount)
-            {
-                points[pointIndex] = position;
-                prevPoints[pointIndex] = position;
-            }
+            if (pointIndex < 0 || pointIndex >= pointCount) return;
+            points[pointIndex] = position;
+            prevPoints[pointIndex] = position;
         }
     }
 }

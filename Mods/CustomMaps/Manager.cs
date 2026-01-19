@@ -79,14 +79,11 @@ namespace iiMenu.Mods.CustomMaps
             string input = CustomGameMode.LuaScript;
             string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            foreach (var kvp in replacements)
+            foreach (var (lineIndex, value) in replacements)
             {
-                int lineIndex = kvp.Key;
-                if (lineIndex >= 0 && lineIndex < lines.Length)
-                {
-                    LogManager.Log("Replacing " + lines[lineIndex] + " with " + kvp.Value);
-                    lines[lineIndex] = kvp.Value;
-                }
+                if (lineIndex < 0 || lineIndex >= lines.Length) continue;
+                LogManager.Log("Replacing " + lines[lineIndex] + " with " + value);
+                lines[lineIndex] = value;
             }
 
             CustomGameMode.LuaScript = string.Join(Environment.NewLine, lines);
@@ -145,24 +142,20 @@ namespace iiMenu.Mods.CustomMaps
 
         public static CustomMap GetMapByID(long id)
         {
-            if (!mapCache.TryGetValue(id, out var instance))
+            if (mapCache.TryGetValue(id, out var instance)) return instance;
+            var mapTypes = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
+
+            foreach (var type in mapTypes)
             {
-                var mapTypes = Assembly.GetExecutingAssembly()
-                    .GetTypes()
-                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
-
-                foreach (var type in mapTypes)
-                {
-                    CustomMap mapInstance = (CustomMap)Activator.CreateInstance(type);
-                    if (mapInstance.MapID == id)
-                    {
-                        instance = mapInstance;
-                        break;
-                    }
-                }
-
-                mapCache[id] = instance;
+                CustomMap mapInstance = (CustomMap)Activator.CreateInstance(type);
+                if (mapInstance.MapID != id) continue;
+                instance = mapInstance;
+                break;
             }
+
+            mapCache[id] = instance;
 
             return instance;
         }

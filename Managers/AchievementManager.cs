@@ -38,16 +38,14 @@ namespace iiMenu.Managers
         {
             get
             {
-                if (_achievements == null)
-                {
-                    _achievements = new List<Achievement>();
+                if (_achievements != null) return _achievements;
+                _achievements = new List<Achievement>();
 
-                    string[] files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Achievements");
-                    foreach (string file in files)
-                    {
-                        if (file.EndsWith(".json"))
-                            _achievements.Add(Achievement.FromJObject(JObject.Parse(File.ReadAllText(file))));
-                    }
+                string[] files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Achievements");
+                foreach (string file in files)
+                {
+                    if (file.EndsWith(".json"))
+                        _achievements.Add(Achievement.FromJObject(JObject.Parse(File.ReadAllText(file))));
                 }
 
                 return _achievements;

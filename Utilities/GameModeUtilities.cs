@@ -66,8 +66,6 @@ namespace iiMenu.Utilities
                         infected.Add(NetworkSystem.Instance.LocalPlayer);
 
                     break;
-                default:
-                    break;
             }
 
             return infected;
@@ -103,8 +101,6 @@ namespace iiMenu.Utilities
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
-                    break;
-                default:
                     break;
             }
         }
@@ -150,8 +146,6 @@ namespace iiMenu.Utilities
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
                     break;
-                default:
-                    break;
             }
         }
 
@@ -181,8 +175,6 @@ namespace iiMenu.Utilities
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 0;
 
-                    break;
-                default:
                     break;
             }
         }
@@ -215,8 +207,6 @@ namespace iiMenu.Utilities
                     GorillaPaintbrawlManager paintbrawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
                     paintbrawlManager.playerLives[plr.ActorNumber] = 3;
 
-                    break;
-                default:
                     break;
             }
         }

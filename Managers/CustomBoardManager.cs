@@ -365,18 +365,16 @@ namespace iiMenu.Managers
                 {
                     txt.color = targetColor;
 
-                    if (CustomBoardFonts)
-                    {
-                        archiveGorillaTagFont ??= txt.font;
+                    if (!CustomBoardFonts) continue;
+                    archiveGorillaTagFont ??= txt.font;
 
-                        if (!characterDistanceArchive.ContainsKey(txt))
-                            characterDistanceArchive[txt] = txt.characterSpacing;
+                    if (!characterDistanceArchive.ContainsKey(txt))
+                        characterDistanceArchive[txt] = txt.characterSpacing;
 
-                        txt.characterSpacing = 0f;
+                    txt.characterSpacing = 0f;
 
-                        txt.SafeSetFont(activeFont);
-                        txt.SafeSetFontStyle(activeFontStyle);
-                    }
+                    txt.SafeSetFont(activeFont);
+                    txt.SafeSetFontStyle(activeFontStyle);
                 }
             }
             catch { }
@@ -423,7 +421,6 @@ namespace iiMenu.Managers
             catch (Exception e)
             {
                 LogManager.LogError($"Failed to create object board for scene {scene}: {e}");
-                return;
             }
         }
 

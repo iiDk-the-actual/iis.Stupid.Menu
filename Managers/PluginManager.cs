@@ -53,11 +53,8 @@ namespace iiMenu.Managers
 
             if (Plugins.Count > 0)
             {
-                foreach (Plugin Plugin in Plugins)
-                {
-                    if (Plugin.Enabled)
-                        DisablePlugin(Plugin.Assembly);
-                }
+                foreach (var Plugin in Plugins.Where(Plugin => Plugin.Enabled))
+                    DisablePlugin(Plugin.Assembly);
             }
 
             cacheAssembly.Clear();
@@ -70,7 +67,7 @@ namespace iiMenu.Managers
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Plugins"))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Plugins");
 
-            string[] disabledPlugins = new string[] { };
+            string[] disabledPlugins = { };
             if (!File.Exists($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt"))
                 File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", "");
             else
@@ -85,28 +82,25 @@ namespace iiMenu.Managers
             {
                 try
                 {
-                    if (GetFileExtension(File) == "dll")
+                    if (GetFileExtension(File) != "dll") continue;
+                    string pluginName = File.Replace($"{PluginInfo.BaseDirectory}/Plugins/", "");
+
+                    Assembly assembly = GetAssembly(File);
+                    string[] pluginData = GetPluginInfo(assembly);
+
+                    Plugin plugin = new Plugin()
                     {
-                        string PluginName = File.Replace($"{PluginInfo.BaseDirectory}/Plugins/", "");
+                        FileName = pluginName,
+                        Name = pluginData[0],
+                        Description = pluginData[1],
+                        Assembly = GetAssembly(File),
+                        Enabled = !disabledPlugins.Contains(pluginName)
+                    };
 
-                        Assembly assembly = GetAssembly(File);
-                        string[] pluginData = GetPluginInfo(assembly);
+                    if (plugin.Enabled)
+                        EnablePlugin(plugin.Assembly);
 
-                        Plugin plugin = new Plugin()
-                        {
-                            FileName = PluginName,
-                            Name = pluginData[0],
-                            Description = pluginData[1],
-                            Assembly = GetAssembly(File),
-                            Enabled = !disabledPlugins.Contains(PluginName)
-                        };
-
-                        if (plugin.Enabled)
-                            EnablePlugin(plugin.Assembly);
-
-                        Plugins.Add(plugin);
-                        
-                    }
+                    Plugins.Add(plugin);
                 }
                 catch (Exception e) { LogManager.Log("Error with loading plugin " + File + ": " + e); }
             }
@@ -151,9 +145,7 @@ namespace iiMenu.Managers
 
             plugin.Enabled = !plugin.Enabled;
 
-            string disabledPluginsString = "";
-            foreach (string disabledPlugin in Plugins.Where(plugin => !plugin.Enabled).Select(plugin => plugin.FileName))
-                disabledPluginsString += disabledPlugin + "\n";
+            string disabledPluginsString = Plugins.Where(plugin => !plugin.Enabled).Select(plugin => plugin.FileName).Aggregate("", (current, disabledPlugin) => current + (disabledPlugin + "\n"));
 
             File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", disabledPluginsString);
 
@@ -295,24 +287,22 @@ namespace iiMenu.Managers
 
         public static void LoadPluginLibrary()
         {
-            currentCategoryName = "Sound Library";
-
             string library = GetHttp($"{PluginInfo.ServerResourcePath}/Plugins/PluginLibrary.txt");
             string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
 
-            List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
+            List<ButtonInfo> buttonInfos = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
             int index = 0;
 
             foreach (string plugin in plugins)
             {
-                if (plugin.Length > 2)
-                {
-                    index++;
-                    string[] Data = plugin.Split(";");
-                    pluginbuttons.Add(new ButtonInfo { buttonText = "PluginDownload" + index, overlapText = Data[0], method = () => DownloadPlugin(Data[0], Data[2]), isTogglable = false, toolTip = Data[1] });
-                }
+                if (plugin.Length <= 2) continue;
+                index++;
+                string[] Data = plugin.Split(";");
+                buttonInfos.Add(new ButtonInfo { buttonText = "PluginDownload" + index, overlapText = Data[0], method = () => DownloadPlugin(Data[0], Data[2]), isTogglable = false, toolTip = Data[1] });
             }
-            Buttons.buttons[Buttons.GetCategory("Sound Library")] = pluginbuttons.ToArray();
+            
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttonInfos.ToArray();
+            currentCategoryName = "Temporary Category";
         }
         #endregion
     }
