@@ -345,7 +345,6 @@ namespace iiMenu.Mods
         }
         public static void HideDebug()
         {
-            currentCategoryName = "Main";
             int category = Buttons.GetCategory("Temporary Category");
 
             Buttons.RemoveButton(category, "DebugMenuName");
@@ -356,12 +355,11 @@ namespace iiMenu.Mods
             Buttons.RemoveButton(category, "DebugFps");
             Buttons.RemoveButton(category, "DebugRoomA");
             Buttons.RemoveButton(category, "DebugRoomB");
+            currentCategoryName = "Main";
         }
 
         public static void PlayersTab()
         {
-            currentCategoryName = "Players";
-
             List<ButtonInfo> buttons = new List<ButtonInfo> { 
                 new ButtonInfo { 
                     buttonText = "Exit Players", 
@@ -397,6 +395,7 @@ namespace iiMenu.Mods
             }
 
             Buttons.buttons[37] = buttons.ToArray();
+            currentCategoryName = "Players";
         }
 
         public static void NavigatePlayer(NetPlayer player)
