@@ -4572,7 +4572,7 @@ namespace iiMenu.Mods
             {
                 snowballDelay = Time.time + SnowballSpawnDelay;
 
-                Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetTargetPlayer(0.5f)));
+                Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetTargetPlayer(SnowballSpawnDelay)));
                 BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, plr);
             }
         }
@@ -4737,15 +4737,6 @@ namespace iiMenu.Mods
             {
                 if (gunLocked)
                     gunLocked = false;
-            }
-        }
-
-        public static void SnowballStrongFlingAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > snowballDelay)
-            {
-                snowballDelay = Time.time + SnowballSpawnDelay;
-                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 1);
             }
         }
 
