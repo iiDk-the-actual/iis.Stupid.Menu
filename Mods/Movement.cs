@@ -5179,6 +5179,34 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool tinnitusSelf;
+
+        public static AudioClip CreateTinnitusSound()
+        {
+            int sampleRate = 48000;
+            float duration = 600f;
+            int samples = (int)(sampleRate * duration);
+
+            AudioClip clip = AudioClip.Create(
+                "Tinnitus",
+                samples,
+                1,
+                sampleRate,
+                false
+            );
+
+            float[] data = new float[samples];
+            for (int i = 0; i < samples; i++)
+            {
+                data[i] = (i & 1) == 0 ? 1f : -1f; // literally the maximum you can make this
+            }
+
+            clip.SetData(data, 0);
+
+            return clip;
+        }
+
+        public static AudioClip tinnitus;
         public static void TinnitusGun()
         {
             if (GetGunInput(false))
@@ -5194,8 +5222,11 @@ namespace iiMenu.Mods
                         gunLocked = true;
                         lockTarget = gunTarget;
 
-                        Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
-                        GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+                        if (tinnitus == null)
+                            tinnitus = CreateTinnitusSound();
+                        Sound.PlayAudio(tinnitus);
+                        
+                        GorillaTagger.Instance.myRecorder.DebugEchoMode = tinnitusSelf;
 
                         SerializePatch.OverrideSerialization = () =>
                         {
@@ -5230,8 +5261,10 @@ namespace iiMenu.Mods
 
         public static void TinnitusAll()
         {
-            Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
-            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+            if (tinnitus == null)
+                tinnitus = CreateTinnitusSound();
+            Sound.PlayAudio(tinnitus);
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = tinnitusSelf;
 
             SerializePatch.OverrideSerialization = () => {
                 MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
