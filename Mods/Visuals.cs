@@ -49,6 +49,7 @@ using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static Unity.Burst.Intrinsics.X86.Avx;
 using Object = UnityEngine.Object;
 
 namespace iiMenu.Mods
@@ -2738,6 +2739,9 @@ namespace iiMenu.Mods
                                 TextMeshPro.color = crashedColor;
                                 TextMeshPro.SafeSetText("Lagging");
 
+                                TextMeshPro.SafeSetFontStyle(activeFontStyle);
+                                TextMeshPro.SafeSetFont(activeFont);
+
                                 crashedNameTags.Add(vrrig, go);
                             }
                         }
@@ -2754,11 +2758,6 @@ namespace iiMenu.Mods
 
                             TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
                             tmp.color = crashedColor;
-                            if (NameTagOptimize())
-                            {
-                                tmp.SafeSetFontStyle(activeFontStyle);
-                                tmp.SafeSetFont(activeFont);
-                            }
                             if (nameTagChams)
                                 tmp.Chams();
                             nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
