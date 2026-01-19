@@ -5337,6 +5337,7 @@ namespace iiMenu.Mods
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = PhotonNetwork.PlayerList.Where(plr => plr.ActorNumber != target.ActorNumber).Select(plr => plr.ActorNumber).ToArray() });
 
                             return false;
                         };
