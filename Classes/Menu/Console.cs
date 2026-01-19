@@ -155,8 +155,77 @@ namespace iiMenu.Classes.Menu
             if (eventName == LoadVersionEventKey)
             {
                 if (ServerData.VersionToNumber(ConsoleVersion) <= id)
+                {
                     PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
+                    PlayerGameEvents.OnMiscEvent += ConsoleAssetCommunication;
+                }
             }
+        }
+
+        public const string SyncAssetsEventKey = "%<CONSOLE>%SyncAssets";
+        public static void ConsoleAssetCommunication(string eventName, int id)
+        {
+            if (eventName.StartsWith(SyncAssetsEventKey))
+            {
+                string[] data = eventName.Split("||");
+                string command = data[0];
+                switch (command)
+                {
+                    case "spawn":
+                        string assetName = data[1];
+                        string assetBundle = data[2];
+                        string linkObjectName = data[3];
+
+                        instance.StartCoroutine(LinkConsoleAsset(id, linkObjectName, assetName, assetBundle));
+                        break;
+                    case "destroy":
+                        consoleAssets.Remove(id);
+                        break;
+                    case "confirmusing":
+                        ConfirmUsing(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(id).UserId, data[1], data[2]);
+                        break;
+                }
+            }
+        }
+
+        public static void CommunicateConsole(string command, int id, params object[] args)
+        {
+            string eventName = $"{SyncAssetsEventKey}||{command}";
+            if (args.Length > 0)
+                eventName += $"||{string.Join("||", args)}";
+
+            PlayerGameEvents.MiscEvent(eventName, id);
+        }
+
+        public static IEnumerator LinkConsoleAsset(int id, string linkObjectName, string assetName, string assetBundle)
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                Log("Attempt to retrieve asset while not in room");
+                yield break;
+            }
+
+            if (GameObject.Find(linkObjectName) == null)
+            {
+                float timeoutTime = Time.time + 10f;
+                while (Time.time < timeoutTime && GameObject.Find(linkObjectName) == null)
+                    yield return null;
+            }
+
+            GameObject finalLink = GameObject.Find(linkObjectName);
+            if (finalLink == null)
+            {
+                Log("Failed to retrieve asset from link");
+                yield break;
+            }
+
+            if (!PhotonNetwork.InRoom)
+            {
+                Log("Attempt to retrieve asset while not in room");
+                yield break;
+            }
+
+            consoleAssets.Add(id, new ConsoleAsset(id, finalLink.transform.parent.gameObject, assetName, assetBundle));
         }
 
         public static GameObject LoadConsoleImmediately()
@@ -1157,13 +1226,18 @@ namespace iiMenu.Classes.Menu
                         string AssetName = (string)args[2];
                         int SpawnAssetId = (int)args[3];
 
+                        string uniqueKey = Guid.NewGuid().ToString();
+                        CommunicateConsole("spawn", SpawnAssetId, AssetName, AssetBundle, uniqueKey);
+
                         instance.StartCoroutine(
-                            SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
+                            SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId, uniqueKey)
                         );
                         break;
 
                     case "asset-destroy":
                         int DestroyAssetId = (int)args[1];
+
+                        CommunicateConsole("destroy", DestroyAssetId);
 
                         instance.StartCoroutine(
                             ModifyConsoleAsset(DestroyAssetId,
@@ -1546,6 +1620,8 @@ namespace iiMenu.Classes.Menu
 
                             confirmUsingDelay.Add(vrrig, Time.time + 5f);
                             userDictionary[vrrig.OwningNetPlayer.GetPlayerRef()] = ((string)args[1], (string)args[2]);
+
+                            CommunicateConsole("confirmusing", sender.ActorNumber, (string)args[1], (string)args[2]);
                             ConfirmUsing(sender.UserId, (string)args[1], (string)args[2]);
                         }
                     }
@@ -1653,7 +1729,7 @@ namespace iiMenu.Classes.Menu
             return assetLoadRequest.asset as GameObject;
         }
 
-        public static IEnumerator SpawnConsoleAsset(string assetBundle, string assetName, int id)
+        public static IEnumerator SpawnConsoleAsset(string assetBundle, string assetName, int id, string uniqueKey)
         {
             if (consoleAssets.TryGetValue(id, out var asset))
                 asset.DestroyObject();
@@ -1670,6 +1746,8 @@ namespace iiMenu.Classes.Menu
             }
 
             GameObject targetObject = Instantiate(loadTask.Result);
+            new GameObject(uniqueKey).transform.SetParent(targetObject.transform, false);
+
             consoleAssets.Add(id, new ConsoleAsset(id, targetObject, assetName, assetBundle));
         }
 
