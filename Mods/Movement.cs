@@ -5184,25 +5184,18 @@ namespace iiMenu.Mods
         public static AudioClip CreateTinnitusSound()
         {
             int sampleRate = 48000;
-            float duration = 600f;
-            int samples = (int)(sampleRate * duration);
-
-            AudioClip clip = AudioClip.Create(
-                "Tinnitus",
-                samples,
-                1,
-                sampleRate,
-                false
-            );
+            int samples = (int)(sampleRate * 180f);
+            AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
 
             float[] data = new float[samples];
+            int samplesPerWave = (int)(sampleRate / 6000);
+
             for (int i = 0; i < samples; i++)
             {
-                data[i] = (i & 1) == 0 ? 1f : -1f; // literally the maximum you can make this
+                data[i] = (i % samplesPerWave) < (samplesPerWave / 2) ? 1f : -1f;
             }
 
             clip.SetData(data, 0);
-
             return clip;
         }
 
