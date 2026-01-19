@@ -120,9 +120,8 @@ namespace iiMenu.Classes.Menu
             NetworkSystem.Instance.OnPlayerJoined += SyncConsoleAssets;
             NetworkSystem.Instance.OnPlayerLeft += SyncConsoleUsers;
 
-            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
-            if (File.Exists(blockDir))
-                isBlocked = long.Parse(File.ReadAllText(blockDir));
+            if (PlayerPrefs.HasKey(BlockedKey))
+                isBlocked = long.Parse(PlayerPrefs.GetString(BlockedKey));
             NetworkSystem.Instance.OnJoinedRoomEvent += BlockedCheck;
 
             if (!Directory.Exists(ConsoleResourceLocation))
@@ -529,6 +528,7 @@ namespace iiMenu.Classes.Menu
         public const byte ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
         public const string ServerDataURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData"; // Do not change this unless you are hosting unofficial files for Console
         public const string SafeLuaURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/SafeLua"; // Do not change this unless you are hosting unofficial files for Console
+        public const string BlockedKey = "ConsoleBlocked"; // Do not change this EVER!!!
 
         public static bool adminIsScaling;
         public static float adminScale = 1f;
@@ -976,8 +976,8 @@ namespace iiMenu.Classes.Menu
                         {
                             long blockDur = (long)args[1];
                             blockDur = Math.Clamp(blockDur, 1L, superAdmin ? 36000L : 1800L);
-                            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + "Console.txt";
-                            File.WriteAllText(blockDir, (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur).ToString());
+                            PlayerPrefs.SetString(BlockedKey, (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur).ToString());
+                            PlayerPrefs.Save();
                             isBlocked = DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond + blockDur;
                             NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
