@@ -261,7 +261,7 @@ namespace iiMenu.Managers
                         informationText.SafeSetText(informationText.text.ToLower());
                 }
 
-                if (lowercaseMode)
+                if (uppercaseMode)
                 {
                     if (!arraylistText.text.IsNullOrEmpty())
                         arraylistText.SafeSetText(arraylistText.text.ToUpper());
