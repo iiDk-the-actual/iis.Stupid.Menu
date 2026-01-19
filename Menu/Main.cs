@@ -1932,6 +1932,7 @@ namespace iiMenu.Menu
             if (inputTextColor != "green")
                 targetButtonText = targetButtonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
+            targetButtonText = FixTMProTags(targetButtonText);
             targetButtonText = FollowMenuSettings(targetButtonText);
 
             buttonText.spriteAsset = ButtonSpriteSheet;
@@ -5449,6 +5450,14 @@ namespace iiMenu.Menu
         {
             Regex notags = new Regex("<.*?>", RegexOptions.IgnoreCase);
             return notags.Replace(input, replace);
+        }
+
+        public static string FixTMProTags(string input)
+        {
+            input = input.Replace("<color=green>", "<color=#008000>");
+            input = input.Replace("<color=purple>", "<color=#800080>");
+
+            return input;
         }
 
         public static string NoColorTags(string input, string replace = "")

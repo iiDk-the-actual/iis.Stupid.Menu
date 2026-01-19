@@ -219,6 +219,7 @@ namespace iiMenu.Managers
                                     if (inputTextColor != "green")
                                         buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
+                                    buttonText = FixTMProTags(buttonText);
                                     buttonText = FollowMenuSettings(buttonText);
                                     enabledMods.Add(buttonText);
                                 }
@@ -315,6 +316,8 @@ namespace iiMenu.Managers
 
                 if (inputTextColor != "green")
                     notificationText = notificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
+
+                notificationText = FixTMProTags(notificationText);
 
                 if (hideBrackets)
                     notificationText = notificationText.Replace("[", "").Replace("]", "");

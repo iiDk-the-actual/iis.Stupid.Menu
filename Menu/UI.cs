@@ -248,6 +248,8 @@ namespace iiMenu.Menu
                             if (inputTextColor != "green")
                                 buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
+                            buttonText = FixTMProTags(buttonText);
+
                             buttonText = FollowMenuSettings(buttonText);
                             enabledMods.Add(buttonText);
                         }

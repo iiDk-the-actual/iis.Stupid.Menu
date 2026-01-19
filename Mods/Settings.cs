@@ -5159,6 +5159,7 @@ exit 0";
                     if (inputTextColor != "green")
                         buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
+                    buttonText = FixTMProTags(buttonText);
                     buttonText = FollowMenuSettings(buttonText);
 
                     transform.Find("Title").GetComponent<TextMeshProUGUI>().SafeSetText(buttonText);
@@ -5169,6 +5170,7 @@ exit 0";
                     if (inputTextColor != "green")
                         toolTipText = toolTipText.Replace("<color=green>", $"<color={inputTextColor}>");
 
+                    toolTipText = FixTMProTags(buttonText);
                     toolTipText = FollowMenuSettings(toolTipText);
 
                     transform.Find("ToolTip").GetComponent<TextMeshProUGUI>().SafeSetText(toolTipText);
