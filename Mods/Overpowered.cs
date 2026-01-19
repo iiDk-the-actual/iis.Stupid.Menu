@@ -4060,10 +4060,10 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > snowballDelay)
                     {
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < 10; i++)
                             BetaSpawnSnowball(BombObject.transform.position, RandomVector3(500f), 0);
 
-                        snowballDelay = Time.time + (SnowballSpawnDelay * 5f);
+                        snowballDelay = Time.time + (SnowballSpawnDelay * 10f);
                     }
 
                     Object.Destroy(BombObject);
@@ -4071,6 +4071,35 @@ namespace iiMenu.Mods
                 }
                 else
                     BombObject.GetComponent<Renderer>().material.color = buttonColors[0].GetColor(0);
+            }
+        }
+
+        private static float rpgDelay;
+        private static bool rpgShot;
+
+        public static void SnowballRPG()
+        {
+            if (Time.time > rpgDelay && Time.time > snowballDelay)
+            {
+                rpgDelay = Time.time + 1f;
+                rpgShot = true;
+
+                snowballDelay = Time.time + SnowballSpawnDelay;
+            }
+        }
+
+        public static void OnSnowballHit(SlingshotProjectile slingshotProjectile, Collision _)
+        {
+            if (rpgShot && slingshotProjectile.projectileOwner == NetworkSystem.Instance.LocalPlayer)
+            {
+                rpgShot = false;
+                if (Time.time > snowballDelay)
+                {
+                    for (int i = 0; i < 10; i++)
+                        BetaSpawnSnowball(slingshotProjectile.transform.position + (Vector3.up * 0.3f), RandomVector3(500f), 0);
+
+                    snowballDelay = Time.time + (SnowballSpawnDelay * 10f);
+                }
             }
         }
 
