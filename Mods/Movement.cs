@@ -5203,7 +5203,7 @@ namespace iiMenu.Mods
                             MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            VRRig.LocalRig.transform.position = lockTarget.transform.position + Vector3.up;
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position - (lockTarget.headMesh.transform.forward * 0.2f);
                             SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
 
                             VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
@@ -5242,7 +5242,7 @@ namespace iiMenu.Mods
                 {
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
-                    VRRig.LocalRig.transform.position = targetRig.transform.position + Vector3.up;
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - (lockTarget.headMesh.transform.forward * 0.2f);
                     SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { Player.ActorNumber } });
                 }
 
