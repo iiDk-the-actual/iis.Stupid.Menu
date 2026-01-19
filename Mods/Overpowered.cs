@@ -4531,7 +4531,7 @@ namespace iiMenu.Mods
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f)
-                FlingPlayer(GetTargetPlayer(0.5f));
+                FlingPlayer(GetTargetPlayer(SnowballSpawnDelay));
         }
 
         public static void SnowballFlingVerticalGun()
