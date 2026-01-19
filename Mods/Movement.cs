@@ -5188,7 +5188,6 @@ namespace iiMenu.Mods
         }
 
         public static bool tinnitusSelf;
-
         public static AudioClip CreateTinnitusSound()
         {
             int sampleRate = 48000;
@@ -5205,6 +5204,24 @@ namespace iiMenu.Mods
 
             clip.SetData(data, 0);
             return clip;
+        }
+
+        public static int targetHz = 6000;
+        public static void ChangeTinnitusHz(bool positive = true)
+        {
+            if (positive)
+                targetHz += 500;
+            else
+                targetHz -= 500;
+
+            if (targetHz > 7500)
+                targetHz = 4000;
+            if (targetHz < 4000)
+                targetHz = 7500;
+
+            tinnitus = null;
+
+            Buttons.GetIndex("Change Tinnitus Hertz").overlapText = "Change Tinnitus Hertz <color=grey>[</color><color=green>" + targetHz + "</color><color=grey>]</color>";
         }
 
         public static AudioClip tinnitus;

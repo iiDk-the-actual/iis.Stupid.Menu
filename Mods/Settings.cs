@@ -5442,142 +5442,145 @@ exit 0";
                     }
                 }
 
-                if (XRSettings.isDeviceActive)
+                if (clickGuiLine == null)
                 {
-                    if (clickGuiLine == null)
+                    clickGuiLine = new GameObject("iiMenu_ClickGUILine")
+                        .GetOrAddComponent<LineRenderer>();
+
+                    clickGuiLine.material = new Material(Shader.Find("GUI/Text Shader"));
+                    clickGuiLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                    clickGuiLine.endWidth = clickGuiLine.startWidth;
+                    clickGuiLine.useWorldSpace = true;
+                    clickGuiLine.positionCount = 2;
+
+                    if (smoothLines)
                     {
-                        clickGuiLine = new GameObject("iiMenu_ClickGUILine")
-                            .GetOrAddComponent<LineRenderer>();
+                        clickGuiLine.numCapVertices = 10;
+                        clickGuiLine.numCornerVertices = 5;
+                    }
+                }
 
-                        clickGuiLine.material = new Material(Shader.Find("GUI/Text Shader"));
-                        clickGuiLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                        clickGuiLine.endWidth = clickGuiLine.startWidth;
-                        clickGuiLine.useWorldSpace = true;
-                        clickGuiLine.positionCount = 2;
+                clickGuiLine.startColor = backgroundColor.GetCurrentColor();
+                clickGuiLine.endColor = backgroundColor.GetCurrentColor(0.5f);
 
-                        if (smoothLines)
+                var uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
+                eventSystem ??= EventSystem.current;
+
+                pointerData ??= new PointerEventData(eventSystem);
+
+                bool useLeft = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
+
+                var (_, _, _, forward, _) = useLeft
+                    ? ControllerUtilities.GetTrueLeftHand()
+                    : ControllerUtilities.GetTrueRightHand();
+
+                if (!XRSettings.isDeviceActive)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    forward = ray.direction;
+                }
+
+                Vector3 startPos = useLeft
+                    ? GorillaTagger.Instance.leftHandTransform.position
+                    : GorillaTagger.Instance.rightHandTransform.position;
+
+                Vector3 direction = forward.normalized;
+
+                Vector3 screenPoint = Camera.main.WorldToScreenPoint(startPos + direction * 5f);
+                pointerData.position = screenPoint;
+
+                uiResults.Clear();
+                uiRaycaster.Raycast(pointerData, uiResults);
+
+                currentUI = uiResults.Count > 0 ? uiResults[0].gameObject : null;
+
+                Vector3 endPos = currentUI != null
+                    ? uiResults[0].worldPosition
+                    : startPos + direction * 5f;
+
+                clickGuiLine.SetPosition(0, startPos);
+                clickGuiLine.SetPosition(1, endPos);
+
+                bool trigger = useLeft ? leftTrigger > 0.5f : rightTrigger > 0.5f;
+                Vector2 currentPos = pointerData.position;
+                pointerData.delta = currentPos - lastPointerPos;
+                lastPointerPos = currentPos;
+
+                if (trigger && !lastTriggerClick && currentUI != null)
+                {
+                    GameObject targetUI = null;
+                    foreach (var result in uiResults)
+                    {
+                        var button = result.gameObject.GetComponent<Button>();
+                        var toggle = result.gameObject.GetComponent<Toggle>();
+                        var slider = result.gameObject.GetComponent<Slider>();
+                        var inputField = result.gameObject.GetComponent<TMP_InputField>();
+
+                        if (button != null || toggle != null || slider != null || inputField != null)
                         {
-                            clickGuiLine.numCapVertices = 10;
-                            clickGuiLine.numCornerVertices = 5;
+                            targetUI = result.gameObject;
+                            break;
                         }
                     }
 
-                    clickGuiLine.startColor = backgroundColor.GetCurrentColor();
-                    clickGuiLine.endColor = backgroundColor.GetCurrentColor(0.5f);
+                    pressedUI = targetUI ?? currentUI;
+                    pointerData.pressPosition = currentPos;
+                    pointerData.pointerPressRaycast = uiResults[0];
 
-                    var uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
-                    eventSystem ??= EventSystem.current;
+                    ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerDownHandler);
+                    pointerData.pointerPress = pressedUI;
 
-                    pointerData ??= new PointerEventData(eventSystem);
+                    isDragging = false;
+                    draggedUI = ExecuteEvents.GetEventHandler<IDragHandler>(currentUI);
+                    pointerData.pointerDrag = draggedUI ?? null;
+                }
 
-                    bool useLeft = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
-
-                    var (_, _, _, forward, _) = useLeft
-                        ? ControllerUtilities.GetTrueLeftHand()
-                        : ControllerUtilities.GetTrueRightHand();
-
-                    Vector3 startPos = useLeft
-                        ? GorillaTagger.Instance.leftHandTransform.position
-                        : GorillaTagger.Instance.rightHandTransform.position;
-
-                    Vector3 direction = forward.normalized;
-
-                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(startPos + direction * 5f);
-                    pointerData.position = screenPoint;
-
-                    uiResults.Clear();
-                    uiRaycaster.Raycast(pointerData, uiResults);
-
-                    currentUI = uiResults.Count > 0 ? uiResults[0].gameObject : null;
-
-                    Vector3 endPos = currentUI != null
-                        ? uiResults[0].worldPosition
-                        : startPos + direction * 5f;
-
-                    clickGuiLine.SetPosition(0, startPos);
-                    clickGuiLine.SetPosition(1, endPos);
-
-                    bool trigger = useLeft ? leftTrigger > 0.5f : rightTrigger > 0.5f;
-                    Vector2 currentPos = pointerData.position;
-                    pointerData.delta = currentPos - lastPointerPos;
-                    lastPointerPos = currentPos;
-
-                    if (trigger && !lastTriggerClick && currentUI != null)
+                switch (trigger)
+                {
+                    case true when draggedUI != null:
                     {
-                        GameObject targetUI = null;
-                        foreach (var result in uiResults)
+                        if (!isDragging)
                         {
-                            var button = result.gameObject.GetComponent<Button>();
-                            var toggle = result.gameObject.GetComponent<Toggle>();
-                            var slider = result.gameObject.GetComponent<Slider>();
-                            var inputField = result.gameObject.GetComponent<TMP_InputField>();
-
-                            if (button != null || toggle != null || slider != null || inputField != null)
+                            if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
                             {
-                                targetUI = result.gameObject;
-                                break;
-                            }
-                        }
+                                isDragging = true;
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
 
-                        pressedUI = targetUI ?? currentUI;
-                        pointerData.pressPosition = currentPos;
-                        pointerData.pointerPressRaycast = uiResults[0];
-
-                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerDownHandler);
-                        pointerData.pointerPress = pressedUI;
-
-                        isDragging = false;
-                        draggedUI = ExecuteEvents.GetEventHandler<IDragHandler>(currentUI);
-                        pointerData.pointerDrag = draggedUI ?? null;
-                    }
-
-                    switch (trigger)
-                    {
-                        case true when draggedUI != null:
-                        {
-                            if (!isDragging)
-                            {
-                                if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
+                                if (pressedUI != null && pressedUI != draggedUI)
                                 {
-                                    isDragging = true;
-                                    ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
-
-                                    if (pressedUI != null && pressedUI != draggedUI)
-                                    {
-                                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                                        pointerData.pointerPress = null;
-                                    }
+                                    ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                    pointerData.pointerPress = null;
                                 }
                             }
-
-                            if (isDragging)
-                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
-                            break;
                         }
-                        case false when lastTriggerClick:
-                        {
-                            if (pressedUI != null && !isDragging)
-                            {
-                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
-                            }
-                            else if (pressedUI != null)
-                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
 
-                            if (isDragging && draggedUI != null)
-                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
-
-                            pressedUI = null;
-                            draggedUI = null;
-                            pointerData.pointerDrag = null;
-                            pointerData.pointerPress = null;
-                            isDragging = false;
-                            break;
-                        }
+                        if (isDragging)
+                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
+                        break;
                     }
+                    case false when lastTriggerClick:
+                    {
+                        if (pressedUI != null && !isDragging)
+                        {
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
+                        }
+                        else if (pressedUI != null)
+                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
 
-                    lastTriggerClick = trigger;
+                        if (isDragging && draggedUI != null)
+                            ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
+
+                        pressedUI = null;
+                        draggedUI = null;
+                        pointerData.pointerDrag = null;
+                        pointerData.pointerPress = null;
+                        isDragging = false;
+                        break;
+                    }
                 }
+
+                lastTriggerClick = trigger;
             }
         }
 
@@ -5802,7 +5805,8 @@ exit 0";
                 Projectiles.snowballIndex.ToString(),
                 characterDistance.ToString(),
                 Overpowered.lagTypeIndex.ToString(),
-                Overpowered.masterVisualizationType.ToString()
+                Overpowered.masterVisualizationType.ToString(),
+                Movement.targetHz.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -6072,6 +6076,9 @@ exit 0";
 
                 Overpowered.masterVisualizationType = int.Parse(data[66]) - 1;
                 Overpowered.MasterVisualizationType();
+
+                Movement.targetHz = int.Parse(data[67]) - 500;
+                Movement.ChangeTinnitusHz();
             }
             catch { LogManager.Log("Save file out of date"); }
 
