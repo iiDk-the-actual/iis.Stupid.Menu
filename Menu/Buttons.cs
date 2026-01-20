@@ -2314,8 +2314,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Safe Restart Game", enableMethod =() => { Experimental.restartDelay = Time.time; Experimental.restartIndex = 0; }, method = Experimental.SafeRestartGame, toolTip = "Restarts Gorilla Tag, saving room and position data."},
 
-                new ButtonInfo { buttonText = "Overlap RPCs", enableMethod =() => NoOverlapRPCs = false, disableMethod =() => NoOverlapRPCs = true, toolTip = "Disables the check that only allows you to flush once a frame."},
-
                 new ButtonInfo { buttonText = "Fix Broken Buttons", method = Experimental.FixDuplicateButtons, isTogglable = false, toolTip = "Fixes any duplicate or broken buttons."},
 
                 new ButtonInfo { buttonText = "Get Sound Data", method = Experimental.DumpSoundData, isTogglable = false, toolTip = "Dumps the hand tap sounds to a file."},

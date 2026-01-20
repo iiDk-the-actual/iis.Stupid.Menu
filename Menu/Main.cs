@@ -1147,7 +1147,6 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region Miscellaneous
-                hasRemovedThisFrame = false;
                 frameCount++;
                 playTime += Time.unscaledDeltaTime;
 
@@ -4210,10 +4209,6 @@ namespace iiMenu.Menu
 
             try
             {
-                if (hasRemovedThisFrame) return;
-                if (NoOverlapRPCs)
-                    hasRemovedThisFrame = true;
-
                 GorillaNot.instance.rpcErrorMax = int.MaxValue;
                 GorillaNot.instance.rpcCallLimit = int.MaxValue;
                 GorillaNot.instance.logErrorMax = int.MaxValue;
@@ -6387,8 +6382,6 @@ jgs \_   _/ |Oo\
         public static bool HasLoaded;
         public static bool hasLoadedPreferences;
         public static bool allowDetected;
-        public static bool hasRemovedThisFrame;
-        public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
         public static float playTime;
         public static int frameCount;
