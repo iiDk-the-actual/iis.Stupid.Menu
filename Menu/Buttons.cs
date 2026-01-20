@@ -2449,7 +2449,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(), enableMethod =() => Fun.ChangeBlockDelay(), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." },
                 new ButtonInfo { buttonText = "Change Cycle Delay", overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Fun.ChangeCycleDelay(), enableMethod =() => Fun.ChangeCycleDelay(), disableMethod =() => Fun.ChangeCycleDelay(false), incremental = true, isTogglable = false, toolTip = "Changes the delay on name cycle mods." },
 
-                new ButtonInfo { buttonText = "Entity Gravity", toolTip = "Gives gravity to any spawned intities in the ghost reactor or Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Entity Gravity", toolTip = "Gives gravity to any spawned entities in the ghost reactor or Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Tinnitus Self", enableMethod =() => Movement.tinnitusSelf = true, disableMethod =() => Movement.tinnitusSelf = false, toolTip = "Be able to hear the loud beep the menu creates with this mod on. God save your ears."},
             },
