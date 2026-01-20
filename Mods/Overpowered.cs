@@ -3667,10 +3667,23 @@ namespace iiMenu.Mods
                     break;
             }
 
-            foreach (SnowballThrowable snowball in snowballDict.Values)
-                try { snowball.SetSnowballActiveLocal(true); } catch { }
+            bool shouldIncrement = SnowballTime >= 9;
+            if (shouldIncrement)
+                Projectiles.ChangeGrowingProjectile();
+
+            SnowballThrowable left = GetProjectile($"{Projectiles.SnowballName}LeftAnchor");
+            SnowballThrowable right = GetProjectile($"{Projectiles.SnowballName}RightAnchor");
+
+            if (shouldIncrement)
+                Projectiles.ChangeGrowingProjectile(false);
+
+            left.SetSnowballActiveLocal(true);
+            right.SetSnowballActiveLocal(true);
 
             SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+            left.SetSnowballActiveLocal(false);
+            right.SetSnowballActiveLocal(false);
 
             yield return null;
             yield return null;
@@ -3682,8 +3695,8 @@ namespace iiMenu.Mods
             BetaSpawnSnowball(Pos, Vel, Mode, Target, customScale, ignoreMultiply);
             InvisibleSnowballs = true;
 
-            foreach (SnowballThrowable snowball in snowballDict.Values)
-                try { snowball.SetSnowballActiveLocal(false); } catch { }
+            left.SetSnowballActiveLocal(false);
+            right.SetSnowballActiveLocal(false);
         }
 
         public static bool SnowballHandIndex;
