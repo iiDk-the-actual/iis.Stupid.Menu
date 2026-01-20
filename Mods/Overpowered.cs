@@ -4216,6 +4216,10 @@ namespace iiMenu.Mods
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position;
                         BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
+                        
+                        if (Buttons.GetIndex("Graphic Punch Mod").enabled)
+                            Projectiles.BetaFireProjectile("AppleLeftAnchor", rig.headMesh.transform.position, Vector3.down * 600f, new Color32(100, 0, 0, 255));
+
                         snowballDelay = Time.time + SnowballSpawnDelay;
                     }
                 }
@@ -5156,6 +5160,9 @@ namespace iiMenu.Mods
 
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), vel);
                         thingdeb = Time.time + 0.1f;
+
+                        if (Buttons.GetIndex("Graphic Punch Mod").enabled)
+                            Projectiles.BetaFireProjectile("AppleLeftAnchor", rig.headMesh.transform.position, Vector3.down * 600f, new Color32(100, 0, 0, 255));
                     }
                 }
             }
@@ -5786,6 +5793,9 @@ namespace iiMenu.Mods
                 {
                     Vector3 targetDirection = rig.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position;
                     SendBarrelProjectile(rig.transform.position + (GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position).normalized * 0.1f, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+
+                    if (Buttons.GetIndex("Graphic Punch Mod").enabled)
+                        Projectiles.BetaFireProjectile("AppleLeftAnchor", rig.headMesh.transform.position, Vector3.down * 600f, new Color32(100, 0, 0, 255));
                 }
             }
         }

@@ -30,8 +30,6 @@ using iiMenu.Managers.DiscordRPC;
 using iiMenu.Patches.Menu;
 using iiMenu.Utilities;
 using Photon.Pun;
-using PlayFab;
-using PlayFab.CloudScriptModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
