@@ -331,8 +331,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Size Changer Buttons", toolTip = "Disables the size changer's buttons, so hitting grip or trigger or whatever won't do anything."},
                 new ButtonInfo { buttonText = "Pass World Scale Checks", enableMethod =() => Movement.passWorldScaleCheck = true, disableMethod =() => Movement.passWorldScaleCheck = false, toolTip = "Disables the Steam Long Arms mod when your hands are close to your head."},
 
-                new ButtonInfo { buttonText = "Midpoint Macros", overlapText = "Midpoint Macros", enableMethod =() => Movement.midpointMacros = true, disableMethod =() => Movement.midpointMacros = false, toolTip = "Allows for macros to be played from their middles." },
-                new ButtonInfo { buttonText = "Direction Based Macros", overlapText = "Direction Based Macros", enableMethod =() => Movement.directionBased = true, disableMethod =() => Movement.directionBased = false, toolTip = "Only plays macros if you match their velocity direction." },
+                new ButtonInfo { buttonText = "Midpoint Macros", enableMethod =() => Movement.midpointMacros = true, disableMethod =() => Movement.midpointMacros = false, toolTip = "Allows for macros to be played from their middles." },
+                new ButtonInfo { buttonText = "Direction Based Macros", enableMethod =() => Movement.directionBased = true, disableMethod =() => Movement.directionBased = false, toolTip = "Only plays macros if you match their velocity direction." },
                 new ButtonInfo { buttonText = "Change Macro Playback Range", overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeMacroPlaybackRange(), enableMethod =() => Movement.ChangeMacroPlaybackRange(), disableMethod =() => Movement.ChangeMacroPlaybackRange(false), incremental = true, isTogglable = false, toolTip = "Changes the range where macros can play."},
 
                 new ButtonInfo { buttonText = "Hand Oriented Strafe", toolTip = "Makes the strafe mods move you in the forward direction of your hand."},
