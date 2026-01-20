@@ -5188,23 +5188,7 @@ namespace iiMenu.Mods
         }
 
         public static bool tinnitusSelf;
-        public static AudioClip CreateTinnitusSound()
-        {
-            int sampleRate = 48000;
-            int samples = (int)(sampleRate * 180f);
-            AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
 
-            float[] data = new float[samples];
-            int samplesPerWave = sampleRate / 6000;
-
-            for (int i = 0; i < samples; i++)
-            {
-                data[i] = (i % samplesPerWave) < (samplesPerWave / 2) ? 1f : -1f;
-            }
-
-            clip.SetData(data, 0);
-            return clip;
-        }
 
         public static int targetHz = 6000;
         public static void ChangeTinnitusHz(bool positive = true)
@@ -5222,6 +5206,23 @@ namespace iiMenu.Mods
             tinnitus = null;
 
             Buttons.GetIndex("Change Tinnitus Hertz").overlapText = "Change Tinnitus Hertz <color=grey>[</color><color=green>" + targetHz + "</color><color=grey>]</color>";
+        }
+        public static AudioClip CreateTinnitusSound()
+        {
+            int sampleRate = 48000;
+            int samples = (int)(sampleRate * 180f);
+            AudioClip clip = AudioClip.Create("Tinnitus", samples, 1, sampleRate, false);
+
+            float[] data = new float[samples];
+            int samplesPerWave = sampleRate / targetHz;
+
+            for (int i = 0; i < samples; i++)
+            {
+                data[i] = (i % samplesPerWave) < (samplesPerWave / 2) ? 1f : -1f;
+            }
+
+            clip.SetData(data, 0);
+            return clip;
         }
 
         public static AudioClip tinnitus;
