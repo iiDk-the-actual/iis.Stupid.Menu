@@ -675,35 +675,70 @@ namespace iiMenu.Mods
 
         public static float elapsedTime = Time.time;
 
-		public static void RainbowGun()
+        public static void RainbowGun()
         {
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-
                 if (gunLocked && lockTarget != null)
                 {
-                    Vector3 colorValues = new Vector3(Mathf.Sin(elapsedTime * 2f), Mathf.Sin(elapsedTime * 1.5f), Mathf.Sin(elapsedTime * 2.5f)) * 0.5f + Vector3.one * 0.5f;
-                    Color calculatedColor = new Color(colorValues.x, colorValues.y, colorValues.z);
+                    Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
                     VRRig vrrig = lockTarget;
+
+                    if (vrrig != null)
+                    {
+                        if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            vrrig.mainSkin.material.color = rgb;
+                            lockTarget.mainSkin.material.color = rgb;
+                            lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                            lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                            lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
+                        }
+
+                        if (lockTarget && lockTarget != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            vrrig.mainSkin.material.color = rgb;
+                            lockTarget.mainSkin.material.color = rgb;
+                            lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                            lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                            lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
+                        }
+
+                        vrrig.mainSkin.material.color = rgb;
+
+                        lockTarget.mainSkin.material.color = rgb;
+                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
+                    }
 
                     if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
-                        vrrig.mainSkin.material.color = calculatedColor;
+                        vrrig.mainSkin.material.color = rgb;
+                        lockTarget.mainSkin.material.color = rgb;
+                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
                     }
 
                     if (lockTarget && lockTarget != GorillaTagger.Instance.offlineVRRig)
                     {
-                        lockTarget.mainSkin.material.color = calculatedColor;
+                        vrrig.mainSkin.material.color = rgb;
+                        lockTarget.mainSkin.material.color = rgb;
+                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
                     }
 
-                    lockTarget.mainSkin.material.color = calculatedColor;
-                    lockTarget.tempVRRig.mainSkin.material.color = calculatedColor;
-                    lockTarget.GetPlayer().VRRig().mainSkin.material.color = calculatedColor;
-                    lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = calculatedColor;
-                }
+                    vrrig.mainSkin.material.color = rgb;
 
+                    lockTarget.mainSkin.material.color = rgb;
+                    lockTarget.tempVRRig.mainSkin.material.color = rgb;
+                    lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
+                    lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
+                }
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -720,18 +755,18 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
-
         public static void RainbowAll()
         {
-            Vector3 colorValues = new Vector3(Mathf.Sin(elapsedTime * 2f), Mathf.Sin(elapsedTime * 1.5f), Mathf.Sin(elapsedTime * 2.5f)) * 0.5f + Vector3.one * 0.5f;
-            Color calculatedColor = new Color(colorValues.x, colorValues.y, colorValues.z);
+            Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
-                    vrrig.mainSkin.material.color = calculatedColor;
+                    vrrig.mainSkin.material.color = rgb;
                 }
+
+                vrrig.mainSkin.material.color = rgb;
             }
         }
 
