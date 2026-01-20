@@ -673,7 +673,9 @@ namespace iiMenu.Mods
         public static void HueShift(Color color) =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
-        public static void RainbowGun()
+        public static float elapsedTime = Time.time;
+
+		public static void RainbowGun()
         {
             if (GetGunInput(false))
             {
