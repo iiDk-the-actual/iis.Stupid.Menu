@@ -238,7 +238,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => NotificationManager.narrateNotifications = true, disableMethod =() => NotificationManager.narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
-                new ButtonInfo { buttonText = "No Prefix Narration", enableMethod =() => NotificationManager.noPrefix = true, disableMethod =() => NotificationManager.noPrefix = false, toolTip = "Strops the prefix on notifications from narrating itself."},
+                new ButtonInfo { buttonText = "No Prefix Narration", enableMethod =() => NotificationManager.noPrefix = true, disableMethod =() => NotificationManager.noPrefix = false, toolTip = "Stops the prefix on notifications from narrating itself."},
                 new ButtonInfo { buttonText = "Hide Notification Brackets", enableMethod =() => hideBrackets = true, disableMethod =() => hideBrackets = false, toolTip = "Hides brackets on all notifications."},
 
                 new ButtonInfo { buttonText = "Conduct Notifications", enableMethod =() => { GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText").GetComponent<TextMeshPro>().text = "II'S STUPID MENU"; GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().richText = true; }, method =() => GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData").GetComponent<TextMeshPro>().text = NotificationManager.notificationText.text, toolTip = "Shows notifications on the code of conduct instead."},
@@ -331,8 +331,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Size Changer Buttons", toolTip = "Disables the size changer's buttons, so hitting grip or trigger or whatever won't do anything."},
                 new ButtonInfo { buttonText = "Pass World Scale Checks", enableMethod =() => Movement.passWorldScaleCheck = true, disableMethod =() => Movement.passWorldScaleCheck = false, toolTip = "Disables the Steam Long Arms mod when your hands are close to your head."},
 
-                new ButtonInfo { buttonText = "Midpoint Macors", overlapText = "Midpoint Macros", enableMethod =() => Movement.midpointMacros = true, disableMethod =() => Movement.midpointMacros = false, toolTip = "Allows for macros to be played from their middles." },
-                new ButtonInfo { buttonText = "Direction Based Macors", overlapText = "Direction Based Macros", enableMethod =() => Movement.directionBased = true, disableMethod =() => Movement.directionBased = false, toolTip = "Only plays macros if you match their velocity direction." },
+                new ButtonInfo { buttonText = "Midpoint Macros", overlapText = "Midpoint Macros", enableMethod =() => Movement.midpointMacros = true, disableMethod =() => Movement.midpointMacros = false, toolTip = "Allows for macros to be played from their middles." },
+                new ButtonInfo { buttonText = "Direction Based Macros", overlapText = "Direction Based Macros", enableMethod =() => Movement.directionBased = true, disableMethod =() => Movement.directionBased = false, toolTip = "Only plays macros if you match their velocity direction." },
                 new ButtonInfo { buttonText = "Change Macro Playback Range", overlapText = "Change Macro Playback Range <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeMacroPlaybackRange(), enableMethod =() => Movement.ChangeMacroPlaybackRange(), disableMethod =() => Movement.ChangeMacroPlaybackRange(false), incremental = true, isTogglable = false, toolTip = "Changes the range where macros can play."},
 
                 new ButtonInfo { buttonText = "Hand Oriented Strafe", toolTip = "Makes the strafe mods move you in the forward direction of your hand."},
@@ -2093,7 +2093,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Party Ban", overlapText = "Auto Party Ban", method = Overpowered.AutoPartyBan, toolTip = "When you party, you will automatically send everyone in your party to a bannable code." },
 
                 new ButtonInfo { buttonText = "Break Audio Gun", method = Overpowered.BreakAudioGun, toolTip = "Attempts to break the audio of whoever your hand desires." },
-                new ButtonInfo { buttonText = "Break Audio All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BreakAudioAll, toolTip = "Attempts to breaks everyone's audio when holding trigger." },
+                new ButtonInfo { buttonText = "Break Audio All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BreakAudioAll, toolTip = "Attempts to break everyone's audio when holding trigger." },
             },
 
             new[] { // Soundboard [18]
