@@ -3200,8 +3200,8 @@ namespace iiMenu.Menu
                     }
 
                     menu.transform.parent = TPC.transform;
-                    menu.transform.position = TPC.transform.position + TPC.transform.forward * 0.5f;
-                    menu.transform.rotation = TPC.transform.rotation * (clickGUI ? Quaternion.Euler(0f, menu.transform.eulerAngles.y + 180f, 0f) : Quaternion.Euler(-90f, 90f, 0f));
+                    menu.transform.position = clickGUI ? TPC.transform.position + TPC.transform.forward * 1.5f : TPC.transform.position + TPC.transform.forward * 0.5f;
+                    menu.transform.rotation = TPC.transform.rotation * (clickGUI ? Quaternion.Euler(0f, 0f, 0f) : Quaternion.Euler(-90f, 90f, 0f));
 
                     if (reference != null)
                     {
