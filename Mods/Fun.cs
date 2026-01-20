@@ -673,6 +673,45 @@ namespace iiMenu.Mods
         public static void HueShift(Color color) =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
+        public static float elapsedTime = Time.time;
+
+        public static void RainbowGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                if (gunLocked && lockTarget != null)
+                {
+                    Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
+					lockTarget.mainSkin.material.color = rgb;
+                }
+				
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+		
+        public static void RainbowAll()
+        {
+            Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
+				vrrig.mainSkin.material.color = rgb;
+        }
+
         private static bool wasTagged;
         public static void PreloadJumpscareData()
         {
