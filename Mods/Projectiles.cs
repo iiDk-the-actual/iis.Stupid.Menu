@@ -939,7 +939,7 @@ namespace iiMenu.Mods
             HandleGrabProjectile(true);
             HandleGrabProjectile(false);
         }
-
+        
         public static void Urine()
         {
             if (rightGrab || Mouse.current.leftButton.isPressed)
@@ -950,7 +950,7 @@ namespace iiMenu.Mods
                 BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.yellow);
             }
         }
-
+        
         public static void Feces()
         {
             if (rightGrab || Mouse.current.leftButton.isPressed)
@@ -959,6 +959,17 @@ namespace iiMenu.Mods
                 Vector3 charvel = Vector3.zero;
 
                 BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.white);
+            }
+        }
+
+        public static void Period()
+        {
+            if (rightGrab || Mouse.current.leftButton.isPressed)
+            {
+                Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
+                Vector3 charvel = Vector3.zero;
+
+                BetaFireProjectile("IceCreamScoopRightAnchor", startpos, charvel, Color.red);
             }
         }
 
@@ -1053,6 +1064,40 @@ namespace iiMenu.Mods
                     Vector3 charvel = Vector3.zero;
 
                     BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.white);
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void PeriodGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.65f, 0f);
+                    Vector3 charvel = Vector3.zero;
+
+                    BetaFireProjectile("IceCreamScoopRightAnchor", startpos, charvel, Color.red);
                 }
                 if (GetGunInput(true))
                 {
