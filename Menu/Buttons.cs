@@ -1033,6 +1033,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Confuse Player Gun", method = Movement.ConfusePlayerGun, toolTip = "Makes whoever your hand desires look like they're going crazy by splashing water on their screen."},
                 new ButtonInfo { buttonText = "Confuse All Players", enableMethod = Movement.ConfuseAllPlayers, method = Movement.ConfuseAllPlayersSplash, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Splashes water on everyone's screens, making them look like they're going crazy."},
                 
+                new ButtonInfo { buttonText = "Pride Gun", overlapText = "Rainbow Gun", method = Fun.RainbowGun, toolTip = "Makes whoever your hand desires rainbow. This mod is client-sided."},
+                new ButtonInfo { buttonText = "Pride All", overlapText = "Rainbow All", method = Fun.RainbowAll, toolTip = "Makes everyone rainbow. This mod is client-sided."},
+
                 new ButtonInfo { buttonText = "Tinnitus Gun", method = Movement.TinnitusGun, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for whoever your hand desires."},
                 new ButtonInfo { buttonText = "Tinnitus All", enableMethod = Movement.TinnitusAll, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for everyone in the room."},
 
