@@ -3648,13 +3648,71 @@ namespace iiMenu.Mods
                 try { snowball.SetSnowballActiveLocal(false); } catch { }
         }
 
+        public static IEnumerator InvisibleSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null, bool ignoreMultiply = false)
+        {
+            if (!PhotonNetwork.InRoom)
+                yield break;
+
+            RaiseEventOptions options = null;
+            switch (Mode)
+            {
+                case 0:
+                    options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                    break;
+                case 1:
+                    options = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
+                    break;
+                case 2:
+                    options = new RaiseEventOptions { TargetActors = new[] { Target.ActorNumber } };
+                    break;
+            }
+
+            bool shouldIncrement = SnowballTime >= 10;
+            if (shouldIncrement)
+                Projectiles.ChangeGrowingProjectile();
+
+            SnowballThrowable left = GetProjectile($"{Projectiles.SnowballName}LeftAnchor");
+            SnowballThrowable right = GetProjectile($"{Projectiles.SnowballName}RightAnchor");
+
+            if (shouldIncrement)
+                Projectiles.ChangeGrowingProjectile(false);
+
+            left.SetSnowballActiveLocal(true);
+            right.SetSnowballActiveLocal(true);
+
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+            left.SetSnowballActiveLocal(false);
+            right.SetSnowballActiveLocal(false);
+
+            yield return null;
+            yield return null;
+
+            if (!NoTeleportSnowballs)
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
+
+            InvisibleSnowballs = false;
+            BetaSpawnSnowball(Pos, Vel, Mode, Target, customScale, ignoreMultiply);
+            InvisibleSnowballs = true;
+
+            left.SetSnowballActiveLocal(false);
+            right.SetSnowballActiveLocal(false);
+        }
+
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
+        public static bool InvisibleSnowballs;
         public static bool NoDelaySnowballs;
         public static int SnowballTime;
 
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null, bool ignoreMultiply = false)
         {
+            if (InvisibleSnowballs)
+            {
+                CoroutineManager.instance.StartCoroutine(InvisibleSnowball(Pos, Vel, Mode, Target, customScale, ignoreMultiply));
+                return;
+            }
+
             try
             {
                 RaiseEventOptions options = null;
