@@ -3678,6 +3678,8 @@ namespace iiMenu.Mods
             left.SetSnowballActiveLocal(false);
             right.SetSnowballActiveLocal(false);
 
+            RPCProtection();
+
             yield return null;
             yield return null;
 
@@ -3689,6 +3691,7 @@ namespace iiMenu.Mods
                 try { snowball.SetSnowballActiveLocal(false); } catch { }
 
             SendSerialize(GorillaTagger.Instance.myVRRig.reliableView, options);
+            RPCProtection();
         }
 
         public static bool SnowballHandIndex;
