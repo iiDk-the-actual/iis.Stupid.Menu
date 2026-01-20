@@ -673,6 +673,20 @@ namespace iiMenu.Mods
         public static void HueShift(Color color) =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
+		public static void RainbowAll()
+        {
+            float elapsedTime = Time.time;
+            Vector3 colorValues = new Vector3(Mathf.Sin(elapsedTime * 2f), Mathf.Sin(elapsedTime * 1.5f), Mathf.Sin(elapsedTime * 2.5f)) * 0.5f + Vector3.one * 0.5f;
+            Color calculatedColor = new Color(colorValues.x, colorValues.y, colorValues.z);
+            foreach (VRRig vrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrig && vrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    vrig.mainSkin.material.color = calculatedColor;
+                }
+            }
+        }
+
         private static bool wasTagged;
         public static void PreloadJumpscareData()
         {
