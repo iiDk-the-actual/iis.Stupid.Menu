@@ -684,7 +684,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
-					vrrig.mainSkin.material.color = rgb;
+					lockTarget.mainSkin.material.color = rgb;
                 }
 				
                 if (GetGunInput(true))
@@ -709,10 +709,7 @@ namespace iiMenu.Mods
             Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
-            {
-				Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
 				vrrig.mainSkin.material.color = rgb;
-            }
         }
 
         private static bool wasTagged;
