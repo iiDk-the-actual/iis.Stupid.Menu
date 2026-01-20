@@ -673,16 +673,62 @@ namespace iiMenu.Mods
         public static void HueShift(Color color) =>
             ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
-		public static void RainbowAll()
+        public static void RainbowGun()
         {
-            float elapsedTime = Time.time;
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    Vector3 colorValues = new Vector3(Mathf.Sin(elapsedTime * 2f), Mathf.Sin(elapsedTime * 1.5f), Mathf.Sin(elapsedTime * 2.5f)) * 0.5f + Vector3.one * 0.5f;
+                    Color calculatedColor = new Color(colorValues.x, colorValues.y, colorValues.z);
+                    VRRig vrrig = lockTarget;
+
+                    if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        vrrig.mainSkin.material.color = calculatedColor;
+                    }
+
+                    if (lockTarget && lockTarget != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        lockTarget.mainSkin.material.color = calculatedColor;
+                    }
+
+                    lockTarget.mainSkin.material.color = calculatedColor;
+                    lockTarget.tempVRRig.mainSkin.material.color = calculatedColor;
+                    lockTarget.GetPlayer().VRRig().mainSkin.material.color = calculatedColor;
+                    lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = calculatedColor;
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void RainbowAll()
+        {
             Vector3 colorValues = new Vector3(Mathf.Sin(elapsedTime * 2f), Mathf.Sin(elapsedTime * 1.5f), Mathf.Sin(elapsedTime * 2.5f)) * 0.5f + Vector3.one * 0.5f;
             Color calculatedColor = new Color(colorValues.x, colorValues.y, colorValues.z);
-            foreach (VRRig vrig in GorillaParent.instance.vrrigs)
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrig && vrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
-                    vrig.mainSkin.material.color = calculatedColor;
+                    vrrig.mainSkin.material.color = calculatedColor;
                 }
             }
         }
