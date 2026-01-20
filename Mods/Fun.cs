@@ -684,61 +684,9 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
-                    VRRig vrrig = lockTarget;
-
-                    if (vrrig != null)
-                    {
-                        if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            vrrig.mainSkin.material.color = rgb;
-                            lockTarget.mainSkin.material.color = rgb;
-                            lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                            lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                            lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
-                        }
-
-                        if (lockTarget && lockTarget != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            vrrig.mainSkin.material.color = rgb;
-                            lockTarget.mainSkin.material.color = rgb;
-                            lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                            lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                            lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
-                        }
-
-                        vrrig.mainSkin.material.color = rgb;
-
-                        lockTarget.mainSkin.material.color = rgb;
-                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
-                    }
-
-                    if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        vrrig.mainSkin.material.color = rgb;
-                        lockTarget.mainSkin.material.color = rgb;
-                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
-                    }
-
-                    if (lockTarget && lockTarget != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        vrrig.mainSkin.material.color = rgb;
-                        lockTarget.mainSkin.material.color = rgb;
-                        lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                        lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                        lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
-                    }
-
-                    vrrig.mainSkin.material.color = rgb;
-
-                    lockTarget.mainSkin.material.color = rgb;
-                    lockTarget.tempVRRig.mainSkin.material.color = rgb;
-                    lockTarget.GetPlayer().VRRig().mainSkin.material.color = rgb;
-                    lockTarget.GetPhotonPlayer().VRRig().mainSkin.material.color = rgb;
+					vrrig.mainSkin.material.color = rgb;
                 }
+				
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -755,18 +703,15 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
+		
         public static void RainbowAll()
         {
             Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
 
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()))
             {
-                if (vrrig && vrrig != GorillaTagger.Instance.offlineVRRig)
-                {
-                    vrrig.mainSkin.material.color = rgb;
-                }
-
-                vrrig.mainSkin.material.color = rgb;
+				Color rgb = Color.HSVToRGB(Time.frameCount / 180f % 1f, 1f, 1f);
+				vrrig.mainSkin.material.color = rgb;
             }
         }
 
