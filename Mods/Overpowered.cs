@@ -4003,7 +4003,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                 if (Mouse.current.leftButton.isPressed)
                 {
                     Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -4022,7 +4022,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                 if (Mouse.current.leftButton.isPressed)
                 {
                     Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -4043,7 +4043,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * (ShootStrength * 5f);
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                 if (Mouse.current.leftButton.isPressed)
                 {
                     Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -4104,11 +4104,12 @@ namespace iiMenu.Mods
 
         public static void SnowballRPG()
         {
-            if (Time.time > rpgDelay && Time.time > snowballDelay)
+            if (rightGrab && Time.time > rpgDelay && Time.time > snowballDelay)
             {
                 rpgDelay = Time.time + 1f;
                 rpgShot = true;
 
+                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, 0);
                 snowballDelay = Time.time + SnowballSpawnDelay;
             }
         }
@@ -4146,7 +4147,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null && Time.time > snowballDelay)
                 {
-                    Vector3 velocity = lockTarget.rightHandTransform.transform.forward * (ShootStrength * 5f);
+                    Vector3 velocity = lockTarget.rightHandTransform.transform.forward * ShootStrength;
 
                     BetaSpawnSnowball(lockTarget.rightHandTransform.transform.position, velocity, 0);
                     snowballDelay = Time.time + SnowballSpawnDelay;
