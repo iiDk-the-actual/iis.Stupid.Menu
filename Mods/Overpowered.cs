@@ -3768,7 +3768,7 @@ namespace iiMenu.Mods
                     }, options, new SendOptions
                     {
                         Reliability = false,
-                        Encrypt = true
+                        Encrypt = false
                     });
 
                     PhotonNetwork.RaiseEvent(176, new object[]
@@ -3780,7 +3780,7 @@ namespace iiMenu.Mods
                     }, options, new SendOptions
                     {
                         Reliability = false,
-                        Encrypt = true
+                        Encrypt = false
                     });
 
                     GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"{Projectiles.SnowballName}{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
