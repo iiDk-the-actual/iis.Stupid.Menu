@@ -958,7 +958,7 @@ namespace iiMenu.Mods
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.white);
+                BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.brown);
             }
         }
 
@@ -980,7 +980,7 @@ namespace iiMenu.Mods
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.white);
+                BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.ghostWhite);
             }
         }
 
@@ -1063,7 +1063,7 @@ namespace iiMenu.Mods
                     Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.65f, 0f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.white);
+                    BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.brown);
                 }
                 if (GetGunInput(true))
                 {
@@ -1131,7 +1131,7 @@ namespace iiMenu.Mods
                     Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.4f, 0f) + lockTarget.transform.forward * 0.2f;
                     Vector3 charvel = lockTarget.transform.forward * 8.33f;
 
-                    BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.white);
+                    BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.ghostWhite);
                 }
                 if (GetGunInput(true))
                 {
