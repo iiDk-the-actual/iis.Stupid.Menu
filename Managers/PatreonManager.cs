@@ -140,7 +140,7 @@ namespace iiMenu.Managers
                     textMesh.alignment = TextAlignmentOptions.Center;
 
                     textMesh.SafeSetText(member.Value.TierName);
-                    textMesh.SafeSetFontStyle(FontStyles.Bold);
+                    textMesh.SafeSetFontStyle(Menu.Main.activeFontStyle);
                     textMesh.SafeSetFont(Menu.Main.activeFont);
                     textMesh.color = GetTierColor(member.Value.TierName);
                     textMesh.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
