@@ -4155,6 +4155,22 @@ namespace iiMenu.Mods
         private static float rpgDelay;
         private static bool rpgShot;
 
+        public static void SnowballGrenade()
+        {
+            if (rightGrab)
+            {
+                rpgShot = true;
+
+                SnowballThrowable Throwable = GetProjectile("SnowballRightAnchor");
+                Throwable.SetSnowballActiveLocal(true);
+
+                Color targetColor = new Color(0f, 0.6f, 0f, 1f);
+                VRRig.LocalRig.SetThrowableProjectileColor(true, targetColor);
+                Throwable.randomizeColor = true;
+                Throwable.ApplyColor(targetColor);
+            }
+        }
+
         public static void SnowballRPG()
         {
             if (rightGrab && Time.time > rpgDelay && Time.time > snowballDelay)
