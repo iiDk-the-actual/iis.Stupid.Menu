@@ -5391,8 +5391,35 @@ namespace iiMenu.Mods
         }
 
         private static float freezeAllDelay;
-        public static void FreezeAll_OnPlayerLeave(NetPlayer _) =>
-            NotificationManager.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Freeze All.");
+        public static void LagServer()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            if (rightTrigger > 0.5f)
+            {
+                SerializePatch.OverrideSerialization = () => false;
+
+                if (Time.time > freezeAllDelay)
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        WebFlags flags = new WebFlags(255);
+                        NetEventOptions options = new NetEventOptions
+                        {
+                            Flags = flags,
+                            TargetActors = new[] { -1 }
+                        };
+                        byte code = 51;
+                        NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
+                    }
+
+                    RPCProtection();
+                    freezeAllDelay = Time.time + 1f;
+                }
+            }
+            else
+                SerializePatch.OverrideSerialization = null;
+        }
 
         public static void FreezeAll()
         {
@@ -5434,14 +5461,9 @@ namespace iiMenu.Mods
 
         public static void ZaWarudo_enableMethod()
         {
-            NetworkSystem.Instance.OnPlayerLeft += ZaWarudo_OnPlayerLeave;
-
             ZaWarudo_Start = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Timestop/start.ogg", "Audio/Mods/Overpowered/Timestop/start.ogg");
             ZaWarudo_Stop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Timestop/end.ogg", "Audio/Mods/Overpowered/Timestop/end.ogg");
         }
-
-        public static void ZaWarudo_OnPlayerLeave(NetPlayer player) =>
-            NotificationManager.SendNotification("<color=grey>[</color><color=green>FREEZE</color><color=grey>]</color> You may now use Za Warudo.");
 
         private static bool zaWarudoTrigger;
         public static void ZaWarudo()

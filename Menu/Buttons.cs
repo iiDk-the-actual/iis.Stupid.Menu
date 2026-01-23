@@ -2037,8 +2037,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
                 new ButtonInfo { buttonText = "Towards Point on Grab Gun", method = Overpowered.TowardsPointOnGrab, disableMethod = Overpowered.DisableTowardsPointOnGrab, toolTip = "Sends the player to your target position when they grab you." },
 
-                new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => NetworkSystem.Instance.OnPlayerLeft += Overpowered.FreezeAll_OnPlayerLeave, method = Overpowered.FreezeAll, disableMethod =() => NetworkSystem.Instance.OnPlayerLeft -= Overpowered.FreezeAll_OnPlayerLeave, toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
-                new ButtonInfo { buttonText = "Za Warudo <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod = Overpowered.ZaWarudo_enableMethod, method = Overpowered.ZaWarudo, disableMethod =() => NetworkSystem.Instance.OnPlayerLeft -= Overpowered.ZaWarudo_OnPlayerLeave, toolTip = "Freeze all, but with special effects." },
+                new ButtonInfo { buttonText = "Lag Server <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.LagServer, toolTip = "Lags the room when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Freeze Server <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.FreezeAll, toolTip = "Freezes the room when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Za Warudo <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod = Overpowered.ZaWarudo_enableMethod, method = Overpowered.ZaWarudo, toolTip = "Freeze all, but with special effects." },
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method = Overpowered.AntiReportFling, toolTip = "Flings whoever tries to report you."},
 
