@@ -1,0 +1,1 @@
+PelicanV2;Anti cheat for Gorilla Tag;https://github.com/iiDk-the-actual/PelicanV2/releases/latest/download/PelicanV2.dll
