@@ -1101,7 +1101,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => SpeakText(keyboardInput), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
                 new ButtonInfo { buttonText = "Save Narration", method =() => PromptText("What would you like the narration to say?", () => Fun.SaveNarration(keyboardInput)), isTogglable = false, toolTip = "Saves whatever you want to narrate to your soundboard."},
-                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method =() => { Settings.CheckFocus(); GorillaTagger.Instance.myRecorder.IsRecording = Sound.AudioIsPlaying; }, disableMethod = Fun.DisableMaskVoice, toolTip = "Masks your voice with a TTS bot."},
+                new ButtonInfo { buttonText = "Mask Voice", enableMethod = Fun.MaskVoice, method =() => { Settings.CheckFocus(); GorillaTagger.Instance.myRecorder.IsRecording = Sound.AudioIsPlaying; }, disableMethod = Fun.DisableMaskVoice, toolTip = "Masks your voice with a TTS voice."},
 
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method = Important.DisablePitchScaling, disableMethod = Important.EnablePitchScaling, toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method = Important.DisableMouthMovement, disableMethod = Important.EnableMouthMovement, toolTip = "Disables your mouth from moving."},

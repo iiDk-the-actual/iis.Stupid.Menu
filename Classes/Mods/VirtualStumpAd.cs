@@ -78,7 +78,12 @@ namespace iiMenu.Classes.Mods
         private void Update()
         {
             if (hasSetupFeaturedMapVideo && !videoPlayer.isPlaying && videoPlayer.enabled)
+            {
+                if (!videoPlayer.isLooping)
+                    videoPlayer.isLooping = true;
                 videoPlayer.Play();
+            }
+                
 
             if (hasSetupFeaturedMapVideo)
                 return;
