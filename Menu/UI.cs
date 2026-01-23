@@ -28,9 +28,11 @@ using Photon.Pun;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 
@@ -400,10 +402,18 @@ namespace iiMenu.Menu
                         DebugPrint($"Telemetry is now {(ServerData.DisableTelemetry ? "disabled" : "enabled")}");
                         break;
                     }
-                case "about":
+                case "prompt":
                     {
-                        DebugPrint($"ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}");
-                        DebugPrint($"Compiled {PluginInfo.BuildTimestamp}");
+                        MatchCollection matches = Regex.Matches(args.Skip(1).Join(" "), @"\[(.*?)\]");
+                        List<string> results = matches.Select(matches => matches.Groups).SelectMany(group => group).Select(group => group.Value).ToList();
+
+                        string promptText = args.Length > 1 ? args[1] : "Prompt text";
+                        string acceptText = args.Length > 2 ? args[2] : "Accept";
+                        string declineText = args.Length > 3 ? args[3] : "Decline";
+
+                        Prompt(promptText, () => DebugPrint("Prompt accepted"), () => DebugPrint("Prompt declined"), acceptText, declineText);
+                        DebugPrint($"Propted user {promptText} {acceptText} {declineText}");
+
                         break;
                     }
                 case "exit":
