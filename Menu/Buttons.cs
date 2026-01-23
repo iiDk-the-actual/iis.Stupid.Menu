@@ -518,6 +518,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Connect to US", method =() => Important.ConnectToRegion("us"), toolTip = "Connects you to the United States servers."},
                 new ButtonInfo { buttonText = "Connect to US West", method =() => Important.ConnectToRegion("usw"), toolTip = "Connects you to the western United States servers."},
                 new ButtonInfo { buttonText = "Connect to EU", method =() => Important.ConnectToRegion("eu"), toolTip = "Connects you to the Europe servers."},
+
+                new ButtonInfo { buttonText = "Reauthenticate", method = MothershipAuthenticator.Instance.BeginLoginFlow, isTogglable = false, toolTip = "Restarts the login flow that happens at the beginning of the game."},
             },
 
             new[] { // Safety Mods [8]
