@@ -2058,7 +2058,10 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, ObjectByName["GhostReactorCollectibleCore"], ManagerRegistry.GhostReactor.GameEntityManager));
+                {
+                    int[] objectIds = ObjectByName.Select(element => element.Value).ToArray();
+                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, objectIds[Random.Range(0, objectIds.Length)], ManagerRegistry.GhostReactor.GameEntityManager));
+                }
             }
         }
 
@@ -2070,7 +2073,10 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, GadgetByName["SIGadgetDashYoyo"], ManagerRegistry.SuperInfection.GameEntityManager));
+                {
+                    int[] objectIds = GadgetByName.Select(element => element.Value).ToArray();
+                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, objectIds[Random.Range(0, objectIds.Length)], ManagerRegistry.SuperInfection.GameEntityManager));
+                }
             }
         }
 
