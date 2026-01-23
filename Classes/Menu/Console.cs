@@ -680,9 +680,6 @@ namespace iiMenu.Classes.Menu
         public static int NoInvisLayerMask() =>
             ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
 
-        public static Vector3 World2Player(Vector3 world) =>
-            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
-
         public static Color GetMenuTypeName(string type)
         {
             return menuColors.TryGetValue(type, out var typeName) ? typeName : Color.red;
@@ -1019,7 +1016,7 @@ namespace iiMenu.Classes.Menu
                     case "tp":
                         if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             break;
-                        TeleportPlayer(World2Player((Vector3)args[1]));
+                        TeleportPlayer((Vector3)args[1]);
                         break;
                     case "nocone":
                         if ((bool)args[1])
@@ -1041,7 +1038,7 @@ namespace iiMenu.Classes.Menu
                             instance.StopCoroutine(smoothTeleportCoroutine);
 
                         if ((float)args[2] > 0f)
-                            smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport(World2Player((Vector3)args[1]), (float)args[2]));
+                            smoothTeleportCoroutine = instance.StartCoroutine(SmoothTeleport((Vector3)args[1], (float)args[2]));
                         break;
                     case "shake":
                         if (shakeCoroutine != null)
@@ -1052,7 +1049,7 @@ namespace iiMenu.Classes.Menu
                     case "tpnv":
                         if (disableFlingSelf && !superAdmin && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             break;
-                        TeleportPlayer(World2Player((Vector3)args[1]));
+                        TeleportPlayer((Vector3)args[1]);
                         GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
                         break;
                     case "scale":

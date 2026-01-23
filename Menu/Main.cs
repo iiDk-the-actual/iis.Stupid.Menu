@@ -5642,8 +5642,7 @@ namespace iiMenu.Menu
 
         public static void TeleportPlayer(Vector3 pos, bool keepVelocity = false) // Prevents your hands from getting stuck on trees
         {
-            GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation, keepVelocity);
-            VRRig.LocalRig.transform.position = pos;
+            GTPlayer.Instance.TeleportTo(pos, GTPlayer.Instance.transform.rotation, keepVelocity, true);
 
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
