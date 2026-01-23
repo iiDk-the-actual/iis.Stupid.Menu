@@ -69,7 +69,7 @@ namespace iiMenu.Mods
 
         public static void SpawnKeyboard()
         {
-            isKeyboardPc = toggleButtonActive && keyboardWithToggleButton;
+            isKeyboardPc = isOnPC || toggleButtonActive && keyboardWithToggleButton;
             inTextInput = true;
             keyboardInput = "";
 
