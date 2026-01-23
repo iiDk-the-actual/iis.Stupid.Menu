@@ -4163,7 +4163,7 @@ namespace iiMenu.Mods
 
         public static void SnowballGrenade()
         {
-            if (rightGrab)
+            if (rightGrab && !rpgShot)
             {
                 rpgShot = true;
 
