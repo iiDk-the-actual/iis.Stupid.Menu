@@ -2001,7 +2001,8 @@ namespace iiMenu.Mods
             drec = new DictationRecognizer();
             drec.DictationResult += (text, confidence) =>
             {
-                LogManager.Log($"Dictation result: {text}");
+                if (Settings.debugDictation)
+                    LogManager.Log($"Dictation result: {text}");
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
 
                 if (GorillaTagger.Instance.myRecorder != null)
