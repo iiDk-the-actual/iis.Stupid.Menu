@@ -3766,8 +3766,7 @@ namespace iiMenu.Mods
                         customScale ?? snowballScale,
                     }, options, new SendOptions
                     {
-                        Reliability = false,
-                        Encrypt = false
+                        Reliability = false
                     });
 
                     PhotonNetwork.RaiseEvent(176, new object[]
@@ -3775,11 +3774,11 @@ namespace iiMenu.Mods
                         GrowingSnowball.snowballThrowEvent._eventId,
                         Pos,
                         Vel,
-                        GetProjectileIncrement(Pos, Vel, snowballScale)
+                        GetProjectileIncrement(Pos, Vel, snowballScale),
+                        null // If this argument isn't here, the snowballs don't function. This has no sentimental value or checks besides the length check prohibiting even normal players from sending snowballs.
                     }, options, new SendOptions
                     {
-                        Reliability = false,
-                        Encrypt = false
+                        Reliability = false
                     });
 
                     GrowingSnowballThrowable nextGrowingSnowball = GetProjectile($"{Projectiles.SnowballName}{(SnowballHandIndex ? "Left" : "Right")}Anchor") as GrowingSnowballThrowable;
