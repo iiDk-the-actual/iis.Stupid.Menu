@@ -69,14 +69,14 @@ namespace iiMenu.Mods
 
         public static void SpawnKeyboard()
         {
-            isKeyboardPc = isOnPC;
+            isKeyboardPc = toggleButtonActive && keyboardWithToggleButton;
             inTextInput = true;
             keyboardInput = "";
 
             shift = false;
             lockShift = false;
 
-            if (isOnPC)
+            if (isKeyboardPc)
                 lastPressedKeys.Add(KeyCode.Q);
 
             if (!isKeyboardPc)
