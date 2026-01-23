@@ -3319,7 +3319,7 @@ namespace iiMenu.Menu
 
             try
             {
-                if ((isOnPC || (toggleButtonActive && keyboardWithToggleButton) || isKeyboardPc) && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                if ((isOnPC || keyboardWithToggleButton || isKeyboardPc) && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
                 {
                     isOnPC = false;
                     TPC.transform.position = TPC.transform.parent.position;
