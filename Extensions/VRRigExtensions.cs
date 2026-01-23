@@ -49,6 +49,9 @@ namespace iiMenu.Extensions
         public static bool IsSteam(this VRRig rig) =>
             rig.GetPlatform() != "Standalone";
 
+        public static bool IsKIDRestricted(this VRRig rig) =>
+            !rig.IsMicEnabled && rig.GetName().ToLower().StartsWith("gorilla");
+
         public static string GetPlatform(this VRRig rig)
         {
             string concatStringOfCosmeticsAllowed = rig.rawCosmeticString;

@@ -391,8 +391,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method = Overpowered.DisableSnowballImpactEffect, toolTip = "Disables the impact effect that people get when hit with snowballs."},
                 new ButtonInfo { buttonText = "Invisible Snowballs", enableMethod =() => Overpowered.InvisibleSnowballs = true, disableMethod =() => Overpowered.InvisibleSnowballs = false, toolTip = "Makes the snowballs invisible."},
-                new ButtonInfo { buttonText = "No Teleport Snowballs", enableMethod =() => Overpowered.NoTeleportSnowballs = true, disableMethod =() => Overpowered.NoTeleportSnowballs = false, toolTip = "Stops snowball mods from teleporting you." },
-                new ButtonInfo { buttonText = "No Delay Snowballs", enableMethod =() => Overpowered.NoDelaySnowballs = true, disableMethod =() => Overpowered.NoDelaySnowballs = false, toolTip = "Uses every form of snowball to lower the delay to 30 per second." }
+                new ButtonInfo { buttonText = "No Teleport Snowballs", enableMethod =() => Overpowered.NoTeleportSnowballs = true, disableMethod =() => Overpowered.NoTeleportSnowballs = false, toolTip = "Stops snowball mods from teleporting you." }
             },
 
             new[] { // Room Mods [6]
@@ -468,8 +467,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method = Important.OculusReportMenu, toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
                 new ButtonInfo { buttonText = "Accept TOS", method = Important.AcceptTOS, disableMethod =() => TOSPatches.enabled = false, toolTip = "Accepts the Terms of Service for you."},
-                new ButtonInfo { buttonText = "Bypass K-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by K-ID for underage users."},
-                new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.instance.StartCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
+                new ButtonInfo { buttonText = "Bypass K-ID Restrictions", overlapText = "Bypass k-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by k-ID for underage users."},
+                new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.instance.StartCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks k-ID gives you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method = Important.CopyPlayerPosition, isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
@@ -915,6 +914,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "FPS Name Tags", method = Visuals.FPSTags, disableMethod = Visuals.DisableFPSTags, toolTip = "Gives players name tags above their heads that show their FPS."},
                 new ButtonInfo { buttonText = "ID Name Tags", method = Visuals.IDTags, disableMethod = Visuals.DisableIDTags, toolTip = "Gives players name tags above their heads that show their ID."},
                 new ButtonInfo { buttonText = "Platform Name Tags", method = Visuals.PlatformTags, disableMethod = Visuals.DisablePlatformTags, toolTip = "Gives players name tags above their heads that show what platform they're playing on."},
+                new ButtonInfo { buttonText = "k-ID Name Tags", method = Visuals.KIDNameTags, disableMethod = Visuals.DisableKIDNameTags, toolTip = "Gives players name tags above their heads that show if they have k-ID restrictions."},
                 new ButtonInfo { buttonText = "Creation Date Name Tags", method = Visuals.CreationDateTags, disableMethod = Visuals.DisableCreationDateTags, toolTip = "Gives players name tags above their heads that show their creation date."},
                 new ButtonInfo { buttonText = "Ping Name Tags", method = Visuals.PingTags, disableMethod = Visuals.DisablePingTags, toolTip = "Gives players name tags above their heads that show their ping."},
                 new ButtonInfo { buttonText = "Turn Name Tags", method = Visuals.TurnTags, disableMethod = Visuals.DisableTurnTags, toolTip = "Gives players name tags above their heads that show their turn settings."},

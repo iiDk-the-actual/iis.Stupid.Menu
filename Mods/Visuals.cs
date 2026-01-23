@@ -1956,6 +1956,77 @@ namespace iiMenu.Mods
             platformTags.Clear();
         }
 
+        private static readonly Dictionary<VRRig, GameObject> kidNameTags = new Dictionary<VRRig, GameObject>();
+        public static void KIDNameTags()
+        {
+            List<KeyValuePair<VRRig, GameObject>> kidNameTagsCopy = kidNameTags.ToList();
+            foreach (KeyValuePair<VRRig, GameObject> nametag in kidNameTagsCopy)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    Object.Destroy(nametag.Value);
+                    kidNameTags.Remove(nametag.Key);
+                }
+                else
+                {
+                    if (!nametag.Key.IsKIDRestricted())
+                    {
+                        Object.Destroy(nametag.Value);
+                        kidNameTags.Remove(nametag.Key);
+                    }
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal || selfNameTag)
+                    {
+                        if (!kidNameTags.ContainsKey(vrrig))
+                        {
+                            if (vrrig.IsKIDRestricted())
+                            {
+                                GameObject go = new GameObject("iiMenu_Kidtag");
+                                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
+                                TextMeshPro.fontSize = 4.8f;
+                                TextMeshPro.alignment = TextAlignmentOptions.Center;
+                                TextMeshPro.color = new Color32(56, 126, 138, 255);
+                                TextMeshPro.SafeSetText("k-ID Restricted");
+
+                                TextMeshPro.SafeSetFontStyle(activeFontStyle);
+                                TextMeshPro.SafeSetFont(activeFont);
+
+                                kidNameTags.Add(vrrig, go);
+                            }
+                        }
+
+                        if (kidNameTags.TryGetValue(vrrig, out GameObject nameTag))
+                        {
+                            TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
+                            if (nameTagChams)
+                                tmp.Chams();
+                            nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                            nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                            nameTag.transform.LookAt(Camera.main.transform.position);
+                            nameTag.transform.Rotate(0f, 180f, 0f);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableKIDNameTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in kidNameTags)
+                Object.Destroy(nametag.Value);
+
+            kidNameTags.Clear();
+        }
+
         private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();
         public static void CreationDateTags()
         {

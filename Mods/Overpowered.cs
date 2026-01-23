@@ -3640,7 +3640,7 @@ namespace iiMenu.Mods
         public static float _snowballSpawnDelay = 0.1f;
         public static float SnowballSpawnDelay
         {
-            get { return (NoDelaySnowballs ? (1f/30f) : _snowballSpawnDelay) * snowballMultiplicationFactor; }
+            get { return _snowballSpawnDelay * snowballMultiplicationFactor; }
             set { _snowballSpawnDelay = value; }
         }
 
@@ -3706,8 +3706,6 @@ namespace iiMenu.Mods
         public static bool SnowballHandIndex;
         public static bool NoTeleportSnowballs;
         public static bool InvisibleSnowballs;
-        public static bool NoDelaySnowballs;
-        public static int SnowballTime;
 
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, int Mode, Player Target = null, int? customScale = null, bool ignoreMultiply = false)
         {
@@ -3750,14 +3748,6 @@ namespace iiMenu.Mods
 
                 for (int i = 0; i < (ignoreMultiply ? 1 : snowballMultiplicationFactor); i++)
                 {
-                    SnowballTime++;
-
-                    if (NoDelaySnowballs && SnowballTime >= 10)
-                    {
-                        Projectiles.ChangeGrowingProjectile();
-                        SnowballTime = 0;
-                    }
-
                     SnowballHandIndex = !SnowballHandIndex;
                     Vel = Vel.ClampMagnitudeSafe(50f);
 
