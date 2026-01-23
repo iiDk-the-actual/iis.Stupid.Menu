@@ -406,6 +406,13 @@ namespace iiMenu.Menu
                         DebugPrint($"Compiled {PluginInfo.BuildTimestamp}");
                         break;
                     }
+                case "exit":
+                case "quit":
+                case "close":
+                    {
+                        Application.Quit();
+                        break;
+                    }
                 default:
                     {
                         DebugPrint($"Unknown command: '{commandName}'");
