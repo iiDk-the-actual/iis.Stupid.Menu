@@ -1689,7 +1689,9 @@ namespace iiMenu.Menu
                     if (pcKeyboardSounds)
                         VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
                     pageNumber = 0;
-                    ReloadMenu();
+
+                    if (!clickGUI)
+                        ReloadMenu();
                 }
                 else
                     keyPressedTimes.Remove(keyCode);
