@@ -5395,60 +5395,46 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (rightTrigger > 0.5f)
+            if (Time.time > freezeAllDelay)
             {
-                SerializePatch.OverrideSerialization = () => false;
-
-                if (Time.time > freezeAllDelay)
+                for (int i = 0; i < 11; i++)
                 {
-                    for (int i = 0; i < 11; i++)
+                    WebFlags flags = new WebFlags(255);
+                    NetEventOptions options = new NetEventOptions
                     {
-                        WebFlags flags = new WebFlags(255);
-                        NetEventOptions options = new NetEventOptions
-                        {
-                            Flags = flags,
-                            TargetActors = new[] { -1 }
-                        };
-                        byte code = 51;
-                        NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                    }
-
-                    RPCProtection();
-                    freezeAllDelay = Time.time + 1f;
+                        Flags = flags,
+                        TargetActors = new[] { -1 }
+                    };
+                    byte code = 51;
+                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
+
+                RPCProtection();
+                freezeAllDelay = Time.time + 1f;
             }
-            else
-                SerializePatch.OverrideSerialization = null;
         }
 
         public static void FreezeAll()
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (rightTrigger > 0.5f)
+            if (Time.time > freezeAllDelay)
             {
-                SerializePatch.OverrideSerialization = () => false;
-
-                if (Time.time > freezeAllDelay)
+                for (int i = 0; i < 11; i++)
                 {
-                    for (int i = 0; i < 11; i++)
+                    WebFlags flags = new WebFlags(255);
+                    NetEventOptions options = new NetEventOptions
                     {
-                        WebFlags flags = new WebFlags(255);
-                        NetEventOptions options = new NetEventOptions
-                        {
-                            Flags = flags,
-                            TargetActors = new[] { -1 }
-                        };
-                        byte code = 51;
-                        NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                    }
-
-                    RPCProtection();
-                    freezeAllDelay = Time.time + 0.1f;
+                        Flags = flags,
+                        TargetActors = new[] { -1 }
+                    };
+                    byte code = 51;
+                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
+
+                RPCProtection();
+                freezeAllDelay = Time.time + 0.1f;
             }
-            else
-                SerializePatch.OverrideSerialization = null;
         }
 
         public static float zaWarudoNotificationDelay;
