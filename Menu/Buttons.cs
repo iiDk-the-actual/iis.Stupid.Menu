@@ -1037,6 +1037,16 @@ namespace iiMenu.Menu
                 
                 new ButtonInfo { buttonText = "Pride Gun", overlapText = "Rainbow Gun", method = Fun.RainbowGun, toolTip = "Makes whoever your hand desires rainbow. This mod is client-sided."},
                 new ButtonInfo { buttonText = "Pride All", overlapText = "Rainbow All", method = Fun.RainbowAll, toolTip = "Makes everyone rainbow. This mod is client-sided."},
+                new ButtonInfo { buttonText = "Random Color All", overlapText = "Randomise All", method = Fun.RainbowAll, isTogglable = false, toolTip = "Makes everyone a random color. This mod is client-sided."},
+
+                new ButtonInfo { buttonText = "God Gun (Color)", overlapText = "White Gun", method = Fun.WhiteGun, toolTip = "Makes whoever your hand desires white. This mod is client-sided."},
+                new ButtonInfo { buttonText = "God All (Color)", overlapText = "White All", method = Fun.WhiteAll, isTogglable = false, toolTip = "Makes everyone white. This mod is client-sided."},
+
+                new ButtonInfo { buttonText = "Depressed Gun", overlapText = "Gray Gun", method = Fun.GrayGun, toolTip = "Makes whoever your hand desires gray. This mod is client-sided."},
+                new ButtonInfo { buttonText = "Depressed All", overlapText = "Gray All", method = Fun.GrayAll, isTogglable = false, toolTip = "Makes everyone gray. This mod is client-sided."},
+
+                new ButtonInfo { buttonText = "Very Depressed Gun", overlapText = "Black Gun", method = Fun.BlackGun, toolTip = "Makes whoever your hand desires black. This mod is client-sided."},
+                new ButtonInfo { buttonText = "Very Depressed All", overlapText = "Black All", method = Fun.BlackAll, isTogglable = false, toolTip = "Makes everyone black. This mod is client-sided."},
 
                 new ButtonInfo { buttonText = "Tinnitus Gun", method = Movement.TinnitusGun, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for whoever your hand desires."},
                 new ButtonInfo { buttonText = "Tinnitus All", enableMethod = Movement.TinnitusAll, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for everyone in the room."},
