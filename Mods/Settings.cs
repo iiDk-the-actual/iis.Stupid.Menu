@@ -6219,6 +6219,7 @@ exit 0";
                 66,
                 66,
                 338,
+                66,
                 66
             };
             string[] buttonSoundNames = {
@@ -6248,7 +6249,8 @@ exit 0";
                 "Destiny",
                 "Untitled",
                 "Slap",
-                "Dog"
+                "Dog",
+                "Garry's Mod"
             };
 
             if (positive)

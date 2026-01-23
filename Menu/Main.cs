@@ -5868,7 +5868,8 @@ namespace iiMenu.Menu
                         { 22, "windows" },
                         { 23, "destiny" },
                         { 24, "untitled" },
-                        { 26, "dog" }
+                        { 26, "dog" },
+                        { 27, "gmod" }
                     };
 
                     try
