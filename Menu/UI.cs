@@ -58,6 +58,11 @@ namespace iiMenu.Menu
             arraylist = canvas.Find("Arraylist").GetComponent<TextMeshProUGUI>();
             controlBackground = canvas.Find("ControlUI").GetComponent<Image>();
 
+            debugUI = canvas.Find("DebugUI")?.gameObject;
+            debugUI.AddComponent<UIDragWindow>();
+
+            templateLine = debugUI.transform.Find("Lines/Line")?.gameObject;
+
             r = canvas.Find("ControlUI/R").GetComponent<TMP_InputField>();
             g = canvas.Find("ControlUI/G").GetComponent<TMP_InputField>();
             b = canvas.Find("ControlUI/B").GetComponent<TMP_InputField>();
@@ -83,6 +88,19 @@ namespace iiMenu.Menu
                 ChangeName(textInput.text);
             });
 
+            TMP_InputField inputField = debugUI.transform.Find("TextInput").gameObject.GetComponent<TMP_InputField>();
+
+            inputField.onSelect.AddListener(_ => focusedOnDebug = true);
+            inputField.onDeselect.AddListener(_ => focusedOnDebug = false);
+
+            inputField.onEndEdit.AddListener((string text) =>
+            {
+                if (focusedOnDebug && !inputField.text.IsNullOrEmpty())
+                    HandleDebugCommand(text);
+
+                inputField.text = string.Empty;
+            });
+
             textObjects = new List<TextMeshProUGUI>
             {
                 canvas.Find("ControlUI/TextInput/Text Area/Text").GetComponent<TextMeshProUGUI>(),
@@ -104,7 +122,9 @@ namespace iiMenu.Menu
                 canvas.Find("ControlUI/QueueButton").GetComponent<Image>(),
                 canvas.Find("ControlUI/JoinButton").GetComponent<Image>(),
                 canvas.Find("ControlUI/ColorButton").GetComponent<Image>(),
-                canvas.Find("ControlUI/NameButton").GetComponent<Image>()
+                canvas.Find("ControlUI/NameButton").GetComponent<Image>(),
+                debugUI.transform.Find("TextInput").GetComponent<Image>(),
+                debugUI.transform.Find("Lines").GetComponent<Image>()
             };
 
             watermark.material = new Material(watermark.material);
@@ -120,8 +140,10 @@ namespace iiMenu.Menu
         }
 
         private bool isOpen = true;
+        private bool focusedOnDebug;
 
         private GameObject uiPrefab;
+        private GameObject debugUI;
 
         private Image watermark;
         private TextMeshProUGUI versionLabel;
@@ -137,22 +159,20 @@ namespace iiMenu.Menu
         private List<TextMeshProUGUI> textObjects;
         private List<Image> imageObjects = new List<Image>();
 
-        private bool wasKeyboardCondition;
         private float uiUpdateDelay;
 
         private void Update()
         {
-            bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Backslash);
-
-            if (isKeyboardCondition && !wasKeyboardCondition)
+            if (UnityInput.Current.GetKeyDown(KeyCode.Backslash))
                 ToggleGUI();
-            
-            wasKeyboardCondition = isKeyboardCondition;
 
             if (isOpen)
             {
                 uiPrefab.SetActive(true);
-                
+
+                if (UnityInput.Current.GetKeyDown(KeyCode.BackQuote))
+                    ToggleDebug();
+
                 Color guiColor = Buttons.GetIndex("Swap GUI Colors").enabled
                     ? textColors[1].GetCurrentColor()
                     : backgroundColor.GetCurrentColor();
@@ -188,6 +208,29 @@ namespace iiMenu.Menu
 
                 roomStatus.SafeSetText(FollowMenuSettings(!PhotonNetwork.InRoom ? "Not connected to room" : "Connected to room ") +
                    (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : ""));
+
+                if (debugUI.activeSelf)
+                {
+                    debugUI.GetComponent<Image>().color = backgroundColor.GetCurrentColor();
+
+                    List<TextMeshProUGUI> debugTextObjects = new List<TextMeshProUGUI>
+                    {
+                        debugUI.transform.Find("Title").GetComponent<TextMeshProUGUI>(),
+                        debugUI.transform.Find("TextInput/Text Area/Text").GetComponent<TextMeshProUGUI>(),
+                        debugUI.transform.Find("TextInput/Text Area/Placeholder").GetComponent<TextMeshProUGUI>()
+                    };
+
+                    debugTextObjects.AddRange(debugUI.transform.Find("Lines").GetComponentsInChildren<TextMeshProUGUI>());
+
+                    foreach (var textObject in debugTextObjects)
+                    {
+                        textObject.color = textColors[1].GetCurrentColor();
+                        textObject.SafeSetFont(activeFont);
+                        textObject.SafeSetFontStyle(activeFontStyle);
+                    }
+
+                    debugUI.transform.Find("Title").GetComponent<TextMeshProUGUI>().color = textColors[0].GetCurrentColor();
+                }
 
                 if (!(Time.time > uiUpdateDelay)) return;
                 Texture2D watermarkTexture = customWatermark ?? watermarkImage;
@@ -295,6 +338,45 @@ namespace iiMenu.Menu
 
             GameObject closeMessage = uiPrefab.transform.Find("Canvas")?.Find("HideMessage")?.gameObject;
             closeMessage?.SetActive(false);
+        }
+
+        private void ToggleDebug()
+        {
+            if (debugUI.activeSelf)
+                debugUI.SetActive(false);
+            else
+            {
+                if (dynamicSounds)
+                    LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/console.ogg", "Audio/Menu/console.ogg").Play(buttonClickVolume / 10f);
+
+                debugUI.SetActive(true);
+            }
+        }
+
+        private GameObject templateLine;
+        public void DebugPrint(string text)
+        {
+            if (!debugUI.activeSelf)
+                return;
+
+            GameObject line = Instantiate(templateLine, debugUI.transform.Find("Lines"), false);
+            line.SetActive(true);
+            line.GetComponent<TextMeshProUGUI>().text = text;
+        }
+
+        public void HandleDebugCommand(string command)
+        {
+            string[] args = command.Split(' ');
+            string commandName = args[0].ToLower();
+            switch (commandName)
+            {
+                case "print":
+                    DebugPrint(args.Skip(1).Join(" "));
+                    break;
+                default:
+                    DebugPrint($"Unknown command: '{commandName}'");
+                    break;
+            }
         }
 
         private void OnGUI() // Legacy plugin OnGUI compatibility
