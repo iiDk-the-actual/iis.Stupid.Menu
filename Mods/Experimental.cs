@@ -744,6 +744,29 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float jumpscareDelay;
+        public static void AdminJumpscareGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true) && Time.time > jumpscareDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        jumpscareDelay = Time.time + 0.2f;
+                        Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Jumpscare");
+                    }
+                }
+            }
+        }
+
+        public static void AdminJumpscareAll() =>
+            Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Jumpscare");
+
         public static bool muted;
         public static void AdminMute()
         {
