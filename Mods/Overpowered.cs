@@ -814,6 +814,7 @@ namespace iiMenu.Mods
                 binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
                 binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
                 binaryWriter.Write(0L);
+                binaryWriter.Write(manager.GetInvalidNetId());
                 binaryWriter.Write((byte)3);
             }
 
@@ -1473,7 +1474,7 @@ namespace iiMenu.Mods
 
                 ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
 
-                int netId = gameEntityManager.CreateNetId();
+                int netId = gameEntityManager.CreateTypeNetId(hash);
 
                 if (target is NetPlayer netPlayer)
                     target = NetPlayerToPlayer(netPlayer);
@@ -1618,11 +1619,12 @@ namespace iiMenu.Mods
 
                 for (int i = 0; i < hashes.Length; i++)
                 {
-                    binaryWriter.Write(manager.CreateNetId());
+                    binaryWriter.Write(manager.CreateTypeNetId(hashes[i]));
                     binaryWriter.Write(hashes[i]);
                     binaryWriter.Write(BitPackUtils.PackWorldPosForNetwork(positions[i]));
                     binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(rotations[i]));
                     binaryWriter.Write(sendData[i]);
+                    binaryWriter.Write(gameEntityManager.GetInvalidNetId());
                 }
 
                 byte[] array = GZipStream.CompressBuffer(data);
@@ -2231,14 +2233,15 @@ namespace iiMenu.Mods
 
                     ghostReactorDelay = Time.time + gameEntityManager.m_RpcSpamChecks.m_callLimiters[(int)GameEntityManager.RPC.CreateItem].GetDelay();
 
-                    int netId = gameEntityManager.CreateNetId();
+                    int netId = gameEntityManager.CreateTypeNetId(hash);
 
                     object[] createData = {
                         new[] { netId },
                         new[] { hash },
                         new[] { BitPackUtils.PackWorldPosForNetwork(GorillaTagger.Instance.leftHandTransform.position) },
                         new[] { BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.leftHandTransform.rotation) },
-                        new[] { 0L }
+                        new[] { 0L },
+                        new[] { gameEntityManager.GetInvalidNetId() }
                     };
 
                     gameEntityManager.photonView.RPC("CreateItemRPC", RpcTarget.All, createData);

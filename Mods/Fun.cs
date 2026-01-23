@@ -1541,7 +1541,7 @@ namespace iiMenu.Mods
         public static void StartShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
-            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.state == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
+            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.GetState() == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
             RPCProtection();
         }
 
@@ -1625,9 +1625,9 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = GetVRRigFromPlayer(Target);
 
-            int netId = ManagerRegistry.GhostReactor.GameEntityManager.CreateNetId();
+            int netId = ManagerRegistry.GhostReactor.GameEntityManager.CreateTypeNetId(Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"]);
 
-            ManagerRegistry.GhostReactor.GameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)ManagerRegistry.GhostReactor.GameEntityManager.zone }, new[] { Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L });
+            ManagerRegistry.GhostReactor.GameEntityManager.photonView.RPC("CreateItemRPC", Target, new[] { netId }, new[] { (int)ManagerRegistry.GhostReactor.GameEntityManager.zone }, new[] { Overpowered.ObjectByName["GhostReactorEnemyChaserArmored"] }, new[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) }, new[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) }, new[] { 0L }, new[] { 0 });
 
             ManagerRegistry.GhostReactor.GhostReactorManager.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new[] { netId }, new byte[] { 6 });
 

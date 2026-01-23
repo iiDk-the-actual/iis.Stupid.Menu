@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using iiMenu.Mods.CustomMaps;
 using iiMenu.Utilities;
 using Photon.Pun;
 using System;
@@ -157,6 +158,12 @@ namespace iiMenu.Extensions
                     angVelocity
                 });
 		}
+
+        public static int CreateTypeNetId(this GameEntityManager manager, int typeId) =>
+            manager.CreateNetId(1 + manager.FactoryGetBuiltInEntityCountById(typeId));
+
+        public static int GetInvalidNetId(this GameEntityManager manager) =>
+            manager.GetNetIdFromEntityId(GameEntityId.Invalid);
 
         public static bool TryGetComponentInParent<T>(this Component component, out T result) where T : Component
         {
