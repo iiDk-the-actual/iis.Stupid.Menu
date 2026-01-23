@@ -5039,6 +5039,14 @@ exit 0";
         public static void InitializeClickGUI()
         {
             canvas = menu.transform.Find("Canvas").GetComponent<Canvas>();
+            
+            if (!XRSettings.isDeviceActive)
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 1;
+
+                canvas.gameObject.transform.Find("Main").AddComponent<UIDragWindow>();
+            }
 
             Transform canvasTransform = canvas.gameObject.transform;
             canvasTransform.Find("Main").AddComponent<UIColorChanger>().colors = backgroundColor;
@@ -5417,6 +5425,8 @@ exit 0";
                 buttonBackgroundColor.colors[i] = new GradientColorKey { time = colorKey.time, color = DarkenColor(colorKey.color, 0.75f) };
             }
             canvasTransform.Find("Main/ModuleTab/Search").AddComponent<UIColorChanger>().colors = buttonBackgroundColor;
+
+            Canvas.ForceUpdateCanvases();
         }
 
         public static void ClickGUI()
@@ -5428,169 +5438,161 @@ exit 0";
                     Object.Destroy(clickGuiLine.gameObject);
                     clickGuiLine = null;
                 }
-                return;
             }
-
-            canvas.transform.Find("Main/Sidebar/Watermark").localRotation =
-                Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
-
-            if (isSearching && currentCategoryIndex != 0)
+            else
             {
-                Transform searchBar = canvas.transform.Find("Main/ModuleTab/Search");
-                TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
+                canvas.transform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
 
-                if (inputField.text != keyboardInput)
+                if (isSearching && currentCategoryIndex != 0)
                 {
-                    inputField.text = keyboardInput;
-                    foreach (GameObject button in canvas.transform.Find("Main/ModuleTab/Modules/Viewport/Content").Children())
+                    Transform searchBar = canvas.transform.Find("Main/ModuleTab/Search");
+                    TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
+
+                    if (inputField.text != keyboardInput)
                     {
-                        button.SetActive(
-                            keyboardInput.IsNullOrEmpty() ||
-                            button.name.ClearTags().Replace(" ", "").ToLower()
-                                .Contains(keyboardInput.Replace(" ", "").ToLower())
-                        );
+                        inputField.text = keyboardInput;
+                        foreach (GameObject button in canvas.transform.Find("Main/ModuleTab/Modules/Viewport/Content").Children())
+                            button.SetActive(keyboardInput.IsNullOrEmpty() || button.name.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()));
                     }
                 }
-            }
 
-            if (clickGuiLine == null)
-            {
-                clickGuiLine = new GameObject("iiMenu_ClickGUILine")
-                    .GetOrAddComponent<LineRenderer>();
-                clickGuiLine.material = new Material(Shader.Find("GUI/Text Shader"));
-                clickGuiLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                clickGuiLine.endWidth = clickGuiLine.startWidth;
-                clickGuiLine.useWorldSpace = true;
-                clickGuiLine.positionCount = 2;
+                if (!XRSettings.isDeviceActive)
+                    return;
 
-                if (smoothLines)
+                if (clickGuiLine == null)
                 {
-                    clickGuiLine.numCapVertices = 10;
-                    clickGuiLine.numCornerVertices = 5;
+                    clickGuiLine = new GameObject("iiMenu_ClickGUILine")
+                        .GetOrAddComponent<LineRenderer>();
+
+                    clickGuiLine.material = new Material(Shader.Find("GUI/Text Shader"));
+                    clickGuiLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                    clickGuiLine.endWidth = clickGuiLine.startWidth;
+                    clickGuiLine.useWorldSpace = true;
+                    clickGuiLine.positionCount = 2;
+
+                    if (smoothLines)
+                    {
+                        clickGuiLine.numCapVertices = 10;
+                        clickGuiLine.numCornerVertices = 5;
+                    }
                 }
-            }
 
-            clickGuiLine.enabled = XRSettings.isDeviceActive;
+                clickGuiLine.startColor = backgroundColor.GetCurrentColor();
+                clickGuiLine.endColor = backgroundColor.GetCurrentColor(0.5f);
 
-            clickGuiLine.startColor = backgroundColor.GetCurrentColor();
-            clickGuiLine.endColor = backgroundColor.GetCurrentColor(0.5f);
+                var uiRaycaster = canvas.GetComponent<GraphicRaycaster>();
+                eventSystem ??= EventSystem.current;
 
-            var uiRaycaster = canvas.GetComponent<TrackedDeviceGraphicRaycaster>();
-            eventSystem ??= EventSystem.current;
-            pointerData ??= new PointerEventData(eventSystem);
+                pointerData ??= new PointerEventData(eventSystem);
 
-            bool useLeft = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
-            Vector3 startPos;
-            Vector3 direction;
+                bool useLeft = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton);
 
-            if (XRSettings.isDeviceActive)
-            {
                 var (_, _, _, forward, _) = useLeft
                     ? ControllerUtilities.GetTrueLeftHand()
                     : ControllerUtilities.GetTrueRightHand();
 
-                startPos = useLeft
+                Vector3 startPos = useLeft
                     ? GorillaTagger.Instance.leftHandTransform.position
                     : GorillaTagger.Instance.rightHandTransform.position;
 
-                direction = forward.normalized;
-            }
-            else
-            {
-                Ray mouseRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-                startPos = mouseRay.origin;
-                direction = mouseRay.direction;
-            }
+                Vector3 direction = forward.normalized;
 
-            pointerData.Reset();
-            pointerData.pointerId = -1;
+                Vector3 screenPoint = Camera.main.WorldToScreenPoint(startPos + direction * 5f);
+                pointerData.position = screenPoint;
 
-            uiResults.Clear();
-            uiRaycaster.Raycast(pointerData, uiResults);
+                uiResults.Clear();
+                uiRaycaster.Raycast(pointerData, uiResults);
 
-            currentUI = uiResults.Count > 0 ? uiResults[0].gameObject : null;
+                currentUI = uiResults.Count > 0 ? uiResults[0].gameObject : null;
 
-            Vector3 endPos = currentUI != null
-                ? uiResults[0].worldPosition
-                : startPos + direction * 5f;
+                Vector3 endPos = currentUI != null
+                    ? uiResults[0].worldPosition
+                    : startPos + direction * 5f;
 
-            clickGuiLine.SetPosition(0, startPos);
-            clickGuiLine.SetPosition(1, endPos);
+                clickGuiLine.SetPosition(0, startPos);
+                clickGuiLine.SetPosition(1, endPos);
 
-            bool trigger = useLeft ? leftTrigger > 0.5f : rightTrigger > 0.5f;
-            Vector2 currentPos = pointerData.position;
-            pointerData.delta = currentPos - lastPointerPos;
-            lastPointerPos = currentPos;
+                bool trigger = useLeft ? leftTrigger > 0.5f : rightTrigger > 0.5f;
+                Vector2 currentPos = pointerData.position;
+                pointerData.delta = currentPos - lastPointerPos;
+                lastPointerPos = currentPos;
 
-            if (trigger && !lastTriggerClick && currentUI != null)
-            {
-                GameObject targetUI = null;
-                foreach (var result in uiResults)
+                if (trigger && !lastTriggerClick && currentUI != null)
                 {
-                    var button = result.gameObject.GetComponent<Button>();
-                    var toggle = result.gameObject.GetComponent<Toggle>();
-                    var slider = result.gameObject.GetComponent<Slider>();
-                    var inputField = result.gameObject.GetComponent<TMP_InputField>();
-
-                    if (button != null || toggle != null || slider != null || inputField != null)
+                    GameObject targetUI = null;
+                    foreach (var result in uiResults)
                     {
-                        targetUI = result.gameObject;
-                        break;
-                    }
-                }
+                        var button = result.gameObject.GetComponent<Button>();
+                        var toggle = result.gameObject.GetComponent<Toggle>();
+                        var slider = result.gameObject.GetComponent<Slider>();
+                        var inputField = result.gameObject.GetComponent<TMP_InputField>();
 
-                pressedUI = targetUI ?? currentUI;
-                pointerData.pressPosition = currentPos;
-                pointerData.pointerPressRaycast = uiResults[0];
-
-                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerDownHandler);
-                pointerData.pointerPress = pressedUI;
-
-                isDragging = false;
-                draggedUI = ExecuteEvents.GetEventHandler<IDragHandler>(currentUI);
-                pointerData.pointerDrag = draggedUI ?? null;
-            }
-
-            switch (trigger)
-            {
-                case true when draggedUI != null:
-                    if (!isDragging && Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
-                    {
-                        isDragging = true;
-                        ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
-
-                        if (pressedUI != null && pressedUI != draggedUI)
+                        if (button != null || toggle != null || slider != null || inputField != null)
                         {
-                            ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                            pointerData.pointerPress = null;
+                            targetUI = result.gameObject;
+                            break;
                         }
                     }
 
-                    if (isDragging)
-                        ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
-                    break;
+                    pressedUI = targetUI ?? currentUI;
+                    pointerData.pressPosition = currentPos;
+                    pointerData.pointerPressRaycast = uiResults[0];
 
-                case false when lastTriggerClick:
-                    if (pressedUI != null && !isDragging)
-                    {
-                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
-                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
-                    }
-                    else if (pressedUI != null)
-                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                    ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerDownHandler);
+                    pointerData.pointerPress = pressedUI;
 
-                    if (isDragging && draggedUI != null)
-                        ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
-
-                    pressedUI = null;
-                    draggedUI = null;
-                    pointerData.pointerDrag = null;
-                    pointerData.pointerPress = null;
                     isDragging = false;
-                    break;
-            }
+                    draggedUI = ExecuteEvents.GetEventHandler<IDragHandler>(currentUI);
+                    pointerData.pointerDrag = draggedUI ?? null;
+                }
 
-            lastTriggerClick = trigger;
+                switch (trigger)
+                {
+                    case true when draggedUI != null:
+                        {
+                            if (!isDragging)
+                            {
+                                if (Vector2.Distance(pointerData.pressPosition, currentPos) > 15f)
+                                {
+                                    isDragging = true;
+                                    ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.beginDragHandler);
+
+                                    if (pressedUI != null && pressedUI != draggedUI)
+                                    {
+                                        ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                        pointerData.pointerPress = null;
+                                    }
+                                }
+                            }
+
+                            if (isDragging)
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.dragHandler);
+                            break;
+                        }
+                    case false when lastTriggerClick:
+                        {
+                            if (pressedUI != null && !isDragging)
+                            {
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerClickHandler);
+                            }
+                            else if (pressedUI != null)
+                                ExecuteEvents.Execute(pressedUI, pointerData, ExecuteEvents.pointerUpHandler);
+
+                            if (isDragging && draggedUI != null)
+                                ExecuteEvents.Execute(draggedUI, pointerData, ExecuteEvents.endDragHandler);
+
+                            pressedUI = null;
+                            draggedUI = null;
+                            pointerData.pointerDrag = null;
+                            pointerData.pointerPress = null;
+                            isDragging = false;
+                            break;
+                        }
+                }
+
+                lastTriggerClick = trigger;
+            }
         }
 
         public static GameObject selectObject;

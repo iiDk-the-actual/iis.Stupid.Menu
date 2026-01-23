@@ -339,15 +339,6 @@ namespace iiMenu.Menu
                 if (oneHand)
                     buttonCondition = rightHand ? leftInputs[menuButtonIndex] : rightInputs[menuButtonIndex];
 
-                if (toggleButton)
-                {
-                    if (buttonCondition && !toggleButtonHeld)
-                        toggleButtonActive = !toggleButtonActive;
-
-                    toggleButtonHeld = buttonCondition;
-                    buttonCondition = toggleButtonActive;
-                }
-
                 if (bothHands)
                 {
                     buttonCondition = rightInputs[menuButtonIndex] || leftInputs[menuButtonIndex];
@@ -394,6 +385,20 @@ namespace iiMenu.Menu
 
                     buttonCondition = true;
                 }
+
+                if (toggleButton)
+                {
+                    if ((buttonCondition || isKeyboardCondition) && !toggleButtonHeld)
+                    {
+                        toggleButtonActive = !toggleButtonActive;
+                        keyboardWithToggleButton = isKeyboardCondition;
+                    }
+
+                    toggleButtonHeld = buttonCondition || isKeyboardCondition;
+                    buttonCondition = toggleButtonActive;
+                    isKeyboardCondition = toggleButtonActive && keyboardWithToggleButton;
+                }
+
                 buttonCondition |= isKeyboardCondition;
                 buttonCondition |= inTextInput;
                 buttonCondition &= !Lockdown;
@@ -3059,8 +3064,8 @@ namespace iiMenu.Menu
                     recenterRotation = menu.transform.rotation;
                 }
 
-                menu.transform.position = recenterPosition.Value;
-                menu.transform.rotation = recenterRotation ?? menu.transform.rotation;
+                menu.transform.position = clickGUI && !XRSettings.isDeviceActive ? Vector3.zero : recenterPosition.Value;
+                menu.transform.rotation = clickGUI && !XRSettings.isDeviceActive ? Quaternion.identity : (recenterRotation ?? menu.transform.rotation);
             }
             else if (joystickMenu)
             {
@@ -3200,8 +3205,8 @@ namespace iiMenu.Menu
                     }
 
                     menu.transform.parent = TPC.transform;
-                    menu.transform.position = clickGUI ? TPC.transform.position + TPC.transform.forward * 1.5f : TPC.transform.position + TPC.transform.forward * 0.5f;
-                    menu.transform.rotation = TPC.transform.rotation * (clickGUI ? Quaternion.Euler(0f, 0f, 0f) : Quaternion.Euler(-90f, 90f, 0f));
+                    menu.transform.position = TPC.transform.position + TPC.transform.forward * 0.5f;
+                    menu.transform.rotation = clickGUI && !XRSettings.isDeviceActive ? Quaternion.identity : TPC.transform.rotation * Quaternion.Euler(-90f, 90f, 0f);
 
                     if (reference != null)
                     {
@@ -3312,7 +3317,7 @@ namespace iiMenu.Menu
 
             try
             {
-                if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                if ((isOnPC || keyboardWithToggleButton) && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
                 {
                     isOnPC = false;
                     TPC.transform.position = TPC.transform.parent.position;
@@ -6488,6 +6493,7 @@ jgs \_   _/ |Oo\
         public static bool toggleButton;
         public static bool toggleButtonHeld;
         public static bool toggleButtonActive;
+        public static bool keyboardWithToggleButton;
         public static int characterDistance;
 
         public static bool doButtonsVibrate = true;
