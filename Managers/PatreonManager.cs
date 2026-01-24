@@ -19,8 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using ExitGames.Client.Photon;
+using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
+using iiMenu.Menu;
 using iiMenu.Utilities;
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +59,7 @@ namespace iiMenu.Managers
 
         private Material iconMaterial;
         private readonly Dictionary<VRRig, GameObject> iconPool = new Dictionary<VRRig, GameObject>();
+        private static readonly List<Player> excludedIndicators = new List<Player>();
 
         public static KeyValuePair<NetPlayer, PatreonMembership>[] GetAllMembersInRoom()
         {
@@ -92,11 +98,12 @@ namespace iiMenu.Managers
             };
         }
 
+        public static bool IndicatorsEnabled = true;
         public void Update()
         {
             List<VRRig> toRemoveRigs = new List<VRRig>();
 
-            foreach (var indicator in iconPool.Where(indicator => !indicator.Key.Active() || !IsPlayerPatreonMember(GetPlayerFromVRRig(indicator.Key))))
+            foreach (var indicator in iconPool.Where(indicator => !IndicatorsEnabled || !indicator.Key.Active() || !IsPlayerPatreonMember(GetPlayerFromVRRig(indicator.Key)) || excludedIndicators.Contains(indicator.Key.GetPhotonPlayer())))
             {
                 toRemoveRigs.Add(indicator.Key);
                 Destroy(indicator.Value);
@@ -105,12 +112,16 @@ namespace iiMenu.Managers
             foreach (VRRig rig in toRemoveRigs)
                 iconPool.Remove(rig);
 
+            if (!IndicatorsEnabled) return;
+
             if (!NetworkSystem.Instance.InRoom) return;
             var members = GetAllMembersInRoom();
             foreach (var member in members)
             {
                 VRRig playerRig = GetVRRigFromPlayer(member.Key);
                 if (playerRig == null) continue;
+                if (excludedIndicators.Contains(member.Key.GetPlayer())) continue;
+
                 if (!iconPool.TryGetValue(playerRig, out GameObject playerIndicator))
                 {
                     playerIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -140,8 +151,8 @@ namespace iiMenu.Managers
                     textMesh.alignment = TextAlignmentOptions.Center;
 
                     textMesh.SafeSetText(member.Value.TierName);
-                    textMesh.SafeSetFontStyle(Menu.Main.activeFontStyle);
-                    textMesh.SafeSetFont(Menu.Main.activeFont);
+                    textMesh.SafeSetFontStyle(Main.activeFontStyle);
+                    textMesh.SafeSetFont(Main.activeFont);
                     textMesh.color = GetTierColor(member.Value.TierName);
                     textMesh.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
                     textMesh.transform.SetParent(playerIndicator.transform, false);
@@ -160,5 +171,88 @@ namespace iiMenu.Managers
                 nameTag.transform.Rotate(0f, 180f, 0f);
             }
         }
+
+        public const byte PatreonByte = 63;
+        public static void EventReceived(EventData data)
+        {
+            try
+            {
+                NetPlayer sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender);
+                if (data.Code != PatreonByte || !IsPlayerPatreonMember(sender)) return;
+                VRRig senderRig = GetVRRigFromPlayer(sender);
+                object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
+                string command = args.Length > 0 ? (string)args[0] : "";
+
+                switch (command)
+                {
+                    case "indicator":
+                        {
+                            if (args[0] is bool enabled)
+                            {
+                                if (enabled)
+                                    if (!excludedIndicators.Contains(sender.GetPlayer()))
+                                        excludedIndicators.Add(sender.GetPlayer());
+                                else
+                                    if (excludedIndicators.Contains(sender.GetPlayer()))
+                                        excludedIndicators.Remove(sender.GetPlayer());
+                            }
+                            break;
+                        }
+                }
+            }
+            catch { }
+        }
+
+        public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
+        {
+            if (!NetworkSystem.Instance.InRoom)
+                return;
+
+            PhotonNetwork.RaiseEvent(63,
+                new object[] { command }
+                    .Concat(parameters)
+                    .ToArray(),
+            options, SendOptions.SendReliable);
+        }
+
+        public static void ExecuteCommand(string command, int[] targets, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = targets }, parameters);
+
+        public static void ExecuteCommand(string command, int target, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new[] { target } }, parameters);
+
+        public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
+
+
+        #region Patreon Mods
+        public static void SetupPatreonMods(string patreonName)
+        {
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>PATREON</color><color=grey>]</color> Welcome, {patreonName}! Patroen mods have been enabled.", 10000);
+
+            List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
+            buttons.Add(new ButtonInfo { buttonText = "Patreon Mods", method = () => Main.currentCategoryName = "Patreon Mods", isTogglable = false, toolTip = "Opens the patreon mods." });
+            Buttons.buttons[0] = buttons.ToArray();
+
+            if (Main.dynamicSounds)
+                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/patreon.ogg", "Audio/Menu/patreon.ogg").Play(Main.buttonClickVolume / 10f);
+        }
+
+        public static void ShowIndicator(bool enabled) =>
+            ExecuteCommand("indicator", ReceiverGroup.All, enabled);
+
+        private static int lastPlayerCount;
+        public static void ConstantHideIndicator()
+        {
+            if (!PhotonNetwork.InRoom)
+                lastPlayerCount = -1;
+
+            if (PhotonNetwork.PlayerList.Length != lastPlayerCount && PhotonNetwork.InRoom)
+            {
+                ShowIndicator(false);
+                lastPlayerCount = PhotonNetwork.PlayerList.Length;
+            }
+        }
+        #endregion
     }
 }

@@ -28,7 +28,6 @@ using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
-using iiMenu.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -2629,6 +2628,18 @@ namespace iiMenu.Menu
             new[] // Mod List [46]
             {
                 new ButtonInfo { buttonText = "Exit Mod List", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." }
+            },
+
+            new[] // Patreon Mods [47]
+            {
+                new ButtonInfo { buttonText = "Exit Patreon Mods", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." },
+                new ButtonInfo { buttonText = "No Patreon Indicator", enableMethod =() => PatreonManager.ShowIndicator(true), method = PatreonManager.ConstantHideIndicator, disableMethod =() => PatreonManager.ShowIndicator(false), toolTip = "Disables the membership that appears above your head to others with the menu."}
+            },
+
+            new[] // Patreon Settings [48]
+            {
+                new ButtonInfo { buttonText = "Exit Patreon Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                new ButtonInfo { buttonText = "Disable Patreon Indicators", enableMethod =() => PatreonManager.IndicatorsEnabled = false, disableMethod =() => PatreonManager.IndicatorsEnabled = true, toolTip = "Disables the memberships that appear above people's head with the menu."}
             }
         };
 
@@ -2679,7 +2690,9 @@ namespace iiMenu.Menu
             "Detected Mods",
             "Detected Settings",
             "Achievements",
-            "Mod List"
+            "Mod List",
+            "Patreon Mods",
+            "Patreon Settings"
         };
 
         private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/

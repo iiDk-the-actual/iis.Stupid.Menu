@@ -78,7 +78,7 @@ namespace iiMenu.Managers
 
         private float UpdateTime;
         private string FriendResponse;
-        public const int FriendByte = 53;
+        public const byte FriendByte = 53;
         private const float RigDespawnTime = 0.5f;
 
         public FriendData Friends = new FriendData { friends = new Dictionary<string, FriendData.Friend>(), incoming = new Dictionary<string, FriendData.PendingFriend>(), outgoing = new Dictionary<string, FriendData.PendingFriend>() };

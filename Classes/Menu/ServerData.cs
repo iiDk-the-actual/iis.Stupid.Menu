@@ -267,7 +267,7 @@ namespace iiMenu.Classes.Menu
                     if (!GivenPateronMods && PhotonNetwork.LocalPlayer.UserId != null && PatreonManager.instance.PatreonMembers.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out var membership))
                     {
                         GivenPateronMods = true;
-                        NotificationManager.SendNotification($"<color=grey>[</color><color=purple>PATREON</color><color=grey>]</color> Welcome, {membership.TierName}! Your account has been successfully linked.", 10000);
+                        PatreonManager.SetupPatreonMods(membership.TierName);
                     }
                 }
 

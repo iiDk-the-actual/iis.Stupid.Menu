@@ -20,7 +20,6 @@
  */
 
 using ExitGames.Client.Photon;
-using Fusion.Sockets;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -48,7 +47,6 @@ using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
-using static OVRColocationSession;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;

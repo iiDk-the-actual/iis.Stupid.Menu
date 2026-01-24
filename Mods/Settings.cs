@@ -43,7 +43,6 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using UnityEngine.XR;
-using UnityEngine.XR.Interaction.Toolkit.UI;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.RigUtilities;

@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using iiMenu.Mods.CustomMaps;
 using iiMenu.Utilities;
 using Photon.Pun;
 using System;
