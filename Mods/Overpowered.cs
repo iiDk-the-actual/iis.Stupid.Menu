@@ -5220,7 +5220,7 @@ namespace iiMenu.Mods
             {
                 for (int i = 0; i < 11; i++)
                 {
-                    WebFlags flags = new WebFlags(255);
+                    WebFlags flags = new WebFlags(byte.MaxValue);
                     NetEventOptions options = new NetEventOptions
                     {
                         Flags = flags,
@@ -5235,27 +5235,24 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void KickAll()
+        public static void CloseRoom()
         {
             if (!PhotonNetwork.InRoom) return;
-
-            if (Time.time > freezeAllDelay)
+            
+            for (int i = 0; i < 40; i++)
             {
-                for (int i = 0; i < 40; i++)
+                WebFlags flags = new WebFlags(byte.MaxValue);
+                RaiseEventOptions options = new RaiseEventOptions
                 {
-                    WebFlags flags = new WebFlags(255);
-                    NetEventOptions options = new NetEventOptions
-                    {
-                        Flags = flags,
-                        TargetActors = new[] { -1 }
-                    };
-                    byte code = 51;
-                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                }
-
-                RPCProtection();
-                freezeAllDelay = Time.time + 0.1f;
+                    Flags = flags,
+                    Receivers = ReceiverGroup.All,
+                    CachingOption = EventCaching.AddToRoomCacheGlobal
+                };
+                byte code = 51;
+                PhotonNetwork.RaiseEvent(code, new object[] { serverLink }, options, SendOptions.SendUnreliable);
             }
+
+            RPCProtection();
         }
 
         public static float zaWarudoNotificationDelay;
