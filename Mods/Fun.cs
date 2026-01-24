@@ -1565,7 +1565,7 @@ namespace iiMenu.Mods
         public static void StartShift()
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client."); return; }
-            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.GetState() == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
+            ManagerRegistry.GhostReactor.GhostReactorManager.RequestShiftStartAuthority(GhostReactor.instance.shiftManager.ShiftState == GhostReactorShiftManager.State.WaitingForFirstShiftStart);
             RPCProtection();
         }
 
