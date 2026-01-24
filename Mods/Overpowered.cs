@@ -5247,18 +5247,10 @@ namespace iiMenu.Mods
                     NetEventOptions options = new NetEventOptions
                     {
                         Flags = flags,
-                        TargetActors = new[] { -1 },
+                        TargetActors = new[] { -1 }
                     };
-
-                    PhotonNetwork.RaiseEvent(
-                        51, 
-                        new object[] { serverLink }, 
-                        new RaiseEventOptions { 
-                            Flags = new WebFlags(255), 
-                            TargetActors = new[] { -1 }, 
-                            CachingOption = EventCaching.AddToRoomCache 
-                        },
-                        SendOptions.SendUnreliable);
+                    byte code = 51;
+                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
 
                 RPCProtection();
