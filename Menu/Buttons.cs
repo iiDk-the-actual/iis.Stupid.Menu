@@ -2069,6 +2069,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Elevator Kick Aura", method = Overpowered.ElevatorKickAura, toolTip = "Kicks players nearby you if they are in the elevator."},
                 new ButtonInfo { buttonText = "Elevator Kick On Touch", method = Overpowered.ElevatorKickOnTouch, toolTip = "Kicks players you touch if they are in the elevator."},
 
+                new ButtonInfo { buttonText = "Kick All", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method = Overpowered.KickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room." },
+
                 new ButtonInfo { buttonText = "Instant Party", method = Fun.InstantParty, toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
                 new ButtonInfo { buttonText = "Party Break Network Triggers", method = Overpowered.PartyBreakNetworkTriggers, toolTip = "Breaks the network triggers for anyone in your party." },

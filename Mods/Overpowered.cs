@@ -20,6 +20,7 @@
  */
 
 using ExitGames.Client.Photon;
+using Fusion.Sockets;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
@@ -47,6 +48,7 @@ using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
+using static OVRColocationSession;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using JoinType = GorillaNetworking.JoinType;
 using Object = UnityEngine.Object;
@@ -5228,6 +5230,37 @@ namespace iiMenu.Mods
                     };
                     byte code = 51;
                     NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
+                }
+
+                RPCProtection();
+                freezeAllDelay = Time.time + 0.1f;
+            }
+        }
+
+        public static void KickAll()
+        {
+            if (!PhotonNetwork.InRoom) return;
+
+            if (Time.time > freezeAllDelay)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    WebFlags flags = new WebFlags(255);
+                    NetEventOptions options = new NetEventOptions
+                    {
+                        Flags = flags,
+                        TargetActors = new[] { -1 },
+                    };
+
+                    PhotonNetwork.RaiseEvent(
+                        51, 
+                        new object[] { serverLink }, 
+                        new RaiseEventOptions { 
+                            Flags = new WebFlags(255), 
+                            TargetActors = new[] { -1 }, 
+                            CachingOption = EventCaching.AddToRoomCache 
+                        },
+                        SendOptions.SendUnreliable);
                 }
 
                 RPCProtection();
