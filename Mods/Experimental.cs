@@ -1744,7 +1744,7 @@ namespace iiMenu.Mods
         }
 
         public static void ConfirmNotifyAllUsing() =>
-            Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
+            Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "kingofnetflix" ? "Yes, I am @kingofnetflix. I am the developer for ii's Stupid Menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
 
         public static int[] oldCosmetics;
         public static int[] oldTryOn;
