@@ -813,6 +813,30 @@ namespace iiMenu.Mods
                 TPC.GetComponent<Camera>().fieldOfView = 60f;
         }
 
+        public static void PrioritizeVoiceGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    rig.voiceAudio.volume = rig == lockTarget ? 0.2f : 1f;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+                gunLocked = false;
+        }
+
         private static float muteDelay;
         public static void MuteGun()
         {
