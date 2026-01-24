@@ -589,14 +589,31 @@ namespace iiMenu.Mods
             bool Shift = UnityInput.Current.GetKey(KeyCode.LeftShift);
             bool Alt = UnityInput.Current.GetKey(KeyCode.LeftAlt);
 
+            bool LeftArrow = UnityInput.Current.GetKey(KeyCode.LeftArrow);
+            bool RightArrow = UnityInput.Current.GetKey(KeyCode.RightArrow);
+            bool UpArrow = UnityInput.Current.GetKey(KeyCode.UpArrow);
+            bool DownArrow = UnityInput.Current.GetKey(KeyCode.DownArrow);
+
             if (stationary || W || A || S || D || Space || Ctrl)
                 GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
 
             if (!menu)
             {
+                Transform parentTransform = GTPlayer.Instance.GetControllerTransform(false).parent;
+
+                float turnSpeed = 250f;
+                
+                if (LeftArrow)
+                    parentTransform.eulerAngles += new Vector3(0, -turnSpeed, 0) * Time.deltaTime;
+                if (RightArrow)
+                    parentTransform.eulerAngles += new Vector3(0, turnSpeed, 0) * Time.deltaTime;
+                if (UpArrow)
+                    parentTransform.eulerAngles += new Vector3(-turnSpeed, 0, 0) * Time.deltaTime;
+                if (DownArrow)
+                    parentTransform.eulerAngles += new Vector3(turnSpeed, 0, 0) * Time.deltaTime;
+                
                 if (Mouse.current.rightButton.isPressed)
                 {
-                    Transform parentTransform = GTPlayer.Instance.GetControllerTransform(false).parent;
                     Quaternion currentRotation = parentTransform.rotation;
                     Vector3 euler = currentRotation.eulerAngles;
 
