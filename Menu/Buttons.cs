@@ -1833,8 +1833,23 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "End Shift", method = Fun.EndShift, isTogglable = false, toolTip = "Ends the current ghost reactor shift."},
                 new ButtonInfo { buttonText = "Set Quota", method = Fun.SetQuota, toolTip = "Meets the quota for you."},
 
+                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, toolTip = "Kicks whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
+
+                new ButtonInfo { buttonText = "Virtual Stump Crash Gun", method = Overpowered.VirtualStumpCrashGun, toolTip = "Crashes whoever your hand desires in the virtual stump."},
+                new ButtonInfo { buttonText = "Virtual Stump Crash All", method = Overpowered.VirtualStumpCrashAll, toolTip = "Crashes everyone in the virtual stump."},
+                
                 new ButtonInfo { buttonText = "Ghost Reactor Freeze Gun", method = Fun.GhostReactorFreezeGun, toolTip = "Freezes whoever your hand desires in the ghost reactor."},
                 new ButtonInfo { buttonText = "Ghost Reactor Freeze All", method = Fun.GhostReactorFreezeAll, toolTip = "Freezes everyone in the ghost reactor."},
+
+                new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
+                new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
+
+                new ButtonInfo { buttonText = "Super Infection Crash Gun", method = Overpowered.SuperInfectionCrashGun, toolTip = "Crashes whoever your hand desires in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Crash All", method = Overpowered.SuperInfectionCrashAll, toolTip = "Crashes everyone in the Super Infection gamemode."},
+
+                new ButtonInfo { buttonText = "Super Infection Break Audio Gun", method = Overpowered.SuperInfectionBreakAudioGun, toolTip = "Breaks the audio of whoever your hand desires in the Super Infection gamemode."},
+                new ButtonInfo { buttonText = "Super Infection Break Audio All", method = Overpowered.SuperInfectionBreakAudioAll, toolTip = "Breaks the audio of everyone in the Super Infection gamemode."},
 
                 new ButtonInfo { buttonText = "Kill Self", method =() => Fun.SetStateSelf(1), isTogglable = false, toolTip = "Turns you into a ghost."},
                 new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.SetStateGun(1), toolTip = "Turns whoever your hand desires into a ghost."},
@@ -1995,36 +2010,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Kick Master Client", method = Overpowered.KickMasterClient, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks the master client from the room." },
-
-                new ButtonInfo { buttonText = "Ghost Reactor Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the Ghost Reactor map."},
-
-                new ButtonInfo { buttonText = "Ghost Reactor Kick Gun", method = Overpowered.GhostReactorKickGun, toolTip = "Kicks whoever your hand desires in the Ghost Reactor map as long as they are master client."},
-                new ButtonInfo { buttonText = "Ghost Reactor Kick All", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone above you on the leaderboard in the Ghost Reactor map."},
-                new ButtonInfo { buttonText = "Ghost Reactor Set Master Client", method = Overpowered.GhostReactorKickAll, isTogglable = false, toolTip = "Kicks everyone above you on the leaderboard in the Ghost Reactor map to make you master client."},
-
-                new ButtonInfo { buttonText = "Ghost Reactor Crash Gun", method = Overpowered.GhostReactorCrashGun, toolTip = "Crashes whoever your hand desires in the ghost reactor."},
-                new ButtonInfo { buttonText = "Ghost Reactor Crash All", method = Overpowered.GhostReactorCrashAll, toolTip = "Crashes everyone in the ghost reactor."},
-
-                new ButtonInfo { buttonText = "Super Infection Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the Super Infection gamemode."},
-
-                new ButtonInfo { buttonText = "Super Infection Kick Gun", method = Overpowered.SuperInfectionKickGun, toolTip = "Kicks whoever your hand desires in the Super Infection gamemode as long as they are master client."},
-                new ButtonInfo { buttonText = "Super Infection Kick All", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone above you on the leaderboard in the Super Infection gamemode."},
-                new ButtonInfo { buttonText = "Super Infection Set Master Client", method = Overpowered.SuperInfectionKickAll, isTogglable = false, toolTip = "Kicks everyone above you on the leaderboard in the Super Infection gamemode to make you master client."},
-
-                new ButtonInfo { buttonText = "Super Infection Crash Gun", method = Overpowered.SuperInfectionCrashGun, toolTip = "Crashes whoever your hand desires in the Super Infection gamemode."},
-                new ButtonInfo { buttonText = "Super Infection Crash All", method = Overpowered.SuperInfectionCrashAll, toolTip = "Crashes everyone in the Super Infection gamemode."},
-
-                new ButtonInfo { buttonText = "Super Infection Break Audio Gun", method = Overpowered.SuperInfectionBreakAudioGun, toolTip = "Breaks the audio of whoever your hand desires in the Super Infection gamemode."},
-                new ButtonInfo { buttonText = "Super Infection Break Audio All", method = Overpowered.SuperInfectionBreakAudioAll, toolTip = "Breaks the audio of everyone in the Super Infection gamemode."},
-
-                new ButtonInfo { buttonText = "Virtual Stump Kick Master Client", method =() => Overpowered.GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager), isTogglable = false, toolTip = "Kicks the master client in the virtual stump."},
-
-                new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method = Overpowered.VirtualStumpKickGun, toolTip = "Kicks whoever your hand desires in the virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Kick All", method = Overpowered.VirtualStumpKickAll, toolTip = "Kicks everyone in the virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Set Master Client", method = Overpowered.VirtualStumpMasterKickAll, isTogglable = false, toolTip = "Kicks everyone in the virtual stump to make you master client."},
-
-                new ButtonInfo { buttonText = "Virtual Stump Crash Gun", method = Overpowered.VirtualStumpCrashGun, toolTip = "Crashes whoever your hand desires in the virtual stump."},
-                new ButtonInfo { buttonText = "Virtual Stump Crash All", method = Overpowered.VirtualStumpCrashAll, toolTip = "Crashes everyone in the virtual stump."},
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
@@ -2539,9 +2524,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Detected Lag All", overlapText = "Lag All", method = Detected.LagAll, detected = true, toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Detected Lag Aura", overlapText = "Lag Aura", method = Detected.LagAura, detected = true, toolTip = "Lags players nearby you."},
                 new ButtonInfo { buttonText = "Detected Lag On Touch", overlapText = "Lag On Touch", method = Detected.LagOnTouch, detected = true, toolTip = "Lags players that you touch."},
-                
-                new ButtonInfo { buttonText = "Detected Kick Gun", overlapText = "Kick Gun", method = Detected.KickGun, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks whoever your hand desires."},
-                new ButtonInfo { buttonText = "Detected Kick All", overlapText = "Kick All", method = Detected.KickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, detected = true, toolTip = "Kicks everyone in the room."},
 
                 new ButtonInfo { buttonText = "Detected Crash Gun", overlapText = "Crash Gun", method = Detected.CrashGun, detected = true, toolTip = "Crashes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Detected Crash All", overlapText = "Crash All", method = Detected.CrashAll, detected = true, toolTip = "Crashes everyone in the room."},

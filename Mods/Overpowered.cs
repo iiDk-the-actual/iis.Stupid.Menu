@@ -681,9 +681,10 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (!NetworkSystem.Instance.IsMasterClient)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                VirtualStumpMasterKickGun();
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                Toggle("Virtual Stump Kick All");
                 return;
             }
 
@@ -739,7 +740,7 @@ namespace iiMenu.Mods
 
             if (!PhotonNetwork.IsMasterClient)
             {
-                VirtualStumpMasterKickAll();
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
                 Toggle("Virtual Stump Kick All");
                 return;
             }
@@ -776,63 +777,6 @@ namespace iiMenu.Mods
 
             NotificationManager.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully kicked others.");
             Toggle("Virtual Stump Kick All");
-        }
-
-        public static void GameEntityKickMaster(GameEntityManager manager)
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            if (manager == null)
-                return;
-
-            if (Buttons.GetIndex("Kick Fix").enabled)
-            {
-                if (ManagerRegistry.SuperInfection.SuperInfectionManager != null && manager == ManagerRegistry.SuperInfection.SuperInfectionManager)
-                    ManagerRegistry.SuperInfection.SuperInfectionManager.photonView.RPC("SIClientToClientRPC", RpcTarget.MasterClient, new object[]
-                    {
-                        Array.Empty<int>(),
-                        Array.Empty<int>(),
-                        Array.Empty<bool[]>(),
-                        0,
-                        0,
-                        0,
-                        Array.Empty<int>(),
-                        Array.Empty<int>()
-                    });
-            }
-
-            byte[] byteData = new byte[15360];
-            MemoryStream memoryStream = new MemoryStream(byteData);
-            BinaryWriter binaryWriter = new BinaryWriter(memoryStream);
-
-            binaryWriter.Write(4);
-
-            for (int i = 0; i < 4; i++)
-            {
-                binaryWriter.Write(manager.itemPrefabFactory.Keys.ToArray().GetRandomItem());
-                binaryWriter.Write(GorillaTagger.Instance.bodyCollider.transform.position.Pack());
-                binaryWriter.Write(BitPackUtils.PackQuaternionForNetwork(GorillaTagger.Instance.bodyCollider.transform.rotation));
-                binaryWriter.Write(0L);
-                binaryWriter.Write(manager.GetInvalidNetId());
-                binaryWriter.Write((byte)3);
-            }
-
-            byte[] bytes = GZipStream.CompressBuffer(byteData);
-            byte[] padding = new byte[1960];
-
-            Buffer.BlockCopy(bytes, 0, padding, 0, bytes.Length);
-            bytes = padding;
-
-            manager.SendRPC(
-                "JoinWithItemsRPC",
-                RpcTarget.MasterClient,
-                bytes,
-                new int[0],
-                NetworkSystem.Instance.LocalPlayer.ActorNumber
-            );
-
-            RPCProtection();
         }
 
         public const int ItemCrashCount = 500;
@@ -914,54 +858,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void VirtualStumpMasterKickGun()
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            VisualizeMasterClient();
-
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
-                    {
-                        kgDebounce = Time.time + 0.2f;
-                        GameEntityKickMaster(ManagerRegistry.CustomMaps.GameEntityManager);
-                    }
-                }
-            }
-        }
-
-        private static Coroutine vstumpKickAllCoroutine;
-        public static IEnumerator VStumpKickAllCoroutine()
-        {
-            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
-            {
-                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                GameEntityKickMaster(ManagerRegistry.CustomMaps.GameEntityManager);
-
-                float timeDelay = Time.time + 1f;
-                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
-            }
-
-            vstumpKickAllCoroutine = null;
-            yield break;
-        }
-
-        public static void VirtualStumpMasterKickAll()
-        {
-            if (vstumpKickAllCoroutine != null)
-                CoroutineManager.instance.StopCoroutine(vstumpKickAllCoroutine);
-
-            vstumpKickAllCoroutine = CoroutineManager.instance.StartCoroutine(VStumpKickAllCoroutine());
-        }
-
         public static void VirtualStumpCrashGun()
         {
             if (GetGunInput(false))
@@ -1021,103 +917,6 @@ namespace iiMenu.Mods
 
         public static void GhostReactorCrashAll() =>
             GameEntityCrash(ManagerRegistry.GhostReactor.GameEntityManager, RpcTarget.Others);
-
-        private static float kgDebounce;
-        public static void GhostReactorKickGun()
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            VisualizeMasterClient();
-
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
-                    {
-                        kgDebounce = Time.time + 0.2f;
-                        GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager);
-                    }
-                }
-            }
-        }
-
-        private static Coroutine grKickAllCoroutine;
-        public static IEnumerator GRKickAllCoroutine()
-        {
-            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
-            {
-                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                GameEntityKickMaster(ManagerRegistry.GhostReactor.GameEntityManager);
-
-                float timeDelay = Time.time + 1f;
-                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
-            }
-
-            grKickAllCoroutine = null;
-            yield break;
-        }
-
-        public static void GhostReactorKickAll()
-        {
-            if (grKickAllCoroutine != null)
-                CoroutineManager.instance.StopCoroutine(grKickAllCoroutine);
-
-            grKickAllCoroutine = CoroutineManager.instance.StartCoroutine(GRKickAllCoroutine());
-        }
-        
-        public static void SuperInfectionKickGun()
-        {
-            if (NetworkSystem.Instance.IsMasterClient)
-                return;
-
-            VisualizeMasterClient();
-
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > kgDebounce)
-                    {
-                        kgDebounce = Time.time + 0.2f;
-                        GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
-                    }
-                }
-            }
-        }
-
-        private static Coroutine siKickAllCoroutine;
-        public static IEnumerator SIKickAllCoroutine()
-        {
-            while (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
-            {
-                int masterActor = NetworkSystem.Instance.MasterClient.ActorNumber;
-                GameEntityKickMaster(ManagerRegistry.SuperInfection.GameEntityManager);
-
-                float timeDelay = Time.time + 1f;
-                yield return new WaitUntil(() => !PhotonNetwork.CurrentRoom.Players.ContainsKey(masterActor) || Time.time > timeDelay);
-            }
-
-            siKickAllCoroutine = null;
-            yield break;
-        }
-
-        public static void SuperInfectionKickAll()
-        {
-            if (siKickAllCoroutine != null)
-                CoroutineManager.instance.StopCoroutine(siKickAllCoroutine);
-
-            siKickAllCoroutine = CoroutineManager.instance.StartCoroutine(SIKickAllCoroutine());
-        }
 
         public static void SuperInfectionCrashGun()
         {
