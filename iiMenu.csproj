@@ -25,11 +25,6 @@
     <EmbeddedResource Include="Resources\Client\*" />
   </ItemGroup>
 
-  <ItemGroup>
-	<Compile Remove="BuildChecks\**\*.cs" />
-	<None Remove="BuildChecks\**\*" />
-  </ItemGroup>
-	
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->
   <ItemGroup>
 	  <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
