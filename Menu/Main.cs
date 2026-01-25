@@ -4951,6 +4951,12 @@ namespace iiMenu.Menu
             ColorChanger colorChanger = render.gameObject.AddComponent<ColorChanger>();
             colorChanger.colors = buttonColors[buttonIndex < 0 && swapButtonColors ? 1 : 0];
 
+            if (shouldRound)
+            {
+                render.enabled = false;
+                colorChanger.overrideTransparency = false;
+            }
+
             if (!joystickMenu || buttonIndex != joystickButtonSelected) yield break;
             ExtGradient gradient = colorChanger.colors.Clone();
             gradient.SetColor(0, Color.red);
