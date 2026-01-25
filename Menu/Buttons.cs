@@ -28,6 +28,7 @@ using iiMenu.Managers;
 using iiMenu.Mods;
 using iiMenu.Patches.Menu;
 using iiMenu.Patches.Safety;
+using iiMenu.Utilities;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -1039,7 +1040,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Overstimulate All", method = Movement.OverstimulateAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Overstimulates everyone in the room."},
 
                 new ButtonInfo { buttonText = "Shutdown Headset Gun", method = Movement.ShutdownHeadsetGun, disableMethod = Movement.DisableTinnitus, toolTip = "Pretends to shut down the headset of whoever your hand desires."},
-                new ButtonInfo { buttonText = "Shutdown Headset All", method = Movement.ShutdownHeadsetAll, disableMethod = Movement.DisableTinnitus, toolTip = "Pretends to shut down the headset of everyone in the room."},
+                new ButtonInfo { buttonText = "Shutdown Headset All", enableMethod =() => Sound.PlayAudio(AssetUtilities.LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/shutdown.ogg", "Audio/Mods/Fun/shutdown.ogg")), method = Movement.ShutdownHeadsetAll, disableMethod = Movement.DisableTinnitus, toolTip = "Pretends to shut down the headset of everyone in the room."},
 
                 new ButtonInfo { buttonText = "Schizophrenic Gun", method = Movement.SchizophrenicGun, toolTip = "Makes you not appear for whoever your hand desires."},
                 new ButtonInfo { buttonText = "Reverse Schizophrenic Gun", method = Movement.ReverseSchizoGun, toolTip = "Makes you only appear for whoever your hand desires."},

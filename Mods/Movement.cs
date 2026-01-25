@@ -5496,52 +5496,18 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
+                if (gunLocked && lockTarget != null)
+                    Fun.HoverboardScreenTarget(lockTarget, Color.black);
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
 
                         Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/shutdown.ogg", "Audio/Mods/Fun/shutdown.ogg"));
-                        SerializePatch.OverrideSerialization = () =>
-                        {
-                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
-
-                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            Vector3 angVel = lockTarget.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
-
-                            Vector3 HoverboardPos = lockTarget.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + lockTarget.LatestVelocity() * 0.5f;
-                            Quaternion HoverboardRotation = lockTarget.headMesh.transform.rotation * Quaternion.Euler(angVel * (Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
-
-                            VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
-
-                            GTPlayer.Instance.SetHoverAllowed(true);
-
-                            HoverboardVisual hoverboardVisual = VRRig.LocalRig.hoverboardVisual;
-
-                            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(HoverboardPos), hoverboardVisual.NominalParentTransform.InverseTransformRotation(HoverboardRotation), Color.black);
-                            GTPlayer.Instance.SetHoverActive(false);
-
-                            hoverboardVisual.interpolatedLocalPosition = hoverboardVisual.NominalLocalPosition;
-                            hoverboardVisual.interpolatedLocalRotation = hoverboardVisual.NominalLocalRotation;
-
-                            GTPlayer.Instance.SetHoverboardPosRot(HoverboardPos, HoverboardRotation);
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
-
-                            GTPlayer.Instance.SetHoverActive(false);
-                            VRRig.LocalRig.hoverboardVisual.SetNotHeld();
-
-                            VRRig.LocalRig.transform.position = new Vector3(Random.Range(-99999f, 99999f), 99999f, Random.Range(-99999f, 99999f));
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = PhotonNetwork.PlayerList.Where(plr => plr.ActorNumber != target.ActorNumber).Select(plr => plr.ActorNumber).ToArray() });
-
-                            RPCProtection();
-                            VRRig.LocalRig.transform.position = positionArchive;
-
-                            return false;
-                        };
                     }
                 }
             }
@@ -5550,17 +5516,13 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    Sound.FixMicrophone();
-                    SerializePatch.OverrideSerialization = null;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
 
-        public static void ShutdownHeadsetAll()
-        {
-            Sound.PlayAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/tinnitus.ogg", "Audio/Mods/Fun/tinnitus.ogg"));
+        public static void ShutdownHeadsetAll() =>
             Fun.HoverboardScreenAll(Color.black);
-        }
 
         public static void SchizophrenicGun()
         {
