@@ -242,6 +242,7 @@ namespace iiMenu.Mods
         public static void ResetFog() =>
             ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
+        /*
         public static void SpawnLightning() =>
             ManagerRegistry.LightningManager.DoLightningStrike();
 
@@ -258,6 +259,18 @@ namespace iiMenu.Mods
 
             return timeUntilStrike < 0f ? 0f : timeUntilStrike;
         }
+
+        public static void StrikeTimeOverlay()
+        {
+            float timeUntilStrike = GetTimeUntilNextLightningStrike();
+            if (timeUntilStrike < 0f)
+            {
+                NotificationManager.information.Remove("Lightning");
+                return;
+            }
+            NotificationManager.information["Lightning"] = $"{timeUntilStrike:F1}s";
+        }
+        */
 
         public static void CoreESP()
         {
@@ -862,17 +875,6 @@ namespace iiMenu.Mods
             TimeSpan time = TimeSpan.FromSeconds(playtime);
             OverallPlaytime = $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
             yield return new WaitForSeconds(0.1f);
-        }
-
-        public static void StrikeTimeOverlay()
-        {
-            float timeUntilStrike = GetTimeUntilNextLightningStrike();
-            if (timeUntilStrike < 0f)
-            {
-                NotificationManager.information.Remove("Lightning");
-                return;
-            }
-            NotificationManager.information["Lightning"] = $"{timeUntilStrike:F1}s";
         }
 
         public static void VelocityLabel()
