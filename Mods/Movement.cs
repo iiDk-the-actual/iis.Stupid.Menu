@@ -5245,6 +5245,7 @@ namespace iiMenu.Mods
         public static AudioClip tinnitus;
         public static void TinnitusGun()
         {
+
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
@@ -5255,6 +5256,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
                     {
+                        if (!PhotonNetwork.InRoom) return;
                         gunLocked = true;
                         lockTarget = gunTarget;
 
@@ -5297,6 +5299,7 @@ namespace iiMenu.Mods
 
         public static void TinnitusAll()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (tinnitus == null)
                 tinnitus = CreateTinnitusSound();
             Sound.PlayAudio(tinnitus);
