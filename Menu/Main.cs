@@ -1944,7 +1944,7 @@ namespace iiMenu.Menu
             buttonText.spriteAsset = ButtonSpriteSheet;
 
             if (favorites.Contains(method.buttonText))
-                buttonText.text = $"    {buttonText.text}    <sprite name=\"Favorite\">";
+                targetButtonText = $"    {targetButtonText}    <sprite name=\"Favorite\">";
 
             buttonText.font = activeFont;
             buttonText.SafeSetText(targetButtonText);
