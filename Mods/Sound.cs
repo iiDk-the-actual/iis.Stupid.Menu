@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
@@ -155,14 +156,28 @@ namespace iiMenu.Mods
 
         public static bool AudioIsPlaying;
         public static float RecoverTime = -1f;
+
+        private static GameObject soundboardAudioManager;
+
         public static void PlayAudio(AudioClip sound)
         {
             if (!PhotonNetwork.InRoom)
             {
-                Play2DAudio(sound);
+                if (soundboardAudioManager == null)
+                {
+                    soundboardAudioManager = new GameObject("2DAudioMgr");
+                    AudioSource temp = soundboardAudioManager.AddComponent<AudioSource>();
+                    temp.spatialBlend = 0f;
+                }
+
+                AudioSource ausrc = soundboardAudioManager.GetComponent<AudioSource>();
+                ausrc.volume = 1f;
+                ausrc.clip = sound;
+                ausrc.loop = false;
+                ausrc.Play();
 
                 AudioIsPlaying = true;
-                RecoverTime = Time.time + sound.length + 0.4f;
+                RecoverTime = Time.time + sound.length;
 
                 return;
             }
@@ -189,6 +204,9 @@ namespace iiMenu.Mods
 
         public static void FixMicrophone()
         {
+            if (soundboardAudioManager != null)
+                soundboardAudioManager.GetComponent<AudioSource>().Stop();
+
             if (PhotonNetwork.InRoom)
             {
                 GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
