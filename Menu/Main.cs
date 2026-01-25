@@ -5814,7 +5814,8 @@ namespace iiMenu.Menu
                         { 23, "destiny" },
                         { 24, "untitled" },
                         { 26, "dog" },
-                        { 27, "gmod" }
+                        { 27, "gmod" },
+                        { 28, "hl1" }
                     };
 
                     try
