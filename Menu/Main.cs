@@ -6184,6 +6184,7 @@ namespace iiMenu.Menu
         {
             Settings.Panic();
             CustomBoardManager.CustomBoardsEnabled = false;
+            CustomBoardManager.CustomBoardFonts = false;
 
             NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer -= OnLeaveRoom;
