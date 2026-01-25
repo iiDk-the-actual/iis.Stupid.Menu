@@ -4414,7 +4414,8 @@ exit 0";
             { "Thunderbird",   "thunderbird" },
             { "Pixie Dust",    "pixiedust"   },
             { "Moon Beam",     "moonbeam"    },
-            { "Dog",           "dog"         }
+            { "Dog",           "dog"         },
+            { "GMod Error",    "gmod-error"  }
         };
 
         public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
@@ -6252,8 +6253,10 @@ exit 0";
                 "Untitled",
                 "Slap",
                 "Dog",
-                "Garry's Mod",
-                "Half Life"
+                "GMod Spawn",
+                "GMod Undo",
+                "Half Life",
+                "Mine"
             };
 
             if (positive)
