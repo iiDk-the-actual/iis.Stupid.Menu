@@ -36,9 +36,6 @@ using static iiMenu.Utilities.AssetUtilities;
 
 namespace iiMenu.Managers
 {
-    // Originally created by lars, he gave me permission
-    // Modified by ii, not much though
-
     public class NotificationManager : MonoBehaviour
     {
         public static NotificationManager Instance { get; private set; }
