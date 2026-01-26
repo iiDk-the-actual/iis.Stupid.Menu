@@ -39,7 +39,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Technie.PhysicsCreator;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -110,7 +109,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public static readonly string ConsoleVersion = "3.0.3";
+        public static readonly string ConsoleVersion = "3.0.4";
         public static Console instance;
 
         public void Awake()
