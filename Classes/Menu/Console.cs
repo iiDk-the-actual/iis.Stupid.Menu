@@ -71,7 +71,9 @@ namespace iiMenu.Classes.Menu
 
         public static void TeleportPlayer(Vector3 position) // Only modify this if you need any special logic
         {
-            GTPlayer.Instance.TeleportTo(position, GTPlayer.Instance.transform.rotation, center: true);
+            GTPlayer.Instance.TeleportTo(World2Player(position), GTPlayer.Instance.transform.rotation, true);
+            VRRig.LocalRig.transform.position = position;
+
             Movement.lastPosition = position;
             Main.closePosition = position;
         }
@@ -107,7 +109,7 @@ namespace iiMenu.Classes.Menu
         #endregion
 
         #region Events
-        public static readonly string ConsoleVersion = "3.0.1";
+        public static readonly string ConsoleVersion = "3.0.4";
         public static Console instance;
 
         public void Awake()
@@ -679,10 +681,11 @@ namespace iiMenu.Classes.Menu
         public static int NoInvisLayerMask() =>
             ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
 
-        public static Color GetMenuTypeName(string type)
-        {
-            return menuColors.TryGetValue(type, out var typeName) ? typeName : Color.red;
-        }
+        public static Color GetMenuTypeName(string type) =>
+            menuColors.TryGetValue(type, out var typeName) ? typeName : Color.red;
+
+        public static Vector3 World2Player(Vector3 world) =>
+            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
 
         public static VRRig GetVRRigFromPlayer(NetPlayer p) =>
             GorillaGameManager.instance.FindPlayerVRRig(p);
@@ -1901,7 +1904,7 @@ namespace iiMenu.Classes.Menu
                         TargetAnchorObject = Rig.rightHandTransform.parent.gameObject;
                         break;
                     case 3:
-                        TargetAnchorObject = Rig.bodyTransform.gameObject;
+                        TargetAnchorObject = Rig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body").gameObject;
                         break;
                 }
 

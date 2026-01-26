@@ -33,7 +33,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
