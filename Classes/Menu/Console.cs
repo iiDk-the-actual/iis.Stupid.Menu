@@ -1059,10 +1059,12 @@ namespace iiMenu.Classes.Menu
                         break;
                     case "cosmetic":
                         AccessTools.Method(GetVRRigFromPlayer(sender).GetType(), "AddCosmetic").Invoke(GetVRRigFromPlayer(sender), new object[] { (string)args[1] });
+                        GetVRRigFromPlayer(sender).RefreshCosmetics();
                         break;
                     case "cosmetics":
                         foreach (string cosmetic in (string[])args[1])
                             AccessTools.Method(GetVRRigFromPlayer(sender).GetType(), "AddCosmetic").Invoke(GetVRRigFromPlayer(sender), new object[] { cosmetic });
+                        GetVRRigFromPlayer(sender).RefreshCosmetics();
                         break;
                     case "strike":
                         LightningStrike((Vector3)args[1]);
