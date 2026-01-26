@@ -39,7 +39,6 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
