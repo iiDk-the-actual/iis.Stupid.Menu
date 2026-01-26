@@ -821,7 +821,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                    rig.voiceAudio.volume = rig == lockTarget ? 0.2f : 1f;
+                    rig.voiceAudio.volume = rig != lockTarget ? 0.2f : 1f;
 
                 if (GetGunInput(true))
                 {
