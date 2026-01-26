@@ -39,6 +39,7 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using Valve.VR.InteractionSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.RandomUtilities;
 using static iiMenu.Utilities.RigUtilities;
@@ -1759,8 +1760,8 @@ namespace iiMenu.Mods
 
                     if (!string.IsNullOrEmpty(concat))
                     {
-                        Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, concat);
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
+                        string[] array = concat.Split(',', StringSplitOptions.None);
+                        Console.ExecuteCommand("cosmetics", ReceiverGroup.Others, array);
                     }
                 }
             }
@@ -1772,8 +1773,8 @@ namespace iiMenu.Mods
 
             if (!string.IsNullOrEmpty(concat))
             {
-                Console.ExecuteCommand("cosmetic", new[] { player.ActorNumber }, concat);
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
+                string[] array = concat.Split(',', StringSplitOptions.None);
+                Console.ExecuteCommand("cosmetics", new[] { player.ActorNumber }, array);
             }
         }
     }
