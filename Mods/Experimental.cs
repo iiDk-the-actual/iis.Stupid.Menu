@@ -1755,26 +1755,23 @@ namespace iiMenu.Mods
                 if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray() || forceRun)
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
-                    string concat = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Aggregate("", (current, cosmetic) => current + cosmetic);
+                    string[] cosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Where(c => !string.Equals(c, "NOTHING", StringComparison.OrdinalIgnoreCase)).ToArray();
+                    foreach (string cosmetic in cosmetics)
+                        LogManager.Log(cosmetic);
 
-                    if (!string.IsNullOrEmpty(concat))
-                    {
-                        string[] array = concat.Split(',', StringSplitOptions.None);
-                        Console.ExecuteCommand("cosmetics", ReceiverGroup.Others, array);
-                    }
+                    Console.ExecuteCommand("cosmetics", ReceiverGroup.Others, cosmetics);
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
                 }
             }
         }
 
         public static void OnPlayerJoinSpoof(NetPlayer player)
         {
-            string concat = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Aggregate("", (current, cosmetic) => current + cosmetic);
-
-            if (!string.IsNullOrEmpty(concat))
-            {
-                string[] array = concat.Split(',', StringSplitOptions.None);
-                Console.ExecuteCommand("cosmetics", new[] { player.ActorNumber }, array);
-            }
+            string[] cosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Where(c => !string.Equals(c, "NOTHING", StringComparison.OrdinalIgnoreCase)).ToArray();
+            foreach (string cosmetic in cosmetics)
+                LogManager.Log(cosmetic);
+            Console.ExecuteCommand("cosmetics", new[] { player.ActorNumber }, cosmetics);
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
         }
     }
 }
