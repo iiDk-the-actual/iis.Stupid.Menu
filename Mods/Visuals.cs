@@ -45,6 +45,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.TextCore;
 using UnityEngine.UI;
+using WebSocketSharp;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
@@ -2431,11 +2432,14 @@ namespace iiMenu.Mods
                                 tmp.Chams();
                         }
                         
-                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+                        if (!string.IsNullOrEmpty(tmp.text))
+                        {
+                            nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
-                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
-                        nameTag.transform.LookAt(Camera.main.transform.position);
-                        nameTag.transform.Rotate(0f, 180f, 0f);
+                            nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                            nameTag.transform.LookAt(Camera.main.transform.position);
+                            nameTag.transform.Rotate(0f, 180f, 0f);
+                        }
                     }
                 }
                 catch { }
