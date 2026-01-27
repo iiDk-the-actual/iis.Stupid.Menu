@@ -1760,7 +1760,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = velnametags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -1816,7 +1816,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = fpsNametags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -1872,7 +1872,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = idNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -1928,7 +1928,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = platformTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2056,7 +2056,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = creationDateTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2113,7 +2113,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = pingNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2173,7 +2173,7 @@ namespace iiMenu.Mods
                         int turnFactor = vrrig.turnFactor;
 
                         GameObject nameTag = turnNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2230,7 +2230,7 @@ namespace iiMenu.Mods
 
                         
                         GameObject nameTag = taggedNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2386,7 +2386,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = modNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
 
                         if (NameTagOptimize())
                         {
@@ -2427,9 +2427,10 @@ namespace iiMenu.Mods
                             tmp.color = vrrig.GetColor();
                             tmp.SafeSetFontStyle(activeFontStyle);
                             tmp.SafeSetFont(activeFont);
+                            if (nameTagChams)
+                                tmp.Chams();
                         }
-                        if (nameTagChams)
-                            tmp.Chams();
+                        
                         nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -2486,7 +2487,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = cosmeticNameTags[vrrig];
-                        TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                        TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
                         if (NameTagOptimize())
                         {
                             string cosmetics = null;
@@ -2652,7 +2653,7 @@ namespace iiMenu.Mods
                             {
                                 GameObject go = new GameObject("iiMenu_Verifiedtag");
                                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                TextMeshPro TextMeshPro = go.AddComponent<TextMeshPro>();
+                                TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
                                 TextMeshPro.SafeSetText(name);
@@ -2662,7 +2663,7 @@ namespace iiMenu.Mods
                             {
                                 GameObject go = new GameObject("iiMenu_Verifiedtag");
                                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                TextMeshPro TextMeshPro = go.AddComponent<TextMeshPro>();
+                                TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
                                 TextMeshPro.fontSize = 4.8f;
                                 TextMeshPro.alignment = TextAlignmentOptions.Center;
                                 TextMeshPro.SafeSetText(adminName);
@@ -2673,7 +2674,7 @@ namespace iiMenu.Mods
 
                         if (verifiedNameTags.TryGetValue(vrrig, out GameObject nameTag))
                         {
-                            TextMeshPro tmp = nameTag.AddComponent<TextMeshPro>();
+                            TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
                             tmp.color = vrrig.GetColor();
                             if (NameTagOptimize()) 
                             {
