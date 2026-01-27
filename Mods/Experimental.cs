@@ -1756,8 +1756,6 @@ namespace iiMenu.Mods
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
                     string[] cosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Where(c => !string.Equals(c, "NOTHING", StringComparison.OrdinalIgnoreCase)).ToArray();
-                    foreach (string cosmetic in cosmetics)
-                        LogManager.Log(cosmetic);
 
                     Console.ExecuteCommand("cosmetics", ReceiverGroup.Others, cosmetics);
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
@@ -1768,8 +1766,7 @@ namespace iiMenu.Mods
         public static void OnPlayerJoinSpoof(NetPlayer player)
         {
             string[] cosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray().Where(c => !string.Equals(c, "NOTHING", StringComparison.OrdinalIgnoreCase)).ToArray();
-            foreach (string cosmetic in cosmetics)
-                LogManager.Log(cosmetic);
+
             Console.ExecuteCommand("cosmetics", new[] { player.ActorNumber }, cosmetics);
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray(), false);
         }
