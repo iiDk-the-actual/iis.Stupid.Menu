@@ -4845,7 +4845,16 @@ exit 0";
 
         public static IEnumerator DictationOn()
         {
+            
+
             ButtonInfo mod = Buttons.GetIndex("AI Assistant");
+
+            if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
+                PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
+            else if (Application.platform != RuntimePlatform.WindowsPlayer)
+                PromptSingle("You must be on Windows 10 or greater for this mod to run.", () => mod.enabled = false);
+
+
             ButtonInfo vc = Buttons.GetIndex("Voice Commands");
             if (vc.enabled)
                 Prompt("You currently have Voice Commands enabled. Would you like to disable it?", () => vc.enabled = false, () => mod.enabled = false);
@@ -4874,10 +4883,7 @@ exit 0";
         {
             ButtonInfo mod = Buttons.GetIndex("AI Assistant");
 
-            if (Application.platform == RuntimePlatform.WindowsPlayer && Environment.OSVersion.Version.Major < 10)
-                PromptSingle("Your version of Windows is too old for this mod to run.", () => mod.enabled = false);
-            else if (Application.platform != RuntimePlatform.WindowsPlayer) 
-                PromptSingle("You must be on Windows 10 or greater for this mod to run.", () => mod.enabled = false);
+           
 
             PhraseRecognitionSystem.Shutdown();
             while (PhraseRecognitionSystem.Status != SpeechSystemStatus.Stopped)
