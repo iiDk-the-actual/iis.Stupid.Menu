@@ -1283,7 +1283,8 @@ namespace iiMenu.Mods
                     new[] { hash },
                     new[] { BitPackUtils.PackWorldPosForNetwork(position) },
                     new[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
-                    new[] { sendData }
+                    new[] { sendData },
+                    new[] { gameEntityManager.GetInvalidNetId() }
                 };
 
                 switch (target)
