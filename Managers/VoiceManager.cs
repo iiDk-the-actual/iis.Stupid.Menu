@@ -48,9 +48,9 @@ public class VoiceManager : IAudioReader<float>
 
     private bool muteMicrophone;
 
-    public VoiceManager(int micLoopLengthSeconds = 1, string device = null)
+    public VoiceManager(int loopLength = 1, string device = null)
     {
-        this.loopLength = micLoopLengthSeconds;
+        this.loopLength = loopLength;
         StartRecording(device);
     }
 
@@ -93,7 +93,7 @@ public class VoiceManager : IAudioReader<float>
     /// <summary>
     /// A post processer that can be used to edit the buffer after all the audio data is compiled.
     /// </summary>
-    public Func<float[], bool> PostProcess { get; set; }
+    public Action<float[]> PostProcess { get; set; }
 
     /// <summary>
     /// Gets or sets the decision on if the post processing should affect the applied Audio Clip or not.
@@ -110,12 +110,12 @@ public class VoiceManager : IAudioReader<float>
     /// <summary>
     /// Returns a valid VoiceManager instance. If the Instance variable is null, it will create a new VoiceManager.
     /// </summary>
-    /// <param name="micLoopLengthSeconds">Length (in seconds) of the looping mic buffer, handled by Unity when the microphone is started, only used if the instance is null.</param>
+    /// <param name="loopLength">Length (in seconds) of the looping mic buffer, handled by Unity when the microphone is started, only used if the instance is null.</param>
     /// <param name="device">The microphone device to be used in recording, if the instance is null.</param>
     /// <returns></returns>
-    public static VoiceManager Get(int micLoopLengthSeconds = 1, string device = null)
+    public static VoiceManager Get(int loopLength = 1, string device = null)
     {
-        return Instance ??= new VoiceManager(micLoopLengthSeconds, device);
+        return Instance ??= new VoiceManager(loopLength, device);
     }
 
     /// <summary>
