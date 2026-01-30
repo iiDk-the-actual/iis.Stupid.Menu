@@ -1089,6 +1089,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Legacy Microphone", enableMethod =() => { RecorderPatch.enabled = false; Fun.ReloadMicrophone();  }, disableMethod =() => { RecorderPatch.enabled = true; Fun.ReloadMicrophone(); }, toolTip = "Reverts the microphone system into using the legacy input switcher. This is generally not recommended." },
                 new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(6000, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
                 new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
+                new ButtonInfo { buttonText = "Echo Microphone", enableMethod =() => Fun.EchoMicrophone(true), disableMethod =() => Fun.EchoMicrophone(false), toolTip = "Makes your microphone echo."},
+
                 new ButtonInfo { buttonText = "Mute Microphone", method =() => Fun.MuteMicrophone(true), disableMethod =() => Fun.MuteMicrophone(false), toolTip = "Disables your microphone."},
 
                 new ButtonInfo { buttonText = "Very High Pitch Microphone", method =() => Fun.SetMicrophonePitch(2.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone very very high pitched."},

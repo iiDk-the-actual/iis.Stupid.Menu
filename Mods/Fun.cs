@@ -1914,6 +1914,29 @@ namespace iiMenu.Mods
                 
         }
 
+        public static void EchoMicrophone(bool echo)
+        {
+            ButtonInfo button = Buttons.GetIndex("Legacy Microphone");
+            if (button.enabled)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are using Legacy Microphone. This mod does not support using the old microphone system.");
+                button.enabled = false;
+                return;
+            }
+
+            if (echo)
+            {
+                VoiceManager.Get().PostProcess = buffer =>
+                {
+                    int samples = 4000;
+                    for (int i = samples; i < buffer.Length; i++)
+                        buffer[i] += buffer[i - samples] * 0.5f;
+                };
+            }
+            else
+                VoiceManager.Get().PostProcess = null;
+        }
+
         public static void MuteMicrophone(bool mute)
         {
             if (RecorderPatch.enabled)
