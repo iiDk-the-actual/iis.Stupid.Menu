@@ -224,9 +224,7 @@ public class VoiceManager : IAudioReader<float>
 
         int remaining = microphoneClip.samples - lastSamplePosition;
         if (remaining >= buffer.Length)
-        {
             microphoneClip.GetData(tempBuffer, lastSamplePosition);
-        }
         else
         {
             microphoneClip.GetData(tempBuffer, lastSamplePosition);
@@ -235,7 +233,7 @@ public class VoiceManager : IAudioReader<float>
 
         for (int i = 0; i < buffer.Length; i++)
         {
-            float micSample = 0;
+            float microphoneSample = 0;
             if (!muteMicrophone)
             {
                 int index = (int)resample;
@@ -243,15 +241,14 @@ public class VoiceManager : IAudioReader<float>
                 if (index >= tempBuffer.Length) { resample = 0f; index = 0; nextIndex = 1; }
                 if (nextIndex >= tempBuffer.Length) nextIndex = 0;
 
-                float frac = resample - index;
-                micSample = Mathf.Lerp(tempBuffer[index], tempBuffer[nextIndex], frac);
+                microphoneSample = Mathf.Lerp(tempBuffer[index], tempBuffer[nextIndex], resample - index);
 
                 resample += pitch;
                 if (resample >= tempBuffer.Length) resample = 0f;
             }
 
             float pushed = NextAudioClipSample();
-            buffer[i] = Mathf.Clamp(micSample * gain + pushed, -1f, 1f);
+            buffer[i] = Mathf.Clamp(microphoneSample * gain + pushed, -1f, 1f);
         }
 
         lastSamplePosition = (lastSamplePosition + buffer.Length) % microphoneClip.samples;
