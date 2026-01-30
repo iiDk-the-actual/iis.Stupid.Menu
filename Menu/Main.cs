@@ -4867,7 +4867,7 @@ namespace iiMenu.Menu
         public static void SetupAdminPanel(string playername)
         {
             if (dynamicSounds)
-                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/accessgranted.ogg", "Audio/Menu/accessgranted.ogg").Play(buttonClickVolume / 10f);
+                LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/admin.ogg", "Audio/Menu/admin.ogg").Play(buttonClickVolume / 10f);
 
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
