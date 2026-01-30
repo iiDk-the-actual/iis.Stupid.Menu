@@ -1989,14 +1989,17 @@ namespace iiMenu.Mods
                         if (RecorderPatch.enabled)
                         {
                             SpeakerPatch.enabled = true;
-
-                            VoiceManager.Get().PostProcess = buffer =>
+                            VoiceManager vm = VoiceManager.Get();
+                            if (vm.PostProcess == null)
                             {
-                                for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
+                                VoiceManager.Get().PostProcess = buffer =>
                                 {
-                                    buffer[i] = SpeakerPatch.frameOut.Buf[i];
-                                }
-                            };
+                                    for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
+                                    {
+                                        buffer[i] = SpeakerPatch.frameOut.Buf[i];
+                                    }
+                                };
+                            }  
                         }
                         else
                         {
@@ -2037,6 +2040,8 @@ namespace iiMenu.Mods
                     gunLocked = false;
 
                     factory?.Dispose();
+
+                    VoiceManager.Get().PostProcess = null;
 
                     SpeakerPatch.enabled = false;
 
