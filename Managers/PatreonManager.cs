@@ -228,7 +228,7 @@ namespace iiMenu.Managers
         #region Patreon Mods
         public static void SetupPatreonMods(string patreonName)
         {
-            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>PATREON</color><color=grey>]</color> Welcome, {patreonName}! Patroen mods have been enabled.", 10000);
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>PATREON</color><color=grey>]</color> Welcome, {patreonName}! Patreon mods have been enabled.", 10000);
 
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Patreon Mods", method = () => Main.currentCategoryName = "Patreon Mods", isTogglable = false, toolTip = "Opens the patreon mods." });
