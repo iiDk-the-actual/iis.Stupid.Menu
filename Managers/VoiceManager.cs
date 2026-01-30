@@ -24,6 +24,7 @@
 // You may use VoiceManager.Get()
 using iiMenu.Managers;
 using Photon.Voice;
+using System;
 using UnityEngine;
 
 public class VoiceManager : IAudioReader<float>
@@ -88,6 +89,17 @@ public class VoiceManager : IAudioReader<float>
         get => pitch;
         set => pitch = Mathf.Max(0.1f, value); 
     }
+
+    /// <summary>
+    /// A post processer that can be used to edit the buffer after all the audio data is compiled.
+    /// </summary>
+    public Func<float[], bool> PostProcess { get; set; }
+
+    /// <summary>
+    /// Gets or sets the decision on if the post processing should affect the applied Audio Clip or not.
+    /// </summary>
+    public bool PostProcessClip { get; set; }
+
 
     public int Channels => 1;
     public string Error => error;
@@ -209,7 +221,7 @@ public class VoiceManager : IAudioReader<float>
     /// <summary>
     /// Used to pull the next chunk of audio samples.
     /// </summary>
-    
+
     // this is automatically called by photon
     public bool Read(float[] buffer)
     {
@@ -231,9 +243,10 @@ public class VoiceManager : IAudioReader<float>
             microphoneClip.GetData(tempBuffer, 0);
         }
 
+        float[] microphoneBuffer = new float[buffer.Length];
         for (int i = 0; i < buffer.Length; i++)
         {
-            float microphoneSample = 0;
+            float microphoneSample = 0f;
             if (!muteMicrophone)
             {
                 int index = (int)resample;
@@ -247,13 +260,25 @@ public class VoiceManager : IAudioReader<float>
                 if (resample >= tempBuffer.Length) resample = 0f;
             }
 
-            float pushed = NextAudioClipSample();
-            buffer[i] = Mathf.Clamp(microphoneSample * gain + pushed, -1f, 1f);
+            microphoneBuffer[i] = microphoneSample * gain;
         }
+
+        if (!PostProcessClip)
+            PostProcess?.Invoke(microphoneBuffer);
+
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            float pushed = NextAudioClipSample();
+            buffer[i] = Mathf.Clamp(microphoneBuffer[i] + pushed, -1f, 1f);
+        }
+
+        if (PostProcessClip)
+            PostProcess?.Invoke(buffer);
 
         lastSamplePosition = (lastSamplePosition + buffer.Length) % microphoneClip.samples;
         return true;
     }
+
 
     /// <summary>
     /// Returns the next sample from the pushed audio buffer each time the Read() function is called.
