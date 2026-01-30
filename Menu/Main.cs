@@ -739,7 +739,7 @@ namespace iiMenu.Menu
                     if (Sound.AudioIsPlaying)
                     {
                         if (Time.time > Sound.RecoverTime)
-                            Sound.FixMicrophone();
+                            Sound.StopAllSounds();
                     }
                 }
                 catch { }
@@ -4845,12 +4845,23 @@ namespace iiMenu.Menu
         public static void NarrateText(string text) =>
             CoroutineManager.instance.StartCoroutine(TranscribeText(text, (audio) => Play2DAudio(audio, buttonClickSound / 10f)));
 
+
         /// <summary>
         /// Initiates narration of the specified text by transcribing it to audio and playing it through your microphone.
         /// </summary>
         /// <param name="text">The text to be narrated.</param>
-        public static void SpeakText(string text) =>
-            CoroutineManager.instance.StartCoroutine(TranscribeText(text, Sound.PlayAudio));
+        public static void SpeakText(string text)
+        {
+            SpeakText(text, false);
+        }
+
+        /// <summary>
+        /// Initiates narration of the specified text by transcribing it to audio and playing it through your microphone.
+        /// </summary>
+        /// <param name="text">The text to be narrated.</param>
+        /// <param name="disableMicrophone">If you'd like the microphone to stop recording while the audio is being played.</param>
+        public static void SpeakText(string text, bool disableMicrophone = false) =>
+            CoroutineManager.instance.StartCoroutine(TranscribeText(text, t => Sound.PlayAudio(t, disableMicrophone)));
 
         public static bool isAdmin;
         public static void SetupAdminPanel(string playername)

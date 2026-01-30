@@ -562,7 +562,7 @@ namespace iiMenu.Mods
             if (mic == null)
                 return;
 
-            if (mic.SourceType != Recorder.InputSourceType.Microphone)
+            if (mic.SourceType == Recorder.InputSourceType.AudioClip)
                 return;
 
             float volume = 0f;

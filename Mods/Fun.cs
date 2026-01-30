@@ -837,6 +837,36 @@ namespace iiMenu.Mods
                 gunLocked = false;
         }
 
+        public static void DeprioritizeVoiceGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    rig.voiceAudio.volume = rig != lockTarget ? 1f : 0.2f;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+                gunLocked = false;
+        }
+
+        public static void ResetVoiceAll()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                rig.voiceAudio.volume = 1f;
+        }
+
         private static float muteDelay;
         public static void MuteGun()
         {
@@ -1830,15 +1860,20 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            Recorder mic = GorillaTagger.Instance.myRecorder;
+            if (RecorderPatch.enabled)
+                VoiceManager.Get().SamplingRate = samplingRate;
+            else
+            {
+                Recorder mic = GorillaTagger.Instance.myRecorder;
 
-            if (mic.SamplingRate == (SamplingRate)samplingRate && mic.Bitrate == bitrate)
-                return;
+                if (mic.SamplingRate == (SamplingRate)samplingRate && mic.Bitrate == bitrate)
+                    return;
 
-            mic.SamplingRate = (SamplingRate)samplingRate;
-            mic.Bitrate = bitrate;
+                mic.SamplingRate = (SamplingRate)samplingRate;
+                mic.Bitrate = bitrate;
 
-            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+            }      
         }
 
         public static void SetMicrophoneAmplification(bool amplify)
@@ -1846,40 +1881,52 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            Recorder mic = GorillaTagger.Instance.myRecorder;
-
-            if (amplify)
+            if (RecorderPatch.enabled)
+                VoiceManager.Get().Gain = amplify ? 16f : 1;
+            else
             {
-                if (mic.gameObject.GetComponent<MicAmplifier>() != null)
-                    return;
+                Recorder mic = GorillaTagger.Instance.myRecorder;
 
-                MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
-                microphoneAmplifier.AmplificationFactor = 16;
-                microphoneAmplifier.BoostValue = 16;
-            } else
-            {
-                if (mic.gameObject.GetComponent<MicAmplifier>())
+                if (amplify)
                 {
-                    if (mic.gameObject.GetComponent<MicAmplifier>() == null)
+                    if (mic.gameObject.GetComponent<MicAmplifier>() != null)
                         return;
 
-                    MicAmplifier microphoneAmplifier = mic.gameObject.GetComponent<MicAmplifier>();
-                    microphoneAmplifier.enabled = false;
-                    Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+                    MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
+                    microphoneAmplifier.AmplificationFactor = 16;
+                    microphoneAmplifier.BoostValue = 16;
                 }
-            }
+                else
+                {
+                    if (mic.gameObject.GetComponent<MicAmplifier>())
+                    {
+                        if (mic.gameObject.GetComponent<MicAmplifier>() == null)
+                            return;
 
-            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                        MicAmplifier microphoneAmplifier = mic.gameObject.GetComponent<MicAmplifier>();
+                        microphoneAmplifier.enabled = false;
+                        Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+                    }
+                }
+
+                CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+            }
+                
         }
 
         public static void MuteMicrophone(bool mute)
         {
-            if (!PhotonNetwork.InRoom)
-                return;
-            Recorder mic = GorillaTagger.Instance.myRecorder;
-            if (mic.IsRecording != mute)
-                return;
-            mic.IsRecording = !mute;
+            if (RecorderPatch.enabled)
+                VoiceManager.Get().MuteMicrophone = mute;
+            else
+            {
+                if (!PhotonNetwork.InRoom)
+                    return;
+                Recorder mic = GorillaTagger.Instance.myRecorder;
+                if (mic.IsRecording != mute)
+                    return;
+                mic.IsRecording = !mute;
+            }
         }
 
         public static void SetMicrophonePitch(float pitch)
@@ -1887,30 +1934,36 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom)
                 return;
 
-            Recorder mic = GorillaTagger.Instance.myRecorder;
-
-            if (!Mathf.Approximately(pitch, 1f))
-            {
-                MicPitchShifter pitchShifter = mic.gameObject.GetComponent<MicPitchShifter>();
-                if (pitchShifter != null && Mathf.Approximately(pitchShifter.PitchFactor, pitch))
-                    return;
-
-                MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
-                microphoneAmplifier.PitchFactor = pitch;
-            }
+            if (RecorderPatch.enabled)
+                VoiceManager.Get().Pitch = pitch;
             else
             {
-                if (mic.gameObject.GetComponent<MicPitchShifter>())
+                Recorder mic = GorillaTagger.Instance.myRecorder;
+
+                if (!Mathf.Approximately(pitch, 1f))
                 {
-                    MicPitchShifter microphoneAmplifier = mic.gameObject.GetComponent<MicPitchShifter>();
-                    microphoneAmplifier.enabled = false;
-                    Object.Destroy(mic.gameObject.GetComponent<MicPitchShifter>());
+                    MicPitchShifter pitchShifter = mic.gameObject.GetComponent<MicPitchShifter>();
+                    if (pitchShifter != null && Mathf.Approximately(pitchShifter.PitchFactor, pitch))
+                        return;
+
+                    MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
+                    microphoneAmplifier.PitchFactor = pitch;
                 }
                 else
-                    return;
-            }
+                {
+                    if (mic.gameObject.GetComponent<MicPitchShifter>())
+                    {
+                        MicPitchShifter microphoneAmplifier = mic.gameObject.GetComponent<MicPitchShifter>();
+                        microphoneAmplifier.enabled = false;
+                        Object.Destroy(mic.gameObject.GetComponent<MicPitchShifter>());
+                    }
+                    else
+                        return;
+                }
 
-            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+            }
+                
         }
 
         public static void SetDebugEchoMode(bool value)
@@ -1942,6 +1995,8 @@ namespace iiMenu.Mods
 
                         SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
 
+                        RecorderPatch.enabled = false;
+
                         factory?.Dispose();
 
                         factory = new LoopbackFactory();
@@ -1967,6 +2022,8 @@ namespace iiMenu.Mods
                     SpeakerPatch.enabled = false;
 
                     Sound.FixMicrophone();
+
+                    RecorderPatch.enabled = !Buttons.GetIndex("Legacy Microphone").enabled;
                 }
             }
         }
@@ -1996,7 +2053,7 @@ namespace iiMenu.Mods
                 {
                     GorillaTagger.Instance.myRecorder.IsRecording = true;
                     if (PhotonNetwork.InRoom)
-                        SpeakText(text);
+                        SpeakText(text, true);
                     else
                         NarrateText(text);
                 }
@@ -2009,11 +2066,15 @@ namespace iiMenu.Mods
             };
             drec.DictationError += (error, hresult) =>
             {
-                LogManager.LogError($"Dictation error: {error}; HResult = {hresult}.");
+                if (Settings.debugDictation)
+                    LogManager.LogError($"Dictation error: {error}; HResult = {hresult}.");
             };
             drec.DictationHypothesis += (text) =>
             {
-                LogManager.Log($"Hypothesis: {text}");
+                if (Settings.debugDictation)
+                    LogManager.Log($"Hypothesis: {text}");
+                NotificationManager.ClearAllNotifications();
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>VOICE</color><color=grey>]</color> {text}");
             };
             drec.Start();
         }

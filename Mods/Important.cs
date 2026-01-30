@@ -856,13 +856,13 @@ exit";
         public static void DisableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = false;
-            MicPatch.enabled = true;
+            LoudnessPatch.enabled = true;
         }
 
         public static void EnableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = true;
-            MicPatch.enabled = false;
+            LoudnessPatch.enabled = false;
         }
 
         private static float lastTime;

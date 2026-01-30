@@ -24,7 +24,7 @@
 namespace iiMenu.Patches.Menu
 {
     [HarmonyPatch(typeof(GorillaSpeakerLoudness), "UpdateLoudness")]
-    public class MicPatch
+    public class LoudnessPatch
     {
         public static bool enabled;
 

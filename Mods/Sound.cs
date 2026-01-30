@@ -25,6 +25,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
+using iiMenu.Patches.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -77,7 +78,7 @@ namespace iiMenu.Mods
                 {
                     string soundName = RemoveFileExtension(fileName).Replace("_", " ");
                     bool enabled = enabledSounds.Contains(soundName);
-                    soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = FixMicrophone, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
+                    soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = StopAllSounds, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                     
                 } else
                 {
@@ -85,13 +86,13 @@ namespace iiMenu.Mods
                     if (LoopAudio)
                     {
                         bool enabled = enabledSounds.Contains(soundName);
-                        soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = FixMicrophone, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
+                        soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = StopAllSounds, enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                     }
                     else
                         soundButtons.Add(new ButtonInfo { buttonText = "SoundboardSound" + soundName.Hash(), overlapText = RemoveFileExtension(fileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone." });
                 }
             }
-            soundButtons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = FixMicrophone, isTogglable = false, toolTip = "Stops all currently playing sounds." });
+            soundButtons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = StopAllSounds, isTogglable = false, toolTip = "Stops all currently playing sounds." });
             soundButtons.Add(new ButtonInfo { buttonText = "Open Sound Folder", method = OpenSoundFolder, isTogglable = false, toolTip = "Opens a folder containing all of your sounds." });
             soundButtons.Add(new ButtonInfo { buttonText = "Reload Sounds", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Reloads all of your sounds." });
             soundButtons.Add(new ButtonInfo { buttonText = "Get More Sounds", method = LoadSoundLibrary, isTogglable = false, toolTip = "Opens a public audio library, where you can download your own sounds." });
@@ -158,7 +159,7 @@ namespace iiMenu.Mods
 
         private static GameObject soundboardAudioManager;
 
-        public static void PlayAudio(AudioClip sound)
+        public static void PlayAudio(AudioClip sound, bool disableMicrophone = false)
         {
             if (!PhotonNetwork.InRoom)
             {
@@ -181,9 +182,16 @@ namespace iiMenu.Mods
                 return;
             }
 
-            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-            GorillaTagger.Instance.myRecorder.AudioClip = sound;
-            GorillaTagger.Instance.myRecorder.RestartRecording(true);
+
+            if (RecorderPatch.enabled)
+                VoiceManager.Get().AudioClip(sound, disableMicrophone);
+            else
+            {
+                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
+                GorillaTagger.Instance.myRecorder.AudioClip = sound;
+                GorillaTagger.Instance.myRecorder.RestartRecording(true);
+            }
+
             GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
             if (!LoopAudio)
             {
@@ -201,21 +209,34 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void FixMicrophone()
+        public static void StopAllSounds() // used to be FixMicrophone
         {
             if (soundboardAudioManager != null)
                 soundboardAudioManager.GetComponent<AudioSource>().Stop();
 
             if (PhotonNetwork.InRoom)
             {
-                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
-                GorillaTagger.Instance.myRecorder.AudioClip = null;
-                GorillaTagger.Instance.myRecorder.RestartRecording(true);
-                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+                if (RecorderPatch.enabled)
+                    VoiceManager.Get().StopAudioClip();
+                else
+                {
+                    GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
+                    GorillaTagger.Instance.myRecorder.AudioClip = null;
+                    GorillaTagger.Instance.myRecorder.RestartRecording(true);
+                    GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+                }
             }
-            
+
             AudioIsPlaying = false;
             RecoverTime = -1f;
+        }
+
+        public static void FixMicrophone()
+        {
+            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
+            GorillaTagger.Instance.myRecorder.AudioClip = null;
+            GorillaTagger.Instance.myRecorder.RestartRecording(true);
+            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
         }
 
         private static bool lastBindPressed;
