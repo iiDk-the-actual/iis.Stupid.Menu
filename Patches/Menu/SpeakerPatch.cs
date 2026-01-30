@@ -31,12 +31,14 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
         public static Speaker targetSpeaker;
+        public static FrameOut<float> frameOut;
 
         static void Postfix(Speaker __instance, FrameOut<float> frame)
         {
             if (!enabled || targetSpeaker == null || __instance != targetSpeaker)
                 return;
 
+            frameOut = frame;
             Fun.ProcessFrameBuffer(frame.Buf);
         }
     }

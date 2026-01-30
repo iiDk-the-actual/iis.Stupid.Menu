@@ -1984,29 +1984,48 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal() && Time.time > copyVoiceGunDelay)
+                    if (gunTarget && !gunTarget.IsLocal())
                     {
-                        copyVoiceGunDelay = Time.time + 0.5f;
-
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-
-                        SpeakerPatch.enabled = true;
-
-                        SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
-
-                        RecorderPatch.enabled = false;
-
-                        factory?.Dispose();
-
-                        factory = new LoopbackFactory();
-
-                        GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Factory;
-                        GorillaTagger.Instance.myRecorder.InputFactory = () =>
+                        if (RecorderPatch.enabled)
                         {
-                            return factory;
-                        };
-                        CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                            SpeakerPatch.enabled = true;
+
+                            VoiceManager.Get().PostProcess = buffer =>
+                            {
+                                for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
+                                {
+                                    buffer[i] = SpeakerPatch.frameOut.Buf[i];
+                                }
+                            };
+                        }
+                        else
+                        {
+                            if (Time.time > copyVoiceGunDelay)
+                            {
+                                copyVoiceGunDelay = Time.time + 0.5f;
+
+                                gunLocked = true;
+                                lockTarget = gunTarget;
+
+                                SpeakerPatch.enabled = true;
+
+                                SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
+
+                                RecorderPatch.enabled = false;
+
+                                factory?.Dispose();
+
+                                factory = new LoopbackFactory();
+
+                                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Factory;
+                                GorillaTagger.Instance.myRecorder.InputFactory = () =>
+                                {
+                                    return factory;
+                                };
+                                CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                            }
+                        }
+                            
                         GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
                     }
                 }
