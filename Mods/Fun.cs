@@ -1945,7 +1945,7 @@ namespace iiMenu.Mods
                 float[] delayedBuffer = new float[samples];
                 int index = 0;
 
-                VoiceManager.Get().PostProcessors["Echo"] = buffer =>
+                VoiceManager.Get().PostProcessors["Echo"] ??= buffer =>
                 {
                     for (int i = 0; i < buffer.Length; i++)
                     {
@@ -1990,7 +1990,7 @@ namespace iiMenu.Mods
                 int samplesUntilNext = Random.Range(rate * 1, rate * 4);
 
                 VoiceManager.Get().PostProcessClip = true;
-                VoiceManager.Get().PostProcessors["Glitch"] = buffer =>
+                VoiceManager.Get().PostProcessors["Glitch"] ??= buffer =>
                 {
                     for (int i = 0; i < buffer.Length; i++)
                     {
@@ -2042,7 +2042,7 @@ namespace iiMenu.Mods
 
             if (status)
             {
-                VoiceManager.Get().PostProcessors["Lag"] = buffer =>
+                VoiceManager.Get().PostProcessors["Lag"] ??= buffer =>
                 {
                     if (UnityEngine.Random.value < 0.25f)
                         Array.Clear(buffer, 0, buffer.Length);
