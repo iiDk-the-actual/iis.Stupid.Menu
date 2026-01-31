@@ -1945,20 +1945,23 @@ namespace iiMenu.Mods
                 float[] delayedBuffer = new float[samples];
                 int index = 0;
 
-                VoiceManager.Get().PostProcessors["Echo"] ??= buffer =>
+                if (!VoiceManager.Get().PostProcessors.ContainsKey("Echo"))
                 {
-                    for (int i = 0; i < buffer.Length; i++)
+                    VoiceManager.Get().PostProcessors["Echo"] = buffer =>
                     {
-                        float delayed = delayedBuffer[index];
-                        float raw = buffer[i];
-                        float mix = raw + delayed * 0.5f;
+                        for (int i = 0; i < buffer.Length; i++)
+                        {
+                            float delayed = delayedBuffer[index];
+                            float raw = buffer[i];
+                            float mix = raw + delayed * 0.5f;
 
-                        buffer[i] = Mathf.Clamp(mix, -1f, 1f);
+                            buffer[i] = Mathf.Clamp(mix, -1f, 1f);
 
-                        delayedBuffer[index] = mix;
-                        index = (index + 1) % samples;
-                    }
-                };
+                            delayedBuffer[index] = mix;
+                            index = (index + 1) % samples;
+                        }
+                    };
+                }
             }
             else
             {
@@ -1990,39 +1993,42 @@ namespace iiMenu.Mods
                 int samplesUntilNext = Random.Range(rate * 1, rate * 4);
 
                 VoiceManager.Get().PostProcessClip = true;
-                VoiceManager.Get().PostProcessors["Glitch"] ??= buffer =>
+                if (!VoiceManager.Get().PostProcessors.ContainsKey("Glitch"))
                 {
-                    for (int i = 0; i < buffer.Length; i++)
+                    VoiceManager.Get().PostProcessors["Glitch"] = buffer =>
                     {
-                        history[historyIndex] = buffer[i];
-                        historyIndex = (historyIndex + 1) % repeatLength;
-                        if (repeatsLeft > 0)
+                        for (int i = 0; i < buffer.Length; i++)
                         {
-                            buffer[i] = repeatBuffer[repeatIndex];
-                            repeatIndex++;
-                            if (repeatIndex >= repeatLength)
+                            history[historyIndex] = buffer[i];
+                            historyIndex = (historyIndex + 1) % repeatLength;
+                            if (repeatsLeft > 0)
                             {
-                                repeatIndex = 0;
-                                repeatsLeft--;
-                            }
-                        }
-                        else
-                        {
-                            samplesUntilNext--;
-                            if (samplesUntilNext <= 0)
-                            {
-                                for (int j = 0; j < repeatLength; j++)
+                                buffer[i] = repeatBuffer[repeatIndex];
+                                repeatIndex++;
+                                if (repeatIndex >= repeatLength)
                                 {
-                                    int index = (historyIndex + j) % repeatLength; 
-                                    repeatBuffer[j] = history[index];
+                                    repeatIndex = 0;
+                                    repeatsLeft--;
                                 }
-                                repeatsLeft = Random.Range(1, 2);
-                                repeatIndex = 0;
-                                samplesUntilNext = Random.Range(rate * 1, rate * 4);
+                            }
+                            else
+                            {
+                                samplesUntilNext--;
+                                if (samplesUntilNext <= 0)
+                                {
+                                    for (int j = 0; j < repeatLength; j++)
+                                    {
+                                        int index = (historyIndex + j) % repeatLength;
+                                        repeatBuffer[j] = history[index];
+                                    }
+                                    repeatsLeft = Random.Range(1, 2);
+                                    repeatIndex = 0;
+                                    samplesUntilNext = Random.Range(rate * 1, rate * 4);
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                } 
             }
             else
             {
@@ -2042,11 +2048,14 @@ namespace iiMenu.Mods
 
             if (status)
             {
-                VoiceManager.Get().PostProcessors["Lag"] ??= buffer =>
+                if (!VoiceManager.Get().PostProcessors.ContainsKey("Lag"))
                 {
-                    if (UnityEngine.Random.value < 0.25f)
-                        Array.Clear(buffer, 0, buffer.Length);
-                };
+                    VoiceManager.Get().PostProcessors["Lag"] = buffer =>
+                    {
+                        if (UnityEngine.Random.value < 0.25f)
+                            Array.Clear(buffer, 0, buffer.Length);
+                    };
+                }
             }
             else
                 VoiceManager.Get().PostProcessors.Remove("Lag");
