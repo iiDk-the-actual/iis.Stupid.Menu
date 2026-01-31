@@ -736,7 +736,7 @@ namespace iiMenu.Menu
                 // Recover from playing sound on soundboard code
                 try
                 {
-                    if (Sound.AudioIsPlaying)
+                    if (Sound.AudioIsPlaying && !RecorderPatch.enabled)
                     {
                         if (Time.time > Sound.RecoverTime)
                             Sound.StopAllSounds();

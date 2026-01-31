@@ -25,11 +25,14 @@
 using iiMenu.Managers;
 using Photon.Voice;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class VoiceManager : IAudioReader<float>
 {
     private int samplingRate = 16000;
+    private const int OutputRate = 16000;
     private float gain = 1;
     private float pitch = 1f;
 
@@ -37,14 +40,23 @@ public class VoiceManager : IAudioReader<float>
     private string currentDevice;
     public AudioClip microphoneClip;
     private int lastSamplePosition;
+    private float step;
 
     private string error;
 
     private float[] tempBuffer;
     private float resample;
-    private float[] audioClip;
-    private float audioClipPosition;
-    private float audioClipStep;
+    public sealed class Clip
+    {
+        public Guid Id { get; set; }
+        public AudioClip Source { get; set; }
+        public float[] Samples;
+        public float Position;
+        public float Step;
+        public bool MuteMicrophone;
+    }
+
+    private List<Clip> audioClips = new List<Clip>();
 
     private bool muteMicrophone;
 
@@ -54,6 +66,7 @@ public class VoiceManager : IAudioReader<float>
         StartRecording(device);
     }
 
+    public IReadOnlyList<Clip> AudioClips => audioClips.AsReadOnly();
     /// <summary>
     /// Gets or sets the microphone's recording status. This does not stop the pushed AudioClip from playing.
     /// </summary>
@@ -140,6 +153,7 @@ public class VoiceManager : IAudioReader<float>
 
         microphoneClip = Microphone.Start(currentDevice, true, loopLength, samplingRate);
         lastSamplePosition = 0;
+        step = samplingRate / (float)OutputRate;
         return true;
     }
 
@@ -174,22 +188,21 @@ public class VoiceManager : IAudioReader<float>
     /// </summary>
     /// <param name="clip">AudioClip to play.</param>
     /// <param name="disableMicrophone">Whether to mute the microphone while the clip plays.</param>
-    public bool AudioClip(AudioClip clip, bool disableMicrophone)
+    /// <returns>System.Guid</returns>
+    public Guid AudioClip(AudioClip clip, bool disableMicrophone = false)
     {
         if (clip == null)
-            return false;
-
-        muteMicrophone = disableMicrophone;
+            return Guid.Empty;
 
         int channels = clip.channels;
         float[] raw = new float[clip.samples * channels];
         clip.GetData(raw, 0);
 
-        audioClip = new float[clip.samples];
+        float[] mono = new float[clip.samples];
         if (channels == 1)
         {
             for (int i = 0; i < clip.samples; i++)
-                audioClip[i] = raw[i];
+                mono[i] = raw[i];
         }
         else
         {
@@ -199,24 +212,43 @@ public class VoiceManager : IAudioReader<float>
                 int baseIndex = i * channels;
                 for (int c = 0; c < channels; c++)
                     sum += raw[baseIndex + c];
-                audioClip[i] = sum / channels;
+                mono[i] = sum / channels;
             }
         }
 
-        audioClipPosition = 0f;
-        audioClipStep = clip.frequency / (float)samplingRate;
-        return true;
+        var id = Guid.NewGuid();
+        audioClips.Add(new Clip
+        {
+            Id = id,
+            Source = clip,
+            Samples = mono,
+            Position = 0f,
+            Step = clip.frequency / (float)samplingRate,
+            MuteMicrophone = disableMicrophone
+        });
+
+        return id;
     }
 
     /// <summary>
-    /// Stops the currently playing AudioClip.
+    /// Stops the specified audio clip from playing.
     /// </summary>
-    public void StopAudioClip()
+    /// <param name="id">The GUID of the audio clip to stop.</param>
+    public bool StopAudioClip(Guid id)
     {
-        audioClip = null;
-        audioClipPosition = 0f;
-        muteMicrophone = false; // maybe?
+        int index = audioClips.FindIndex(c => c.Id == id);
+        if (index == -1) return false;
+
+        audioClips.RemoveAt(index);
+        return true;
     }
+
+
+    /// <summary>
+    /// Stops all the currently playing audio clips.
+    /// </summary>
+    public void StopAudioClips() =>
+        audioClips.Clear();
 
     /// <summary>
     /// Used to pull the next chunk of audio samples.
@@ -227,27 +259,31 @@ public class VoiceManager : IAudioReader<float>
     {
         if (microphoneClip == null || string.IsNullOrEmpty(currentDevice)) return false;
 
+        int samples = Mathf.CeilToInt(buffer.Length * step);
         int pos = Microphone.GetPosition(currentDevice);
         int available = (pos < lastSamplePosition) ? microphoneClip.samples - lastSamplePosition + pos : pos - lastSamplePosition;
-        if (available < buffer.Length) return false;
+        if (available < samples) return false;
 
-        if (tempBuffer == null || tempBuffer.Length != buffer.Length)
-            tempBuffer = new float[buffer.Length];
+        if (tempBuffer == null || tempBuffer.Length != samples)
+            tempBuffer = new float[samples];
 
         int remaining = microphoneClip.samples - lastSamplePosition;
-        if (remaining >= buffer.Length)
+        if (remaining >= samples)
             microphoneClip.GetData(tempBuffer, lastSamplePosition);
         else
         {
             microphoneClip.GetData(tempBuffer, lastSamplePosition);
-            microphoneClip.GetData(tempBuffer, 0);
+            int wrap = samples - remaining;
+            float[] wrapBuffer = new float[wrap];
+            microphoneClip.GetData(wrapBuffer, 0);
+            Array.Copy(wrapBuffer, 0, tempBuffer, remaining, wrap);
         }
 
         float[] microphoneBuffer = new float[buffer.Length];
         for (int i = 0; i < buffer.Length; i++)
         {
             float microphoneSample = 0f;
-            if (!muteMicrophone)
+            if (!muteMicrophone || !audioClips.Any(c => c.MuteMicrophone))
             {
                 int index = (int)resample;
                 int nextIndex = index + 1;
@@ -256,7 +292,7 @@ public class VoiceManager : IAudioReader<float>
 
                 microphoneSample = Mathf.Lerp(tempBuffer[index], tempBuffer[nextIndex], resample - index);
 
-                resample += pitch;
+                resample += step * pitch;
                 if (resample >= tempBuffer.Length) resample = 0f;
             }
 
@@ -275,7 +311,7 @@ public class VoiceManager : IAudioReader<float>
         if (PostProcessClip)
             PostProcess?.Invoke(buffer);
 
-        lastSamplePosition = (lastSamplePosition + buffer.Length) % microphoneClip.samples;
+        lastSamplePosition = (lastSamplePosition + samples) % microphoneClip.samples;
         return true;
     }
 
@@ -285,23 +321,31 @@ public class VoiceManager : IAudioReader<float>
     /// </summary>
     private float NextAudioClipSample()
     {
-        if (audioClip == null || audioClip.Length == 0)
+        if (audioClips.Count == 0)
             return 0f;
 
-        int index = (int)audioClipPosition;
-        int nextIndex = index + 1;
+        float mixed = 0f;
 
-        if (nextIndex >= audioClip.Length)
+        for (int i = audioClips.Count - 1; i >= 0; i--)
         {
-            audioClip = null;
-            return 0f;
+            var clip = audioClips[i];
+
+            int index = (int)clip.Position;
+            int nextIndex = index + 1;
+
+            if (nextIndex >= clip.Samples.Length)
+            {
+                audioClips.RemoveAt(i);
+                continue;
+            }
+
+            float frac = clip.Position - index;
+            mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac);
+
+            clip.Position += clip.Step;
         }
 
-        float frac = audioClipPosition - index;
-        float sample = Mathf.Lerp(audioClip[index], audioClip[nextIndex], frac);
-
-        audioClipPosition += audioClipStep;
-        return sample;
+        return mixed;
     }
 
     public void Dispose()

@@ -1861,7 +1861,13 @@ namespace iiMenu.Mods
                 return;
 
             if (RecorderPatch.enabled)
-                VoiceManager.Get().SamplingRate = samplingRate;
+            {
+                if (VoiceManager.Get().SamplingRate != samplingRate)
+                {
+                    VoiceManager.Get().SamplingRate = samplingRate; 
+                    VoiceManager.Get().RestartMicrophone();
+                }
+            }   
             else
             {
                 Recorder mic = GorillaTagger.Instance.myRecorder;
