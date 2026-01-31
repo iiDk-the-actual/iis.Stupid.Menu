@@ -286,11 +286,15 @@ namespace iiMenu.Mods
 
         public static void StopSoundboardSound(ButtonInfo info)
         {
-            if (activeSounds != null && activeSounds.ContainsKey(info))
+            if (activeSounds != null)
             {
-                VoiceManager.Get().StopAudioClip(activeSounds[info]);
-                activeSounds.Remove(info);
-                ReloadMenu();
+                if (activeSounds.ContainsKey(info))
+                {
+                    VoiceManager.Get().StopAudioClip(activeSounds[info]);
+                    activeSounds.Remove(info);
+                    ReloadMenu();
+                }
+
             }
         }
         public static void PlayAudio(string file)
