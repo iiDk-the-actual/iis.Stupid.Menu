@@ -283,7 +283,7 @@ namespace iiMenu.Managers
             for (int i = 0; i < buffer.Length; i++)
             {
                 float microphoneSample = 0;
-                if (!muteMicrophone || !audioClips.Any(c => c.MuteMicrophone))
+                if (!muteMicrophone && !audioClips.Any(c => c.MuteMicrophone))
                 {
                     int index = (int)resample;
                     int nextIndex = index + 1;
