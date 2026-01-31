@@ -212,16 +212,16 @@
     <Reference Include="PhotonUnityNetworking.Utilities">
       <HintPath>$(ProjectDir)References\Managed\PhotonUnityNetworking.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonVoice">
+    <Reference Include="PhotonVoice" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\PhotonVoice.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonVoice.API">
+    <Reference Include="PhotonVoice.API" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\PhotonVoice.API.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonVoice.Fusion">
+    <Reference Include="PhotonVoice.Fusion" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\PhotonVoice.Fusion.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonVoice.PUN">
+    <Reference Include="PhotonVoice.PUN" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\PhotonVoice.PUN.dll</HintPath>
     </Reference>
     <Reference Include="PlayFab" Publicize="true">

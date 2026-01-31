@@ -883,7 +883,9 @@ namespace iiMenu.Mods
                         foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.linePlayer == GetPlayerFromVRRig(gunTarget)))
                         {
                             muteDelay = Time.time + 0.5f;
-                            line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
+
+                            line.muteButton.isOn = !line.muteButton.isOn;
+                            line.PressButton(line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
                         }
                     }
                 }
@@ -893,13 +895,19 @@ namespace iiMenu.Mods
         public static void MuteAll()
         {
             foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => !line.muteButton.isAutoOn))
+            {
+                line.muteButton.isOn = true;
                 line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+            }
         }
 
         public static void UnmuteAll()
         {
             foreach (var line in GorillaScoreboardTotalUpdater.allScoreboardLines.Where(line => line.muteButton.isAutoOn))
+            {
+                line.muteButton.isOn = false;
                 line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+            }
         }
 
         public static void ReportGun()
