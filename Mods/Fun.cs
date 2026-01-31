@@ -2136,13 +2136,18 @@ namespace iiMenu.Mods
                         if (RecorderPatch.enabled)
                         {
                             SpeakerPatch.enabled = true;
-                            VoiceManager.Get().PostProcessors["CopyVoice"] ??= buffer =>
+                            SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
+                            if (!VoiceManager.Get().PostProcessors.ContainsKey("CopyVoice"))
                             {
-                                for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
+                                VoiceManager.Get().PostProcessors["CopyVoice"] = buffer =>
                                 {
-                                    buffer[i] = SpeakerPatch.frameOut.Buf[i];
-                                }
-                            };
+                                    for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
+                                    {
+                                        buffer[i] = SpeakerPatch.frameOut.Buf[i];
+                                    }
+                                };
+                            }
+
                         }
                         else
                         {
