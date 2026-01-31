@@ -45,6 +45,7 @@ namespace iiMenu.Mods
     public static class Sound
     {
         public static bool LoopAudio = false;
+        public static bool OverlapAudio = false;
         public static int BindMode;
         public static string Subdirectory = "";
         public static void LoadSoundboard(bool openCategory = true)
@@ -83,9 +84,16 @@ namespace iiMenu.Mods
                     overlapText = soundName,
                     toolTip = "Plays \"" + RemoveFileExtension(fileName).Replace("_", " ") + "\" through your microphone."
                 };
+                if (OverlapAudio)
+                    buttonInfo.method = () => PlayAudio(file[14..]);
+                else
+                {
+                    buttonInfo.method = () => PlaySoundboardSound(file[14..], buttonInfo, LoopAudio, BindMode > 0);
+                    buttonInfo.disableMethod = () => StopSoundboardSound(buttonInfo);
+                }
+                    
 
-                buttonInfo.method = () => PlaySoundboardSound(file[14..], buttonInfo, LoopAudio, BindMode > 0);
-                buttonInfo.disableMethod =() => StopSoundboardSound(buttonInfo);
+                buttonInfo.isTogglable = !OverlapAudio;
 
                 soundButtons.Add(buttonInfo);
 
@@ -246,7 +254,7 @@ namespace iiMenu.Mods
             if (bind && BindMode > 0)
             {
                 bool bindPressed = bindings[BindMode - 1];
-                shouldPlay = bindPressed && !lastBindPressed;
+                shouldPlay = bindPressed && !lastBindPressed; 
                 lastBindPressed = bindPressed;
             }
 
