@@ -22,340 +22,342 @@
 // Written with love by kingofnetflix </3
 // For anyone else snooping in this class hoping to use it, you need to make sure that your recorder source type is a Factory and that the Factory is a new instance of this class.
 // You may use VoiceManager.Get()
-using iiMenu.Managers;
 using Photon.Voice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class VoiceManager : IAudioReader<float>
+namespace iiMenu.Managers
 {
-    private int samplingRate = 16000;
-    private const int OutputRate = 16000;
-    private float gain = 1;
-    private float pitch = 1f;
-
-    private readonly int loopLength;
-    private string currentDevice;
-    public AudioClip microphoneClip;
-    private int lastSamplePosition;
-    private float step;
-
-    private string error;
-
-    private float[] tempBuffer;
-    private float resample;
-    public sealed class Clip
+    public class VoiceManager : IAudioReader<float>
     {
-        public Guid Id { get; set; }
-        public AudioClip Source { get; set; }
-        public float[] Samples;
-        public float Position;
-        public float Step;
-        public bool MuteMicrophone;
-    }
+        private int samplingRate = 16000;
+        private const int OutputRate = 16000;
+        private float gain = 1;
+        private float pitch = 1f;
 
-    private readonly List<Clip> audioClips = new List<Clip>();
+        private readonly int loopLength;
+        private string currentDevice;
+        public AudioClip microphoneClip;
+        private int lastSamplePosition;
+        private float step;
 
-    private bool muteMicrophone;
+        private string error;
 
-    public VoiceManager(int loopLength = 1, string device = null)
-    {
-        this.loopLength = loopLength;
-        StartRecording(device);
-    }
-
-    public IReadOnlyList<Clip> AudioClips => audioClips.AsReadOnly();
-    /// <summary>
-    /// Gets or sets the microphone's recording status. This does not stop the pushed AudioClip from playing.
-    /// </summary>
-    public bool MuteMicrophone
-    {
-        get { return muteMicrophone; }
-        set { muteMicrophone = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the microphone sampling rate. Setting a value restarts the microphone.
-    /// </summary>
-    public int SamplingRate
-    {
-        get { return samplingRate; }
-        set { samplingRate = value; RestartMicrophone(); }
-    }
-
-    /// <summary>
-    /// Gets or sets the microphone gain multiplier.
-    /// </summary>
-    public float Gain
-    {
-        get { return gain; }
-        set { gain = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the pitch. Lowest possible value can be 0.1f.
-    /// </summary>
-    public float Pitch
-    {
-        get => pitch;
-        set => pitch = Mathf.Max(0.1f, value); 
-    }
-
-    /// <summary>
-    /// A list of post processers that can be used to edit the buffer after all the audio data is compiled.
-    /// </summary>
-    public readonly Dictionary<string, Action<float[]>> PostProcessors = new Dictionary<string, Action<float[]>>();
-
-    /// <summary>
-    /// Gets or sets the decision on if the post processing should affect the applied Audio Clip or not.
-    /// </summary>
-    public bool PostProcessClip { get; set; }
-
-    public int Channels => 1;
-    public string Error => error;
-    public string CurrentDevice => currentDevice;
-
-    public static VoiceManager Instance { get; private set; }
-
-    /// <summary>
-    /// Returns a valid VoiceManager instance. If the Instance variable is null, it will create a new VoiceManager.
-    /// </summary>
-    /// <param name="loopLength">Length (in seconds) of the looping mic buffer, handled by Unity when the microphone is started, only used if the instance is null.</param>
-    /// <param name="device">The microphone device to be used in recording, if the instance is null.</param>
-    /// <returns></returns>
-    public static VoiceManager Get(int loopLength = 1, string device = null)
-    {
-        return Instance ??= new VoiceManager(loopLength, device);
-    }
-
-    /// <summary>
-    /// Starts the microphone recording.
-    /// </summary>
-    /// <param name="device"> Microphone device name to be used. If empty, the default microphone is selected.</param>
-    public bool StartRecording(string device = null)
-    {
-        error = null;
-
-        if (Microphone.devices.Length == 0)
+        private float[] tempBuffer;
+        private float resample;
+        public sealed class Clip
         {
-            error = "No microphone devices found";
-            LogManager.LogWarning(error);
-            return false;
+            public Guid Id { get; set; }
+            public AudioClip Source { get; set; }
+            public float[] Samples;
+            public float Position;
+            public float Step;
+            public bool MuteMicrophone;
         }
 
-        currentDevice = string.IsNullOrEmpty(device) ? Microphone.devices[0] : device;
+        private readonly List<Clip> audioClips = new List<Clip>();
 
-        if (Microphone.IsRecording(currentDevice))
-            Microphone.End(currentDevice);
+        private bool muteMicrophone;
 
-        microphoneClip = Microphone.Start(currentDevice, true, loopLength, samplingRate);
-        lastSamplePosition = 0;
-        step = samplingRate / (float)OutputRate;
-        return true;
-    }
-
-    /// <summary>
-    /// Stops the microphone recording.
-    /// </summary>
-    public bool StopRecording()
-    {
-        if (!string.IsNullOrEmpty(currentDevice) && Microphone.IsRecording(currentDevice))
-            Microphone.End(currentDevice);
-
-        microphoneClip = null;
-        lastSamplePosition = 0;
-        return true;
-    }
-
-    /// <summary>
-    /// Switches the microphone device and restarts recording.
-    /// </summary>
-    /// <param name="device">Microphone device name to be used.</param>
-    public bool SwitchMicrophone(string device)
-        => StopRecording() && StartRecording(device);
-
-    /// <summary>
-    /// Restarts the microphone using the current device, or the default if none is set.
-    /// </summary>
-    public bool RestartMicrophone() 
-        => StopRecording() && StartRecording(currentDevice);
-
-    /// <summary>
-    /// Pushes an AudioClip into the output stream.
-    /// </summary>
-    /// <param name="clip">AudioClip to play.</param>
-    /// <param name="disableMicrophone">Whether to mute the microphone while the clip plays.</param>
-    /// <returns>System.Guid</returns>
-    public Guid AudioClip(AudioClip clip, bool disableMicrophone = false)
-    {
-        if (clip == null)
-            return Guid.Empty;
-
-        int channels = clip.channels;
-        float[] raw = new float[clip.samples * channels];
-        clip.GetData(raw, 0);
-
-        float[] mono = new float[clip.samples];
-        if (channels == 1)
+        public VoiceManager(int loopLength = 1, string device = null)
         {
-            for (int i = 0; i < clip.samples; i++)
-                mono[i] = raw[i];
+            this.loopLength = loopLength;
+            StartRecording(device);
         }
-        else
+
+        public IReadOnlyList<Clip> AudioClips => audioClips.AsReadOnly();
+        /// <summary>
+        /// Gets or sets the microphone's recording status. This does not stop the pushed AudioClip from playing.
+        /// </summary>
+        public bool MuteMicrophone
         {
-            for (int i = 0; i < clip.samples; i++)
+            get { return muteMicrophone; }
+            set { muteMicrophone = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the microphone sampling rate. Setting a value restarts the microphone.
+        /// </summary>
+        public int SamplingRate
+        {
+            get { return samplingRate; }
+            set { samplingRate = value; RestartMicrophone(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the microphone gain multiplier.
+        /// </summary>
+        public float Gain
+        {
+            get { return gain; }
+            set { gain = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the pitch. Lowest possible value can be 0.1f.
+        /// </summary>
+        public float Pitch
+        {
+            get => pitch;
+            set => pitch = Mathf.Max(0.1f, value);
+        }
+
+        /// <summary>
+        /// A list of post processers that can be used to edit the buffer after all the audio data is compiled.
+        /// </summary>
+        public readonly Dictionary<string, Action<float[]>> PostProcessors = new Dictionary<string, Action<float[]>>();
+
+        /// <summary>
+        /// Gets or sets the decision on if the post processing should affect the applied Audio Clip or not.
+        /// </summary>
+        public bool PostProcessClip { get; set; }
+
+        public int Channels => 1;
+        public string Error => error;
+        public string CurrentDevice => currentDevice;
+
+        public static VoiceManager Instance { get; private set; }
+
+        /// <summary>
+        /// Returns a valid VoiceManager instance. If the Instance variable is null, it will create a new VoiceManager.
+        /// </summary>
+        /// <param name="loopLength">Length (in seconds) of the looping mic buffer, handled by Unity when the microphone is started, only used if the instance is null.</param>
+        /// <param name="device">The microphone device to be used in recording, if the instance is null.</param>
+        /// <returns></returns>
+        public static VoiceManager Get(int loopLength = 1, string device = null)
+        {
+            return Instance ??= new VoiceManager(loopLength, device);
+        }
+
+        /// <summary>
+        /// Starts the microphone recording.
+        /// </summary>
+        /// <param name="device"> Microphone device name to be used. If empty, the default microphone is selected.</param>
+        public bool StartRecording(string device = null)
+        {
+            error = null;
+
+            if (Microphone.devices.Length == 0)
             {
-                float sum = 0f;
-                int baseIndex = i * channels;
-                for (int c = 0; c < channels; c++)
-                    sum += raw[baseIndex + c];
-                mono[i] = sum / channels;
+                error = "No microphone devices found";
+                LogManager.LogWarning(error);
+                return false;
             }
+
+            currentDevice = string.IsNullOrEmpty(device) ? Microphone.devices[0] : device;
+
+            if (Microphone.IsRecording(currentDevice))
+                Microphone.End(currentDevice);
+
+            microphoneClip = Microphone.Start(currentDevice, true, loopLength, samplingRate);
+            lastSamplePosition = 0;
+            step = samplingRate / (float)OutputRate;
+            return true;
         }
 
-        var id = Guid.NewGuid();
-        audioClips.Add(new Clip
+        /// <summary>
+        /// Stops the microphone recording.
+        /// </summary>
+        public bool StopRecording()
         {
-            Id = id,
-            Source = clip,
-            Samples = mono,
-            Position = 0f,
-            Step = clip.frequency / (float)samplingRate,
-            MuteMicrophone = disableMicrophone
-        });
+            if (!string.IsNullOrEmpty(currentDevice) && Microphone.IsRecording(currentDevice))
+                Microphone.End(currentDevice);
 
-        return id;
-    }
-
-    /// <summary>
-    /// Stops the specified audio clip from playing.
-    /// </summary>
-    /// <param name="id">The GUID of the audio clip to stop.</param>
-    public bool StopAudioClip(Guid id)
-    {
-        int index = audioClips.FindIndex(c => c.Id == id);
-        if (index == -1) return false;
-
-        audioClips.RemoveAt(index);
-        return true;
-    }
-
-
-    /// <summary>
-    /// Stops all the currently playing audio clips.
-    /// </summary>
-    public void StopAudioClips() =>
-        audioClips.Clear();
-
-    /// <summary>
-    /// Used to pull the next chunk of audio samples.
-    /// </summary>
-
-    // this is automatically called by photon
-    public bool Read(float[] buffer)
-    {
-        if (microphoneClip == null || string.IsNullOrEmpty(currentDevice)) return false;
-
-        int samples = Mathf.CeilToInt(buffer.Length * step);
-        int pos = Microphone.GetPosition(currentDevice);
-        int available = (pos < lastSamplePosition) ? microphoneClip.samples - lastSamplePosition + pos : pos - lastSamplePosition;
-        if (available < samples) return false;
-
-        if (tempBuffer == null || tempBuffer.Length != samples)
-            tempBuffer = new float[samples];
-
-        int remaining = microphoneClip.samples - lastSamplePosition;
-        if (remaining >= samples)
-            microphoneClip.GetData(tempBuffer, lastSamplePosition);
-        else
-        {
-            microphoneClip.GetData(tempBuffer, lastSamplePosition);
-            int wrap = samples - remaining;
-            float[] wrapBuffer = new float[wrap];
-            microphoneClip.GetData(wrapBuffer, 0);
-            Array.Copy(wrapBuffer, 0, tempBuffer, remaining, wrap);
+            microphoneClip = null;
+            lastSamplePosition = 0;
+            return true;
         }
 
-        float[] microphoneBuffer = new float[buffer.Length];
-        for (int i = 0; i < buffer.Length; i++)
+        /// <summary>
+        /// Switches the microphone device and restarts recording.
+        /// </summary>
+        /// <param name="device">Microphone device name to be used.</param>
+        public bool SwitchMicrophone(string device)
+            => StopRecording() && StartRecording(device);
+
+        /// <summary>
+        /// Restarts the microphone using the current device, or the default if none is set.
+        /// </summary>
+        public bool RestartMicrophone()
+            => StopRecording() && StartRecording(currentDevice);
+
+        /// <summary>
+        /// Pushes an AudioClip into the output stream.
+        /// </summary>
+        /// <param name="clip">AudioClip to play.</param>
+        /// <param name="disableMicrophone">Whether to mute the microphone while the clip plays.</param>
+        /// <returns>System.Guid</returns>
+        public Guid AudioClip(AudioClip clip, bool disableMicrophone = false)
         {
-            float microphoneSample = 0f;
-            if (!muteMicrophone || !audioClips.Any(c => c.MuteMicrophone))
+            if (clip == null)
+                return Guid.Empty;
+
+            int channels = clip.channels;
+            float[] raw = new float[clip.samples * channels];
+            clip.GetData(raw, 0);
+
+            float[] mono = new float[clip.samples];
+            if (channels == 1)
             {
-                int index = (int)resample;
+                for (int i = 0; i < clip.samples; i++)
+                    mono[i] = raw[i];
+            }
+            else
+            {
+                for (int i = 0; i < clip.samples; i++)
+                {
+                    float sum = 0f;
+                    int baseIndex = i * channels;
+                    for (int c = 0; c < channels; c++)
+                        sum += raw[baseIndex + c];
+                    mono[i] = sum / channels;
+                }
+            }
+
+            var id = Guid.NewGuid();
+            audioClips.Add(new Clip
+            {
+                Id = id,
+                Source = clip,
+                Samples = mono,
+                Position = 0f,
+                Step = clip.frequency / (float)samplingRate,
+                MuteMicrophone = disableMicrophone
+            });
+
+            return id;
+        }
+
+        /// <summary>
+        /// Stops the specified audio clip from playing.
+        /// </summary>
+        /// <param name="id">The GUID of the audio clip to stop.</param>
+        public bool StopAudioClip(Guid id)
+        {
+            int index = audioClips.FindIndex(c => c.Id == id);
+            if (index == -1) return false;
+
+            audioClips.RemoveAt(index);
+            return true;
+        }
+
+
+        /// <summary>
+        /// Stops all the currently playing audio clips.
+        /// </summary>
+        public void StopAudioClips() =>
+            audioClips.Clear();
+
+        /// <summary>
+        /// Used to pull the next chunk of audio samples.
+        /// </summary>
+
+        // this is automatically called by photon
+        public bool Read(float[] buffer)
+        {
+            if (microphoneClip == null || string.IsNullOrEmpty(currentDevice)) return false;
+
+            int samples = Mathf.CeilToInt(buffer.Length * step);
+            int pos = Microphone.GetPosition(currentDevice);
+            int available = (pos < lastSamplePosition) ? microphoneClip.samples - lastSamplePosition + pos : pos - lastSamplePosition;
+            if (available < samples) return false;
+
+            if (tempBuffer == null || tempBuffer.Length != samples)
+                tempBuffer = new float[samples];
+
+            int remaining = microphoneClip.samples - lastSamplePosition;
+            if (remaining >= samples)
+                microphoneClip.GetData(tempBuffer, lastSamplePosition);
+            else
+            {
+                microphoneClip.GetData(tempBuffer, lastSamplePosition);
+                int wrap = samples - remaining;
+                float[] wrapBuffer = new float[wrap];
+                microphoneClip.GetData(wrapBuffer, 0);
+                Array.Copy(wrapBuffer, 0, tempBuffer, remaining, wrap);
+            }
+
+            float[] microphoneBuffer = new float[buffer.Length];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                float microphoneSample = 0;
+                if (!muteMicrophone || !audioClips.Any(c => c.MuteMicrophone))
+                {
+                    int index = (int)resample;
+                    int nextIndex = index + 1;
+                    if (index >= tempBuffer.Length) { resample = 0f; index = 0; nextIndex = 1; }
+                    if (nextIndex >= tempBuffer.Length) nextIndex = 0;
+
+                    microphoneSample = Mathf.Lerp(tempBuffer[index], tempBuffer[nextIndex], resample - index);
+
+                    resample += step * pitch;
+                    if (resample >= tempBuffer.Length) resample = 0f;
+                }
+
+                microphoneBuffer[i] = microphoneSample * gain;
+            }
+
+            if (!PostProcessClip)
+            {
+                foreach (var postProcess in PostProcessors.Values)
+                    postProcess?.Invoke(microphoneBuffer);
+            }
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                float pushed = NextAudioClipSample();
+                buffer[i] = Mathf.Clamp(microphoneBuffer[i] + pushed, -1f, 1f);
+            }
+
+            if (PostProcessClip)
+            {
+                foreach (var postProcess in PostProcessors.Values)
+                    postProcess?.Invoke(buffer);
+            }
+
+            lastSamplePosition = (lastSamplePosition + samples) % microphoneClip.samples;
+            return true;
+        }
+
+
+        /// <summary>
+        /// Returns the next sample from the pushed audio buffer each time the Read() function is called.
+        /// </summary>
+        private float NextAudioClipSample()
+        {
+            if (audioClips.Count == 0)
+                return 0f;
+
+            float mixed = 0f;
+
+            for (int i = audioClips.Count - 1; i >= 0; i--)
+            {
+                var clip = audioClips[i];
+
+                int index = (int)clip.Position;
                 int nextIndex = index + 1;
-                if (index >= tempBuffer.Length) { resample = 0f; index = 0; nextIndex = 1; }
-                if (nextIndex >= tempBuffer.Length) nextIndex = 0;
 
-                microphoneSample = Mathf.Lerp(tempBuffer[index], tempBuffer[nextIndex], resample - index);
+                if (nextIndex >= clip.Samples.Length)
+                {
+                    audioClips.RemoveAt(i);
+                    continue;
+                }
 
-                resample += step * pitch;
-                if (resample >= tempBuffer.Length) resample = 0f;
+                float frac = clip.Position - index;
+                mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac);
+
+                clip.Position += clip.Step;
             }
 
-            microphoneBuffer[i] = microphoneSample * gain;
+            return mixed;
         }
 
-        if (!PostProcessClip)
+        public void Dispose()
         {
-            foreach (var postProcess in PostProcessors.Values)
-                postProcess?.Invoke(microphoneBuffer);
-        }
-
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            float pushed = NextAudioClipSample();
-            buffer[i] = Mathf.Clamp(microphoneBuffer[i] + pushed, -1f, 1f);
-        }
-
-        if (PostProcessClip)
-        {
-            foreach (var postProcess in PostProcessors.Values)
-                postProcess?.Invoke(microphoneBuffer);
-        }
-
-        lastSamplePosition = (lastSamplePosition + samples) % microphoneClip.samples;
-        return true;
-    }
-
-
-    /// <summary>
-    /// Returns the next sample from the pushed audio buffer each time the Read() function is called.
-    /// </summary>
-    private float NextAudioClipSample()
-    {
-        if (audioClips.Count == 0)
-            return 0f;
-
-        float mixed = 0f;
-
-        for (int i = audioClips.Count - 1; i >= 0; i--)
-        {
-            var clip = audioClips[i];
-
-            int index = (int)clip.Position;
-            int nextIndex = index + 1;
-
-            if (nextIndex >= clip.Samples.Length)
-            {
-                audioClips.RemoveAt(i);
-                continue;
-            }
-
-            float frac = clip.Position - index;
-            mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac);
-
-            clip.Position += clip.Step;
-        }
-
-        return mixed;
-    }
-
-    public void Dispose()
-    {
-        StopRecording();
-        Instance = null;
+            StopRecording();
+            Instance = null;
+        }  
     }
 }
