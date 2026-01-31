@@ -1089,7 +1089,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Legacy Microphone", enableMethod =() => { RecorderPatch.enabled = false; Fun.ReloadMicrophone();  }, disableMethod =() => { RecorderPatch.enabled = true; Fun.ReloadMicrophone(); }, toolTip = "Reverts the microphone system into using the legacy input switcher. This is generally not recommended." },
                 new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(6000, 4000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
                 new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
-                new ButtonInfo { buttonText = "Echo Microphone", enableMethod =() => Fun.EchoMicrophone(true), disableMethod =() => Fun.EchoMicrophone(false), toolTip = "Makes your microphone echo."},
+                new ButtonInfo { buttonText = "Echo Microphone", method =() => Fun.EchoMicrophone(true), disableMethod =() => Fun.EchoMicrophone(false), toolTip = "Makes your microphone echo."},
+                new ButtonInfo { buttonText = "Glitchy Microphone", method =() => Fun.GlitchyMicrophone(true), disableMethod =() => Fun.GlitchyMicrophone(false), toolTip = "Makes your microphone glitchy."},
+                new ButtonInfo { buttonText = "Laggy Microphone", method =() => Fun.LaggyMicrophone(true), disableMethod =() => Fun.LaggyMicrophone(false), toolTip = "Makes your microphone laggy."},
 
                 new ButtonInfo { buttonText = "Mute Microphone", method =() => Fun.MuteMicrophone(true), disableMethod =() => Fun.MuteMicrophone(false), toolTip = "Disables your microphone."},
 
@@ -2357,6 +2359,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Soundboard Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Loop Sounds", enableMethod =() => Sound.LoopAudio = true, disableMethod =() => Sound.LoopAudio = false, toolTip = "Makes sounds loop forever until stopped."},
+                new ButtonInfo { buttonText = "Overlap Sounds", enableMethod =() => Sound.OverlapAudio = true, disableMethod =() => Sound.OverlapAudio = false, toolTip = "Makes it so you can play sounds over and over again, making them overlap eachother."},
                 new ButtonInfo { buttonText = "Sound Bindings", overlapText = "Sound Bindings <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Sound.SoundBindings(), enableMethod =() => Sound.SoundBindings(), disableMethod =() => Sound.SoundBindings(false), incremental = true, isTogglable = false, toolTip = "Changes the button used to play sounds on the soundboard."},
             },
 

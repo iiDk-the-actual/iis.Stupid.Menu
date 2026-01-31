@@ -1928,7 +1928,7 @@ namespace iiMenu.Mods
                 
         }
 
-        public static void EchoMicrophone(bool echo)
+        public static void EchoMicrophone(bool status)
         {
             ButtonInfo button = Buttons.GetIndex("Legacy Microphone");
             if (button.enabled)
@@ -1938,17 +1938,118 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (echo)
+            if (status)
             {
+                int sampleRate = VoiceManager.Get().SamplingRate;
+                int samples = Mathf.Max(1, sampleRate / 4);
+                float[] delayedBuffer = new float[samples];
+                int index = 0;
+
                 VoiceManager.Get().PostProcessors["Echo"] = buffer =>
                 {
-                    int samples = 4000;
-                    for (int i = samples; i < buffer.Length; i++)
-                        buffer[i] += buffer[i - samples] * 0.5f;
+                    for (int i = 0; i < buffer.Length; i++)
+                    {
+                        float delayed = delayedBuffer[index];
+                        float raw = buffer[i];
+                        float mix = raw + delayed * 0.5f;
+
+                        buffer[i] = Mathf.Clamp(mix, -1f, 1f);
+
+                        delayedBuffer[index] = mix;
+                        index = (index + 1) % samples;
+                    }
                 };
             }
             else
+            {
                 VoiceManager.Get().PostProcessors.Remove("Echo");
+            }
+        }
+
+        public static void GlitchyMicrophone(bool status)
+        {
+            ButtonInfo button = Buttons.GetIndex("Legacy Microphone");
+            if (button.enabled)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are using Legacy Microphone. This mod does not support using the old microphone system.");
+                button.enabled = false;
+                return;
+            }
+
+            if (status)
+            {
+                int rate = VoiceManager.Get().SamplingRate;
+                int repeatLength = Mathf.Max(1, rate / 2);
+                float[] history = new float[repeatLength];
+                int historyIndex = 0;
+
+                float[] repeatBuffer = new float[repeatLength];
+                int repeatIndex = 0;
+                int repeatsLeft = 0;
+
+                int samplesUntilNext = Random.Range(rate * 1, rate * 4);
+
+                VoiceManager.Get().PostProcessClip = true;
+                VoiceManager.Get().PostProcessors["Glitch"] = buffer =>
+                {
+                    for (int i = 0; i < buffer.Length; i++)
+                    {
+                        history[historyIndex] = buffer[i];
+                        historyIndex = (historyIndex + 1) % repeatLength;
+                        if (repeatsLeft > 0)
+                        {
+                            buffer[i] = repeatBuffer[repeatIndex];
+                            repeatIndex++;
+                            if (repeatIndex >= repeatLength)
+                            {
+                                repeatIndex = 0;
+                                repeatsLeft--;
+                            }
+                        }
+                        else
+                        {
+                            samplesUntilNext--;
+                            if (samplesUntilNext <= 0)
+                            {
+                                for (int j = 0; j < repeatLength; j++)
+                                {
+                                    int index = (historyIndex + j) % repeatLength; 
+                                    repeatBuffer[j] = history[index];
+                                }
+                                repeatsLeft = Random.Range(1, 2);
+                                repeatIndex = 0;
+                                samplesUntilNext = Random.Range(rate * 1, rate * 4);
+                            }
+                        }
+                    }
+                };
+            }
+            else
+            {
+                VoiceManager.Get().PostProcessors.Remove("Glitch");
+            }
+        }
+
+        public static void LaggyMicrophone(bool status)
+        {
+            ButtonInfo button = Buttons.GetIndex("Legacy Microphone");
+            if (button.enabled)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are using Legacy Microphone. This mod does not support using the old microphone system.");
+                button.enabled = false;
+                return;
+            }
+
+            if (status)
+            {
+                VoiceManager.Get().PostProcessors["Lag"] = buffer =>
+                {
+                    if (UnityEngine.Random.value < 0.25f)
+                        Array.Clear(buffer, 0, buffer.Length);
+                };
+            }
+            else
+                VoiceManager.Get().PostProcessors.Remove("Lag");
         }
 
         public static void MuteMicrophone(bool mute)
