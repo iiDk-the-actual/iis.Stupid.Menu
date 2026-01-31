@@ -35,6 +35,8 @@ using iiMenu.Utilities;
 using Ionic.Zlib;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
+using Photon.Voice.PUN;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5190,6 +5192,7 @@ namespace iiMenu.Mods
         }
 
         private static float freezeAllDelay;
+        public static bool muteOnFreeze;
         public static void LagServer()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -5207,15 +5210,20 @@ namespace iiMenu.Mods
                     byte code = 51;
                     NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
-
                 RPCProtection();
                 freezeAllDelay = Time.time + 1f;
             }
         }
 
-        public static void FreezeAll()
+        public static void FreezeServer()
         {
             if (!PhotonNetwork.InRoom) return;
+
+            if (muteOnFreeze)
+            {
+                for (int i = 0; i < 10; i++)
+                    MuteTarget(ReceiverGroup.All);
+            }
 
             if (Time.time > freezeAllDelay)
             {
@@ -5230,9 +5238,9 @@ namespace iiMenu.Mods
                     byte code = 51;
                     NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
-
                 RPCProtection();
                 freezeAllDelay = Time.time + 0.1f;
+
             }
         }
 
@@ -5631,6 +5639,91 @@ namespace iiMenu.Mods
 
             if (touchedPlayers.Count > 0)
                 LagTarget(touchedPlayers);
+        }
+
+        public static void MuteTarget(object target) // Credits to boowoomp
+        {
+            RaiseEventOptions raiseOptions = new RaiseEventOptions();
+
+            if (target is ReceiverGroup group)
+                raiseOptions.Receivers = group;
+            else if (target is int[] actors)
+                raiseOptions.TargetActors = actors;
+            else
+                return;
+
+            SendOptions sendOptions = new SendOptions
+            {
+                Reliability = true,
+                Channel = 0
+            };
+
+
+            Dictionary<byte, object> voiceData = new Dictionary<byte, object>
+            {
+                { 1, 255 },
+                { 2, 48000 },
+                { 3, 2 },
+                { 4, 20000 },
+                { 5, 30000 },
+                { 10, null },
+                { 11, (byte)0 },
+                { 12, (byte)Codec.AudioOpus }
+            };
+
+            object[] eventData =
+            {
+                (byte)0,
+                (byte)1,
+                new object[] { voiceData }
+            };
+
+            PhotonVoiceNetwork.Instance.Client.OpRaiseEvent(
+                202,
+                eventData,
+                raiseOptions,
+                sendOptions
+            );
+        }
+
+        public static void ServerMuteAll()
+        {
+            for (int i = 0; i < 3; i++)
+                MuteTarget(ReceiverGroup.Others);
+        }
+            
+        public static void ServerMuteGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    for (int i = 0; i < 3; i++)
+                        MuteTarget(new int[] { lockTarget.GetPlayer().ActorNumber });
+                }
+                    
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
         }
 
         public static void BarrelFlingGun()
