@@ -5689,7 +5689,7 @@ namespace iiMenu.Mods
         public static void ServerMuteAll()
         {
             for (int i = 0; i < 3; i++)
-                MuteTarget(ReceiverGroup.Others);
+                MuteTarget(ReceiverGroup.All);
         }
 
             
