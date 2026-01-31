@@ -5641,7 +5641,7 @@ namespace iiMenu.Mods
                 LagTarget(touchedPlayers);
         }
 
-        public static void MuteTarget(object target) // Credits to boowoomp
+        public static void MuteTarget(object target)
         {
             RaiseEventOptions raiseOptions = new RaiseEventOptions();
 
@@ -5654,7 +5654,7 @@ namespace iiMenu.Mods
 
             SendOptions sendOptions = new SendOptions
             {
-                Reliability = true,
+                Reliability = false,
                 Channel = 0
             };
 
@@ -5688,11 +5688,10 @@ namespace iiMenu.Mods
 
         public static void ServerMuteAll()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 MuteTarget(ReceiverGroup.All);
         }
 
-            
         public static void DeafenGun()
         {
             if (GetGunInput(false))
@@ -5702,7 +5701,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 2; i++)
                         MuteTarget(new int[] { lockTarget.GetPlayer().ActorNumber });
                 }
                     
