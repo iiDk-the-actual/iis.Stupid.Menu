@@ -66,7 +66,7 @@ namespace iiMenu.Mods
             select new ButtonInfo
             {
                 buttonText = "SoundboardFolder" + FolderName.Hash(),
-                overlapText = $"<sprite name=\"Folder\">    {FolderName}    ",
+                overlapText = $"<sprite name=\"Folder\">  {FolderName}  ",
                 method = () => OpenFolder(folder[21..]),
                 isTogglable = false,
                 toolTip = "Opens the " + FolderName + " folder."
