@@ -264,8 +264,8 @@ namespace iiMenu.Mods
                 activeSounds[info] = id;
             }
 
-            var activeClipIds = VoiceManager.Get().AudioClips.Select(c => c.Id).ToHashSet();
-            var finished = activeSounds.Where(kvp => !activeClipIds.Contains(kvp.Value)).Select(kvp => kvp.Key).ToList();
+            var activeSoundIds = VoiceManager.Get().AudioClips.Select(c => c.Id).ToHashSet();
+            var finished = activeSounds.Where(kvp => !activeSoundIds.Contains(kvp.Value)).Select(kvp => kvp.Key).ToList();
 
             foreach (var finishedInfo in finished)
             {
