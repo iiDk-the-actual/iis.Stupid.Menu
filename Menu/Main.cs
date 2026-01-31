@@ -738,14 +738,13 @@ namespace iiMenu.Menu
                 {
                     if (Sound.AudioIsPlaying)
                     {
-                        if (!RecorderPatch.enabled)
+                        if (Time.time > Sound.RecoverTime)
                         {
-                            if (Time.time > Sound.RecoverTime)
+                            if (!RecorderPatch.enabled)
                                 Sound.StopAllSounds();
+                            else
+                                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
                         }
-                        else
-                            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
-                        
                     }
                 }
                 catch { }
