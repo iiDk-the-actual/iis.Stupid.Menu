@@ -5691,8 +5691,9 @@ namespace iiMenu.Mods
             for (int i = 0; i < 3; i++)
                 MuteTarget(ReceiverGroup.Others);
         }
+
             
-        public static void ServerMuteGun()
+        public static void DeafenGun()
         {
             if (GetGunInput(false))
             {
