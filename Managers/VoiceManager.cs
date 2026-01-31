@@ -56,7 +56,7 @@ public class VoiceManager : IAudioReader<float>
         public bool MuteMicrophone;
     }
 
-    private List<Clip> audioClips = new List<Clip>();
+    private readonly List<Clip> audioClips = new List<Clip>();
 
     private bool muteMicrophone;
 
@@ -104,15 +104,14 @@ public class VoiceManager : IAudioReader<float>
     }
 
     /// <summary>
-    /// A post processer that can be used to edit the buffer after all the audio data is compiled.
+    /// A list of post processers that can be used to edit the buffer after all the audio data is compiled.
     /// </summary>
-    public Action<float[]> PostProcess { get; set; }
+    public readonly Dictionary<string, Action<float[]>> PostProcessors = new Dictionary<string, Action<float[]>>();
 
     /// <summary>
     /// Gets or sets the decision on if the post processing should affect the applied Audio Clip or not.
     /// </summary>
     public bool PostProcessClip { get; set; }
-
 
     public int Channels => 1;
     public string Error => error;
@@ -300,7 +299,10 @@ public class VoiceManager : IAudioReader<float>
         }
 
         if (!PostProcessClip)
-            PostProcess?.Invoke(microphoneBuffer);
+        {
+            foreach (var postProcess in PostProcessors.Values)
+                postProcess?.Invoke(microphoneBuffer);
+        }
 
         for (int i = 0; i < buffer.Length; i++)
         {
@@ -309,7 +311,10 @@ public class VoiceManager : IAudioReader<float>
         }
 
         if (PostProcessClip)
-            PostProcess?.Invoke(buffer);
+        {
+            foreach (var postProcess in PostProcessors.Values)
+                postProcess?.Invoke(microphoneBuffer);
+        }
 
         lastSamplePosition = (lastSamplePosition + samples) % microphoneClip.samples;
         return true;

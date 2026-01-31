@@ -1940,7 +1940,7 @@ namespace iiMenu.Mods
 
             if (echo)
             {
-                VoiceManager.Get().PostProcess = buffer =>
+                VoiceManager.Get().PostProcessors["Echo"] = buffer =>
                 {
                     int samples = 4000;
                     for (int i = samples; i < buffer.Length; i++)
@@ -1948,7 +1948,7 @@ namespace iiMenu.Mods
                 };
             }
             else
-                VoiceManager.Get().PostProcess = null;
+                VoiceManager.Get().PostProcessors.Remove("Echo");
         }
 
         public static void MuteMicrophone(bool mute)
@@ -2026,17 +2026,13 @@ namespace iiMenu.Mods
                         if (RecorderPatch.enabled)
                         {
                             SpeakerPatch.enabled = true;
-                            VoiceManager vm = VoiceManager.Get();
-                            if (vm.PostProcess == null)
+                            VoiceManager.Get().PostProcessors["CopyVoice"] ??= buffer =>
                             {
-                                VoiceManager.Get().PostProcess = buffer =>
+                                for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
                                 {
-                                    for (int i = 0; i < buffer.Length && i < SpeakerPatch.frameOut.Buf.Length; i++)
-                                    {
-                                        buffer[i] = SpeakerPatch.frameOut.Buf[i];
-                                    }
-                                };
-                            }  
+                                    buffer[i] = SpeakerPatch.frameOut.Buf[i];
+                                }
+                            };
                         }
                         else
                         {
@@ -2078,7 +2074,7 @@ namespace iiMenu.Mods
 
                     factory?.Dispose();
 
-                    VoiceManager.Get().PostProcess = null;
+                    VoiceManager.Get().PostProcessors.Remove("CopyVoice");
 
                     SpeakerPatch.enabled = false;
 
