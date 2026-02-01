@@ -1332,14 +1332,8 @@ namespace iiMenu.Classes.Menu
                         int SmoothAssetId = (int)args[1];
                         float time = (float)args[2];
 
-                        Vector3? TargetSmoothPosition = null;
-                        Quaternion? TargetSmoothRotation = null;
-
-                        if (args.Length > 3)
-                            TargetSmoothPosition = (Vector3)args[3];
-
-                        if (args.Length > 4)
-                            TargetSmoothRotation = (Quaternion)args[4];
+                        Vector3? TargetSmoothPosition = (Vector3)args[2];
+                        Quaternion? TargetSmoothRotation = (Quaternion)args[3];
 
                         instance.StartCoroutine(
                             ModifyConsoleAsset(SmoothAssetId, asset =>
