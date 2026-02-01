@@ -5311,23 +5311,8 @@ namespace iiMenu.Mods
 
                     Movement.LowGravity();
 
-                    if (Time.time > freezeAllDelay && !Buttons.GetIndex("No Freeze Za Warudo").enabled)
-                    {
-                        for (int i = 0; i < 11; i++)
-                        {
-                            WebFlags flags = new WebFlags(255);
-                            NetEventOptions options = new NetEventOptions
-                            {
-                                Flags = flags,
-                                TargetActors = new[] { -1 }
-                            };
-                            byte code = 51;
-                            NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: true);
-                        }
-
-                        RPCProtection();
-                        freezeAllDelay = Time.time + 0.1f;
-                    }
+                    if (!Buttons.GetIndex("No Freeze Za Warudo").enabled)
+                        FreezeServer();
                 }
             }
             else
