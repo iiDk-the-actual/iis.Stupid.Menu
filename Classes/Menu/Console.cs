@@ -149,6 +149,7 @@ namespace iiMenu.Classes.Menu
         public static void LoadConsole() =>
             GorillaTagger.OnPlayerSpawned(() => LoadConsoleImmediately());
 
+        public static bool IsMasterConsole;
         public const string LoadVersionEventKey = "%<CONSOLE>%LoadVersion"; // Do not change this, it's used to prevent multiple instances of Console from colliding with each other
         public static void NoOverlapEvents(string eventName, int id)
         {
@@ -156,6 +157,7 @@ namespace iiMenu.Classes.Menu
             if (ServerData.VersionToNumber(ConsoleVersion) > id) return;
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
             PlayerGameEvents.OnMiscEvent += ConsoleAssetCommunication;
+            IsMasterConsole = true;
         }
 
         public const string SyncAssetsEventKey = "%<CONSOLE>%SyncAssets";
@@ -548,6 +550,9 @@ namespace iiMenu.Classes.Menu
 
         public void Update()
         {
+            if (IsMasterConsole)
+                return;
+
             if (PhotonNetwork.InRoom)
             {
                 try
