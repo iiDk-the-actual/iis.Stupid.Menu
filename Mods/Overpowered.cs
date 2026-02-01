@@ -27,6 +27,7 @@ using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.VirtualStumpCustomMaps;
+using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
@@ -4150,6 +4151,7 @@ namespace iiMenu.Mods
         public static AudioClip KameStart;
         public static AudioClip KameStop;
         public static Guid KameSound;
+        public static bool PlayingKameSound;
         public static Coroutine KameStartCoroutine;
 
         public static void Enable_Kamehameha()
@@ -4174,6 +4176,12 @@ namespace iiMenu.Mods
 
                     CoroutineManager.instance.StartCoroutine(EndKame());
                     break;
+            }
+
+            if (!VoiceManager.Get().AudioClips.Any(c => c.Id == KameSound) && PlayingKameSound)
+            {
+                PlayingKameSound = false;
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }
 
@@ -4291,9 +4299,14 @@ namespace iiMenu.Mods
         {
             if (RecorderPatch.enabled)
             {
-                if (KameSound != null)
+                if (KameSound != Guid.Empty)
+                {
                     VoiceManager.Get().StopAudioClip(KameSound);
+                    KameSound = Guid.Empty;
+                }
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
                 KameSound = VoiceManager.Get().AudioClip(clip);
+                PlayingKameSound = true;
             }
             else
                 Sound.PlayAudio(clip);
@@ -6309,10 +6322,12 @@ namespace iiMenu.Mods
 
         public static IEnumerator KickMasterClient()
         {
+            ButtonInfo button = Buttons.GetIndex("Kick Master Client");
             if (!NetworkSystem.Instance.InRoom)
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-                yield break;
+                if (button.enabled)
+                    Toggle("Kick Master Client");
             }
 
             float time = Time.time + 10f;
@@ -6344,6 +6359,8 @@ namespace iiMenu.Mods
                 if (Time.time > time)
                 {
                     NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Could not kick <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)." : ". Try again?"));
+                    if (button.enabled)
+                        Toggle("Kick Master Client");
                     yield break;
                 }
                 yield return null;
