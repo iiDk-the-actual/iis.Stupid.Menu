@@ -291,8 +291,8 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    finishedInfo.enabled = false;
-                    ReloadMenu();
+                    if (info.enabled)
+                        Toggle(info);
                 }
             }
         }
@@ -305,9 +305,9 @@ namespace iiMenu.Mods
                 {
                     VoiceManager.Get().StopAudioClip(activeSounds[info]);
                     activeSounds.Remove(info);
-                    ReloadMenu();
                 }
-
+                if (activeSounds.Count <= 0)
+                    GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }
         public static void PlayAudio(string file)
@@ -328,9 +328,12 @@ namespace iiMenu.Mods
             {
                 if (RecorderPatch.enabled)
                 {
+                    if (activeSounds != null)
+                        foreach (ButtonInfo info in activeSounds.Keys)
+                            info.enabled = false;
                     activeSounds.Clear();
                     VoiceManager.Get().StopAudioClips();
-                    ReloadMenu();
+                    GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
                 }
                 else
                 {

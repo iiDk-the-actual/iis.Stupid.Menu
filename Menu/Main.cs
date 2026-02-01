@@ -736,16 +736,17 @@ namespace iiMenu.Menu
                 // Recover from playing sound on soundboard code
                 try
                 {
-                    if (Sound.AudioIsPlaying)
+                    if (!RecorderPatch.enabled)
                     {
-                        if (Time.time > Sound.RecoverTime)
+                        if (Sound.AudioIsPlaying)
                         {
-                            if (!RecorderPatch.enabled)
+                            if (Time.time > Sound.RecoverTime)
+                            {
                                 Sound.StopAllSounds();
-                            else
-                                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+                            }
                         }
                     }
+                    
                 }
                 catch { }
 
