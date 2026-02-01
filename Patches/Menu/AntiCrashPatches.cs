@@ -131,8 +131,24 @@ namespace iiMenu.Patches.Menu
         {
             public static bool Prefix(GameEntityManager __instance, byte[] stateData, int[] netIds, int joiningActorNum, PhotonMessageInfo info)
             {
-                return stateData.Length <= 1000;
+                return stateData.Length <= 255;
             }
         }
+
+        [HarmonyPatch(typeof(GorillaWrappedSerializer), "FailedToSpawn")]
+        public class FailedToSpawn
+        {
+            public static bool Prefix(GorillaWrappedSerializer __instance)
+            {
+                if (enabled)
+                {
+                    __instance.gameObject.SetActive(false);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+
     }
 }
