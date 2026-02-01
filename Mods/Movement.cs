@@ -4317,7 +4317,7 @@ namespace iiMenu.Mods
                 timerPowerIndex--;
 
             timerPowerIndex %= 51;
-            if (timerPowerIndex < 0)
+            if (timerPowerIndex < 1)
                 timerPowerIndex = 50;
 
             timerPower = timerPowerIndex / 10f;
