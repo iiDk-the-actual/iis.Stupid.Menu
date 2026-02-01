@@ -5215,7 +5215,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void FreezeServer()
+        public static void FreezeServer(float delay = 0.1f, int eventCount = 11)
         {
             if (!PhotonNetwork.InRoom) return;
 
@@ -5227,7 +5227,7 @@ namespace iiMenu.Mods
 
             if (Time.time > freezeAllDelay)
             {
-                for (int i = 0; i < 11; i++)
+                for (int i = 0; i < eventCount; i++)
                 {
                     WebFlags flags = new WebFlags(byte.MaxValue);
                     NetEventOptions options = new NetEventOptions
@@ -5239,7 +5239,7 @@ namespace iiMenu.Mods
                     NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
                 }
                 RPCProtection();
-                freezeAllDelay = Time.time + 0.1f;
+                freezeAllDelay = Time.time + delay;
 
             }
         }
