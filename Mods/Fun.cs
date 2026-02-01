@@ -5889,11 +5889,6 @@ Piece Name: {gunTarget.name}";
                 ChangeName(name);
                 return;
             }
-            if (!GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) && !CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
-            {
-                ChangeName(name);
-                return;
-            }
             if (string.IsNullOrEmpty(name))
                 name = PhotonNetwork.LocalPlayer.NickName;
             int length = (int)Mathf.PingPong(Time.time / 0.25f, name.Length + 1);

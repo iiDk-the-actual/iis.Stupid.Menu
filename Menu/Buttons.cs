@@ -1574,7 +1574,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.NameCycle(new[] { "RUN", "RABBIT" }), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
                 new ButtonInfo { buttonText = "Random Name Cycle", method = Fun.RandomNameCycle, toolTip = "Sets your name on a loop to a bunch of random characters." },
                 new ButtonInfo { buttonText = "Custom Name Cycle", enableMethod = Fun.EnableCustomNameCycle, method =() => Fun.NameCycle(Fun.names), toolTip = "Sets your name on a loop to whatever's in the file." },
-                new ButtonInfo { buttonText = "Animated Name", method = Fun.AnimatedName, disableMethod =() => Fun.name = null, toolTip = "Animates your current username." },
+                new ButtonInfo { buttonText = "Animated Name", method = Fun.AnimatedName, disableMethod =() => { ChangeName(Fun.name); Fun.name = null;  }, toolTip = "Animates your current username." },
 
                 new ButtonInfo { buttonText = "Strobe Color", overlapText = "Flash Color", method = Fun.FlashColor, toolTip = "Makes your character flash." },
                 new ButtonInfo { buttonText = "Strobe Color", method = Fun.StrobeColor, toolTip = "Makes your character random colors." },
