@@ -745,6 +745,12 @@ namespace iiMenu.Menu
                                 Sound.StopAllSounds();
                             }
                         }
+                    } else if (RecorderPatch.enabled)
+                    {
+                        if (Buttons.GetIndex("Microphone Feedback").enabled)
+                            return;
+                        GorillaTagger.Instance.myRecorder.DebugEchoMode = VoiceManager.Get().AudioClips.Any();
+
                     }
                     
                 }

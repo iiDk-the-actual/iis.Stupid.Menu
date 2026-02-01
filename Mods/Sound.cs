@@ -266,7 +266,7 @@ namespace iiMenu.Mods
                 lastBindPressed = bindPressed;
             }
 
-            GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+            // GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
 
             if (shouldPlay && !activeSounds.ContainsKey(info))
             {
@@ -308,8 +308,6 @@ namespace iiMenu.Mods
                     VoiceManager.Get().StopAudioClip(activeSounds[info].id);
                     activeSounds.Remove(info);
                 }
-                if (activeSounds.Count <= 0 && !Buttons.GetIndex("Microphone Feedback").enabled)
-                    GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }
         public static void PlayAudio(string file)
