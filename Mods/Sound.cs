@@ -308,7 +308,7 @@ namespace iiMenu.Mods
                     VoiceManager.Get().StopAudioClip(activeSounds[info].id);
                     activeSounds.Remove(info);
                 }
-                if (activeSounds.Count <= 0)
+                if (activeSounds.Count <= 0 && !Buttons.GetIndex("Microphone Feedback").enabled)
                     GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }

@@ -4178,7 +4178,7 @@ namespace iiMenu.Mods
                     break;
             }
 
-            if (!VoiceManager.Get().AudioClips.Any(c => c.Id == KameSound) && PlayingKameSound)
+            if (!VoiceManager.Get().AudioClips.Any(c => c.Id == KameSound) && PlayingKameSound && !Buttons.GetIndex("Microphone Feedback").enabled)
             {
                 PlayingKameSound = false;
                 GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
