@@ -6686,6 +6686,8 @@ jgs \_   _/ |Oo\
         public static bool wristMenu;
         public static bool explodeMenu;
         public static bool watchMenu;
+        public static bool watchUsed;
+        public static float watchTimer;
         public static bool wristOpen;
         public static float wristMenuDelay;
 
