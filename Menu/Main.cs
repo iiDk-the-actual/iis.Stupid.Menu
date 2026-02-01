@@ -6126,7 +6126,7 @@ namespace iiMenu.Menu
         /// multiple times. A notification is displayed to inform the user of the action taken.</remarks>
         /// <param name="buttonText">The text label of the button to be toggled. This is used to identify the target button.</param>
         /// <param name="increment">true to apply the incremental action; false to apply the decremental action.</param>
-        public static void ToggleIncremental(string buttonText, bool increment)
+        public static void ToggleIncremental(string buttonText, bool increment, bool reload = true)
         { 
             ButtonInfo target = Buttons.GetIndex(buttonText);
             if (target != null)
@@ -6139,62 +6139,170 @@ namespace iiMenu.Menu
                         target.overlapText = target.buttonText;
                 }
 
-                if (dynamicAnimations)
-                    lastClickedName = buttonText + (increment ? "+" : "-");
+                if (target.label)
+                    return;
 
-                bool boost = incrementalBoost && rightGrab;
-                if (increment)
+                switch (true)
                 {
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> {target.toolTip}");
-
-                    if (boost)
-                        for (int i = 0; i < 5; i++)
+                    case true when menuButtonIndex != 2 && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f && leftTrigger > 0.5f)):
                         {
-                            if (target.enableMethod == null) continue;
-                            try { target.enableMethod.Invoke(); }
-                            catch (Exception exc)
+                            if (IsBinding)
                             {
-                                LogManager.LogError(
-                                    $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
-                            }
-                        }
-                    else
-                        if (target.enableMethod != null)
-                            try { target.enableMethod.Invoke(); }
-                            catch (Exception exc)
-                            {
-                                LogManager.LogError(
-                                $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
-                            }
-                }
-                else
-                {
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> {target.toolTip}");
+                                bool AlreadyBinded = false;
+                                string BindedTo = "";
+                                foreach (var Bind in ModBindings.Where(Bind => Bind.Value.Contains(target.buttonText)))
+                                {
+                                    AlreadyBinded = true;
+                                    BindedTo = Bind.Key;
+                                    break;
+                                }
 
-                    if (boost)
-                        for (int i = 0; i < 5; i++)
-                        {
-                            if (target.enableMethod == null) continue;
-                            if (target.disableMethod == null) continue;
-                            try { target.disableMethod.Invoke(); }
-                            catch (Exception exc)
-                            {
-                                LogManager.LogError(
-                                    $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                if (AlreadyBinded)
+                                {
+                                    target.customBind = null;
+                                    ModBindings[BindedTo].Remove(target.buttonText);
+                                    VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                    NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
+                                }
+                                else
+                                {
+                                    target.customBind = BindInput;
+                                    ModBindings[BindInput].Add(target.buttonText);
+                                    VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                    NotificationManager.SendNotification($"<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to <color=green>{BindInput}</color>.");
+                                }
                             }
+                            else
+                            {
+                                if (IsRebinding)
+                                {
+                                    if (target.rebindKey != null)
+                                    {
+                                        target.rebindKey = null;
+                                        VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>REBINDS</color><color=grey>]</color> Successfully rebinded mod to deafult.");
+                                    }
+                                    else
+                                    {
+                                        target.rebindKey = BindInput;
+                                        VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                        NotificationManager.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully rebinded mod to {BindInput}.");
+                                    }
+                                }
+                                else
+                                {
+                                    if (target.buttonText != "Exit Favorite Mods")
+                                    {
+                                        if (favorites.Contains(target.buttonText))
+                                        {
+                                            favorites.Remove(target.buttonText);
+                                            VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
+                                        }
+                                        else
+                                        {
+                                            favorites.Add(target.buttonText);
+                                            VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                            NotificationManager.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
+                                        }
+                                    }
+                                }
+                            }
+
+                            break;
                         }
-                    else
-                        if (target.disableMethod != null)
-                            try { target.disableMethod.Invoke(); }
-                            catch (Exception exc)
+                    case true when menuButtonIndex != 3 && leftTrigger > 0.5f && !joystickMenu:
+                        {
+                            if (!quickActions.Contains(target.buttonText))
                             {
-                                LogManager.LogError(
-                                $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                quickActions.Add(target.buttonText);
+                                VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
                             }
+                            else
+                            {
+                                quickActions.Remove(target.buttonText);
+                                VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                NotificationManager.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
+                            }
+
+                            break;
+                        }
+                    case true when target.detected && !allowDetected:
+                        {
+                            NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is detected and requires permission to run.");
+                            break;
+                        }
+                    default:
+                        {
+                            if (dynamicAnimations)
+                                lastClickedName = buttonText + (increment ? "+" : "-");
+
+                            bool boost = incrementalBoost && rightGrab;
+                            if (increment)
+                            {
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> {target.toolTip}");
+
+                                if (boost)
+                                    for (int i = 0; i < 5; i++)
+                                    {
+                                        if (target.enableMethod == null) continue;
+                                        try { target.enableMethod.Invoke(); }
+                                        catch (Exception exc)
+                                        {
+                                            LogManager.LogError(
+                                                $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                        }
+                                    }
+                                else
+                                    if (target.enableMethod != null)
+                                    try { target.enableMethod.Invoke(); }
+                                    catch (Exception exc)
+                                    {
+                                        LogManager.LogError(
+                                        $"Error with mod enableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                    }
+                            }
+                            else
+                            {
+                                NotificationManager.SendNotification($"<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> {target.toolTip}");
+
+                                if (boost)
+                                    for (int i = 0; i < 5; i++)
+                                    {
+                                        if (target.enableMethod == null) continue;
+                                        if (target.disableMethod == null) continue;
+                                        try { target.disableMethod.Invoke(); }
+                                        catch (Exception exc)
+                                        {
+                                            LogManager.LogError(
+                                                $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                        }
+                                    }
+                                else
+                                    if (target.disableMethod != null)
+                                    try { target.disableMethod.Invoke(); }
+                                    catch (Exception exc)
+                                    {
+                                        LogManager.LogError(
+                                        $"Error with mod disableMethod {target.buttonText} at {exc.StackTrace}: {exc.Message}");
+                                    }
+                            }
+
+                            break;
+                        }
                 }
             }
+            else
+                LogManager.LogError($"{buttonText} does not exist");
 
-            if (!clickGUI)
+            if (!clickGUI && reload)
                 ReloadMenu();
         }
 
