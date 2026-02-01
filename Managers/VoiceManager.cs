@@ -32,8 +32,8 @@ namespace iiMenu.Managers
 {
     public class VoiceManager : IAudioReader<float>
     {
-        private int samplingRate = 16000;
-        private const int OutputRate = 16000;
+        private int samplingRate = 48000;
+        private int outputRate = 48000;
         private float gain = 1;
         private float pitch = 1f;
 
@@ -88,6 +88,15 @@ namespace iiMenu.Managers
         {
             get { return samplingRate; }
             set { samplingRate = value; RestartMicrophone(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the output rate used for AudioClip samples.
+        /// </summary>
+        public int OutputRate
+        {
+            get { return outputRate; }
+            set { outputRate = value; RestartMicrophone(); }
         }
 
         /// <summary>
