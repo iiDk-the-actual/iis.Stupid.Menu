@@ -747,9 +747,8 @@ namespace iiMenu.Menu
                         }
                     } else if (RecorderPatch.enabled)
                     {
-                        if (Buttons.GetIndex("Microphone Feedback").enabled)
-                            return;
-                        GorillaTagger.Instance.myRecorder.DebugEchoMode = VoiceManager.Get().AudioClips.Any();
+                        if (!Buttons.GetIndex("Microphone Feedback").enabled)
+                            GorillaTagger.Instance.myRecorder.DebugEchoMode = VoiceManager.Get().AudioClips.Any();
 
                     }
                     
