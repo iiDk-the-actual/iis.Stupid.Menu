@@ -900,7 +900,10 @@ exit 0";
             }
 
             if (!watchUsed && Time.time >= watchTimer)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=purple>WATCH</color><color=grey>]</color> Seems that you got stuck using Watch Menu, automatically disabling..");
                 Toggle("Watch Menu");
+            }
         }
         public static void WatchMenuOff()
         {
