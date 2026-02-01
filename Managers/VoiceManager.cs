@@ -67,7 +67,11 @@ namespace iiMenu.Managers
             StartRecording(device);
         }
 
+        /// <summary>
+        /// A read-only list of AudioClips currently playing
+        /// </summary>
         public IReadOnlyList<Clip> AudioClips => audioClips.AsReadOnly();
+
         /// <summary>
         /// Gets or sets the microphone's recording status. This does not stop the pushed AudioClip from playing.
         /// </summary>
