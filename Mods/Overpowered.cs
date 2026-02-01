@@ -4149,13 +4149,14 @@ namespace iiMenu.Mods
 
         public static AudioClip KameStart;
         public static AudioClip KameStop;
-
+        public static Guid KameSound;
         public static Coroutine KameStartCoroutine;
 
         public static void Enable_Kamehameha()
         {
             KameStart = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/start.ogg", "Audio/Mods/Overpowered/Kamehameha/start.ogg");
             KameStop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/end.ogg", "Audio/Mods/Overpowered/Kamehameha/end.ogg");
+
         }
 
         public static void Kamehameha()
@@ -4179,7 +4180,7 @@ namespace iiMenu.Mods
         public static GameObject cursor;
         public static IEnumerator StartKame()
         {
-            Sound.PlayAudio(KameStart);
+            PlayKameSound(KameStart);
             yield return new WaitForSeconds(0.5f);
 
             GrowingSnowballThrowable leftSnowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
@@ -4243,7 +4244,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator EndKame()
         {
-            Sound.PlayAudio(KameStop);
+            PlayKameSound(KameStop);
             yield return new WaitForSeconds(0.5f);
 
             float startTime = Time.time;
@@ -4284,6 +4285,18 @@ namespace iiMenu.Mods
 
             if (cursor != null)
                 Object.Destroy(cursor);
+        }
+
+        public static void PlayKameSound(AudioClip clip)
+        {
+            if (RecorderPatch.enabled)
+            {
+                if (KameSound != null)
+                    VoiceManager.Get().StopAudioClip(KameSound);
+                KameSound = VoiceManager.Get().AudioClip(clip);
+            }
+            else
+                Sound.PlayAudio(clip);
         }
 
         public static void Disable_Kamehameha()
@@ -6294,53 +6307,54 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void KickMasterClient()
+        public static IEnumerator KickMasterClient()
         {
-            if (NetworkSystem.Instance.SessionIsPrivate)
+            if (!NetworkSystem.Instance.InRoom)
             {
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a public room.");
-                Buttons.GetIndex("Kick Master Client").enabled = false;
-
-                return;
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+                yield break;
             }
 
-            GRPlayer self = GRPlayer.GetLocal();
+            float time = Time.time + 10f;
 
-            if (self == null) // how
-                return;
+            SerializePatch.OverrideSerialization = () => false;
 
-            if (GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).GetOwner() == null) // how???
-                return;
+            Player player = PhotonNetwork.MasterClient;
+            VRRig rig = GetVRRigFromPlayer(PhotonNetwork.MasterClient);
+            string color = rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white";
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)." : "."));
+            int view = PhotonNetwork.AllocateViewID(0);
+            PhotonNetwork.SendAllOutgoingCommands();
 
-            GorillaFriendCollider currentCollider = GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).friendCollider;
-            GorillaFriendCollider targetCollider = GRElevatorManager.GetShuttle(self.shuttleData.targetShuttleId).friendCollider;
-
-            if (currentCollider == null && targetCollider == null)
-                return;
-
-            GorillaFriendCollider collider = currentCollider ?? targetCollider;
-
-            VRRig.LocalRig.enabled = false;
-            VRRig.LocalRig.transform.position = collider.transform.position;
-
-            if (ServerPos.Distance(collider.transform.position) < 0.5f)
+            for (int i = 0; i < 3970; i++)
             {
-                CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                 {
-                    PhotonNetworkController.Instance.shuffler = Random.Range(0, 99).ToString().PadLeft(2, '0') + Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                    PhotonNetworkController.Instance.keyStr = Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                    BetaShuttleFollowCommand(GRElevatorManager.GetShuttle(self.shuttleData.currShuttleId).GetOwner().GetPlayer());
-                    RPCProtection();
-                }, () =>
+                    { 0, "GameMode" },
+                    { 6, PhotonNetwork.ServerTimestamp },
+                    { 7, view }
+                }, new RaiseEventOptions
                 {
-                    CreateKickRoom();
-                    Buttons.GetIndex("Kick Master Client").enabled = false;
-                    VRRig.LocalRig.enabled = true;
-
-                }));
+                    TargetActors = new int[] { player.ActorNumber }
+                }, SendOptions.SendReliable);
             }
+
+            while (PhotonNetwork.PlayerList.Contains(player))
+            {
+                if (Time.time > time)
+                {
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Could not kick <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)." : ". Try again?"));
+                    yield break;
+                }
+                yield return null;
+            }
+
+            SerializePatch.OverrideSerialization = null;
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)" : "" + " has been kicked!"));
+            yield break;
+
         }
+
 
         public static void BetaShuttleFollowCommand(Player player)
         {

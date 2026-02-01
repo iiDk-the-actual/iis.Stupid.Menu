@@ -2017,7 +2017,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method = Overpowered.GuardianCrashGun, toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Kick Master Client", method = Overpowered.KickMasterClient, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks the master client from the room." },
+                new ButtonInfo { buttonText = "Kick Master Client", enableMethod = () => CoroutineManager.instance.StartCoroutine(Overpowered.KickMasterClient()), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks the master client from the room." },
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
