@@ -252,6 +252,8 @@ namespace iiMenu.Managers
         /// <param name="source">The <see cref="UnityEngine.AudioClip"/> to be resampled.</param>
         /// <param name="targetSampleRate">The desired sample rate for the resulting audio clip.</param>
         /// <returns>A new <see cref="UnityEngine.AudioClip"/> containing the resampled audio data.</returns>
+
+        // this is pretty heavy, but the only fix I could think of for making clip length consistent.
         public static AudioClip Resample(AudioClip source, int sampleRate)
         {
             if (source == null || source.frequency == sampleRate)
