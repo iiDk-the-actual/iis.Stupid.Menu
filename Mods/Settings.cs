@@ -4963,6 +4963,8 @@ exit 0";
 
             drec.DictationHypothesis += (text) =>
             {
+                if (AIManager.generating)
+                    return;
                 if (debugDictation)
                     LogManager.Log($"Hypothesis: {text}");
 
