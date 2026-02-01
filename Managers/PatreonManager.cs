@@ -208,7 +208,7 @@ namespace iiMenu.Managers
             if (!NetworkSystem.Instance.InRoom)
                 return;
 
-            PhotonNetwork.RaiseEvent(63,
+            PhotonNetwork.RaiseEvent(PatreonByte,
                 new object[] { command }
                     .Concat(parameters)
                     .ToArray(),
