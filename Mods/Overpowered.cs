@@ -4149,13 +4149,14 @@ namespace iiMenu.Mods
 
         public static AudioClip KameStart;
         public static AudioClip KameStop;
-
+        public static Guid KameSound;
         public static Coroutine KameStartCoroutine;
 
         public static void Enable_Kamehameha()
         {
             KameStart = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/start.ogg", "Audio/Mods/Overpowered/Kamehameha/start.ogg");
             KameStop = LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Mods/Overpowered/Kamehameha/end.ogg", "Audio/Mods/Overpowered/Kamehameha/end.ogg");
+
         }
 
         public static void Kamehameha()
@@ -4179,7 +4180,7 @@ namespace iiMenu.Mods
         public static GameObject cursor;
         public static IEnumerator StartKame()
         {
-            Sound.PlayAudio(KameStart);
+            PlayKameSound(KameStart);
             yield return new WaitForSeconds(0.5f);
 
             GrowingSnowballThrowable leftSnowball = GetProjectile($"{Projectiles.SnowballName}LeftAnchor") as GrowingSnowballThrowable;
@@ -4243,7 +4244,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator EndKame()
         {
-            Sound.PlayAudio(KameStop);
+            PlayKameSound(KameStop);
             yield return new WaitForSeconds(0.5f);
 
             float startTime = Time.time;
@@ -4284,6 +4285,18 @@ namespace iiMenu.Mods
 
             if (cursor != null)
                 Object.Destroy(cursor);
+        }
+
+        public static void PlayKameSound(AudioClip clip)
+        {
+            if (RecorderPatch.enabled)
+            {
+                if (KameSound != null)
+                    VoiceManager.Get().StopAudioClip(KameSound);
+                KameSound = VoiceManager.Get().AudioClip(clip);
+            }
+            else
+                Sound.PlayAudio(clip);
         }
 
         public static void Disable_Kamehameha()
