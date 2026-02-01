@@ -400,18 +400,25 @@ namespace iiMenu.Managers
                 var clip = audioClips[i];
 
                 int index = (int)clip.Position;
-                int nextIndex = index + 1;                
+
+                if (index >= clip.Samples.Length)
+                {
+                    audioClips.RemoveAt(i);
+                    continue;
+                }
+
+                int nextIndex = index + 1;
+                if (nextIndex >= clip.Samples.Length)
+                {
+                    mixed += clip.Samples[index];
+                    audioClips.RemoveAt(i);
+                    continue;
+                }
 
                 float frac = clip.Position - index;
                 mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac);
 
                 clip.Position += clip.Step;
-
-                if (nextIndex >= clip.Samples.Length)
-                {
-                    audioClips.RemoveAt(i);
-                    continue;
-                }
             }
 
             return mixed;
