@@ -2162,7 +2162,9 @@ namespace iiMenu.Mods
 
                                 SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
 
-                                RecorderPatch.enabled = false;
+                                RecorderPatch.enabled = !Buttons.GetIndex("Legacy Microphone").enabled;
+
+                                VoiceManager.Get().PostProcessors["CopyVoice"] = null;
 
                                 factory?.Dispose();
 
@@ -2187,17 +2189,22 @@ namespace iiMenu.Mods
                 {
                     gunLocked = false;
 
-                    factory?.Dispose();
-
-                    VoiceManager.Get().PostProcessors.Remove("CopyVoice");
-
-                    SpeakerPatch.enabled = false;
-
-                    Sound.FixMicrophone();
-
-                    RecorderPatch.enabled = !Buttons.GetIndex("Legacy Microphone").enabled;
+                    DisableCopyVoice();
                 }
             }
+        }
+
+        public static void DisableCopyVoice()
+        {
+            factory?.Dispose();
+
+            VoiceManager.Get().PostProcessors.Remove("CopyVoice");
+
+            SpeakerPatch.enabled = false;
+
+            Sound.FixMicrophone();
+
+            RecorderPatch.enabled = !Buttons.GetIndex("Legacy Microphone").enabled;
         }
 
         public static void SaveNarration(string text)

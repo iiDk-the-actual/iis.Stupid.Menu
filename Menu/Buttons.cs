@@ -742,9 +742,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze Rig Body", method = Movement.FreezeRigBody, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
                 new ButtonInfo { buttonText = "Freeze Rig", method = Movement.FreezeRig, disableMethod =() => { VRRig.LocalRig.enabled = true; Movement.startPosition = null; }, toolTip = "Makes your body freeze on your rig, but not your hands and head."},
                 
-                new ButtonInfo { buttonText = "Paralyze Rig", method = Movement.ParalyzeRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig. Credits to Expansion for the idea."},
+                new ButtonInfo { buttonText = "Paralyze Rig", method = Movement.ParalyzeRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig."},
                 new ButtonInfo { buttonText = "Chicken Rig", method = Movement.ChickenRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
-                new ButtonInfo { buttonText = "Amputate Rig", method = Movement.AmputateRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig. Credits to Expansion for the idea."},
+                new ButtonInfo { buttonText = "Amputate Rig", method = Movement.AmputateRig, disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig."},
                 new ButtonInfo { buttonText = "Decapitate Rig", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.DecapitateRigUpdate, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.DecapitateRigUpdate, toolTip = "Removes the head from your rig."},
 
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SetBodyPatch(true), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your body spin around, but not your head."},
@@ -1100,10 +1100,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone low pitched."},
                 new ButtonInfo { buttonText = "Very Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.01f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone very very low pitched."},
 
-                new ButtonInfo { buttonText = "Reload Microphone", method = Fun.ReloadMicrophone, isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
+                new ButtonInfo { buttonText = "Reload Microphone", overlapText = "Restart Microphone", method = Fun.ReloadMicrophone, isTogglable = false,  toolTip = "Restarts / fixes your microphone."},
 
                 new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.SetDebugEchoMode(true), disableMethod =() => Fun.SetDebugEchoMode(false), toolTip = "Plays sound coming through your microphone back to your speakers."},
-                new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, toolTip = "Copies the voice of whoever your hand desires."},
+                new ButtonInfo { buttonText = "Copy Voice Gun", method = Fun.CopyVoiceGun, disableMethod = Fun.DisableCopyVoice, toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Narrate Text", method =() => PromptText("What would you like to be narrated?", () => SpeakText(keyboardInput), null, "Done", "Cancel"), isTogglable = false, toolTip = "Narrates the text of your desire."},
                 new ButtonInfo { buttonText = "Save Narration", method =() => PromptText("What would you like the narration to say?", () => Fun.SaveNarration(keyboardInput)), isTogglable = false, toolTip = "Saves whatever you want to narrate to your soundboard."},
