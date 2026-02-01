@@ -1380,16 +1380,31 @@ namespace iiMenu.Classes.Menu
                         break;
 
                     case "asset-playsound":
-                        int SoundAssetId = (int)args[1];
-                        string SoundObjectName = (string)args[2];
-                        string AudioClipName = args.Length > 3 ? (string)args[3] : null;
+                        {
+                            int SoundAssetId = (int)args[1];
+                            string SoundObjectName = (string)args[2];
+                            string AudioClipName = args.Length > 3 ? (string)args[3] : null;
 
-                        instance.StartCoroutine(
-                            ModifyConsoleAsset(SoundAssetId,
-                            asset => asset.PlayAudioSource(SoundObjectName, AudioClipName),
-                            true)
-                        );
-                        break;
+                            instance.StartCoroutine(
+                                ModifyConsoleAsset(SoundAssetId,
+                                asset => asset.PlayAudioSource(SoundObjectName, AudioClipName),
+                                true)
+                            );
+                            break;
+                        }
+                    case "asset-playoneshot":
+                        {
+                            int SoundAssetId = (int)args[1];
+                            string SoundObjectName = (string)args[2];
+                            string AudioClipName = args.Length > 3 ? (string)args[3] : null;
+
+                            instance.StartCoroutine(
+                                ModifyConsoleAsset(SoundAssetId,
+                                asset => asset.PlayAudioSourceOneShot(SoundObjectName, AudioClipName),
+                                true)
+                            );
+                            break;
+                        }
                     case "asset-stopsound":
                         int StopSoundAssetId = (int)args[1];
                         string StopSoundObjectName = (string)args[2];
@@ -1959,7 +1974,7 @@ namespace iiMenu.Classes.Menu
 
             public void PlayAudioSource(string objectName, string audioClipName = null)
             {
-                AudioSource audioSource = assetObject.transform.Find(objectName).GetComponent<AudioSource>();
+                AudioSource audioSource = (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<AudioSource>();
 
                 if (audioClipName != null)
                     audioSource.clip = assetBundlePool[assetBundle].LoadAsset<AudioClip>(audioClipName);
@@ -1967,36 +1982,47 @@ namespace iiMenu.Classes.Menu
                 audioSource.Play();
             }
 
+            public void PlayAudioSourceOneShot(string objectName, string audioClipName = null)
+            {
+                AudioSource audioSource = (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<AudioSource>();
+                AudioClip clip = audioSource.clip;
+
+                if (audioClipName != null)
+                    audioSource.clip = clip;
+
+                audioSource.PlayOneShot(clip);
+            }
+
             public void PlayAnimation(string objectName, string animationClip) =>
-                assetObject.transform.Find(objectName).GetComponent<Animator>().Play(animationClip);
+                (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<Animator>().Play(animationClip);
 
             public void StopAudioSource(string objectName) =>
-                assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
+                (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<AudioSource>().Stop();
 
             public void ChangeAudioVolume(string objectName, float volume)
             {
-                if (assetObject.transform.Find(objectName).TryGetComponent(out AudioSource source))
+                if ((objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).TryGetComponent(out AudioSource source))
                     source.volume = volume;
 
-                if (assetObject.transform.Find(objectName).TryGetComponent(out VideoPlayer video))
+                if ((objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).TryGetComponent(out VideoPlayer video))
                     video.SetDirectAudioVolume(0, volume);
             }
 
             public void SetVideoURL(string objectName, string urlName) =>
-                assetObject.transform.Find(objectName).GetComponent<VideoPlayer>().url = urlName;
+                (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<VideoPlayer>().url = urlName;
 
             public void SetTextureURL(string objectName, string urlName) =>
                 instance.StartCoroutine(GetTextureResource(urlName, texture =>
-                    assetObject.transform.Find(objectName).GetComponent<Renderer>().material.SetTexture("_MainTex", texture)));
+                    (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<Renderer>().material.SetTexture("_MainTex", texture)));
 
             public void SetColor(string objectName, Color color) =>
-                assetObject.transform.Find(objectName).GetComponent<Renderer>().material.color = color;
+                (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<Renderer>().material.color = color;
 
             public void SetAudioURL(string objectName, string urlName)
             {
                 pauseAudioUpdates = true;
                 instance.StartCoroutine(GetSoundResource(urlName, audio =>
-                { assetObject.transform.Find(objectName).GetComponent<AudioSource>().clip = audio; pauseAudioUpdates = false; }));
+                { (objectName.IsNullOrEmpty() ? assetObject.transform : assetObject.transform.Find(objectName)).GetComponent<AudioSource>().clip = audio; pauseAudioUpdates = false; }));
             }
 
             public void DestroyObject()
