@@ -4151,6 +4151,7 @@ namespace iiMenu.Mods
         public static AudioClip KameStart;
         public static AudioClip KameStop;
         public static Guid KameSound;
+        public static bool PlayingKameSound;
         public static Coroutine KameStartCoroutine;
 
         public static void Enable_Kamehameha()
@@ -4175,6 +4176,12 @@ namespace iiMenu.Mods
 
                     CoroutineManager.instance.StartCoroutine(EndKame());
                     break;
+            }
+
+            if (!VoiceManager.Get().AudioClips.Any(c => c.Id == KameSound) && PlayingKameSound)
+            {
+                PlayingKameSound = false;
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }
 
@@ -4292,9 +4299,14 @@ namespace iiMenu.Mods
         {
             if (RecorderPatch.enabled)
             {
-                if (KameSound != null)
+                if (KameSound != Guid.Empty)
+                {
                     VoiceManager.Get().StopAudioClip(KameSound);
+                    KameSound = Guid.Empty;
+                }
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
                 KameSound = VoiceManager.Get().AudioClip(clip);
+                PlayingKameSound = true;
             }
             else
                 Sound.PlayAudio(clip);
