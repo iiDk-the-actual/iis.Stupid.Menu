@@ -5891,8 +5891,9 @@ Piece Name: {gunTarget.name}";
             }
             if (string.IsNullOrEmpty(name))
                 name = PhotonNetwork.LocalPlayer.NickName;
-            int length = (int)Mathf.PingPong(Time.time / 0.25f, name.Length + 1);
-            ChangeName(length > 0 ? name[..length] : "");
+            int length = Mathf.Clamp((int)Mathf.PingPong(Time.time / 0.25f, name.Length) + 1, 1, name.Length);
+
+            ChangeName(name[..length]);
         }
 
         public static float colorChangerDelay;
