@@ -5679,7 +5679,7 @@ namespace iiMenu.Mods
                 { 5, 30000 },
                 { 10, null },
                 { 11, (byte)0 },
-                { 12, (byte)Codec.AudioOpus }
+                { 12, Codec.AudioOpus }
             };
 
             object[] eventData =
