@@ -64,6 +64,7 @@ namespace iiMenu.Managers
         Always assist to the best of your ability, focusing on Gorilla Tag mod functionality.";
 
         public static bool customPrompt;
+        public static bool generating;
         public static string URLEncode(string input) => Uri.EscapeDataString(input);
 
         public static int Duration(string input)
@@ -92,6 +93,7 @@ namespace iiMenu.Managers
             using UnityWebRequest request = UnityWebRequest.Get(api);
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
+            generating = true;
 
             if (request.result != UnityWebRequest.Result.Success)
             {
@@ -242,6 +244,10 @@ namespace iiMenu.Managers
 
             if (!Buttons.GetIndex("Chain Voice Commands").enabled)
                 CoroutineManager.instance.StartCoroutine(Settings.DictationRestart());
+
+            generating = false;
+
+            yield break;
         }
     }
 }
