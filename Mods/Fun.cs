@@ -5881,6 +5881,20 @@ Piece Name: {gunTarget.name}";
                 File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
         }
 
+        public static string name;
+        public static void AnimatedName()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                ChangeName(name);
+                return;
+            }
+            if (string.IsNullOrEmpty(name))
+                name = PhotonNetwork.LocalPlayer.NickName;
+            int length = (int)Mathf.PingPong(Time.time / 0.25f, name.Length + 1);
+            ChangeName(length > 0 ? name[..length] : "");
+        }
+
         public static float colorChangerDelay;
 
         public static int colorChangeType;

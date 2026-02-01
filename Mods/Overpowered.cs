@@ -5701,7 +5701,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < 3; i++)
                         MuteTarget(new int[] { lockTarget.GetPlayer().ActorNumber });
                 }
                     
