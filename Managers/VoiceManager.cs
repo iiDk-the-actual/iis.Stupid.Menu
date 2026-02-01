@@ -32,8 +32,8 @@ namespace iiMenu.Managers
 {
     public class VoiceManager : IAudioReader<float>
     {
-        private int samplingRate = 16000;
-        private int outputRate = 16000;
+        private int samplingRate = 48000;
+        private int outputRate = 48000;
         private float gain = 1;
         private float pitch = 1f;
 
