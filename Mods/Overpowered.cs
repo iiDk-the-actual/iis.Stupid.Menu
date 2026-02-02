@@ -27,6 +27,7 @@ using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.VirtualStumpCustomMaps;
+using HarmonyLib;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
@@ -43,6 +44,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
@@ -5703,7 +5705,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 2; i++)
                         MuteTarget(new int[] { lockTarget.GetPlayer().ActorNumber });
                 }
                     
@@ -5726,6 +5728,12 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void DeafenAll()
+        {
+            for (int i = 0; i < 2; i++)
+                MuteTarget(ReceiverGroup.Others);
         }
 
         public static void BarrelFlingGun()
@@ -6311,58 +6319,162 @@ namespace iiMenu.Mods
             }
         }
 
+        // i've been told to release this by iiDk - kingofnetflix
+        public static Coroutine kickCoroutine;
         public static IEnumerator KickMasterClient()
         {
             ButtonInfo button = Buttons.GetIndex("Kick Master Client");
             if (!NetworkSystem.Instance.InRoom)
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
-                if (button.enabled)
-                    Toggle("Kick Master Client");
+                kickCoroutine = null;
+                yield break;
             }
-
-            float time = Time.time + 10f;
 
             SerializePatch.OverrideSerialization = () => false;
 
             Player player = PhotonNetwork.MasterClient;
             VRRig rig = GetVRRigFromPlayer(PhotonNetwork.MasterClient);
-            string color = rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white";
-            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)." : "."));
+            string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
             int view = PhotonNetwork.AllocateViewID(0);
-            PhotonNetwork.SendAllOutgoingCommands();
-
-            for (int i = 0; i < 3970; i++)
+            float time;
+            kick:
             {
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
+                time = Time.time + 10f;
+                PhotonNetwork.SendAllOutgoingCommands();
+                for (int i = 0; i < 3970; i++)
                 {
-                    { 0, "GameMode" },
-                    { 6, PhotonNetwork.ServerTimestamp },
-                    { 7, view }
-                }, new RaiseEventOptions
-                {
-                    TargetActors = new int[] { player.ActorNumber }
-                }, SendOptions.SendReliable);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
+                    {
+                        { 0, "GameMode" },
+                        { 6, PhotonNetwork.ServerTimestamp },
+                        { 7, view }
+                    }, new RaiseEventOptions
+                    {
+                        TargetActors = new int[] { player.ActorNumber }
+                    }, SendOptions.SendReliable);
+                }
             }
+            
 
             while (PhotonNetwork.PlayerList.Contains(player))
             {
                 if (Time.time > time)
                 {
-                    NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Could not kick <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)." : ". Try again?"));
-                    if (button.enabled)
-                        Toggle("Kick Master Client");
-                    yield break;
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Could not kick {name}. Trying again..");
+                    yield return null;
+                    goto kick;
                 }
                 yield return null;
             }
 
             SerializePatch.OverrideSerialization = null;
-            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=#{color}>{player.NickName}</color> " + (player.IsMasterClient ? "(MASTER)" : "" + " has been kicked!"));
-            yield break;
-
+            NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked!");
+            kickCoroutine = null;
         }
 
+        public static IEnumerator KickAll()
+        {
+            ButtonInfo button = Buttons.GetIndex("Kick Master Client");
+
+            if (!NetworkSystem.Instance.InRoom)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+                kickCoroutine = null;
+                yield break;
+            }
+
+            SerializePatch.OverrideSerialization = () => false;
+
+            while (!PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                Player player = PhotonNetwork.MasterClient;
+                if (player == null)
+                    break;
+
+                VRRig rig = GetVRRigFromPlayer(player);
+                string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
+
+                NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
+                PhotonNetwork.SendAllOutgoingCommands();
+
+                float time;
+                kick:
+                {
+                    time = Time.time + 10f;
+                    for (int i = 0; i < 3970; i++)
+                    {
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
+                        {
+                            { 0, "GameMode" },
+                            { 6, PhotonNetwork.ServerTimestamp },
+                            { 7, PhotonNetwork.AllocateViewID(0) }
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { player.ActorNumber }
+                        }, SendOptions.SendReliable);
+                    }
+                }
+
+                while (PhotonNetwork.MasterClient == player)
+                {
+                    if (Time.time > time)
+                    {
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=red>KICK</color><color=grey>]</color> Could not kick {name}, trying again..");
+                        yield return null;
+                        goto kick;
+                    }
+                    yield return null;
+                }
+
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting 5 seconds to kick the next person..");
+                yield return new WaitForSeconds(5f);
+
+            }
+
+            SerializePatch.OverrideSerialization = null;
+
+            NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Kicked all successfully!");
+
+
+            kickCoroutine = null;
+        }
+
+        /*
+         * Be rexon
+         * Make mod that only works on master client
+         * Turn it into a gun
+         */
+
+        public static void KickGun()
+        {
+            if (NetworkSystem.Instance.InRoom)
+                Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && lockTarget.GetPlayer().IsMasterClient && kickCoroutine == null)
+                    kickCoroutine = CoroutineManager.instance.StartCoroutine(KickMasterClient());
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
 
         public static void BetaShuttleFollowCommand(Player player)
         {
