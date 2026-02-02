@@ -6514,6 +6514,38 @@ namespace iiMenu.Mods
             RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
         }
 
+        public static void LowGravityEvent(bool status)
+        {
+            if (NetworkSystem.Instance.InRoom)
+            {
+                if (!NetworkSystem.Instance.IsMasterClient)
+                {
+                    NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                    return;
+                }
+
+                if (status)
+                {
+                    GreyZoneManager.Instance.gravityFactorOptionSelection = 0;
+                    GreyZoneManager.Instance.ActivateGreyZoneAuthority();
+                }
+                else if (!status)
+                    GreyZoneManager.Instance.DeactivateGreyZoneAuthority();
+            }        
+        }
+
+        public static float spazGreyDelay;
+        public static bool greyState;
+        public static void SpazGreyScreen() 
+        { 
+            if (Time.time > spazGreyDelay)
+            {
+                greyState = !greyState;
+                LowGravityEvent(greyState);
+                spazGreyDelay = Time.time + 0.1f;
+            }
+        }
+
         public static void KickAllInParty()
         {
             if (FriendshipGroupDetection.Instance.IsInParty)

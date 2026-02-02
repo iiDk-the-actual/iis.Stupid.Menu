@@ -2023,6 +2023,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnect from the room." },
 
+                new ButtonInfo { buttonText = "Grey Screen All", enableMethod = ()=> Overpowered.LowGravityEvent(true), disableMethod =() => Overpowered.LowGravityEvent(false), toolTip = "Makes everyone's screen grey." },
+                new ButtonInfo { buttonText = "Spaz Grey Screen All", method = ()=> Overpowered.SpazGreyScreen(), disableMethod =() => Overpowered.LowGravityEvent(false), toolTip = "Makes everyone's screen flash grey." },
+
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
