@@ -2043,7 +2043,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag On Touch", method = Overpowered.LagOnTouch, toolTip = "Lags whoever you touch." },
 
                 new ButtonInfo { buttonText = "Server Mute All", method = Overpowered.ServerMuteAll, toolTip = "Makes everyone not be able to hear anyone else."},
-                new ButtonInfo { buttonText = "Deafen Gun" overlapText = "Server Mute Gun", method = Overpowered.DeafenGun, toolTip = "Makes whoever your hand deseries not be able to hear anyone else."},
+                new ButtonInfo { buttonText = "Deafen Gun", overlapText = "Server Mute Gun", method = Overpowered.DeafenGun, toolTip = "Makes whoever your hand deseries not be able to hear anyone else."},
                 new ButtonInfo { buttonText = "Server Mute Aura", method = Overpowered.ServerMuteAura, toolTip = "Makes nearby players not be able to hear anyone else."},
                 new ButtonInfo { buttonText = "Server Mute On Touch", method = Overpowered.ServerMuteOnTouch, toolTip = "Makes players you touch not be able to hear anyone else."},
  
