@@ -6542,6 +6542,56 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LogSpam(object target)
+        {
+            RaiseEventOptions raiseOptions = new RaiseEventOptions();
+
+            
+            if (target is ReceiverGroup group)
+                raiseOptions.Receivers = group;
+            else if (target is int[] actors)
+                raiseOptions.TargetActors = actors;
+            else
+                return;
+
+            Hashtable hashtable = new Hashtable
+            {
+                { "\n" + PluginInfo.Logo, serverLink }
+            };
+
+            PhotonNetwork.NetworkingClient.OpRaiseEvent(200, hashtable, raiseOptions, SendOptions.SendUnreliable);
+        }
+
+        public static void LogSpamGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    LogSpam(new int[] { lockTarget.GetPlayer().ActorNumber });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void LogSpamAll() =>
+            LogSpam(ReceiverGroup.All);
+
         public static void KickAllInParty()
         {
             if (FriendshipGroupDetection.Instance.IsInParty)
