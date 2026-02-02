@@ -200,7 +200,7 @@
     <Reference Include="Pathfinding.Poly2Tri">
       <HintPath>$(ProjectDir)References\Managed\Pathfinding.Poly2Tri.dll</HintPath>
     </Reference>
-    <Reference Include="Photon3Unity3D">
+    <Reference Include="Photon3Unity3D" Publicize="true">
       <HintPath>$(ProjectDir)References\Managed\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="PhotonRealtime" Publicize="true">

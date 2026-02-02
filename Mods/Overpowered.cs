@@ -6476,6 +6476,32 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CreatePeerBase()
+        {
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.TransportProtocol = ConnectionProtocol.Tcp;
+
+            var peerBase = PhotonNetwork.NetworkingClient.LoadBalancingPeer.peerBase;
+
+            if (!(peerBase is TPeer))
+                peerBase = new TPeer();
+            var tPeer = peerBase as TPeer;
+            tPeer.DoFraming = true;
+
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.peerBase = tPeer;
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.peerBase.photonPeer = PhotonNetwork.NetworkingClient.LoadBalancingPeer;
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.peerBase.usedTransportProtocol = PhotonNetwork.NetworkingClient.LoadBalancingPeer.TransportProtocol;
+        }
+        public static void UnloadPeerBase()
+        {
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.TransportProtocol = ConnectionProtocol.Udp;
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.peerBase = new EnetPeer
+            {
+                photonPeer = PhotonNetwork.NetworkingClient.LoadBalancingPeer,
+                usedTransportProtocol = ConnectionProtocol.Udp
+            };
+            NetworkSystem.Instance.ReturnToSinglePlayer();
+        }
+
         public static void BetaShuttleFollowCommand(Player player)
         {
             PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);

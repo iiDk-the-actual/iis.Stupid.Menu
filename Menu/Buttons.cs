@@ -2021,6 +2021,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks the master client from the room." },
                 new ButtonInfo { buttonText = "Kick All", enableMethod = () => Overpowered.kickCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.KickAll()), method =() => { if (Overpowered.kickCoroutine == null) Toggle("Kick All"); }, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks the master client from the room." },
 
+                new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnect from the room." },
+
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
