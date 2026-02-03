@@ -3272,6 +3272,39 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void StrongerFlingGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > flingDelay)
+                    {
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), new Vector3(0f, 50f, 0f) );
+                        RPCProtection();
+                        flingDelay = Time.time + 0.1f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static void FlingAll()
         {
             if (rightTrigger > 0.5f && Time.time > flingDelay)
