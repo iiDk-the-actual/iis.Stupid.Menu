@@ -320,8 +320,8 @@ namespace iiMenu.Mods
 
         public static void SetTagCooldown(float value)
         {
-            if (!NetworkSystem.Instance.IsMasterClient)
-                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+            if (!NetworkSystem.Instance.IsMasterClient || !NetworkSystem.Instance.InRoom)
+                Overpowered.LagMasterClient();
             else
             {
                 GorillaTagManager tagman = (GorillaTagManager)GorillaGameManager.instance;
