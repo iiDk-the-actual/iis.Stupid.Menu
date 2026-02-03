@@ -6441,7 +6441,7 @@ namespace iiMenu.Mods
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Kicking {name} failed. :(");
                 }
 
-                int left = (Time.time - (time - 10f)) < 1f ? 10 : 5;
+                int left = (Time.time - (time - 10f)) < 2.5f ? 10 : 5;
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting {left} seconds to kick the next person..");
                 yield return new WaitForSeconds(left);
