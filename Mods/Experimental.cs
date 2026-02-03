@@ -1403,9 +1403,6 @@ namespace iiMenu.Mods
             if (Visuals.DoPerformanceCheck())
                 return;
 
-            if (GorillaGameManager.instance == null)
-                return;
-
             bool followMenuTheme = Buttons.GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = Buttons.GetIndex("Transparent Theme").enabled;
             _ = Buttons.GetIndex("Hidden on Camera").enabled;
