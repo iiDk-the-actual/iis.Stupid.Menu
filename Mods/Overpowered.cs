@@ -6406,8 +6406,8 @@ namespace iiMenu.Mods
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
                 RPCProtection();
-
                 float time;
+                bool reattempted = false;
                 kick:
                 {
                     time = Time.time + 10f;
@@ -6432,6 +6432,7 @@ namespace iiMenu.Mods
                     {
                         NotificationManager.SendNotification($"<color=grey>[</color><color=red>KICK</color><color=grey>]</color> Could not kick {name}, trying again..");
                         yield return null;
+                        reattempted = true;
                         goto kick;
                     }
                     yield return null;
@@ -6442,7 +6443,7 @@ namespace iiMenu.Mods
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Kicking {name} failed. :(");
                 }
 
-                int left = (int)((int)(Time.time - time) < 1f ? 5f : 10f);
+                int left = reattempted && ((Time.time - (time - 10f)) < 1f) ? 10 : 5;
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting {left} seconds to kick the next person..");
                 yield return new WaitForSeconds(left);
