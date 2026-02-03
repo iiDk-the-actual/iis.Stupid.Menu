@@ -27,7 +27,6 @@ using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.VirtualStumpCustomMaps;
-using HarmonyLib;
 using iiMenu.Classes.Menu;
 using iiMenu.Extensions;
 using iiMenu.Managers;
@@ -44,7 +43,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
@@ -6337,12 +6335,12 @@ namespace iiMenu.Mods
             VRRig rig = GetVRRigFromPlayer(PhotonNetwork.MasterClient);
             string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
             NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
-            int view = PhotonNetwork.AllocateViewID(0);
             float time;
             RPCProtection();
             kick:
             {
                 time = Time.time + 10f;
+                int view = PhotonNetwork.AllocateViewID(0);
                 for (int i = 0; i < 3965; i++)
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
@@ -6352,7 +6350,7 @@ namespace iiMenu.Mods
                         { 7, view }
                     }, new RaiseEventOptions
                     {
-                        TargetActors = new int[] { player.ActorNumber }
+                        Receivers = ReceiverGroup.MasterClient
                     }, SendOptions.SendReliable);
                 }
             }
@@ -6403,6 +6401,7 @@ namespace iiMenu.Mods
                 kick:
                 {
                     time = Time.time + 10f;
+                    int view = PhotonNetwork.AllocateViewID(0);
                     for (int i = 0; i < 3965; i++)
                     {
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
@@ -6412,7 +6411,7 @@ namespace iiMenu.Mods
                             { 7, PhotonNetwork.AllocateViewID(0) }
                         }, new RaiseEventOptions
                         {
-                            TargetActors = new int[] { player.ActorNumber }
+                            Receivers = ReceiverGroup.MasterClient
                         }, SendOptions.SendReliable);
                     }
                 }
@@ -6480,6 +6479,32 @@ namespace iiMenu.Mods
             {
                 if (gunLocked)
                     gunLocked = false;
+            }
+        }
+
+        public static float lagMasterDelay;
+
+        public static void LagMasterClient()
+        {
+            if (NetworkSystem.Instance.IsMasterClient || !NetworkSystem.Instance.InRoom)
+                return;
+
+            if (Time.time > lagMasterDelay)
+            {
+                int view = PhotonNetwork.AllocateViewID(0);
+                for (int i = 0; i < 150; i++)
+                {
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
+                    {
+                        { 0, "GameMode" },
+                        { 6, PhotonNetwork.ServerTimestamp },
+                        { 7, view }
+                    }, new RaiseEventOptions
+                    {
+                        Receivers = ReceiverGroup.MasterClient
+                    }, SendOptions.SendReliable);
+                }
+                lagMasterDelay = Time.time + 1f;
             }
         }
 
