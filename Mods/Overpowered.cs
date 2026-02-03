@@ -6397,11 +6397,11 @@ namespace iiMenu.Mods
                 string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
-                PhotonNetwork.SendAllOutgoingCommands();
 
                 float time;
                 kick:
                 {
+                    PhotonNetwork.SendAllOutgoingCommands();
                     time = Time.time + 10f;
                     for (int i = 0; i < 3970; i++)
                     {
@@ -6428,8 +6428,13 @@ namespace iiMenu.Mods
                     yield return null;
                 }
 
+                if (!PhotonNetwork.InRoom)
+                {
+                    NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Kicking {name} failed. :(");
+                }
+
                 NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting 5 seconds to kick the next person..");
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds((Time.time - time) < 1f ? 10f : 5f);
 
             }
 
