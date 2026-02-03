@@ -6343,7 +6343,7 @@ namespace iiMenu.Mods
             kick:
             {
                 time = Time.time + 10f;
-                for (int i = 0; i < 3970; i++)
+                for (int i = 0; i < 3960; i++)
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                     {
@@ -6403,7 +6403,7 @@ namespace iiMenu.Mods
                 kick:
                 {
                     time = Time.time + 10f;
-                    for (int i = 0; i < 3970; i++)
+                    for (int i = 0; i < 3960; i++)
                     {
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                         {
