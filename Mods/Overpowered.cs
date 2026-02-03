@@ -6336,11 +6336,11 @@ namespace iiMenu.Mods
             NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
             int view = PhotonNetwork.AllocateViewID(0);
             float time;
+            PhotonNetwork.SendAllOutgoingCommands();
             kick:
             {
                 time = Time.time + 10f;
-                PhotonNetwork.SendAllOutgoingCommands();
-                for (int i = 0; i < 3970; i++)
+                for (int i = 0; i < 3960; i++)
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                     {
@@ -6394,13 +6394,13 @@ namespace iiMenu.Mods
                 string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
+                PhotonNetwork.SendAllOutgoingCommands();
 
                 float time;
                 kick:
                 {
-                    PhotonNetwork.SendAllOutgoingCommands();
                     time = Time.time + 10f;
-                    for (int i = 0; i < 3970; i++)
+                    for (int i = 0; i < 3960; i++)
                     {
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                         {
