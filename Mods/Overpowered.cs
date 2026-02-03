@@ -6453,7 +6453,7 @@ namespace iiMenu.Mods
 
         public static void KickGun()
         {
-            if (NetworkSystem.Instance.InRoom)
+            if (NetworkSystem.Instance.InRoom || !NetworkSystem.Instance.IsMasterClient)
                 Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
             if (GetGunInput(false))
             {
