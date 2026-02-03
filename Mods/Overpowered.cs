@@ -6327,6 +6327,12 @@ namespace iiMenu.Mods
                 yield break;
             }
 
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                kickCoroutine = null;
+                yield break;
+            }
+
             SerializePatch.OverrideSerialization = () => false;
 
             Player player = PhotonNetwork.MasterClient;
@@ -6377,6 +6383,12 @@ namespace iiMenu.Mods
             if (!NetworkSystem.Instance.InRoom)
             {
                 NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+                kickCoroutine = null;
+                yield break;
+            }
+
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
                 kickCoroutine = null;
                 yield break;
             }
