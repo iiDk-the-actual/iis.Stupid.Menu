@@ -820,7 +820,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                foreach (VRRig rig in VRRigCache.Instance.GetAllRigs())
                     rig.voiceAudio.volume = rig != lockTarget ? 0.2f : 1f;
 
                 if (GetGunInput(true))
@@ -844,7 +844,7 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                foreach (VRRig rig in VRRigCache.Instance.GetAllRigs())
                     rig.voiceAudio.volume = rig != lockTarget ? 1f : 0.2f;
 
                 if (GetGunInput(true))
@@ -863,7 +863,7 @@ namespace iiMenu.Mods
 
         public static void ResetVoiceAll()
         {
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            foreach (VRRig rig in VRRigCache.Instance.GetAllRigs())
                 rig.voiceAudio.volume = 1f;
         }
 
