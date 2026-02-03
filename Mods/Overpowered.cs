@@ -1865,10 +1865,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                {
-                    int[] objectIds = ObjectByName.Select(element => element.Value).ToArray();
-                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, objectIds[Random.Range(0, objectIds.Length)], ManagerRegistry.GhostReactor.GameEntityManager));
-                }
+                    CoroutineManager.instance.StartCoroutine(DrawSmallDelay(NewPointer.transform.position, ObjectByName["GhostReactorCollectibleCore"], ManagerRegistry.GhostReactor.GameEntityManager));
             }
         }
 
