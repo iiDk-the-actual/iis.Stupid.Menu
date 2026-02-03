@@ -6339,11 +6339,11 @@ namespace iiMenu.Mods
             NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
             int view = PhotonNetwork.AllocateViewID(0);
             float time;
-            PhotonNetwork.SendAllOutgoingCommands();
+            RPCProtection();
             kick:
             {
                 time = Time.time + 10f;
-                for (int i = 0; i < 3960; i++)
+                for (int i = 0; i < 3965; i++)
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                     {
@@ -6397,13 +6397,13 @@ namespace iiMenu.Mods
                 string name = $"<color=#{(rig != null ? ColorUtility.ToHtmlStringRGBA(rig.GetColor()) : "white")}>{player.NickName}</color>";
 
                 NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}.");
-                PhotonNetwork.SendAllOutgoingCommands();
+                RPCProtection();
 
                 float time;
                 kick:
                 {
                     time = Time.time + 10f;
-                    for (int i = 0; i < 3960; i++)
+                    for (int i = 0; i < 3965; i++)
                     {
                         PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                         {
@@ -6433,8 +6433,10 @@ namespace iiMenu.Mods
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Kicking {name} failed. :(");
                 }
 
-                NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting 5 seconds to kick the next person..");
-                yield return new WaitForSeconds((Time.time - time) < 1f ? 10f : 5f);
+                int left = (int)((int)(Time.time - time) < 1f ? 5f : 10f);
+
+                NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> {name} has been kicked! Waiting {left} seconds to kick the next person..");
+                yield return new WaitForSeconds(left);
 
             }
 
