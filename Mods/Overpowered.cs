@@ -47,6 +47,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.GameModeUtilities;
@@ -6512,7 +6513,57 @@ namespace iiMenu.Mods
             RoomSystem.SendEvent(11, groupJoinSendData, netEventOptions, false);
         }
 
-        public static void LowGravityEvent(bool status)
+        private static float greyZoneDelay;
+        public static void ActivateGreyZoneGun(bool status)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && Time.time > greyZoneDelay)
+                    {
+                        greyZoneDelay = Time.time + 0.1f;
+                        ActivateGreyZone(status, gunTarget.GetPhotonPlayer());
+                    }
+                }
+            }
+        }
+
+        private static Coroutine wipeOverride;
+        public static IEnumerator ClearOverride()
+        {
+            yield return new WaitUntil(() => !PhotonNetwork.InRoom);
+            SerializePatch.OverrideSerialization = null;
+        }
+
+        public static void ActivateGreyZone(bool status, Player target)
+        {
+            if (!NetworkSystem.Instance.IsMasterClient)
+            {
+                NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                return;
+            }
+
+            SerializePatch.OverrideSerialization ??= () =>
+            {
+                MassSerialize(true, new[] { GreyZoneManager.Instance.photonView });
+                return false;
+            };
+
+            wipeOverride ??= CoroutineManager.instance.StartCoroutine(ClearOverride());
+
+            GreyZoneManager.Instance.greyZoneActive = status;
+            GreyZoneManager.Instance.photonConnectedDuringActivation = PhotonNetwork.InRoom;
+            GreyZoneManager.Instance.greyZoneActivationTime = (GreyZoneManager.Instance.photonConnectedDuringActivation ? PhotonNetwork.Time : ((double)Time.time));
+
+            SendSerialize(GreyZoneManager.Instance.photonView, new RaiseEventOptions { TargetActors = new[] { target.ActorNumber } });
+        }
+
+        public static void ActivateGreyZone(bool status)
         {
             if (NetworkSystem.Instance.InRoom)
             {
@@ -6534,12 +6585,23 @@ namespace iiMenu.Mods
 
         public static float spazGreyDelay;
         public static bool greyState;
-        public static void SpazGreyScreen() 
+        public static void SpazGreyZoneGun()
+        {
+            if (Time.time > spazGreyDelay)
+            {
+                greyState = !greyState;
+                spazGreyDelay = Time.time + 0.1f;
+            }
+
+            ActivateGreyZoneGun(greyState);
+        }
+
+        public static void SpazGreyZone() 
         { 
             if (Time.time > spazGreyDelay)
             {
                 greyState = !greyState;
-                LowGravityEvent(greyState);
+                ActivateGreyZone(greyState);
                 spazGreyDelay = Time.time + 0.1f;
             }
         }
