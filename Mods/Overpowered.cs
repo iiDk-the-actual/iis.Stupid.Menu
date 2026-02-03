@@ -3316,6 +3316,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void StrongerFlingAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > flingDelay)
+            {
+                flingDelay = Time.time + 0.1f;
+                
+                BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(0f, 50f, 0f));
+                RPCProtection();
+            }
+        }
+
         public static void SpazPlayerGun()
         {
             if (GetGunInput(false))
