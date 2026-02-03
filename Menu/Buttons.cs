@@ -1119,10 +1119,15 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Get Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GetBracelet(true), toolTip = "Gives you a party bracelet without needing to be in a party."},
                 new ButtonInfo { buttonText = "Spam Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.BraceletSpam, toolTip = "Spams the party bracelet on and off."},
+                new ButtonInfo { buttonText = "Give Bracelet", method =() => { Fun.SetBraceletState(true, false); RPCProtection(); }, isTogglable = false, toolTip = "Gives you a party bracelet without needing to be in a party."},
                 new ButtonInfo { buttonText = "Remove Bracelet", method = Fun.RemoveBracelet, isTogglable = false, toolTip = "Disables the party bracelet. This does not kick you from the party."},
 
                 new ButtonInfo { buttonText = "Rainbow Bracelet", method = Fun.RainbowBracelet, disableMethod = Fun.RemoveRainbowBracelet, toolTip = "Gives you a rainbow party bracelet."},
 
+                new ButtonInfo { buttonText = "Spam Builder Watch <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => { if (rightGrab) { Fun.GiveBuilderWatch(); Fun.RemoveBuilderWatch(); } }, toolTip = "Spams the builder watch on and off."},
+                new ButtonInfo { buttonText = "Get Builder Watch", method = Fun.GiveBuilderWatch, isTogglable = false, toolTip = "Gives you the builder watch without needing to be in monke blocks."},
+                new ButtonInfo { buttonText = "Remove Builder Watch", method = Fun.RemoveBuilderWatch, isTogglable = false, toolTip = "Removes the builder watch."},
+                
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.QuestNoises, toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method = Fun.MaxQuestScore, toolTip = "Gives you the maximum quest score in the game (99999)."},
                 new ButtonInfo { buttonText = "Custom Quest Score", method = Fun.CustomQuestScore, toolTip = "Gives you a custom quest score. You can change this in the settings."},
@@ -1154,9 +1159,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Custom Virtual Stump Video", enableMethod = Fun.CustomVirtualStumpVideo, disableMethod = Fun.DisableCustomVirtualStumpVideo, toolTip = "Plays a video by the virtual stump VR headset in stump."},
 
                 new ButtonInfo { buttonText = "Fake FPS", method = Fun.FakeFPS, disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
-
-                new ButtonInfo { buttonText = "Get Builder Watch", method = Fun.GiveBuilderWatch, isTogglable = false, toolTip = "Gives you the builder watch without needing to be in attic."},
-                new ButtonInfo { buttonText = "Remove Builder Watch", method = Fun.RemoveBuilderWatch, isTogglable = false, toolTip = "Disables the builder watch."},
 
                 new ButtonInfo { buttonText = "Joystick Rope Control <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Overpowered.JoystickRopeControl, toolTip = "Control the ropes in the direction of your joystick."},
 
@@ -1982,6 +1984,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fling Gun", overlapText = "Guardian Fling Gun", method = Overpowered.FlingGun, toolTip = "Flings whoever your hand desires."},
                 new ButtonInfo { buttonText = "Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.FlingAll, toolTip = "Flings everyone in the room."},
 
+                new ButtonInfo { buttonText = "Stronger Fling Gun", overlapText = "Guardian Strong Fling Gun", method = Overpowered.StrongerFlingGun, toolTip = "Flings whoever your hand desires to clouds."},
+                new ButtonInfo { buttonText = "Stronger Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Strong Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.StrongerFlingAll, toolTip = "Flings everyone in the room to clouds."},
+
                 new ButtonInfo { buttonText = "Bring Gun", overlapText = "Guardian Bring Gun", method = Overpowered.BringGun, toolTip = "Brings whoever your hand desires towards you."},
                 new ButtonInfo { buttonText = "Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BringAll, toolTip = "Brings everyone in the room towards you."},
 
@@ -2018,10 +2023,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.GuardianCrashAll, toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Kick Master Client", enableMethod = () => Overpowered.kickCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.KickMasterClient()), method =() => { if (Overpowered.kickCoroutine == null) Toggle("Kick Master Client"); }, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks the master client from the room." },
-                new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks the master client from the room." },
-                new ButtonInfo { buttonText = "Kick All", enableMethod = () => Overpowered.kickCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.KickAll()), method =() => { if (Overpowered.kickCoroutine == null) Toggle("Kick All"); }, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks the master client from the room." },
+                new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks whoever your hand desires from the room as long as they are master client." },
+                new ButtonInfo { buttonText = "Kick All", enableMethod = () => Overpowered.kickCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.KickAll()), method =() => { if (Overpowered.kickCoroutine == null) Toggle("Kick All"); }, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks everyone from the room." },
 
-                new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnect from the room." },
+                new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnected from the room." },
 
                 new ButtonInfo { buttonText = "Grey Screen All", enableMethod = ()=> Overpowered.LowGravityEvent(true), disableMethod =() => Overpowered.LowGravityEvent(false), toolTip = "Makes everyone's screen grey." },
                 new ButtonInfo { buttonText = "Spaz Grey Screen All", method = ()=> Overpowered.SpazGreyScreen(), disableMethod =() => Overpowered.LowGravityEvent(false), toolTip = "Makes everyone's screen flash grey." },
