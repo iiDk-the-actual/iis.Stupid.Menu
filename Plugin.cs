@@ -68,7 +68,7 @@ namespace iiMenu
 
             string[] ExistingDirectories = {
                 "",
-                "/Sounds",
+                "/Sounds/",
                 "/Plugins",
                 "/Backups",
                 "/Macros",
