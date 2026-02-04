@@ -6439,6 +6439,8 @@ namespace iiMenu.Mods
                 if (!PhotonNetwork.InRoom)
                 {
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Kicking {name} failed. :(");
+                    kickCoroutine = null;
+                    yield break;
                 }
 
                 int left = (Time.time - (time - 10f)) < 2.5f ? 10 : 5;
