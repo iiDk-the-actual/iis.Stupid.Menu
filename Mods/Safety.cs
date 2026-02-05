@@ -771,6 +771,16 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = Random.Range(fpsSpoofValue - 10, fpsSpoofValue + 10);
         }
 
+        public static int pingSpoofValue = 200;
+        public static void PingSpoof()
+        {
+            SerializePatch.OverrideSerialization ??= () =>
+            {
+                MassSerialize(timeOffset: pingSpoofValue);
+                return false;
+            };
+        }
+
         public static void ChangeFPSSpoofValue(bool positive = true)
         {
             if (positive)
@@ -784,6 +794,21 @@ namespace iiMenu.Mods
                 fpsSpoofValue = 140;
 
             Buttons.GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangePingSpoofValue(bool positive = true)
+        {
+            if (positive)
+                pingSpoofValue += 100;
+            else
+                pingSpoofValue -= 100;
+
+            if (pingSpoofValue > 10000)
+                pingSpoofValue = 100;
+            if (pingSpoofValue < 100)
+                pingSpoofValue = 10000;
+
+            Buttons.GetIndex("Change Ping Spoof Value").overlapText = "Change Ping Spoof Value <color=grey>[</color><color=green>" + pingSpoofValue + "</color><color=grey>]</color>";
         }
 
         public static readonly string[] namePrefix = {

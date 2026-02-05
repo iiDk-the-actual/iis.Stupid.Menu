@@ -5844,7 +5844,8 @@ exit 0";
                 characterDistance.ToString(),
                 Overpowered.lagTypeIndex.ToString(),
                 Overpowered.masterVisualizationType.ToString(),
-                Movement.targetHz.ToString()
+                Movement.targetHz.ToString(),
+                Safety.pingSpoofValue.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -6117,6 +6118,9 @@ exit 0";
 
                 Movement.targetHz = int.Parse(data[67]) - 500;
                 Movement.ChangeTinnitusHz();
+
+                Safety.pingSpoofValue = int.Parse(data[68]) - 100;
+                Safety.ChangePingSpoofValue();
             }
             catch { LogManager.Log("Save file out of date"); }
 

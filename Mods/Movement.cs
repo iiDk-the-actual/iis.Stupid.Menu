@@ -5206,7 +5206,6 @@ namespace iiMenu.Mods
 
         public static bool tinnitusSelf;
 
-
         public static int targetHz = 6000;
         public static void ChangeTinnitusHz(bool positive = true)
         {

@@ -576,7 +576,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeIdentityOnDisconnect(Safety.ChangeIdentityRegular), toolTip = "When you leave, your name and color will be set to something a regular player would have."},
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Child</color><color=grey>]</color>", method =() => Safety.ChangeIdentityOnDisconnect(Safety.ChangeIdentityCustom), toolTip = "When you leave, your name and color will be set to whatever you desire."},
 
-                new ButtonInfo { buttonText = "FPS Spoof", method = Safety.FPSSpoof, disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
+                new ButtonInfo { buttonText = "FPS Spoof", method = Safety.FPSSpoof, disableMethod =() => FPSPatch.enabled = false, toolTip = "Makes your FPS appear different for other players and the competitive bot."},
+                new ButtonInfo { buttonText = "Ping Spoof", enableMethod = Safety.PingSpoof, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes your ping appear different for other players and the competitive bot."},
                 new ButtonInfo { buttonText = "Name Spoof", method = Safety.NameSpoof, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", method = Safety.ColorSpoof, toolTip = "Makes your color appear different to every player."},
 
@@ -2366,6 +2367,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Change FPS Spoof Value", overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>90</color><color=grey>]</color>", method =() => Safety.ChangeFPSSpoofValue(), enableMethod =() => Safety.ChangeFPSSpoofValue(), disableMethod =() => Safety.ChangeFPSSpoofValue(false), incremental = true, isTogglable = false, toolTip = "Changes the target FPS for the FPS Spoof mod."},
+                new ButtonInfo { buttonText = "Change Ping Spoof Value", overlapText = "Change Ping Spoof Value <color=grey>[</color><color=green>200</color><color=grey>]</color>", method =() => Safety.ChangePingSpoofValue(), enableMethod =() => Safety.ChangePingSpoofValue(), disableMethod =() => Safety.ChangePingSpoofValue(false), incremental = true, isTogglable = false, toolTip = "Changes the target ping for the Ping Spoof mod."},
 
                 new ButtonInfo { buttonText = "Hide Anti Cheat Report Reasons", enableMethod =() => AntiCheatPatches.SendReportPatch.AntiCheatReasonHide = true, disableMethod =() => AntiCheatPatches.SendReportPatch.AntiCheatReasonHide = false, toolTip = "Hides the reason for Show Anti Cheat Reports."},
 
