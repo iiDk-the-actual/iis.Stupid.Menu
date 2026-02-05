@@ -5647,7 +5647,6 @@ namespace iiMenu.Menu
             objectUpdate[0] = PhotonNetwork.ServerTimestamp + timeOffset;
             objectUpdate[1] = currentLevelPrefix != 0 ? (object)currentLevelPrefix : null;
 
-
             if (delay <= 0f)
                 PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
                     reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
