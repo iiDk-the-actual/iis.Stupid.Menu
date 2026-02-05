@@ -35,10 +35,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using static iiMenu.Menu.Main;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
+using Random = UnityEngine.Random;
 
 namespace iiMenu.Mods
 {
@@ -232,7 +232,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<ButtonInfo, (Guid id, AudioClip clip)> activeSounds = new Dictionary<ButtonInfo, (Guid id, AudioClip clip)>();
+        private static readonly Dictionary<ButtonInfo, (Guid id, AudioClip clip)> activeSounds = new Dictionary<ButtonInfo, (Guid id, AudioClip clip)>();
 
         public static void PlaySoundboardSound(object file, ButtonInfo info, bool loopAudio, bool bind)
         {

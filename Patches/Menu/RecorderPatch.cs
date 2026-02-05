@@ -20,9 +20,9 @@
  */
 
 using HarmonyLib;
+using iiMenu.Managers;
 using Photon.Voice;
 using Photon.Voice.Unity;
-using iiMenu.Managers;
 
 namespace iiMenu.Patches.Menu
 {
