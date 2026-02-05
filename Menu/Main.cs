@@ -88,7 +88,6 @@ namespace iiMenu.Menu
         /// <summary>
         /// Runs on first frame of <see cref="GTPlayer.LateUpdate"/> after menu is launched
         /// </summary>
-        ///
         public static void OnLaunch()
         {
             if (CoroutineManager.instance == null)
