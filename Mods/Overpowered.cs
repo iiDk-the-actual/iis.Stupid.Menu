@@ -5440,8 +5440,7 @@ namespace iiMenu.Mods
             string[] lagNames = {
                 "Party",
                 "VRRig",
-                "Destroy",
-                "GTSignal"
+                "Destroy"
             };
 
             if (positive)
@@ -5463,7 +5462,6 @@ namespace iiMenu.Mods
                 0 => true,
                 1 => true,
                 2 => false,
-                3 => false,
 
                 _ => true
             };
@@ -5533,26 +5531,22 @@ namespace iiMenu.Mods
 
                 byte eventIndex = lagTypeIndex switch
                 {
-                    3 => 204,
-                    _ => 186
+                    _ => 204
                 };
 
                 SendOptions sendOptions = lagTypeIndex switch
                 {
-                    3 => new SendOptions { Encrypt = true, Reliability = false, DeliveryMode = DeliveryMode.Unreliable },
-                    _ => SendOptions.SendUnreliable
+                    _ => new SendOptions { Encrypt = true, Reliability = false, DeliveryMode = DeliveryMode.Unreliable }
                 };
 
                 object data = lagTypeIndex switch
                 {
-                    3 => new object[] { float.NaN },
-                    _ => new Hashtable { { float.NaN, float.NaN } }
+                    _ => new object[] { float.NaN }
                 };
 
                 RaiseEventOptions raiseEventOptions = lagTypeIndex switch 
                 {
-                    3 => new RaiseEventOptions { CachingOption = EventCaching.DoNotCache },
-                    _ => new RaiseEventOptions { }
+                    _ => new RaiseEventOptions { CachingOption = EventCaching.DoNotCache }
                 };
 
                 switch (target)
