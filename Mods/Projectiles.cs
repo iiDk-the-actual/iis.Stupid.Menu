@@ -110,7 +110,9 @@ namespace iiMenu.Mods
             "Walnut_Anchor_Left",
             "Walnut_Anchor_Right",
             "HotCocoaCup_Anchor_LEFT",
-            "HotCocoaCup_Anchor_RIGHT"
+            "HotCocoaCup_Anchor_RIGHT",
+            "SlingshotProjectile",
+            "SlingshotProjectile"
         };
 
         public static string SnowballName = "GrowingSnowball";
@@ -144,23 +146,29 @@ namespace iiMenu.Mods
 
             SnowballThrowable Throwable = GetProjectile(projectileName);
 
-            if (Throwable == null)
-                return;
-
-            if (!Throwable.gameObject.activeSelf)
+            if (projectileName == "SlingshotProjectile")
             {
-                Throwable.SetSnowballActiveLocal(true);
-                Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+            }
+            else
+            {
+                if (Throwable == null)
+                    return;
 
-                if (Buttons.GetIndex("Random Projectile").enabled)
-                    CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
-                else
+                if (!Throwable.gameObject.activeSelf)
                 {
-                    if (DisableCoroutine != null)
-                        CoroutineManager.instance.StopCoroutine(DisableCoroutine);
+                    Throwable.SetSnowballActiveLocal(true);
+                    Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
-                    DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                    if (Buttons.GetIndex("Random Projectile").enabled)
+                        CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                    else
+                    {
+                        if (DisableCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(DisableCoroutine);
+
+                        DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                    }
                 }
             }
 
@@ -178,10 +186,6 @@ namespace iiMenu.Mods
 
                         RigCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
                     }
-
-                    bool wasThrowableRandomized = Throwable.randomizeColor;
-                    Throwable.randomizeColor = true;
-                    VRRig.LocalRig.SetThrowableProjectileColor(true, color);
 
                     bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
 
@@ -260,7 +264,23 @@ namespace iiMenu.Mods
                     {
                         SlingshotProjectile slingshotProjectile = null;
                         if (showSelf)
-                            slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
+                        {
+                            if (Throwable == null)
+                            {
+                                ProjectileWeapon weapon = VRRig.LocalRig.GetSlingshot();
+                                GameObject projectile = ObjectPools.instance.Instantiate(PoolUtils.GameObjHashCode(weapon.projectilePrefab), true);
+
+                                float projectileScale = Mathf.Abs(weapon.transform.lossyScale.x);
+                                projectile.transform.localScale = Vector3.one * projectileScale;
+
+                                weapon.AttachTrail(PoolUtils.GameObjHashCode(weapon.projectileTrail), projectile, position, false, false, true, color);
+
+                                slingshotProjectile = projectile.GetComponent<SlingshotProjectile>();
+                                slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, ProjectileTracker.AddAndIncrementLocalProjectile(slingshotProjectile, velocity, position, projectileScale), projectileScale, true, color);
+                            }
+                            else
+                                slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
+                        }
 
                         if (PhotonNetwork.InRoom && !Buttons.GetIndex("Client Sided Projectiles").enabled)
                         {
@@ -271,7 +291,7 @@ namespace iiMenu.Mods
                             object[] projectileSendData = new object[9];
                             projectileSendData[0] = position;
                             projectileSendData[1] = velocity;
-                            projectileSendData[2] = 1;
+                            projectileSendData[2] = projectileName == "SlingshotProjectile" ? 0 : (projectileName.ToLower().Contains("left") ? 1 : 2);
                             projectileSendData[3] = index;
                             projectileSendData[4] = true;
                             projectileSendData[5] = color32.r;
@@ -297,8 +317,6 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                     }
-
-                    Throwable.randomizeColor = wasThrowableRandomized;
                 }
                 catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
@@ -367,7 +385,8 @@ namespace iiMenu.Mods
                 "Plate",
                 "Stick",
                 "Walnut",
-                "Hot Cocoa"
+                "Hot Cocoa",
+                "Slingshot"
             };
 
             if (positive)

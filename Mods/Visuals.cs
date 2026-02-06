@@ -1374,7 +1374,7 @@ namespace iiMenu.Mods
                     SlingshotProjectile projectileInstance = projectileArray[index].projectileInstance;
                     if (projectileInstance == null || !projectileInstance.gameObject.activeSelf) continue;
 
-                    if (VRRig.LocalRig.GetSlingshot().dummyProjectile && VRRig.LocalRig.GetSlingshot().dummyProjectile.GetComponent<SlingshotProjectile>() == projectileInstance) continue;
+                    if ((VRRig.LocalRig.GetSlingshot() as Slingshot).dummyProjectile && (VRRig.LocalRig.GetSlingshot() as Slingshot).dummyProjectile.GetComponent<SlingshotProjectile>() == projectileInstance) continue;
 
                     if (!trajectoryPool.TryGetValue(projectileInstance, out LineRenderer Line))
                     {
@@ -1430,7 +1430,7 @@ namespace iiMenu.Mods
             {
                 if (rig.IsLocal()) continue;
 
-                Slingshot playerSlingshot = rig.GetSlingshot();
+                Slingshot playerSlingshot = rig.GetSlingshot() as Slingshot;
                 if (playerSlingshot != null)
                 {
                     if (playerSlingshot.InDrawingState() && playerSlingshot.dummyProjectile != null)
@@ -1495,7 +1495,7 @@ namespace iiMenu.Mods
                     localTrajectoryLine.gameObject.SetActive(false);
             }
 
-            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot();
+            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot() as Slingshot;
             if (localSlingshot == null || !localSlingshot.InDrawingState())
                 return;
 

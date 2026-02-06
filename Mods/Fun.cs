@@ -3067,7 +3067,7 @@ Piece Name: {gunTarget.name}";
         public static void AngryBirdsSounds()
         {
             if (!dynamicSounds) return;
-            Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
+            Slingshot slingshot = VRRig.LocalRig.GetSlingshot() as Slingshot;
 
             if (!slingshot) return;
 
@@ -3094,7 +3094,7 @@ Piece Name: {gunTarget.name}";
         }
         public static void SlingshotHelper()
         {
-            Slingshot slingshot = VRRig.LocalRig.GetSlingshot();
+            Slingshot slingshot = VRRig.LocalRig.GetSlingshot() as Slingshot;
             if (slingshot == null)
                 return;
 
@@ -3117,7 +3117,7 @@ Piece Name: {gunTarget.name}";
                     paintbrawlTriggerLine.gameObject.SetActive(false);
             }
 
-            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot();
+            Slingshot localSlingshot = VRRig.LocalRig.GetSlingshot() as Slingshot;
             if (localSlingshot == null || !localSlingshot.InDrawingState())
                 return;
 

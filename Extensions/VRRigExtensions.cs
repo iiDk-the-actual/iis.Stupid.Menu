@@ -131,8 +131,8 @@ namespace iiMenu.Extensions
         public static Photon.Realtime.Player GetPhotonPlayer(this VRRig rig) =>
             RigUtilities.NetPlayerToPlayer(RigUtilities.GetPlayerFromVRRig(rig));
 
-        public static Slingshot GetSlingshot(this VRRig rig) =>
-            rig.projectileWeapon as Slingshot;
+        public static ProjectileWeapon GetSlingshot(this VRRig rig) =>
+            rig.projectileWeapon;
 
         public static float[] GetSpeed(this VRRig rig)
         {
