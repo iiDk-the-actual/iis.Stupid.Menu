@@ -3935,7 +3935,7 @@ namespace iiMenu.Mods
             {
                 Vector3 normal = GTPlayer.Instance.lastHitInfoHand.normal;
                 Vector3 direction = GorillaTagger.Instance.rigidbody.linearVelocity.X_Z();
-                GTPlayer.Instance.transform.position += (direction - normal * Vector3.Dot(direction, normal)).normalized * (direction.magnitude / GTPlayer.Instance.maxJumpSpeed * pullPower) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                GTPlayer.Instance.transform.position += (direction - normal * Vector3.Dot(direction, normal)).normalized * (direction.magnitude / GTPlayer.Instance.maxJumpSpeed * (pullPower * 5f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
             }
 
             previousTouchingGround[left] = touchingGround;
