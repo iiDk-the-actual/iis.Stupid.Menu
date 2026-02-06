@@ -5863,6 +5863,15 @@ Piece Name: {gunTarget.name}";
             Buttons.GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce + "</color><color=grey>]</color>";
         }
 
+        public static void GoldenNameTag(bool isGolden)
+        {
+			VRRig.LocalRig.ShowGoldNameTag = isGolden;
+            VRRig.LocalRig.playerText1.color = VRRig.LocalRig.ShowGoldNameTag ? SubscriptionManager.SUBSCRIBER_NAME_COLOR : Color.white;
+		}
+
+        public static void FlashNameTag() =>
+            GoldenNameTag((Time.time % 0.2f) > 0.1f);
+
         public static void NameCycle(string[] names)
         {
             if (Time.time > nameCycleDelay)
