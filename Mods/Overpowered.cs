@@ -6581,6 +6581,8 @@ namespace iiMenu.Mods
         {
             yield return new WaitUntil(() => !PhotonNetwork.InRoom);
             SerializePatch.OverrideSerialization = null;
+
+            wipeOverride = null;
         }
 
         public static void ActivateGreyZone(bool status, Player target)
