@@ -508,8 +508,8 @@ namespace iiMenu.Mods
                         if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
                         {
                             string handPath = (bool)args[1]
-                                ? "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
-                                : "GorillaPlayerNetworkedRigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+                                ? "rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                : "rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
 
                             Vector3 position = target.gameObject.transform.Find(handPath).position;
 
@@ -3086,7 +3086,7 @@ Piece Name: {gunTarget.name}";
                 if (oldIndex == -1)
                     oldIndex = VRRig.LocalRig.ActiveTransferrableObjectIndex(0);
                 if (slingshot == null)
-                    slingshot = VRRig.LocalRig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body/Slingshot Chest Snap/DropZoneAnchor/Slingshot").GetComponent<Slingshot>();
+                    slingshot = VRRig.LocalRig.transform.Find("rig/body_pivot/Slingshot Chest Snap/DropZoneAnchor/Slingshot").GetComponent<Slingshot>();
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(0, active ? 212 : oldIndex);
                 slingshot.gameObject.SetActive(active);
             }

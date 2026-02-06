@@ -1950,7 +1950,7 @@ namespace iiMenu.Classes.Menu
                         TargetAnchorObject = Rig.rightHandTransform.parent.gameObject;
                         break;
                     case 3:
-                        TargetAnchorObject = Rig.transform.Find("GorillaPlayerNetworkedRigAnchor/rig/body").gameObject;
+                        TargetAnchorObject = Rig.transform.Find("rig/body_pivot").gameObject;
                         break;
                 }
 
