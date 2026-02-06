@@ -5735,6 +5735,76 @@ exit 0";
             }
         }
 
+        public static IEnumerator MenuIntroCoroutine()
+        {
+            if (Time.time < timeMenuStarted)
+                yield return new WaitForSeconds(1f);
+
+            float fps = 1f / Time.unscaledDeltaTime;
+            yield return new WaitUntil(() => { fps = Mathf.Lerp(fps, 1f / Time.unscaledDeltaTime, 0.1f); return fps > 30f; });
+
+            GameObject menuIntro = LoadObject<GameObject>("Intro");
+
+            menuIntro.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+            menuIntro.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+
+            VideoPlayer videoPlayer = menuIntro.transform.Find("Video").GetComponent<VideoPlayer>();
+            ParticleSystem particleSystem = menuIntro.transform.Find("Particles").GetComponent<ParticleSystem>();
+
+            Color backgroundColor = Color.white;
+            Fun.HueShift(Color.white);
+
+            var main = particleSystem.main; // ????
+            main.startColor = new ParticleSystem.MinMaxGradient(
+                Main.backgroundColor.GetColor(0)
+            );
+
+            void EndImmediately()
+            {
+                Fun.HueShift(Color.clear);
+                Object.Destroy(menuIntro);
+            }
+
+            float timeout = 0f;
+
+            while (!videoPlayer.isPrepared)
+            {
+                timeout += Time.deltaTime;
+                if (timeout > 5f)
+                {
+                    EndImmediately();
+                    yield break;
+                }
+                yield return null;
+            }
+
+            bool videoEnded = false;
+            videoPlayer.Play();
+            videoPlayer.loopPointReached += (_) => videoEnded = true;
+
+            yield return new WaitUntil(() => videoEnded);
+
+            float fadeEnd = Time.time + 1f;
+            Color transparentColor = backgroundColor;
+            transparentColor.a = 0f;
+
+            while (Time.time < fadeEnd)
+            {
+                float t = 1f - (fadeEnd - Time.time);
+                Fun.HueShift(Color.Lerp(backgroundColor, transparentColor, t));
+                videoPlayer.gameObject.GetComponent<Renderer>().material.color = Color.Lerp(Color.white, Color.clear, t);
+                main.startColor = new ParticleSystem.MinMaxGradient(
+                    Color.Lerp(main.startColor.color, Color.clear, t)
+                );
+
+                yield return null;
+            }
+
+            EndImmediately();
+        }
+
+        public static void MenuIntro() =>
+            CoroutineManager.instance.StartCoroutine(MenuIntroCoroutine());
 
         public static void ResetVoiceCommandsKeywords()
         {

@@ -170,6 +170,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Reset System Prompt", method = Settings.ResetSystemPrompt, isTogglable = false, toolTip = "Resets the system prompt for the AI Assistant."},
 
                 new ButtonInfo { buttonText = "Player Select", method = Settings.PlayerSelect, toolTip = "Spawns a line in your hand when moving your hand away from the menu that you can select players with."},
+                new ButtonInfo { buttonText = "Menu Intro", enableMethod = Settings.MenuIntro, toolTip = "Plays an intro for the menu."},
 
                 new ButtonInfo { buttonText = "Annoying Mode", enableMethod =() => annoyingMode = true, disableMethod = Settings.AnnoyingModeOff, toolTip = "Turns on the April Fools 2024 settings."},
                 new ButtonInfo { buttonText = "Lowercase Mode", enableMethod =() => lowercaseMode = true, disableMethod =() => lowercaseMode = false, toolTip = "Makes the entire menu's text lowercase."},

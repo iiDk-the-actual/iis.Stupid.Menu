@@ -5258,10 +5258,14 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float closeRoomDelay;
         public static void CloseRoom()
         {
             if (!PhotonNetwork.InRoom) return;
-            
+            if (Time.time < closeRoomDelay) return;
+
+            closeRoomDelay = Time.time + 0.1f;
+
             for (int i = 0; i < 40; i++)
             {
                 WebFlags flags = new WebFlags(byte.MaxValue);
