@@ -35,7 +35,7 @@ namespace iiMenu.Patches.Menu
             if (enabled)
             {
                 oldDeltaTime = Time.fixedDeltaTime;
-                __instance._frameRateUpdated = true;
+                __instance._framerateUpdated = true;
                 Time.fixedDeltaTime = 1 / UnityEngine.XR.XRDevice.refreshRate;
             }
         }

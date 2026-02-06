@@ -3191,9 +3191,11 @@ namespace iiMenu.Mods
             Quaternion rightHandStartRot = rig.rightHand.rigTarget.localRotation;
 
             float startTime = Time.time;
-            while (Time.time < startTime + 0.1f)
+            float length = 1f / PhotonNetwork.SendRate;
+
+            while (Time.time < startTime + length)
             {
-                float t = (Time.time - startTime) / 0.1f;
+                float t = (Time.time - startTime) / length;
 
                 rig.head.rigTarget.localRotation = Quaternion.Lerp(headStartRot, rig.head.syncRotation, t);
 

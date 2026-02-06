@@ -21,6 +21,7 @@
 
 using BepInEx;
 using GorillaExtensions;
+using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -80,8 +81,6 @@ namespace iiMenu.Mods
             yield return new WaitForSeconds(0.5f);
 
             instance.netState = NetSystemState.Connecting;
-
-            RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
 
             while (!instance.InRoom)
             {
@@ -152,7 +151,7 @@ namespace iiMenu.Mods
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
-                MaxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
+                MaxPlayers = RoomSystem.GetRoomSizeForCreate((PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest")).zone, Enum.Parse<GameModeType>(GorillaComputer.instance.currentGameMode.Value, true), !isPublic, SubscriptionManager.IsLocalSubscribed()),
                 CustomProps = new Hashtable
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
