@@ -250,8 +250,7 @@ namespace iiMenu.Mods
                                     GrowingSnowball.snowballThrowEvent._eventId,
                                     position,
                                     velocity,
-                                    index,
-                                    null
+                                    index
                                 }, options, new SendOptions
                                 {
                                     Reliability = false,

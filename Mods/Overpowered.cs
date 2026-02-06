@@ -3574,8 +3574,7 @@ namespace iiMenu.Mods
                         GrowingSnowball.snowballThrowEvent._eventId,
                         Pos,
                         Vel,
-                        GetProjectileIncrement(Pos, Vel, snowballScale),
-                        null // If this argument isn't here, the snowballs don't function. This has no sentimental value or checks besides the length check prohibiting even normal players from sending snowballs.
+                        GetProjectileIncrement(Pos, Vel, snowballScale)
                     }, options, new SendOptions
                     {
                         Reliability = false
@@ -5439,7 +5438,6 @@ namespace iiMenu.Mods
         {
             string[] lagNames = {
                 "Party",
-                "VRRig",
                 "Destroy"
             };
 
@@ -5460,8 +5458,7 @@ namespace iiMenu.Mods
             return lagTypeIndex switch
             {
                 0 => true,
-                1 => true,
-                2 => false,
+                1 => false,
 
                 _ => true
             };
@@ -5492,12 +5489,10 @@ namespace iiMenu.Mods
                 };
                 string rpcName = lagTypeIndex switch
                 {
-                    1 => "RPC_UpdateCosmeticsWithTryonPacked",
                     _ => "AddPartyMembers"
                 };
                 object[] data = lagTypeIndex switch
                 {
-                    1 => new object[] { null, null, false },
                     _ => new object[] { "Infection", (short)12, null }
                 };
 
