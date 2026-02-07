@@ -1,5 +1,5 @@
 /*
- * ii's Stupid Menu  Patches/Menu/SubscriptionPatch.cs
+ * ii's Stupid Menu  Patches/Menu/SubscriptionPatches.cs
  * A mod menu for Gorilla Tag with over 1000+ mods
  *
  * Copyright (C) 2026  Goldentrophy Software
