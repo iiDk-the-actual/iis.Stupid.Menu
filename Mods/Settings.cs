@@ -5456,6 +5456,16 @@ exit 0";
             Canvas.ForceUpdateCanvases();
         }
 
+        public static void UpdateSearch()
+        {
+            Transform searchBar = canvas.transform.Find("Main/ModuleTab/Search");
+            TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
+
+            inputField.text = keyboardInput;
+            foreach (GameObject button in canvas.transform.Find("Main/ModuleTab/Modules/Viewport/Content").Children())
+                button.SetActive(keyboardInput.IsNullOrEmpty() || button.name.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()));
+        }
+
         public static void ClickGUI()
         {
             if (menu == null)
@@ -5476,11 +5486,7 @@ exit 0";
                     TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();
 
                     if (inputField.text != keyboardInput)
-                    {
-                        inputField.text = keyboardInput;
-                        foreach (GameObject button in canvas.transform.Find("Main/ModuleTab/Modules/Viewport/Content").Children())
-                            button.SetActive(keyboardInput.IsNullOrEmpty() || button.name.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()));
-                    }
+                        UpdateSearch();
                 }
 
                 if (!XRSettings.isDeviceActive)

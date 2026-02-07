@@ -1702,6 +1702,8 @@ namespace iiMenu.Menu
 
                     if (!clickGUI)
                         ReloadMenu();
+                    else
+                        Settings.UpdateSearch();
                 }
                 else
                     keyPressedTimes.Remove(keyCode);
