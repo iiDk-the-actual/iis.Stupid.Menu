@@ -3264,7 +3264,7 @@ namespace iiMenu.Mods
             Quaternion rightHandStartRot = rig.rightHand.rigTarget.localRotation;
 
             float startTime = Time.time;
-            float length = 1f / PhotonNetwork.SendRate;
+            float length = 1f / PhotonNetwork.SerializationRate;
 
             while (Time.time < startTime + length)
             {
