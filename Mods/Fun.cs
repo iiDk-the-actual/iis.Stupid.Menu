@@ -6599,6 +6599,7 @@ Piece Name: {gunTarget.name}";
             SpeakText(ids);
         }
 
+        private static float allNarrationDelay;
         public static void NarrateIDAura()
         {
             if (!PhotonNetwork.InRoom) return;
@@ -6612,12 +6613,14 @@ Piece Name: {gunTarget.name}";
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
+            if (nearbyPlayers.Count > 0 && Time.time > allNarrationDelay)
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    SpeakText("Name: " + GetPlayerFromVRRig(nearbyPlayer).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(nearbyPlayer).UserId));
-                }
+                allNarrationDelay = Time.time + 10f;
+
+                string ids = "";
+                foreach (VRRig vrrig in nearbyPlayers)
+                        ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(vrrig).UserId) + ". ";
+                SpeakText(ids);
             }
         }
 
@@ -6639,12 +6642,14 @@ Piece Name: {gunTarget.name}";
                 }
             }
 
-            if (touchedPlayers.Count > 0)
+            if (touchedPlayers.Count > 0 && Time.time > allNarrationDelay)
             {
-                foreach (VRRig rig in touchedPlayers)
-                {
-                    SpeakText("Name: " + GetPlayerFromVRRig(rig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(rig).UserId));
-                }
+                allNarrationDelay = Time.time + 10f;
+
+                string ids = "";
+                foreach (VRRig vrrig in touchedPlayers)
+                    ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(vrrig).UserId) + ". ";
+                SpeakText(ids);
             }
         }
 
@@ -6694,12 +6699,14 @@ Piece Name: {gunTarget.name}";
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count > 0)
+            if (nearbyPlayers.Count > 0 && Time.time > allNarrationDelay)
             {
-                foreach (VRRig nearbyPlayer in nearbyPlayers)
-                {
-                    SpeakText("Name: " + GetPlayerFromVRRig(nearbyPlayer).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
-                }
+                allNarrationDelay = Time.time + 10f;
+
+                string ids = "";
+                foreach (VRRig vrrig in nearbyPlayers)
+                        ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}") + ". ";
+                SpeakText(ids);
             }
         }
 
@@ -6721,12 +6728,14 @@ Piece Name: {gunTarget.name}";
                 }
             }
 
-            if (touchedPlayers.Count > 0)
+            if (touchedPlayers.Count > 0 && Time.time > allNarrationDelay)
             {
-                foreach (VRRig rig in touchedPlayers)
-                {
-                    SpeakText("Name: " + GetPlayerFromVRRig(rig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}"));
-                }
+                allNarrationDelay = Time.time + 10f;
+
+                string ids = "";
+                foreach (VRRig vrrig in touchedPlayers)
+                    ids += "Name: " + GetPlayerFromVRRig(vrrig).NickName + ". I P  ADD DRESS: " + string.Join(" ", $"{Random.Range(1, 255)}.{Random.Range(1, 255)}.{Random.Range(1, 255)}") + ". ";
+                SpeakText(ids);
             }
         }
 
