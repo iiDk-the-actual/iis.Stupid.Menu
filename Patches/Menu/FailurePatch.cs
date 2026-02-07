@@ -31,7 +31,7 @@ namespace iiMenu.Patches.Menu
     {
         public static void Prefix(string failMessage)
         {
-            if (ServerData.ServerDataEnabled && failMessage.Contains("YOUR ACCOUNT"))
+            if (ServerData.ServerDataEnabled && failMessage.ToLower().Contains("your account"))
                 CoroutineManager.instance.StartCoroutine(ServerData.ReportFailureMessage(failMessage));
         }
     }
