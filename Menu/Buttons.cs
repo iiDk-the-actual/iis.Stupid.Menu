@@ -467,7 +467,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method = Important.OculusReportMenu, toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
-                new ButtonInfo { buttonText = "Accept TOS", method = Important.AcceptTOS, disableMethod =() => TOSPatches.enabled = false, toolTip = "Accepts the Terms of Service for you."},
+                new ButtonInfo { buttonText = "Accept TOS", awakeMethod =() => TOSPatches.enabled = true, method = Important.AcceptTOS, disableMethod =() => TOSPatches.enabled = false, toolTip = "Accepts the Terms of Service for you."},
                 new ButtonInfo { buttonText = "Bypass K-ID Restrictions", overlapText = "Bypass k-ID Restrictions", method =() => PermissionPatch.enabled = true, disableMethod =() => PermissionPatch.enabled = false, toolTip = "Bypasses the permission restrictions held by k-ID for underage users."},
                 new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.instance.StartCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks k-ID gives you."},
 
@@ -604,7 +604,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.SlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Zero Gravity Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.ZeroGravitySlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner without gravity, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Slingshot Bark Fly <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.VelocityBarkFly, toolTip = "Acts like the fly that Bark has, mixed with slingshot fly. Credits to KyleTheScientist."},
-                new ButtonInfo { buttonText = "WASD Fly", enableMethod=() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, method = Movement.WASDFly, disableMethod =() => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
+                new ButtonInfo { buttonText = "WASD Fly", enableMethod =() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, postMethod = Movement.WASDFly, disableMethod =() => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
 
                 new ButtonInfo { buttonText = "Dash <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Dash, toolTip = "Flings your character forwards when pressing <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Reverse Velocity <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.ReverseVelocity, toolTip = "Reverses your current velocity when you press <color=green>A</color>."},

@@ -87,11 +87,14 @@ namespace iiMenu
                     Directory.CreateDirectory(DirectoryTarget);
             }
 
-            // Ugily hard-coded but works so well
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
             {
-                if (File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
-                    TOSPatches.enabled = true;
+                string[] mods = File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;");
+                foreach (string mod in mods)
+                {
+                    var button = Buttons.GetIndex(mod);
+                    button?.awakeMethod?.Invoke();
+                }
             }
 
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_DisableTelemetry.txt"))

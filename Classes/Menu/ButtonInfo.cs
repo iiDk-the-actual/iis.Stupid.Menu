@@ -30,11 +30,12 @@ namespace iiMenu.Classes.Menu
 
         public string toolTip = "This button doesn't have a tooltip/tutorial.";
 
-        public Action method;
-        public Action postMethod;
+        public Action method;         // Every frame before GTPlayer.LateUpdate is called
+        public Action postMethod;     // Every frame after GTPlayer.LateUpdate is called
+        public Action awakeMethod;    // Once on awake (before entire game initialization)
 
-        public Action enableMethod;
-        public Action disableMethod;
+        public Action enableMethod;   // Once before method on enable
+        public Action disableMethod;  // Once on disable
 
         public bool enabled;
         public bool isTogglable = true;
