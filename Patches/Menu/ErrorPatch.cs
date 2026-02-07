@@ -27,11 +27,10 @@ using System.Collections.Generic;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaComputer), nameof(GorillaComputer.OnErrorShared))]
-    public class ErrorPatch
+    public class ErrorPatches
     {
         public static bool enabled;
-        public static bool Prefix(PlayFabError error)
+        public static bool ErrorCall(PlayFabError error)
         {
             if (!enabled)
                 return true;
@@ -47,7 +46,7 @@ namespace iiMenu.Patches.Menu
 
             bool isIndefinite = keyValuePair.Value[0] == "Indefinite";
 
-            DateTime banEnd = DateTime.Parse(keyValuePair.Value[0]);
+            DateTime banEnd = isIndefinite ? DateTime.MaxValue : DateTime.Parse(keyValuePair.Value[0]);
             TimeSpan remaining = banEnd - DateTime.UtcNow;
 
             string banMessage = @$"Your account {PlayFabAuthenticator.instance.GetPlayFabPlayerId()} has been banned.
@@ -79,5 +78,17 @@ Unban Date: {(isIndefinite ? "Never" : banEnd.ToString("MMMM dd, yyyy h:mm tt"))
 
             return string.Join(" ", parts);
         }
+    }
+
+    [HarmonyPatch(typeof(GorillaComputer), nameof(GorillaComputer.OnErrorShared))]
+    public class ComputerErrorShared
+    {
+        public static bool Prefix(PlayFabError error) => ErrorPatches.ErrorCall(error);
+    }
+
+    [HarmonyPatch(typeof(PlayFabAuthenticator), nameof(PlayFabAuthenticator.OnPlayFabError))]
+    public class PlayFabErrorShared
+    {
+        public static bool Prefix(PlayFabError obj) => ErrorPatches.ErrorCall(obj);
     }
 }

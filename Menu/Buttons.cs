@@ -484,7 +484,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Block on Mute", method = Important.BlockOnMute, toolTip = "Disables any muted players' rig unless you need to see them."},
 
                 new ButtonInfo { buttonText = "Steam Refund Timer", method =() => { if (playTime > 6000f) { NotificationManager.information["REFUND"] = "Refund soon"; } else { NotificationManager.information.Remove("REFUND"); } }, enableMethod = Important.CheckNewAcc, disableMethod =() => NotificationManager.information.Remove("REFUND"), toolTip = "Alerts you when you are nearby the steam refund time."},
-                new ButtonInfo { buttonText = "Advanced Ban Message", enableMethod =() => ErrorPatch.enabled = true, disableMethod =() => ErrorPatch.enabled = false, toolTip = "Shows more information, such as remaining time and unban date, when banned."},
+                new ButtonInfo { buttonText = "Advanced Ban Message", enableMethod =() => ErrorPatches.enabled = true, disableMethod =() => ErrorPatches.enabled = false, toolTip = "Shows more information, such as remaining time and unban date, when banned."},
 
                 new ButtonInfo { buttonText = "120 FPS", method =() => Important.CapFPS(120), toolTip = "Caps your FPS at 120 frames per second."},
                 new ButtonInfo { buttonText = "90 FPS", method =() => Important.CapFPS(90), toolTip = "Caps your FPS at 90 frames per second."},
