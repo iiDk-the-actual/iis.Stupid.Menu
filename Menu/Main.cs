@@ -1083,7 +1083,7 @@ namespace iiMenu.Menu
 
                         GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                         GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
-                        GhostRig.transform.Find("rig/body_pivotSlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("rig/body_pivot/SlideAudio").gameObject.SetActive(false);
                         GhostRig.GetComponent<OwnershipGaurd>().enabled = false;
 
                         Visuals.FixRigMaterialESPColors(GhostRig);
