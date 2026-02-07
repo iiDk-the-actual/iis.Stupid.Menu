@@ -6855,7 +6855,9 @@ Piece Name: {gunTarget.name}";
                     nearbyPlayers.Remove(vrrig);
             }
 
-            if (nearbyPlayers.Count <= 0) return;
+            if (nearbyPlayers.Count <= 0 || Time.time < allNarrationDelay) return;
+            allNarrationDelay = Time.time + 10f;
+
             foreach (var date in nearbyPlayers.Select(nearbyPlayer => GetCreationDate(GetPlayerFromVRRig(nearbyPlayer).UserId, date => SpeakText(date))).Where(date => date != "Loading..."))
                 SpeakText(date);
         }
@@ -6866,7 +6868,9 @@ Piece Name: {gunTarget.name}";
 
             List<VRRig> touchedPlayers = GorillaParent.instance.vrrigs.Where(rig => !rig.IsLocal()).Where(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f || Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f).ToList();
 
-            if (touchedPlayers.Count <= 0) return;
+            if (touchedPlayers.Count <= 0 || Time.time < allNarrationDelay) return;
+            allNarrationDelay = Time.time + 10f;
+
             foreach (var date in touchedPlayers.Select(rig => GetCreationDate(GetPlayerFromVRRig(rig).UserId, date => SpeakText(date))).Where(date => date != "Loading..."))
                 SpeakText(date);
         }
