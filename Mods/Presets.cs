@@ -198,7 +198,6 @@ namespace iiMenu.Mods
                 "Disable Enabled GUI",
                 "Accept TOS",
                 "Player Scale Menu",
-                "High Quality Text",
                 "PC Button Click"
             };
 
