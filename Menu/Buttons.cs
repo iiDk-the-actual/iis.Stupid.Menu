@@ -2036,13 +2036,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kick Gun", method = Overpowered.KickGun, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kick whoever your hand desires, if they are master client. Credits to Rexon for making such a stupid mod." },
                 new ButtonInfo { buttonText = "Kick All", enableMethod = () => Overpowered.kickCoroutine = CoroutineManager.instance.StartCoroutine(Overpowered.KickAll()), method =() => { if (Overpowered.kickCoroutine == null) Toggle("Kick All"); }, disableMethod =() => { SerializePatch.OverrideSerialization = null; Overpowered.kickCoroutine = null; }, toolTip = "Kicks everyone above you from the room." },
 
-                new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnected from the room." },
+                new ButtonInfo { buttonText = "Cache Kick Gun", method = Overpowered.CacheKickGun, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks everyone in the room by filling up the room cache." },
+                new ButtonInfo { buttonText = "Cache Kick All", enableMethod = Overpowered.EnableCacheKickAll, method = Overpowered.CacheKickAll, disableMethod =() => Overpowered.OptimizeEvents = false, toolTip = "Kicks everyone in the room by filling up the room cache." },
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method = Overpowered.DelayBanGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod = Overpowered.DelayBanAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
-
-                new ButtonInfo { buttonText = "Log Spam Gun", method = Overpowered.LogSpamGun, toolTip = "Fills whoever your hand desires' game console with text." },
-                new ButtonInfo { buttonText = "Log Spam All", method = Overpowered.LogSpamAll, toolTip = "Fills everyone's game console with text." },
 
                 new ButtonInfo { buttonText = "Force Grab", method = Overpowered.ForceGrab, toolTip = "Attempts to grab the hand of anyone who presses their grips." },
                 new ButtonInfo { buttonText = "Fling on Grab", method = Overpowered.FlingOnGrab, toolTip = "Flings the player when they grab you." },
@@ -2052,9 +2050,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
                 new ButtonInfo { buttonText = "Towards Point on Grab Gun", method = Overpowered.TowardsPointOnGrab, disableMethod = Overpowered.DisableTowardsPointOnGrab, toolTip = "Sends the player to your target position when they grab you." },
 
-                new ButtonInfo { buttonText = "Lag Server", method = Overpowered.LagServer, toolTip = "Lags the room when holding <color=green>trigger</color>." },
-                new ButtonInfo { buttonText = "Freeze Server", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method =() => Overpowered.FreezeServer(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Freezes the room when holding <color=green>trigger</color>." },
-                new ButtonInfo { buttonText = "Crash Server", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method =() => Overpowered.FreezeServer(0.1f, 40), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes the room when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Lag Server", method =() => Overpowered.FreezeServer(1f, 11), toolTip = "Lags the room." },
+                new ButtonInfo { buttonText = "Freeze Server", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method =() => Overpowered.FreezeServer(), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Freezes the room." },
+                new ButtonInfo { buttonText = "Crash Server", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method =() => Overpowered.FreezeServer(0.1f, 40), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Crashes the room." },
                 new ButtonInfo { buttonText = "Za Warudo <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod = Overpowered.ZaWarudo_enableMethod, method = Overpowered.ZaWarudo, toolTip = "Freeze all, but with special effects." },
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method = Overpowered.AntiReportFling, toolTip = "Flings whoever tries to report you."},
@@ -2090,8 +2088,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomStatus(false), isTogglable = false, toolTip = "Locks the room so no one else can join."},
                 new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomStatus(true), isTogglable = false, toolTip = "Unlocks the room so anyone can join."},
                 new ButtonInfo { buttonText = "Spaz Room", method =() => { Overpowered.SetRoomStatus(false); Overpowered.SetRoomStatus(true); }, toolTip = "Locks and unlocks the room so people will get kicked when joining."},
-
                 new ButtonInfo { buttonText = "Close Room", enableMethod =() => SerializePatch.OverrideSerialization = () => false, method = Overpowered.CloseRoom, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room." },
+                new ButtonInfo { buttonText = "Spy Room", enableMethod =() => Overpowered.CreatePeerBase(), disableMethod =() => Overpowered.UnloadPeerBase(), toolTip = "Allows you to hear people whilst being disconnected from the room." },
 
                 new ButtonInfo { buttonText = "Destroy Gun", method = Overpowered.DestroyGun, toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method = Overpowered.DestroyAll, isTogglable = false, toolTip = "Block new players from seeing everyone."},

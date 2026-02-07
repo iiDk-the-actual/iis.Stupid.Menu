@@ -5206,54 +5206,29 @@ namespace iiMenu.Mods
 
         private static float freezeAllDelay;
         public static bool muteOnFreeze;
-        public static void LagServer()
+        public static void FreezeServer(float delay = 0.1f, int eventCount = 11, RaiseEventOptions options = null)
         {
             if (!PhotonNetwork.InRoom) return;
 
-            if (Time.time > freezeAllDelay)
+            options ??= new RaiseEventOptions
             {
-                for (int i = 0; i < 11; i++)
-                {
-                    WebFlags flags = new WebFlags(255);
-                    NetEventOptions options = new NetEventOptions
-                    {
-                        Flags = flags,
-                        TargetActors = new[] { -1 }
-                    };
-                    byte code = 51;
-                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                }
-                RPCProtection();
-                freezeAllDelay = Time.time + 1f;
-            }
-        }
-
-        public static void FreezeServer(float delay = 0.1f, int eventCount = 11)
-        {
-            if (!PhotonNetwork.InRoom) return;
+                Flags = new WebFlags(byte.MaxValue),
+                TargetActors = new[] { -1 }
+            };
 
             if (muteOnFreeze)
             {
                 for (int i = 0; i < 10; i++)
-                    MuteTarget(ReceiverGroup.All);
+                    MuteTarget(options);
             }
 
             if (Time.time > freezeAllDelay)
             {
                 for (int i = 0; i < eventCount; i++)
-                {
-                    WebFlags flags = new WebFlags(byte.MaxValue);
-                    NetEventOptions options = new NetEventOptions
-                    {
-                        Flags = flags,
-                        TargetActors = new[] { -1 }
-                    };
-                    byte code = 51;
-                    NetworkSystemRaiseEvent.RaiseEvent(code, new object[] { serverLink }, options, reliable: false);
-                }
+                    PhotonNetwork.RaiseEvent(51, new object[] { serverLink }, options, SendOptions.SendUnreliable);
+
                 RPCProtection();
                 freezeAllDelay = Time.time + delay;
-
             }
         }
 
@@ -5641,6 +5616,8 @@ namespace iiMenu.Mods
                 raiseOptions.Receivers = group;
             else if (target is int[] actors)
                 raiseOptions.TargetActors = actors;
+            else if (target is RaiseEventOptions options)
+                raiseOptions = options;
             else
                 return;
 
@@ -6445,7 +6422,6 @@ namespace iiMenu.Mods
 
             NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Kicked all successfully!");
 
-
             kickCoroutine = null;
         }
 
@@ -6483,6 +6459,70 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
+
+        // Euphoria I see you eat shit
+        // Malachi I see you, I'm sorry
+        public static void CacheKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!lockTarget.Active())
+                    {
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Kicked all successfully!");
+                        gunLocked = false;
+                        return;
+                    }
+
+                    FreezeServer(8.5f, 3950, new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.AddToRoomCache,
+                        TargetActors = new[] { lockTarget.GetPlayer().ActorNumber },
+                        Flags = new WebFlags(byte.MaxValue)
+                    });
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal() && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        OptimizeEvents = true;
+                        string name = $"<color=#{(lockTarget != null ? ColorUtility.ToHtmlStringRGBA(lockTarget.GetColor()) : "white")}>{lockTarget.GetName()}</color>";
+                        NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking {name}. This can take up to 2 minutes, please be patient.");
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    OptimizeEvents = false;
+                }
+            }
+        }
+
+        public static void EnableCacheKickAll()
+        {
+            OptimizeEvents = true;
+            NotificationManager.SendNotification($"<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> Kicking everyone. This can take up to 2 minutes, please be patient.");
+        }
+
+        public static void CacheKickAll() =>
+            FreezeServer(8.5f, 3950, new RaiseEventOptions
+            {
+                CachingOption = EventCaching.AddToRoomCache,
+                Receivers = ReceiverGroup.Others,
+                Flags = new WebFlags(byte.MaxValue)
+            });
 
         public static float lagMasterDelay;
 
@@ -6639,56 +6679,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LogSpam(object target)
-        {
-            RaiseEventOptions raiseOptions = new RaiseEventOptions();
-
-            
-            if (target is ReceiverGroup group)
-                raiseOptions.Receivers = group;
-            else if (target is int[] actors)
-                raiseOptions.TargetActors = actors;
-            else
-                return;
-
-            Hashtable hashtable = new Hashtable
-            {
-                { "\n" + PluginInfo.Logo, serverLink }
-            };
-
-            PhotonNetwork.NetworkingClient.OpRaiseEvent(200, hashtable, raiseOptions, SendOptions.SendUnreliable);
-        }
-
-        public static void LogSpamGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (gunLocked && lockTarget != null)
-                    LogSpam(new int[] { lockTarget.GetPlayer().ActorNumber });
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void LogSpamAll() =>
-            LogSpam(ReceiverGroup.All);
-
         public static void KickAllInParty()
         {
             if (FriendshipGroupDetection.Instance.IsInParty)
@@ -6784,7 +6774,7 @@ namespace iiMenu.Mods
                             SerializePatch.OverrideSerialization = () => false;
                         else
                         {
-                            PhotonNetwork.SerializationRate = 3;
+                            PhotonNetwork.SerializationRate = 2;
                             RPCFilter.FilteredRPCs["OnHandTapRPC"] = () => false;
                             RPCFilter.FilteredRPCs["RPC_UpdateCosmeticsWithTryonPacked"] = () => false;
 
