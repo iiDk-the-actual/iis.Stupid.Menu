@@ -25,6 +25,7 @@ using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
+using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes.Menu;
 using iiMenu.Classes.Mods;
@@ -2028,6 +2029,78 @@ namespace iiMenu.Mods
                 Object.Destroy(nametag.Value);
 
             kidNameTags.Clear();
+        }
+
+        private static readonly Dictionary<VRRig, GameObject> subNameTags = new Dictionary<VRRig, GameObject>();
+        public static void SubscriberNameTags()
+        {
+            List<KeyValuePair<VRRig, GameObject>> subNameTagsCopy = subNameTags.ToList();
+            foreach (KeyValuePair<VRRig, GameObject> nametag in subNameTagsCopy)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    Object.Destroy(nametag.Value);
+                    subNameTags.Remove(nametag.Key);
+                }
+                else
+                {
+                    if (SubscriptionManager.GetSubscriptionDetails(nametag.Key).tier <= 0)
+                    {
+                        Object.Destroy(nametag.Value);
+                        subNameTags.Remove(nametag.Key);
+                    }
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal || selfNameTag)
+                    {
+                        if (!subNameTags.ContainsKey(vrrig))
+                        {
+                            var subDetails = SubscriptionManager.GetSubscriptionDetails(vrrig);
+                            if (subDetails.tier > 0)
+                            {
+                                GameObject go = new GameObject("iiMenu_Kidtag");
+                                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMeshPro TextMeshPro = go.GetOrAddComponent<TextMeshPro>();
+                                TextMeshPro.fontSize = 4.8f;
+                                TextMeshPro.alignment = TextAlignmentOptions.Center;
+                                TextMeshPro.color = SubscriptionManager.SUBSCRIBER_NAME_COLOR;
+                                TextMeshPro.SafeSetText($"Subscriber {subDetails.daysAccrued}d");
+
+                                TextMeshPro.SafeSetFontStyle(activeFontStyle);
+                                TextMeshPro.SafeSetFont(activeFont);
+
+                                subNameTags.Add(vrrig, go);
+                            }
+                        }
+
+                        if (subNameTags.TryGetValue(vrrig, out GameObject nameTag))
+                        {
+                            TextMeshPro tmp = nameTag.GetOrAddComponent<TextMeshPro>();
+                            if (nameTagChams)
+                                tmp.Chams();
+                            nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                            nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                            nameTag.transform.LookAt(Camera.main.transform.position);
+                            nameTag.transform.Rotate(0f, 180f, 0f);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableSubscriberNameTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in subNameTags)
+                Object.Destroy(nametag.Value);
+
+            subNameTags.Clear();
         }
 
         private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();

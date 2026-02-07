@@ -21,9 +21,6 @@
 
 using GorillaTagScripts;
 using HarmonyLib;
-using Photon.Pun;
-﻿using System.Threading.Tasks;
-using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
