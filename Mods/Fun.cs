@@ -508,8 +508,8 @@ namespace iiMenu.Mods
                         if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
                         {
                             string handPath = (bool)args[1]
-                                ? "rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
-                                : "rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+                                ? "rig/body_pivot/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                : "rig/body_pivot/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
 
                             Vector3 position = target.gameObject.transform.Find(handPath).position;
 

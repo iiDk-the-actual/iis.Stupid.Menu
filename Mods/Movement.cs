@@ -3771,7 +3771,7 @@ namespace iiMenu.Mods
                         {
                             if (vrrig.rightIndex.calcT < 0.5f && vrrig.rightMiddle.calcT > 0.5f)
                             {
-                                Vector3 dir = vrrig.transform.Find("rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R").up;
+                                Vector3 dir = vrrig.transform.Find("rig/body_pivot/hand.R").up;
                                 Physics.SphereCast(vrrig.rightHandTransform.position + dir * 0.1f, 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -3785,7 +3785,7 @@ namespace iiMenu.Mods
                             }
                             if (vrrig.leftIndex.calcT < 0.5f && vrrig.leftMiddle.calcT > 0.5f)
                             {
-                                Vector3 dir = vrrig.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
+                                Vector3 dir = vrrig.transform.Find("rig/body_pivot/hand.L").up;
                                 Physics.SphereCast(vrrig.leftHandTransform.position + dir * 0.1f, 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -3805,7 +3805,7 @@ namespace iiMenu.Mods
                 if (sithright ? sithlord.rightIndex.calcT < 0.5f && sithlord.rightMiddle.calcT > 0.5f : sithlord.leftMiddle.calcT < 0.5f && sithlord.leftMiddle.calcT > 0.5f)
                 {
                     Transform hand = sithright ? sithlord.rightHandTransform : sithlord.leftHandTransform;
-                    Vector3 dir = sithright ? sithlord.transform.Find("rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R").up : sithlord.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
+                    Vector3 dir = sithright ? sithlord.transform.Find("rig/body_pivot/hand.R").up : sithlord.transform.Find("rig/body_pivot/hand.L").up;
                     TeleportPlayer(Vector3.Lerp(GorillaTagger.Instance.bodyCollider.transform.position, hand.position + dir * sithdist, 0.1f));
                     GorillaTagger.Instance.rigidbody.linearVelocity = Vector3.zero;
                     ZeroGravity();

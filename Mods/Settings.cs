@@ -858,11 +858,11 @@ exit 0";
         public static void WatchMenuOn()
         {
             watchMenu = true;
-            GameObject mainwatch = VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)").gameObject;
+            GameObject mainwatch = VRRig.LocalRig.transform.Find("rig/body_pivot/hand.L/huntcomputer (1)").gameObject;
             watchobject = Object.Instantiate(mainwatch, 
                 rightHand ?
-                VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R").transform :
-                VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+                VRRig.LocalRig.transform.Find("rig/body_pivot/hand.R").transform :
+                VRRig.LocalRig.transform.Find("rig/body_pivot/hand.L").transform, false);
 
             Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);

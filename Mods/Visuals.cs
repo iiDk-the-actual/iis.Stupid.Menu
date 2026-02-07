@@ -3112,7 +3112,7 @@ namespace iiMenu.Mods
             try
             {
                 Transform HeadCosmetics = VRRig.LocalRig.mainCamera.transform.Find("HeadCosmetics");
-                Transform Head = VRRig.LocalRig.transform.Find("rig/body_pivot/head");
+                Transform Head = VRRig.LocalRig.transform.Find("rig/head");
                 foreach (GameObject Cosmetic in VRRig.LocalRig.cosmetics)
                 {
                     if (Cosmetic.activeSelf && (Cosmetic.transform.parent == HeadCosmetics || Cosmetic.transform.parent == Head))
