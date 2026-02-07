@@ -1012,6 +1012,55 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BypassAntiReport()
+        {
+            SerializePatch.OverrideSerialization = () =>
+            {
+
+                bool isNearReportButton = false;
+                List<int> people = new List<int> { };
+                try
+                {
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    {
+                        Transform report = line.reportButton.gameObject.transform;
+                        float D1 = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, report.position);
+                        float D2 = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, report.position);
+
+                        if (D1 < 0.5f || D2 < 0.5f)
+                        {
+                            people.Add(line.linePlayer.ActorNumber);
+                            isNearReportButton = true;
+                        }
+                    }
+                }
+                catch { }
+
+                if (GorillaTagger.Instance.myVRRig != null && isNearReportButton)
+                {
+                    MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    Vector3 positionArchiveLeft = VRRig.LocalRig.leftHand.rigTarget.transform.position;
+                    Vector3 positionArchiveRight = VRRig.LocalRig.rightHand.rigTarget.transform.position;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = PhotonNetwork.PlayerListOthers.Where(player => !people.ToArray().Contains(player.ActorNumber)).Select(player => player.ActorNumber).ToArray() });
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.forward * 100f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.forward * 100f);
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = people.ToArray() });
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = positionArchiveLeft;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = positionArchiveRight;
+
+                    RPCProtection();
+
+                    return false;
+                }
+
+                return true;
+            };
+        }
+
         public static void BreakModCheckers()
         {
             Hashtable props = new Hashtable();
