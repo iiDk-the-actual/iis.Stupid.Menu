@@ -276,12 +276,13 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool OverlappingButton(VRRig vrrig, Vector3 position)
-        {
-            var D1 = Vector3.Distance(vrrig.rightHandTransform.position, position);
-            var D2 = Vector3.Distance(vrrig.leftHandTransform.position, position);
-            return D1 < threshold || D2 < threshold;
-        }
+        private static bool OverlappingButton(VRRig vrrig, Vector3 position) =>
+            new[] {
+                vrrig.rightHandTransform.position,
+                vrrig.leftHandTransform.position,
+                vrrig.rightHand.syncPos,
+                vrrig.leftHand.syncPos
+            }.Any(handPos => Vector3.Distance(handPos, position) < threshold);
 
         public static bool antiMute;
 
