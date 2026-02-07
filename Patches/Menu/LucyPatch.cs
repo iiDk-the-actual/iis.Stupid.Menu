@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(HalloweenGhostChaser), "LateUpdate")]
+    [HarmonyPatch(typeof(HalloweenGhostChaser), nameof(HalloweenGhostChaser.LateUpdate))]
     public class LucyPatch
     {
         public static bool enabled;

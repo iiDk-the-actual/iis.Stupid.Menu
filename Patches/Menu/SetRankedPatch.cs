@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(RankedProgressionManager), "SetLocalProgressionData")]
+    [HarmonyPatch(typeof(RankedProgressionManager), nameof(RankedProgressionManager.SetLocalProgressionData))]
     public class SetRankedPatch
     {
         public static bool enabled;

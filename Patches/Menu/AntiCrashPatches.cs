@@ -33,7 +33,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
+        [HarmonyPatch(typeof(VRRig), nameof(VRRig.DroppedByPlayer))]
         public class DroppedByPlayer
         {
             public static bool enabled;
@@ -44,7 +44,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
+        [HarmonyPatch(typeof(VRRig), nameof(VRRig.RequestCosmetics))]
         public class RequestCosmetics
         {
             private static readonly List<float> callTimestamps = new List<float>();
@@ -61,7 +61,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(VRRig), "RequestMaterialColor")]
+        [HarmonyPatch(typeof(VRRig), nameof(VRRig.RequestMaterialColor))]
         public class RequestMaterialColor
         {
             private static readonly List<float> callTimestamps = new List<float>();
@@ -78,7 +78,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(DeployedChild), "Deploy")]
+        [HarmonyPatch(typeof(DeployedChild), nameof(DeployedChild.Deploy))]
         public class Deploy
         {
             public static void Postfix(DeployedChild __instance, DeployableObject parent, Vector3 launchPos, Quaternion launchRot, Vector3 releaseVel, bool isRemote = false)
@@ -88,7 +88,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(LuauVm), "OnEvent")]
+        [HarmonyPatch(typeof(LuauVm), nameof(LuauVm.OnEvent))]
         public class OnEvent
         {
             public static bool Prefix(EventData eventData)
@@ -110,14 +110,14 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(RoomSystem), "SearchForShuttle")]
+        [HarmonyPatch(typeof(RoomSystem), nameof(RoomSystem.SearchForShuttle))]
         public class SearchForShuttle
         {
             public static bool Prefix(object[] shuffleData, PhotonMessageInfoWrapped info) =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(RoomInfo), "InternalCacheProperties")]
+        [HarmonyPatch(typeof(RoomInfo), nameof(RoomInfo.InternalCacheProperties))]
         public class InternalCacheProperties
         {
             public static bool Prefix(RoomInfo __instance, Hashtable propertiesToCache)
@@ -126,7 +126,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(GameEntityManager), "JoinWithItemsRPC")]
+        [HarmonyPatch(typeof(GameEntityManager), nameof(GameEntityManager.JoinWithItemsRPC))]
         public class JoinWithItemsRPC
         {
             public static bool Prefix(GameEntityManager __instance, byte[] stateData, int[] netIds, int joiningActorNum, PhotonMessageInfo info)
@@ -135,7 +135,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(GorillaWrappedSerializer), "FailedToSpawn")]
+        [HarmonyPatch(typeof(GorillaWrappedSerializer), nameof(GorillaWrappedSerializer.FailedToSpawn))]
         public class FailedToSpawn
         {
             public static bool Prefix(GorillaWrappedSerializer __instance)

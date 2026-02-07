@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GameEntityManager), "JoinWithItems")]
+    [HarmonyPatch(typeof(GameEntityManager), nameof(GameEntityManager.JoinWithItems))]
     public class JoinPatch
     {
         public static bool enabled;

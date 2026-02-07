@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(BuilderPiece), "CanPlayerGrabPiece")]
+        [HarmonyPatch(typeof(BuilderPiece), nameof(BuilderPiece.CanPlayerGrabPiece))]
         public class UnlimitPatch1
         {
             public static bool Prefix(ref bool __result)
@@ -43,7 +43,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderPiece), "CanPlayerAttachPieceToPiece")]
+        [HarmonyPatch(typeof(BuilderPiece), nameof(BuilderPiece.CanPlayerAttachPieceToPiece))]
         public class UnlimitPatch2
         {
             public static bool Prefix(ref bool __result)
@@ -58,7 +58,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), "CanPlayerAttachToPlot")]
+        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), nameof(BuilderPiecePrivatePlot.CanPlayerAttachToPlot))]
         public class UnlimitPatch3
         {
             public static bool Prefix(ref bool __result)
@@ -73,7 +73,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), "CanPlayerAttachToPlot")]
+        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), nameof(BuilderPiecePrivatePlot.CanPlayerAttachToPlot))]
         public class UnlimitPatch4
         {
             public static bool Prefix(ref bool __result)
@@ -88,7 +88,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), "CanPlayerGrabFromPlot")]
+        [HarmonyPatch(typeof(BuilderPiecePrivatePlot), nameof(BuilderPiecePrivatePlot.CanPlayerGrabFromPlot))]
         public class UnlimitPatch5
         {
             public static bool Prefix(ref bool __result)
@@ -103,7 +103,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateAttachPieceParams")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateAttachPieceParams))]
         public class UnlimitPatch6
         {
             public static bool Prefix(ref bool __result)
@@ -118,7 +118,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateCreatePieceParams")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateCreatePieceParams))]
         public class UnlimitPatch7
         {
             public static bool Prefix(ref bool __result)
@@ -133,7 +133,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateDropPieceParams")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateDropPieceParams))]
         public class UnlimitPatch8
         {
             public static bool Prefix(ref bool __result)
@@ -148,7 +148,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateDropPieceState")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateDropPieceState))]
         public class UnlimitPatch9
         {
             public static bool Prefix(ref bool __result)
@@ -163,7 +163,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateFunctionalPieceState")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateFunctionalPieceState))]
         public class UnlimitPatch10
         {
             public static bool Prefix(ref bool __result)
@@ -178,7 +178,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateGrabPieceParams")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateGrabPieceParams))]
         public class UnlimitPatch11
         {
             public static bool Prefix(ref bool __result)
@@ -193,7 +193,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateGrabPieceState")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateGrabPieceState))]
         public class UnlimitPatch12
         {
             public static bool Prefix(ref bool __result)
@@ -208,7 +208,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateGrabPieceState")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateGrabPieceState))]
         public class UnlimitPatch13
         {
             public static bool Prefix(ref bool __result)
@@ -223,7 +223,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidatePieceWorldTransform")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidatePieceWorldTransform))]
         public class UnlimitPatch14
         {
             public static bool Prefix(ref bool __result)
@@ -238,7 +238,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidatePieceWorldTransform")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidatePieceWorldTransform))]
         public class UnlimitPatch15
         {
             public static bool Prefix(ref bool __result)
@@ -253,7 +253,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidatePlacePieceParams")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidatePlacePieceParams))]
         public class UnlimitPatch16
         {
             public static bool Prefix(ref bool __result)
@@ -268,7 +268,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidatePlacePieceState")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidatePlacePieceState))]
         public class UnlimitPatch17
         {
             public static bool Prefix(ref bool __result)
@@ -283,7 +283,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(BuilderTable), "ValidateRepelPiece")]
+        [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.ValidateRepelPiece))]
         public class UnlimitPatch18
         {
             public static bool Prefix(ref bool __result)

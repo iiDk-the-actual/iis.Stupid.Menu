@@ -24,7 +24,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "PackCompetitiveData")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.PackCompetitiveData))]
     public class FPSPatch
     {
         public static bool enabled;

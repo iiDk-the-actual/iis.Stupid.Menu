@@ -24,7 +24,7 @@ using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SnowballThrowable), "GetRandomModelIndex")]
+    [HarmonyPatch(typeof(SnowballThrowable), nameof(SnowballThrowable.GetRandomModelIndex))]
     public class IndexPatch
     {
         public static bool enabled;

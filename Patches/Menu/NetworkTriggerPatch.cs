@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaNetworkJoinTrigger), "OnBoxTriggered")]
+    [HarmonyPatch(typeof(GorillaNetworkJoinTrigger), nameof(GorillaNetworkJoinTrigger.OnBoxTriggered))]
     public class NetworkTriggerPatch
     {
         public static bool enabled;

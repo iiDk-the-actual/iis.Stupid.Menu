@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(BuilderPieceInteractor), "UpdateHandState")]
+    [HarmonyPatch(typeof(BuilderPieceInteractor), nameof(BuilderPieceInteractor.UpdateHandState))]
     public class BuildPatch
     {
         public static bool enabled;

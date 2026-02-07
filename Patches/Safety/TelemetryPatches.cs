@@ -31,35 +31,35 @@ namespace iiMenu.Patches.Safety
     {
         public static bool enabled = true;
 
-        [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEvent")]
+        [HarmonyPatch(typeof(GorillaTelemetry), nameof(GorillaTelemetry.EnqueueTelemetryEvent))]
         public class TelemetryPatch1
         {
             private static bool Prefix(string eventName, object content, [CanBeNull] string[] customTags = null) =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(GorillaTelemetry), "EnqueueTelemetryEventPlayFab")]
+        [HarmonyPatch(typeof(GorillaTelemetry), nameof(GorillaTelemetry.EnqueueTelemetryEventPlayFab))]
         public class TelemetryPatch2
         {
             private static bool Prefix(EventContents eventContent) =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(GorillaTelemetry), "FlushPlayFabTelemetry")]
+        [HarmonyPatch(typeof(GorillaTelemetry), nameof(GorillaTelemetry.FlushPlayFabTelemetry))]
         public class TelemetryPatch3
         {
             private static bool Prefix() =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(GorillaTelemetry), "FlushMothershipTelemetry")]
+        [HarmonyPatch(typeof(GorillaTelemetry), nameof(GorillaTelemetry.FlushMothershipTelemetry))]
         public class TelemetryPatch4
         {
             private static bool Prefix() =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(LckTelemetryClient), "SendTelemetry")]
+        [HarmonyPatch(typeof(LckTelemetryClient), nameof(LckTelemetryClient.SendTelemetry))]
         public class TelemetryPatch5
         {
             private static bool Prefix(LckTelemetryEvent lckTelemetryEvent) =>

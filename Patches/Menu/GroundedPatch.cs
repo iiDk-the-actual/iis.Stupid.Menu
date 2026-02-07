@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(TakeMyHand_HandLink), "LocalUpdate")]
+    [HarmonyPatch(typeof(TakeMyHand_HandLink), nameof(TakeMyHand_HandLink.LocalUpdate))]
     public class GroundedPatch
     {
         public static bool enabled;

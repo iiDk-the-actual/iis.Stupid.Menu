@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(FriendCard), "Populate")]
+    [HarmonyPatch(typeof(FriendCard), nameof(FriendCard.Populate))]
     public class PopulatePatch
     {
         public static bool enabled;

@@ -25,7 +25,7 @@ using System;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "SerializeReadShared")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.SerializeReadShared))]
     public class PlayerSerializePatch
     {
         public static bool stopSerialization;

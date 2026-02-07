@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(LurkerGhost), "ChangeState")]
+    [HarmonyPatch(typeof(LurkerGhost), nameof(LurkerGhost.ChangeState))]
     public class LurkerPatch
     {
         public static bool enabled;

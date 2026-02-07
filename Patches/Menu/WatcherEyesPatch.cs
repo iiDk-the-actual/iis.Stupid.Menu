@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(HalloweenWatcherEyes), "Update")]
+    [HarmonyPatch(typeof(HalloweenWatcherEyes), nameof(HalloweenWatcherEyes.Update))]
     public class WatcherEyesPatch
     {
         public static bool enabled;

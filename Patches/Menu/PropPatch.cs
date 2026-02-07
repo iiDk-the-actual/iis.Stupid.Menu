@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PropHuntHandFollower), "GeoCollisionPoint")]
+    [HarmonyPatch(typeof(PropHuntHandFollower), nameof(PropHuntHandFollower.GeoCollisionPoint))]
     public class PropPatch
     {
         public static bool enabled;

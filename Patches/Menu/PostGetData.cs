@@ -26,7 +26,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(BundleManager), "CheckIfBundlesOwned")]
+    [HarmonyPatch(typeof(BundleManager), nameof(BundleManager.CheckIfBundlesOwned))]
     public class PostGetData
     {
         public static bool CosmeticsInitialized;

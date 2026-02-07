@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(CosmeticsController), "PurchaseItem")]
+    [HarmonyPatch(typeof(CosmeticsController), nameof(CosmeticsController.PurchaseItem))]
     public class PurchasePatch
     {
         public static bool enabled;

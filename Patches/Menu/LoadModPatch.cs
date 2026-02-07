@@ -26,14 +26,14 @@ using Modio.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(CustomMapManager), "LoadMap")]
+    [HarmonyPatch(typeof(CustomMapManager), nameof(CustomMapManager.LoadMap))]
     public class LoadModPatch
     {
         public static void Prefix(ModId modId) =>
             Manager.UpdateCustomMapsTab(modId);
     }
 
-    [HarmonyPatch(typeof(CustomMapManager), "UnloadMap")]
+    [HarmonyPatch(typeof(CustomMapManager), nameof(CustomMapManager.UnloadMap))]
     public class UnloadModPatch
     {
         public static void Prefix(bool returnToSinglePlayerIfInPublic) =>

@@ -25,7 +25,7 @@ using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(BuilderTableNetworking), "PieceCreatedByShelfRPC")]
+    [HarmonyPatch(typeof(BuilderTableNetworking), nameof(BuilderTableNetworking.PieceCreatedByShelfRPC))]
     public class CreatePatch
     {
         public static bool enabled;

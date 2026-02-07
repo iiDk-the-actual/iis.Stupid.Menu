@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaSpeakerLoudness), "UpdateLoudness")]
+    [HarmonyPatch(typeof(GorillaSpeakerLoudness), nameof(GorillaSpeakerLoudness.UpdateLoudness))]
     public class LoudnessPatch
     {
         public static bool enabled;

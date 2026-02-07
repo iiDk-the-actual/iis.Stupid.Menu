@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(NetworkSystemPUN), "InternalDisconnect")]
+    [HarmonyPatch(typeof(NetworkSystemPUN), nameof(NetworkSystemPUN.InternalDisconnect))]
     public class SinglePlayerPatch
     {
         public static bool enabled;

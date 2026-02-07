@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "IsPositionInRange")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.IsPositionInRange))]
     public class DistancePatch
     {
         public static bool enabled;

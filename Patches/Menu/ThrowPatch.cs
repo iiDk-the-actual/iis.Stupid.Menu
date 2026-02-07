@@ -25,7 +25,7 @@ using static iiMenu.Utilities.RandomUtilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GrowingSnowballThrowable), "PerformSnowballThrowAuthority")]
+    [HarmonyPatch(typeof(GrowingSnowballThrowable), nameof(GrowingSnowballThrowable.PerformSnowballThrowAuthority))]
     public class ThrowPatch
     {
         public static bool enabled;

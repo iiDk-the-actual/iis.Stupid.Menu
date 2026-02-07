@@ -25,7 +25,7 @@ using iiMenu.Menu;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaPlayerScoreboardLine), "UpdatePlayerText")]
+    [HarmonyPatch(typeof(GorillaPlayerScoreboardLine), nameof(GorillaPlayerScoreboardLine.UpdatePlayerText))]
     public class UpdatePatch
     {
         public static bool enabled;

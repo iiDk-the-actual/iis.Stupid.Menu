@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(TakeMyHand_HandLink), "OnRelease")]
+    [HarmonyPatch(typeof(TakeMyHand_HandLink), nameof(TakeMyHand_HandLink.OnRelease))]
     public class ReleasePatch
     {
         public static bool enabled;

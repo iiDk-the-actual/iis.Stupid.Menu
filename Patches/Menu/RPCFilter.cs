@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PhotonNetwork), "RPC", typeof(PhotonView), typeof(string), typeof(RpcTarget), typeof(Player), typeof(bool), typeof(object[]))]
+    [HarmonyPatch(typeof(PhotonNetwork), nameof(PhotonNetwork.RPC), typeof(PhotonView), typeof(string), typeof(RpcTarget), typeof(Player), typeof(bool), typeof(object[]))]
     public class RPCFilter
     {
         /// <summary>

@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GliderHoldable), "Respawn")]
+    [HarmonyPatch(typeof(GliderHoldable), nameof(GliderHoldable.Respawn))]
     public class GliderPatch
     {
         public static bool enabled;

@@ -25,7 +25,7 @@ using iiMenu.Utilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "InitializeNoobMaterial")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.InitializeNoobMaterial))]
     public class InitializeNoobMaterial
     {
         public static bool Prefix(VRRig __instance, float red, float green, float blue, PhotonMessageInfoWrapped info)

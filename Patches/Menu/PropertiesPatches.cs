@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(Player), "SetCustomProperties")]
+        [HarmonyPatch(typeof(Player), nameof(Player.SetCustomProperties))]
         public class SetCustomPropertiesMethod
         {
             public static bool Prefix(Player __instance, ref Hashtable propertiesToSet)
@@ -45,7 +45,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(Player), "set_CustomProperties")]
+        [HarmonyPatch(typeof(Player), nameof(Player.CustomProperties), MethodType.Setter)]
         public class SetCustomPropertiesField
         {
             public static bool Prefix(Player __instance, ref Hashtable value)

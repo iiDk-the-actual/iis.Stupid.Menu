@@ -28,7 +28,7 @@ using static iiMenu.Utilities.GameModeUtilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetChargeBlaster), "FireProjectile")]
+    [HarmonyPatch(typeof(SIGadgetChargeBlaster), nameof(SIGadgetChargeBlaster.FireProjectile))]
     public class FirePatch
     {
         public static bool enabled;

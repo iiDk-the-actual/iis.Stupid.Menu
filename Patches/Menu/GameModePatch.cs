@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaGameManager), "ValidGameMode")]
+    [HarmonyPatch(typeof(GorillaGameManager), nameof(GorillaGameManager.ValidGameMode))]
     public class GameModePatch
     {
         public static bool enabled;

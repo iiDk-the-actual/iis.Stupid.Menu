@@ -26,7 +26,7 @@ using Photon.Voice.Unity;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(Speaker), "OnAudioFrame")]
+    [HarmonyPatch(typeof(Speaker), nameof(Speaker.OnAudioFrame))]
     public class SpeakerPatch
     {
         public static bool enabled;

@@ -26,7 +26,7 @@ using Photon.Pun;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(PhotonNetwork), "RunViewUpdate")]
+    [HarmonyPatch(typeof(PhotonNetwork), nameof(PhotonNetwork.RunViewUpdate))]
     public class SerializePatch
     {
         /// <summary>

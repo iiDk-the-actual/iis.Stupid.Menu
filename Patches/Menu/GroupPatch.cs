@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(RoomSystem), "SearchForNearby")]
+    [HarmonyPatch(typeof(RoomSystem), nameof(RoomSystem.SearchForNearby))]
     public class GroupPatch
     {
         public static bool enabled;

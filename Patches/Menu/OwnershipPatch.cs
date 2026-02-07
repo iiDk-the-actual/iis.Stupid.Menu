@@ -25,7 +25,7 @@ using Photon.Pun;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
+    [HarmonyPatch(typeof(RequestableOwnershipGuard), nameof(RequestableOwnershipGuard.OwnershipRequested))]
     public class OwnershipPatch
     {
         public static bool enabled;

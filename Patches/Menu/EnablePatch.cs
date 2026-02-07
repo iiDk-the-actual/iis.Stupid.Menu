@@ -24,7 +24,7 @@ using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GrowingSnowballThrowable), "OnEnable")]
+    [HarmonyPatch(typeof(GrowingSnowballThrowable), nameof(GrowingSnowballThrowable.OnEnable))]
     public class EnablePatch
     {
         public static bool enabled;

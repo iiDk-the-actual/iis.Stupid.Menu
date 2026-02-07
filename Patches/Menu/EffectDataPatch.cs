@@ -27,7 +27,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "SetHandEffectData")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.SetHandEffectData))]
     public class EffectDataPatch
     {
         public static bool enabled;

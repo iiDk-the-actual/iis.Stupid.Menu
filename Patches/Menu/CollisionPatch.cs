@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SlingshotProjectile), "OnCollisionEnter")]
+    [HarmonyPatch(typeof(SlingshotProjectile), nameof(SlingshotProjectile.OnCollisionEnter))]
     public class CollisionPatch
     {
         public static event Action<SlingshotProjectile, Collision> OnCollisionEnterEvent;

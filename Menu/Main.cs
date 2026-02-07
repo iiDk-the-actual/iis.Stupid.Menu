@@ -82,7 +82,7 @@ using Random = UnityEngine.Random;
 
 namespace iiMenu.Menu
 {
-    [HarmonyPatch(typeof(GTPlayer), "LateUpdate")]
+    [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.LateUpdate))]
     public class Main : MonoBehaviour // Do not get rid of this. I don't know why, the entire class kills itself.
     {
         /// <summary>

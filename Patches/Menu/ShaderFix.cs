@@ -26,7 +26,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GameObject), "CreatePrimitive")]
+    [HarmonyPatch(typeof(GameObject), nameof(GameObject.CreatePrimitive))]
     public class ShaderFix
     {
         private static void Postfix(GameObject __result)

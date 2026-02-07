@@ -31,7 +31,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.RequestCosmetics))]
     public class RequestPatch
     {
         public static bool enabled;

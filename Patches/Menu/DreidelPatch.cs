@@ -25,7 +25,7 @@ using Photon.Pun;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(DreidelHoldable), "OnActivate")]
+    [HarmonyPatch(typeof(DreidelHoldable), nameof(DreidelHoldable.OnActivate))]
     public class DreidelPatch
     {
         public static bool enabled;

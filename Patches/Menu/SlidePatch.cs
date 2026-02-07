@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GTPlayer), "GetSlidePercentage")]
+    [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.GetSlidePercentage))]
     public class SlidePatch
     {
         public static bool everythingSlippery;

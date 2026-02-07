@@ -29,7 +29,7 @@ using static iiMenu.Utilities.RigUtilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(Slingshot), "GetLaunchVelocity")]
+    [HarmonyPatch(typeof(Slingshot), nameof(Slingshot.GetLaunchVelocity))]
     public class GetLaunchPatch
     {
         public static bool enabled;

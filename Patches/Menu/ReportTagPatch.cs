@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaTagManager), "ReportTag")]
+    [HarmonyPatch(typeof(GorillaTagManager), nameof(GorillaTagManager.ReportTag))]
     public class ReportTagPatch
     {
         public static readonly List<NetPlayer> blacklistedPlayers = new List<NetPlayer>();

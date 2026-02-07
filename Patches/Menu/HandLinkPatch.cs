@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GTPlayer), "TakeMyHand_ProcessMovement")]
+    [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.TakeMyHand_ProcessMovement))]
     public class HandLinkPatch
     {
         public static bool enabled;

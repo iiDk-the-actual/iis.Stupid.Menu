@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GTPlayer), "ApplyKnockback")]
+    [HarmonyPatch(typeof(GTPlayer), nameof(GTPlayer.ApplyKnockback))]
     public class KnockbackPatch
     {
         public static bool enabled;

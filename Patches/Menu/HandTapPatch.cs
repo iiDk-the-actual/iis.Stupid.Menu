@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRigSerializer), "OnHandTapRPCShared")]
+    [HarmonyPatch(typeof(VRRigSerializer), nameof(VRRigSerializer.OnHandTapRPCShared))]
     public class HandTapPatch
     {
         public static Action<VRRig, Vector3> OnHandTap;

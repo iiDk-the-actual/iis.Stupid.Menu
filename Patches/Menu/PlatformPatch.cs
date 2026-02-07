@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), "OnUpdateAuthority")]
+    [HarmonyPatch(typeof(SIGadgetPlatformDeployer), nameof(SIGadgetPlatformDeployer.OnUpdateAuthority))]
     public class PlatformPatch
     {
         public static bool enabled;

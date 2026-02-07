@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
     public class RecorderPatch
     {
         public static bool enabled = true;
-        [HarmonyPatch("get_SourceType")]
+        [HarmonyPatch(nameof(Recorder.SourceType), MethodType.Getter)]
         public static bool Prefix(ref Recorder.InputSourceType __result)
         {
             if (enabled)
@@ -42,7 +42,7 @@ namespace iiMenu.Patches.Menu
             
         }
 
-        [HarmonyPatch("get_InputFactory")]
+        [HarmonyPatch(nameof(Recorder.InputFactory), MethodType.Getter)]
         public static bool Prefix(ref System.Func<IAudioDesc> __result)
         {
             if (enabled)
@@ -53,7 +53,7 @@ namespace iiMenu.Patches.Menu
             return true;
         }
 
-        [HarmonyPatch("CreateLocalVoiceAudioAndSource")]
+        [HarmonyPatch(nameof(Recorder.CreateLocalVoiceAudioAndSource))]
         public static bool Prefix(Recorder __instance)
         {
             if (enabled)

@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "IsItemAllowed")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.IsItemAllowed))]
     public class CosmeticPatch
     {
         public static bool enabled;

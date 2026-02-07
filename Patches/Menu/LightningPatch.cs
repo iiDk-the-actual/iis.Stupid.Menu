@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(LightningManager), "DoLightningStrike")]
+    [HarmonyPatch(typeof(LightningManager), nameof(LightningManager.DoLightningStrike))]
     public class LightningPatch
     {
         public static bool enabled;

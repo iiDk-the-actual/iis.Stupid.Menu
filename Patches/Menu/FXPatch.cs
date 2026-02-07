@@ -24,7 +24,7 @@ using iiMenu.Menu;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(FXSystem), "PlayFXForRig", typeof(FXType), typeof(IFXContext), typeof(PhotonMessageInfoWrapped))]
+    [HarmonyPatch(typeof(FXSystem), nameof(FXSystem.PlayFXForRig), typeof(FXType), typeof(IFXContext), typeof(PhotonMessageInfoWrapped))]
     public class FXPatch
     {
         public static bool Prefix(FXType fxType, IFXContext context, PhotonMessageInfoWrapped info = default(PhotonMessageInfoWrapped))

@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaHandClimber), "GetClosestClimbable")]
+    [HarmonyPatch(typeof(GorillaHandClimber), nameof(GorillaHandClimber.GetClosestClimbable))]
     public class ClimbablePatch
     {
         public static bool enabled;

@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetChargeBlaster), "OnUpdateAuthority")]
+    [HarmonyPatch(typeof(SIGadgetChargeBlaster), nameof(SIGadgetChargeBlaster.OnUpdateAuthority))]
     public class CooldownPatch
     {
         public static bool enabled;

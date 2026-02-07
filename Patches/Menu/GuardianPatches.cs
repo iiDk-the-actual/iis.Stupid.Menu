@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "GrabbedByPlayer")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.GrabbedByPlayer))]
     public class GrabPatch
     {
         public static bool enabled;
@@ -33,14 +33,14 @@ namespace iiMenu.Patches.Menu
             !enabled;
     }
 
-    [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.DroppedByPlayer))]
     public class DropPatch
     {
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity) =>
             !GrabPatch.enabled;
     }
 
-    [HarmonyPatch(typeof(GuardianRPCs), "GuardianLaunchPlayer")]
+    [HarmonyPatch(typeof(GuardianRPCs), nameof(GuardianRPCs.GuardianLaunchPlayer))]
     public class LaunchPatch
     {
         public static bool Prefix(Vector3 velocity) =>

@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(VRRig), "UpdateFriendshipBracelet")]
+    [HarmonyPatch(typeof(VRRig), nameof(VRRig.UpdateFriendshipBracelet))]
     public class BraceletPatch
     {
         public static bool enabled;

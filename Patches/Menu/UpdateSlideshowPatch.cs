@@ -25,7 +25,7 @@ using TMPro;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(NewMapsDisplay), "UpdateSlideshow")]
+    [HarmonyPatch(typeof(NewMapsDisplay), nameof(NewMapsDisplay.UpdateSlideshow))]
     public static class UpdateSlideshowPatch
     {
         public static bool Prefix(NewMapsDisplay __instance)

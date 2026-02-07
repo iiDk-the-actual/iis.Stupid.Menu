@@ -24,7 +24,7 @@ using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SlingshotProjectile), "CheckForAOEKnockback")]
+    [HarmonyPatch(typeof(SlingshotProjectile), nameof(SlingshotProjectile.CheckForAOEKnockback))]
     public class MultiplySelfKnockbackPatch
     {
         public static bool enabled;

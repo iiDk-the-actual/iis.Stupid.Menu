@@ -27,21 +27,21 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(ForceVolume), "OnTriggerEnter")]
+        [HarmonyPatch(typeof(ForceVolume), nameof(ForceVolume.OnTriggerEnter))]
         public class OnTriggerEnter
         {
             public static bool Prefix() =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(ForceVolume), "OnTriggerExit")]
+        [HarmonyPatch(typeof(ForceVolume), nameof(ForceVolume.OnTriggerExit))]
         public class OnTriggerExit
         {
             public static bool Prefix() =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(ForceVolume), "OnTriggerStay")]
+        [HarmonyPatch(typeof(ForceVolume), nameof(ForceVolume.OnTriggerStay))]
         public class OnTriggerStay
         {
             public static bool Prefix() =>

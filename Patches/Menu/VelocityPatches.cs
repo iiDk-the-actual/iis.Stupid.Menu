@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
         public static bool enabled;
         public static float multipleFactor;
 
-        [HarmonyPatch(typeof(GorillaVelocityTracker), "GetAverageVelocity")]
+        [HarmonyPatch(typeof(GorillaVelocityTracker), nameof(GorillaVelocityTracker.GetAverageVelocity))]
         public class VelocityPatch
         {
             public static void Postfix(GorillaVelocityTracker __instance, ref Vector3 __result, bool worldSpace = false, float maxTimeFromPast = 0.15f, bool doMagnitudeCheck = false)
@@ -40,7 +40,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(GorillaVelocityTracker), "GetLatestVelocity")]
+        [HarmonyPatch(typeof(GorillaVelocityTracker), nameof(GorillaVelocityTracker.GetLatestVelocity))]
         public class VelocityPatch2
         {
             public static void Postfix(GorillaVelocityTracker __instance, ref Vector3 __result, bool worldSpace = false)
@@ -50,7 +50,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(GorillaVelocityEstimator), "TriggeredLateUpdate")]
+        [HarmonyPatch(typeof(GorillaVelocityEstimator), nameof(GorillaVelocityEstimator.TriggeredLateUpdate))]
         public class VelocityPatch3
         {
             public static void Postfix(GorillaVelocityEstimator __instance)

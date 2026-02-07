@@ -34,7 +34,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(GorillaServer), "CheckForBadName")]
+        [HarmonyPatch(typeof(GorillaServer), nameof(GorillaServer.CheckForBadName))]
         public class AutoBanPlayfabFunction
         {
             public static bool Prefix(CheckForBadNameRequest request, Action<ExecuteFunctionResult> successCallback, Action<PlayFabError> errorCallback)
@@ -49,7 +49,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(GorillaComputer), "CheckAutoBanListForName")]
+        [HarmonyPatch(typeof(GorillaComputer), nameof(GorillaComputer.CheckAutoBanListForName))]
         public class CheckAutoBanListForName
         {
             public static bool Prefix(string nameToCheck, ref bool __result)
@@ -91,7 +91,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(PlayFabUnityHttp), "MakeApiCall")]
+        [HarmonyPatch(typeof(PlayFabUnityHttp), nameof(PlayFabUnityHttp.MakeApiCall))]
         public class AntiBanCrash1
         {
             public static bool enabled;
@@ -133,7 +133,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(PlayFabWebRequest), "MakeApiCall")]
+        [HarmonyPatch(typeof(PlayFabWebRequest), nameof(PlayFabWebRequest.MakeApiCall))]
         public class AntiBanCrash2
         {
             private static bool Prefix(object reqContainerObj)

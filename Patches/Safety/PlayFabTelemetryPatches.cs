@@ -32,49 +32,49 @@ namespace iiMenu.Patches.Safety
 {
     public class PlayFabTelemetryPatches
     {
-        [HarmonyPatch(typeof(PlayFabDeviceUtil), "SendDeviceInfoToPlayFab")]
+        [HarmonyPatch(typeof(PlayFabDeviceUtil), nameof(PlayFabDeviceUtil.SendDeviceInfoToPlayFab))]
         public class PlayfabUtil01
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabClientInstanceAPI), "ReportDeviceInfo")]
+        [HarmonyPatch(typeof(PlayFabClientInstanceAPI), nameof(PlayFabClientInstanceAPI.ReportDeviceInfo))]
         public class PlayfabUtil02
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabClientAPI), "ReportDeviceInfo")]
+        [HarmonyPatch(typeof(PlayFabClientAPI), nameof(PlayFabClientAPI.ReportDeviceInfo))]
         public class PlayfabUtil03
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabDeviceUtil), "GetAdvertIdFromUnity")]
+        [HarmonyPatch(typeof(PlayFabDeviceUtil), nameof(PlayFabDeviceUtil.GetAdvertIdFromUnity))]
         public class PlayfabUtil04
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabClientAPI), "AttributeInstall")]
+        [HarmonyPatch(typeof(PlayFabClientAPI), nameof(PlayFabClientAPI.AttributeInstall))]
         public class PlayfabUtil05
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabHttp), "InitializeScreenTimeTracker")]
+        [HarmonyPatch(typeof(PlayFabHttp), nameof(PlayFabHttp.InitializeScreenTimeTracker))]
         public class PlayfabUtil06
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
+        [HarmonyPatch(typeof(PlayFabClientAPI), nameof(PlayFabClientAPI.UpdateUserTitleDisplayName))] // Credits to Shiny for letting me use this
         public class DisplayNamePatch
         {
             public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null) =>

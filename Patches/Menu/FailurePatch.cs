@@ -26,7 +26,7 @@ using iiMenu.Managers;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaComputer), "GeneralFailureMessage")]
+    [HarmonyPatch(typeof(GorillaComputer), nameof(GorillaComputer.GeneralFailureMessage))]
     public class FailurePatch
     {
         public static void Prefix(string failMessage)

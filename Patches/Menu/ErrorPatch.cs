@@ -27,7 +27,7 @@ using System.Collections.Generic;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaComputer), "OnErrorShared")]
+    [HarmonyPatch(typeof(GorillaComputer), nameof(GorillaComputer.OnErrorShared))]
     public class ErrorPatch
     {
         public static bool enabled;

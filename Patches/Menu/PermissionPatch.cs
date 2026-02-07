@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(KIDManager), "HasPermissionToUseFeature")]
+    [HarmonyPatch(typeof(KIDManager), nameof(KIDManager.HasPermissionToUseFeature))]
     public class PermissionPatch
     {
         public static bool enabled;

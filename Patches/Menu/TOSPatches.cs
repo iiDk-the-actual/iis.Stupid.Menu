@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Menu
     {
         public static bool enabled;
 
-        [HarmonyPatch(typeof(LegalAgreements), "Update")]
+        [HarmonyPatch(typeof(LegalAgreements), nameof(LegalAgreements.Update))]
         public class Update
         {
             private static bool Prefix(LegalAgreements __instance)
@@ -44,7 +44,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(ModIOTermsOfUse_v1), "PostUpdate")]
+        [HarmonyPatch(typeof(ModIOTermsOfUse_v1), nameof(ModIOTermsOfUse_v1.PostUpdate))]
         public class PostUpdateModIO
         {
             private static bool Prefix(ModIOTermsOfUse_v1 __instance)
@@ -60,7 +60,7 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(AgeSlider), "PostUpdate")]
+        [HarmonyPatch(typeof(AgeSlider), nameof(AgeSlider.PostUpdate))]
         public class PostUpdateAgeSlider
         {
             private static bool Prefix(AgeSlider __instance)
@@ -75,14 +75,14 @@ namespace iiMenu.Patches.Menu
             }
         }
 
-        [HarmonyPatch(typeof(PrivateUIRoom), "StartOverlay")]
+        [HarmonyPatch(typeof(PrivateUIRoom), nameof(PrivateUIRoom.StartOverlay))]
         public class StartOverlay
         {
             private static bool Prefix() =>
                 !enabled;
         }
 
-        [HarmonyPatch(typeof(KIDManager), "UseKID")]
+        [HarmonyPatch(typeof(KIDManager), nameof(KIDManager.UseKID))]
         public class UseKID
         {
             private static bool Prefix(ref Task<bool> __result)

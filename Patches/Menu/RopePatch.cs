@@ -26,7 +26,7 @@ using UnityEngine.XR;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaRopeSwing), "AttachLocalPlayer")]
+    [HarmonyPatch(typeof(GorillaRopeSwing), nameof(GorillaRopeSwing.AttachLocalPlayer))]
     public class RopePatch
     {
         public static bool enabled;

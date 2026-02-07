@@ -24,7 +24,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(BuilderTable), "RequestPlacePiece")]
+    [HarmonyPatch(typeof(BuilderTable), nameof(BuilderTable.RequestPlacePiece))]
     public class PlacePatch
     {
         public static BuilderPiece _piece;

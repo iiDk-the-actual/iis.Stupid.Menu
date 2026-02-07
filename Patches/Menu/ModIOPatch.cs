@@ -23,7 +23,7 @@
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(ModIOManager), "OnJoinedRoom")]
+    [HarmonyPatch(typeof(ModIOManager), nameof(ModIOManager.OnJoinedRoom))]
     public class ModIOPatch
     {
         public static bool Prefix(VRRig __instance) =>

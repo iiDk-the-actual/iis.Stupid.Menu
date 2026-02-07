@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GameEntityManager), "TryGrabLocal")]
+    [HarmonyPatch(typeof(GameEntityManager), nameof(GameEntityManager.TryGrabLocal))]
     public class EntityGrabPatch
     {
         public static bool enabled;

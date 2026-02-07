@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(SIGadgetWristJet), "OnUpdateAuthority")]
+    [HarmonyPatch(typeof(SIGadgetWristJet), nameof(SIGadgetWristJet.OnUpdateAuthority))]
     public class FuelPatch
     {
         public static bool enabled;

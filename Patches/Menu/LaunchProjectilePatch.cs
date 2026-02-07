@@ -26,7 +26,7 @@ using static iiMenu.Utilities.AssetUtilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(ProjectileWeapon), "LaunchProjectile")]
+    [HarmonyPatch(typeof(ProjectileWeapon), nameof(ProjectileWeapon.LaunchProjectile))]
     public class LaunchProjectilePatch
     {
         public static bool enabled;

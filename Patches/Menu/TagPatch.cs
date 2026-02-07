@@ -32,7 +32,7 @@ using static iiMenu.Utilities.GameModeUtilities;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GameMode), "ReportTag")]
+    [HarmonyPatch(typeof(GameMode), nameof(GameMode.ReportTag))]
     public class TagPatch
     {
         public static readonly List<NetPlayer> taggedPlayers = new List<NetPlayer>();

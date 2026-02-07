@@ -23,7 +23,7 @@ using HarmonyLib;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(HalloweenGhostChaser), "RiseGrabbedLocalPlayer")]
+    [HarmonyPatch(typeof(HalloweenGhostChaser), nameof(HalloweenGhostChaser.RiseGrabbedLocalPlayer))]
     public class RisePatch
     {
         public static bool enabled;

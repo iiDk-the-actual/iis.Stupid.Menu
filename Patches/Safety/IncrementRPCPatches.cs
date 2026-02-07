@@ -26,21 +26,21 @@ namespace iiMenu.Patches.Safety
 {
     public class IncrementRPCPatches
     {
-        [HarmonyPatch(typeof(VRRig), "IncrementRPC", typeof(PhotonMessageInfoWrapped), typeof(string))]
+        [HarmonyPatch(typeof(VRRig), nameof(VRRig.IncrementRPC), typeof(PhotonMessageInfoWrapped), typeof(string))]
         public class NoIncrementRPC
         {
             private static bool Prefix(PhotonMessageInfoWrapped info, string sourceCall) =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCall", typeof(PhotonMessageInfo), typeof(string))]
+        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.IncrementRPCCall), typeof(PhotonMessageInfo), typeof(string))]
         public class NoIncrementRPCCall
         {
             private static bool Prefix(PhotonMessageInfo info, string callingMethod = "") =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCallLocal")]
+        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.IncrementRPCCallLocal))]
         public class NoIncrementRPCCallLocal
         {
             private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction) =>

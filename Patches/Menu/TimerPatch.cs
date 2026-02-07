@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches.Menu
 {
-    [HarmonyPatch(typeof(GorillaTagger), "LateUpdate")]
+    [HarmonyPatch(typeof(GorillaTagger), nameof(GorillaTagger.LateUpdate))]
     public class TimerPatch
     {
         public static bool enabled;
