@@ -5831,7 +5831,7 @@ namespace iiMenu.Mods
                 barrelAllDelay = Time.time + 0.3f;
         }
 
-        public const int BarrelIndex = 621;
+        public const int BarrelIndex = 618;
         public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
             options ??= new RaiseEventOptions { Receivers = ReceiverGroup.All };
@@ -5867,9 +5867,8 @@ namespace iiMenu.Mods
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
 
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -50);
-
                 VRRig.LocalRig.transform.position = pos;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -50);
                 SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
 
                 vel = vel.ClampMagnitudeSafe(50f);
