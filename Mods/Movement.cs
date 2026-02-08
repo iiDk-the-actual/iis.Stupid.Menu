@@ -1971,7 +1971,7 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> buttons = new List<ButtonInfo>
             {
-                new ButtonInfo { buttonText = "Exit Macros", method =() => currentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods."},
+                new ButtonInfo { buttonText = "Exit Macros", method =() => Buttons.CurrentCategoryName = "Movement Mods", isTogglable = false, toolTip = "Returns you back to the movement mods."},
             };
 
             int index = 0;
@@ -1991,7 +1991,7 @@ namespace iiMenu.Mods
                 new ButtonInfo { buttonText = "Reload Macros", method = LoadMacros, isTogglable = false, toolTip = "Reloads your macros." },
                 new ButtonInfo { buttonText = "Disable Macros", enableMethod =() => disableMacros = true, disableMethod =() => disableMacros = false, toolTip = "Disables all macros." }
             });
-            Buttons.buttons[42] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Macros")] = buttons.ToArray();
         }
 
         public static void OpenMacrosFolder()
@@ -2339,7 +2339,7 @@ namespace iiMenu.Mods
 
         public static void ExitTeleportToMap()
         {
-            currentCategoryName = "Movement Mods";
+            Buttons.CurrentCategoryName = "Movement Mods";
             pageNumber = rememberPageNumber;
         }
 
@@ -2442,7 +2442,7 @@ namespace iiMenu.Mods
             
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = tpbuttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void TeleportToMap(string zone, string pos)

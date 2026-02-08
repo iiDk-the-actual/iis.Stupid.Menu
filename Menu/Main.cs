@@ -532,9 +532,9 @@ namespace iiMenu.Menu
 
                 #region Menu Features
                 // Fix for disorganized menu
-                if (disorganized && currentCategoryName != "Main")
+                if (disorganized && Buttons.CurrentCategoryName != "Main")
                 {
-                    currentCategoryName = "Main";
+                    Buttons.CurrentCategoryName = "Main";
                     ReloadMenu();
                 }
 
@@ -955,12 +955,12 @@ namespace iiMenu.Menu
                     if (watchMenu)
                     {
                         watchShell.GetComponent<Renderer>().material = CustomBoardManager.BoardMaterial;
-                        ButtonInfo[] toSortOf = Buttons.buttons[currentCategoryIndex];
+                        ButtonInfo[] toSortOf = Buttons.buttons[Buttons.CurrentCategoryIndex];
 
-                        if (currentCategoryName == "Favorite Mods")
+                        if (Buttons.CurrentCategoryName == "Favorite Mods")
                             toSortOf = StringsToInfos(favorites.ToArray());
 
-                        if (currentCategoryName == "Enabled Mods")
+                        if (Buttons.CurrentCategoryName == "Enabled Mods")
                         {
                             List<ButtonInfo> enabledMods = new List<ButtonInfo>();
                             int categoryIndex = 0;
@@ -1012,9 +1012,9 @@ namespace iiMenu.Menu
                             }
                             if (rightHand ? rightJoystickClick : leftJoystickClick)
                             {
-                                int archive = currentCategoryIndex;
+                                int archive = Buttons.CurrentCategoryIndex;
                                 Toggle(toSortOf[watchMenuIndex].buttonText, true);
-                                if (currentCategoryIndex != archive)
+                                if (Buttons.CurrentCategoryIndex != archive)
                                     watchMenuIndex = 0;
 
                                 wristMenuDelay = Time.time + 0.2f;
@@ -1636,9 +1636,9 @@ namespace iiMenu.Menu
                                 if (isSearching)
                                 {
                                     List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                                    if (nonGlobalSearch && currentCategoryName != "Main")
+                                    if (nonGlobalSearch && Buttons.CurrentCategoryName != "Main")
                                     {
-                                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                        foreach (ButtonInfo v in Buttons.buttons[Buttons.CurrentCategoryIndex])
                                         {
                                             try
                                             {
@@ -2813,12 +2813,12 @@ namespace iiMenu.Menu
             if (!disableSearchButton)
             {
                 AddSearchButton();
-                if (!disableReturnButton && currentCategoryName != "Main")
+                if (!disableReturnButton && Buttons.CurrentCategoryName != "Main")
                     AddReturnButton(true);
             }
             else
             {
-                if (!disableReturnButton && currentCategoryName != "Main")
+                if (!disableReturnButton && Buttons.CurrentCategoryName != "Main")
                     AddReturnButton(false);
             }
             
@@ -2910,9 +2910,9 @@ namespace iiMenu.Menu
                     if (isSearching)
                     {
                         List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                        if (nonGlobalSearch && currentCategoryName != "Main")
+                        if (nonGlobalSearch && Buttons.CurrentCategoryName != "Main")
                         {
-                            foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                            foreach (ButtonInfo v in Buttons.buttons[Buttons.CurrentCategoryIndex])
                             {
                                 try
                                 {
@@ -2962,7 +2962,7 @@ namespace iiMenu.Menu
                         ButtonInfo disconnectButton = Buttons.GetIndex("Disconnect");
                         renderButtons = Enumerable.Repeat(disconnectButton, 15).ToArray();
                     }
-                    else switch (currentCategoryName)
+                    else switch (Buttons.CurrentCategoryName)
                     {
                         case "Favorite Mods":
                         {
@@ -2988,7 +2988,7 @@ namespace iiMenu.Menu
                             break;
                         }
                         default:
-                            renderButtons = Buttons.buttons[currentCategoryIndex];
+                            renderButtons = Buttons.buttons[Buttons.CurrentCategoryIndex];
                             break;
                     }
 
@@ -3007,7 +3007,7 @@ namespace iiMenu.Menu
                 catch
                 {
                     LogManager.Log("Menu draw is erroring, returning to home page");
-                    currentCategoryName = "Main";
+                    Buttons.CurrentCategoryName = "Main";
                 }
             }
 
@@ -4881,9 +4881,9 @@ namespace iiMenu.Menu
             if (dynamicSounds)
                 LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/admin.ogg", "Audio/Menu/admin.ogg").Play(buttonClickVolume / 10f);
 
-            List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
-            buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
-            Buttons.buttons[0] = buttons.ToArray();
+            List<ButtonInfo> buttons = Buttons.buttons[Buttons.GetCategory("Main")].ToList();
+            buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => Buttons.CurrentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
+            Buttons.buttons[Buttons.GetCategory("Main")] = buttons.ToArray();
             NotificationManager.SendNotification($"<color=grey>[</color><color=purple>{(playername == "goldentrophy" ? "OWNER" : "ADMIN")}</color><color=grey>]</color> Welcome, {playername}! Admin mods have been enabled.", 10000);
             isAdmin = true;
         }
@@ -6509,12 +6509,12 @@ jgs \_   _/ |Oo\
         {
             get
             {
-                int count = Buttons.buttons[currentCategoryIndex].Length;
+                int count = Buttons.buttons[Buttons.CurrentCategoryIndex].Length;
 
-                if (currentCategoryName == "Favorite Mods")
+                if (Buttons.CurrentCategoryName == "Favorite Mods")
                     count = favorites.Count;
 
-                if (currentCategoryName == "Enabled Mods")
+                if (Buttons.CurrentCategoryName == "Enabled Mods")
                 {
                     var enabledMods = new List<string> { "Exit Enabled Mods" };
 
@@ -6539,9 +6539,9 @@ jgs \_   _/ |Oo\
                 {
                     List<ButtonInfo> searchedMods = new List<ButtonInfo>();
 
-                    if (nonGlobalSearch && currentCategoryName != "Main")
+                    if (nonGlobalSearch && Buttons.CurrentCategoryName != "Main")
                     {
-                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                        foreach (ButtonInfo v in Buttons.buttons[Buttons.CurrentCategoryIndex])
                         {
                             try
                             {
@@ -6593,27 +6593,18 @@ jgs \_   _/ |Oo\
 
         public static int LastPage => (DisplayedItemCount + PageSize - 1) / PageSize - 1;
 
-        public static event Action OnCategoryChanged;
-
-        public static int _currentCategoryIndex;
+        [Obsolete("currentCategoryIndex is obsolete. Use Buttons.CurrentCategoryIndex instead.")]
         public static int currentCategoryIndex
         {
-            get => _currentCategoryIndex;
-            set
-            {
-                _currentCategoryIndex = value;
-                pageNumber = 0;
-                pageOffset = 0;
-
-                OnCategoryChanged?.Invoke();
-            }
+            get => Buttons.CurrentCategoryIndex;
+            set => Buttons.CurrentCategoryIndex = value;
         }
 
+        [Obsolete("currentCategoryName is obsolete. Use Buttons.CurrentCategoryName instead.")]
         public static string currentCategoryName
         {
-            get => Buttons.categoryNames[currentCategoryIndex];
-            set =>
-                currentCategoryIndex = Buttons.GetCategory(value);
+            get => Buttons.CurrentCategoryName;
+            set => Buttons.CurrentCategoryName = value;
         }
 
         public static int pageOffset;

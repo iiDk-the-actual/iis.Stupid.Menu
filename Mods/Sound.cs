@@ -53,12 +53,12 @@ namespace iiMenu.Mods
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             
-            List<string> enabledSounds = (from binfo in Buttons.buttons[18] where binfo.enabled select binfo.overlapText).ToList();
+            List<string> enabledSounds = (from binfo in Buttons.buttons[Buttons.GetCategory("Soundboard")] where binfo.enabled select binfo.overlapText).ToList();
             List<ButtonInfo> soundButtons = new List<ButtonInfo>();
             if (Subdirectory != "")
                 soundButtons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = ExitParentDirectory, isTogglable = false, toolTip = "Returns you back to the last folder." });
 
-            soundButtons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the sound mods." });
+            soundButtons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => Buttons.CurrentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Returns you back to the sound mods." });
 
             string[] folders = Directory.GetDirectories($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             soundButtons.AddRange(from folder in folders
@@ -128,10 +128,10 @@ namespace iiMenu.Mods
             soundButtons.Add(new ButtonInfo { buttonText = "Open Sound Folder", method = OpenSoundFolder, isTogglable = false, toolTip = "Opens a folder containing all of your sounds." });
             soundButtons.Add(new ButtonInfo { buttonText = "Reload Sounds", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Reloads all of your sounds." });
             soundButtons.Add(new ButtonInfo { buttonText = "Get More Sounds", method = LoadSoundLibrary, isTogglable = false, toolTip = "Opens a public audio library, where you can download your own sounds." });
-            Buttons.buttons[18] = soundButtons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Soundboard")] = soundButtons.ToArray();
 
             if (openCategory)
-                currentCategoryName = "Soundboard";
+                Buttons.CurrentCategoryName = "Soundboard";
         }
 
         public static void ExitParentDirectory()
@@ -161,8 +161,8 @@ namespace iiMenu.Mods
                     soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardDownload" + index, overlapText = Data[0], method = () => DownloadSound(Data[0], $"{PluginInfo.ServerResourcePath}/Audio/Mods/Fun/Soundboard/Sounds/{Data[1]}"), isTogglable = false, toolTip = "Downloads " + Data[0] + " to your sound library." });
                 }
             }
-            Buttons.buttons[26] = soundbuttons.ToArray();
-            currentCategoryName = "Sound Library";
+            Buttons.buttons[Buttons.GetCategory("Sound Library")] = soundbuttons.ToArray();
+            Buttons.CurrentCategoryName = "Sound Library";
         }
 
         public static void DownloadSound(string name, string url)

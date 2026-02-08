@@ -199,7 +199,7 @@ namespace iiMenu.Mods
         public static void BlankPage()
         {
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = Array.Empty<ButtonInfo>();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void CopyCustomGamemodeScript()

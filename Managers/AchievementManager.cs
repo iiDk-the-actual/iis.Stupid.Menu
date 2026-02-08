@@ -57,7 +57,7 @@ namespace iiMenu.Managers
         {
             int achievementCount = Achievements.Count;
 
-            List<ButtonInfo> achievementButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Achievements", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
+            List<ButtonInfo> achievementButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Achievements", method = () => Buttons.CurrentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
             
             if (achievementCount <= 0)
                 achievementButtons.Add(
@@ -82,7 +82,7 @@ namespace iiMenu.Managers
                 }
 
             Buttons.buttons[Buttons.GetCategory("Achievements")] = achievementButtons.ToArray();
-            currentCategoryName = "Achievements";
+            Buttons.CurrentCategoryName = "Achievements";
         }
 
         public static bool HasAchievement(string name) =>

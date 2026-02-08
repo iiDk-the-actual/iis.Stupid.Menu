@@ -184,7 +184,7 @@ namespace iiMenu.Mods
         public static void GlobalReturn()
         {
             NotificationManager.ClearAllNotifications();
-            Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
+            Toggle(Buttons.buttons[Buttons.CurrentCategoryIndex][Buttons.GetCategory("Main")].buttonText, true);
             StopCurrentPrompt();
         }
 
@@ -321,7 +321,7 @@ namespace iiMenu.Mods
             Buttons.AddButton(category, new ButtonInfo { buttonText = "DebugRoomB", overlapText = "Loading...", label = true });
 
             Debug();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static bool hideId;
@@ -355,7 +355,7 @@ namespace iiMenu.Mods
             Buttons.RemoveButton(category, "DebugFps");
             Buttons.RemoveButton(category, "DebugRoomA");
             Buttons.RemoveButton(category, "DebugRoomB");
-            currentCategoryName = "Main";
+            Buttons.CurrentCategoryName = "Main";
         }
 
         public static void PlayersTab()
@@ -363,7 +363,7 @@ namespace iiMenu.Mods
             List<ButtonInfo> buttons = new List<ButtonInfo> { 
                 new ButtonInfo { 
                     buttonText = "Exit Players", 
-                    method =() => currentCategoryName = "Main", 
+                    method =() => Buttons.CurrentCategoryName = "Main", 
                     isTogglable = false, 
                     toolTip = "Returns you back to the main page." 
                 } 
@@ -394,8 +394,8 @@ namespace iiMenu.Mods
                 }
             }
 
-            Buttons.buttons[37] = buttons.ToArray();
-            currentCategoryName = "Players";
+            Buttons.buttons[Buttons.GetCategory("Players")] = buttons.ToArray();
+            Buttons.CurrentCategoryName = "Players";
         }
 
         public static void NavigatePlayer(NetPlayer player)
@@ -628,7 +628,7 @@ namespace iiMenu.Mods
                 );
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void SpectatePlayer(VRRig rig)
@@ -3793,7 +3793,7 @@ exit 0";
             WriteCustomTheme();
         }
 
-        private static int rememberdirectory;
+        private static int previousPage;
         public static void CustomMenuTheme()
         {
             if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt"))
@@ -3804,7 +3804,7 @@ exit 0";
 
         public static void ChangeCustomMenuTheme()
         {
-            rememberdirectory = pageNumber;
+            previousPage = pageNumber;
             CustomMenuThemePage();
         }
 
@@ -3818,7 +3818,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void CMTBackground()
@@ -3830,7 +3830,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTBackgroundFirst()
         {
@@ -3845,7 +3845,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTBackgroundSecond()
         {
@@ -3860,7 +3860,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void CMTButton()
@@ -3872,7 +3872,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabled()
         {
@@ -3883,7 +3883,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabled()
         {
@@ -3894,7 +3894,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabledFirst()
         {
@@ -3909,7 +3909,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonEnabledSecond()
         {
@@ -3924,7 +3924,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabledFirst()
         {
@@ -3938,7 +3938,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTButtonDisabledSecond()
         {
@@ -3953,7 +3953,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void CMTText()
@@ -3966,7 +3966,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTTextTitle()
         {
@@ -3981,7 +3981,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTTextEnabled()
         {
@@ -3996,7 +3996,7 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         public static void CMTTextDisabled()
         {
@@ -4011,13 +4011,13 @@ exit 0";
             };
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void ExitCustomMenuTheme()
         {
-            pageNumber = rememberdirectory;
-            currentCategoryName = "Menu Settings";
+            pageNumber = previousPage;
+            Buttons.CurrentCategoryName = "Menu Settings";
         }
 
         public static void ReadCustomTheme()
@@ -4670,7 +4670,7 @@ exit 0";
                     if (buttonArray.Length > 0)
                     {
                         for (int i = 0; i < buttonArray.Length; i++)
-                            Buttons.buttons[0] = Buttons.buttons[0].Concat(new[] { buttonArray[i] }).ToArray();
+                            Buttons.buttons[Buttons.GetCategory("Main")] = Buttons.buttons[Buttons.GetCategory("Main")].Concat(new[] { buttonArray[i] }).ToArray();
 
                         Array.Clear(buttonArray, 0, buttonArray.Length);
                     }
@@ -5048,13 +5048,13 @@ exit 0";
             clickGUI = true; 
             ReloadMenu();
 
-            OnCategoryChanged += ReloadOnCategoryChange;
+            Buttons.OnCategoryChanged += ReloadOnCategoryChange;
         }
 
         public static void DisableClickGUI()
         {
             clickGUI = false;
-            OnCategoryChanged -= ReloadOnCategoryChange;
+            Buttons.OnCategoryChanged -= ReloadOnCategoryChange;
 
             if (clickGuiLine != null)
             {
@@ -5143,7 +5143,7 @@ exit 0";
             };
 
             GameObject otherBase = canvasTransform.Find("Main/Sidebar/Scroll View/Viewport/Content/Other").gameObject;
-            foreach (ButtonInfo button in Buttons.buttons[0])
+            foreach (ButtonInfo button in Buttons.buttons[Buttons.GetCategory("Main")])
             {
                 if (!ignoreButtons.Contains(button.buttonText))
                 {
@@ -5165,11 +5165,11 @@ exit 0";
                 tab.AddComponent<UIColorChanger>().colors = buttonColors[0];
                 tab.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    Toggle(Buttons.buttons[0].Where(button => button.buttonText.StartsWith(tab.name)).FirstOrDefault() ?? Buttons.GetIndex("Exit Settings"));
+                    Toggle(Buttons.buttons[Buttons.GetCategory("Main")].Where(button => button.buttonText.StartsWith(tab.name)).FirstOrDefault() ?? Buttons.GetIndex("Exit Settings"));
                     PlayButtonSound();
                 });
 
-                if (currentCategoryName.StartsWith(tab.name == "Home" ? "Main" : tab.name))
+                if (Buttons.CurrentCategoryName.StartsWith(tab.name == "Home" ? "Main" : tab.name))
                 {
                     movedSelection = true;
                     selection.SetParent(tab.transform, false);
@@ -5342,12 +5342,12 @@ exit 0";
                     accept.transform.Find("Text").GetComponent<RectTransform>().localScale = new Vector3(rectTransform.localScale.y / 2.05f, rectTransform.localScale.y, rectTransform.localScale.z);
                 }
             }
-            else if (currentCategoryIndex == 0)
+            else if (Buttons.CurrentCategoryIndex == 0)
             {
                 canvasTransform.Find("Main/HomeTab").gameObject.SetActive(true);
                 canvasTransform.Find("Main/HomeTab/Title").GetComponent<TextMeshProUGUI>().SafeSetText($"Hey, {PhotonNetwork.NickName ?? "null"}!");
 
-                if (currentCategoryIndex == 0)
+                if (Buttons.CurrentCategoryIndex == 0)
                 {
                     foreach (string partName in new[]
                     {
@@ -5408,9 +5408,9 @@ exit 0";
                     })
                     toRecolor.Add(canvasTransform.Find(partName).GetComponent<MaskableGraphic>());
 
-                List<ButtonInfo> buttons = Buttons.buttons[currentCategoryIndex].ToList();
+                List<ButtonInfo> buttons = Buttons.buttons[Buttons.CurrentCategoryIndex].ToList();
 
-                if (buttons.Count > 0 && ignoreButtons.Contains(currentCategoryName))
+                if (buttons.Count > 0 && ignoreButtons.Contains(Buttons.CurrentCategoryName))
                     buttons.RemoveAt(0);
 
                 if (buttons.Count > 0)
@@ -5480,7 +5480,7 @@ exit 0";
             {
                 canvas.transform.Find("Main/Sidebar/Watermark").localRotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
 
-                if (isSearching && currentCategoryIndex != 0)
+                if (isSearching && Buttons.CurrentCategoryIndex != 0)
                 {
                     Transform searchBar = canvas.transform.Find("Main/ModuleTab/Search");
                     TMP_InputField inputField = searchBar.GetComponent<TMP_InputField>();

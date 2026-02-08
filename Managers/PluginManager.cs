@@ -49,7 +49,7 @@ namespace iiMenu.Managers
         public static readonly List<Plugin> Plugins = new List<Plugin>();
         public static void LoadPlugins()
         {
-            Buttons.buttons[Buttons.GetCategory("Plugin Settings")] = new[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu." } };
+            Buttons.buttons[Buttons.GetCategory("Plugin Settings")] = new[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => Buttons.CurrentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu." } };
 
             if (Plugins.Count > 0)
             {
@@ -109,14 +109,14 @@ namespace iiMenu.Managers
             {
                 try
                 {
-                    Buttons.AddButton(33, new ButtonInfo { buttonText = Plugin.FileName, overlapText = (Plugin.Enabled ? "<color=grey>[</color><color=green>ON</color><color=grey>]</color>" : "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>") + " " + Plugin.Name, method = () => TogglePlugin(Plugin), isTogglable = false, toolTip = Plugin.Description });
+                    Buttons.AddButton(Buttons.GetCategory("Plugin Settings"), new ButtonInfo { buttonText = Plugin.FileName, overlapText = (Plugin.Enabled ? "<color=grey>[</color><color=green>ON</color><color=grey>]</color>" : "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>") + " " + Plugin.Name, method = () => TogglePlugin(Plugin), isTogglable = false, toolTip = Plugin.Description });
                 }
                 catch (Exception e) { LogManager.Log("Error with enabling plugin " + Plugin.Name + ": " + e); }
             }
 
-            Buttons.AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = OpenPluginsFolder, isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
-            Buttons.AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." });
-            Buttons.AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = LoadPluginLibrary, isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
+            Buttons.AddButton(Buttons.GetCategory("Plugin Settings"), new ButtonInfo { buttonText = "Open Plugins Folder", method = OpenPluginsFolder, isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
+            Buttons.AddButton(Buttons.GetCategory("Plugin Settings"), new ButtonInfo { buttonText = "Reload Plugins", method = ReloadPlugins, isTogglable = false, toolTip = "Reloads all of your plugins." });
+            Buttons.AddButton(Buttons.GetCategory("Plugin Settings"), new ButtonInfo { buttonText = "Get More Plugins", method = LoadPluginLibrary, isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
         }
 
         public static void DownloadPlugin(string name, string url)
@@ -279,7 +279,7 @@ namespace iiMenu.Managers
             if (isSearching)
                 Mods.Settings.Search();
 
-            currentCategoryName = "Main";
+            Buttons.CurrentCategoryName = "Main";
         }
 
         public static void OpenPluginsFolder() =>
@@ -290,7 +290,7 @@ namespace iiMenu.Managers
             string library = GetHttp($"{PluginInfo.ServerResourcePath}/Plugins/PluginLibrary.txt");
             string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
 
-            List<ButtonInfo> buttonInfos = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
+            List<ButtonInfo> buttonInfos = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => Buttons.CurrentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
             int index = 0;
 
             foreach (string plugin in plugins)
@@ -302,7 +302,7 @@ namespace iiMenu.Managers
             }
             
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttonInfos.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
         #endregion
     }

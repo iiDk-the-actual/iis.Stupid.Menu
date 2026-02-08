@@ -977,7 +977,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Exit Friends",
-                    method =() => currentCategoryName = "Main",
+                    method =() => Buttons.CurrentCategoryName = "Main",
                     isTogglable = false,
                     toolTip = "Returns you back to the main page."
                 }
@@ -1000,7 +1000,7 @@ namespace iiMenu.Managers
                 toolTip = "Use this tab to add people as friends."
             });
 
-            Buttons.buttons[34] = buttons.ToArray();
+            Buttons.buttons[Buttons.GetCategory("Friends")] = buttons.ToArray();
         }
 
         public static void AddFriendsUI()
@@ -1008,7 +1008,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Friends",
-                    method =() => currentCategoryName = "Friends",
+                    method =() => Buttons.CurrentCategoryName = "Friends",
                     isTogglable = false,
                     toolTip = "Returns you back to the friends page."
                 },
@@ -1041,7 +1041,7 @@ namespace iiMenu.Managers
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void IncomingFriendRequests()
@@ -1070,7 +1070,7 @@ namespace iiMenu.Managers
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void OutgoingFriendRequests()
@@ -1099,7 +1099,7 @@ namespace iiMenu.Managers
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void InspectFriend(string friendTarget)
@@ -1108,7 +1108,7 @@ namespace iiMenu.Managers
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Return to Friends",
-                    method =() => currentCategoryName = "Friends",
+                    method =() => Buttons.CurrentCategoryName = "Friends",
                     isTogglable = false,
                     toolTip = "Returns you back to the friends page."
                 }
@@ -1205,7 +1205,7 @@ namespace iiMenu.Managers
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void InspectPendingFriend(string friendTarget)
@@ -1240,7 +1240,7 @@ namespace iiMenu.Managers
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void ShowChatMessages(string friendTarget)
@@ -1299,8 +1299,8 @@ namespace iiMenu.Managers
                 toolTip = $"Sends a message to {friend.currentName}."
             });
 
-            Buttons.buttons[41] = buttons.ToArray();
-            currentCategoryName = "Chat Messages";
+            Buttons.buttons[Buttons.GetCategory("Chat Messages")] = buttons.ToArray();
+            Buttons.CurrentCategoryName = "Chat Messages";
         }
 
         public class FriendWebSocket : MonoBehaviour
@@ -1526,7 +1526,7 @@ namespace iiMenu.Managers
                         NotificationManager.SendNotification($"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {Regex.Replace(message, @"<\s*https?://[^\s>]+\s*>", "[Media]")}", 5000);
                         UpdateFriendMessage(from, $"<color=grey>[</color><color=#{color}>{friendName.ToUpper()}</color><color=grey>]</color> {message}        ");
 
-                        if (currentCategoryIndex == 41)
+                        if (Buttons.CurrentCategoryIndex == 41)
                         {
                             ShowChatMessages(from);
                             ReloadMenu();

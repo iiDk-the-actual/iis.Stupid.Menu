@@ -1094,7 +1094,7 @@ namespace iiMenu.Mods
         {
             Prompt("Would you like to choose from a mod list or type the mod property?", () =>
             {
-                List<ButtonInfo> modList = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Mod List", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
+                List<ButtonInfo> modList = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Mod List", method = () => Buttons.CurrentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
                 modList.AddRange(Visuals.modDictionary.Select((t, i) => Visuals.modDictionary.ElementAt(i))
                 .Select((mod, i) => new ButtonInfo
                 {
@@ -1107,7 +1107,7 @@ namespace iiMenu.Mods
 
 
                 Buttons.buttons[Buttons.GetCategory("Mod List")] = modList.ToArray();
-                currentCategoryName = "Mod List";
+                Buttons.CurrentCategoryName = "Mod List";
             }, () =>
             {
                 PromptSingleText("Please enter what you would like to spoof your mods to (seperated by commas).", () =>
@@ -2562,7 +2562,7 @@ Piece Name: {gunTarget.name}";
             }
 
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = blockButtons.ToArray();
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
@@ -6431,13 +6431,13 @@ Piece Name: {gunTarget.name}";
             }
             Buttons.buttons[Buttons.GetCategory("Temporary Category")] = cosmeticbuttons.ToArray();
 
-            currentCategoryName = "Temporary Category";
+            Buttons.CurrentCategoryName = "Temporary Category";
         }
 
         public static void RemoveCosmeticBrowser()
         {
             pageNumber = rememberdirectory;
-            currentCategoryName = "Fun Mods";
+            Buttons.CurrentCategoryName = "Fun Mods";
         }
 
         public static void AutoLoadCosmetics()

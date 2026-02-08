@@ -47,7 +47,7 @@ namespace iiMenu.Mods
                 Play2DAudio(LoadSoundFromURL($"{PluginInfo.ServerResourcePath}/Audio/Menu/danger.ogg", "Audio/Menu/danger.ogg"), buttonClickVolume / 10f); 
                 Prompt("The mods in this category are detected. <b>Unless you know what you're doing, you will get banned.</b> Are you sure you would like to continue?", 
                     () => { 
-                        allowDetected = true; currentCategoryName = "Detected Mods";
+                        allowDetected = true; Buttons.CurrentCategoryName = "Detected Mods";
 
                         AchievementManager.UnlockAchievement(new AchievementManager.Achievement
                         {
@@ -57,7 +57,7 @@ namespace iiMenu.Mods
 
                         });
                     }); 
-            } else currentCategoryName = "Detected Mods";
+            } else Buttons.CurrentCategoryName = "Detected Mods";
         }
 
         public static float masterDelay;
