@@ -645,6 +645,27 @@ namespace iiMenu.Mods
             PromptSingle("<https://.mat>", () => Object.Destroy(cameraObject), "Done");
         }
 
+        public static void CategorySettings()
+        {
+            List<ButtonInfo> buttons = new List<ButtonInfo> {new ButtonInfo { buttonText = "Exit Menu Settings", method =() => Buttons.CurrentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."}};
+
+            foreach (var button in Buttons.buttons[Buttons.GetCategory("Main")])
+            {
+                buttons.Add(new ButtonInfo
+                {
+                    buttonText = $"Category{button.buttonText.Hash()}",
+                    overlapText = button.buttonText,
+                    enabled = !skipButtons.Contains(button.buttonText),
+                    enableMethod =() => skipButtons.Remove(button.buttonText),
+                    disableMethod =() => skipButtons.Add(button.buttonText),
+                    toolTip = "Toggles the visibility of the category " + button.buttonText + "."
+                });
+            }
+
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
+            Buttons.CurrentCategoryName = "Temporary Category";
+        }
+
         public static void RightHand()
         {
             rightHand = true;
@@ -5955,7 +5976,9 @@ exit 0";
                     }
                 }
             }
-            
+
+            string skipButtonString = string.Join(seperator, skipButtons);
+
             string finaltext =
                 enabledtext + "\n" +
                 favoritetext + "\n" +
@@ -5965,7 +5988,8 @@ exit 0";
                 fontCycle + "\n" +
                 bindingtext + "\n" +
                 quickActionString + "\n" +
-                rebindingtext;
+                rebindingtext + "\n" +
+                skipButtonString;
 
             return finaltext;
         }
@@ -6250,6 +6274,17 @@ exit 0";
                     ButtonInfo button = Buttons.GetIndex(rebindText);
                     if (button != null)
                         button.rebindKey = rebindKey;
+                }
+            } catch { }
+
+            try
+            {
+                skipButtons.Clear();
+                foreach (string skipButton in textData[9].Split(";;"))
+                {
+                    ButtonInfo button = Buttons.GetIndex(skipButton);
+                    if (button != null)
+                        skipButtons.Add(skipButton);
                 }
             } catch { }
 

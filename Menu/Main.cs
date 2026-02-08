@@ -163,7 +163,7 @@ namespace iiMenu.Menu
             catch (Exception exc)
             {
                 LogManager.LogError(
-                $"Error with Settings.LoadPlugins() at {exc.StackTrace}: {exc.Message}");
+                $"Error with PluginManager.LoadPlugins() at {exc.StackTrace}: {exc.Message}");
             }
 
             try
@@ -2964,6 +2964,17 @@ namespace iiMenu.Menu
                     }
                     else switch (Buttons.CurrentCategoryName)
                     {
+                        case "Main":
+                        {
+                            List<ButtonInfo> buttons = new List<ButtonInfo>();
+                            foreach (var button in Buttons.buttons[Buttons.CurrentCategoryIndex])
+                            {
+                                if (!skipButtons.Contains(button.buttonText))
+                                    buttons.Add(button);
+                            }
+                            renderButtons = buttons.ToArray();
+                            break;
+                        }
                         case "Favorite Mods":
                         {
                             foreach (var favoriteMod in favorites.Where(favoriteMod => Buttons.GetIndex(favoriteMod) == null).ToList())
@@ -6535,6 +6546,15 @@ jgs \_   _/ |Oo\
                     count = enabledMods.Count - 1;
                 }
 
+                if (Buttons.CurrentCategoryName == "Main")
+                {
+                    foreach (var button in Buttons.buttons[Buttons.CurrentCategoryIndex])
+                    {
+                        if (skipButtons.Contains(button.buttonText))
+                            count--;
+                    }
+                }
+
                 if (!isSearching) return count;
                 {
                     List<ButtonInfo> searchedMods = new List<ButtonInfo>();
@@ -6565,7 +6585,8 @@ jgs \_   _/ |Oo\
                                     if (((Buttons.categoryNames[categoryIndex].Contains("Admin") ||
                                           Buttons.categoryNames[categoryIndex] == "Mod Givers") &&
                                          !isAdmin)
-                                        || (v.detected && !allowDetected))
+                                        || (v.detected && !allowDetected)
+                                        || (Buttons.CurrentCategoryName == "Main" && skipButtons.Contains(v.buttonText)))
                                         continue;
 
                                     string displayedText = v.overlapText ?? v.buttonText;
@@ -6902,6 +6923,7 @@ jgs \_   _/ |Oo\
         public static Texture2D customWatermark;
 
         public static readonly List<string> favorites = new List<string> { "Exit Favorite Mods" };
+        public static readonly List<string> skipButtons = new List<string> { };
         public static bool translate;
 
         public static string serverLink = "https://discord.gg/iidk";
