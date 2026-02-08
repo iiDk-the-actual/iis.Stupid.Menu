@@ -25,6 +25,7 @@ using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches;
+using iiMenu.Patches.Menu;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -86,14 +87,11 @@ namespace iiMenu
                     Directory.CreateDirectory(DirectoryTarget);
             }
 
+            // Ugily hard-coded but works so well
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
             {
-                string[] mods = File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;");
-                foreach (string mod in mods)
-                {
-                    var button = Buttons.GetIndex(mod);
-                    button?.awakeMethod?.Invoke();
-                }
+                if (File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
+                    TOSPatches.enabled = true;
             }
 
             if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_DisableTelemetry.txt"))

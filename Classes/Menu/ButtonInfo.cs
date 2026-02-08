@@ -32,7 +32,6 @@ namespace iiMenu.Classes.Menu
 
         public Action method;         // Every frame before GTPlayer.LateUpdate is called
         public Action postMethod;     // Every frame after GTPlayer.LateUpdate is called
-        public Action awakeMethod;    // Once on awake (before entire game initialization)
 
         public Action enableMethod;   // Once before method on enable
         public Action disableMethod;  // Once on disable
