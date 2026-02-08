@@ -25,7 +25,6 @@ using iiMenu.Classes.Menu;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches;
-using iiMenu.Patches.Menu;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
