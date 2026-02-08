@@ -263,7 +263,6 @@ namespace iiMenu.Mods
 
         public static void VisualizeAntiReport()
         {
-
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
                 if (line.linePlayer != NetworkSystem.Instance.LocalPlayer) continue;
