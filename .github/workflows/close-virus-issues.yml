@@ -18,7 +18,7 @@ jobs:
             const issue = context.payload.issue;
             const title = issue.title.toLowerCase();
             const body = (issue.body || "").toLowerCase();
-            const containsMalware = title.includes("virus") || title.includes("trojan");
+            const containsMalware = title.includes("virus") || title.includes("trojan") || title.includes("microsoft") || body.includes("virus") || body.includes("trojan") || body.includes("microsoft");
             if (containsMalware) {
               await github.rest.issues.update({
                 ...context.repo,
