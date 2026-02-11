@@ -5857,7 +5857,8 @@ namespace iiMenu.Menu
                         { 27, "gmod" },
                         { 28, "undo" },
                         { 29, "hl1" },
-                        { 30, "mine" }
+                        { 30, "mine" },
+                        { 31, "sensation" },
                     };
 
                     try

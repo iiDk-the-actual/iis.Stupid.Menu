@@ -6365,6 +6365,9 @@ exit 0";
                 338,
                 66,
                 66,
+                66,
+                66,
+                66,
                 66
             };
             string[] buttonSoundNames = {
@@ -6398,7 +6401,8 @@ exit 0";
                 "GMod Spawn",
                 "GMod Undo",
                 "Half Life",
-                "Mine"
+                "Mine",
+                "Sensation"
             };
 
             if (positive)
