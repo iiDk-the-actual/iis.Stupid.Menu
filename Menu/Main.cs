@@ -4355,7 +4355,10 @@ namespace iiMenu.Menu
             GunPointer.transform.position = EndPosition;
 
             Renderer PointerRenderer = GunPointer.GetComponent<Renderer>();
-            PointerRenderer.material.shader = Shader.Find("GUI/Text Shader");
+
+            if (PointerRenderer.material.shader.name != "GUI/Text Shader")
+                PointerRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            
             PointerRenderer.material.color = gunLocked || GetGunInput(true) ? buttonColors[1].GetCurrentColor() : buttonColors[0].GetCurrentColor();
 
             if (disableGunPointer)
@@ -4371,7 +4374,9 @@ namespace iiMenu.Menu
                 Destroy(Particle.GetComponent<Collider>());
             }
 
-            Destroy(GunPointer.GetComponent<Collider>());
+            Collider gunPointerCollider = GunPointer.GetComponent<Collider>();
+            if (gunPointerCollider != null)
+                Destroy(gunPointerCollider);
 
             if (disableGunLine) return (Ray, GunPointer);
             if (GunLine == null)
@@ -4381,7 +4386,8 @@ namespace iiMenu.Menu
             }
 
             GunLine.gameObject.SetActive(true);
-            GunLine.material.shader = Shader.Find("GUI/Text Shader");
+            if (GunLine.material.shader.name != "GUI/Text Shader")
+                GunLine.material.shader = Shader.Find("GUI/Text Shader");
             GunLine.startColor = backgroundColor.GetCurrentColor();
             GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
             GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);

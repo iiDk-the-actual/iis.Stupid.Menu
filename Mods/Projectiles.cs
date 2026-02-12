@@ -146,10 +146,7 @@ namespace iiMenu.Mods
 
             SnowballThrowable Throwable = GetProjectile(projectileName);
 
-            if (projectileName == "SlingshotProjectile")
-            {
-            }
-            else
+            if (projectileName != "SlingshotProjectile")
             {
                 if (Throwable == null)
                     return;
