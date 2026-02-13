@@ -1951,7 +1951,7 @@ namespace iiMenu.Menu
                 targetButtonText = targetButtonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
             targetButtonText = FixTMProTags(targetButtonText);
-            targetButtonText = FollowMenuSettings(targetButtonText);
+            targetButtonText = FollowMenuSettings(targetButtonText, true);
 
             buttonText.spriteAsset = ButtonSpriteSheet;
 
@@ -2648,7 +2648,7 @@ namespace iiMenu.Menu
                         title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length)] + " v" + Random.Range(8, 159);
                 }
 
-                title.text = FollowMenuSettings(title.text, !doCustomName);
+                title.text = FollowMenuSettings(title.text, !doCustomName, true);
 
                 if (!noPageNumber)
                     title.text += $" <color=grey>[</color><color=white>{(pageScrolling ? pageOffset : pageNumber) + 1}</color><color=grey>]</color>";
@@ -2863,7 +2863,7 @@ namespace iiMenu.Menu
                 }.AddComponent<TextMeshPro>();
 
                 keyboardInputObject.font = activeFont;
-                keyboardInputObject.text = FollowMenuSettings(keyboardInput) + ((Time.time % 1f) > 0.5f ? "|" : "");
+                keyboardInputObject.text = FollowMenuSettings(keyboardInput, false) + ((Time.time % 1f) > 0.5f ? "|" : "");
 
                 keyboardInputObject.richText = true;
                 keyboardInputObject.fontSize = 1;
@@ -3550,7 +3550,7 @@ namespace iiMenu.Menu
             if (promptImageUrl != null)
                 promptText.text = promptText.text.Replace($"<{promptImageUrl}>", "");
 
-            promptText.text = FollowMenuSettings(promptText.text);
+            promptText.text = FollowMenuSettings(promptText.text, true);
 
             promptText.fontSize = 1;
             promptText.lineSpacing = 0.8f;
@@ -3672,7 +3672,7 @@ namespace iiMenu.Menu
                 TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = FollowMenuSettings(CurrentPrompt.AcceptText);
+                text.text = FollowMenuSettings(CurrentPrompt.AcceptText, true);
                 text.fontSize = 1;
                 text.alignment = TextAlignmentOptions.Center;
                 text.enableAutoSizing = true;
@@ -3732,7 +3732,7 @@ namespace iiMenu.Menu
                 TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = FollowMenuSettings(CurrentPrompt.DeclineText);
+                text.text = FollowMenuSettings(CurrentPrompt.DeclineText, true);
                 text.fontSize = 1;
                 text.alignment = TextAlignmentOptions.Center;
                 text.enableAutoSizing = true;
@@ -5304,10 +5304,14 @@ namespace iiMenu.Menu
         /// true.</param>
         /// <returns>A string containing the transformed input, with translation and case modifications applied as specified by
         /// the current settings.</returns>
-        public static string FollowMenuSettings(string input, bool translateText = true)
+        public static string FollowMenuSettings(string input, bool translateText = true, bool reloadOnTranslate = false)
         {
+            Action<string> onTranslate = null;
+            if (reloadOnTranslate)
+                onTranslate = (_) => TranslationReloadDelay();
+
             if (translateText && translate)
-                input = TranslationManager.TranslateText(input);
+                input = TranslationManager.TranslateText(input, onTranslate);
 
             if (lowercaseMode)
                 input = input.ToLower();
@@ -5324,6 +5328,24 @@ namespace iiMenu.Menu
             input = new string(result);
 
             return input;
+        }
+
+        private static Coroutine translationCoroutine;
+        public static void TranslationReloadDelay()
+        {
+            if (translationCoroutine != null)
+            {
+                CoroutineManager.instance.StopCoroutine(translationCoroutine);
+                translationCoroutine = null;
+            }
+
+            translationCoroutine = CoroutineManager.instance.StartCoroutine(TranslationReloadCoroutine());
+        }
+
+        public static IEnumerator TranslationReloadCoroutine()
+        {
+            yield return new WaitForSeconds(0.5f);
+            ReloadMenu();
         }
 
         /// <summary>
