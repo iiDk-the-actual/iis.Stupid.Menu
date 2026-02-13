@@ -273,6 +273,8 @@ namespace iiMenu.Mods
 
                                 slingshotProjectile = projectile.GetComponent<SlingshotProjectile>();
                                 slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, ProjectileTracker.AddAndIncrementLocalProjectile(slingshotProjectile, velocity, position, projectileScale), projectileScale, true, color);
+
+                                slingshotProjectile.ApplyColor(slingshotProjectile.defaultBall, color);
                             }
                             else
                                 slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
