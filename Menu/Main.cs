@@ -57,6 +57,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json;
 using Valve.VR;
+using WebSocketSharp;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
@@ -193,10 +194,23 @@ namespace iiMenu.Menu
                 {
                     Settings.LoadPreferences();
                 }
-                catch
+                catch (Exception exc)
                 {
+                    LogManager.LogError(
+                    $"Error with Settings.LoadPreferences() at {exc.StackTrace}: {exc.Message}");
+
                     CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
                 }
+            }
+
+            try
+            {
+                Settings.LoadPCControls();
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError(
+                $"Error with Settings.LoadPCControls() at {exc.StackTrace}: {exc.Message}");
             }
 
             if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime >= DateTime.Now.AddYears(1))
@@ -217,19 +231,19 @@ namespace iiMenu.Menu
             #region Controls
             try
             {
-                rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
-                rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
-                leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
-                leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
-                leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
-                rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
+                rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightPrimaryButton]);
+                rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightSecondaryButton]);
+                leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftPrimaryButton]);
+                leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftSecondaryButton]);
+                leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftGrip]);
+                rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightGrip]);
                 leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
                 rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
 
-                if (UnityInput.Current.GetKey(KeyCode.Minus))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftTrigger]))
                     leftTrigger = 1f;
 
-                if (UnityInput.Current.GetKey(KeyCode.Equals))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightTrigger]))
                     rightTrigger = 1f;
 
                 if (IsSteam)
@@ -250,18 +264,20 @@ namespace iiMenu.Menu
                 }
 
                 bool arrowKeysPressed = UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow);
+                bool leftOverride = UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftOverride]);
+                
                 if (arrowKeysPressed)
                 {
                     Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
-                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                    if (leftOverride)
                         rightJoystick = direction;
                     else
                         leftJoystick = direction;
                 }
 
-                if (UnityInput.Current.GetKey(KeyCode.Return))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.JoystickClick]))
                 {
-                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                    if (leftOverride)
                         rightJoystickClick = true;
                     else
                         leftJoystickClick = true;
@@ -290,14 +306,7 @@ namespace iiMenu.Menu
                     }
                 }
 
-                shouldBePC = UnityInput.Current.GetKey(KeyCode.E)
-                            || UnityInput.Current.GetKey(KeyCode.R)
-                            || UnityInput.Current.GetKey(KeyCode.F)
-                            || UnityInput.Current.GetKey(KeyCode.G)
-                            || UnityInput.Current.GetKey(KeyCode.LeftBracket)
-                            || UnityInput.Current.GetKey(KeyCode.RightBracket)
-                            || UnityInput.Current.GetKey(KeyCode.Minus)
-                            || UnityInput.Current.GetKey(KeyCode.Equals)
+                shouldBePC = Settings.pcBindings.Values.Any(key => UnityInput.Current.GetKey(key))
                             || Mouse.current.leftButton.isPressed
                             || Mouse.current.rightButton.isPressed
                             || arrowKeysPressed;
