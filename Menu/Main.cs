@@ -6645,6 +6645,7 @@ jgs \_   _/ |Oo\
         public static int LastPage => (DisplayedItemCount + PageSize - 1) / PageSize - 1;
 
         [Obsolete("currentCategoryIndex is obsolete. Use Buttons.CurrentCategoryIndex instead.")]
+#pragma warning disable IDE1006 // Naming Styles
         public static int currentCategoryIndex
         {
             get => Buttons.CurrentCategoryIndex;
@@ -6657,6 +6658,7 @@ jgs \_   _/ |Oo\
             get => Buttons.CurrentCategoryName;
             set => Buttons.CurrentCategoryName = value;
         }
+#pragma warning restore IDE1006 // Naming Styles
 
         public static int pageOffset;
         public static int pageNumber;
