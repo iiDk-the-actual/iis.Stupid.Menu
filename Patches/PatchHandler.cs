@@ -67,13 +67,9 @@ namespace iiMenu.Patches
         public static void ApplyPatch(Type targetClass, string methodName, MethodInfo prefix = null, MethodInfo postfix = null, Type[] parameterTypes = null)
         {
             var original =
-                parameterTypes == null ?
+                (parameterTypes == null ?
                 targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) :
-                targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, parameterTypes, null);
-
-            if (original == null)
-                throw new Exception($"Method '{methodName}' not found on {targetClass.FullName}");
-
+                targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, parameterTypes, null)) ?? throw new Exception($"Method '{methodName}' not found on {targetClass.FullName}");
             instance.Patch(original,
                 prefix: prefix != null ? new HarmonyMethod(prefix) : null,
                 postfix: postfix != null ? new HarmonyMethod(postfix) : null);
@@ -82,12 +78,9 @@ namespace iiMenu.Patches
         public static void RemovePatch(Type targetClass, string methodName, Type[] parameterTypes = null)
         {
             var original =
-                parameterTypes == null ?
+                (parameterTypes == null ?
                 targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static) :
-                targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, parameterTypes, null);
-            if (original == null)
-                throw new Exception($"Method '{methodName}' not found on {targetClass.FullName}");
-
+                targetClass.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, parameterTypes, null)) ?? throw new Exception($"Method '{methodName}' not found on {targetClass.FullName}");
             instance.Unpatch(original, HarmonyPatchType.All, instance.Id);
         }
 
