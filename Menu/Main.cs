@@ -1642,9 +1642,10 @@ namespace iiMenu.Menu
                                         {
                                             try
                                             {
-                                                string buttonText = v.overlapText ?? v.buttonText;
+                                                List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                                texts.Add(v.overlapText ?? v.buttonText);
 
-                                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                                     searchedMods.Add(v);
                                             }
                                             catch { }
@@ -2916,11 +2917,10 @@ namespace iiMenu.Menu
                             {
                                 try
                                 {
-                                    string buttonText = v.buttonText;
-                                    if (v.overlapText != null)
-                                        buttonText = v.overlapText;
+                                    List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                    texts.Add(v.overlapText ?? v.buttonText);
 
-                                    if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                    if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                         searchedMods.Add(v);
                                 }
                                 catch { }
@@ -6594,9 +6594,10 @@ jgs \_   _/ |Oo\
                         {
                             try
                             {
-                                string buttonText = v.overlapText ?? v.buttonText;
+                                List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                texts.Add(v.overlapText ?? v.buttonText);
 
-                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                     searchedMods.Add(v);
                             }
                             catch { }
