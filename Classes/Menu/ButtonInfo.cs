@@ -25,16 +25,18 @@ namespace iiMenu.Classes.Menu
 {
     public class ButtonInfo
     {
-        public string buttonText = "-";
-        public string overlapText;
+        public string buttonText = "-"; // Button code name, displayed in menu if overlapText is null
+        public string overlapText;      // Button text displayed on menu, overrides buttonText
 
-        public string toolTip = "This button doesn't have a tooltip/tutorial.";
+        public string[] aliases;        // Other terms a button can go by for searching, not displayed in menu
 
-        public Action method;         // Every frame before GTPlayer.LateUpdate is called
-        public Action postMethod;     // Every frame after GTPlayer.LateUpdate is called
+        public string toolTip = "This button doesn't have a tooltip/tutorial."; // Tooltip of button, a short description
 
-        public Action enableMethod;   // Once before method on enable
-        public Action disableMethod;  // Once on disable
+        public Action method;           // Every frame before GTPlayer.LateUpdate is called
+        public Action postMethod;       // Every frame after GTPlayer.LateUpdate is called
+
+        public Action enableMethod;     // Once before method on enable
+        public Action disableMethod;    // Once on disable
 
         public bool enabled;
         public bool isTogglable = true;

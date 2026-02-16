@@ -1687,7 +1687,8 @@ namespace iiMenu.Mods
         public static bool selfNameTag;
         public static void NameTags()
         {
-            foreach (var nametag in nametags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = nametags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 nametags.Remove(nametag.Key);
@@ -1738,7 +1739,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject>();
         public static void VelocityTags()
         {
-            foreach (var nametag in velnametags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = velnametags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 velnametags.Remove(nametag.Key);
@@ -1794,7 +1796,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> fpsNametags = new Dictionary<VRRig, GameObject>();
         public static void FPSTags()
         {
-            foreach (var nametag in fpsNametags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = fpsNametags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 fpsNametags.Remove(nametag.Key);
@@ -1850,7 +1853,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> idNameTags = new Dictionary<VRRig, GameObject>();
         public static void IDTags()
         {
-            foreach (var nametag in idNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = idNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 idNameTags.Remove(nametag.Key);
@@ -1906,7 +1910,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> platformTags = new Dictionary<VRRig, GameObject>();
         public static void PlatformTags()
         {
-            foreach (var nametag in platformTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = platformTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 platformTags.Remove(nametag.Key);
@@ -2106,7 +2111,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> creationDateTags = new Dictionary<VRRig, GameObject>();
         public static void CreationDateTags()
         {
-            foreach (var nametag in creationDateTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = creationDateTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 creationDateTags.Remove(nametag.Key);
@@ -2163,7 +2169,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> pingNameTags = new Dictionary<VRRig, GameObject>();
         public static void PingTags()
         {
-            foreach (var nametag in pingNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = pingNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 pingNameTags.Remove(nametag.Key);
@@ -2220,7 +2227,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject>();
         public static void TurnTags()
         {
-            foreach (var nametag in turnNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = turnNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 turnNameTags.Remove(nametag.Key);
@@ -2279,7 +2287,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject>();
         public static void TaggedTags()
         {
-            foreach (var nametag in taggedNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = taggedNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 taggedNameTags.Remove(nametag.Key);
@@ -2436,7 +2445,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
         public static void ModTags()
         {
-            foreach (var nametag in modNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = modNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 modNameTags.Remove(nametag.Key);
@@ -2540,7 +2550,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject>();
         public static void CosmeticTags()
         {
-            foreach (var nametag in cosmeticNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = cosmeticNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 cosmeticNameTags.Remove(nametag.Key);
@@ -2711,7 +2722,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
         public static void VerifiedTags()
         {
-            foreach (var nametag in verifiedNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = verifiedNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 verifiedNameTags.Remove(nametag.Key);
@@ -2906,7 +2918,8 @@ namespace iiMenu.Mods
         public static void CompactTags()
         {
             bool hoc = Buttons.GetIndex("Hidden on Camera").enabled;
-            foreach (var nametag in compactNameTags.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> nametagsCopy = compactNameTags.ToList();
+            foreach (var nametag in nametagsCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 Object.Destroy(compactTagBackgrounds[nametag.Key]);
@@ -3300,7 +3313,8 @@ namespace iiMenu.Mods
         private static Material cosmeticMat;
         public static void CosmeticESP()
         {
-            foreach (var nametag in cosmeticIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> indicatorCopy = cosmeticIndicators.ToList();
+            foreach (var nametag in indicatorCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 cosmeticIndicators.Remove(nametag.Key);
@@ -3382,7 +3396,8 @@ namespace iiMenu.Mods
 
         public static void PlatformIndicators()
         {
-            foreach (var nametag in platformIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> indicatorCopy = platformIndicators.ToList();
+            foreach (var nametag in indicatorCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 platformIndicators.Remove(nametag.Key);
@@ -3422,7 +3437,8 @@ namespace iiMenu.Mods
 
         public static void PlatformESP()
         {
-            foreach (var nametag in platformIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> indicatorCopy = platformIndicators.ToList();
+            foreach (var nametag in indicatorCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 platformIndicators.Remove(nametag.Key);
@@ -3468,7 +3484,8 @@ namespace iiMenu.Mods
         private static readonly Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject>();
         public static void VoiceIndicators()
         {
-            foreach (var nametag in voiceIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> indicatorCopy = voiceIndicators.ToList();
+            foreach (var nametag in indicatorCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 voiceIndicators.Remove(nametag.Key);
@@ -3529,7 +3546,8 @@ namespace iiMenu.Mods
 
         public static void VoiceESP()
         {
-            foreach (var nametag in voiceIndicators.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
+            List<KeyValuePair<VRRig, GameObject>> indicatorCopy = voiceIndicators.ToList();
+            foreach (var nametag in indicatorCopy.Where(nametag => !GorillaParent.instance.vrrigs.Contains(nametag.Key)))
             {
                 Object.Destroy(nametag.Value);
                 voiceIndicators.Remove(nametag.Key);

@@ -6319,6 +6319,70 @@ exit 0";
             }
         }
 
+        public enum ControllerBinding
+        {
+            None,
+            LeftTrigger,
+            RightTrigger,
+            LeftGrip,
+            RightGrip,
+            LeftPrimaryButton,
+            RightPrimaryButton,
+            LeftSecondaryButton,
+            RightSecondaryButton,
+            JoystickClick,
+            LeftOverride
+        }
+
+        public static readonly Dictionary<ControllerBinding, KeyCode> pcBindings = new Dictionary<ControllerBinding, KeyCode>
+        {
+            { ControllerBinding.RightPrimaryButton, KeyCode.E },
+            { ControllerBinding.RightSecondaryButton, KeyCode.R },
+            { ControllerBinding.LeftPrimaryButton, KeyCode.F },
+            { ControllerBinding.LeftSecondaryButton, KeyCode.G },
+            { ControllerBinding.LeftGrip, KeyCode.LeftBracket },
+            { ControllerBinding.RightGrip, KeyCode.RightBracket },
+            { ControllerBinding.LeftTrigger, KeyCode.Minus },
+            { ControllerBinding.LeftTrigger, KeyCode.Equals },
+            { ControllerBinding.JoystickClick, KeyCode.Return },
+            { ControllerBinding.LeftOverride, KeyCode.LeftAlt }
+        };
+
+        public static void LoadPCControls()
+        {
+            string fileName = $"{PluginInfo.BaseDirectory}/iiMenu_PCControls.txt";
+
+            if (File.Exists(fileName))
+            {
+                string data = File.ReadAllText(fileName);
+                string[] lines = data.Split('\n');
+                pcBindings.Clear();
+
+                foreach (string line in lines)
+                {
+                    string finalLine = line.Trim();
+
+                    if (!finalLine.Contains(" - "))
+                        continue;
+
+                    string[] splitData = finalLine.Split(" - ");
+
+                    if (Enum.TryParse(splitData[1], out ControllerBinding binding) && Enum.TryParse(splitData[0], out KeyCode key))
+                        pcBindings[binding] = key;
+                }
+            }
+            else
+            {
+                var lines = new List<string>();
+
+                foreach (var pair in pcBindings)
+                    lines.Add($"{pair.Value} - {pair.Key}");
+
+                File.WriteAllLines(fileName, lines);
+            }
+        }
+
+
         public static void ChangeReconnectTime(bool positive = true)
         {
             if (positive)

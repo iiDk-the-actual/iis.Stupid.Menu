@@ -57,6 +57,7 @@ using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.Newtonsoft.Json;
 using Valve.VR;
+using WebSocketSharp;
 using static iiMenu.Utilities.AssetUtilities;
 using static iiMenu.Utilities.FileUtilities;
 using static iiMenu.Utilities.RandomUtilities;
@@ -193,10 +194,23 @@ namespace iiMenu.Menu
                 {
                     Settings.LoadPreferences();
                 }
-                catch
+                catch (Exception exc)
                 {
+                    LogManager.LogError(
+                    $"Error with Settings.LoadPreferences() at {exc.StackTrace}: {exc.Message}");
+
                     CoroutineManager.instance.StartCoroutine(DelayLoadPreferences());
                 }
+            }
+
+            try
+            {
+                Settings.LoadPCControls();
+            }
+            catch (Exception exc)
+            {
+                LogManager.LogError(
+                $"Error with Settings.LoadPCControls() at {exc.StackTrace}: {exc.Message}");
             }
 
             if (new DirectoryInfo(Path.Combine(GetGamePath(), PluginInfo.ClientResourcePath)).CreationTime >= DateTime.Now.AddYears(1))
@@ -217,19 +231,19 @@ namespace iiMenu.Menu
             #region Controls
             try
             {
-                rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
-                rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
-                leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
-                leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
-                leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
-                rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
+                rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightPrimaryButton]);
+                rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightSecondaryButton]);
+                leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftPrimaryButton]);
+                leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftSecondaryButton]);
+                leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftGrip]);
+                rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightGrip]);
                 leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
                 rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
 
-                if (UnityInput.Current.GetKey(KeyCode.Minus))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftTrigger]))
                     leftTrigger = 1f;
 
-                if (UnityInput.Current.GetKey(KeyCode.Equals))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.RightTrigger]))
                     rightTrigger = 1f;
 
                 if (IsSteam)
@@ -250,18 +264,20 @@ namespace iiMenu.Menu
                 }
 
                 bool arrowKeysPressed = UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow);
+                bool leftOverride = UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.LeftOverride]);
+                
                 if (arrowKeysPressed)
                 {
                     Vector2 direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
-                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                    if (leftOverride)
                         rightJoystick = direction;
                     else
                         leftJoystick = direction;
                 }
 
-                if (UnityInput.Current.GetKey(KeyCode.Return))
+                if (UnityInput.Current.GetKey(Settings.pcBindings[Settings.ControllerBinding.JoystickClick]))
                 {
-                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                    if (leftOverride)
                         rightJoystickClick = true;
                     else
                         leftJoystickClick = true;
@@ -290,14 +306,7 @@ namespace iiMenu.Menu
                     }
                 }
 
-                shouldBePC = UnityInput.Current.GetKey(KeyCode.E)
-                            || UnityInput.Current.GetKey(KeyCode.R)
-                            || UnityInput.Current.GetKey(KeyCode.F)
-                            || UnityInput.Current.GetKey(KeyCode.G)
-                            || UnityInput.Current.GetKey(KeyCode.LeftBracket)
-                            || UnityInput.Current.GetKey(KeyCode.RightBracket)
-                            || UnityInput.Current.GetKey(KeyCode.Minus)
-                            || UnityInput.Current.GetKey(KeyCode.Equals)
+                shouldBePC = Settings.pcBindings.Values.Any(key => UnityInput.Current.GetKey(key))
                             || Mouse.current.leftButton.isPressed
                             || Mouse.current.rightButton.isPressed
                             || arrowKeysPressed;
@@ -1642,9 +1651,10 @@ namespace iiMenu.Menu
                                         {
                                             try
                                             {
-                                                string buttonText = v.overlapText ?? v.buttonText;
+                                                List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                                texts.Add(v.overlapText ?? v.buttonText);
 
-                                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                                     searchedMods.Add(v);
                                             }
                                             catch { }
@@ -1951,7 +1961,7 @@ namespace iiMenu.Menu
                 targetButtonText = targetButtonText.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
 
             targetButtonText = FixTMProTags(targetButtonText);
-            targetButtonText = FollowMenuSettings(targetButtonText);
+            targetButtonText = FollowMenuSettings(targetButtonText, true);
 
             buttonText.spriteAsset = ButtonSpriteSheet;
 
@@ -2648,7 +2658,7 @@ namespace iiMenu.Menu
                         title.text = randomMenuNames[Random.Range(0, randomMenuNames.Length)] + " v" + Random.Range(8, 159);
                 }
 
-                title.text = FollowMenuSettings(title.text, !doCustomName);
+                title.text = FollowMenuSettings(title.text, !doCustomName, true);
 
                 if (!noPageNumber)
                     title.text += $" <color=grey>[</color><color=white>{(pageScrolling ? pageOffset : pageNumber) + 1}</color><color=grey>]</color>";
@@ -2863,7 +2873,7 @@ namespace iiMenu.Menu
                 }.AddComponent<TextMeshPro>();
 
                 keyboardInputObject.font = activeFont;
-                keyboardInputObject.text = FollowMenuSettings(keyboardInput) + ((Time.time % 1f) > 0.5f ? "|" : "");
+                keyboardInputObject.text = FollowMenuSettings(keyboardInput, false) + ((Time.time % 1f) > 0.5f ? "|" : "");
 
                 keyboardInputObject.richText = true;
                 keyboardInputObject.fontSize = 1;
@@ -2916,11 +2926,10 @@ namespace iiMenu.Menu
                             {
                                 try
                                 {
-                                    string buttonText = v.buttonText;
-                                    if (v.overlapText != null)
-                                        buttonText = v.overlapText;
+                                    List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                    texts.Add(v.overlapText ?? v.buttonText);
 
-                                    if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                    if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                         searchedMods.Add(v);
                                 }
                                 catch { }
@@ -3550,7 +3559,7 @@ namespace iiMenu.Menu
             if (promptImageUrl != null)
                 promptText.text = promptText.text.Replace($"<{promptImageUrl}>", "");
 
-            promptText.text = FollowMenuSettings(promptText.text);
+            promptText.text = FollowMenuSettings(promptText.text, true);
 
             promptText.fontSize = 1;
             promptText.lineSpacing = 0.8f;
@@ -3672,7 +3681,7 @@ namespace iiMenu.Menu
                 TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = FollowMenuSettings(CurrentPrompt.AcceptText);
+                text.text = FollowMenuSettings(CurrentPrompt.AcceptText, true);
                 text.fontSize = 1;
                 text.alignment = TextAlignmentOptions.Center;
                 text.enableAutoSizing = true;
@@ -3732,7 +3741,7 @@ namespace iiMenu.Menu
                 TextMeshPro text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<TextMeshPro>();
                 text.font = activeFont;
                 text.fontStyle = activeFontStyle;
-                text.text = FollowMenuSettings(CurrentPrompt.DeclineText);
+                text.text = FollowMenuSettings(CurrentPrompt.DeclineText, true);
                 text.fontSize = 1;
                 text.alignment = TextAlignmentOptions.Center;
                 text.enableAutoSizing = true;
@@ -5304,10 +5313,14 @@ namespace iiMenu.Menu
         /// true.</param>
         /// <returns>A string containing the transformed input, with translation and case modifications applied as specified by
         /// the current settings.</returns>
-        public static string FollowMenuSettings(string input, bool translateText = true)
+        public static string FollowMenuSettings(string input, bool translateText = true, bool reloadOnTranslate = false)
         {
+            Action<string> onTranslate = null;
+            if (reloadOnTranslate)
+                onTranslate = (_) => TranslationReloadDelay();
+
             if (translateText && translate)
-                input = TranslationManager.TranslateText(input);
+                input = TranslationManager.TranslateText(input, onTranslate);
 
             if (lowercaseMode)
                 input = input.ToLower();
@@ -5324,6 +5337,24 @@ namespace iiMenu.Menu
             input = new string(result);
 
             return input;
+        }
+
+        private static Coroutine translationCoroutine;
+        public static void TranslationReloadDelay()
+        {
+            if (translationCoroutine != null)
+            {
+                CoroutineManager.instance.StopCoroutine(translationCoroutine);
+                translationCoroutine = null;
+            }
+
+            translationCoroutine = CoroutineManager.instance.StartCoroutine(TranslationReloadCoroutine());
+        }
+
+        public static IEnumerator TranslationReloadCoroutine()
+        {
+            yield return new WaitForSeconds(0.5f);
+            ReloadMenu();
         }
 
         /// <summary>
@@ -6572,9 +6603,10 @@ jgs \_   _/ |Oo\
                         {
                             try
                             {
-                                string buttonText = v.overlapText ?? v.buttonText;
+                                List<string> texts = v.aliases == null ? new List<string>() : v.aliases.ToList();
+                                texts.Add(v.overlapText ?? v.buttonText);
 
-                                if (buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                if (texts.Any(buttonText => buttonText.ClearTags().Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower())))
                                     searchedMods.Add(v);
                             }
                             catch { }
@@ -6622,6 +6654,7 @@ jgs \_   _/ |Oo\
         public static int LastPage => (DisplayedItemCount + PageSize - 1) / PageSize - 1;
 
         [Obsolete("currentCategoryIndex is obsolete. Use Buttons.CurrentCategoryIndex instead.")]
+#pragma warning disable IDE1006 // Naming Styles
         public static int currentCategoryIndex
         {
             get => Buttons.CurrentCategoryIndex;
@@ -6634,6 +6667,7 @@ jgs \_   _/ |Oo\
             get => Buttons.CurrentCategoryName;
             set => Buttons.CurrentCategoryName = value;
         }
+#pragma warning restore IDE1006 // Naming Styles
 
         public static int pageOffset;
         public static int pageNumber;
