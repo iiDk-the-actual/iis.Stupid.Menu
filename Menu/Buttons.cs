@@ -605,7 +605,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.SlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Zero Gravity Slingshot Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.ZeroGravitySlingshotFly, toolTip = "Sends your character forwards, in a more elastic manner without gravity, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Slingshot Bark Fly <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.VelocityBarkFly, toolTip = "Acts like the fly that Bark has, mixed with slingshot fly. Credits to KyleTheScientist."},
-                new ButtonInfo { buttonText = "WASD Fly", enableMethod =() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, postMethod = Movement.WASDFly, disableMethod =() => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
+                new ButtonInfo { buttonText = "WASD Fly", aliases = new[] { "PC Fly" }, enableMethod =() => { Movement.lastPosition = GorillaTagger.Instance.rigidbody.transform.position; }, postMethod = Movement.WASDFly, disableMethod =() => GTPlayer.Instance.GetControllerTransform(false).parent.rotation = Quaternion.Euler(0, 0, 0), toolTip = "Moves your rig with <color=green>WASD</color>."},
 
                 new ButtonInfo { buttonText = "Dash <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Dash, toolTip = "Flings your character forwards when pressing <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Reverse Velocity <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.ReverseVelocity, toolTip = "Reverses your current velocity when you press <color=green>A</color>."},
@@ -613,7 +613,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Iron Man", aliases = new[] { "Iron Monke" }, method = Movement.IronMan, toolTip = "Turns you into iron man, rotate your hands around to change direction."},
                 new ButtonInfo { buttonText = "Spider Man", aliases = new[] { "Spider Monke" }, method = Movement.SpiderMan, disableMethod = Movement.DisableSpiderMan, toolTip = "Turns you into spider man, use your <color=green>grips</color> to shoot webs."},
                 new ButtonInfo { buttonText = "Grappling Hooks", method = Movement.GrapplingHooks, disableMethod = Movement.DisableSpiderMan, toolTip = "Gives you grappling hooks, use your <color=green>grips</color> to shoot them."},
-                new ButtonInfo { buttonText = "Portal Gun", method = Movement.PortalGun, disableMethod = Movement.DisablePortalGun, toolTip = "Gives you a gun to spawn portals that can be seen and walked through."},
+                new ButtonInfo { buttonText = "Portal Gun", aliases = new[] { "Portals" }, method = Movement.PortalGun, disableMethod = Movement.DisablePortalGun, toolTip = "Gives you a gun to spawn portals that can be seen and walked through."},
 
                 new ButtonInfo { buttonText = "Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", aliases = new[] { "Car Monke" }, method = Movement.Drive, toolTip = "Lets you drive around in your invisible car. Use the <color=green>joystick</color> to move."},
                 new ButtonInfo { buttonText = "Hard Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", overlapText = "Sticky Drive <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.HardDrive, toolTip = "Similar to drive, but locks you to the ground."},
@@ -625,7 +625,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Size Changer", method = Movement.SizeChanger, enableMethod = Movement.DisableSizeChanger, disableMethod = Movement.DisableSizeChanger, toolTip = "Increase your size by holding <color=green>trigger</color>, and decrease your size by holding <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Auto Walk <color=grey>[</color><color=green>J</color><color=grey>]</color>", method = Movement.AutoWalk, toolTip = "Makes your character automatically walk when using the <color=green>joystick</color>."},
+                new ButtonInfo { buttonText = "Auto Walk <color=grey>[</color><color=green>J</color><color=grey>]</color>", aliases = new[] { "Ghost Walk", "Walk Simulator" }, method = Movement.AutoWalk, toolTip = "Makes your character automatically walk when using the <color=green>joystick</color>."},
                 new ButtonInfo { buttonText = "Auto Funny Run <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.AutoFunnyRun, toolTip = "Makes your character automatically funny run when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Auto Pinch Climb <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.AutoPinchClimb, toolTip = "Makes your character automatically pinch climb when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Auto Elevator Climb <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.AutoElevatorClimb, toolTip = "Makes your character automatically elevator climb when holding <color=green>grip</color>."},
@@ -634,12 +634,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Force Tag Freeze", method = Movement.ForceTagFreeze, disableMethod = Movement.NoTagFreeze, toolTip = "Forces tag freeze on your character."},
                 new ButtonInfo { buttonText = "No Tag Freeze", method = Movement.NoTagFreeze, toolTip = "Disables tag freeze on your character."},
                 new ButtonInfo { buttonText = "Feather Falling", method = Movement.FeatherFalling, toolTip = "Makes you fall like a feather."},
-                new ButtonInfo { buttonText = "Low Gravity", method = Movement.LowGravity, toolTip = "Makes gravity lower on your character."},
-                new ButtonInfo { buttonText = "Zero Gravity", method = Movement.ZeroGravity, toolTip = "Disables gravity on your character."},
-                new ButtonInfo { buttonText = "High Gravity", method = Movement.HighGravity, toolTip = "Makes gravity higher on your character."},
-                new ButtonInfo { buttonText = "Reverse Gravity", method = Movement.ReverseGravity, disableMethod = Movement.UnflipCharacter, toolTip = "Reverses gravity on your character."},
+                new ButtonInfo { buttonText = "Low Gravity", aliases = new[] { "Moon Gravity" }, method = Movement.LowGravity, toolTip = "Makes gravity lower on your character."},
+                new ButtonInfo { buttonText = "Zero Gravity", aliases = new[] { "No Gravity" }, method = Movement.ZeroGravity, toolTip = "Disables gravity on your character."},
+                new ButtonInfo { buttonText = "High Gravity", aliases = new[] { "Mars Gravity" }, method = Movement.HighGravity, toolTip = "Makes gravity higher on your character."},
+                new ButtonInfo { buttonText = "Reverse Gravity", aliases = new[] { "Flip Gravity" }, method = Movement.ReverseGravity, disableMethod = Movement.UnflipCharacter, toolTip = "Reverses gravity on your character."},
 
-                new ButtonInfo { buttonText = "Rewind <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Movement.Rewind, disableMethod = Movement.ClearRewind, toolTip = "Brings you back in time when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Rewind <color=grey>[</color><color=green>T</color><color=grey>]</color>", aliases = new[] { "Reverse" }, method = Movement.Rewind, disableMethod = Movement.ClearRewind, toolTip = "Brings you back in time when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Macros", method =() => CurrentCategoryName = "Macros", isTogglable = false, toolTip = "Opens a category to manage your macros."},
 
                 new ButtonInfo { buttonText = "Wall Walk <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.WallWalk, toolTip = "Makes you get brought towards any wall you touch when holding <color=green>grip</color>."},
@@ -654,31 +654,31 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Checkpoint <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.Checkpoint, disableMethod = Movement.DisableCheckpoint, toolTip = "Place a checkpoint with <color=green>grip</color> and teleport to it with <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Advanced Checkpoints <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.AdvancedCheckpoints, disableMethod = Movement.DisableAdvancedCheckpoints, toolTip = "Place checkpoints with <color=green>grip</color>, use your joystick to swap between checkpoints, and teleport to your selected checkpoint with <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Ender Pearl <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.EnderPearl, disableMethod = Movement.DestroyEnderPearl, toolTip = "Gives you a throwable ender pearl when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "C4 <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.Bomb, disableMethod = Movement.DisableBomb, toolTip = "Place a C4 with <color=green>grip</color> and detonate it with <color=green>A</color>."},
+                new ButtonInfo { buttonText = "C4 <color=grey>[</color><color=green>G</color><color=grey>]</color>", aliases = new[] { "Bomb" }, method = Movement.Bomb, disableMethod = Movement.DisableBomb, toolTip = "Place a C4 with <color=green>grip</color> and detonate it with <color=green>A</color>."},
 
                 new ButtonInfo { buttonText = "Punch Mod", method = Movement.PunchMod, toolTip = "Lets people punch you across the map."},
                 new ButtonInfo { buttonText = "Telekinesis", method = Movement.Telekinesis, toolTip = "Lets people control you with nothing but the power of their finger."},
                 new ButtonInfo { buttonText = "Safety Bubble", method = Movement.SafetyBubble, toolTip = "Moves you away from players if they get too close to you."},
-                new ButtonInfo { buttonText = "Solid Players", method = Movement.SolidPlayers, disableMethod = Movement.DisableSolidPlayers, toolTip = "Lets you walk on top of other players."},
+                new ButtonInfo { buttonText = "Solid Players", aliases = new[] { "Solid Monke" }, method = Movement.SolidPlayers, disableMethod = Movement.DisableSolidPlayers, toolTip = "Lets you walk on top of other players."},
                 new ButtonInfo { buttonText = "Pull Mod <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.PullMod, toolTip = "Pulls you more whenever you walk to simulate speed without modifying your velocity."},
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", aliases = new[] { "Long Jump" }, method = Movement.PlayspaceAbuse, toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
-                new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod = Movement.CreateVelocityTrackers, method = Movement.VelocityLongArms, disableMethod = Movement.DestroyVelocityTrackers, toolTip = "Moves your arms farther depending on how fast you move them."},
+                new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", aliases = new[] { "Velocity Long Arms" }, enableMethod = Movement.CreateVelocityTrackers, method = Movement.VelocityLongArms, disableMethod = Movement.DestroyVelocityTrackers, toolTip = "Moves your arms farther depending on how fast you move them."},
 
                 new ButtonInfo { buttonText = "Timer", enableMethod =() => TimerPatch.enabled = true, method = Movement.Timer, disableMethod =() => { TimerPatch.enabled = false; Time.timeScale = 1f; GTPlayer.Instance.debugMovement = false;  }, toolTip = "Speeds up or slows down the time of your game."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method = Movement.SpeedBoost, toolTip = "Changes your speed to whatever you set it to."},
                 new ButtonInfo { buttonText = "Grip Speed Boost", method =() => { if (rightGrab) { Movement.SpeedBoost(); } }, toolTip = "Changes your speed to whatever you set it to, if you're holding right grip."},
                 new ButtonInfo { buttonText = "Dynamic Speed Boost", method = Movement.DynamicSpeedBoost, toolTip = "Dynamically changes your speed to whatever you set it to when tagged players get closer to you."},
-                new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Removes the velocity limit of walking."},
+                new ButtonInfo { buttonText = "Uncap Max Velocity", aliases = new[] { "Velmax" }, method =() => GTPlayer.Instance.maxJumpSpeed = float.MaxValue, toolTip = "Removes the velocity limit of walking."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method = Movement.AlwaysMaxVelocity, toolTip = "Always makes you go as fast as the velocity limit."},
                 new ButtonInfo { buttonText = "Disable Velocity Cap", enableMethod = Movement.DisableVelocityCap, disableMethod =() => Movement.playspace.enabled = true, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
 
-                new ButtonInfo { buttonText = "Funny Movement", overlapText = "Exponential Movement", method = Movement.FunMove, toolTip = "Multiplies your velocity every frame, making you exponential."},
+                new ButtonInfo { buttonText = "Funny Movement", overlapText = "Exponential Movement", aliases = new[] { "Funny Movement" }, method = Movement.FunMove, toolTip = "Multiplies your velocity every frame, making you exponential."},
 
                 new ButtonInfo { buttonText = "Slip Slap", enableMethod = Movement.SlipSlap, disableMethod = Movement.DisableSlipSlap, toolTip = "Allows you to slip slap again."},
-                new ButtonInfo { buttonText = "Slippery Hands", overlapText = "Slippery Surfaces", enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
-                new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slippery Surfaces", enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
-                new ButtonInfo { buttonText = "Slippery Surface Helper", enableMethod =() => SlidePatch.minimalSlip = true, disableMethod =() => SlidePatch.minimalSlip = false, toolTip = "Helps you stick to slippery walls more, but doesn't remove the slipperiness."},
+                new ButtonInfo { buttonText = "Slippery Hands", overlapText = "Slippery Surfaces", aliases = new[] { "Slippery Hands" }, enableMethod =() => SlidePatch.everythingSlippery = true, disableMethod =() => SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
+                new ButtonInfo { buttonText = "Grippy Hands", overlapText = "No Slippery Surfaces", aliases = new[] { "Grippy Hands" }, enableMethod =() => SlidePatch.everythingGrippy = true, disableMethod =() => SlidePatch.everythingGrippy = false, toolTip = "Disables any slipperiness of any surfaces."},
+                new ButtonInfo { buttonText = "Slippery Surface Helper", aliases = new[] { "Slippery Wall Helper" }, enableMethod =() => SlidePatch.minimalSlip = true, disableMethod =() => SlidePatch.minimalSlip = false, toolTip = "Helps you stick to slippery walls more, but doesn't remove the slipperiness."},
                 new ButtonInfo { buttonText = "Remove Forest Colliders", enableMethod = Movement.RemoveForestColliders, disableMethod = Movement.RestoreForestColliders, toolTip = "Removes the colliders on the roof and the entrance to tutorial inside Forest."},
                 new ButtonInfo { buttonText = "Sticky Hands", method = Movement.StickyHands, disableMethod = Movement.DisableStickyHands, toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method = Movement.ClimbyHands, disableMethod = Movement.DisableClimbyHands, toolTip = "Lets you climb everything like a rope."},
@@ -690,9 +690,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Weak Slide Control", enableMethod = Movement.EnableWeakSlideControl, disableMethod = Movement.DisableSlideControl, toolTip = "Lets you control yourself on ice a little more perfect than before."},
 
                 new ButtonInfo { buttonText = "Throw Controllers", method = Movement.ThrowControllers, toolTip = "Lets you throw your controllers with <color=green>X</color> or <color=green>A</color>."},
-                new ButtonInfo { buttonText = "Controller Flick", enableMethod = Movement.EnableControllerFlick, method = Movement.ControllerFlick, disableMethod = Movement.DisableControllerFlick, toolTip = "Flicks your controllers in a similar way to disconnecting them with <color=green>X</color> or <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Controller Flick", aliases = new[] { "DC Flick", "Disconnect Flick" }, enableMethod = Movement.EnableControllerFlick, method = Movement.ControllerFlick, disableMethod = Movement.DisableControllerFlick, toolTip = "Flicks your controllers in a similar way to disconnecting them with <color=green>X</color> or <color=green>A</color>."},
 
-                new ButtonInfo { buttonText = "Uncap Arm Length", method =() => { GTPlayer.Instance.leftHand.maxArmLength = float.MaxValue; GTPlayer.Instance.rightHand.maxArmLength = float.MaxValue; }, disableMethod =() => { GTPlayer.Instance.leftHand.maxArmLength = 1; GTPlayer.Instance.rightHand.maxArmLength = 1; }, toolTip = "Removes the arm distance limit."},
+                new ButtonInfo { buttonText = "Uncap Arm Length", aliases = new[] { "Armmax" }, method =() => { GTPlayer.Instance.leftHand.maxArmLength = float.MaxValue; GTPlayer.Instance.rightHand.maxArmLength = float.MaxValue; }, disableMethod =() => { GTPlayer.Instance.leftHand.maxArmLength = 1; GTPlayer.Instance.rightHand.maxArmLength = 1; }, toolTip = "Removes the arm distance limit."},
                 new ButtonInfo { buttonText = "Steam Long Arms", method = Movement.EnableSteamLongArms, disableMethod = Movement.DisableSteamLongArms, toolTip = "Gives you long arms similar to override world scale."},
                 new ButtonInfo { buttonText = "Stick Long Arms", method = Movement.StickLongArms, toolTip = "Makes you look like you're using sticks."},
                 new ButtonInfo { buttonText = "Multiplied Long Arms", method = Movement.MultipliedLongArms, toolTip = "Gives you a weird version of long arms."},
@@ -703,18 +703,18 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Flick Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.FlickJump, toolTip = "Makes your hand go down really fast when holding <color=green>A</color>."},
 
-                new ButtonInfo { buttonText = "Bunny Hop", method = Movement.BunnyHop, toolTip = "Makes you automatically jump when on the ground."},
+                new ButtonInfo { buttonText = "Bunny Hop", aliases = new[] { "Bhop" }, method = Movement.BunnyHop, toolTip = "Makes you automatically jump when on the ground."},
                 new ButtonInfo { buttonText = "Strafe", method = Movement.Strafe, toolTip = "Makes you strafe when in the air."},
                 new ButtonInfo { buttonText = "Dynamic Strafe", method = Movement.DynamicStrafe, toolTip = "Makes you dynamically strafe when in the air."},
                 new ButtonInfo { buttonText = "Ground Helper <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.GroundHelper, toolTip = "Helps you run on ground when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Bouncy", enableMethod = Movement.PreBouncy, method = Movement.Bouncy, disableMethod = Movement.PostBouncy, toolTip = "Makes you really bouncy when on the ground."},
-                new ButtonInfo { buttonText = "Solid Water", enableMethod = Movement.SolidWater, disableMethod = Movement.FixWater, toolTip = "Makes the water solid in the beach map." },
+                new ButtonInfo { buttonText = "Solid Water", aliases = new[] { "Jesus" }, enableMethod = Movement.SolidWater, disableMethod = Movement.FixWater, toolTip = "Makes the water solid in the beach map." },
                 new ButtonInfo { buttonText = "Disable Water", enableMethod = Movement.DisableWater, disableMethod = Movement.FixWater, toolTip = "Disables the water in the beach map." },
-                new ButtonInfo { buttonText = "Air Swim", method = Movement.AirSwim, disableMethod = Movement.DisableAirSwim, toolTip = "Puts you in a block of water, letting you swim in the air." },
+                new ButtonInfo { buttonText = "Air Swim", aliases = new[] { "Fish" }, method = Movement.AirSwim, disableMethod = Movement.DisableAirSwim, toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.SetSwimSpeed(10f), disableMethod =() => Movement.SetSwimSpeed(), toolTip = "Lets you swim faster in water." },
                 new ButtonInfo { buttonText = "Water Run Helper", overlapText = "Water Run", enableMethod =() => Movement.WaterRunHelper(true), disableMethod =() => Movement.WaterRunHelper(false), toolTip = "Adds back water running to the game." },
-                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { ForcePatches.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(false); }, disableMethod =() => { ForcePatches.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
+                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", aliases = new[] { "Disable Air" }, enableMethod =() => { ForcePatches.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(false); }, disableMethod =() => { ForcePatches.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); GetObject("Environment Objects/LocalObjects_Prefab/ForestToHoverboard/TurnOnInForestAndHoverboard/ForestDome_CollisionOnly").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Ghost, disableMethod = Movement.EnableRig, toolTip = "Keeps your rig still when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method = Movement.Invisible, disableMethod = Movement.EnableRig, toolTip = "Makes you go invisible when holding <color=green>B</color>."},
@@ -756,7 +756,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rec Room Body", method = Movement.RecRoomBody, disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your rig like how the Rec Room bodies are."},
                 new ButtonInfo { buttonText = "Freeze Body Rotation <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Movement.FreezeBodyRotation, disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Freezes your body rotation in place, but not your head, when holding <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Auto Dance <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.AutoDance, toolTip = "Makes you dance when holding <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Auto Dance <color=grey>[</color><color=green>A</color><color=grey>]</color>", aliases = new[] { "Emote" }, method = Movement.AutoDance, toolTip = "Makes you dance when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Auto Griddy <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.AutoGriddy, toolTip = "Makes you griddy when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Auto T Pose <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "T Pose <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.AutoTPose, toolTip = "Makes you t pose when holding <color=green>A</color>. Good for fly trolling."},
                 new ButtonInfo { buttonText = "Helicopter <color=grey>[</color><color=green>A</color><color=grey>]</color>", method = Movement.Helicopter, toolTip = "Turns you into a helicopter when holding <color=green>A</color>."},
@@ -769,15 +769,15 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Stare at Nearby", overlapText = "Stare At Player Nearby", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.StareAtNearby, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtNearby, toolTip = "Makes you stare at the nearest player."},
                 new ButtonInfo { buttonText = "Stare at Player Gun", method = Movement.StareAtGun, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.StareAtTarget, toolTip = "Makes you stare at whoever your hand desires."},
-                new ButtonInfo { buttonText = "Stare at All Players", enableMethod = Movement.StareAtAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you stare at everyone in the room."},
+                new ButtonInfo { buttonText = "Stare at All Players", aliases = new[] { "Owl" }, enableMethod = Movement.StareAtAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you stare at everyone in the room."},
                 new ButtonInfo { buttonText = "Eye Contact", enableMethod =() => TorsoPatch.VRRigLateUpdate += Movement.EyeContact, disableMethod =() => TorsoPatch.VRRigLateUpdate -= Movement.EyeContact, toolTip = "Makes you stare at anyone who is looking at you."},
                 new ButtonInfo { buttonText = "Floating Rig", enableMethod = Movement.EnableFloatingRig, method = Movement.FloatingRig, disableMethod = Movement.DisableFloatingRig, toolTip = "Makes your rig float."},
 
                 new ButtonInfo { buttonText = "Bees", method = Movement.Bees, disableMethod = Movement.EnableRig, toolTip = "Makes your rig teleport to random players, imitating the bees ghost."},
                 new ButtonInfo { buttonText = "Bees <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() =>{ if (rightGrab) {Movement.Bees(); } }, disableMethod = Movement.EnableRig, toolTip = "Makes your rig teleport to random players when holding <color=green>grip</color>, imitating the bees ghost."},
 
-                new ButtonInfo { buttonText = "Piggyback Gun", method = Movement.PiggybackGun, toolTip = "Teleports you on top of whoever your hand desires repeatedly."},
-                new ButtonInfo { buttonText = "Piggyback All", enableMethod = Movement.PiggybackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you appear on top of everyone in the room"},
+                new ButtonInfo { buttonText = "Piggyback Gun", aliases = new[] { "Ride Gun" }, method = Movement.PiggybackGun, toolTip = "Teleports you on top of whoever your hand desires repeatedly."},
+                new ButtonInfo { buttonText = "Piggyback All", aliases = new[] { "Ride All" }, enableMethod = Movement.PiggybackAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you appear on top of everyone in the room"},
 
                 new ButtonInfo { buttonText = "Copy Movement Gun", method = Movement.CopyMovementGun, toolTip = "Makes your rig copy the movement of whoever your hand desires."},
                 new ButtonInfo { buttonText = "Copy Movement All", enableMethod = Movement.CopyMovementAll, disableMethod =() => { SerializePatch.OverrideSerialization = null; Movement.followPositions.Clear(); }, toolTip = "Makes your rig copy the movement of every player in the room."},
@@ -797,8 +797,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Intercourse Gun", aliases = new[] { "Sex Gun" }, method = Movement.IntercourseGun, toolTip = "Makes you thrust whoever your hand desires, with sounds."},
                 new ButtonInfo { buttonText = "Intercourse All", aliases = new[] { "Sex All" }, enableMethod = Movement.IntercourseAll, method = Movement.IntercourseNoises, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, with sounds."},
 
-                new ButtonInfo { buttonText = "Head Gun", method = Movement.HeadGun, toolTip = "Makes you thrust whoever your hand desires, but lower, with sounds."},
-                new ButtonInfo { buttonText = "Head All", enableMethod = Movement.HeadAll, method = Movement.IntercourseNoises, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, but lower, with sounds."}
+                new ButtonInfo { buttonText = "Head Gun", aliases = new[] { "Blowjob Gun" }, method = Movement.HeadGun, toolTip = "Makes you thrust whoever your hand desires, but lower, with sounds."},
+                new ButtonInfo { buttonText = "Head All", aliases = new[] { "Blowjob All" }, enableMethod = Movement.HeadAll, method = Movement.IntercourseNoises, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Makes you thrust everyone in the room, but lower, with sounds."}
             },
 
             new[] { // Advantage Mods [10]
@@ -808,8 +808,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Gun", method = Advantages.TagGun, toolTip = "Tags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Tag All", method = Advantages.TagAll, disableMethod = Movement.EnableRig, toolTip = "Attempts to tag everyone in the the room."},
 
-                new ButtonInfo { buttonText = "Tag Aura", method = Advantages.TagAura, toolTip = "Moves your hand into nearby players when tagged."},
-                new ButtonInfo { buttonText = "Grip Tag Aura <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Advantages.GripTagAura, toolTip = "Moves your hand into nearby players when tagged and when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Tag Aura", aliases = new[] { "Tag Range" }, method = Advantages.TagAura, toolTip = "Moves your hand into nearby players when tagged."},
+                new ButtonInfo { buttonText = "Grip Tag Aura <color=grey>[</color><color=green>G</color><color=grey>]</color>", aliases = new[] { "Grip Tag Range" }, method = Advantages.GripTagAura, toolTip = "Moves your hand into nearby players when tagged and when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Tag Aura Gun", method = Advantages.TagAuraGun, toolTip = "Gives a player tag aura."},
                 new ButtonInfo { buttonText = "Tag Aura All", method = Advantages.TagAuraAll, toolTip = "Gives all players tag aura."},
@@ -826,7 +826,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Tag", method = Advantages.AntiTag, disableMethod = Advantages.TagOnJoin, toolTip = "Removes you from the list of tagged players when tagged."},
                 new ButtonInfo { buttonText = "Report Anti Tag", enableMethod = Advantages.ReportAntiTag, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Prevents you from getting tagged, and whoever tries to tag you will just get reported."},
 
-                new ButtonInfo { buttonText = "No Tag Limit", method =() => GorillaTagger.Instance.maxTagDistance = float.MaxValue, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Removes the distance check when tagging players."},
+                new ButtonInfo { buttonText = "No Tag Limit", aliases = new[] { "Tagmax" }, method =() => GorillaTagger.Instance.maxTagDistance = float.MaxValue, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Removes the distance check when tagging players."},
                 new ButtonInfo { buttonText = "Tag Lag Detector", method = Important.TagLagDetector, toolTip = "Detects when the master client is not currently allowing tag requests."},
                 
                 new ButtonInfo { buttonText = "Fake Lag", method = Movement.FakeLag, disableMethod =() => { SerializePatch.OverrideSerialization = null; PlayerSerializePatch.delay = null; }, toolTip = "Forces your ping to be high."},
@@ -860,17 +860,17 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Enemy ESP", method = Visuals.EnemyESP, toolTip = "Puts dots on your screen at where all of the cores in the ghost reactor map are."},
                 new ButtonInfo { buttonText = "Resource ESP", method = Visuals.ResourceESP, toolTip = "Puts dots on your screen at where all of the resources are in the Super Infection gamemode."},
 
-                new ButtonInfo { buttonText = "Enable Snow", enableMethod =() => Visuals.ToggleSnow(true), disableMethod =() => Visuals.ToggleSnow(false), toolTip = "Forcibly enables the snow."},
-                new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
-                new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
+                new ButtonInfo { buttonText = "Enable Snow", aliases = new[] { "Winter" }, enableMethod =() => Visuals.ToggleSnow(true), disableMethod =() => Visuals.ToggleSnow(false), toolTip = "Forcibly enables the snow."},
+                new ButtonInfo { buttonText = "Rainy Weather", aliases = new[] { "Enable Rain" }, method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
+                new ButtonInfo { buttonText = "Clear Weather", aliases = new[] { "Disable Rain" }, method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
                 new ButtonInfo { buttonText = "Disable Fog", method = Visuals.DisableFog, disableMethod = Visuals.ResetFog, toolTip = "Disables the fog."},
                 new ButtonInfo { buttonText = "Enable Fog", method = Visuals.EnableFog, disableMethod = Visuals.ResetFog, toolTip = "Enables the fog."},
 
                 new ButtonInfo { buttonText = "Disable Ambience", enableMethod = Visuals.DisableAmbience, disableMethod = Visuals.EnableAmbience, toolTip = "Disables all ambient effects."},
 
-                new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod = Visuals.DoCustomSkyboxColor, method = Visuals.CustomSkyboxColor, disableMethod = Visuals.UnCustomSkyboxColor, toolTip = "Changes the skybox color to match the menu."},
+                new ButtonInfo { buttonText = "Custom Skybox Color", aliases = new[] { "Custom Sky Color" }, enableMethod = Visuals.DoCustomSkyboxColor, method = Visuals.CustomSkyboxColor, disableMethod = Visuals.UnCustomSkyboxColor, toolTip = "Changes the skybox color to match the menu."},
                 new ButtonInfo { buttonText = "Draw Gun", method = Visuals.DrawGun, disableMethod = Visuals.DisableDrawGun, toolTip = "Lets you draw on whatever your hand desires." },
-                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method = Visuals.GamesenseRing, disableMethod = Visuals.DisableGamesenseRing, toolTip = "Shows the direction of where people walk around you." },
+                new ButtonInfo { buttonText = "Gamesense Ring", aliases = new[] { "Fortnite Ring" }, enableMethod =() => HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method = Visuals.GamesenseRing, disableMethod = Visuals.DisableGamesenseRing, toolTip = "Shows the direction of where people walk around you." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method = Visuals.VelocityLabel, toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method = Visuals.NearbyTaggerLabel, toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
@@ -888,12 +888,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Nearby Overlay", method = Visuals.NearbyTaggerOverlay, disableMethod =() => NotificationManager.information.Remove("Nearby"), toolTip = "Displays the distance to the nearest tagger/target on your screen."},
                 new ButtonInfo { buttonText = "Info Overlay Gun", method = Visuals.InfoOverlayGun, toolTip = "Displays an overlay, showing the information of whoever your hand desires."},
 
-                new ButtonInfo { buttonText = "Debug HUD", enableMethod = Visuals.EnableDebugHUD, disableMethod = Visuals.DisableDebugHUD, toolTip = "Displays the developer debug HUD."},
+                new ButtonInfo { buttonText = "Debug HUD", aliases = new[] { "Developer HUD", "Debug UI", "Developer UI" }, enableMethod = Visuals.EnableDebugHUD, disableMethod = Visuals.DisableDebugHUD, toolTip = "Displays the developer debug HUD."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod = Visuals.WatchOn, method = Visuals.WatchStep, disableMethod = Visuals.WatchOff, toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
                 new ButtonInfo { buttonText = "Leaderboard Info", enableMethod =() => UpdatePatch.enabled = true, method = Visuals.LeaderboardInfo, disableMethod =() => UpdatePatch.enabled = false, toolTip = "Shows info next to players' names on the leaderboard."},
 
-                new ButtonInfo { buttonText = "FPS Boost", enableMethod =() => QualitySettings.globalTextureMipmapLimit = int.MaxValue, disableMethod =() => QualitySettings.globalTextureMipmapLimit = 1, toolTip = "Makes everything low quality in an attempt to boost your FPS."},
+                new ButtonInfo { buttonText = "FPS Boost", aliases = new[] { "Low Quality" }, enableMethod =() => QualitySettings.globalTextureMipmapLimit = int.MaxValue, disableMethod =() => QualitySettings.globalTextureMipmapLimit = 1, toolTip = "Makes everything low quality in an attempt to boost your FPS."},
                 new ButtonInfo { buttonText = "Freeze In Background", enableMethod =() => Application.runInBackground = false, disableMethod =() => Application.runInBackground = true, toolTip = "Freezes the game when the application is not focused."},
 
                 new ButtonInfo { buttonText = "Fake Unban Self", method = Visuals.FakeUnbanSelf, isTogglable = false, toolTip = "Makes it appear as if you're not banned." },
@@ -907,7 +907,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Show Scheduled Objects", enableMethod = Visuals.ShowScheduledObjects, toolTip = "Shows all scheduled and planned objects before their target date."},
 
                 new ButtonInfo { buttonText = "Visualize Network Triggers", method = Visuals.VisualizeNetworkTriggers, toolTip = "Visualizes the network joining and leaving triggers."},
-                new ButtonInfo { buttonText = "Visualize Wind Barriers", method = Visuals.VisualizeWindBarriers, toolTip = "Visualizes the wind barriers."},
+                new ButtonInfo { buttonText = "Visualize Wind Barriers", aliases = new[] { "Visualize Air" }, method = Visuals.VisualizeWindBarriers, toolTip = "Visualizes the wind barriers."},
                 new ButtonInfo { buttonText = "Visualize Map Triggers", method = Visuals.VisualizeMapTriggers, toolTip = "Visualizes the map loading and unloading triggers."},
 
                 new ButtonInfo { buttonText = "Name Tags", method = Visuals.NameTags, disableMethod = Visuals.DisableNameTags, toolTip = "Gives players name tags above their heads that show their nickname."},
@@ -925,7 +925,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cosmetic Name Tags", method = Visuals.CosmeticTags, disableMethod = Visuals.DisableCosmeticTags, toolTip = "Gives players name tags above their heads that show what special cosmetics they have."},
                 new ButtonInfo { buttonText = "Verified Name Tags", method = Visuals.VerifiedTags, disableMethod = Visuals.DisableVerifiedTags, toolTip = "Gives players name tags above their heads if they are a verified player."},
                 new ButtonInfo { buttonText = "Lag Name Tags", method = Visuals.CrashedTags, disableMethod = Visuals.DisableCrashedTags, toolTip = "Gives players name tags above their heads if they are lagging."},
-                new ButtonInfo { buttonText = "Compact Name Tags", overlapText = "VRChat Name Tags", method = Visuals.CompactTags, disableMethod = Visuals.DisableCompactTags, toolTip = "Gives players name tags above their heads that show a lot of information compactly. Credits to snake for the mod idea."},
+                new ButtonInfo { buttonText = "Compact Name Tags", overlapText = "VRChat Name Tags", aliases = new[] { "Compact Name Tags" }, method = Visuals.CompactTags, disableMethod = Visuals.DisableCompactTags, toolTip = "Gives players name tags above their heads that show a lot of information compactly. Credits to snake for the mod idea."},
                 
                 new ButtonInfo { buttonText = "Fix Rig Colors", method = Visuals.FixRigColors, toolTip = "Fixes a Steam bug where other players' color would be wrong between servers."},
                 new ButtonInfo { buttonText = "Disable Rig Lerping", overlapText = "Disable Rig Smoothing", method = Visuals.NoSmoothRigs, disableMethod = Visuals.ReSmoothRigs, toolTip = "Disable the smoothing on the other player's rigs."},
@@ -933,7 +933,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Remove Leaves", enableMethod = Visuals.EnableRemoveLeaves, disableMethod = Visuals.DisableRemoveLeaves, toolTip = "Removes leaves on trees, good for branching."},
                 new ButtonInfo { buttonText = "Streamer Remove Leaves", enableMethod = Visuals.EnableStreamerRemoveLeaves, disableMethod = Visuals.DisableStreamerRemoveLeaves, toolTip = "Removes leaves on trees in VR, but not on the camera. Good for streaming."},
                 new ButtonInfo { buttonText = "Remove Cosmetics", enableMethod = Visuals.DisableCosmetics, disableMethod = Visuals.EnableCosmetics, toolTip = "Locally toggles off your cosmetics, so you can wear sight-blocking cosmetics such as the eyepatch."},
-                new ButtonInfo { buttonText = "X-Ray <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Visuals.Xray, toolTip = "Lets you see through objects when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "X-Ray <color=grey>[</color><color=green>T</color><color=grey>]</color>", aliases = new[] { "See Through" }, method = Visuals.Xray, toolTip = "Lets you see through objects when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Cosmetic ESP", method = Visuals.CosmeticESP, disableMethod = Visuals.DisableCosmeticESP, toolTip = "Shows icons above people's heads if they are a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator."},
 
@@ -1020,11 +1020,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Head Bang", method = Fun.HeadBang, disableMethod = Fun.FixHead, toolTip = "Bangs your head at the BPM of Paint it Black (159)."},
 
-                new ButtonInfo { buttonText = "Flip Hands", method = Fun.FlipHands, toolTip = "Swaps your hands, left is right and right is left."},
+                new ButtonInfo { buttonText = "Flip Hands", aliases = new[] { "Fish Arms" }, method = Fun.FlipHands, toolTip = "Swaps your hands, left is right and right is left."},
                 new ButtonInfo { buttonText = "Loud Hand Taps", method = Fun.LoudHandTaps, disableMethod = Fun.FixHandTaps, toolTip = "Makes your hand taps really loud."},
-                new ButtonInfo { buttonText = "Silent Hand Taps", method = Fun.SilentHandTaps, disableMethod = Fun.FixHandTaps, toolTip = "Makes your hand taps really quiet."},
+                new ButtonInfo { buttonText = "Silent Hand Taps", aliases = new[] { "No Hand Taps" }, method = Fun.SilentHandTaps, disableMethod = Fun.FixHandTaps, toolTip = "Makes your hand taps really quiet."},
                 new ButtonInfo { buttonText = "Instant Hand Taps", method =() => GorillaTagger.Instance.tapCoolDown = 0f, disableMethod =() => GorillaTagger.Instance.tapCoolDown = 0.33f, toolTip = "Removes the hand tap cooldown."},
-                new ButtonInfo { buttonText = "Silent Hand Taps on Tag", method = Fun.SilentHandTapsOnTag, disableMethod = Fun.FixHandTaps, toolTip = "Makes your hand taps really quiet when you're tagged, good for ambush."},
+                new ButtonInfo { buttonText = "Silent Hand Taps on Tag", aliases = new[] { "No Hand Taps on Tag" }, method = Fun.SilentHandTapsOnTag, disableMethod = Fun.FixHandTaps, toolTip = "Makes your hand taps really quiet when you're tagged, good for ambush."},
 
                 new ButtonInfo { buttonText = "Water Splash Hands <color=grey>[</color><color=green>G</color><color=grey>]</color>", method = Fun.WaterSplashHands, toolTip = "Splashes water when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Give Water Splash Hands Gun", method = Fun.GiveWaterSplashHandsGun, toolTip = "Gives whoever your hand desires the water splash hands mod." },
@@ -1037,8 +1037,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Confuse Player Gun", method = Movement.ConfusePlayerGun, toolTip = "Makes whoever your hand desires look like they're going crazy by splashing water on their screen."},
                 new ButtonInfo { buttonText = "Confuse All Players", enableMethod = Movement.ConfuseAllPlayers, method = Movement.ConfuseAllPlayersSplash, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Splashes water on everyone's screens, making them look like they're going crazy."},
 
-                new ButtonInfo { buttonText = "Tinnitus Gun", method = Movement.TinnitusGun, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for whoever your hand desires."},
-                new ButtonInfo { buttonText = "Tinnitus All", enableMethod = Movement.TinnitusAll, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for everyone in the room."},
+                new ButtonInfo { buttonText = "Tinnitus Gun", aliases = new[] { "Ear Rape All", "Earrape All" }, method = Movement.TinnitusGun, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for whoever your hand desires."},
+                new ButtonInfo { buttonText = "Tinnitus All", aliases = new[] { "Ear Rape All", "Earrape All" }, enableMethod = Movement.TinnitusAll, disableMethod = Movement.DisableTinnitus, toolTip = "Plays high pitched noises for everyone in the room."},
 
                 new ButtonInfo { buttonText = "Overstimulate Gun", method = Movement.OverstimulateGun, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Overstimulates whoever your hand desires."},
                 new ButtonInfo { buttonText = "Overstimulate All", method = Movement.OverstimulateAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Overstimulates everyone in the room."},
