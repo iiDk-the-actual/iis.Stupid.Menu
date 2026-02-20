@@ -5541,6 +5541,7 @@ namespace iiMenu.Menu
             if (!disableRoomNotifications)
                 NotificationManager.SendNotification($"<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: {lastRoom}");
 
+            OnMasterClientSwitch(NetworkSystem.Instance.MasterClient);
             RPCProtection();
         }
 
