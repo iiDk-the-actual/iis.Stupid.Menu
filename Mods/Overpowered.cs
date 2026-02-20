@@ -6526,6 +6526,35 @@ namespace iiMenu.Mods
 
         public static float lagMasterDelay;
 
+        public static void LagMasterClientGun()
+        {
+            if (NetworkSystem.Instance.InRoom || !NetworkSystem.Instance.IsMasterClient)
+                Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && lockTarget.GetPlayer().IsMasterClient)
+                    LagMasterClient(); -- bruh
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static void LagMasterClient()
         {
             if (NetworkSystem.Instance.IsMasterClient || !NetworkSystem.Instance.InRoom)
