@@ -4106,7 +4106,7 @@ namespace iiMenu.Mods
                     if (Vector3.Distance(rig2.leftHandTransform.position, rig1.headMesh.transform.position) < 0.25f || Vector3.Distance(rig2.rightHandTransform.position, rig1.headMesh.transform.position) < 0.25f)
                     {
                         Vector3 targetDirection = rig2.headMesh.transform.position - rig1.headMesh.transform.position;
-                        BetaSpawnSnowball(rig1.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, rig1.OwningNetPlayer.GetPlayerRef());
+                        BetaSpawnSnowball(rig1.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 2, rig1.GetPhotonPlayer());
                         SetBoxingDelay(rig1);
                     }
                 }
@@ -4122,7 +4122,7 @@ namespace iiMenu.Mods
 
                 if (!rig.isOfflineVRRig && rig.rightThumb.calcT > 0.5f)
                 {
-                    BetaSpawnSnowball(rig.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-rig.headMesh.transform.forward.x, 0f, -rig.headMesh.transform.forward.z) * 1.5f, new Vector3(0f, -300f, 0f), 2, rig.OwningNetPlayer.GetPlayerRef());
+                    BetaSpawnSnowball(rig.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-rig.headMesh.transform.forward.x, 0f, -rig.headMesh.transform.forward.z) * 1.5f, new Vector3(0f, -300f, 0f), 2, rig.GetPhotonPlayer());
                     SetBoxingDelay(rig);
                 }
             }
@@ -4138,7 +4138,7 @@ namespace iiMenu.Mods
 
                 if (!rig.isOfflineVRRig && (Ray.distance > 0.12f && Ray.distance < 0.2f))
                 {
-                    BetaSpawnSnowball(rig.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, rig.OwningNetPlayer.GetPlayerRef());
+                    BetaSpawnSnowball(rig.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 2, rig.GetPhotonPlayer());
                     SetBoxingDelay(rig);
                 }
             }

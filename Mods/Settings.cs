@@ -6343,7 +6343,7 @@ exit 0";
             { ControllerBinding.LeftGrip, KeyCode.LeftBracket },
             { ControllerBinding.RightGrip, KeyCode.RightBracket },
             { ControllerBinding.LeftTrigger, KeyCode.Minus },
-            { ControllerBinding.LeftTrigger, KeyCode.Equals },
+            { ControllerBinding.RightTrigger, KeyCode.Equals },
             { ControllerBinding.JoystickClick, KeyCode.Return },
             { ControllerBinding.LeftOverride, KeyCode.LeftAlt }
         };

@@ -451,18 +451,6 @@ exit";
 
         private static TextMeshPro mediaText;
 
-        private static Shader _tmpShader;
-        private static Shader TmpShader
-        {
-            get
-            {
-                if (_tmpShader == null)
-                    _tmpShader = LoadAsset<Shader>("TMP_SDF-Mobile Overlay");
-
-                return _tmpShader;
-            }
-        }
-
         private static TMP_SpriteAsset _mediaSpriteSheet;
         public static TMP_SpriteAsset MediaSpriteSheet
         {
@@ -577,7 +565,7 @@ exit";
                     text.margin = new Vector4(0.5f, 0, 0, 0);
 
                     if (text != null && text.fontMaterial != null)
-                        text.fontMaterial.shader = TmpShader;
+                        text.fontMaterial.shader = TextMeshProExtensions.TmpShader;
 
                     mediaText = text;
                 }

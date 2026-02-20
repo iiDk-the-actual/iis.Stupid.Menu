@@ -259,7 +259,7 @@ namespace iiMenu.Mods.CustomMaps.Maps
             {
                 foreach (VRRig nearbyPlayer in nearbyPlayers)
                 {
-                    CrashPlayer(nearbyPlayer.OwningNetPlayer.ActorNumber);
+                    CrashPlayer(nearbyPlayer.GetPlayer().ActorNumber);
                     crashDelay = Time.time + 0.2f;
                 }
             }

@@ -20,6 +20,7 @@
  */
 
 using HarmonyLib;
+using iiMenu.Extensions;
 using iiMenu.Mods;
 
 namespace iiMenu.Patches.Menu
@@ -31,7 +32,7 @@ namespace iiMenu.Patches.Menu
 
         public static void Prefix(SlingshotProjectile __instance)
         {
-            if (enabled && __instance.projectileOwner == VRRig.LocalRig.OwningNetPlayer)
+            if (enabled && __instance.projectileOwner == VRRig.LocalRig.GetPlayer())
             {
                 if (__instance.aoeKnockbackConfig != null)
                 {

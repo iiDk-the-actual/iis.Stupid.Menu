@@ -28,7 +28,7 @@ namespace iiMenu.Patches.Safety
 {
     public class AntiCheatPatches
     {
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.SendReport))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.SendReport))]
         public class SendReportPatch
         {
             public static bool AntiCheatSelf;
@@ -63,42 +63,42 @@ namespace iiMenu.Patches.Safety
             }
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.CloseInvalidRoom))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.CloseInvalidRoom))]
         public class NoCloseInvalidRoom
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.CheckReports))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.CheckReports))]
         public class NoCheckReports
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.DispatchReport))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.DispatchReport))]
         public class NoDispatchReport
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.GetRPCCallTracker))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.GetRPCCallTracker))]
         internal class NoGetRPCCallTracker
         {
             private static bool Prefix() =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.LogErrorCount))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.LogErrorCount))]
         public class NoLogErrorCount
         {
             private static bool Prefix(string logString, string stackTrace, LogType type) =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.QuitDelay), MethodType.Enumerator)]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.QuitDelay), MethodType.Enumerator)]
         public class NoQuitDelay
         {
             private static bool Prefix() =>
@@ -112,7 +112,7 @@ namespace iiMenu.Patches.Safety
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.ShouldDisconnectFromRoom))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.ShouldDisconnectFromRoom))]
         public class NoShouldDisconnectFromRoom                                                                         
         {
             private static bool Prefix() =>

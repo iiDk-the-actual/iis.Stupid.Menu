@@ -77,7 +77,7 @@ namespace iiMenu.Extensions
         }
 
         private static Shader _tmpShader;
-        private static Shader TmpShader
+        public static Shader TmpShader
         {
             get
             {

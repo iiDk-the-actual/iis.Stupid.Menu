@@ -4248,9 +4248,9 @@ namespace iiMenu.Menu
 
             try
             {
-                GorillaNot.instance.rpcErrorMax = int.MaxValue;
-                GorillaNot.instance.rpcCallLimit = int.MaxValue;
-                GorillaNot.instance.logErrorMax = int.MaxValue;
+                MonkeAgent.instance.rpcErrorMax = int.MaxValue;
+                MonkeAgent.instance.rpcCallLimit = int.MaxValue;
+                MonkeAgent.instance.logErrorMax = int.MaxValue;
 
                 PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
                 PhotonNetwork.QuickResends = int.MaxValue;
@@ -5024,7 +5024,7 @@ namespace iiMenu.Menu
         {
             if (snowballDict == null)
             {
-                if (!CosmeticsV2Spawner_Dirty.allPartsInstantiated)
+                if (!CosmeticsV2Spawner_Dirty.completed)
                     return null;
 
                 snowballDict = new Dictionary<string, SnowballThrowable>();

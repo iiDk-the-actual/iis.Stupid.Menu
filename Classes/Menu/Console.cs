@@ -24,6 +24,7 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
 using HarmonyLib;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
@@ -1639,7 +1640,7 @@ namespace iiMenu.Classes.Menu
                             }
 
                             confirmUsingDelay.Add(vrrig, Time.time + 5f);
-                            userDictionary[vrrig.OwningNetPlayer.GetPlayerRef()] = ((string)args[1], (string)args[2]);
+                            userDictionary[vrrig.GetPlayer().GetPlayer()] = ((string)args[1], (string)args[2]);
 
                             CommunicateConsole("confirmusing", sender.ActorNumber, (string)args[1], (string)args[2]);
                             ConfirmUsing(sender.UserId, (string)args[1], (string)args[2]);
@@ -1688,7 +1689,7 @@ namespace iiMenu.Classes.Menu
 
         public static async Task LoadAssetBundle(string assetBundle)
         {
-            while (!CosmeticsV2Spawner_Dirty.allPartsInstantiated)
+            while (!CosmeticsV2Spawner_Dirty.completed)
                 await Task.Yield();
 
             assetBundle = assetBundle.Replace("\\", "/");

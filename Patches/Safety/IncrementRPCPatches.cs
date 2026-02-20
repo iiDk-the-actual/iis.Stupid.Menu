@@ -33,14 +33,14 @@ namespace iiMenu.Patches.Safety
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.IncrementRPCCall), typeof(PhotonMessageInfo), typeof(string))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.IncrementRPCCall), typeof(PhotonMessageInfo), typeof(string))]
         public class NoIncrementRPCCall
         {
             private static bool Prefix(PhotonMessageInfo info, string callingMethod = "") =>
                 false;
         }
 
-        [HarmonyPatch(typeof(GorillaNot), nameof(GorillaNot.IncrementRPCCallLocal))]
+        [HarmonyPatch(typeof(MonkeAgent), nameof(MonkeAgent.IncrementRPCCallLocal))]
         public class NoIncrementRPCCallLocal
         {
             private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction) =>
