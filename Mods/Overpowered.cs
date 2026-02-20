@@ -6526,7 +6526,7 @@ namespace iiMenu.Mods
 
         public static float lagMasterDelay;
 
-        public static void LagMasterClient()
+        public static void LagMasterClient(delay = 1f, amount = 150)
         {
             if (NetworkSystem.Instance.IsMasterClient || !NetworkSystem.Instance.InRoom)
                 return;
@@ -6534,7 +6534,7 @@ namespace iiMenu.Mods
             if (Time.time > lagMasterDelay)
             {
                 int view = PhotonNetwork.AllocateViewID(0);
-                for (int i = 0; i < 150; i++)
+                for (int i = 0; i < amount; i++)
                 {
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, new Hashtable
                     {
@@ -6546,7 +6546,7 @@ namespace iiMenu.Mods
                         Receivers = ReceiverGroup.MasterClient
                     }, SendOptions.SendReliable);
                 }
-                lagMasterDelay = Time.time + 1f;
+                lagMasterDelay = Time.time + delay;
             }
         }
 
