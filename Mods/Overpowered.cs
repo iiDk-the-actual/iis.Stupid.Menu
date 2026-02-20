@@ -6536,7 +6536,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null && lockTarget.GetPlayer().IsMasterClient)
-                    LagMasterClient(); -- bruh
+                    LagMasterClient(); // bruh
 
                 if (GetGunInput(true))
                 {
