@@ -6297,7 +6297,8 @@ namespace iiMenu.Mods
 
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                kickCoroutine = null;
+				NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are master client! You have no one to kick.");
+				kickCoroutine = null;
                 yield break;
             }
 
@@ -6433,7 +6434,7 @@ namespace iiMenu.Mods
 
         public static void KickGun()
         {
-            if (NetworkSystem.Instance.InRoom || !NetworkSystem.Instance.IsMasterClient)
+            if (NetworkSystem.Instance.InRoom)
                 Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
             if (GetGunInput(false))
             {
