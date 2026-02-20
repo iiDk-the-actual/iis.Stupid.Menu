@@ -156,7 +156,9 @@ namespace iiMenu.Mods
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
                     { "platform", PhotonNetworkController.Instance.platformTag },
-                    { "queueName", GorillaComputer.instance.currentQueue }
+                    { "queueName", GorillaComputer.instance.currentQueue },
+                    { "language", LocalisationManager.CurrentLanguage.ToString() },
+                    { "fan_club", SubscriptionManager.IsLocalSubscribed() ? "true" : "false" }
                 }
             };
 

@@ -275,6 +275,9 @@
     <Reference Include="Unity.InputSystem.ForUI">
       <HintPath>$(ProjectDir)References\Managed\Unity.InputSystem.ForUI.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Localization">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Localization.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>$(ProjectDir)References\Managed\Unity.Mathematics.dll</HintPath>
     </Reference>
