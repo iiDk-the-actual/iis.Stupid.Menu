@@ -696,6 +696,27 @@ namespace iiMenu.Mods
             Buttons.GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
         }
 
+        public static int fastRopesInt;
+        public static void ChangeFastRopesSpeed(bool positive = true)
+        {
+            float[] speedamounts = { 5f, 10f, 30f };
+            string[] speedNames = { "Normal", "Fast", "Ultra Fast", };
+
+            if (positive)
+                fastRopesInt++;
+            else
+                fastRopesInt--;
+
+            fastRopesInt %= speedamounts.Length;
+            if (fastRopesInt < 0)
+                fastRopesInt = speedamounts.Length - 1;
+
+            RopePatch.amplifier = speedamounts[driveInt];
+            Buttons.GetIndex("Change Fast Ropes Speed").overlapText = "Change Fast Ropes Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
+        }
+
+
+
         public static Vector2 driveLerpDirection = Vector2.zero;
         public static void Drive()
         {

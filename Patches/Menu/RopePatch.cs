@@ -30,7 +30,7 @@ namespace iiMenu.Patches.Menu
     public class RopePatch
     {
         public static bool enabled;
-        public static readonly float amplifier = 5f;
+        public static float amplifier = 5f;
 
         public static void Prefix(XRNode xrNode, Transform grabbedBone, Vector3 offset, ref Vector3 velocity)
         {
