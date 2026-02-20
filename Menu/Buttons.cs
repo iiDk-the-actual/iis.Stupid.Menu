@@ -1381,11 +1381,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blaster Fling Gun", method =() => Overpowered.BlasterFlingGun(RandomVector3()), toolTip = "Uses the blasters to fling whoever your hand desires."},
                 new ButtonInfo { buttonText = "Blaster Fling All", method =() => Overpowered.BlasterFlingAll(RandomVector3()), disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room."},
 
-                new ButtonInfo { buttonText = "Blaster Fling Towards Gun", method = Overpowered.BlasterFlingTowardsGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
-                new ButtonInfo { buttonText = "Blaster Fling Towards All", method = Overpowered.BlasterFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room towards you."},
+                new ButtonInfo { buttonText = "Blaster Fling Towards Gun", overlapText = "Blaster Bring Gun", aliases = new[] { "Blaster Fling Towards Gun" }, method = Overpowered.BlasterFlingTowardsGun, toolTip = "Uses the blasters to fling whoever your hand desires towards you."},
+                new ButtonInfo { buttonText = "Blaster Fling Towards All", overlapText = "Blaster Bring All", aliases = new[] { "Blaster Fling Towards All" }, method = Overpowered.BlasterFlingTowardsAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room towards you."},
 
-                new ButtonInfo { buttonText = "Blaster Fling Away Gun", method = Overpowered.BlasterFlingAwayGun, toolTip = "Uses the blasters to fling whoever your hand desires away from you."},
-                new ButtonInfo { buttonText = "Blaster Fling Away All", method = Overpowered.BlasterFlingAwayAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room away from you."},
+                new ButtonInfo { buttonText = "Blaster Fling Away Gun", overlapText = "Blaster Push Gun", aliases = new[] { "Blaster Fling Towards Gun" }, method = Overpowered.BlasterFlingAwayGun, toolTip = "Uses the blasters to fling whoever your hand desires away from you."},
+                new ButtonInfo { buttonText = "Blaster Fling Away All", overlapText = "Blaster Push All", aliases = new[] { "Blaster Fling Towards All" }, method = Overpowered.BlasterFlingAwayAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Uses the blasters to fling everyone in the room away from you."},
 
                 new ButtonInfo { buttonText = "Blaster Kick Gun", method = Overpowered.BlasterKickGun, toolTip = "Kicks whoever your hand desires using the blasters." },
                 new ButtonInfo { buttonText = "Blaster Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.BlasterKickAll, disableMethod =() => SerializePatch.OverrideSerialization = null, toolTip = "Kicks everyone in the room when holding <color=green>trigger</color> using the blasters." },
@@ -1782,11 +1782,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Fling Vertical Gun", method = Overpowered.SnowballFlingVerticalGun, toolTip = "Flings whoever your hand desires vertically."},
                 new ButtonInfo { buttonText = "Snowball Fling Vertical All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Overpowered.SnowballFlingVerticalAll, toolTip = "Flings everybody vertically when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Snowball Fling Towards Gun", method = Overpowered.SnowballFlingTowardsGun, toolTip = "Flings everybody towards wherever your hand desires."},
-                new ButtonInfo { buttonText = "Snowball Fling Away Gun", method = Overpowered.SnowballFlingAwayGun, toolTip = "Flings everybody away from wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Fling Towards Gun", overlapText = "Snowball Bring Gun", aliases = new[] { "Snowball Fling Towards Gun" }, method = Overpowered.SnowballFlingTowardsGun, toolTip = "Flings everybody towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Fling Away Gun", method = Overpowered.SnowballFlingAwayGun, overlapText = "Snowball Push Gun", aliases = new[] { "Snowball Fling Away Gun" }, toolTip = "Flings everybody away from wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", method = Overpowered.SnowballFlingPlayerTowardsGun, toolTip = "Flings whoever your hand desires towards you."},
-                new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", method = Overpowered.SnowballFlingPlayerAwayGun, toolTip = "Flings whoever your hand desires away from you."},
+                new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", overlapText = "Snowball Bring Player Gun", aliases = new[] { "Snowball Fling Player Towards Gun" }, method = Overpowered.SnowballFlingPlayerTowardsGun, toolTip = "Flings whoever your hand desires towards you."},
+                new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", overlapText = "Snowball Push Player Gun", aliases = new[] { "Snowball Fling Player Away Gun" }, method = Overpowered.SnowballFlingPlayerAwayGun, toolTip = "Flings whoever your hand desires away from you."},
 
                 new ButtonInfo { buttonText = "Snowball Launch Gun", method = Overpowered.SnowballLaunchGun, toolTip = "Launches whoever your hand desires like a launch pad."},
 
