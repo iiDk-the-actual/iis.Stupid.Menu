@@ -1902,7 +1902,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Block Freeze Gun", overlapText = "Building Block Freeze Gun", method = Fun.AtticFreezeGun, toolTip = "Freeze whoever your hand desires."},
                 new ButtonInfo { buttonText = "Block Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Building Block Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method = Fun.AtticFreezeAll, toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Block Float Gun", overlapText = "Building Block Float Gun", method = Fun.AtticFloatGun, toolTip = "Makes whoever your hand desires float."},
+                new ButtonInfo { buttonText = "Block Float Gun", overlapText = "Building Block Float Gun", method = Fun.AtticFloatGun, toolTip = "Makes whoever your hand desires float using the building blocks."},
+                new ButtonInfo { buttonText = "Building Block Fling Gun", method = Fun.AtticFlingGun, toolTip = "Flings whoever your hand desires using the building blocks."},
 
                 new ButtonInfo { buttonText = "Spaz Targets", method = Overpowered.TargetSpam, toolTip = "Gives the targets a seizure."},
 
