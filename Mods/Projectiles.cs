@@ -112,7 +112,13 @@ namespace iiMenu.Mods
             "HotCocoaCup_Anchor_LEFT",
             "HotCocoaCup_Anchor_RIGHT",
             "SlingshotProjectile",
-            "SlingshotProjectile"
+            "SlingshotProjectile",
+            "PillowProjectile_Anchor_LEFT",
+            "PillowProjectile_Anchor_RIGHT",
+            "CakePieces_Anchor_LEFT",
+            "CakePieces_Anchor_RIGHT",
+            "BalloonAnimalProjectileAnchor_LEFT",
+            "BalloonAnimalProjectileAnchor_RIGHT"
         };
 
         public static string SnowballName = "GrowingSnowball";
@@ -400,7 +406,10 @@ namespace iiMenu.Mods
                 "Stick",
                 "Walnut",
                 "Hot Cocoa",
-                "Slingshot"
+                "Slingshot",
+                "Pillow",
+                "Cake",
+                "Balloon Animal"
             };
 
             if (positive)
