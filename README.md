@@ -88,12 +88,13 @@ Let's bring back the collaboration of modding. No paywalls, no secrets, no malwa
 |---------|------|------|
 |Rift|✅|✅|
 |Rift S|✅|✅|
-|Oculus Go|✅|❌|
+|Oculus Go|⚠️|❌|
 |Quest 1|✅|✅|
 |Quest 2|✅|✅|
 |Quest Pro|✅|✅|
 |Quest 3/3s|✅|✅|
 |Pico 4/Pro|✅|✅|
+|Pico 4 Ultra Pro|✅|⚠️|
 |Valve Index|✅|✅|
 |HTC VIVE/Pro|✅|⚠️|
 |HP Reverb G1/G2|✅|⚠️|
@@ -135,7 +136,7 @@ If you wish to support me, here are some of the ways you can!
 > Menu sends requests to https://text.pollinations.ai for the mod **AI Assistant**. (when enabled)<br>
 > Menu sends requests to https://lazypy.ro for many TTS voices.<br>
 > Menu connects to wss://iidk.online for friend system and administrative purposes.<br>
-> Donate, search, star, speak symbols by [Icons8](https://icons8.com).
+> The donate, search, star and speak symbols are made by [Icons8](https://icons8.com).
 
 > ii's Stupid Menu  README.md<br>
 > A mod menu for Gorilla Tag with over 1000+ mods
@@ -154,7 +155,7 @@ If you wish to support me, here are some of the ways you can!
 > GNU General Public License for more details.
 > 
 > You should have received a copy of the GNU General Public License
-> along with this program.  If not, see <https://www.gnu.org/licenses/>.
+> along with this program.  If not, see <https://www.gnu.org/licenses>.
 
 <p align="center">
   <img src="Resources/GitHub/byebye.gif">
