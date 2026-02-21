@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using ExitGames.Client.Photon.StructWrapping;
 using GameObjectScheduling;
 using GorillaExtensions;
 using GorillaGameModes;
@@ -877,6 +878,24 @@ namespace iiMenu.Mods
             TimeSpan time = TimeSpan.FromSeconds(playtime);
             OverallPlaytime = $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
             yield return new WaitForSeconds(0.1f);
+        }
+
+        public static void ExtraRoomInfo(bool? overlapInRoom = null)
+        {
+            if (overlapInRoom ?? PhotonNetwork.InRoom)
+            {
+                NetworkSystem.Instance.CurrentRoom.CustomProps.TryGetValue("language", out var language);
+                NetworkSystem.Instance.CurrentRoom.CustomProps.TryGetValue("mmrTier", out var mmrTier);
+
+                NotificationManager.information["Language"] = language?.ToString() ?? "Unknown";
+                if (mmrTier != null)
+                    NotificationManager.information["MMR Tier"] = mmrTier.ToString();
+            }
+            else
+            {
+                NotificationManager.information.Remove("Language");
+                NotificationManager.information.Remove("MMR Tier");
+            }
         }
 
         public static void VelocityLabel()
