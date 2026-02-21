@@ -6261,8 +6261,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -6283,7 +6283,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // i've been told to release this by iiDk - kingofnetflix
         public static Coroutine kickCoroutine;
         public static IEnumerator KickMasterClient()
         {
@@ -6426,12 +6425,6 @@ namespace iiMenu.Mods
             kickCoroutine = null;
         }
 
-        /*
-         * Be rexon
-         * Make mod that only works on master client
-         * Turn it into a gun
-         */
-
         public static void KickGun()
         {
             if (NetworkSystem.Instance.InRoom)
@@ -6462,8 +6455,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // Euphoria I see you eat shit
-        // Malachi I see you, I'm sorry
         public static void CacheKickGun()
         {
             if (GetGunInput(false))
@@ -6528,35 +6519,6 @@ namespace iiMenu.Mods
 
         public static float lagMasterDelay;
 
-        public static void LagMasterClientGun()
-        {
-            if (NetworkSystem.Instance.InRoom || !NetworkSystem.Instance.IsMasterClient)
-                Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-
-                if (gunLocked && lockTarget != null && lockTarget.GetPlayer().IsMasterClient)
-                    LagMasterClient(); // bruh
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !gunTarget.IsLocal())
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
         public static void LagMasterClient()
         {
             if (NetworkSystem.Instance.IsMasterClient || !NetworkSystem.Instance.InRoom)
@@ -6578,6 +6540,36 @@ namespace iiMenu.Mods
                     }, SendOptions.SendReliable);
                 }
                 lagMasterDelay = Time.time + lagDelay;
+            }
+        }
+
+        public static void LagMasterClientGun()
+        {
+            if (NetworkSystem.Instance.InRoom || !NetworkSystem.Instance.IsMasterClient)
+                VisualizeMasterClient();
+			
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null && lockTarget.GetPlayer().IsMasterClient)
+                    LagMasterClient();
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
