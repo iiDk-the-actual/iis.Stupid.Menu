@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using ExitGames.Client.Photon.StructWrapping;
 using GameObjectScheduling;
 using GorillaExtensions;
 using GorillaGameModes;
