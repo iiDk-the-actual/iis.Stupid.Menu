@@ -4675,6 +4675,76 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void AtticBringGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                    else
+                    {
+                        RequestCreatePiece(-566818631, lockTarget.transform.position, Quaternion.Euler(0f, Random.Range(0f, 350f), 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), false, true, (GorillaTagger.Instance.headCollider.transform.position - lockTarget.transform.position).normalized * 50f);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                floatPower = 0.35f;
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void AtticPushGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotificationManager.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not master client.");
+                    else
+                    {
+                        RequestCreatePiece(-566818631, lockTarget.transform.position, Quaternion.Euler(0f, Random.Range(0f, 350f), 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), false, true, (lockTarget.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized * 50f);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !gunTarget.IsLocal())
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                floatPower = 0.35f;
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
         public static Vector3 position = Vector3.zero;
         public static void AtticTowerGun()
         {

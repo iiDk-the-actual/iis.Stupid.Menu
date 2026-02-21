@@ -1916,6 +1916,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Block Float Gun", overlapText = "Building Block Float Gun", method = Fun.AtticFloatGun, toolTip = "Makes whoever your hand desires float using the building blocks."},
                 new ButtonInfo { buttonText = "Building Block Fling Gun", method = Fun.AtticFlingGun, toolTip = "Flings whoever your hand desires using the building blocks."},
 
+                new ButtonInfo { buttonText = "Building Block Bring Gun", method = Fun.AtticBringGun, toolTip = "Brings whoever your hand desires using the building blocks."},
+                new ButtonInfo { buttonText = "Building Block Push Gun", method = Fun.AtticPushGun, toolTip = "Pushes whoever your hand desires using the building blocks."},
+
                 new ButtonInfo { buttonText = "Spaz Targets", method = Overpowered.TargetSpam, toolTip = "Gives the targets a seizure."},
 
                 new ButtonInfo { buttonText = "Slow Monsters", enableMethod = Fun.SlowMonsters, disableMethod = Fun.FixMonsters, toolTip = "Slows down the basement monsters." },
