@@ -124,8 +124,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -241,8 +241,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -261,7 +261,7 @@ namespace iiMenu.Mods
 
         public static void CrashWhenTouched()
         {
-            foreach (var playerFromVRRig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isMyPlayer && !vrrig.isOfflineVRRig && (Vector3.Distance(vrrig.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.position) <= 0.5) select GetPlayerFromVRRig(vrrig))
+            foreach (var playerFromVRRig in from vrrig in GorillaParent.instance.vrrigs where !vrrig.isMyPlayer && !vrrig.isOfflineVRRig && (Vector3.Distance(vrrig.rightHandTransform.position, VRRig.LocalRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.leftHandTransform.position, VRRig.LocalRig.transform.position) <= 0.5 || Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) <= 0.5) select GetPlayerFromVRRig(vrrig))
             {
                 PhotonNetwork.SetMasterClient(playerFromVRRig.GetPlayer());
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
@@ -375,8 +375,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                         touchedRigs.Add(rig);
                 }
             }
@@ -524,8 +524,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedRigs.Add(rig);
                     }
@@ -635,8 +635,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedRigs.Add(rig);
                     }
@@ -727,8 +727,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -818,8 +818,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                         touchedRigs.Add(rig);
                 }
             }
@@ -928,8 +928,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -1033,8 +1033,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -1144,8 +1144,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -1239,8 +1239,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -1323,8 +1323,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
@@ -1404,8 +1404,8 @@ namespace iiMenu.Mods
             {
                 if (!rig.IsLocal())
                 {
-                    if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.rightHandTransform.position) <= 0.35f ||
-                        Vector3.Distance(rig.transform.position, GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) <= 0.35f)
+                    if (Vector3.Distance(rig.transform.position, VRRig.LocalRig.rightHandTransform.position) <= 0.35f ||
+                        Vector3.Distance(rig.transform.position, VRRig.LocalRig.leftHandTransform.position) <= 0.35f)
                     {
                         touchedPlayers.Add(rig);
                     }
