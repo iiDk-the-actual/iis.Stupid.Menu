@@ -226,7 +226,7 @@ namespace iiMenu.Menu
             {
                 if (PatchHandler.CriticalPatchFailed)
                 {
-                    string message = "A critical patch has failed. You have been blocked from joining rooms for safety reasons. Please report this as an issue to the GitHub repository."; 
+                    string message = "A critical patch has failed, and you have been blocked from joining rooms for safety reasons. Please report this as an issue to the GitHub repository."; 
                     NotificationManager.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {message}", 10000);
                     GorillaComputer.instance.GeneralFailureMessage(message);
                     if (NetworkSystem.Instance.InRoom)
