@@ -683,6 +683,7 @@ exit";
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         public static void ForceEnableHands()
         {
