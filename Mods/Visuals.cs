@@ -884,10 +884,12 @@ namespace iiMenu.Mods
         {
             if (overlapInRoom ?? PhotonNetwork.InRoom)
             {
+                NetworkSystem.Instance.CurrentRoom.CustomProps.TryGetValue("platform", out var platform);
                 NetworkSystem.Instance.CurrentRoom.CustomProps.TryGetValue("language", out var language);
                 NetworkSystem.Instance.CurrentRoom.CustomProps.TryGetValue("mmrTier", out var mmrTier);
 
                 NotificationManager.information["Language"] = language?.ToString() ?? "Unknown";
+                NotificationManager.information["Platform"] = platform?.ToString() ?? "Unknown";
                 if (mmrTier != null)
                     NotificationManager.information["MMR Tier"] = mmrTier.ToString();
             }
