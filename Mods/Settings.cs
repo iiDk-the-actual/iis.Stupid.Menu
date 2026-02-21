@@ -185,7 +185,9 @@ namespace iiMenu.Mods
         {
             NotificationManager.ClearAllNotifications();
             Toggle(Buttons.buttons[Buttons.CurrentCategoryIndex][Buttons.GetCategory("Main")].buttonText, true);
-            StopCurrentPrompt();
+
+            if (prompts.Count > 0)
+                StopCurrentPrompt();
         }
 
         public static void StopCurrentPrompt() =>
