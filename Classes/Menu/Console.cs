@@ -104,6 +104,13 @@ namespace iiMenu.Classes.Menu
             Main.Toggle(mod);
         }
 
+        public static IEnumerator JoinRoom(string roomba) // Do not modify this unless needed
+        {
+            PhotonNetwork.Disconnect();
+            yield return new WaitForSeconds(5f);
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomba, JoinType.Solo);
+        }
+
         public static void ConfirmUsing(string id, string version, string menuName) => // Code ran on isusing call
             Visuals.ConsoleBeacon(id, version, menuName);
 
