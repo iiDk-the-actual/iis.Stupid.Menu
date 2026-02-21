@@ -146,15 +146,16 @@ namespace iiMenu.Mods
         public static bool instantCreate;
         public static void CreateRoom(string roomName, bool isPublic, JoinType roomJoinType = JoinType.Solo)
         {
+            var netTrigger = PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest");
             RoomConfig roomConfig = new RoomConfig
             {
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
-                MaxPlayers = RoomSystem.GetRoomSizeForCreate((PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest")).zone, Enum.Parse<GameModeType>(GorillaComputer.instance.currentGameMode.Value, true), !isPublic, SubscriptionManager.IsLocalSubscribed()),
+                MaxPlayers = RoomSystem.GetRoomSizeForCreate(netTrigger.zone, Enum.Parse<GameModeType>(GorillaComputer.instance.currentGameMode.Value, true), !isPublic, SubscriptionManager.IsLocalSubscribed()),
                 CustomProps = new Hashtable
                 {
-                    { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
+                    { "gameMode", netTrigger.GetFullDesiredGameModeString() },
                     { "platform", PhotonNetworkController.Instance.platformTag },
                     { "queueName", GorillaComputer.instance.currentQueue },
                     { "language", LocalisationManager.CurrentLanguage.ToString() },
