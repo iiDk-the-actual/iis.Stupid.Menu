@@ -647,7 +647,7 @@ namespace iiMenu.Mods
 
         public static void CategorySettings()
         {
-            List<ButtonInfo> buttons = new List<ButtonInfo> {new ButtonInfo { buttonText = "Exit Menu Settings", method =() => Buttons.CurrentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."}};
+            List<ButtonInfo> buttons = new List<ButtonInfo> {new ButtonInfo { buttonText = "Exit Menu Settings", method =() => { Buttons.CurrentCategoryName = "Settings"; Buttons.buttons[Buttons.GetCategory("Temporary Category")] = Array.Empty<ButtonInfo>(); }, isTogglable = false, toolTip = "Returns you back to the settings menu."}};
 
             foreach (var button in Buttons.buttons[Buttons.GetCategory("Main")])
             {
