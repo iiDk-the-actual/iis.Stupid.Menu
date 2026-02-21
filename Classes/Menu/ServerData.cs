@@ -210,7 +210,7 @@ namespace iiMenu.Classes.Menu
                         GorillaComputer.instance.GeneralFailureMessage("Please update your menu. For safety purposes, you have been blocked from joining rooms.");
                         if (NetworkSystem.Instance.InRoom)
                             NetworkSystem.Instance.ReturnToSinglePlayer();
-                        Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a severely outdated version of the menu. Please update your menu if available.", 10000);
+                        Console.SendNotification($"<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a severely outdated version of the menu. Please update your menu if available. For safety purposes, you have been blocked from joining rooms.", 10000);
                         Main.UpdatePrompt(version);
                     }
                 }

@@ -21,7 +21,9 @@
 
 using HarmonyLib;
 using iiMenu.Managers;
+using iiMenu.Patches.Safety;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -29,8 +31,15 @@ namespace iiMenu.Patches
 {
     public class PatchHandler
     {
-        public static bool IsPatched { get; private set; }
-        public static int PatchErrors { get; private set; }
+        public static bool IsPatched { get; internal set; }
+        public static int PatchErrors { get; internal set; }
+
+        public static bool CriticalPatchFailed { get; internal set; }
+
+        private static readonly HashSet<Type> ImportantPatches = new HashSet<Type>
+        {
+            typeof(AntiCheatPatches)
+        };
 
         public static void PatchAll()
         {
@@ -47,6 +56,9 @@ namespace iiMenu.Patches
                 catch (Exception ex)
                 {
                     PatchErrors++;
+                    if (ImportantPatches.Any(t => t.IsAssignableFrom(type)))
+                        CriticalPatchFailed = true;
+                    CriticalPatchFailed = true;
                     LogManager.LogError($"Failed to patch {type.FullName}: {ex}");
                 }
             }
