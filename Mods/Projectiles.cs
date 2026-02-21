@@ -132,6 +132,21 @@ namespace iiMenu.Mods
         }
 
         public static bool friendSided;
+        public static float friendProjectileScale = 1f;
+        public static void FriendProjectileScale(bool positive = true)
+        {
+            if (positive)
+                friendProjectileScale += 1;
+            else
+                friendProjectileScale -= 1;
+
+            if (friendProjectileScale > 10)
+                friendProjectileScale = 1;
+            if (friendProjectileScale < 0)
+                friendProjectileScale = 10;
+
+            Buttons.GetIndex("Friend Projectile Scale").overlapText = "Friend Projectile Scale <color=grey>[</color><color=green>" + friendProjectileScale + "</color><color=grey>]</color>";
+        }
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null, bool bypassTeleport = false)
         {
             color.a = 1f;
@@ -140,9 +155,9 @@ namespace iiMenu.Mods
                 velocity = velocity.normalized * 9999f;
 
             options ??= new RaiseEventOptions
-                {
-                    Receivers = ReceiverGroup.All
-                };
+            {
+                Receivers = ReceiverGroup.All
+            };
 
             SnowballThrowable Throwable = GetProjectile(projectileName);
 
@@ -300,6 +315,7 @@ namespace iiMenu.Mods
                             object[] sendEventData;
                             if (friendSided)
                             {
+                                projectileSendData[9] = friendProjectileScale;
                                 sendEventData = new object[2];
                                 sendEventData[0] = "sendProjectile";
                                 sendEventData[1] = projectileSendData;
