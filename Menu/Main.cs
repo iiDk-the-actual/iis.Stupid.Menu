@@ -5026,6 +5026,7 @@ namespace iiMenu.Menu
         }
 
         public static Dictionary<string, SnowballThrowable> snowballDict;
+        private static bool allSnowballsInitialized;
 
         /// <summary>
         /// Retrieves a SnowballThrowable instance by its projectile name.
@@ -5038,6 +5039,16 @@ namespace iiMenu.Menu
             {
                 if (!CosmeticsV2Spawner_Dirty.completed)
                     return null;
+
+                if (!allSnowballsInitialized)
+                {
+                    allSnowballsInitialized = true;
+
+                    CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.ForEach(v => VRRig.LocalRig.cosmeticsObjectRegistry.Cosmetic(v.Value));
+                    CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.ForEach(v => VRRig.LocalRig.cosmeticsObjectRegistry.Cosmetic(v.Value));
+
+                    return null; // Doesn't work for a singular frame because of GT optimization and threading
+                }
 
                 snowballDict = new Dictionary<string, SnowballThrowable>();
 
