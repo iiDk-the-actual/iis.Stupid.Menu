@@ -695,6 +695,11 @@ exit";
 
             ConnectedControllerHandler.Instance.leftValid = true;
             ConnectedControllerHandler.Instance.rightValid = true;
+
+            ConnectedControllerHandler.Instance.rightXRController.enabled = true;
+            ConnectedControllerHandler.Instance.leftXRController.enabled = true;
+
+            ConnectedControllerHandler.Instance.UpdateControllerStates();
         }
 
         private static bool reportMenuToggle;
