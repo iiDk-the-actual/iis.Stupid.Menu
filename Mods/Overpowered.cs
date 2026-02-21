@@ -6435,7 +6435,8 @@ namespace iiMenu.Mods
         public static void KickGun()
         {
             if (NetworkSystem.Instance.InRoom)
-                Visuals.VisualizeAura(NetworkSystem.Instance.MasterClient.VRRig().transform.position, 0.15f, Color.blue, 2017928);
+                VisualizeMasterClient();
+
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
