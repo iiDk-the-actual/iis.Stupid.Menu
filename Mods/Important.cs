@@ -1000,7 +1000,7 @@ exit";
             {
                 string text = RandomString();
                 if (GorillaComputer.instance.CheckAutoBanListForName(text))
-                    return SubscriptionPatches.enabled && text.Length == 4 ? $"@{text}" : text;
+                    return text;
             }
         }
     }

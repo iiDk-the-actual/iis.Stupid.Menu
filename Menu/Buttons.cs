@@ -411,6 +411,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
                 new ButtonInfo { buttonText = "Create Private", method =() => Important.CreateRoom(Important.RandomRoomName(), false), isTogglable = false, toolTip = "Creates a private room."},
 
+                new ButtonInfo { buttonText = "Create 20 Player Public", method =() => Important.CreateRoom($"@{Important.RandomRoomName()}", true), isTogglable = false, toolTip = "Creates a public room which can hold 20 players."},
+                new ButtonInfo { buttonText = "Create 20 Player Private", method =() => Important.CreateRoom($"@{Important.RandomRoomName()}", false), isTogglable = false, toolTip = "Creates a private room which can hold 20 players."},
+
                 new ButtonInfo { buttonText = "Fast Disconnect", method =() => SinglePlayerPatch.enabled = true, disableMethod =() =>  SinglePlayerPatch.enabled = false, toolTip = "Uses the fastest method of disconnecting possible."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 
