@@ -422,8 +422,8 @@ namespace iiMenu.Mods
 
         public static void WatchOn()
         {
-            GameObject mainwatch = VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)").gameObject;
-            regwatchobject = Object.Instantiate(mainwatch, rightHand ? VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : VRRig.LocalRig.transform.Find("rig/body_pivot/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            GameObject mainwatch = VRRig.LocalRig.transform.Find("rig/hand.L/huntcomputer (1)").gameObject;
+            regwatchobject = Object.Instantiate(mainwatch, rightHand ? VRRig.LocalRig.transform.Find("rig/hand.R").transform : VRRig.LocalRig.transform.Find("rig/hand.L").transform, false);
             Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
             regwatchobject.SetActive(true);
 
