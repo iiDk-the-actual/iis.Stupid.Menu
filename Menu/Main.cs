@@ -5035,6 +5035,9 @@ namespace iiMenu.Menu
         /// <returns>The matching SnowballThrowable instance if found; otherwise, null.</returns>
         public static SnowballThrowable GetProjectile(string projectileName)
         {
+            if (!GorillaComputer.instance.isConnectedToMaster)
+                return null;
+
             if (snowballDict == null)
             {
                 if (!CosmeticsV2Spawner_Dirty.completed)

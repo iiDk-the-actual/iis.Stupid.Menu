@@ -196,180 +196,180 @@ namespace iiMenu.Mods
         public static bool clientSided;
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null, bool bypassTeleport = false)
         {
-            color.a = 1f;
-
-            if (velocity.magnitude > 9999f)
-                velocity = velocity.normalized * 9999f;
-
-            options ??= new RaiseEventOptions
+            try
             {
-                Receivers = ReceiverGroup.All
-            };
+                color.a = 1f;
 
-            SnowballThrowable Throwable = GetProjectile(projectileName);
+                if (velocity.magnitude > 9999f)
+                    velocity = velocity.normalized * 9999f;
 
-            if (projectileName != "SlingshotProjectile")
-            {
-                if (Throwable == null)
-                    return;
-
-                if (!Throwable.gameObject.activeSelf)
+                options ??= new RaiseEventOptions
                 {
-                    Throwable.SetSnowballActiveLocal(true);
-                    Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                    Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                    Receivers = ReceiverGroup.All
+                };
 
-                    if (Buttons.GetIndex("Random Projectile").enabled)
-                        CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
-                    else
-                    {
-                        if (DisableCoroutine != null)
-                            CoroutineManager.instance.StopCoroutine(DisableCoroutine);
+                SnowballThrowable Throwable = GetProjectile(projectileName);
 
-                        DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
-                    }
-                }
-            }
-
-            if (Time.time > projDebounce)
-            {
-                try
+                if (projectileName != "SlingshotProjectile")
                 {
-                    if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 3.9f && !bypassTeleport)
+                    if (Throwable == null)
+                        throw new Exception("Throwable is null");
+
+                    if (!Throwable.gameObject.activeSelf)
                     {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = position + new Vector3(0f, velocity.y > 0f ? -3f : 3f, 0f);
+                        Throwable.SetSnowballActiveLocal(true);
+                        Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                        Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
-                        if (RigCoroutine != null)
-                            CoroutineManager.instance.StopCoroutine(RigCoroutine);
-
-                        RigCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
-                    }
-
-                    bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
-
-                    if (showSelf)
-                    {
-                        if (options.Receivers == ReceiverGroup.All)
-                            options.Receivers = ReceiverGroup.Others;
-
-                        if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
+                        if (Buttons.GetIndex("Random Projectile").enabled)
+                            CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                        else
                         {
-                            List<int> targetActors = options.TargetActors.ToList();
-                            targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
-                            options.TargetActors = targetActors.ToArray();
+                            if (DisableCoroutine != null)
+                                CoroutineManager.instance.StopCoroutine(DisableCoroutine);
+
+                            DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
                         }
                     }
+                }
 
-                    if (projectileName.Contains(SnowballName))
-                    {
-                        int scale = Overpowered.snowballScale;
-                        GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
+                if (Time.time > projDebounce)
+                {
+                
+                        if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 3.9f && !bypassTeleport)
+                        {
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = position + new Vector3(0f, velocity.y > 0f ? -3f : 3f, 0f);
 
-                        int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+                            if (RigCoroutine != null)
+                                CoroutineManager.instance.StopCoroutine(RigCoroutine);
 
-                        SlingshotProjectile slingshotProjectile;
+                            RigCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
+                        }
+
+                        bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
+
                         if (showSelf)
                         {
-                            slingshotProjectile = GrowingSnowball.SpawnGrowingSnowball(ref velocity, scale);
-                            slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
-                        }
+                            if (options.Receivers == ReceiverGroup.All)
+                                options.Receivers = ReceiverGroup.Others;
 
-                        if (PhotonNetwork.InRoom && !clientSided)
-                        {
-                            if (friendSided)
+                            if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
                             {
-                                Color32 color32 = color;
-
-                                object[] projectileSendData = new object[8];
-                                projectileSendData[0] = "sendSnowball";
-                                projectileSendData[1] = position;
-                                projectileSendData[2] = velocity;
-                                projectileSendData[3] = color32.r;
-                                projectileSendData[4] = color32.g;
-                                projectileSendData[5] = color32.b;
-                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[scale].snowballScale;
-                                projectileSendData[7] = index;
-
-                                PhotonNetwork.RaiseEvent(FriendManager.FriendByte, projectileSendData, options, SendOptions.SendUnreliable);
-                            } else
-                            {
-                                PhotonNetwork.RaiseEvent(176, new object[]
-                                {
-                                    GrowingSnowball.changeSizeEvent._eventId,
-                                    scale
-                                }, options, new SendOptions
-                                {
-                                    Reliability = false,
-                                    Encrypt = true
-                                });
-
-                                PhotonNetwork.RaiseEvent(176, new object[]
-                                {
-                                    GrowingSnowball.snowballThrowEvent._eventId,
-                                    position,
-                                    velocity,
-                                    index
-                                }, options, new SendOptions
-                                {
-                                    Reliability = false,
-                                    Encrypt = true
-                                });
+                                List<int> targetActors = options.TargetActors.ToList();
+                                targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                                options.TargetActors = targetActors.ToArray();
                             }
                         }
-                    }
-                    else
-                    {
-                        if (NetworkSystem.Instance.InRoom || clientSided)
+
+                        if (projectileName.Contains(SnowballName))
                         {
+                            int scale = Overpowered.snowballScale;
+                            GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
+
                             int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
-                            Color32 color32 = color;
-
-                            List<object> projectileSendData = new List<object>
+                            SlingshotProjectile slingshotProjectile;
+                            if (showSelf)
                             {
-                                position,
-                                velocity,
-                                projectileName == "SlingshotProjectile" ? 0 : (projectileName.ToLower().Contains("left") ? 1 : 2),
-                                index,
-                                true,
-                                color32.r,
-                                color32.g,
-                                color32.b,
-                                color32.a
-                            };
-
-                            object[] sendEventData = new object[3];
-                            if ((friendSided || clientSided) && showSelf)
-                            {
-                                projectileSendData.Add(friendProjectileScale);
-                                projectileSendData.Add(Throwable);
-                                sendEventData[0] = "sendProjectile";
-                                sendEventData[1] = projectileSendData.ToArray();
-                                sendEventData[2] = NetworkSystem.Instance.LocalPlayer;
-                            } else if (!clientSided)
-                            {
-                                sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
-                                sendEventData[1] = 0;
-                                sendEventData[2] = projectileSendData.ToArray();
+                                slingshotProjectile = GrowingSnowball.SpawnGrowingSnowball(ref velocity, scale);
+                                slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                             }
 
-                            if (friendSided && showSelf)
-                                LaunchFriendProjectile(sendEventData);
-                            else if (!clientSided)
+                            if (PhotonNetwork.InRoom && !clientSided)
                             {
-                                PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
-                                RPCProtection();
+                                if (friendSided)
+                                {
+                                    Color32 color32 = color;
+
+                                    object[] projectileSendData = new object[8];
+                                    projectileSendData[0] = "sendSnowball";
+                                    projectileSendData[1] = position;
+                                    projectileSendData[2] = velocity;
+                                    projectileSendData[3] = color32.r;
+                                    projectileSendData[4] = color32.g;
+                                    projectileSendData[5] = color32.b;
+                                    projectileSendData[6] = GrowingSnowball.snowballSizeLevels[scale].snowballScale;
+                                    projectileSendData[7] = index;
+
+                                    PhotonNetwork.RaiseEvent(FriendManager.FriendByte, projectileSendData, options, SendOptions.SendUnreliable);
+                                } else
+                                {
+                                    PhotonNetwork.RaiseEvent(176, new object[]
+                                    {
+                                        GrowingSnowball.changeSizeEvent._eventId,
+                                        scale
+                                    }, options, new SendOptions
+                                    {
+                                        Reliability = false,
+                                        Encrypt = true
+                                    });
+
+                                    PhotonNetwork.RaiseEvent(176, new object[]
+                                    {
+                                        GrowingSnowball.snowballThrowEvent._eventId,
+                                        position,
+                                        velocity,
+                                        index
+                                    }, options, new SendOptions
+                                    {
+                                        Reliability = false,
+                                        Encrypt = true
+                                    });
+                                }
                             }
+                        }
+                        else
+                        {
+                            if (NetworkSystem.Instance.InRoom || clientSided)
+                            {
+                                int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+
+                                Color32 color32 = color;
+
+                                List<object> projectileSendData = new List<object>
+                                {
+                                    position,
+                                    velocity,
+                                    projectileName == "SlingshotProjectile" ? 0 : (projectileName.ToLower().Contains("left") ? 1 : 2),
+                                    index,
+                                    true,
+                                    color32.r,
+                                    color32.g,
+                                    color32.b,
+                                    color32.a
+                                };
+
+                                object[] sendEventData = new object[3];
+                                if ((friendSided || clientSided) && showSelf)
+                                {
+                                    projectileSendData.Add(friendProjectileScale);
+                                    projectileSendData.Add(Throwable);
+                                    sendEventData[0] = "sendProjectile";
+                                    sendEventData[1] = projectileSendData.ToArray();
+                                    sendEventData[2] = NetworkSystem.Instance.LocalPlayer;
+                                } else if (!clientSided)
+                                {
+                                    sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
+                                    sendEventData[1] = 0;
+                                    sendEventData[2] = projectileSendData.ToArray();
+                                }
+
+                                if (friendSided && showSelf)
+                                    LaunchFriendProjectile(sendEventData);
+                                else if (!clientSided)
+                                {
+                                    PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
+                                    RPCProtection();
+                                }
                             
+                            }
                         }
                     }
-                }
-                catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}. Full exception:\n{e}"); }
-
                 if (projDebounceType > 0f)
                     projDebounce = Time.time + (projDebounceType + (projDebounceType == 0f ? 0f : 0.01f));
             }
+            catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}. Full exception:\n{e}"); }
         }
 
         public static void BetaFireImpact(Vector3 position, Color color)
