@@ -341,7 +341,8 @@ namespace iiMenu.Mods
                                 };
 
                                 object[] sendEventData = new object[3];
-                                if ((friendSided || clientSided) && showSelf)
+                                bool launchLocally = (friendSided || clientSided) && showSelf;
+                                if (launchLocally)
                                 {
                                     projectileSendData.Add(friendProjectileScale);
                                     projectileSendData.Add(Throwable);
@@ -355,7 +356,7 @@ namespace iiMenu.Mods
                                     sendEventData[2] = projectileSendData.ToArray();
                                 }
 
-                                if (friendSided && showSelf)
+                                if (launchLocally)
                                     LaunchFriendProjectile(sendEventData);
                                 else if (!clientSided)
                                 {
