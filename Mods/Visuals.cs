@@ -3173,6 +3173,8 @@ namespace iiMenu.Mods
                     tmp.SafeSetFont(Minecraft);
                     tmp.margin = Vector4.zero;
                 }
+                if (nameTagChams)
+                    tmp.Chams();
 
                 Vector2 size = tmp.textBounds.size;
                 float paddingX = 0.1f;
