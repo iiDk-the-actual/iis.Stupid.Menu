@@ -5040,7 +5040,7 @@ namespace iiMenu.Menu
                 if (!CosmeticsV2Spawner_Dirty.completed)
                     return null;
 
-                if (!allSnowballsInitialized)
+                if (!allSnowballsInitialized && (CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.Count >= 1 && CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.Count >= 1))
                 {
                     allSnowballsInitialized = true;
 
