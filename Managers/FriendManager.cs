@@ -586,7 +586,7 @@ namespace iiMenu.Managers
                     }
                     case "sendProjectile":
                     {
-                        Projectiles.LaunchLocalProjectile(args);
+                        Projectiles.LaunchFriendProjectile(args);
                         break;
                     }
                     case "sendSnowball":

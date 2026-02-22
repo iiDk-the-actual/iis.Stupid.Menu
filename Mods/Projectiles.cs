@@ -155,7 +155,7 @@ namespace iiMenu.Mods
 
             Buttons.GetIndex("Friend Projectile Scale").overlapText = "Friend Projectile Scale <color=grey>[</color><color=green>" + friendProjectileScale + "</color><color=grey>]</color>";
         }
-        public static void LaunchLocalProjectile(object[] data)
+        public static void LaunchFriendProjectile(object[] data)
         {
             NetPlayer sender = (NetPlayer)data[2];
             VRRig senderRig = sender.VRRig();
@@ -354,7 +354,7 @@ namespace iiMenu.Mods
 
                             PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
                             if (showSelf)
-                                LaunchLocalProjectile(sendEventData);
+                                LaunchFriendProjectile(sendEventData);
                             RPCProtection();
                         }
                     }
