@@ -5651,14 +5651,17 @@ namespace iiMenu.Menu
 
             foreach (PhotonView photonView in photonViewList.Values)
             {
+                if (!photonView.IsMine || photonView.Synchronization == ViewSynchronization.Off || !photonView.isActiveAndEnabled || PhotonNetwork.blockedSendingGroups.Contains(photonView.Group))
+                    continue;
+
                 if (exclude)
                 {
-                    if (photonView.IsMine && !filteredViewIDs.Contains(photonView.ViewID))
+                    if (!filteredViewIDs.Contains(photonView.ViewID))
                         viewsToSerialize.Add(photonView);
                 }
                 else
                 {
-                    if (photonView.IsMine && filteredViewIDs.Contains(photonView.ViewID))
+                    if (filteredViewIDs.Contains(photonView.ViewID))
                         viewsToSerialize.Add(photonView);
                 }
             }
