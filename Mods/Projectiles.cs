@@ -148,10 +148,10 @@ namespace iiMenu.Mods
             else
                 friendProjectileScale -= 1;
 
-            if (friendProjectileScale > 10)
+            if (friendProjectileScale > 5)
                 friendProjectileScale = 1;
-            if (friendProjectileScale < 0)
-                friendProjectileScale = 10;
+            if (friendProjectileScale < 1)
+                friendProjectileScale = 5;
 
             Buttons.GetIndex("Friend Projectile Scale").overlapText = "Friend Projectile Scale <color=grey>[</color><color=green>" + friendProjectileScale + "</color><color=grey>]</color>";
         }
@@ -172,7 +172,7 @@ namespace iiMenu.Mods
             byte a = (byte)projectileData[8];
             Color32 color32 = new Color32(r, g, b, a);
 
-            float scale = Mathf.Clamp((float)projectileData[9], 1f, 10f);
+            float scale = Mathf.Clamp((float)projectileData[9], 1f, 5f);
             SnowballThrowable throwable = (SnowballThrowable)projectileData[10];
 
 
