@@ -157,40 +157,48 @@ namespace iiMenu.Mods
         }
         public static void LaunchFriendProjectile(object[] data)
         {
-            NetPlayer sender = (NetPlayer)data[2];
-            VRRig senderRig = sender.VRRig();
-            object[] projectileData = (object[])data[1];
-            Vector3 position = (Vector3)projectileData[0];
-            Vector3 velocity = (Vector3)projectileData[1];
-            int projectileType = (int)projectileData[2];
-            int index = (int)projectileData[3];
-            bool overrideColor = (bool)projectileData[4];
-
-            byte r = (byte)projectileData[5];
-            byte g = (byte)projectileData[6];
-            byte b = (byte)projectileData[7];
-            byte a = (byte)projectileData[8];
-            Color32 color32 = new Color32(r, g, b, a);
-
-            float scale = Mathf.Clamp((float)projectileData[9], 1f, 5f);
-            SnowballThrowable throwable = (SnowballThrowable)projectileData[10];
-
-            if (projectileType == 0)
+            try
             {
-                ProjectileWeapon weapon = senderRig.projectileWeapon;
-                if (weapon.IsNotNull())
+                NetPlayer sender = (NetPlayer)data[2];
+                VRRig senderRig = sender.VRRig();
+                object[] projectileData = (object[])data[1];
+                Vector3 position = (Vector3)projectileData[0];
+                Vector3 velocity = (Vector3)projectileData[1];
+                int projectileType = (int)projectileData[2];
+                int index = (int)projectileData[3];
+                bool overrideColor = (bool)projectileData[4];
+
+                byte r = (byte)projectileData[5];
+                byte g = (byte)projectileData[6];
+                byte b = (byte)projectileData[7];
+                byte a = (byte)projectileData[8];
+                Color32 color32 = new Color32(r, g, b, a);
+
+                int scale = Mathf.Clamp((int)projectileData[9], 1, 5);
+                SnowballThrowable throwable = (SnowballThrowable)projectileData[10];
+
+                if (projectileType == 0)
                 {
-                    GameObject go = ObjectPools.instance.Instantiate(weapon.projectilePrefab, true);
+                    ProjectileWeapon weapon = senderRig.projectileWeapon;
+                    if (weapon.IsNotNull())
+                    {
+                        GameObject go = ObjectPools.instance.Instantiate(weapon.projectilePrefab, true);
+                        SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
+                        projectile.Launch(position, velocity, null, false, false, index, scale, true, color32);
+                    }
+                }
+                else
+                {
+                    GameObject go = ObjectPools.instance.Instantiate(throwable.projectilePrefab, true);
                     SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                    projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
+                    projectile.Launch(position, velocity, null, false, false, index, scale, true, color32);
                 }
             }
-            else
+            catch (Exception e)
             {
-                GameObject go = ObjectPools.instance.Instantiate(throwable.projectilePrefab, true);
-                SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
+                LogManager.LogError($"Friend Projectile error: {e.Message}. Full stacktrace:\n{e}");
             }
+            
         }
 
         public static bool clientSided;
