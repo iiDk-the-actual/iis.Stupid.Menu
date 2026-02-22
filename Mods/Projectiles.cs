@@ -197,6 +197,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool clientSided;
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null, bool bypassTeleport = false)
         {
             color.a = 1f;
@@ -278,7 +279,7 @@ namespace iiMenu.Mods
                             slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                         }
 
-                        if (PhotonNetwork.InRoom && !Buttons.GetIndex("Client Sided Projectiles").enabled)
+                        if (PhotonNetwork.InRoom && !clientSided)
                         {
                             if (friendSided)
                             {
@@ -323,7 +324,7 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        if (NetworkSystem.Instance.InRoom)
+                        if (NetworkSystem.Instance.InRoom || clientSided)
                         {
                             int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
@@ -343,14 +344,14 @@ namespace iiMenu.Mods
                             };
 
                             object[] sendEventData = new object[3];
-                            if (friendSided)
+                            if ((friendSided || clientSided) && showSelf)
                             {
                                 projectileSendData.Add(friendProjectileScale);
                                 projectileSendData.Add(Throwable);
                                 sendEventData[0] = "sendProjectile";
                                 sendEventData[1] = projectileSendData.ToArray();
                                 sendEventData[2] = NetworkSystem.Instance.LocalPlayer;
-                            } else
+                            } else if (!clientSided)
                             {
                                 sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                                 sendEventData[1] = 0;
@@ -359,7 +360,7 @@ namespace iiMenu.Mods
 
                             if (friendSided && showSelf)
                                 LaunchFriendProjectile(sendEventData);
-                            else
+                            else if (!clientSided)
                             {
                                 PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
                                 RPCProtection();
