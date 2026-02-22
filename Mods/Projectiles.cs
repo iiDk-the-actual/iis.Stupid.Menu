@@ -175,8 +175,6 @@ namespace iiMenu.Mods
             float scale = Mathf.Clamp((float)projectileData[9], 1f, 5f);
             SnowballThrowable throwable = (SnowballThrowable)projectileData[10];
 
-
-            LogManager.Log(projectileType);
             if (projectileType == 0)
             {
                 ProjectileWeapon weapon = senderRig.projectileWeapon;
@@ -190,9 +188,7 @@ namespace iiMenu.Mods
             else
             {
                 GameObject go = ObjectPools.instance.Instantiate(throwable.projectilePrefab, true);
-                if (go) LogManager.Log("created projectile");
                 SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                LogManager.Log("launching projectile");
                 projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
             }
         }
