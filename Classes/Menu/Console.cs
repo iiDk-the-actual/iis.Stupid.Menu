@@ -24,7 +24,6 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag.Rendering;
 using HarmonyLib;
-using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Mods;
