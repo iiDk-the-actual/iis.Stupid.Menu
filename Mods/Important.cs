@@ -639,7 +639,7 @@ exit";
             mediaText = null;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
+        #pragma warning disable CS0618 // Type or member is obsolete
         private static bool wasenabled = true;
 
         public static void EnableFPC()
@@ -683,24 +683,7 @@ exit";
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        public static void ForceEnableHands()
-        {
-            if (!XRSettings.isDeviceActive)
-                return;
-
-            ConnectedControllerHandler.Instance.leftControllerValid = true;
-            ConnectedControllerHandler.Instance.rightControllerValid = true;
-
-            ConnectedControllerHandler.Instance.leftValid = true;
-            ConnectedControllerHandler.Instance.rightValid = true;
-
-            ConnectedControllerHandler.Instance.rightXRController.enabled = true;
-            ConnectedControllerHandler.Instance.leftXRController.enabled = true;
-
-            ConnectedControllerHandler.Instance.UpdateControllerStates();
-        }
+        #pragma warning restore CS0618 // Type or member is obsolete
 
         private static bool reportMenuToggle;
         public static void OculusReportMenu()
