@@ -140,7 +140,7 @@ namespace iiMenu.Mods
         }
 
         public static bool friendSided;
-        public static float friendProjectileScale = 1f;
+        public static int friendProjectileScale = 1;
         public static void FriendProjectileScale(bool positive = true)
         {
             if (positive)
@@ -264,7 +264,7 @@ namespace iiMenu.Mods
 
                         if (projectileName.Contains(SnowballName))
                         {
-                            int scale = Overpowered.snowballScale;
+                            int scale = friendSided ? Math.Max(Overpowered.snowballScale, friendProjectileScale) : Overpowered.snowballScale;
                             GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
 
                             int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
