@@ -5040,7 +5040,7 @@ namespace iiMenu.Menu
                 if (!CosmeticsV2Spawner_Dirty.completed)
                     return null;
 
-                if (!allSnowballsInitialized)
+                if (!allSnowballsInitialized && (CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.Count >= 1 && CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.Count >= 1))
                 {
                     allSnowballsInitialized = true;
 
@@ -5651,14 +5651,17 @@ namespace iiMenu.Menu
 
             foreach (PhotonView photonView in photonViewList.Values)
             {
+                if (!photonView.IsMine || photonView.Synchronization == ViewSynchronization.Off || !photonView.isActiveAndEnabled || PhotonNetwork.blockedSendingGroups.Contains(photonView.Group))
+                    continue;
+
                 if (exclude)
                 {
-                    if (photonView.IsMine && !filteredViewIDs.Contains(photonView.ViewID))
+                    if (!filteredViewIDs.Contains(photonView.ViewID))
                         viewsToSerialize.Add(photonView);
                 }
                 else
                 {
-                    if (photonView.IsMine && filteredViewIDs.Contains(photonView.ViewID))
+                    if (filteredViewIDs.Contains(photonView.ViewID))
                         viewsToSerialize.Add(photonView);
                 }
             }
