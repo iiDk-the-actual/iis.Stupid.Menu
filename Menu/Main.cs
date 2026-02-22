@@ -5035,42 +5035,52 @@ namespace iiMenu.Menu
         /// <returns>The matching SnowballThrowable instance if found; otherwise, null.</returns>
         public static SnowballThrowable GetProjectile(string projectileName)
         {
-            if (!GorillaComputer.instance.isConnectedToMaster)
-                return null;
-
             if (snowballDict == null)
             {
                 if (!CosmeticsV2Spawner_Dirty.completed)
                     return null;
 
-                if (!allSnowballsInitialized && (CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.Count >= 1 && CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.Count >= 1))
+                if (!GorillaComputer.instance.isConnectedToMaster)
+                    return null;
+
+                if (!allSnowballsInitialized &&
+                    (CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.Count >= 1 &&
+                     CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.Count >= 1))
                 {
                     allSnowballsInitialized = true;
 
                     CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringLeft.ForEach(v => VRRig.LocalRig.cosmeticsObjectRegistry.Cosmetic(v.Value));
                     CosmeticsV2Spawner_Dirty.materialIndexToSnowballThrowablePlayfabIdStringRight.ForEach(v => VRRig.LocalRig.cosmeticsObjectRegistry.Cosmetic(v.Value));
 
-                    return null; // Doesn't work for a singular frame because of GT optimization and threading
+                    return null;
                 }
 
                 snowballDict = new Dictionary<string, SnowballThrowable>();
-
                 foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
                 {
                     foreach (SnowballThrowable Throwable in Maker.snowballs)
                     {
                         try
                         {
-                            snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable);
+                            string key = Throwable.transform.parent.gameObject.name;
+                            snowballDict.Add(key, Throwable);
                         }
-                        catch { }
+                        catch (Exception e)
+                        {
+                            LogManager.LogError($"Failed to add projectile to snowballDict: {e.Message}");
+                        }
                     }
                 }
             }
 
             projectileName += "(Clone)";
+            if (!snowballDict.TryGetValue(projectileName, out var projectile))
+            {
+                LogManager.LogWarning($"Projectile not found: {projectileName}");
+                return null;
+            }
 
-            return snowballDict != null && snowballDict.TryGetValue(projectileName, out var projectile) ? projectile : null;
+            return projectile;
         }
 
         public static readonly Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]>();

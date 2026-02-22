@@ -155,50 +155,31 @@ namespace iiMenu.Mods
 
             Buttons.GetIndex("Friend Projectile Scale").overlapText = "Friend Projectile Scale <color=grey>[</color><color=green>" + friendProjectileScale + "</color><color=grey>]</color>";
         }
-        public static void LaunchFriendProjectile(object[] data)
+        public static void LaunchLocalProjectile(Vector3 position, Vector3 velocity, int projectileType, int index, bool overrideColor, Color32 color, int scale, SnowballThrowable throwable, VRRig rig)
         {
             try
             {
-                NetPlayer sender = (NetPlayer)data[2];
-                VRRig senderRig = sender.VRRig();
-                object[] projectileData = (object[])data[1];
-                Vector3 position = (Vector3)projectileData[0];
-                Vector3 velocity = (Vector3)projectileData[1];
-                int projectileType = (int)projectileData[2];
-                int index = (int)projectileData[3];
-                bool overrideColor = (bool)projectileData[4];
-
-                byte r = (byte)projectileData[5];
-                byte g = (byte)projectileData[6];
-                byte b = (byte)projectileData[7];
-                byte a = (byte)projectileData[8];
-                Color32 color32 = new Color32(r, g, b, a);
-
-                int scale = Mathf.Clamp((int)projectileData[9], 1, 5);
-                SnowballThrowable throwable = (SnowballThrowable)projectileData[10];
-
                 if (projectileType == 0)
                 {
-                    ProjectileWeapon weapon = senderRig.projectileWeapon;
+                    ProjectileWeapon weapon = rig.projectileWeapon;
                     if (weapon.IsNotNull())
                     {
                         GameObject go = ObjectPools.instance.Instantiate(weapon.projectilePrefab, true);
                         SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                        projectile.Launch(position, velocity, null, false, false, index, scale, true, color32);
+                        projectile.Launch(position, velocity, null, false, false, index, scale, overrideColor, color);
                     }
                 }
                 else
                 {
                     GameObject go = ObjectPools.instance.Instantiate(throwable.projectilePrefab, true);
                     SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                    projectile.Launch(position, velocity, null, false, false, index, scale, true, color32);
+                    projectile.Launch(position, velocity, null, false, false, index, scale, overrideColor, color);
                 }
             }
             catch (Exception e)
             {
-                LogManager.LogError($"Friend Projectile error: {e.Message}. Full stacktrace:\n{e}");
-            }
-            
+                LogManager.LogError($"Friend Projectile error: {e.Message}. Full exception:\n{e}");
+            } 
         }
 
         public static bool clientSided;
@@ -334,11 +315,12 @@ namespace iiMenu.Mods
 
                             Color32 color32 = color;
 
+                            int projectileSource = projectileName == "SlingshotProjectile" ? 0 : (projectileName.ToLower().Contains("left") ? 1 : 2);
                             List<object> projectileSendData = new List<object>
                             {
                                 position,
                                 velocity,
-                                projectileName == "SlingshotProjectile" ? 0 : (projectileName.ToLower().Contains("left") ? 1 : 2),
+                                projectileSource,
                                 index,
                                 true,
                                 color32.r,
@@ -347,30 +329,28 @@ namespace iiMenu.Mods
                                 color32.a
                             };
 
-                            object[] sendEventData = new object[3];
+                            List<object> sendEventData = new List<object>();
                             bool launchLocally = (friendSided || clientSided) && showSelf;
                             if (launchLocally)
                             {
                                 projectileSendData.Add(friendProjectileScale);
                                 projectileSendData.Add(Throwable);
-                                sendEventData[0] = "sendProjectile";
-                                sendEventData[1] = projectileSendData.ToArray();
-                                sendEventData[2] = NetworkSystem.Instance.LocalPlayer;
-                            } else if (!clientSided)
+                                sendEventData.Add("sendProjectile");
+                                sendEventData.Add(projectileSendData.ToArray());
+                            } else
                             {
-                                sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
-                                sendEventData[1] = 0;
-                                sendEventData[2] = projectileSendData.ToArray();
-                            }
+                                sendEventData.Add(NetworkSystem.Instance.ServerTimestamp);
+                                sendEventData.Add(0);
+                                sendEventData.Add(projectileSendData.ToArray());
+                            } 
 
-                            if (launchLocally)
-                                LaunchFriendProjectile(sendEventData);
-                            else if (!clientSided)
+                            if (showSelf)
+                                LaunchLocalProjectile(position, velocity, projectileSource, index, true, color32, friendSided ? friendProjectileScale : 1, Throwable, VRRig.LocalRig);
+                            if (!clientSided && NetworkSystem.Instance.InRoom)
                             {
-                                PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
+                                PhotonNetwork.RaiseEvent(friendSided ? FriendManager.FriendByte : (byte)3, sendEventData.ToArray(), options, SendOptions.SendReliable);
                                 RPCProtection();
                             }
-                            
                         }
                     }
                 }

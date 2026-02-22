@@ -586,7 +586,17 @@ namespace iiMenu.Managers
                     }
                     case "sendProjectile":
                     {
-                        Projectiles.LaunchFriendProjectile(args);
+                        Projectiles.LaunchLocalProjectile(
+                            (Vector3)args[0],
+                            (Vector3)args[1],
+                            (int)args[2],
+                            (int)args[3],
+                            (bool)args[4],
+                            new Color32((byte)args[5], (byte)args[6], (byte)args[7], (byte)args[8]),
+                            (int)args[9],
+                            (SnowballThrowable)args[10],
+                            senderRig
+                        );
                         break;
                     }
                     case "sendSnowball":
