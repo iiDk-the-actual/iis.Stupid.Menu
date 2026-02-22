@@ -80,7 +80,7 @@ namespace iiMenu.Mods
             yield return new WaitUntil(() => instance.netState == NetSystemState.Idle);
             yield return new WaitForSeconds(0.5f);
 
-            instance.netState = NetSystemState.Connecting;
+            // instance.netState = NetSystemState.Connecting;
 
             while (!instance.InRoom)
             {

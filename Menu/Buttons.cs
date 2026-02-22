@@ -301,6 +301,7 @@ namespace iiMenu.Menu
             new[] { // Room Settings [3]
                 new ButtonInfo { buttonText = "Exit Room Settings", method =() => CurrentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
+                new ButtonInfo { buttonText = "20 Player Rooms", toolTip = "Changes Create Public and Create Private to 20 player capacity." },
                 new ButtonInfo { buttonText = "crTime", overlapText = "Change Reconnect Time <color=grey>[</color><color=green>5</color><color=grey>]</color>", method =() => Settings.ChangeReconnectTime(), enableMethod =() => Settings.ChangeReconnectTime(), disableMethod =() => Settings.ChangeReconnectTime(false), incremental = true, isTogglable = false, toolTip = "Changes the amount of time waited before attempting to reconnect again."},
             },
 
@@ -401,18 +402,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Room Mods", method =() => CurrentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Disconnect", method =() => NetworkSystem.Instance.ReturnToSinglePlayer(), isTogglable = false, toolTip = "Disconnects you from the the room."},
-                new ButtonInfo { buttonText = "Reconnect", method = Important.Reconnect, isTogglable = false, toolTip = "Reconnects you from and to the the room."},
+                new ButtonInfo { buttonText = "Reconnect", aliases = new[] { "Rejoin" }, method = Important.Reconnect, isTogglable = false, toolTip = "Reconnects you from and to the the room."},
 
                 new ButtonInfo { buttonText = "Cancel Reconnect", method = Important.CancelReconnect, isTogglable = false, toolTip = "Cancels the reconnection loop."},
 
                 new ButtonInfo { buttonText = "Join Last Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom, JoinType.Solo), isTogglable = false, toolTip = "Joins the last room you left."},
                 new ButtonInfo { buttonText = "Join Random", method = Important.JoinRandom, isTogglable = false, toolTip = "Joins a random public room." },
 
-                new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
-                new ButtonInfo { buttonText = "Create Private", method =() => Important.CreateRoom(Important.RandomRoomName(), false), isTogglable = false, toolTip = "Creates a private room."},
-
-                new ButtonInfo { buttonText = "Create 20 Player Public", method =() => Important.CreateRoom($"@{Important.RandomRoomName()}", true), isTogglable = false, toolTip = "Creates a public room which can hold 20 players."},
-                new ButtonInfo { buttonText = "Create 20 Player Private", method =() => Important.CreateRoom($"@{Important.RandomRoomName()}", false), isTogglable = false, toolTip = "Creates a private room which can hold 20 players."},
+                new ButtonInfo { buttonText = "Create Public", method =() => { if (GetIndex("20 Player Rooms").enabled) Important.CreateRoom($"@{Important.RandomRoomName()}", true); else Important.CreateRoom(Important.RandomRoomName(), true); }, isTogglable = false, toolTip = "Creates a public room."},
+                new ButtonInfo { buttonText = "Create Private", method =() => { if (GetIndex("20 Player Rooms").enabled) Important.CreateRoom($"@{Important.RandomRoomName()}", false); else Important.CreateRoom(Important.RandomRoomName(), false); }, isTogglable = false, toolTip = "Creates a private room."},
 
                 new ButtonInfo { buttonText = "Fast Disconnect", method =() => SinglePlayerPatch.enabled = true, disableMethod =() =>  SinglePlayerPatch.enabled = false, toolTip = "Uses the fastest method of disconnecting possible."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
