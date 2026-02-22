@@ -685,6 +685,23 @@ exit";
         }
         #pragma warning restore CS0618 // Type or member is obsolete
 
+        public static void ForceEnableHands()
+        {
+            if (!XRSettings.isDeviceActive)
+                return;
+
+            ConnectedControllerHandler.Instance.leftControllerValid = true;
+            ConnectedControllerHandler.Instance.rightControllerValid = true;
+
+            ConnectedControllerHandler.Instance.leftValid = true;
+            ConnectedControllerHandler.Instance.rightValid = true;
+
+            ConnectedControllerHandler.Instance.rightXRController.enabled = true;
+            ConnectedControllerHandler.Instance.leftXRController.enabled = true;
+
+            ConnectedControllerHandler.Instance.UpdateControllerStates();
+        }
+
         private static bool reportMenuToggle;
         public static void OculusReportMenu()
         {
