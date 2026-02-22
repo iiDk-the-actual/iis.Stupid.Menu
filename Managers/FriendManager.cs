@@ -586,39 +586,7 @@ namespace iiMenu.Managers
                     }
                     case "sendProjectile":
                     {
-                        object[] projectileData = (object[])data[2];
-                        Vector3 position = (Vector3)projectileData[0];
-                        Vector3 velocity = (Vector3)projectileData[1];
-                        int projectileType = (int)projectileData[2];
-                        int index = (int)projectileData[3];
-                        bool overrideColor = (bool)projectileData[4];
-
-                        byte r = (byte)projectileData[5];
-                        byte g = (byte)projectileData[6];
-                        byte b = (byte)projectileData[7];
-                        byte a = (byte)projectileData[8];
-
-                        float scale = Mathf.Clamp((float)projectileData[9], 1f, 10f);
-
-                        Color32 color32 = new Color32(r, g, b, a);
-
-                        if (projectileType == 0)
-                        {
-                            ProjectileWeapon weapon = senderRig.projectileWeapon;
-                            if (weapon.IsNotNull())
-                            {
-                                GameObject go = ObjectPools.instance.Instantiate(PoolUtils.GameObjHashCode(weapon.projectilePrefab), true);
-                                SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-                                projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
-                            }
-                        } else
-                        {
-                            int projectileHash = projectileType == 1 ? senderRig.myBodyDockPositions.GetLeftHandThrowable().GetComponent<SnowballThrowable>().ProjectileHash : projectileType == 2 ? senderRig.myBodyDockPositions.GetRightHandThrowable().GetComponent<SnowballThrowable>().ProjectileHash : 0;
-                            GameObject go = ObjectPools.instance.Instantiate(projectileHash, true);
-                            SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
-
-                            projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
-                        }
+                        Projectiles.LaunchFriendProjectile(args);
                         break;
                     }
                     case "sendSnowball":

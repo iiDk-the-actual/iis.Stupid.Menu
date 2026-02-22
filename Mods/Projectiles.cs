@@ -20,7 +20,9 @@
  */
 
 using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaLocomotion;
+using iiMenu.Extensions;
 using iiMenu.Managers;
 using iiMenu.Menu;
 using iiMenu.Patches.Menu;
@@ -153,6 +155,46 @@ namespace iiMenu.Mods
 
             Buttons.GetIndex("Friend Projectile Scale").overlapText = "Friend Projectile Scale <color=grey>[</color><color=green>" + friendProjectileScale + "</color><color=grey>]</color>";
         }
+        public static void LaunchFriendProjectile(object[] data)
+        {
+            NetPlayer sender = (NetPlayer)data[2];
+            VRRig senderRig = sender.VRRig();
+            object[] projectileData = (object[])data[1];
+            Vector3 position = (Vector3)projectileData[0];
+            Vector3 velocity = (Vector3)projectileData[1];
+            int projectileType = (int)projectileData[2];
+            int index = (int)projectileData[3];
+            bool overrideColor = (bool)projectileData[4];
+
+            byte r = (byte)projectileData[5];
+            byte g = (byte)projectileData[6];
+            byte b = (byte)projectileData[7];
+            byte a = (byte)projectileData[8];
+
+            float scale = Mathf.Clamp((float)projectileData[9], 1f, 10f);
+
+            Color32 color32 = new Color32(r, g, b, a);
+
+            if (projectileType == 0)
+            {
+                ProjectileWeapon weapon = senderRig.projectileWeapon;
+                if (weapon.IsNotNull())
+                {
+                    GameObject go = ObjectPools.instance.Instantiate(PoolUtils.GameObjHashCode(weapon.projectilePrefab), true);
+                    SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
+                    projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
+                }
+            }
+            else
+            {
+                int projectileHash = projectileType == 1 ? senderRig.myBodyDockPositions.GetLeftHandThrowable().GetComponent<SnowballThrowable>().ProjectileHash : projectileType == 2 ? senderRig.myBodyDockPositions.GetRightHandThrowable().GetComponent<SnowballThrowable>().ProjectileHash : 0;
+                GameObject go = ObjectPools.instance.Instantiate(projectileHash, true);
+                SlingshotProjectile projectile = go.GetComponent<SlingshotProjectile>();
+
+                projectile.Launch(position, velocity, null, false, false, index, scale, false, color32);
+            }
+        }
+
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null, bool bypassTeleport = false)
         {
             color.a = 1f;
@@ -279,31 +321,9 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        SlingshotProjectile slingshotProjectile = null;
-                        if (showSelf)
-                        {
-                            if (Throwable == null)
-                            {
-                                ProjectileWeapon weapon = VRRig.LocalRig.GetSlingshot();
-                                GameObject projectile = ObjectPools.instance.Instantiate(PoolUtils.GameObjHashCode(weapon.projectilePrefab), true);
-
-                                float projectileScale = Mathf.Abs(weapon.transform.lossyScale.x);
-                                projectile.transform.localScale = Vector3.one * projectileScale;
-
-                                weapon.AttachTrail(PoolUtils.GameObjHashCode(weapon.projectileTrail), projectile, position, false, false, true, color);
-
-                                slingshotProjectile = projectile.GetComponent<SlingshotProjectile>();
-                                slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, ProjectileTracker.AddAndIncrementLocalProjectile(slingshotProjectile, velocity, position, projectileScale), projectileScale, true, color);
-
-                                slingshotProjectile.ApplyColor(slingshotProjectile.defaultBall, color);
-                            }
-                            else
-                                slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
-                        }
-
                         if (PhotonNetwork.InRoom && !Buttons.GetIndex("Client Sided Projectiles").enabled)
                         {
-                            int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+                            int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
                             Color32 color32 = color;
 
@@ -318,22 +338,23 @@ namespace iiMenu.Mods
                             projectileSendData[7] = color32.b;
                             projectileSendData[8] = color32.a;
 
-                            object[] sendEventData;
+                            object[] sendEventData = new object[3];
                             if (friendSided)
                             {
                                 projectileSendData[9] = friendProjectileScale;
-                                sendEventData = new object[2];
                                 sendEventData[0] = "sendProjectile";
                                 sendEventData[1] = projectileSendData;
+                                sendEventData[2] = NetworkSystem.Instance.LocalPlayer;
                             } else
                             {
-                                sendEventData = new object[3];
                                 sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                                 sendEventData[1] = 0;
                                 sendEventData[2] = projectileSendData;
                             }
 
                             PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), sendEventData, options, SendOptions.SendUnreliable);
+                            if (showSelf)
+                                LaunchFriendProjectile(sendEventData);
                             RPCProtection();
                         }
                     }
